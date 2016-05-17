@@ -1,0 +1,5 @@
+[run]
+include = student_registration/*
+omit = *migrations*, *tests*
+plugins =
+    django_coverage_plugin
