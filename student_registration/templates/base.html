@@ -42,12 +42,19 @@
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-toggleable-xs" id="bs-navbar-collapse-1">
             <ul class="nav navbar-nav">
+               {% if request.user.is_superuser %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'home' %}">Home</a>
+                <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+              </li>
+                {% endif %}
+            {% if request.user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="">Student</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'about' %}">About</a>
+                <a class="nav-link" href="">Attendance</a>
               </li>
+            {% endif %}
             </ul>
 
             <ul class="nav navbar-nav pull-xs-right">
@@ -108,4 +115,4 @@
     {% endblock javascript %}
   </body>
 </html>
- 
+

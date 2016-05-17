@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^users/', include('student_registration.users.urls', namespace='users')),
     url(r'^accounts/', include('allauth.urls')),
 
-    # Your stuff: custom urls includes go here
+    url(r'^users/', include('student_registration.students.urls', namespace='students')),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
