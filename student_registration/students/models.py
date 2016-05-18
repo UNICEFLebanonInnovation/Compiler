@@ -15,7 +15,8 @@ class Nationality(models.Model):
 
 
 class School(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
+    name = models.CharField(max_length=555L)
+    number = models.CharField(max_length=45L, unique=True)
 
     class Meta:
         ordering = ['name']
@@ -44,6 +45,38 @@ class Language(models.Model):
         return self.name
 
 
+class EducationLevel(models.Model):
+    name = models.CharField(max_length=45L, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class ClassLevel(models.Model):
+    name = models.CharField(max_length=45L, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Governorate(models.Model):
+    name = models.CharField(max_length=45L)
+    p_code = models.CharField(max_length=32L, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
+
+class PartnerOrganization(models.Model):
+    name = models.CharField(max_length=100L, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Student(models.Model):
 
     first_name = models.CharField(max_length=64L)
@@ -57,8 +90,34 @@ class Student(models.Model):
             u'Female',
         )
     )
+    birthday_year = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        choices=((str(x), x) for x in range(1990, 2051))
+    )
+    birthday_month = models.CharField(
+        max_length=2,
+        blank=True,
+        null=True,
+        choices=((str(x), x) for x in range(1, 13))
+    )
+    birthday_day = models.CharField(
+        max_length=2,
+        blank=True,
+        null=True,
+        choices=((str(x), x) for x in range(1, 33))
+    )
     phone = models.CharField(max_length=64L, blank=True)
     id_number = models.CharField(max_length=45L, unique=True)
+    nationality = models.ForeignKey(
+        Nationality,
+        blank=True, null=True,
+    )
+    address = models.TextField(
+        blank=True,
+        null=True
+    )
 
     def __unicode__(self):
         return u'{} {} ({})'.format(

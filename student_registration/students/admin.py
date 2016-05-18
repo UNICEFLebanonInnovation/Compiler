@@ -9,7 +9,11 @@ from .models import (
     School,
     Course,
     Nationality,
-    Language
+    Language,
+    Governorate,
+    EducationLevel,
+    ClassLevel,
+    PartnerOrganization,
 )
 
 
@@ -18,3 +22,7 @@ admin.site.register(School)
 admin.site.register(Course)
 admin.site.register(Nationality)
 admin.site.register(Language)
+admin.site.register(Governorate)
+admin.site.register(EducationLevel)
+admin.site.register(ClassLevel)
+admin.site.register(PartnerOrganization)
