@@ -50,7 +50,7 @@ class Outreach(models.Model):
         related_name='+',
     )
     last_education_year = models.CharField(
-        max_length=4,
+        max_length=10,
         blank=True,
         null=True,
         choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
