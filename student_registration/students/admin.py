@@ -10,7 +10,8 @@ from .models import (
     Course,
     Nationality,
     Language,
-    Governorate,
+    Location,
+    LocationType,
     EducationLevel,
     ClassLevel,
     PartnerOrganization,
@@ -22,7 +23,9 @@ admin.site.register(School)
 admin.site.register(Course)
 admin.site.register(Nationality)
 admin.site.register(Language)
-admin.site.register(Governorate)
 admin.site.register(EducationLevel)
 admin.site.register(ClassLevel)
+admin.site.register(Location)
+admin.site.register(LocationType)
 admin.site.register(PartnerOrganization)
+

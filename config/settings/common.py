@@ -114,7 +114,13 @@ DATABASES['default']['ATOMIC_REQUESTS'] = True
 TIME_ZONE = 'Asia/Beirut'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-fr'
+
+LANGUAGES = (
+    ('en', 'english'),
+    ('fr', 'french'),
+)
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
@@ -229,7 +235,7 @@ AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 ########## CELERY
 INSTALLED_APPS += ('student_registration.taskapp.celery.CeleryConfig',)
 # if you are not using the django database broker (e.g. rabbitmq, redis, memcached), you can remove the next line.
-INSTALLED_APPS += ('kombu.transport.django',)
+INSTALLED_APPS += ('kombu.transport.django',"django_makemessages_xgettext",)
 BROKER_URL = env('CELERY_BROKER_URL', default='django://')
 ########## END CELERY
 
@@ -238,3 +244,8 @@ BROKER_URL = env('CELERY_BROKER_URL', default='django://')
 ADMIN_URL = r'^admin/'
 
 # Your common stuff: Below this line define 3rd party library settings
+
+LOCALE_PATHS = (
+    # (APPS_DIR+'/locale'),
+    '/Users/Ali/PycharmProjects/StudentRegistration/student_registration/locale',
+)

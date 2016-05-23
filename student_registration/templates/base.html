@@ -26,7 +26,8 @@
     {% block angular %}
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
     {% endblock %}
-
+    {% block extra_head %}
+    {% endblock %}
   </head>
 
   <body>
@@ -49,10 +50,10 @@
                 {% endif %}
             {% if request.user.is_authenticated %}
               <li class="nav-item">
-                <a class="nav-link" href="">Student</a>
+                <a class="nav-link" href="{% url 'students:list' %}">Student</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="">Outreach</a>
+                <a class="nav-link" href="{% url 'alp:outreach' %}">Outreach</a>
               </li>
             {% endif %}
             </ul>
@@ -88,10 +89,19 @@
       {% endif %}
 
       {% block content %}
-        <p>Use this document as a way to quick start any new project.</p>
       {% endblock content %}
 
     </div> <!-- /container -->
+    <div class="container-full-page">
+      {% if messages %}
+          {% for message in messages %}
+              <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+          {% endfor %}
+      {% endif %}
+
+      {% block content-full-page %}
+      {% endblock content-full-page %}
+    </div>
 
     {% block modal %}{% endblock modal %}
 
@@ -113,6 +123,8 @@
       <!-- place project specific Javascript in this file -->
       <script src="{% static 'js/project.js' %}"></script>
     {% endblock javascript %}
+    {% block extra_js %}
+    {% endblock %}
   </body>
 </html>
 

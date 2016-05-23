@@ -9,7 +9,7 @@ from student_registration.students.models import (
     Language,
     EducationLevel,
     ClassLevel,
-    Governorate,
+    Location,
     PartnerOrganization,
 )
 
@@ -30,8 +30,8 @@ class Outreach(models.Model):
         blank=False, null=False,
         related_name='+',
     )
-    governorate = models.ForeignKey(
-        Governorate,
+    location = models.ForeignKey(
+        Location,
         blank=False, null=False,
         related_name='+',
     )
