@@ -44,7 +44,8 @@ THIRD_PARTY_APPS = (
 # Apps specific for this project go here.
 LOCAL_APPS = (
     'student_registration.users',  # custom users app
-    # Your stuff: custom apps go here
+    'student_registration.students',  # custom students app
+    'student_registration.alp',  # custom students app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -110,10 +111,16 @@ DATABASES['default']['ATOMIC_REQUESTS'] = True
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'Lebanon/Beirut'
+TIME_ZONE = 'Asia/Beirut'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-fr'
+
+LANGUAGES = (
+    ('en', 'english'),
+    ('fr', 'french'),
+)
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
@@ -228,7 +235,7 @@ AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 ########## CELERY
 INSTALLED_APPS += ('student_registration.taskapp.celery.CeleryConfig',)
 # if you are not using the django database broker (e.g. rabbitmq, redis, memcached), you can remove the next line.
-INSTALLED_APPS += ('kombu.transport.django',)
+INSTALLED_APPS += ('kombu.transport.django',"django_makemessages_xgettext",)
 BROKER_URL = env('CELERY_BROKER_URL', default='django://')
 ########## END CELERY
 
@@ -237,3 +244,8 @@ BROKER_URL = env('CELERY_BROKER_URL', default='django://')
 ADMIN_URL = r'^admin/'
 
 # Your common stuff: Below this line define 3rd party library settings
+
+LOCALE_PATHS = (
+    # (APPS_DIR+'/locale'),
+    '/Users/Ali/PycharmProjects/StudentRegistration/student_registration/locale',
+)
