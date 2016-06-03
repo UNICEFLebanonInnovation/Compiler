@@ -1,5 +1,5 @@
 {% load staticfiles i18n %}<!DOCTYPE html>
-<html lang="en" ng-app>
+<html lang="ar" ng-app dir="rtl">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -35,7 +35,7 @@
     <div class="m-b">
       <nav class="navbar navbar-dark navbar-static-top bg-inverse">
         <div class="container">
-          <a class="navbar-brand" href="/">Student Registration</a>
+          <a class="navbar-brand" href="/">{% trans "Student Registration" %}</a>
           <button type="button" class="navbar-toggler hidden-sm-up pull-xs-right" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
             &#9776;
           </button>
@@ -45,15 +45,18 @@
             <ul class="nav navbar-nav">
                {% if request.user.is_superuser %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+                <a class="nav-link" href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'students:list' %}">Students</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'students:student_test2' %}">Students 2</a>
               </li>
                 {% endif %}
             {% if request.user.is_authenticated %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'students:list' %}">Student</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'alp:outreach' %}">Outreach</a>
+                <a class="nav-link" href="{% url 'alp:outreach' %}">{% trans "Outreach" %}</a>
               </li>
             {% endif %}
             </ul>

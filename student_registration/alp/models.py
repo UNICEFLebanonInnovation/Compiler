@@ -17,22 +17,22 @@ from student_registration.students.models import (
 class Outreach(models.Model):
     student = models.ForeignKey(
         Student,
-        blank=False, null=False,
+        blank=False, null=True,
         related_name='+',
     )
     partner = models.ForeignKey(
         PartnerOrganization,
-        blank=False, null=False,
+        blank=False, null=True,
         related_name='+',
     )
     school = models.ForeignKey(
         School,
-        blank=False, null=False,
+        blank=False, null=True,
         related_name='+',
     )
     location = models.ForeignKey(
         Location,
-        blank=False, null=False,
+        blank=False, null=True,
         related_name='+',
     )
     preferred_language = models.ForeignKey(
@@ -42,11 +42,11 @@ class Outreach(models.Model):
     )
     last_education_level = models.ForeignKey(
         EducationLevel,
-        blank=False, null=False,
+        blank=False, null=True,
     )
     last_class_level = models.ForeignKey(
         ClassLevel,
-        blank=False, null=False,
+        blank=False, null=True,
         related_name='+',
     )
     last_education_year = models.CharField(
@@ -83,5 +83,18 @@ class Outreach(models.Model):
         null=True,
         choices=((str(x), x) for x in range(1, 33))
     )
+
+    class Meta:
+        ordering = ['id']
+
+    def student_fullname(self):
+        if self.student:
+            return self.student.father_name
+        return ''
+
+    def student_mother_fullname(self):
+        if self.student:
+            return self.student.mother_fullname
+        return ''
 
 

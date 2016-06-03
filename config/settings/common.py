@@ -83,7 +83,8 @@ FIXTURE_DIRS = (
 
 # EMAIL CONFIGURATION
 # ------------------------------------------------------------------------------
-EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+# EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -115,11 +116,12 @@ TIME_ZONE = 'Asia/Beirut'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 # LANGUAGE_CODE = 'en-us'
-LANGUAGE_CODE = 'fr-fr'
+LANGUAGE_CODE = 'ar-ar'
 
 LANGUAGES = (
     ('en', 'english'),
     ('fr', 'french'),
+    ('ar', 'arabic'),
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
