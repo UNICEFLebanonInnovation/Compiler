@@ -89,7 +89,7 @@ class Outreach(models.Model):
 
     def student_fullname(self):
         if self.student:
-            return self.student.father_name
+            return self.student.full_name
         return ''
 
     def student_mother_fullname(self):

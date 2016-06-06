@@ -161,7 +161,7 @@ class Student(models.Model):
         choices=((str(x), x) for x in range(1, 33))
     )
     phone = models.CharField(max_length=64L, blank=True)
-    id_number = models.CharField(max_length=45L, unique=True)
+    id_number = models.CharField(max_length=45L, blank=True)
     nationality = models.ForeignKey(
         Nationality,
         blank=True, null=True,
@@ -172,11 +172,7 @@ class Student(models.Model):
     )
 
     def __unicode__(self):
-        return u'{} {} {}'.format(
-            self.first_name,
-            self.father_name,
-            self.last_name,
-        )
+        return self.full_name
 
     def nationality_name(self):
         if self.nationality:

@@ -8,6 +8,7 @@ from django.http import HttpResponse, JsonResponse
 
 from .models import Outreach
 from student_registration.students.models import (
+    Student,
     School,
     Language,
     EducationLevel,
@@ -58,9 +59,47 @@ class OutreachNewLineView(LoginRequiredMixin, ListView):
             'genders': (u'Male', u'Female'),
         }
 
+    def delete(self, request, *args, **kwargs):
+        instance = Outreach.objects.get(id=request.body)
+        instance.delete()
+        return JsonResponse({'result': 'OK'})
+
     def post(self, request, *args, **kwargs):
         instance = Outreach.objects.get(id=request.POST.get('id'))
-        instance.school = School.objects.get(id=request.POST.get('school'))
+
+        instance.exam_month = request.POST.get('exam_month')
+        instance.exam_day = request.POST.get('exam_day')
+        instance.average_distance = request.POST.get('average_distance')
+        instance.last_education_year = request.POST.get('last_education_year')
+
+        student, created = Student.objects.update_or_create(
+            full_name=request.POST.get('student_full_name'),
+            mother_fullname=request.POST.get('student_mother_fullname'),
+            phone=request.POST.get('student_phone'),
+            id_number=request.POST.get('student_id_number'),
+            address=request.POST.get('student_address'),
+            sex=request.POST.get('student_sex'),
+            birthday_year=request.POST.get('student_birthday_year'),
+            birthday_month=request.POST.get('student_birthday_month'),
+            birthday_day=request.POST.get('student_birthday_day'),
+            nationality=(Nationality.objects.get(id=request.POST.get('student_nationality')) if request.POST.get('student_nationality') else None)
+        )
+        student.save()
+        instance.student = student
+
+        if request.POST.get('school'):
+            instance.school = School.objects.get(id=request.POST.get('school'))
+        if request.POST.get('preferred_language'):
+            instance.preferred_language = Language.objects.get(id=request.POST.get('preferred_language'))
+        if request.POST.get('last_class_level'):
+            instance.last_class_level = ClassLevel.objects.get(id=request.POST.get('last_class_level'))
+        if request.POST.get('last_education_level'):
+            instance.last_education_level = EducationLevel.objects.get(id=request.POST.get('last_education_level'))
+        if request.POST.get('location'):
+            instance.location = Location.objects.get(id=request.POST.get('location'))
+        if request.POST.get('partner'):
+            instance.partner = PartnerOrganization.objects.get(id=request.POST.get('partner'))
+
         instance.save()
         return JsonResponse({'result': 'OK'})
 
