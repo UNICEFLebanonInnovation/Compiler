@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 
 {% block extra_head %}
 
@@ -107,6 +108,7 @@
     <script type="text/javascript">
         var outreach_total = {{ outreaches|length }};
         var oTable = null;
+        var language  = '{{ LANGUAGE_CODE }}';
         $(document).ready(function(){
             oTable = $('#outreaches_table').DataTable({
                 fixedHeader: true,
@@ -121,7 +123,7 @@
 {#                serverSide: true,#}
 {#                ajax: "{% url 'alp:outreach_list_json' %}"#}
                 "language": {
-                    "url": "{% static "locale/ar.json" %}"
+                    "url": "/static/locale/"+language+".json"
 {#                     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Arabic.json"#}
                 }
             });
