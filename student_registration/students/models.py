@@ -130,13 +130,15 @@ class PartnerOrganization(models.Model):
 
 class Student(models.Model):
 
-    first_name = models.CharField(max_length=64L)
-    last_name = models.CharField(max_length=64L)
-    father_name = models.CharField(max_length=64L)
-    full_name = models.CharField(max_length=225L)
-    mother_fullname = models.CharField(max_length=64L)
+    first_name = models.CharField(max_length=64L, blank=True, null=True)
+    last_name = models.CharField(max_length=64L, blank=True, null=True)
+    father_name = models.CharField(max_length=64L, blank=True, null=True)
+    full_name = models.CharField(max_length=225L, blank=True, null=True)
+    mother_fullname = models.CharField(max_length=64L, blank=True, null=True)
     sex = models.CharField(
         max_length=50,
+        blank=True,
+        null=True,
         choices=Choices(
             u'Male',
             u'Female',
@@ -160,8 +162,8 @@ class Student(models.Model):
         null=True,
         choices=((str(x), x) for x in range(1, 33))
     )
-    phone = models.CharField(max_length=64L, blank=True)
-    id_number = models.CharField(max_length=45L, blank=True)
+    phone = models.CharField(max_length=64L, blank=True, null=True)
+    id_number = models.CharField(max_length=45L, blank=True, null=True)
     nationality = models.ForeignKey(
         Nationality,
         blank=True, null=True,

@@ -13,10 +13,11 @@
 {% get_range 1 31 as days %}
 {% get_range 1 31 as days1 %}
 
-<form class="outreach-form" id="outreach-form-{{ outreach.id }}" method="post" action="{% url 'alp:outreach_new_line' %}" onsubmit="return false;">
-    {% csrf_token %}
+{#<form class="outreach-form" id="outreach-form-{{ outreach.id }}" method="post" action="{% url 'alp:outreach_new_line' %}" onsubmit="return false;">#}
+{#    {% csrf_token %}#}
     <td>
-{#        <button class="btn btn-primary save-outreach-row" itemscope="outreach-form-{{ outreach.id }}">{% trans "Save" %}</button>#}
+{#    <form class="outreach-form" id="outreach-form-{{ outreach.id }}" method="post" action="{% url 'alp:outreach_new_line' %}" onsubmit="return false;">#}
+{#        {% csrf_token %}#}
         <button class="btn btn-danger delete-outreach-row" itemscope="{{ outreach.id }}">{% trans "Delete" %}</button>
     </td>
 {{ splitter }}
@@ -222,9 +223,8 @@
     </td>
 {{ splitter }}
     <td>
-{#        <button class="btn btn-primary save-outreach-row" itemscope="outreach-form-{{ outreach.id }}">{% trans "Save" %}</button>#}
         <button class="btn btn-danger delete-outreach-row" itemscope="{{ outreach.id }}">{% trans "Delete" %}</button>
     </td>
 
-</form>
+{#</form>#}
 {#</tr>#}

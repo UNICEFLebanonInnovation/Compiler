@@ -67,25 +67,43 @@ class OutreachNewLineView(LoginRequiredMixin, ListView):
     def post(self, request, *args, **kwargs):
         instance = Outreach.objects.get(id=request.POST.get('id'))
 
-        instance.exam_month = request.POST.get('exam_month')
-        instance.exam_day = request.POST.get('exam_day')
-        instance.average_distance = request.POST.get('average_distance')
-        instance.last_education_year = request.POST.get('last_education_year')
+        if instance.student:
+            student = instance.student
+        else:
+            student = Student.objects.create(first_name=None)
 
-        student, created = Student.objects.update_or_create(
-            full_name=request.POST.get('student_full_name'),
-            mother_fullname=request.POST.get('student_mother_fullname'),
-            phone=request.POST.get('student_phone'),
-            id_number=request.POST.get('student_id_number'),
-            address=request.POST.get('student_address'),
-            sex=request.POST.get('student_sex'),
-            birthday_year=request.POST.get('student_birthday_year'),
-            birthday_month=request.POST.get('student_birthday_month'),
-            birthday_day=request.POST.get('student_birthday_day'),
-            nationality=(Nationality.objects.get(id=request.POST.get('student_nationality')) if request.POST.get('student_nationality') else None)
-        )
+        if request.POST.get('student_full_name'):
+            student.full_name = request.POST.get('student_full_name')
+        if request.POST.get('student_mother_fullname'):
+            student.mother_fullname = request.POST.get('student_mother_fullname')
+        if request.POST.get('student_phone'):
+            student.phone = request.POST.get('student_phone')
+        if request.POST.get('student_id_number'):
+            student.id_number=request.POST.get('student_id_number')
+        if request.POST.get('student_address'):
+            student.address = request.POST.get('student_address')
+        if request.POST.get('student_sex'):
+            student.sex = request.POST.get('student_sex')
+        if request.POST.get('student_birthday_year'):
+            student.birthday_year = request.POST.get('student_birthday_year')
+        if request.POST.get('student_birthday_month'):
+            student.birthday_month = request.POST.get('student_birthday_month')
+        if request.POST.get('student_birthday_day'):
+            student.birthday_day = request.POST.get('student_birthday_day')
+        if request.POST.get('student_nationality'):
+            student.nationality = Nationality.objects.get(id=request.POST.get('student_nationality'))
+
         student.save()
         instance.student = student
+    
+        if request.POST.get('exam_month'):
+            instance.exam_month = request.POST.get('exam_month')
+        if request.POST.get('exam_day'):
+            instance.exam_day = request.POST.get('exam_day')
+        if request.POST.get('average_distance'):
+            instance.average_distance = request.POST.get('average_distance')
+        if request.POST.get('last_education_year'):
+            instance.last_education_year = request.POST.get('last_education_year')
 
         if request.POST.get('school'):
             instance.school = School.objects.get(id=request.POST.get('school'))

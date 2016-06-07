@@ -151,8 +151,11 @@
                 }
             });
             $(document).on('blur', '.outreach-field', function(){
-                var formscope = '#outreach-form-'+$(this).attr('itemscope');
-                save_row($(formscope));
+                console.log($(this).attr('name'));
+                console.log($(this).val());
+                save_row_value($(this).attr('itemscope'), $(this).attr('name'), $(this).val());
+{#                var formscope = '#outreach-form-'+$(this).attr('itemscope');#}
+{#                save_row($(formscope));#}
             });
         });
 
@@ -181,9 +184,9 @@
                 cache: false,
                 dataType: 'html',
                 success: function(response){
-{#                    $('#outreaches_table').find('tbody').append(response);#}
+                    $('#outreaches_table').find('tbody').append(response);
 {#                    console.log(response.split('##'));#}
-                    oTable.row.add(response.split('##')).draw();
+{#                    oTable.row.add(response.split('##')).draw();#}
 {#                    oTable.row.add([response]).draw();#}
                     var $scrollBody = $(oTable.table().node()).parent();
                     $scrollBody.scrollTop($scrollBody.get(0).scrollHeight);
@@ -221,6 +224,33 @@
                 dataType: 'json',
                 success: function (response) {
                     oTable.row(button.parents('tr')).remove().draw();
+                },
+                error: function (response) {
+
+                }
+            });
+        }
+
+        function save_row_value(outreach, name, value) {
+            var csrftoken = getCookie('csrftoken');
+{#            var data = new Array();#}
+{#            data['csrfmiddlewaretoken'] = csrftoken;#}
+{#            data[name] = value;#}
+{#            data['id'] = outreach;#}
+            var data = {csrfmiddlewaretoken: csrftoken, name: name, value: value, id: outreach};
+            data[name] = value
+{#            item[name] = value#}
+{#            data.push(item)#}
+            console.log(data);
+            $.ajax({
+                type: "POST",
+                url: "{% url 'alp:outreach_new_line' %}",
+                data: data,
+                cache: false,
+                headers: {"X-CSRFToken":csrftoken},
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
                 },
                 error: function (response) {
 
