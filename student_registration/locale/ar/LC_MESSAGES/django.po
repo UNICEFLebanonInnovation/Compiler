@@ -269,16 +269,103 @@ msgstr ""
 
 #: student_registration/templates/base.html:64
 msgid "My Profile"
-msgstr ""
+msgstr "الملف الشخصي"
 
 #: student_registration/templates/base.html:67
 msgid "Logout"
-msgstr ""
+msgstr "خروج"
 
 #: student_registration/templates/base.html:74
 msgid "Log In"
-msgstr ""
+msgstr "دخول"
 
 #: student_registration/users/models.py:16
 msgid "Name of User"
 msgstr ""
+
+msgid "School number"
+msgstr "رقم المركز التربوي للمدرسة"
+
+msgid "School name"
+msgstr "المدرسة التي سيقام فيها امتحان الدخول "
+
+msgid "Exam year"
+msgstr "تاريخ امتحان الدخول - سنة"
+
+msgid "Exam month"
+msgstr "تاريخ امتحان الدخول - شهر"
+
+msgid "Exam day"
+msgstr "تاريخ امتحان الدخول - يوم"
+
+msgid "Average distance"
+msgstr "المسافة التقريبية بين مكان السكن والمدرسة التي تقدم برنامج التعليم المكثّف(كلم) "
+
+msgid "Preferred language"
+msgstr "اللغة الأجنبية المفضّلة"
+
+msgid "Last training level"
+msgstr "أعلى مستوى تعليم مكثف في حال كان الطفل مسجلا في البرنامج سابقا"
+
+msgid "Last education year"
+msgstr "آخر عام دراسي تابعه التلميذ"
+
+msgid "Last education level"
+msgstr " أعلى مستوى تعليم وصل إليه التلميذ"
+
+msgid "Student living address"
+msgstr "البلدة مكان السكن (بالعربي)"
+
+msgid "Governorate"
+msgstr "المحافظة"
+
+msgid "Phone number"
+msgstr "الهاتف"
+
+msgid "ID Number"
+msgstr "رقم المفوضية العليا لللاجئين ID Number أو رقم دفتر العائلة أو رقم الهوية الزرقاء للفلسطنيين أو رقم الهوية "
+
+msgid "Sex"
+msgstr "الجنس"
+
+msgid "Year of birth"
+msgstr "تاريخ الولادة - سنة"
+
+msgid "Month of birth"
+msgstr "تاريخ الولادة - شهر"
+
+msgid "Day of birth"
+msgstr "تاريخ الولادة - يوم"
+
+msgid "Nationality"
+msgstr "الجنسبة"
+
+msgid "Mother fullname"
+msgstr "اسم الأم وشهرتها (بالعربي)"
+
+msgid "Student fullname"
+msgstr "إسم التلميذ الثلاثي (بالعربي)"
+
+msgid "Student number"
+msgstr " الرقم التسلسلي حسب الجمعية"
+
+msgid "Partner"
+msgstr "الجمعية المسؤولة عن الإحالة"
+
+msgid "Male"
+msgstr "ذكر"
+
+msgid "Female"
+msgstr "انثى"
+
+msgid "Student Registration"
+msgstr "برنامج التعليم المكثف "
+
+msgid "Outreach"
+msgstr "التوعية"
+
+msgid "Admin"
+msgstr "إعدادات"
+
+msgid "Add outreach line"
+msgstr "اضف سطر"
