@@ -61,7 +61,9 @@ class OutreachNewLineView(LoginRequiredMixin, ListView):
 
     def delete(self, request, *args, **kwargs):
         instance = Outreach.objects.get(id=request.body)
+        student = instance.student
         instance.delete()
+        student.delete()
         return JsonResponse({'result': 'OK'})
 
     def post(self, request, *args, **kwargs):
@@ -95,7 +97,7 @@ class OutreachNewLineView(LoginRequiredMixin, ListView):
 
         student.save()
         instance.student = student
-    
+
         if request.POST.get('exam_month'):
             instance.exam_month = request.POST.get('exam_month')
         if request.POST.get('exam_day'):
