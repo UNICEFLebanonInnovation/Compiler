@@ -5,6 +5,7 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
+from copy import deepcopy
 
 from .models import Outreach
 from student_registration.students.models import (
@@ -42,12 +43,43 @@ class OutreachNewLineView(LoginRequiredMixin, ListView):
     template_name = 'alp/outreach_new_line.html'
 
     def get_context_data(self, **kwargs):
-        p = Outreach(exam_year="2016", exam_month=6, exam_day=5)
-        p.save(force_insert=True)
+        if int(self.request.GET.get('id')):
+            duplicate = Outreach.objects.get(id=self.request.GET.get('id'))
+
+            if self.request.GET.get('options'):
+                instance = Outreach(exam_year="2016")
+                print self.request.GET.get('school')
+                if self.request.GET.get('school') == 'true':
+                    instance.school = duplicate.school
+                if self.request.GET.get('exam_month') == 'true':
+                    instance.exam_month = duplicate.exam_month
+                if self.request.GET.get('exam_day') == 'true':
+                    instance.exam_day = duplicate.exam_day
+                if self.request.GET.get('average_distance') == 'true':
+                    instance.average_distance = duplicate.average_distance
+                if self.request.GET.get('preferred_language') == 'true':
+                    instance.preferred_language = duplicate.preferred_language
+                if self.request.GET.get('last_class_level') == 'true':
+                    instance.last_class_level = duplicate.last_class_level
+                if self.request.GET.get('last_education_year') == 'true':
+                    instance.last_education_year = duplicate.last_education_year
+                if self.request.GET.get('last_education_level') == 'true':
+                    instance.last_education_level = duplicate.last_education_level
+                if self.request.GET.get('partner') == 'true':
+                    instance.partner = duplicate.partner
+            else:
+                instance = deepcopy(duplicate)
+                instance.pk = None
+                instance.student = None
+
+            instance.save()
+        else:
+            instance = Outreach(exam_year="2016")
+            instance.save(force_insert=True)
 
         return {
             'splitter': '##',
-            'outreach': p,
+            'outreach': instance,
             'schools': School.objects.all(),
             'languages': Language.objects.all(),
             'education_levels': EducationLevel.objects.all(),
@@ -63,7 +95,8 @@ class OutreachNewLineView(LoginRequiredMixin, ListView):
         instance = Outreach.objects.get(id=request.body)
         student = instance.student
         instance.delete()
-        student.delete()
+        if student:
+            student.delete()
         return JsonResponse({'result': 'OK'})
 
     def post(self, request, *args, **kwargs):
