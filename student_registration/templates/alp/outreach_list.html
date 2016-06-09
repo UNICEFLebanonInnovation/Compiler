@@ -52,15 +52,32 @@
                                     <tr>
                                         <th>&nbsp;</th>
                                         <th>{% trans "School number" %}</th>
-                                        <th>{% trans "School name" %}</th>
-                                        <th>{% trans "Exam year" %}</th>
-                                        <th>{% trans "Exam month" %}</th>
-                                        <th>{% trans "Exam day" %}</th>
-                                        <th>{% trans "Average distance" %}</th>
-                                        <th>{% trans "Preferred language" %}</th>
-                                        <th>{% trans "Last training level" %}</th>
-                                        <th>{% trans "Last education year" %}</th>
-                                        <th>{% trans "Last education level" %}</th>
+                                        <th>{% trans "School name" %}
+                                            <input type="checkbox" name="duplicate_school" id="duplicate_school" />
+                                        </th>
+                                        <th>{% trans "Exam year" %}
+                                        </th>
+                                        <th>{% trans "Exam month" %}
+                                            <input type="checkbox" name="duplicate_exam_month" id="duplicate_exam_month" />
+                                        </th>
+                                        <th>{% trans "Exam day" %}
+                                            <input type="checkbox" name="duplicate_exam_day" id="duplicate_exam_day" />
+                                        </th>
+                                        <th>{% trans "Average distance" %}
+                                            <input type="checkbox" name="duplicate_average_distance" id="duplicate_average_distance" />
+                                        </th>
+                                        <th>{% trans "Preferred language" %}
+                                            <input type="checkbox" name="duplicate_preferred_language" id="duplicate_preferred_language" />
+                                        </th>
+                                        <th>{% trans "Last training level" %}
+                                            <input type="checkbox" name="duplicate_last_class_level" id="duplicate_last_class_level" />
+                                        </th>
+                                        <th>{% trans "Last education year" %}
+                                            <input type="checkbox" name="duplicate_last_education_year" id="duplicate_last_education_year" />
+                                        </th>
+                                        <th>{% trans "Last education level" %}
+                                            <input type="checkbox" name="duplicate_last_education_level" id="duplicate_last_education_level" />
+                                        </th>
                                         <th>{% trans "Student living address" %}</th>
                                         <th>{% trans "Governorate" %}</th>
                                         <th>{% trans "Phone number" %}</th>
@@ -73,7 +90,9 @@
                                         <th>{% trans "Mother fullname" %}</th>
                                         <th>{% trans "Student fullname" %}</th>
                                         <th>{% trans "Student number" %}</th>
-                                        <th>{% trans "Partner" %}</th>
+                                        <th>{% trans "Partner" %}
+                                            <input type="checkbox" name="duplicate_partner" id="duplicate_partner" />
+                                        </th>
                                         <th>&nbsp;</th>
                                     </tr>
                                 </thead>
@@ -89,7 +108,15 @@
                         </div>
                               <a class="btn btn-success" id="add_datatable_line">
                                 <i class="icon-plus-sign icon-white"></i>&nbsp;
-                                    {% trans "Add outreach line" %}
+                                    {% trans "Add empty line" %}
+                              </a>
+                              <a class="btn btn-success" id="duplicate_last_line">
+                                <i class="icon-plus-sign icon-white"></i>&nbsp;
+                                    {% trans "duplicate last line" %}
+                              </a>
+                              <a class="btn btn-success" id="duplicate_last_line_select">
+                                <i class="icon-plus-sign icon-white"></i>&nbsp;
+                                    {% trans "duplicate last line with selected option" %}
                               </a>
                      </div>
                 </div>
@@ -133,7 +160,37 @@
                     $('#outreaches_table').find('tbody').empty();
                 }
                 outreach_total = outreach_total + 1;
-                load_outreach_newline();
+                load_outreach_newline(0, {});
+            });
+            $(document).on('click', '#duplicate_last_line', function(){
+                if(outreach_total == 0) {
+                    return false;
+                }else{
+                    var lastid = $('.outreach-field-id:last').val();
+                    outreach_total = outreach_total + 1;
+                    load_outreach_newline(lastid, {});
+                }
+            });
+            $(document).on('click', '#duplicate_last_line_select', function(){
+                if(outreach_total == 0) {
+                    return false;
+                }else{
+                    var lastid = $('.outreach-field-id:last').val();
+                    outreach_total = outreach_total + 1;
+                    var params = {
+                        options: true,
+                        school: $('#duplicate_school').is(':checked'),
+                        exam_month: $('#duplicate_exam_month').is(':checked'),
+                        exam_day: $('#duplicate_exam_day').is(':checked'),
+                        average_distance: $('#duplicate_average_distance').is(':checked'),
+                        preferred_language: $('#duplicate_preferred_language').is(':checked'),
+                        last_class_level: $('#duplicate_last_class_level').is(':checked'),
+                        last_education_year: $('#duplicate_last_education_year').is(':checked'),
+                        last_education_level: $('#duplicate_last_education_level').is(':checked'),
+                        partner: $('#duplicate_partner').is(':checked')
+                    };
+                    load_outreach_newline(lastid, params);
+                }
             });
 
             $(document).on('click', '.save-outreach-row', function(){
@@ -141,8 +198,8 @@
                 save_row($('#'+itemscope));
             });
             $(document).on('click', '.delete-outreach-row', function(){
-                delete_row($(this), $(this).attr('itemscope'))
-{#                oTable.row($(this).parents('tr')).remove().draw();#}
+                delete_row($(this), $(this).attr('itemscope'));
+                outreach_total = outreach_total - 1;
             });
             $(document).on('change', '.outreach-school', function(){
                 if($(this).val()){
@@ -151,11 +208,7 @@
                 }
             });
             $(document).on('blur', '.outreach-field', function(){
-                console.log($(this).attr('name'));
-                console.log($(this).val());
                 save_row_value($(this).attr('itemscope'), $(this).attr('name'), $(this).val());
-{#                var formscope = '#outreach-form-'+$(this).attr('itemscope');#}
-{#                save_row($(formscope));#}
             });
         });
 
@@ -176,17 +229,26 @@
             });
         }
 
-        function load_outreach_newline()
+        function load_outreach_newline(lastid, params)
         {
+            var data = {};
+            if(params){
+                params['id'] = lastid;
+                data = params;
+            }else{
+                data = {id:lastid};
+            }
+
             $.ajax({
                 type: "GET",
                 url: "{% url 'alp:outreach_new_line' %}",
+                data: data,
                 cache: false,
                 dataType: 'html',
                 success: function(response){
-                    $('#outreaches_table').find('tbody').append(response);
+{#                    $('#outreaches_table').find('tbody').append(response);#}
 {#                    console.log(response.split('##'));#}
-{#                    oTable.row.add(response.split('##')).draw();#}
+                    oTable.row.add(response.split('##')).draw();
 {#                    oTable.row.add([response]).draw();#}
                     var $scrollBody = $(oTable.table().node()).parent();
                     $scrollBody.scrollTop($scrollBody.get(0).scrollHeight);
@@ -233,15 +295,8 @@
 
         function save_row_value(outreach, name, value) {
             var csrftoken = getCookie('csrftoken');
-{#            var data = new Array();#}
-{#            data['csrfmiddlewaretoken'] = csrftoken;#}
-{#            data[name] = value;#}
-{#            data['id'] = outreach;#}
             var data = {csrfmiddlewaretoken: csrftoken, name: name, value: value, id: outreach};
-            data[name] = value
-{#            item[name] = value#}
-{#            data.push(item)#}
-            console.log(data);
+            data[name] = value;
             $.ajax({
                 type: "POST",
                 url: "{% url 'alp:outreach_new_line' %}",
