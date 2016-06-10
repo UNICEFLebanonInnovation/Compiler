@@ -188,10 +188,3 @@ class OutreachListJson(LoginRequiredMixin, BaseDatatableView):
 
         return qs
 
-
-# def save_row(request):
-#     HttpRequest.is_ajax()
-
-# from django.http import JsonResponse
-# response = JsonResponse({'foo': 'bar'})
-# response.content

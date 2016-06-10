@@ -1,4 +1,3 @@
-{#<tr>#}
 {% load staticfiles i18n %}
 {% load util_tags %}
 
@@ -16,8 +15,6 @@
 {#<form class="outreach-form" id="outreach-form-{{ outreach.id }}" method="post" action="{% url 'alp:outreach_new_line' %}" onsubmit="return false;">#}
 {#    {% csrf_token %}#}
     <td>
-{#    <form class="outreach-form" id="outreach-form-{{ outreach.id }}" method="post" action="{% url 'alp:outreach_new_line' %}" onsubmit="return false;">#}
-{#        {% csrf_token %}#}
         <button class="btn btn-danger delete-outreach-row" itemscope="{{ outreach.id }}">{% trans "Delete" %}</button>
     </td>
 {{ splitter }}
@@ -207,10 +204,10 @@
                value="{{ outreach.student_fullname }}" />
     </td>
 {{ splitter }}
-    <td>
-
-    </td>
-{{ splitter }}
+{#    <td>#}
+{##}
+{#    </td>#}
+{#{{ splitter }}#}
     <td>
         <select name="partner" class="outreach-field" itemscope="{{ outreach.id }}">
             <option value="">-------</option>
@@ -227,4 +224,3 @@
     </td>
 
 {#</form>#}
-{#</tr>#}
