@@ -2,7 +2,8 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from model_utils import Choices
-
+from django.conf import settings
+# from student_registration.users.models import User
 from student_registration.students.models import (
     Student,
     School,
@@ -22,6 +23,11 @@ class Outreach(models.Model):
     )
     partner = models.ForeignKey(
         PartnerOrganization,
+        blank=False, null=True,
+        related_name='+',
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
     )

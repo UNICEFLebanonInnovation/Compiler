@@ -24,8 +24,9 @@ class OutreachView(LoginRequiredMixin, ListView):
     model = Outreach
 
     def get_context_data(self, **kwargs):
+        owner = self.request.user
         return {
-            'outreaches': self.model.objects.all(),
+            'outreaches': self.model.objects.all().filter(owner=owner),
             'schools': School.objects.all(),
             'languages': Language.objects.all(),
             'education_levels': EducationLevel.objects.all(),
@@ -43,12 +44,14 @@ class OutreachNewLineView(LoginRequiredMixin, ListView):
     template_name = 'alp/outreach_new_line.html'
 
     def get_context_data(self, **kwargs):
+
+        owner = self.request.user
+
         if int(self.request.GET.get('id')):
             duplicate = Outreach.objects.get(id=self.request.GET.get('id'))
 
             if self.request.GET.get('options'):
-                instance = Outreach(exam_year="2016")
-                print self.request.GET.get('school')
+                instance = Outreach(exam_year="2016", owner=owner)
                 if self.request.GET.get('school') == 'true':
                     instance.school = duplicate.school
                 if self.request.GET.get('exam_month') == 'true':
@@ -74,7 +77,7 @@ class OutreachNewLineView(LoginRequiredMixin, ListView):
 
             instance.save()
         else:
-            instance = Outreach(exam_year="2016")
+            instance = Outreach(exam_year="2016", owner=owner)
             instance.save(force_insert=True)
 
         return {

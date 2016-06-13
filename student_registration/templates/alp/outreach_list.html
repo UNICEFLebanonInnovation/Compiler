@@ -148,13 +148,14 @@
         var oTable = null;
         var language  = '{{ LANGUAGE_CODE }}';
         $(document).ready(function(){
+
             oTable = $('#outreaches_table').DataTable({
                 fixedHeader: true,
                 paging:   false,
                 ordering: false,
                 info:     true,
                 autoWidth: false,
-{#                scrollY: '50vh',#}
+                scrollY: '50vh',
                 scrollX: true,
                 scrollCollapse: true,
 {#                processing: true,#}
@@ -163,10 +164,12 @@
                 "language": {
                     "url": "/static/locale/"+language+".json"
 {#                     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Arabic.json"#}
+                },
+                "fnInitComplete": function(oSettings, json) {
+                    $('[data-toggle="tooltip"]').tooltip();
+                    scrollToBottom();
                 }
             });
-
-            $('[data-toggle="tooltip"]').tooltip();
 
             $(document).on('click', '#add_datatable_line', function(){
                 if(outreach_total == 0) {
@@ -225,6 +228,14 @@
             });
         });
 
+        function scrollToBottom()
+        {
+            var $scrollBody = $(oTable.table().node()).parent();
+            $scrollBody.scrollTop($scrollBody.get(0).scrollHeight);
+            $scrollBody.scrollLeft($scrollBody.get(0).scrollWidth);
+{#            $("html, body").animate({ scrollTop: $(document).height() }, 1000);#}
+        }
+
         function load_school_number(school, itemscope)
         {
             $.ajax({
@@ -260,11 +271,9 @@
                 dataType: 'html',
                 success: function(response){
 {#                    $('#outreaches_table').find('tbody').append(response);#}
-{#                    console.log(response.split('##'));#}
                     oTable.row.add(response.split('##')).draw();
 {#                    oTable.row.add([response]).draw();#}
-                    var $scrollBody = $(oTable.table().node()).parent();
-                    $scrollBody.scrollTop($scrollBody.get(0).scrollHeight);
+                    scrollToBottom();
                 },
                 error: function(response) {
 
