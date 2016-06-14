@@ -63,12 +63,42 @@
 
             <ul class="nav navbar-nav pull-xs-right">
               {% if request.user.is_authenticated %}
-{#                <li class="nav-item">#}
-{#                  <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>#}
-{#                </li>#}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>
+                </li>
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
                 </li>
+                  {% get_current_language as LANGUAGE_CODE %}
+                  <li class="nav-item">
+                    <a href="{% url 'users:set_language' 'en-us' %}" class="nav-link{% if LANGUAGE_CODE == 'en-us' %} active{% endif %}">
+                        {% trans 'English' %}
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'users:set_language' 'ar-ar' %}" class="nav-link{% if LANGUAGE_CODE == 'ar-ar' %} active{% endif %}">
+                        {% trans 'Arabic' %}
+                    </a>
+                  </li>
+
+{#                <li class="nav-item">#}
+{##}
+{#                {% load i18n %}#}
+{#                <form action="{% url 'users:set_language' %}" method="post">#}
+{#                    {% csrf_token %}#}
+{#                    <input name="next" type="hidden" value="{{ redirect_to }}" />#}
+{#                    <select name="language">#}
+{#                        {% get_current_language as LANGUAGE_CODE %}#}
+{#                        <option value="ar-ar"{% if LANGUAGE_CODE == 'ar-ar' %} selected="selected"{% endif %}>#}
+{#                            {% trans 'Arabic' %}#}
+{#                        </option>#}
+{#                        <option value="en-us"{% if LANGUAGE_CODE == 'en-us' %} selected="selected"{% endif %}>#}
+{#                            {% trans 'English' %}#}
+{#                        </option>#}
+{#                    </select>#}
+{#                    <input type="submit" value="Go" />#}
+{#                </form>#}
+{#                </li>#}
               {% else %}
 {#                <li class="nav-item">#}
 {#                  <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>#}

@@ -93,11 +93,13 @@ class Outreach(models.Model):
     class Meta:
         ordering = ['id']
 
+    @property
     def student_fullname(self):
         if self.student:
             return self.student.full_name
         return ''
 
+    @property
     def student_mother_fullname(self):
         if self.student:
             return self.student.mother_fullname
