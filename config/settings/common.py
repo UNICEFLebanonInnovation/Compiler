@@ -56,6 +56,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 MIDDLEWARE_CLASSES = (
     # Make sure djangosecure.middleware.SecurityMiddleware is listed first
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -114,14 +115,15 @@ DATABASES['default']['ATOMIC_REQUESTS'] = True
 # In a Windows environment this must be set to your system time zone.
 TIME_ZONE = 'Asia/Beirut'
 
+LANGUAGE_COOKIE_NAME = 'default_language'
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 # LANGUAGE_CODE = 'en-us'
 LANGUAGE_CODE = 'ar-ar'
 
 LANGUAGES = (
-    ('en', 'english'),
-    ('fr', 'french'),
-    ('ar', 'arabic'),
+    ('en-us', 'english'),
+    ('fr-fr', 'french'),
+    ('ar-ar', 'arabic'),
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
