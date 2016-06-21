@@ -269,16 +269,173 @@ msgstr ""
 
 #: student_registration/templates/base.html:64
 msgid "My Profile"
-msgstr ""
+msgstr "الملف الشخصي"
 
 #: student_registration/templates/base.html:67
 msgid "Logout"
-msgstr ""
+msgstr "خروج"
 
 #: student_registration/templates/base.html:74
 msgid "Log In"
-msgstr ""
+msgstr "دخول"
 
 #: student_registration/users/models.py:16
 msgid "Name of User"
 msgstr ""
+
+msgid "School number"
+msgstr "رقم المدرسة"
+
+msgid "School name number"
+msgstr "رقم المركز التربوي للمدرسة"
+
+msgid "School"
+msgstr "إسم المدرسة"
+
+msgid "School name"
+msgstr "المدرسة التي سيقام فيها امتحان الدخول "
+
+msgid "Outreach exam"
+msgstr "تاريخ امتحان الدخول"
+
+msgid "Outreach exam tooltip"
+msgstr "تاريخ امتحان الدخول"
+
+msgid "year"
+msgstr "سنة"
+
+msgid "month"
+msgstr "شهر"
+
+msgid "day"
+msgstr "يوم"
+
+msgid "Average distance tooltip"
+msgstr "المسافة التقريبية بين مكان السكن والمدرسة التي تقدم برنامج التعليم المكثّف(كلم) "
+
+msgid "Average distance"
+msgstr "المسافة بين المنزل والمدرسة"
+
+msgid "Preferred language"
+msgstr "اللغة الأجنبية المفضّلة"
+
+msgid "Preferred language tooltip"
+msgstr "اللغة الأجنبية المفضّلة"
+
+msgid "Last training level tooltip"
+msgstr "أعلى مستوى تعليم مكثف في حال كان الطفل مسجلا في البرنامج سابقا"
+
+msgid "Last training level"
+msgstr "اعلى مستوى تعليم مكثف"
+
+msgid "Last education year"
+msgstr "آخر عام دراسي تابعه التلميذ"
+
+msgid "Last education year tooltip"
+msgstr "آخر عام دراسي تابعه التلميذ"
+
+msgid "Last education level"
+msgstr " أعلى مستوى تعليم وصل إليه التلميذ"
+
+msgid "Last education level tooltip"
+msgstr " أعلى مستوى تعليم وصل إليه التلميذ"
+
+msgid "Student living address"
+msgstr "البلدة مكان السكن (بالعربي)"
+
+msgid "Student living address tooltip"
+msgstr "البلدة مكان السكن (بالعربي)"
+
+msgid "Governorate"
+msgstr "المحافظة"
+
+msgid "Governorate tooltip"
+msgstr "المحافظة"
+
+msgid "Phone number"
+msgstr "الهاتف"
+
+msgid "Phone number tooltip"
+msgstr "الهاتف"
+
+msgid "ID Number tooltip"
+msgstr "رقم المفوضية العليا لللاجئين ID Number أو رقم دفتر العائلة أو رقم الهوية الزرقاء للفلسطنيين أو رقم الهوية "
+
+msgid "ID Number"
+msgstr "ID Number"
+
+msgid "Sex"
+msgstr "الجنس"
+
+msgid "Sex tooltip"
+msgstr "الجنس"
+
+msgid "Year of birth"
+msgstr "تاريخ الولادة - سنة"
+
+msgid "Month of birth"
+msgstr "تاريخ الولادة - شهر"
+
+msgid "Day of birth"
+msgstr "تاريخ الولادة - يوم"
+
+msgid "Birthday"
+msgstr "تاريخ الولادة"
+
+msgid "Birthday tooltip"
+msgstr "تاريخ الولادة (السنة - الشهر -اليوم)"
+
+msgid "Nationality"
+msgstr "الجنسبة"
+
+msgid "Nationality tooltip"
+msgstr "الجنسبة"
+
+msgid "Mother fullname"
+msgstr "اسم الأم وشهرتها (بالعربي)"
+
+msgid "Mother fullname tooltip"
+msgstr "اسم الأم وشهرتها (بالعربي)"
+
+msgid "Student fullname"
+msgstr "إسم التلميذ الثلاثي (بالعربي)"
+
+msgid "Student fullname tooltip"
+msgstr "إسم التلميذ الثلاثي (بالعربي)"
+
+msgid "Student number"
+msgstr " الرقم التسلسلي حسب الجمعية"
+
+msgid "Student number tooltip"
+msgstr " الرقم التسلسلي حسب الجمعية"
+
+msgid "Partner"
+msgstr "الجمعية"
+
+msgid "Partner tooltip"
+msgstr "الجمعية المسؤولة عن الإحالة"
+
+msgid "Male"
+msgstr "ذكر"
+
+msgid "Female"
+msgstr "انثى"
+
+msgid "Student Registration"
+msgstr "برنامج التعليم المكثف "
+
+msgid "Outreach"
+msgstr "التوعية"
+
+msgid "Admin"
+msgstr "إعدادات"
+
+msgid "Add empty line"
+msgstr "اضف سطر فارغ"
+
+msgid "duplicate last line"
+msgstr "كرر آخر سطر"
+
+msgid "duplicate last line with selected option"
+msgstr "كرر آخر سطر مع الخيارات المحددة"
+

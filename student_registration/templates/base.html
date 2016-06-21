@@ -1,5 +1,5 @@
 {% load staticfiles i18n %}<!DOCTYPE html>
-<html lang="en" ng-app>
+<html lang="ar" ng-app dir="rtl">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -35,7 +35,7 @@
     <div class="m-b">
       <nav class="navbar navbar-dark navbar-static-top bg-inverse">
         <div class="container">
-          <a class="navbar-brand" href="/">Student Registration</a>
+          <a class="navbar-brand" href="/">{% trans "Student Registration" %}</a>
           <button type="button" class="navbar-toggler hidden-sm-up pull-xs-right" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
             &#9776;
           </button>
@@ -45,15 +45,18 @@
             <ul class="nav navbar-nav">
                {% if request.user.is_superuser %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+                <a class="nav-link" href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
               </li>
+{#              <li class="nav-item">#}
+{#                <a class="nav-link" href="{% url 'students:list' %}">Students</a>#}
+{#              </li>#}
+{#              <li class="nav-item">#}
+{#                <a class="nav-link" href="{% url 'students:student_test2' %}">Students 2</a>#}
+{#              </li>#}
                 {% endif %}
             {% if request.user.is_authenticated %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'students:list' %}">Student</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'alp:outreach' %}">Outreach</a>
+                <a class="nav-link" href="{% url 'alp:outreach' %}">{% trans "Outreach" %}</a>
               </li>
             {% endif %}
             </ul>
@@ -66,10 +69,40 @@
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
                 </li>
+                  {% get_current_language as LANGUAGE_CODE %}
+                  <li class="nav-item">
+                    <a href="{% url 'users:set_language' 'en-us' %}" class="nav-link{% if LANGUAGE_CODE == 'en-us' %} active{% endif %}">
+                        {% trans 'English' %}
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{% url 'users:set_language' 'ar-ar' %}" class="nav-link{% if LANGUAGE_CODE == 'ar-ar' %} active{% endif %}">
+                        {% trans 'Arabic' %}
+                    </a>
+                  </li>
+
+{#                <li class="nav-item">#}
+{##}
+{#                {% load i18n %}#}
+{#                <form action="{% url 'users:set_language' %}" method="post">#}
+{#                    {% csrf_token %}#}
+{#                    <input name="next" type="hidden" value="{{ redirect_to }}" />#}
+{#                    <select name="language">#}
+{#                        {% get_current_language as LANGUAGE_CODE %}#}
+{#                        <option value="ar-ar"{% if LANGUAGE_CODE == 'ar-ar' %} selected="selected"{% endif %}>#}
+{#                            {% trans 'Arabic' %}#}
+{#                        </option>#}
+{#                        <option value="en-us"{% if LANGUAGE_CODE == 'en-us' %} selected="selected"{% endif %}>#}
+{#                            {% trans 'English' %}#}
+{#                        </option>#}
+{#                    </select>#}
+{#                    <input type="submit" value="Go" />#}
+{#                </form>#}
+{#                </li>#}
               {% else %}
-                <li class="nav-item">
-                  <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
-                </li>
+{#                <li class="nav-item">#}
+{#                  <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>#}
+{#                </li>#}
                 <li class="nav-item">
                   <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Log In" %}</a>
                 </li>
@@ -92,7 +125,7 @@
       {% endblock content %}
 
     </div> <!-- /container -->
-    <div class="container-full-page">
+    <div class="container-full-page" style="position: relative;width: 100%;min-width: 980px;padding: 15px;">
       {% if messages %}
           {% for message in messages %}
               <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>

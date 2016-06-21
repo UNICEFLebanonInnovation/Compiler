@@ -1,0 +1,226 @@
+{% load staticfiles i18n %}
+{% load util_tags %}
+
+{% get_range_str 2000 2051 as education_years %}
+
+{% get_range 1990 2051 as years %}
+{% get_range 1990 2051 as years1 %}
+
+{% get_range 1 12 as months %}
+{% get_range 1 12 as months1 %}
+
+{% get_range 1 31 as days %}
+{% get_range 1 31 as days1 %}
+
+{#<form class="outreach-form" id="outreach-form-{{ outreach.id }}" method="post" action="{% url 'alp:outreach_new_line' %}" onsubmit="return false;">#}
+{#    {% csrf_token %}#}
+    <td>
+        <button class="btn btn-danger delete-outreach-row" itemscope="{{ outreach.id }}">{% trans "Delete" %}</button>
+    </td>
+{{ splitter }}
+    <td>
+        <input type="hidden" name="id" value="{{ outreach.id }}" class="outreach-field-id" />
+        <span id="school_number_{{ outreach.id }}">{% if outreach.school %}{{ outreach.school.number }}{% endif %}</span>
+    </td>
+{{ splitter }}
+    <td>
+        <select name="school" class="outreach-school outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for schl in schools %}
+                <option value="{{ schl.id }}" {% if outreach.school_id == schl.id %}selected="selected"{% endif %}>
+                    {{ schl.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <input type="hidden" name="exam_year" class="outreach-field" itemscope="{{ outreach.id }}" value="{{ outreach.exam_year }}"/>
+        {{ outreach.exam_year }}
+    </td>
+{{ splitter }}
+    <td>
+        <select name="exam_month" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in months %}
+                <option value="{{ item }}" {% if outreach.exam_month == item %}selected="selected"{% endif %}>{{ item }}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <select name="exam_day" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in days %}
+                <option value="{{ item }}" {% if outreach.exam_day == item %}selected="selected"{% endif %}>{{ item }}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <select name="average_distance" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in distances %}
+                <option value="{{ item }}" {% if outreach.average_distance == item %}selected="selected"{% endif %}>{{ item }}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <select name="preferred_language" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in languages %}
+                <option value="{{ item.id }}" {% if outreach.preferred_language_id == item.id %}
+                selected="selected"
+                {% endif %}>{{ item.name }}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <select name="last_class_level" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in levels %}
+                <option value="{{ item.id }}" {% if outreach.last_class_level_id == item.id %}
+                selected="selected"
+                {% endif %}>{{ item.name }}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <select name="last_education_year" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in education_years %}
+                <option value="{{ item }}" {% if outreach.last_education_year == item %}
+                selected="selected"
+                {% endif %}>{{ item }}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <select name="last_education_level" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in education_levels %}
+                <option value="{{ item.id }}" {% if outreach.last_education_level_id == item.id %}
+                selected="selected"
+                {% endif %}>{{ item.name }}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <input type="text" name="student_address" class="outreach-field" itemscope="{{ outreach.id }}" {% if outreach.student %}
+        value="{{ outreach.student.address }}"
+        {% endif %} />
+    </td>
+{{ splitter }}
+    <td>
+        <select name="location" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in locations %}
+                <option value="{{ item.id }}" {% if outreach.location_id == item.id %}
+                selected="selected"
+                {% endif %}>{{ item.name }}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <input type="text" name="student_phone" class="outreach-field" itemscope="{{ outreach.id }}" {% if outreach.student %}
+        value="{{ outreach.student.phone }}"
+        {% endif %}/>
+    </td>
+{{ splitter }}
+    <td>
+        <input type="text" name="student_id_number" class="outreach-field" itemscope="{{ outreach.id }}" {% if outreach.student %}
+        value="{{ outreach.student.id_number }}"
+        {% endif %} />
+    </td>
+{{ splitter }}
+    <td>
+        <select name="student_sex" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in genders %}
+                <option value="{{ item }}" {% if outreach.student and outreach.student.sex == item %}
+                selected="selected"
+                {% endif %}>{% trans item %}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <select name="student_birthday_year" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in years %}
+                <option value="{{ item }}" {% if outreach.student and outreach.student.birthday_year == item %}
+                selected="selected"
+                {% endif %}>{{ item }}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <select name="student_birthday_month" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in months1 %}
+                <option value="{{ item }}" {% if outreach.student and outreach.student.birthday_month == item %}
+                selected="selected"
+                {% endif %}>{{ item }}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <select name="student_birthday_day" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in days1 %}
+                <option value="{{ item }}" {% if outreach.student and outreach.student.birthday_day == item %}
+                selected="selected"
+                {% endif %}>{{ item }}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <select name="student_nationality" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in nationalities %}
+                <option value="{{ item.id }}" {% if outreach.student and outreach.student.nationality_id == item.id %}
+                selected="selected"
+                {% endif %}>{{ item.name }}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <input type="text" name="student_mother_fullname" class="outreach-field" itemscope="{{ outreach.id }}"
+               value="{{ outreach.student_mother_fullname }}" />
+    </td>
+{{ splitter }}
+    <td>
+        <input type="text" name="student_full_name" class="outreach-field" itemscope="{{ outreach.id }}"
+               value="{{ outreach.student_fullname }}" />
+    </td>
+{{ splitter }}
+{#    <td>#}
+{##}
+{#    </td>#}
+{#{{ splitter }}#}
+    <td>
+        <select name="partner" class="outreach-field" itemscope="{{ outreach.id }}">
+            <option value="">-------</option>
+            {% for item in partners %}
+                <option value="{{ item.id }}" {% if outreach.partner_id == item.id %}
+                selected="selected"
+                {% endif %}>{{ item.name }}</option>
+            {% endfor %}
+        </select>
+    </td>
+{{ splitter }}
+    <td>
+        <button class="btn btn-danger delete-outreach-row" itemscope="{{ outreach.id }}">{% trans "Delete" %}</button>
+    </td>
+
+{#</form>#}

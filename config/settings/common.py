@@ -56,6 +56,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 MIDDLEWARE_CLASSES = (
     # Make sure djangosecure.middleware.SecurityMiddleware is listed first
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -83,7 +84,8 @@ FIXTURE_DIRS = (
 
 # EMAIL CONFIGURATION
 # ------------------------------------------------------------------------------
-EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+# EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -113,13 +115,15 @@ DATABASES['default']['ATOMIC_REQUESTS'] = True
 # In a Windows environment this must be set to your system time zone.
 TIME_ZONE = 'Asia/Beirut'
 
+LANGUAGE_COOKIE_NAME = 'default_language'
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 # LANGUAGE_CODE = 'en-us'
-LANGUAGE_CODE = 'fr-fr'
+LANGUAGE_CODE = 'ar-ar'
 
 LANGUAGES = (
-    ('en', 'english'),
-    ('fr', 'french'),
+    ('en-us', 'english'),
+    ('fr-fr', 'french'),
+    ('ar-ar', 'arabic'),
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
@@ -226,7 +230,7 @@ SOCIALACCOUNT_ADAPTER = 'student_registration.users.adapters.SocialAccountAdapte
 # Custom user app defaults
 # Select the correct user model
 AUTH_USER_MODEL = 'users.User'
-LOGIN_REDIRECT_URL = 'users:redirect'
+LOGIN_REDIRECT_URL = 'alp:outreach'
 LOGIN_URL = 'account_login'
 
 # SLUGLIFIER

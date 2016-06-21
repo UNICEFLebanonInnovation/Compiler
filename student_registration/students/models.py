@@ -93,32 +93,28 @@ class Location(MPTTModel):
     p_code = models.CharField(max_length=32L, blank=True, null=True)
 
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
-    geom = models.MultiPolygonField(null=True, blank=True)
-    point = models.PointField(null=True, blank=True)
-    objects = models.GeoManager()
+    # geom = models.MultiPolygonField(null=True, blank=True)
+    # point = models.PointField(null=True, blank=True)
+    # objects = models.GeoManager()
 
     def __unicode__(self):
         #TODO: Make generic
-        return u'{} ({} {})'.format(
+        return u'{} - {}'.format(
             self.name,
-            self.gateway.name,
-            "{}: {}".format(
-                'CERD' if self.gateway.name == 'School' else 'PCode',
-                self.p_code if self.p_code else ''
-            )
+            self.gateway.name
         )
+    #
+    # @property
+    # def geo_point(self):
+    #     return self.point if self.point else self.geom.point_on_surface
 
-    @property
-    def geo_point(self):
-        return self.point if self.point else self.geom.point_on_surface
 
-
-    @property
-    def point_lat_long(self):
-        return "Lat: {}, Long: {}".format(
-            self.point.y,
-            self.point.x
-        )
+    # @property
+    # def point_lat_long(self):
+    #     return "Lat: {}, Long: {}".format(
+    #         self.point.y,
+    #         self.point.x
+    #     )
 
     class Meta:
         unique_together = ('name', 'gateway', 'p_code')
@@ -134,12 +130,15 @@ class PartnerOrganization(models.Model):
 
 class Student(models.Model):
 
-    first_name = models.CharField(max_length=64L)
-    last_name = models.CharField(max_length=64L)
-    father_name = models.CharField(max_length=64L)
-    mother_fullname = models.CharField(max_length=64L)
+    first_name = models.CharField(max_length=64L, blank=True, null=True)
+    last_name = models.CharField(max_length=64L, blank=True, null=True)
+    father_name = models.CharField(max_length=64L, blank=True, null=True)
+    full_name = models.CharField(max_length=225L, blank=True, null=True)
+    mother_fullname = models.CharField(max_length=64L, blank=True, null=True)
     sex = models.CharField(
         max_length=50,
+        blank=True,
+        null=True,
         choices=Choices(
             u'Male',
             u'Female',
@@ -163,8 +162,8 @@ class Student(models.Model):
         null=True,
         choices=((str(x), x) for x in range(1, 33))
     )
-    phone = models.CharField(max_length=64L, blank=True)
-    id_number = models.CharField(max_length=45L, unique=True)
+    phone = models.CharField(max_length=64L, blank=True, null=True)
+    id_number = models.CharField(max_length=45L, blank=True, null=True)
     nationality = models.ForeignKey(
         Nationality,
         blank=True, null=True,
@@ -175,18 +174,7 @@ class Student(models.Model):
     )
 
     def __unicode__(self):
-        return u'{} {} {}'.format(
-            self.first_name,
-            self.father_name,
-            self.last_name,
-        )
-
-    def full_name(self):
-        return u'{} {} {}'.format(
-            self.first_name,
-            self.father_name,
-            self.last_name,
-        )
+        return self.full_name
 
     def nationality_name(self):
         if self.nationality:
