@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import translation
 
 from .models import User
 
@@ -46,3 +47,16 @@ class UserListView(LoginRequiredMixin, ListView):
     # These next two lines tell the view to index lookups by username
     slug_field = 'username'
     slug_url_kwarg = 'username'
+
+
+class UserChangeLanguageRedirectView(LoginRequiredMixin, RedirectView):
+
+    permanent = False
+    query_string = True
+    pattern_name = 'set_language'
+
+    def get_redirect_url(self, *args, **kwargs):
+        user_language = kwargs['language']
+        translation.activate(user_language)
+        self.request.session[translation.LANGUAGE_SESSION_KEY] = user_language
+        return reverse('alp:outreach')
