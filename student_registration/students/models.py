@@ -4,6 +4,7 @@ from django.db import models
 from model_utils import Choices
 from mptt.models import MPTTModel, TreeForeignKey
 from paintstore.fields import ColorPickerField
+from django.utils.translation import ugettext as _
 from django.contrib.gis.db import models
 
 
@@ -140,8 +141,8 @@ class Student(models.Model):
         blank=True,
         null=True,
         choices=Choices(
-            u'Male',
-            u'Female',
+            _(u'Male'),
+            _(u'Female'),
         )
     )
     birthday_year = models.CharField(

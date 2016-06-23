@@ -404,7 +404,7 @@ msgid "Student fullname tooltip"
 msgstr "إسم التلميذ الثلاثي (بالعربي)"
 
 msgid "Student number"
-msgstr " الرقم التسلسلي حسب الجمعية"
+msgstr "رقم التلميذ"
 
 msgid "Student number tooltip"
 msgstr " الرقم التسلسلي حسب الجمعية"

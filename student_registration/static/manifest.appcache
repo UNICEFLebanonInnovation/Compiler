@@ -1,0 +1,20 @@
+CACHE MANIFEST
+/static/images/icon-unknown.gif
+/static/images/favicon.ico
+/static/locale/ar-ar.json
+/static/locale/en-us.json
+/static/css/project.css
+/static/css/bootstrap.css
+/static/css/jquery.dataTables.min.css
+/static/css/buttons.dataTables.min.css
+/static/css/select.dataTables.min.css
+/static/js/project.js
+/static/js/angular.min.js
+/static/js/jquery.min.js
+/static/js/tether.min.js
+/static/js/bootstrap.js
+/static/js/jquery-1.12.3.min.js
+/static/js/jquery.dataTables.min.js
+/static/js/dataTables.bootstrap.min.js
+/static/js/util.js
+/static/js/tooltip.js

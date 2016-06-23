@@ -7,6 +7,12 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
+from rest_framework_nested import routers
+from student_registration.alp.views import OutreachViewSet
+
+api = routers.SimpleRouter()
+api.register(r'outreach', OutreachViewSet, base_name='outreach')
+
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
@@ -22,6 +28,10 @@ urlpatterns = [
     url(r'^students/', include('student_registration.students.urls', namespace='students')),
     url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
 
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/docs/', include('rest_framework_swagger.urls')),
+
+    url(r'^api/', include(api.urls)),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
