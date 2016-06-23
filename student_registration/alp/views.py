@@ -5,9 +5,13 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
+from rest_framework import viewsets, mixins, permissions
 from copy import deepcopy
 
 from .models import Outreach
+from .serializers import OutreachSerializer
+from .forms import OutreachForm, OutreachFormSet
+from django.forms import formset_factory
 from student_registration.students.models import (
     Student,
     School,
@@ -20,13 +24,41 @@ from student_registration.students.models import (
 )
 
 
+class OutreachViewSet(mixins.RetrieveModelMixin,
+                      mixins.ListModelMixin,
+                      mixins.CreateModelMixin,
+                      mixins.UpdateModelMixin,
+                      viewsets.GenericViewSet):
+
+    model = Outreach
+    queryset = Outreach.objects.all()
+    serializer_class = OutreachSerializer
+    permission_classes = (permissions.IsAdminUser,)
+
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user)
+
+
 class OutreachView(LoginRequiredMixin, ListView):
     model = Outreach
 
     def get_context_data(self, **kwargs):
         owner = self.request.user
+        # formset = formset_factory(OutreachForm, formset=OutreachFormSet)
+        # models = self.model.objects.all().filter(owner=owner)
+        # link_data = [{'id': l.id, 'exam_year': l.exam_year, 'school': l.school}
+        #                     for l in models]
+        # forms = formset(initial=link_data)
+        # models = self.model.objects.all().filter(owner=owner).values()
+        # forms = formset(initial=models)
+        # forms = formset(queryset=self.model.objects.filter(owner=owner))
+        # data = self.model.objects.all().filter(owner=owner).values()
+
         return {
-            'outreaches': self.model.objects.all().filter(owner=owner),
+            # 'forms': forms,
+            'outreaches': (),
+            # 'data': simplejson.dumps(data),
+            # 'data': json.dumps(data.values(), cls=DjangoJSONEncoder),
             'schools': School.objects.all(),
             'languages': Language.objects.all(),
             'education_levels': EducationLevel.objects.all(),

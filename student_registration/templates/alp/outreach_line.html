@@ -1,0 +1,108 @@
+{% load staticfiles i18n %}
+
+{#<form class="outreach-form" id="outreach-form-{{ outreach.id }}" method="post" action="{% url 'alp:outreach_new_line' %}" onsubmit="return false;">#}
+{#    {% csrf_token %}#}
+    <td>
+        <button class="btn btn-danger delete-outreach-row" itemscope="{{ outreach.id }}">{% trans "Delete" %}</button>
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.id }}
+        <input type="hidden" name="id" value="{{ outreach.id }}" class="outreach-field-id" />
+        <span id="school_number_{{ outreach.id }}">{% if outreach.school %}{{ outreach.school.number }}{% endif %}</span>
+        {{ form.school_number }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.school }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.exam_year }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.exam_month }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.exam_day }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.average_distance }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.preferred_language }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.last_class_level }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.last_education_year }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.last_education_level }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.student_address }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.location }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.student_phone }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.student_id_number }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.student_sex }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.student_birthday_year }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.student_birthday_month }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.student_birthday_day }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.student_nationality }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.student_mother_fullname }}
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.student_full_name }}
+    </td>
+{{ splitter }}
+    <td>
+
+    </td>
+{{ splitter }}
+    <td>
+        {{ form.partner }}
+    </td>
+{{ splitter }}
+    <td>
+        <button class="btn btn-danger delete-outreach-row" itemscope="{{ form.id.value }}">{% trans "Delete" %}</button>
+    </td>
+
+{#</form>#}
