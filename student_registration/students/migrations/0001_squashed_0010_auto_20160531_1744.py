@@ -10,8 +10,6 @@ import mptt.fields
 
 class Migration(migrations.Migration):
 
-    replaces = [('students', '0001_initial'), ('students', '0002_governorate'), ('students', '0003_classlevel_educationlevel'), ('students', '0004_partnerorganization'), ('students', '0005_auto_20160518_1542'), ('students', '0006_auto_20160518_1610'), ('students', '0007_auto_20160518_1627'), ('students', '0008_auto_20160518_1712'), ('students', '0009_auto_20160520_1429'), ('students', '0010_auto_20160531_1744')]
-
     initial = True
 
     dependencies = [
