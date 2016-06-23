@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('students', '0005_auto_20160518_1542'),
+        ('students', '0001_squashed_0010_auto_20160531_1744'),
     ]
 
     operations = [
