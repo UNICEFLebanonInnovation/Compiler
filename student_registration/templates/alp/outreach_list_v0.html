@@ -24,7 +24,12 @@
 
 {% block content-full-page %}
 
-    {% include 'alp/outreach_prototype.html' %}
+    <table style="display: none;" id="outreach_prototype">
+{#        {% include 'alp/outreach_prototype.html' with splitter='##' %}#}
+        <tr>
+            {% include 'alp/outreach_prototype.html' %}
+        </tr>
+    </table>
 
          <section class="main-content-wrapper">
             <section id="main-content">
@@ -44,6 +49,10 @@
                             </div>
                           </div>
                           <div class="panel-body">
+{#                              <a href="#" class="btn btn-success" id="add_datatable_line">#}
+{#                                <i class="icon-plus-sign icon-white"></i>&nbsp;#}
+{#                                    {% trans "Add outreach line" %}#}
+{#                              </a>#}
                                 <table id="outreaches_table" class="table table-striped table-bordered cell-border"
                                        data-height="500"
                                        data-pagination="true"
@@ -124,7 +133,6 @@
                                     </tr>
                                     <tr>
                                         <th>{% trans "year" %}
-                                            <input type="checkbox" name="duplicate_exam_year" id="duplicate_exam_year" />
                                         </th>
                                         <th>{% trans "month" %}
                                             <input type="checkbox" name="duplicate_exam_month" id="duplicate_exam_month" />
@@ -139,7 +147,17 @@
                                 </thead>
 
                                 <tbody>
-
+{#                                   {{ link_formset.management_form }}#}
+{#                                    {% for form in forms %}#}
+{#                                        <tr>#}
+{#                                            {% include 'alp/outreach_line.html' with form=form %}#}
+{#                                        </tr>#}
+{#                                    {% endfor %}#}
+                                    {% for item in outreaches %}
+                                        <tr>
+                                            {% include 'alp/outreach_new_line.html' with outreach=item %}
+                                        </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -179,9 +197,16 @@
         var store = null;
         var recordID = 1;
         var language  = '{{ LANGUAGE_CODE }}';
-{#        var user_id = {{ request.user.id }};#}
-{#        var user_name = '{{ request.user.full_name }}';#}
-
+        //if (!localStorage.checkins) localStorage.checkins = JSON.stringify(data);
+{#        this.db = openDatabase('compile', '1.0', 'Offline web app database', 5000);#}
+{#        this.db.transaction(function(tx) {#}
+{#          tx.executeSql("create table if not exists " +#}
+{#            "outreach(id integer primary key asc, time integer, latitude float," +#}
+{#                      "longitude float, mood string)",#}
+{#            [],#}
+{#            function() { console.log("siucc"); }#}
+{#          );#}
+{#        });#}
         $(document).ready(function(){
 
 {#            oTable = $('#outreaches_table').DataTable({#}
@@ -204,10 +229,18 @@
 
             createStore();
 
+{#            $(document).on('click', '#create_offline_store', function(){#}
+{#               createStore();#}
+{#            });#}
+
             $(document).on('click', '#add_datatable_line', function(){
+{#                if(outreach_total == 0) {#}
+{#                    $('#outreaches_table').find('tbody').empty();#}
+{#                }#}
+{#                outreach_total = outreach_total + 1;#}
                 add_outreach_newline(recordID);
-                add_to_store({id: recordID, synchronized: false});
-                scrollToBottom();
+                add_to_store({id: recordID});
+{#                load_outreach_newline(0, {});#}
             });
 
             $(document).on('click', '#duplicate_last_line', function(){
@@ -215,14 +248,8 @@
                     return false;
                 }else{
                     var lastid = $('.outreach-field-id:last').val();
-                    var request = getRecord(lastid);
-                    request.onsuccess = function(){
-                        var item = request.result;
-                        item.id = recordID;
-                        add_to_store(item);
-                        add_fill_line_data(item);
-                        scrollToBottom();
-                    };
+                    outreach_total = outreach_total + 1;
+                    load_outreach_newline(lastid, {});
                 }
             });
             $(document).on('click', '#duplicate_last_line_select', function(){
@@ -230,35 +257,20 @@
                     return false;
                 }else{
                     var lastid = $('.outreach-field-id:last').val();
-                    var request = getRecord(lastid);
-                    request.onsuccess = function(){
-                        var item = request.result;
-                        var new_item = {id: recordID, synchronized: false};
-
-                        var params = {
-                            school_number: $('#duplicate_school').is(':checked'),
-                            school: $('#duplicate_school').is(':checked'),
-                            exam_year: $('#duplicate_exam_year').is(':checked'),
-                            exam_month: $('#duplicate_exam_month').is(':checked'),
-                            exam_day: $('#duplicate_exam_day').is(':checked'),
-                            average_distance: $('#duplicate_average_distance').is(':checked'),
-                            preferred_language: $('#duplicate_preferred_language').is(':checked'),
-                            last_class_level: $('#duplicate_last_class_level').is(':checked'),
-                            last_education_year: $('#duplicate_last_education_year').is(':checked'),
-                            last_education_level: $('#duplicate_last_education_level').is(':checked'),
-                            partner: $('#duplicate_partner').is(':checked')
-                        };
-
-                        $.each(params, function(field, flag){
-                            if(flag){
-                                new_item[field] = item[field];
-                            }
-                        });
-
-                        add_to_store(new_item);
-                        add_fill_line_data(new_item);
-                        scrollToBottom();
+                    outreach_total = outreach_total + 1;
+                    var params = {
+                        options: true,
+                        school: $('#duplicate_school').is(':checked'),
+                        exam_month: $('#duplicate_exam_month').is(':checked'),
+                        exam_day: $('#duplicate_exam_day').is(':checked'),
+                        average_distance: $('#duplicate_average_distance').is(':checked'),
+                        preferred_language: $('#duplicate_preferred_language').is(':checked'),
+                        last_class_level: $('#duplicate_last_class_level').is(':checked'),
+                        last_education_year: $('#duplicate_last_education_year').is(':checked'),
+                        last_education_level: $('#duplicate_last_education_level').is(':checked'),
+                        partner: $('#duplicate_partner').is(':checked')
                     };
+                    load_outreach_newline(lastid, params);
                 }
             });
 
@@ -269,23 +281,50 @@
             $(document).on('click', '.delete-outreach-row', function(){
                 delete_from_store($(this).attr('itemscope'));
                 $(this).parents('tr').remove();
+{#                delete_row($(this), $(this).attr('itemscope'));#}
+{#                oTable.row(button.parents('tr')).remove().draw();#}
+{#                outreach_total = outreach_total - 1;#}
             });
             $(document).on('change', '.outreach-school', function(){
                 if($(this).val()){
-                    var option = $(this).find('option:selected');
                     update_item_store($(this).attr('itemscope'), 'school_number', option.attr('itemcontent'));
-                    var itemblock = '.school_number_'+$(this).attr('itemscope');
-                    $(itemblock).val(option.attr('itemcontent'));
+                    var option = $(this).find('option:selected');
+                    var itemblock = '#school_number_'+$(this).attr('itemscope');
+                    $(itemblock).text(option.attr('itemcontent'));
+
+{#                    var itemblock = '#school_number_'+$(this).attr('itemscope');#}
+{#                    load_school_number($(this).val(), itemblock);#}
                 }
             });
             $(document).on('blur', '.outreach-field', function(){
                 update_item_store($(this).attr('itemscope'), $(this).attr('name'), $(this).val());
+{#                save_row_value($(this).attr('itemscope'), $(this).attr('name'), $(this).val());#}
             });
         });
 
         function scrollToBottom()
         {
+{#            var $scrollBody = $(oTable.table().node()).parent();#}
+{#            $scrollBody.scrollTop($scrollBody.get(0).scrollHeight);#}
+{#            $scrollBody.scrollLeft($scrollBody.get(0).scrollWidth);#}
             $("html, body").animate({ scrollTop: $(document).height() }, 10);
+        }
+
+        function load_school_number(school, itemscope)
+        {
+            $.ajax({
+                type: "GET",
+                url: "{% url 'students:school_detail_json' %}",
+                data: "id="+school,
+                cache: false,
+                dataType: 'json',
+                success: function(response){
+                    $(itemscope).text(response.number);
+                },
+                error: function(response) {
+
+                }
+            });
         }
 
         function load_outreach_list()
@@ -315,22 +354,22 @@
         {
             var line_html =  $('#outreach_prototype').find('tbody').html().replace(/\$\$itemscope_id\$\$/g, itemid);
             $('#outreaches_table').find('tbody').append(line_html);
+{#            oTable.row.add($('#outreach_prototype').html().split('##')).draw();#}
+            scrollToBottom();
         }
 
         function add_to_store(data)
         {
-            var store = getObjectStore();
+            store = db.transaction(["outreaches"], "readwrite").objectStore("outreaches");
             var request = store.put(data);
             recordID = recordID + 1;
-            outreach_total = outreach_total + 1;
         }
 
         function delete_from_store(itemid)
         {
-            var store = getObjectStore();
+            store = db.transaction(["outreaches"], "readwrite").objectStore("outreaches");
             var request = store.delete(parseInt(itemid));
             recordID = recordID - 1;
-            outreach_total = outreach_total - 1;
         }
 
         function update_item_store(itemid, name, value)
@@ -342,6 +381,34 @@
                 item[name] = value;
                 store.put(item);
             };
+        }
+
+        function load_outreach_newline(lastid, params)
+        {
+            var data = {};
+            if(params){
+                params['id'] = lastid;
+                data = params;
+            }else{
+                data = {id:lastid};
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "{% url 'alp:outreach_new_line' %}",
+                data: data,
+                cache: false,
+                dataType: 'html',
+                success: function(response){
+{#                    $('#outreaches_table').find('tbody').append(response);#}
+                    oTable.row.add(response.split('##')).draw();
+{#                    oTable.row.add([response]).draw();#}
+                    scrollToBottom();
+                },
+                error: function(response) {
+
+                }
+            });
         }
 
         function getCookie(name) {
@@ -378,6 +445,44 @@
             });
         }
 
+        function save_row_value(outreach, name, value) {
+            var csrftoken = getCookie('csrftoken');
+            var data = {csrfmiddlewaretoken: csrftoken, name: name, value: value, id: outreach};
+            data[name] = value;
+            $.ajax({
+                type: "POST",
+                url: "{% url 'alp:outreach_new_line' %}",
+                data: data,
+                cache: false,
+                headers: {"X-CSRFToken":csrftoken},
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (response) {
+
+                }
+            });
+        }
+
+        function save_row(form) {
+            var csrftoken = getCookie('csrftoken');
+            $.ajax({
+                type: "POST",
+                url: form.attr('action'),
+                data: form.serialize(),
+                cache: false,
+                headers: {"X-CSRFToken":csrftoken},
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (response) {
+
+                }
+            });
+        }
+
         function build_datatable()
         {
             store = getObjectStore();
@@ -385,20 +490,10 @@
             request.onsuccess = function() {
                 var result = request.result;
                 $(result).each(function(i, item){
+                    add_outreach_newline(item.id);
                     recordID = recordID + 1;
-                    outreach_total = outreach_total + 1;
-                    add_fill_line_data(item);
                 });
             };
-        }
-
-        function add_fill_line_data(item)
-        {
-            add_outreach_newline(item.id);
-            var fields = $('#line-'+item.id).find('.outreach-field');
-            $(fields).each(function(i, field){
-                $(field).val(item[$(field).attr('name')]);
-            });
         }
 
         function createStore()
@@ -406,13 +501,11 @@
             var request = indexedDB.open("compile_bd", 3);
 
             request.onupgradeneeded = function() {
-                // The database did not previously exist, so create object stores and indexes.
+                console.log(request);
+              // The database did not previously exist, so create object stores and indexes.
                 db = request.result;
-                try {
-                    if(!db.objectStoreNames().contains('outreaches')) {
-                        store = db.createObjectStore("outreaches", {keyPath: "id", autoIncrement:true});
-                    }
-                }catch(err) {
+{#                store = db.createObjectStore("outreaches", {keyPath: "id", autoIncrement:true});#}
+                if(!db.objectStoreNames().contains('outreaches')) {
                     store = db.createObjectStore("outreaches", {keyPath: "id", autoIncrement:true});
                 }
             };
@@ -424,37 +517,10 @@
             };
         }
 
-{#        function createUserProfileStore()#}
-{#        {#}
-{#            var request = indexedDB.open("compile_bd", 3);#}
-{##}
-{#            request.onupgradeneeded = function() {#}
-{#                // The database did not previously exist, so create object stores and indexes.#}
-{#                var db_user = request.result;#}
-{#                var profile_store = null;#}
-{#                try {#}
-{#                    if(!db_user.objectStoreNames().contains('user')) {#}
-{#                        profile_store = db_user.createObjectStore("user", {keyPath: "id"});#}
-{#                    }#}
-{#                }catch(err) {#}
-{#                    profile_store = db_user.createObjectStore("user", {keyPath: "id"});#}
-{#                }#}
-{##}
-{#                profile_store.put({id: user_id, name: user_name});#}
-{#            };#}
-{#        }#}
-
         function getObjectStore()
         {
             var store = db.transaction(["outreaches"], "readwrite").objectStore("outreaches");
             return store;
-        }
-
-        function getRecord(itemid)
-        {
-            var store = getObjectStore();
-            var request = store.get(parseInt(itemid));
-            return request;
         }
 
     </script>
