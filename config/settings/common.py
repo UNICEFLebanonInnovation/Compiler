@@ -250,6 +250,5 @@ ADMIN_URL = r'^admin/'
 # Your common stuff: Below this line define 3rd party library settings
 
 LOCALE_PATHS = (
-    # (APPS_DIR+'/locale'),
-    '/Users/Ali/PycharmProjects/StudentRegistration/student_registration/locale',
+    (APPS_DIR.path('locale')),
 )
