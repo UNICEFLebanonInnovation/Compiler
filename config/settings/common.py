@@ -238,9 +238,7 @@ AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 
 ########## CELERY
 INSTALLED_APPS += ('student_registration.taskapp.celery.CeleryConfig',)
-# if you are not using the django database broker (e.g. rabbitmq, redis, memcached), you can remove the next line.
-INSTALLED_APPS += ('kombu.transport.django',"django_makemessages_xgettext",)
-BROKER_URL = env('CELERY_BROKER_URL', default='django://')
+BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
 ########## END CELERY
 
 
@@ -250,5 +248,5 @@ ADMIN_URL = r'^admin/'
 # Your common stuff: Below this line define 3rd party library settings
 
 LOCALE_PATHS = (
-    (APPS_DIR.path('locale')),
+    str(APPS_DIR.path('locale')),
 )
