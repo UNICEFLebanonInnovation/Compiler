@@ -251,10 +251,9 @@ ADMIN_URL = r'^admin/'
 
 # Your common stuff: Below this line define 3rd party library settings
 
-LOCALE_PATHS = (
-    # (APPS_DIR+'/locale'),
-    '/Users/Ali/PycharmProjects/StudentRegistration/student_registration/static/locale',
-)
+LOCALE_PATHS = [
+    str(APPS_DIR)+'/static/locale',
+]
 
 REST_FRAMEWORK = {
     # this setting fixes the bug where user can be logged in as AnonymousUser
