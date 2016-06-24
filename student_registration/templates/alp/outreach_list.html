@@ -22,6 +22,15 @@
 
 {% endblock %}
 
+{% block header %}
+    <li>
+      <a class="btn btn-info" id="outreach-synchro">
+        <i class="icon-plus-sign icon-white"></i>&nbsp;
+            {% trans "outreach synchronize" %}
+      </a>
+    </li>
+{% endblock %}
+
 {% block content-full-page %}
 
     {% include 'alp/outreach_prototype.html' %}
@@ -177,36 +186,20 @@
         var oTable = null;
         var db = null;
         var store = null;
-        var recordID = 1;
         var language  = '{{ LANGUAGE_CODE }}';
-{#        var user_id = {{ request.user.id }};#}
-{#        var user_name = '{{ request.user.full_name }}';#}
+        var user_id = {{ request.user.id }};
+        var user_username = '{{ request.user.username }}';
+        var user_email = '{{ request.user.email }}';
 
         $(document).ready(function(){
 
-{#            oTable = $('#outreaches_table').DataTable({#}
-{#                fixedHeader: true,#}
-{#                paging:   false,#}
-{#                ordering: false,#}
-{#                info:     true,#}
-{#                autoWidth: false,#}
-{#                scrollY: '50vh',#}
-{#                scrollX: true,#}
-{#                scrollCollapse: true,#}
-{#                "language": {#}
-{#                    "url": "/static/locale/"+language+".json"#}
-{#                },#}
-{#                "fnInitComplete": function(oSettings, json) {#}
-{#                    $('[data-toggle="tooltip"]').tooltip();#}
-{#                    scrollToBottom();#}
-{#                }#}
-{#            });#}
-
             createStore();
+            createUserProfileStore();
+            $('[data-toggle="tooltip"]').tooltip();
 
             $(document).on('click', '#add_datatable_line', function(){
-                add_outreach_newline(recordID);
-                add_to_store({id: recordID, synchronized: false});
+                var item = create_item_store_default_keys();
+                add_to_store(item, function(key){ add_outreach_newline(key); });
                 scrollToBottom();
             });
 
@@ -217,11 +210,22 @@
                     var lastid = $('.outreach-field-id:last').val();
                     var request = getRecord(lastid);
                     request.onsuccess = function(){
-                        var item = request.result;
-                        item.id = recordID;
-                        add_to_store(item);
-                        add_fill_line_data(item);
-                        scrollToBottom();
+
+                        var params = {
+                            school_number: true,
+                            school: true,
+                            exam_year: true,
+                            exam_month: true,
+                            exam_day: true,
+                            average_distance: true,
+                            preferred_language: true,
+                            last_class_level: true,
+                            last_education_year: true,
+                            last_education_level: true,
+                            partner: true
+                        };
+
+                        duplicate_item_values(request.result, params);
                     };
                 }
             });
@@ -232,8 +236,6 @@
                     var lastid = $('.outreach-field-id:last').val();
                     var request = getRecord(lastid);
                     request.onsuccess = function(){
-                        var item = request.result;
-                        var new_item = {id: recordID, synchronized: false};
 
                         var params = {
                             school_number: $('#duplicate_school').is(':checked'),
@@ -248,24 +250,11 @@
                             last_education_level: $('#duplicate_last_education_level').is(':checked'),
                             partner: $('#duplicate_partner').is(':checked')
                         };
-
-                        $.each(params, function(field, flag){
-                            if(flag){
-                                new_item[field] = item[field];
-                            }
-                        });
-
-                        add_to_store(new_item);
-                        add_fill_line_data(new_item);
-                        scrollToBottom();
+                        duplicate_item_values(request.result, params);
                     };
                 }
             });
 
-            $(document).on('click', '.save-outreach-row', function(){
-                var itemscope = $(this).attr('itemscope');
-                save_row($('#'+itemscope));
-            });
             $(document).on('click', '.delete-outreach-row', function(){
                 delete_from_store($(this).attr('itemscope'));
                 $(this).parents('tr').remove();
@@ -281,34 +270,14 @@
             $(document).on('blur', '.outreach-field', function(){
                 update_item_store($(this).attr('itemscope'), $(this).attr('name'), $(this).val());
             });
+            $(document).on('click', '#outreach-synchro', function(){
+                synchronize_data();
+            });
         });
 
         function scrollToBottom()
         {
             $("html, body").animate({ scrollTop: $(document).height() }, 10);
-        }
-
-        function load_outreach_list()
-        {
-            $.ajax({
-                type: "GET",
-                url: "http://127.0.0.1:8181/api/outreach/",
-                cache: false,
-                headers: {"Content-Type": "application/json", "Authorization": "Basic YWNoYW1zZWRkaW5lOkFsb3VjaGUyMQ=="},
-                dataType: 'json',
-                success: function(response){
-                    outreach_total = $(response).length;
-                    outreaches = response;
-{#                    $(response).each(function(i, item){#}
-{#                        outreach_total = outreach_total + 1;#}
-{#                        store.put(item);#}
-{#                        add_outreach_newline();#}
-{#                    });#}
-                },
-                error: function(response) {
-
-                }
-            });
         }
 
         function add_outreach_newline(itemid)
@@ -317,19 +286,46 @@
             $('#outreaches_table').find('tbody').append(line_html);
         }
 
-        function add_to_store(data)
+        function duplicate_item_values(duplicata, fields)
+        {
+            var new_item = create_item_store_default_keys();
+            $.each(fields, function(field, flag){
+                if(flag){
+                    new_item[field] = duplicata[field];
+                }
+            });
+            var callback = function(key){
+                new_item.id = key;
+                add_fill_line_data(new_item);
+            }
+            add_to_store(new_item, callback);
+            scrollToBottom();
+        }
+
+        function create_item_store_default_keys()
+        {
+            var item = {synchronized: false, owner: user_id};
+            var fields = $('#outreach_prototype').find('.outreach-field');
+            $(fields).each(function(i, field){
+                item[$(field).attr('name')] = '0';
+            });
+            return item;
+        }
+
+        function add_to_store(data, callback)
         {
             var store = getObjectStore();
             var request = store.put(data);
-            recordID = recordID + 1;
-            outreach_total = outreach_total + 1;
+            request.onsuccess = function(){
+                callback(request.result);
+                outreach_total = outreach_total + 1;
+            }
         }
 
         function delete_from_store(itemid)
         {
             var store = getObjectStore();
             var request = store.delete(parseInt(itemid));
-            recordID = recordID - 1;
             outreach_total = outreach_total - 1;
         }
 
@@ -385,7 +381,6 @@
             request.onsuccess = function() {
                 var result = request.result;
                 $(result).each(function(i, item){
-                    recordID = recordID + 1;
                     outreach_total = outreach_total + 1;
                     add_fill_line_data(item);
                 });
@@ -401,6 +396,64 @@
             });
         }
 
+        function synchronize_data()
+        {
+            push_data_to_server();
+        }
+
+        function push_data_to_server()
+        {
+            var store = getObjectStore();
+            var request = store.getAll();
+            request.onsuccess = function() {
+                var result = request.result;
+                $(result).each(function(i, item){
+                    if(item.synchronized == false) {
+                        var callback = function () {
+                            update_synchro_item_store(item);
+                        };
+                        save_row_values(item, callback);
+                    }
+                });
+            };
+        }
+
+        function pull_data_from_server()
+        {
+
+        }
+
+        function update_synchro_item_store(item)
+        {
+            update_item_store(item.id, 'synchronized', true);
+            update_item_store(item.id, 'original_id', item.original_id);
+        }
+
+        function save_row_values(item, callback) {
+            var csrftoken = getCookie('csrftoken');
+            var data = item;
+            data['csrfmiddlewaretoken'] = csrftoken;
+            var url = '{{ request.get_host }}' + '/api/outreach/';
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                cache: false,
+                headers: {"X-CSRFToken":csrftoken},
+                dataType: 'json',
+                success: function (response) {
+                    if(response.status == '201'){
+                        item.original_id = response.data.id;
+                        callback(item);
+                    }
+
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+            });
+        }
+
         function createStore()
         {
             var request = indexedDB.open("compile_bd", 3);
@@ -410,10 +463,10 @@
                 db = request.result;
                 try {
                     if(!db.objectStoreNames().contains('outreaches')) {
-                        store = db.createObjectStore("outreaches", {keyPath: "id", autoIncrement:true});
+                        store = db.createObjectStore("outreaches", {autoIncrement:true});
                     }
                 }catch(err) {
-                    store = db.createObjectStore("outreaches", {keyPath: "id", autoIncrement:true});
+                    store = db.createObjectStore("outreaches", {autoIncrement:true});
                 }
             };
 
@@ -424,25 +477,25 @@
             };
         }
 
-{#        function createUserProfileStore()#}
-{#        {#}
-{#            var request = indexedDB.open("compile_bd", 3);#}
-{##}
-{#            request.onupgradeneeded = function() {#}
-{#                // The database did not previously exist, so create object stores and indexes.#}
-{#                var db_user = request.result;#}
-{#                var profile_store = null;#}
-{#                try {#}
-{#                    if(!db_user.objectStoreNames().contains('user')) {#}
-{#                        profile_store = db_user.createObjectStore("user", {keyPath: "id"});#}
-{#                    }#}
-{#                }catch(err) {#}
-{#                    profile_store = db_user.createObjectStore("user", {keyPath: "id"});#}
-{#                }#}
-{##}
-{#                profile_store.put({id: user_id, name: user_name});#}
-{#            };#}
-{#        }#}
+        function createUserProfileStore()
+        {
+            var request = indexedDB.open("compile_profile", 3);
+
+            request.onupgradeneeded = function() {
+                // The database did not previously exist, so create object stores and indexes.
+                var db_user = request.result;
+                var profile_store = null;
+                try {
+                    if(!db_user.objectStoreNames().contains('user')) {
+                        profile_store = db_user.createObjectStore("user", {keyPath: "id"});
+                    }
+                }catch(err) {
+                    profile_store = db_user.createObjectStore("user", {keyPath: "id"});
+                }
+
+                profile_store.put({id: user_id, username: user_username, email: user_email});
+            };
+        }
 
         function getObjectStore()
         {

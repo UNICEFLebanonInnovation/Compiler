@@ -1,10 +1,11 @@
 
 from rest_framework import serializers
 from .models import Outreach
-
+from student_registration.students.serializers import StudentSerializer
 
 class OutreachSerializer(serializers.ModelSerializer):
     original_id = serializers.IntegerField(source='id', read_only=True)
+    student_id = serializers.IntegerField(source='student.id', read_only=True)
     student_full_name = serializers.CharField(source='student.full_name')
     student_mother_fullname = serializers.CharField(source='student.mother_fullname')
     student_sex = serializers.CharField(source='student.sex')
@@ -23,12 +24,32 @@ class OutreachSerializer(serializers.ModelSerializer):
     last_education_level_name = serializers.CharField(source='last_education_level.name', read_only=True)
     last_class_level_name = serializers.CharField(source='last_class_level.name', read_only=True)
 
+    def create(self, validated_data):
+
+        student_data = validated_data.pop('student', None)
+        student_serializer = StudentSerializer(data=student_data)
+        student_serializer.is_valid(raise_exception=True)
+        student_serializer.instance = student_serializer.save()
+
+        print validated_data
+
+        try:
+            instance = Outreach.objects.create(**validated_data)
+            instance.student = student_serializer.instance
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'instance': ex.message})
+
+        return instance
+
+
     class Meta:
         model = Outreach
         fields = (
             'id',
             'original_id',
-            'student',
+            'student_id',
             'student_full_name',
             'student_mother_fullname',
             'student_sex',
@@ -57,4 +78,5 @@ class OutreachSerializer(serializers.ModelSerializer):
             'exam_year',
             'exam_month',
             'exam_day',
+            'owner',
         )
