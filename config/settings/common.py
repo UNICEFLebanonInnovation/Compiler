@@ -253,7 +253,7 @@ ADMIN_URL = r'^admin/'
 
 LOCALE_PATHS = (
     # (APPS_DIR+'/locale'),
-    '/Users/Ali/PycharmProjects/StudentRegistration/student_registration/locale',
+    '/Users/Ali/PycharmProjects/StudentRegistration/student_registration/static/locale',
 )
 
 REST_FRAMEWORK = {
