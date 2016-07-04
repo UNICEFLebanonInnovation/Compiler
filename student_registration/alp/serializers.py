@@ -1,7 +1,13 @@
 
 from rest_framework import serializers
-from .models import Outreach
+from .models import Outreach, ExtraColumn
 from student_registration.students.serializers import StudentSerializer
+
+
+class ExtraColumnSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExtraColumn
+
 
 class OutreachSerializer(serializers.ModelSerializer):
     original_id = serializers.IntegerField(source='id', read_only=True)
@@ -31,8 +37,6 @@ class OutreachSerializer(serializers.ModelSerializer):
         student_serializer.is_valid(raise_exception=True)
         student_serializer.instance = student_serializer.save()
 
-        print validated_data
-
         try:
             instance = Outreach.objects.create(**validated_data)
             instance.student = student_serializer.instance
@@ -42,7 +46,6 @@ class OutreachSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'instance': ex.message})
 
         return instance
-
 
     class Meta:
         model = Outreach
@@ -79,4 +82,5 @@ class OutreachSerializer(serializers.ModelSerializer):
             'exam_month',
             'exam_day',
             'owner',
+            # 'extra_fields',
         )

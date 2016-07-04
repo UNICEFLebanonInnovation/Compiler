@@ -298,6 +298,15 @@ msgstr "المدرسة التي سيقام فيها امتحان الدخول "
 msgid "Outreach exam"
 msgstr "تاريخ امتحان الدخول"
 
+msgid "Outreach exam - year"
+msgstr "تاريخ امتحان الدخول - السنة"
+
+msgid "Outreach exam - month"
+msgstr "تاريخ امتحان الدخول - الشهر"
+
+msgid "Outreach exam - day"
+msgstr "تاريخ امتحان الدخول - اليوم"
+
 msgid "Outreach exam tooltip"
 msgstr "تاريخ امتحان الدخول"
 
@@ -439,3 +448,20 @@ msgstr "كرر آخر سطر"
 msgid "duplicate last line with selected option"
 msgstr "كرر آخر سطر مع الخيارات المحددة"
 
+msgid "add column"
+msgstr "اضف عامود"
+
+msgid "Export"
+msgstr "تصدير البيانات"
+
+msgid "outreach synchronize"
+msgstr "تطابق المعلومات"
+
+msgid "Please enter extra column name"
+msgstr "يرجى إدخال اسم العمود إضافي"
+
+msgid "are you sure you want to delete this row?"
+msgstr "هل أنت متأكد أنك تريد حذف هذا السطر؟"
+
+msgid "are you sure you want to delete this column?"
+msgstr "هل أنت متأكد أنك تريد حذف هذا العامود؟"
