@@ -13,9 +13,12 @@
 {% get_range 1 31 as days1 %}
 
 <table style="display:none;" id="outreach_prototype">
-    <tr id="line-$$itemscope_id$$" class="outreach-line">
+    <tr id="line-$$itemscope_id$$" class="outreach-line" itemscope="$$itemscope_id$$">
         <td>
-            <button class="btn btn-danger delete-outreach-row" itemscope="$$itemscope_id$$">{% trans "Delete" %}</button>
+            <button class="btn btn-danger delete-outreach-row" itemscope="$$itemscope_id$$">
+                <i class="icon-trash icon-white"></i>
+                {% trans "Delete" %}
+            </button>
         </td>
         <td>
             <input type="hidden" name="id" value="$$itemscope_id$$" class="outreach-field-id" />
@@ -172,8 +175,8 @@
                 {% endfor %}
             </select>
         </td>
-        <td>
-            <button class="btn btn-danger delete-outreach-row" itemscope="$$itemscope_id$$">{% trans "Delete" %}</button>
-        </td>
+{#        <td>#}
+{#            <button class="btn btn-danger delete-outreach-row" itemscope="$$itemscope_id$$">{% trans "Delete" %}</button>#}
+{#        </td>#}
     </tr>
 </table>

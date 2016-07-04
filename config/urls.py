@@ -8,10 +8,11 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
 from rest_framework_nested import routers
-from student_registration.alp.views import OutreachViewSet
+from student_registration.alp.views import OutreachViewSet, ExtraColumnViewSet
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
+api.register(r'extra-column', ExtraColumnViewSet, base_name='extra-column')
 
 
 urlpatterns = [

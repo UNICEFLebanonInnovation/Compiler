@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block extra_head %}
+
+	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">
+
+    <style>
+
+        th {
+            border-color: black;
+            background-color: lightskyblue;
+            text-align: right;
+        }
+        th, td {
+            font-size:14px;
+        }
+    </style>
+
+{% endblock %}
+
+
+{% block content-full-page %}
+
+    {% include 'alp/outreach_prototype.html' %}
+
+         <section class="main-content-wrapper">
+            <section id="main-content">
+                 <div class="row">
+                    <div class="col-md-12">
+                        </br>
+                    </div>
+                </div>
+            <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">{% trans "Outreach" %}
+                            </h3>
+                            <div class="actions pull-right">
+                                <i class="fa fa-chevron-down"></i>
+                                <i class="fa fa-times"></i>
+                            </div>
+                          </div>
+                          <div class="panel-body">
+                                <table id="outreaches_table" class="table table-striped table-bordered cell-border"
+                                       data-height="500"
+                                       data-pagination="true"
+                                       data-search="true"
+                                       cellspacing="0"
+                                       width="100%">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">&nbsp;</th>
+                                        <th rowspan="2">
+                                            {% trans "School number" %}
+                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "School name number" %}"/>
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "School" %}
+                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "School name" %}"/>
+                                        </th>
+                                        <th colspan="3">
+                                            {% trans "Outreach exam" %}
+{#                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "Outreach exam tooltip" %}"/>#}
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Average distance" %}
+                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "Average distance tooltip" %}"/>
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Preferred language" %}
+{#                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "Preferred language tooltip" %}"/>#}
+                                            <input type="checkbox" name="duplicate_preferred_language" id="duplicate_preferred_language" />
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Last training level" %}
+                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "Last training level tooltip" %}"/>
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Last education year" %}
+{#                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "Last education year tooltip" %}"/>#}
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Last education level" %}
+{#                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "Last education level tooltip" %}"/>#}
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Student living address" %}
+{#                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "Student living address tooltip" %}"/>#}
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Governorate" %}
+{#                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "Governorate tooltip" %}"/>#}
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Phone number" %}
+{#                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "Phone number tooltip" %}"/>#}
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "ID Number" %}
+                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"/>
+                                        </th>
+                                        <th rowspan="2">{% trans "Sex" %}</th>
+                                        <th colspan="3">{% trans "Birthday" %}</th>
+                                        <th rowspan="2">{% trans "Nationality" %}</th>
+                                        <th rowspan="2">{% trans "Mother fullname" %}</th>
+                                        <th rowspan="2">{% trans "Student fullname" %}</th>
+                                        <th rowspan="2">{% trans "Student number" %}
+                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "Student number tooltip" %}"/>
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Partner" %}
+                                            <img src="{% static "images/icon-unknown.gif" %}" data-toggle="tooltip" title="{% trans "Partner tooltip" %}"/>
+                                        </th>
+                                        <th rowspan="2">&nbsp;</th>
+                                    </tr>
+                                    <tr>
+                                        <th>{% trans "year" %}
+                                            <input type="checkbox" name="duplicate_exam_year" id="duplicate_exam_year" />
+                                        </th>
+                                        <th>{% trans "month" %}
+                                            <input type="checkbox" name="duplicate_exam_month" id="duplicate_exam_month" />
+                                        </th>
+                                        <th>{% trans "day" %}
+                                            <input type="checkbox" name="duplicate_exam_day" id="duplicate_exam_day" />
+                                        </th>
+                                        <th>{% trans "year" %}</th>
+                                        <th>{% trans "month" %}</th>
+                                        <th>{% trans "day" %}</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+            </section>
+         </section>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
+    <script type="text/javascript">
+        var oTable = null;
+        var language  = '{{ LANGUAGE_CODE }}';
+
+        $(document).ready(function(){
+
+            oTable = $('#outreaches_table').DataTable({
+                fixedHeader: true,
+                paging:   false,
+                ordering: false,
+                info:     true,
+                autoWidth: false,
+                scrollY: '50vh',
+                scrollX: true,
+                scrollCollapse: true,
+                "language": {
+                    "url": "/static/locale/"+language+".json"
+                },
+                "fnInitComplete": function(oSettings, json) {
+                    $('[data-toggle="tooltip"]').tooltip();
+                    scrollToBottom();
+                }
+            });
+
+        });
+
+    </script>
+
+{% endblock %}
