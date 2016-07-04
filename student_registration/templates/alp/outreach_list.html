@@ -241,6 +241,11 @@
 
             createStores();
 
+            setInterval(function(){
+                // check if connection
+                synchronize_data();
+            }, 10000000);
+
             $(document).on("click", ".delete-column", function(e) {
                 var itemid = $(this).parent().attr('itemscope');
                 bootbox.confirm("{% trans 'are you sure you want to delete this column?' %}", function(result) {
@@ -320,6 +325,7 @@
                     }
                 });
             });
+
             $(document).on('change', '.outreach-school', function(){
                 if($(this).val()){
                     var option = $(this).find('option:selected');
@@ -328,13 +334,16 @@
                     $(itemblock).val(option.attr('itemcontent'));
                 }
             });
+
             $(document).on('blur', '.outreach-field', function(){
                 update_item_store($(this).attr('itemscope'), $(this).attr('name'), $(this).val());
             });
+
             $(document).on('click', '#outreach-synchro', function(){
 {#                $("#outreach-synchro").button("option", "disabled", true);#}
                 synchronize_data();
             });
+
             $(document).on('click', '#outreach-add-column', function(){
                 bootbox.prompt("{% trans 'Please enter extra column name' %}", function(result) {
                   if (result === null) {
@@ -558,23 +567,17 @@
 
         function synchronize_data()
         {
-            push_data_to_server();
-        }
-
-        function push_data_to_server()
-        {
             var store = getObjectStore();
             var request = store.getAll();
             request.onsuccess = function() {
                 var result = request.result;
                 $(result).each(function(i, item){
                     if(item.synchronized == false) {
-                        var callback = function () {
-                            update_synchro_item_store(item);
-                        };
-                        synchro_row_values(item, callback);
+                        push_data_to_server(item);
                     }else if(item.deleted == true){
-                        delete_data_from_server();
+                        delete_data_from_server(item);
+                    }else{
+                        update_data_into_server(item);
                     }
                 });
             };
@@ -585,47 +588,16 @@
                 var col_result = col_request.result;
                 $(col_result).each(function(i, col){
                     if(col.synchronized == false) {
-                        synchro_extra_columns(col);
+                        push_extra_columns_to_server(col);
+                    }else if(col.deleted == true){
+
                     }
                 });
-                bootbox.alert("{% trans 'Synchronization done' %}", function() {});
             };
         }
 
-        function delete_data_from_server(itemid)
+        function push_data_to_server(item)
         {
-            var csrftoken = getCookie('csrftoken');
-            $.ajax({
-                type: "DELETE",
-                url: "{% url "alp:outreach_delete_line" %}",
-                data: itemid,
-                cache: false,
-                headers: {"X-CSRFToken":csrftoken},
-                dataType: 'json',
-                success: function (response) {
-                    if(response.status = '200') {
-                        var store = getObjectStore();
-                        store.delete(parseInt(itemid));
-                    }
-                },
-                error: function (response) {
-
-                }
-            });
-        }
-
-        function pull_data_from_server()
-        {
-
-        }
-
-        function update_synchro_item_store(item)
-        {
-            update_item_store(item.id, 'synchronized', true);
-            update_item_store(item.id, 'original_id', item.original_id);
-        }
-
-        function synchro_row_values(item, callback) {
             var csrftoken = getCookie('csrftoken');
             var data = item;
             data['csrfmiddlewaretoken'] = csrftoken;
@@ -640,8 +612,8 @@
                 success: function (response) {
                     if(response.status == '201'){
                         $('#line-'+item.id).find('.outreach-field').removeClass('required');
-                        item.original_id = response.data.id;
-                        callback(item);
+                        update_item_store(item.id, 'synchronized', true);
+                        update_item_store(item.id, 'original_id', response.data.id);
                     }
                 },
                 error: function (response) {
@@ -655,7 +627,64 @@
             });
         }
 
-        function synchro_extra_columns(item) {
+        function update_data_into_server(item)
+        {
+            var csrftoken = getCookie('csrftoken');
+            var data = item;
+            data['csrfmiddlewaretoken'] = csrftoken;
+
+            $.ajax({
+                type: "PUT",
+                url: synchro_path+'/'+item.original_id+'/',
+                data: data,
+                cache: false,
+                headers: {"X-CSRFToken":csrftoken},
+                dataType: 'json',
+                success: function (response) {
+                    if(response.status == '200'){
+                        $('#line-'+item.id).find('.outreach-field').removeClass('required');
+                        update_item_store(item.id, 'synchronized', true);
+                    }
+                },
+                error: function (response) {
+                    var required_fields = JSON.parse(response.responseText);
+                    $('#line-'+item.id).find('.outreach-field').removeClass('required');
+                    $.each(required_fields, function(field_name, field_msg){
+                        $('#line-'+item.id).find('#'+field_name).addClass('required');
+                    });
+                    console.log(response);
+                }
+            });
+        }
+
+        function delete_data_from_server(item)
+        {
+            var csrftoken = getCookie('csrftoken');
+            $.ajax({
+                type: "DELETE",
+                url: synchro_path+item.original_id+'/',
+                cache: false,
+                headers: {"X-CSRFToken":csrftoken},
+                dataType: 'json',
+                success: function (response) {
+                    if(response.status = '200') {
+                        var store = getObjectStore();
+                        store.delete(parseInt(item.id));
+                    }
+                },
+                error: function (response) {
+
+                }
+            });
+        }
+
+        function pull_data_from_server()
+        {
+
+        }
+
+        function push_extra_columns_to_server(item)
+        {
             var csrftoken = getCookie('csrftoken');
             var data = item;
             data['csrfmiddlewaretoken'] = csrftoken;
@@ -670,6 +699,29 @@
                 success: function (response) {
                     if(response.status == '201'){
                         update_column(item.name,'synchronized', true);
+                        update_column(item.name,'original_id', response.data.id);
+                    }
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+            });
+        }
+
+        function delete_extra_columns_from_server(item)
+        {
+            var csrftoken = getCookie('csrftoken');
+            $.ajax({
+                type: "DELETE",
+                url: synchro_path_extra,
+                data: item.id,
+                cache: false,
+                headers: {"X-CSRFToken":csrftoken},
+                dataType: 'json',
+                success: function (response) {
+                    if(response.status = '200') {
+                        var store = getColumnsStore();
+                        store.delete(item.name);
                     }
                 },
                 error: function (response) {
@@ -730,10 +782,8 @@
         function add_column_to_store(column, name, label)
         {
             var store = getColumnsStore();
-            store.put({id: column, name: name, label: label, synchronized: false, owner: user_id});
+            store.put({id: column, name: name, label: label, synchronized: false, owner: user_id, deleted: false});
         }
-
-
 
         function update_column(col_name, name, value)
         {
