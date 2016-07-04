@@ -52,6 +52,19 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
 
         return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
 
+    def delete(self, request, *args, **kwargs):
+        instance = Outreach.objects.get(id=kwargs['pk'])
+        student = instance.student
+        instance.delete()
+        if student:
+            student.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+    def put(self, request, *args, **kwargs):
+        instance = Outreach.objects.get(id=kwargs['pk'])
+        student = instance.student
+        return JsonResponse({'status': status.HTTP_200_OK})
+
 
 class ExtraColumnViewSet(mixins.RetrieveModelMixin,
                       mixins.ListModelMixin,
@@ -77,6 +90,14 @@ class ExtraColumnViewSet(mixins.RetrieveModelMixin,
 
         return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
 
+    def delete(self, request, *args, **kwargs):
+        instance = Outreach.objects.get(id=kwargs['pk'])
+        student = instance.student
+        instance.delete()
+        if student:
+            student.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
 
 class OutreachView(LoginRequiredMixin, ListView):
     model = Outreach
@@ -98,18 +119,6 @@ class OutreachView(LoginRequiredMixin, ListView):
         }
 
 
-class OutreachNewLineView(LoginRequiredMixin, ListView):
-    model = Outreach
-
-    def delete(self, request, *args, **kwargs):
-        instance = Outreach.objects.get(id=request.body)
-        student = instance.student
-        instance.delete()
-        if student:
-            student.delete()
-        return JsonResponse({'status': status.HTTP_200_OK})
-
-
 class ExportViewSet(LoginRequiredMixin, ListView):
     model = Outreach
 
@@ -118,8 +127,12 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         workbook = xlsxwriter.Workbook(output)
         worksheet = workbook.add_worksheet('Page 1')
 
-        data = Outreach.objects.all().filter(owner=self.request.user)
-        columns = ExtraColumn.objects.all().filter(owner=self.request.user)
+        queryset = Outreach.objects.all()
+        col_queryset = ExtraColumn.objects.all()
+
+        if not self.request.user.is_superuser:
+            data = queryset.filter(owner=self.request.user)
+            columns = col_queryset.filter(owner=self.request.user)
 
         format = workbook.add_format({'bold': True, 'font_color': '#383D3F', 'bg_color': '#92CEFB', 'font_size': 16})
 
