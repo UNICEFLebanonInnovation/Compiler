@@ -242,9 +242,10 @@
             createStores();
 
             setInterval(function(){
-                // check if connection
-                synchronize_data();
-            }, 10000000);
+                if(navigator.onLine) {
+                    synchronize_data();
+                }
+            }, 3600000);
 
             $(document).on("click", ".delete-column", function(e) {
                 var itemid = $(this).parent().attr('itemscope');
