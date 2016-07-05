@@ -11,8 +11,10 @@ urlpatterns = [
         view=views.OutreachView.as_view(),
         name='outreach'
     ),
-    # url(regex=r'^outreach/list/$', view=views.OutreachListJson.as_view(), name='outreach_list_json'),
-    # url(regex=r'^outreach/new-line/$', view=views.OutreachNewLineView.as_view(), name='outreach_new_line'),
-    # url(regex=r'^outreach/delete-line/$', view=views.OutreachNewLineView.as_view(), name='outreach_delete_line'),
+    url(
+        regex=r'^outreach-aggregated/$',
+        view=views.OutreachOnlineView.as_view(),
+        name='outreach-aggregated'
+    ),
     url(regex=r'^outreach/export/$', view=views.ExportViewSet.as_view(), name='outreach_export'),
 ]

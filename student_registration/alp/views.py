@@ -37,7 +37,7 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
     model = Outreach
     queryset = Outreach.objects.all()
     serializer_class = OutreachSerializer
-    permission_classes = (permissions.IsAdminUser,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
         return self.queryset.filter(owner=self.request.user)
@@ -75,7 +75,7 @@ class ExtraColumnViewSet(mixins.RetrieveModelMixin,
     model = ExtraColumn
     queryset = ExtraColumn.objects.all()
     serializer_class = ExtraColumnSerializer
-    permission_classes = (permissions.IsAdminUser,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
         return self.queryset.filter(owner=self.request.user)
@@ -106,6 +106,25 @@ class OutreachView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
 
         return {
+            'schools': School.objects.all(),
+            'languages': Language.objects.all(),
+            'education_levels': EducationLevel.objects.all(),
+            'levels': ClassLevel.objects.all(),
+            'locations': Location.objects.all(),
+            'nationalities': Nationality.objects.all(),
+            'partners': PartnerOrganization.objects.all(),
+            'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km'),
+            'genders': (u'Male', u'Female'),
+        }
+
+
+class OutreachOnlineView(LoginRequiredMixin, ListView):
+    model = Outreach
+    template_name = 'alp/outreach.html'
+
+    def get_context_data(self, **kwargs):
+
+        return {
             'outreaches': Outreach.objects.all(),
             'schools': School.objects.all(),
             'languages': Language.objects.all(),
@@ -127,12 +146,12 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         workbook = xlsxwriter.Workbook(output)
         worksheet = workbook.add_worksheet('Page 1')
 
-        queryset = Outreach.objects.all()
-        col_queryset = ExtraColumn.objects.all()
+        data = Outreach.objects.all()
+        columns = ExtraColumn.objects.all()
 
         if not self.request.user.is_superuser:
-            data = queryset.filter(owner=self.request.user)
-            columns = col_queryset.filter(owner=self.request.user)
+            data = data.filter(owner=self.request.user)
+            columns = columns.filter(owner=self.request.user)
 
         format = workbook.add_format({'bold': True, 'font_color': '#383D3F', 'bg_color': '#92CEFB', 'font_size': 16})
 
