@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import, division
 from django.db import models
 from model_utils import Choices
 from django.conf import settings
-# from student_registration.users.models import User
+from django.contrib.postgres.fields import JSONField
 from student_registration.students.models import (
     Student,
     School,
@@ -75,7 +75,7 @@ class Outreach(models.Model):
         max_length=4,
         blank=True,
         null=True,
-        choices=((str(x), x) for x in range(2016, 2051))
+        choices=((str(x), x) for x in range(1990, 2051))
     )
     exam_month = models.CharField(
         max_length=2,
@@ -88,6 +88,11 @@ class Outreach(models.Model):
         blank=True,
         null=True,
         choices=((str(x), x) for x in range(1, 33))
+    )
+
+    extra_fields = JSONField(
+        blank=True,
+        null=True,
     )
 
     class Meta:
@@ -105,4 +110,13 @@ class Outreach(models.Model):
             return self.student.mother_fullname
         return ''
 
+
+class ExtraColumn(models.Model):
+    name = models.CharField(max_length=64L, blank=True, null=True)
+    label = models.CharField(max_length=64L, blank=True, null=True)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
 

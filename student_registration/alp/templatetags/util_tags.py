@@ -1,3 +1,4 @@
+import json
 from django import template
 from django.utils.safestring import mark_safe
 
@@ -28,3 +29,13 @@ def get_range_months(start=1, end=13):
 def get_range_days(start=1, end=31):
     return (str(x) for x in range(start, end))
 
+
+@register.filter
+def json_loads(data):
+    return json.loads(data)
+
+
+@register.simple_tag
+def json_load_value(data, key):
+    list = json.loads(data)
+    return list[key]
