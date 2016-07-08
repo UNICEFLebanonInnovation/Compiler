@@ -465,3 +465,6 @@ msgstr "هل أنت متأكد أنك تريد حذف هذا السطر؟"
 
 msgid "are you sure you want to delete this column?"
 msgstr "هل أنت متأكد أنك تريد حذف هذا العامود؟"
+
+msgid "This column contains there following data:"
+msgstr "هذا العامود الأضافي يحتوي على هذه المعلومات:"
