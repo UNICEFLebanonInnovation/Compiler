@@ -140,6 +140,11 @@
                                             {% trans "Partner" %}
                                             <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "Partner tooltip" %}"></i>
                                         </th>
+                                        {% for col in columns %}
+                                            <th rowspan="2" class="extra-column" id="{{ col.name }}" itemscope="{{ col.id }}">
+                                                {{ col.label }}
+                                            </th>
+                                        {% endfor %}
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th>{% trans "year" %}</th>

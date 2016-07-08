@@ -46,6 +46,7 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         """
         :return: JSON
         """
+        print request.data
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.instance = serializer.save()
@@ -91,11 +92,12 @@ class ExtraColumnViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
 
     def delete(self, request, *args, **kwargs):
-        instance = Outreach.objects.get(id=kwargs['pk'])
-        student = instance.student
+        instance = self.model.objects.get(id=kwargs['pk'])
         instance.delete()
-        if student:
-            student.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+    def put(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
@@ -126,6 +128,7 @@ class OutreachOnlineView(LoginRequiredMixin, ListView):
 
         return {
             'outreaches': Outreach.objects.all(),
+            'columns': ExtraColumn.objects.all(),
             'schools': School.objects.all(),
             'languages': Language.objects.all(),
             'education_levels': EducationLevel.objects.all(),

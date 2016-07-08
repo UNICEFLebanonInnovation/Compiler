@@ -249,7 +249,12 @@
 
             $(document).on("click", ".delete-column", function(e) {
                 var itemid = $(this).parent().attr('itemscope');
-                bootbox.confirm("{% trans 'are you sure you want to delete this column?' %}", function(result) {
+                var breakline = '<br/>';
+                var field_values = breakline + '{% trans "This column contains there following data:" %}' + breakline;
+                $('#outreaches-table').find('.extra-field-'+itemid).each(function(){
+                    field_values = field_values + $(this).val() + breakline;
+                });
+                bootbox.confirm("{% trans 'are you sure you want to delete this column?' %}"+field_values, function(result) {
                     if(result == true){
                         delete_extra_column(itemid);
                         delete_extra_field(itemid);
@@ -408,10 +413,11 @@
             var extra_fields = {};
             $(extra_columns).each(function(i, col){
                 item['extra-field-'+$(this).attr('itemscope')+'-'+rows] = '';
-                extra_fields['extra-field-'+$(this).attr('itemscope')+'-'+rows] = '';
+{#                extra_fields['extra-field-'+$(this).attr('itemscope')+'-'+rows] = '';#}
+                item.extra_fields = 'extra-field-'+$(this).attr('itemscope')+'-'+rows;
             });
 
-            item['extra_fields'] = extra_fields;
+{#            item['extra_fields'] = extra_fields;#}
 
             return item;
         }
@@ -501,7 +507,9 @@
                 var result = request.result;
                 $(result).each(function(i, col){
                     columns = col.id;
-                    create_extra_columns_html(col.id, col.name, col.label);
+                    if(col.deleted == false){
+                        create_extra_columns_html(col.id, col.name, col.label);
+                    }
                 });
                 columns = columns + 1;
             }
@@ -526,6 +534,7 @@
                             .attr('name', 'extra-field-'+column+'-'+itemid)
                             .attr('id', 'extra-field-'+column+'-'+itemid)
                             .attr('class', 'outreach-field extra-field')
+                            .addClass('extra-field-'+column)
                             .attr('itemscope', itemid)
                             .attr('itemid', column)
             );
@@ -535,12 +544,9 @@
 
         function delete_extra_column(column)
         {
-            var col_store = getColumnsStore();
             var col_name = 'extra-column-'+column;
-            var col_request = col_store.delete(col_name);
-            col_request.onsuccess = function(){
-                $('#'+col_name).remove();
-            }
+            update_column(col_name, 'deleted', true);
+            $('#'+col_name).remove();
         }
 
         function delete_extra_field(column)
@@ -591,7 +597,9 @@
                     if(col.synchronized == false) {
                         push_extra_columns_to_server(col);
                     }else if(col.deleted == true){
-
+                        delete_extra_columns_from_server(col);
+                    }else{
+                        update_extra_columns_on_server(col);
                     }
                 });
             };
@@ -613,7 +621,7 @@
                 success: function (response) {
                     if(response.status == '201'){
                         $('#line-'+item.id).find('.outreach-field').removeClass('required');
-                        update_item_store(item.id, 'synchronized', true);
+                        //update_item_store(item.id, 'synchronized', true);
                         update_item_store(item.id, 'original_id', response.data.id);
                     }
                 },
@@ -636,7 +644,7 @@
 
             $.ajax({
                 type: "PUT",
-                url: synchro_path+'/'+item.original_id+'/',
+                url: synchro_path+item.original_id+'/',
                 data: data,
                 cache: false,
                 headers: {"X-CSRFToken":csrftoken},
@@ -681,7 +689,32 @@
 
         function pull_data_from_server()
         {
+            var csrftoken = getCookie('csrftoken');
+            data['csrfmiddlewaretoken'] = csrftoken;
 
+            $.ajax({
+                type: "GET",
+                url: synchro_path,
+                cache: false,
+                headers: {"X-CSRFToken":csrftoken},
+                dataType: 'json',
+                success: function (response) {
+                    if(response.status == '201'){
+                        var store = getObjectStore();
+                        $(response.data).each(function(i, item){
+                            rows = item.id;
+                            item.synchronized = true;
+                            item.deleted = false;
+                            store.put(item);
+                            add_outreach_newline();
+                        });
+                        rows = rows + 1;
+                    }
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+            });
         }
 
         function push_extra_columns_to_server(item)
@@ -709,13 +742,33 @@
             });
         }
 
+        function update_extra_columns_on_server(item)
+        {
+            var csrftoken = getCookie('csrftoken');
+            $.ajax({
+                type: "PUT",
+                url: synchro_path_extra+item.original_id+'/',
+                cache: false,
+                headers: {"X-CSRFToken":csrftoken},
+                dataType: 'json',
+                success: function (response) {
+                    if(response.status = '200') {
+                        var store = getColumnsStore();
+                        store.delete(item.name);
+                    }
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+            });
+        }
+
         function delete_extra_columns_from_server(item)
         {
             var csrftoken = getCookie('csrftoken');
             $.ajax({
                 type: "DELETE",
-                url: synchro_path_extra,
-                data: item.id,
+                url: synchro_path_extra+item.original_id+'/',
                 cache: false,
                 headers: {"X-CSRFToken":csrftoken},
                 dataType: 'json',

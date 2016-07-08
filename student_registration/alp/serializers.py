@@ -82,5 +82,5 @@ class OutreachSerializer(serializers.ModelSerializer):
             'exam_month',
             'exam_day',
             'owner',
-            # 'extra_fields',
+            'extra_fields',
         )
