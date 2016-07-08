@@ -141,8 +141,8 @@ class Student(models.Model):
         blank=True,
         null=True,
         choices=Choices(
-            _(u'Male'),
-            _(u'Female'),
+            u'Male',
+            u'Female',
         )
     )
     birthday_year = models.CharField(
