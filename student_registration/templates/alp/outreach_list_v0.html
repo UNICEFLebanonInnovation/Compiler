@@ -147,12 +147,6 @@
                                 </thead>
 
                                 <tbody>
-{#                                   {{ link_formset.management_form }}#}
-{#                                    {% for form in forms %}#}
-{#                                        <tr>#}
-{#                                            {% include 'alp/outreach_line.html' with form=form %}#}
-{#                                        </tr>#}
-{#                                    {% endfor %}#}
                                     {% for item in outreaches %}
                                         <tr>
                                             {% include 'alp/outreach_new_line.html' with outreach=item %}
