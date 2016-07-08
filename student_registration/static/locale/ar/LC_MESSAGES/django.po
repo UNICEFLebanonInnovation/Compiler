@@ -468,3 +468,6 @@ msgstr "هل أنت متأكد أنك تريد حذف هذا العامود؟"
 
 msgid "This column contains there following data:"
 msgstr "هذا العامود الأضافي يحتوي على هذه المعلومات:"
+
+msgid "Synchronization done"
+msgstr "التطابق تم بنجاح"
