@@ -194,8 +194,28 @@
             {% endfor %}
         </select>
     </td>
-{% for col in columns %}
-    <td>
+    {% if outreach.extra_fields %}
+        {% for field in outreach.extra_fields|json_loads %}
+            <td>{% json_load_value outreach.extra_fields field %}</td>
+        {% endfor %}
+    {% else %}
+        {% for col in columns %}
+            <td></td>
+        {% endfor %}
+    {% endif %}
 
-    </td>
-{% endfor %}
+{#{% for col in columns %}#}
+{#    {% with col_name=col.name|add:'-'|add:outreach.id %}#}
+{#        {% if outreach.extra_fields %}#}
+{#            {% for field in outreach.extra_fields|json_loads %}#}
+{#                {{ field }}<br>#}
+{#                {{ col_name }}<br>#}
+{#                {% if col.name|add:'-'|add:outreach.id == field %}#}
+{#                    <td>{{ field }}</td>#}
+{#                {% endif %}#}
+{#            {% endfor %}#}
+{#        {% else %}#}
+{#            <td></td>#}
+{#        {% endif %}#}
+{#    {% endwith %}#}
+{#{% endfor %}#}
