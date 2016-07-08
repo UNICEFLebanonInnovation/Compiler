@@ -1,8 +1,8 @@
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-{#<html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %}>#}
-<html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %} manifest="{% static 'manifest.appcache' %}">
+<html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %}>
+{#<html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %} manifest="{% static 'manifest.appcache' %}">#}
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -50,17 +50,18 @@
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
               </li>
-{#              <li class="nav-item">#}
-{#                <a class="nav-link" href="{% url 'students:list' %}">Students</a>#}
-{#              </li>#}
-{#              <li class="nav-item">#}
-{#                <a class="nav-link" href="{% url 'students:student_test2' %}">Students 2</a>#}
-{#              </li>#}
                 {% endif %}
             {% if request.user.is_authenticated %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'alp:outreach' %}">{% trans "Outreach" %}</a>
-              </li>
+                {% if request.user.is_superuser %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'alp:outreach-aggregated' %}">{% trans "Outreach" %}</a>
+{#                    <a class="nav-link" href="{% url 'alp:outreach' %}">{% trans "Outreach" %}</a>#}
+                  </li>
+                {% else %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'alp:outreach' %}">{% trans "Outreach" %}</a>
+                  </li>
+                {% endif %}
             {% endif %}
             </ul>
 
@@ -91,6 +92,7 @@
                   <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Log In" %}</a>
                 </li>
               {% endif %}
+                {% block header %}{% endblock %}
             </ul>
           </div>
         </div>
