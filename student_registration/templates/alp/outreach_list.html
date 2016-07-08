@@ -243,7 +243,7 @@
 
             setInterval(function(){
                 if(navigator.onLine) {
-                    synchronize_data();
+                    synchronize_data(false);
                 }
             }, 3600000);
 
@@ -342,12 +342,14 @@
             });
 
             $(document).on('blur', '.outreach-field', function(){
+                if($(this).hasClass('extra-field')){
+                    update_extra_field_store($(this).attr('itemscope'), $(this).attr('name'), $(this).val());
+                }
                 update_item_store($(this).attr('itemscope'), $(this).attr('name'), $(this).val());
             });
 
             $(document).on('click', '#outreach-synchro', function(){
-{#                $("#outreach-synchro").button("option", "disabled", true);#}
-                synchronize_data();
+                synchronize_data(true);
             });
 
             $(document).on('click', '#outreach-add-column', function(){
@@ -363,7 +365,9 @@
                         var itemid = $(this).attr('itemscope');
                         var td = create_extra_field_html(columns, itemid);
                         $(this).append(td);
-                        update_item_store(itemid, 'extra-field-'+columns+'-'+itemid, '');
+                        var field_name = 'extra-field-'+columns+'-'+itemid;
+                        update_item_store(itemid, field_name, '');
+                        update_extra_field_store(itemid, field_name, '');
                     });
                   }
                 });
@@ -412,12 +416,12 @@
             var extra_columns = $('#outreaches-table').find('.extra-column');
             var extra_fields = {};
             $(extra_columns).each(function(i, col){
-                item['extra-field-'+$(this).attr('itemscope')+'-'+rows] = '';
-{#                extra_fields['extra-field-'+$(this).attr('itemscope')+'-'+rows] = '';#}
-                item.extra_fields = 'extra-field-'+$(this).attr('itemscope')+'-'+rows;
+                var field_name = 'extra-field-'+$(this).attr('itemscope')+'-'+rows;
+                item[field_name] = '';
+                extra_fields[field_name] = '';
             });
 
-{#            item['extra_fields'] = extra_fields;#}
+            item['extra_fields'] = extra_fields;
 
             return item;
         }
@@ -452,6 +456,19 @@
             request.onsuccess = function(){
                 var item = request.result;
                 item[name] = value;
+                store.put(item);
+            };
+        }
+
+        function update_extra_field_store(itemid, name, value)
+        {
+            var store =  getObjectStore();
+            var request = store.get(parseInt(itemid));
+            request.onsuccess = function(){
+                var item = request.result;
+                var extra_fields = item.extra_fields;
+                extra_fields[name] = value;
+                item.extra_fields = extra_fields;
                 store.put(item);
             };
         }
@@ -557,7 +574,10 @@
                 var result = request.result;
                 $(result).each(function(i, item){
                     var field_name = 'extra-field-'+column+'-'+item.id;
+                    var extra_fields = item.extra_fields;
+                    delete extra_fields[field_name];
                     delete item[field_name];
+                    item.extra_fields = extra_fields;
                     patch_item_store(item);
                     $('#'+field_name).parent().remove();
                 });
@@ -572,7 +592,7 @@
             });
         }
 
-        function synchronize_data()
+        function synchronize_data(showFeedback)
         {
             var store = getObjectStore();
             var request = store.getAll();
@@ -587,6 +607,9 @@
                         update_data_into_server(item);
                     }
                 });
+                if(showFeedback){
+                    bootbox.alert("{% trans 'Synchronization done' %}", function() {});
+                }
             };
 
             var col_store = getColumnsStore();
@@ -599,7 +622,7 @@
                     }else if(col.deleted == true){
                         delete_extra_columns_from_server(col);
                     }else{
-                        update_extra_columns_on_server(col);
+                        //update_extra_columns_on_server(col);
                     }
                 });
             };
@@ -621,8 +644,10 @@
                 success: function (response) {
                     if(response.status == '201'){
                         $('#line-'+item.id).find('.outreach-field').removeClass('required');
-                        //update_item_store(item.id, 'synchronized', true);
+                        update_item_store(item.id, 'synchronized', true);
+                        item.original_id = response.data.id;
                         update_item_store(item.id, 'original_id', response.data.id);
+                        patch_extra_field_data_on_server(item);
                     }
                 },
                 error: function (response) {
@@ -653,6 +678,7 @@
                     if(response.status == '200'){
                         $('#line-'+item.id).find('.outreach-field').removeClass('required');
                         update_item_store(item.id, 'synchronized', true);
+                        patch_extra_field_data_on_server(item);
                     }
                 },
                 error: function (response) {
@@ -661,6 +687,29 @@
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+item.id).find('#'+field_name).addClass('required');
                     });
+                    console.log(response);
+                }
+            });
+        }
+
+        function patch_extra_field_data_on_server(item)
+        {
+            var csrftoken = getCookie('csrftoken');
+            var data = item.extra_fields;
+
+            $.ajax({
+                type: "PATCH",
+                url: synchro_path+item.original_id+'/',
+                data: data,
+                cache: false,
+                headers: {"X-CSRFToken":csrftoken},
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    if(response.status == '200'){
+                    }
+                },
+                error: function (response) {
                     console.log(response);
                 }
             });

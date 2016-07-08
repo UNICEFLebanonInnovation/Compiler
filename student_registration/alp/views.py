@@ -9,6 +9,7 @@ from rest_framework import viewsets, mixins, permissions
 from copy import deepcopy
 import xlsxwriter
 import StringIO
+import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
 
@@ -46,7 +47,6 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         """
         :return: JSON
         """
-        print request.data
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.instance = serializer.save()
@@ -61,9 +61,15 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
             student.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
-    def put(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         instance = Outreach.objects.get(id=kwargs['pk'])
-        student = instance.student
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+    def partial_update(self, request, *args, **kwargs):
+        extra_fields = json.dumps(request.data)
+        instance = Outreach.objects.get(id=kwargs['pk'])
+        instance.extra_fields = extra_fields
+        instance.save()
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
@@ -96,7 +102,7 @@ class ExtraColumnViewSet(mixins.RetrieveModelMixin,
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
-    def put(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
         return JsonResponse({'status': status.HTTP_200_OK})
 
