@@ -5,9 +5,17 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
+from rest_framework import viewsets, mixins, permissions
 from copy import deepcopy
+import xlsxwriter
+import StringIO
+import json
+from rest_framework import status
+from django.utils.translation import ugettext as _
 
-from .models import Outreach
+from .models import Outreach, ExtraColumn
+from .serializers import OutreachSerializer, ExtraColumnSerializer
+from .forms import OutreachForm, OutreachFormSet
 from student_registration.students.models import (
     Student,
     School,
@@ -18,176 +26,187 @@ from student_registration.students.models import (
     Nationality,
     PartnerOrganization
 )
+from student_registration.students.serializers import StudentSerializer
 
 
-class OutreachView(LoginRequiredMixin, ListView):
+class OutreachViewSet(mixins.RetrieveModelMixin,
+                      mixins.ListModelMixin,
+                      mixins.CreateModelMixin,
+                      mixins.UpdateModelMixin,
+                      viewsets.GenericViewSet):
+
     model = Outreach
+    queryset = Outreach.objects.all()
+    serializer_class = OutreachSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
-    def get_context_data(self, **kwargs):
-        owner = self.request.user
-        return {
-            'outreaches': self.model.objects.all().filter(owner=owner),
-            'schools': School.objects.all(),
-            'languages': Language.objects.all(),
-            'education_levels': EducationLevel.objects.all(),
-            'levels': ClassLevel.objects.all(),
-            'locations': Location.objects.all(),
-            'nationalities': Nationality.objects.all(),
-            'partners': PartnerOrganization.objects.all(),
-            'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km'),
-            'genders': (u'Male', u'Female'),
-        }
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user)
 
+    def create(self, request, *args, **kwargs):
+        """
+        :return: JSON
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.instance = serializer.save()
 
-class OutreachNewLineView(LoginRequiredMixin, ListView):
-    model = Outreach
-    template_name = 'alp/outreach_new_line.html'
-
-    def get_context_data(self, **kwargs):
-
-        owner = self.request.user
-
-        if int(self.request.GET.get('id')):
-            duplicate = Outreach.objects.get(id=self.request.GET.get('id'))
-
-            if self.request.GET.get('options'):
-                instance = Outreach(exam_year="2016", owner=owner)
-                if self.request.GET.get('school') == 'true':
-                    instance.school = duplicate.school
-                if self.request.GET.get('exam_month') == 'true':
-                    instance.exam_month = duplicate.exam_month
-                if self.request.GET.get('exam_day') == 'true':
-                    instance.exam_day = duplicate.exam_day
-                if self.request.GET.get('average_distance') == 'true':
-                    instance.average_distance = duplicate.average_distance
-                if self.request.GET.get('preferred_language') == 'true':
-                    instance.preferred_language = duplicate.preferred_language
-                if self.request.GET.get('last_class_level') == 'true':
-                    instance.last_class_level = duplicate.last_class_level
-                if self.request.GET.get('last_education_year') == 'true':
-                    instance.last_education_year = duplicate.last_education_year
-                if self.request.GET.get('last_education_level') == 'true':
-                    instance.last_education_level = duplicate.last_education_level
-                if self.request.GET.get('partner') == 'true':
-                    instance.partner = duplicate.partner
-            else:
-                instance = deepcopy(duplicate)
-                instance.pk = None
-                instance.student = None
-
-            instance.save()
-        else:
-            instance = Outreach(exam_year="2016", owner=owner)
-            instance.save(force_insert=True)
-
-        return {
-            'splitter': '##',
-            'outreach': instance,
-            'schools': School.objects.all(),
-            'languages': Language.objects.all(),
-            'education_levels': EducationLevel.objects.all(),
-            'levels': ClassLevel.objects.all(),
-            'locations': Location.objects.all(),
-            'nationalities': Nationality.objects.all(),
-            'partners': PartnerOrganization.objects.all(),
-            'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km'),
-            'genders': (u'Male', u'Female'),
-        }
+        return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
 
     def delete(self, request, *args, **kwargs):
-        instance = Outreach.objects.get(id=request.body)
+        instance = Outreach.objects.get(id=kwargs['pk'])
         student = instance.student
         instance.delete()
         if student:
             student.delete()
-        return JsonResponse({'result': 'OK'})
+        return JsonResponse({'status': status.HTTP_200_OK})
 
-    def post(self, request, *args, **kwargs):
-        instance = Outreach.objects.get(id=request.POST.get('id'))
+    def update(self, request, *args, **kwargs):
+        instance = Outreach.objects.get(id=kwargs['pk'])
+        return JsonResponse({'status': status.HTTP_200_OK})
 
-        if instance.student:
-            student = instance.student
-        else:
-            student = Student.objects.create(first_name=None)
-
-        if request.POST.get('student_full_name'):
-            student.full_name = request.POST.get('student_full_name')
-        if request.POST.get('student_mother_fullname'):
-            student.mother_fullname = request.POST.get('student_mother_fullname')
-        if request.POST.get('student_phone'):
-            student.phone = request.POST.get('student_phone')
-        if request.POST.get('student_id_number'):
-            student.id_number=request.POST.get('student_id_number')
-        if request.POST.get('student_address'):
-            student.address = request.POST.get('student_address')
-        if request.POST.get('student_sex'):
-            student.sex = request.POST.get('student_sex')
-        if request.POST.get('student_birthday_year'):
-            student.birthday_year = request.POST.get('student_birthday_year')
-        if request.POST.get('student_birthday_month'):
-            student.birthday_month = request.POST.get('student_birthday_month')
-        if request.POST.get('student_birthday_day'):
-            student.birthday_day = request.POST.get('student_birthday_day')
-        if request.POST.get('student_nationality'):
-            student.nationality = Nationality.objects.get(id=request.POST.get('student_nationality'))
-
-        student.save()
-        instance.student = student
-
-        if request.POST.get('exam_month'):
-            instance.exam_month = request.POST.get('exam_month')
-        if request.POST.get('exam_day'):
-            instance.exam_day = request.POST.get('exam_day')
-        if request.POST.get('average_distance'):
-            instance.average_distance = request.POST.get('average_distance')
-        if request.POST.get('last_education_year'):
-            instance.last_education_year = request.POST.get('last_education_year')
-
-        if request.POST.get('school'):
-            instance.school = School.objects.get(id=request.POST.get('school'))
-        if request.POST.get('preferred_language'):
-            instance.preferred_language = Language.objects.get(id=request.POST.get('preferred_language'))
-        if request.POST.get('last_class_level'):
-            instance.last_class_level = ClassLevel.objects.get(id=request.POST.get('last_class_level'))
-        if request.POST.get('last_education_level'):
-            instance.last_education_level = EducationLevel.objects.get(id=request.POST.get('last_education_level'))
-        if request.POST.get('location'):
-            instance.location = Location.objects.get(id=request.POST.get('location'))
-        if request.POST.get('partner'):
-            instance.partner = PartnerOrganization.objects.get(id=request.POST.get('partner'))
-
+    def partial_update(self, request, *args, **kwargs):
+        extra_fields = json.dumps(request.data)
+        instance = Outreach.objects.get(id=kwargs['pk'])
+        instance.extra_fields = extra_fields
         instance.save()
-        return JsonResponse({'result': 'OK'})
+        return JsonResponse({'status': status.HTTP_200_OK})
 
 
-class OutreachListJson(LoginRequiredMixin, BaseDatatableView):
+class ExtraColumnViewSet(mixins.RetrieveModelMixin,
+                      mixins.ListModelMixin,
+                      mixins.CreateModelMixin,
+                      mixins.UpdateModelMixin,
+                      viewsets.GenericViewSet):
+
+    model = ExtraColumn
+    queryset = ExtraColumn.objects.all()
+    serializer_class = ExtraColumnSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        """
+        :return: JSON
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.instance = serializer.save()
+
+        return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+    def update(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+
+class OutreachView(LoginRequiredMixin, ListView):
+    model = Outreach
+    template_name = 'alp/outreach_list.html'
+
+    def get_context_data(self, **kwargs):
+
+        return {
+            'schools': School.objects.all(),
+            'languages': Language.objects.all(),
+            'education_levels': EducationLevel.objects.all(),
+            'levels': ClassLevel.objects.all(),
+            'locations': Location.objects.all(),
+            'nationalities': Nationality.objects.all(),
+            'partners': PartnerOrganization.objects.all(),
+            'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km'),
+            'genders': (u'Male', u'Female'),
+        }
+
+
+class OutreachOnlineView(LoginRequiredMixin, ListView):
+    model = Outreach
+    template_name = 'alp/outreach.html'
+
+    def get_context_data(self, **kwargs):
+
+        return {
+            'outreaches': Outreach.objects.all(),
+            'columns': ExtraColumn.objects.all(),
+            'schools': School.objects.all(),
+            'languages': Language.objects.all(),
+            'education_levels': EducationLevel.objects.all(),
+            'levels': ClassLevel.objects.all(),
+            'locations': Location.objects.all(),
+            'nationalities': Nationality.objects.all(),
+            'partners': PartnerOrganization.objects.all(),
+            'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km'),
+            'genders': (u'Male', u'Female'),
+        }
+
+
+class ExportViewSet(LoginRequiredMixin, ListView):
     model = Outreach
 
-    columns = ['id', 'school_number', 'school', 'exam_year', 'exam_month', 'exam_day', 'average_distance',
-               'preferred_language', 'last_education_level', 'last_education_year', 'last_class_level',
-               'student_address', 'location', 'student_phone', 'student_id_number', 'student_sex',
-               'student_birth_year', 'student_birth_month', 'student_birth_day', 'student_nationality',
-               'student_mother_name', 'student_fullname', 'student_id', 'partner']
+    def get(self, request, *args, **kwargs):
+        output = StringIO.StringIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet('Page 1')
 
-    order_columns = columns
+        data = Outreach.objects.all()
+        columns = ExtraColumn.objects.all()
 
-    max_display_length = 500
+        if not self.request.user.is_superuser:
+            data = data.filter(owner=self.request.user)
+            columns = columns.filter(owner=self.request.user)
 
-    def render_column(self, row, column):
-        if column == 'full_name':
-            return '{0} {1} {2}'.format(row.first_name, row.father_name, row.last_name)
-        elif column == 'birthday_year':
-            return '{0}/{1}/{2}'.format(row.birthday_day, row.birthday_month, row.birthday_year)
-        else:
-            return super(StudentListJson, self).render_column(row, column)
+        format = workbook.add_format({'bold': True, 'font_color': '#383D3F', 'bg_color': '#92CEFB', 'font_size': 16})
 
-    def filter_queryset(self, qs):
-        # use parameters passed in GET request to filter queryset
+        titles = ['Partner', 'Student number', 'Student fullname', 'Mother fullname', 'Nationality',
+                  'Day of birth', 'Month of birth', 'Year of birth',
+                  'Sex', 'ID Number tooltip',
+                  'Phone number', 'Governorate', 'Student living address', 'Last education level',
+                  'Last education year', 'Last training level', 'Preferred language', 'Average distance',
+                  'Outreach exam - day', 'Outreach exam - month', 'Outreach exam - year',
+                  'School name', 'School name number'
+                  ]
 
-        # simple example:
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            qs = qs.filter(name__istartswith=search)
+        for idx, title in enumerate(titles):
+            worksheet.write(0, idx, _(title), format)
 
-        return qs
+        for idx, line in enumerate(data):
+            worksheet.write_string(idx+1, 0, line.partner.name)
+            worksheet.write_string(idx+1, 1, '')
+            worksheet.write_string(idx+1, 2, line.student.full_name)
+            worksheet.write_string(idx+1, 3, line.student.mother_fullname)
+            worksheet.write_string(idx+1, 4, line.student.nationality.name)
+            worksheet.write_number(idx+1, 7, int(line.student.birthday_day))
+            worksheet.write_number(idx+1, 6, int(line.student.birthday_month))
+            worksheet.write_number(idx+1, 5, int(line.student.birthday_year))
+            worksheet.write_string(idx+1, 8, _(line.student.sex))
+            worksheet.write_string(idx+1, 9, line.student.id_number)
+            worksheet.write_string(idx+1, 10, line.student.phone)
+            worksheet.write_string(idx+1, 11, line.location.name if line.location else '')
+            worksheet.write_string(idx+1, 12, line.student.address)
+            worksheet.write_string(idx+1, 13, line.last_education_level.name)
+            worksheet.write_string(idx+1, 14, line.last_education_year)
+            worksheet.write_string(idx+1, 15, line.last_class_level.name)
+            worksheet.write_string(idx+1, 16, line.preferred_language.name)
+            worksheet.write_string(idx+1, 17, line.average_distance)
+            worksheet.write_number(idx+1, 18, int(line.exam_day))
+            worksheet.write_number(idx+1, 19, int(line.exam_month))
+            worksheet.write_number(idx+1, 20, int(line.exam_year))
+            worksheet.write_string(idx+1, 21, line.school.name)
+            worksheet.write_string(idx+1, 22, line.school.number)
 
+        workbook.close()
+
+        filename = 'ExcelReport.xlsx'
+        output.seek(0)
+
+        response = HttpResponse(output.read(), content_type="application/ms-excel")
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+        return response
