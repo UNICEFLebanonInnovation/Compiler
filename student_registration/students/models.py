@@ -3,6 +3,8 @@ from __future__ import unicode_literals, absolute_import, division
 from django.db import models
 from model_utils import Choices
 from mptt.models import MPTTModel, TreeForeignKey
+from paintstore.fields import ColorPickerField
+from django.utils.translation import ugettext as _
 from django.contrib.gis.db import models
 
 
