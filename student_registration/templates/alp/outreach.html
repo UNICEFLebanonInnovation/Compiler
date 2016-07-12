@@ -4,9 +4,11 @@
 
 {% block extra_head %}
 
-	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">
+{#	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">#}
+{#	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">#}
+{#	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">#}
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
 
     <style>
 
@@ -175,13 +177,21 @@
 
 {% block extra_js %}
 
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
+{#    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>#}
+{#    <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>#}
+{#    <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>#}
+{#    <script type="text/javascript" src="{% static 'js/util.js' %}"></script>#}
+{#    <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>#}
+{#    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>#}
+{#    <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>#}
+
+    <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/umd/util.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/umd/tooltip.js"></script>
+    <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://bootboxjs.com/bootbox.js"></script>
     <script type="text/javascript">
         var oTable = null;
         var language  = '{{ LANGUAGE_CODE }}';
