@@ -421,7 +421,7 @@
                 extra_fields[field_name] = '';
             });
 
-            item['extra_fields'] = extra_fields;
+            item['tmp_extra_fields'] = extra_fields;
 
             return item;
         }
@@ -460,15 +460,20 @@
             };
         }
 
-        function update_extra_field_store(itemid, name, value)
+        function update_extra_field_store(itemid, name, value, col)
         {
             var store =  getObjectStore();
             var request = store.get(parseInt(itemid));
             request.onsuccess = function(){
                 var item = request.result;
-                var extra_fields = item.extra_fields;
-                extra_fields[name] = value;
-                item.extra_fields = extra_fields;
+                var tmp_extra_fields = item.tmp_extra_fields;
+                tmp_extra_fields[name] = value;
+                item.tmp_extra_fields = tmp_extra_fields;
+                if(item.original_id){
+                    var extra_fields = item.extra_fields;
+                    extra_fields[col+'-'+item.original_id] = value;
+                    item.extra_fields = extra_fields;
+                }
                 store.put(item);
             };
         }
@@ -573,11 +578,18 @@
             request.onsuccess = function(){
                 var result = request.result;
                 $(result).each(function(i, item){
-                    var field_name = 'extra-field-'+column+'-'+item.id;
-                    var extra_fields = item.extra_fields;
-                    delete extra_fields[field_name];
-                    delete item[field_name];
-                    item.extra_fields = extra_fields;
+                    var tmp_field_name = 'extra-field-'+column+'-'+item.id;
+                    var tmp_extra_fields = item.tmp_extra_fields;
+                    delete tmp_extra_fields[tmp_field_name];
+                    delete item[tmp_field_name];
+                    item.tmp_extra_fields = tmp_extra_fields;
+                    if(item.original_id){
+                        var field_name = 'extra-field-'+column+'-'+item.original_id;
+                        var extra_fields = item.extra_fields;
+                        delete extra_fields[field_name];
+                        delete item[field_name];
+                        item.extra_fields = extra_fields;
+                    }
                     patch_item_store(item);
                     $('#'+field_name).parent().remove();
                 });
@@ -647,6 +659,7 @@
                         update_item_store(item.id, 'synchronized', true);
                         item.original_id = response.data.id;
                         update_item_store(item.id, 'original_id', response.data.id);
+                        create_extra_field_store(item, response.data.id);
                         patch_extra_field_data_on_server(item);
                     }
                 },
@@ -690,6 +703,22 @@
                     console.log(response);
                 }
             });
+        }
+
+        function create_extra_field_store(item, new_item_id)
+        {
+            var extra_columns = $('#outreaches-table').find('.extra-column');
+            var store = getObjectStore();
+
+            var extra_fields = {};
+            $(extra_columns).each(function(i, col){
+                var field_name = 'extra-field-'+$(this).attr('itemscope')+'-'+new_item_id;
+                var field_value = item['extra-field-'+$(this).attr('itemscope')+'-'+item.id];
+                extra_fields[field_name] = field_value;
+            });
+
+            item['extra_fields'] = extra_fields;
+            store.put(item);
         }
 
         function patch_extra_field_data_on_server(item)
