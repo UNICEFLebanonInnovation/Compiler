@@ -7,6 +7,7 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
 from copy import deepcopy
+from datetime import datetime
 import xlsxwriter
 import StringIO
 import json
@@ -151,6 +152,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
     model = Outreach
 
     def get(self, request, *args, **kwargs):
+        current_date = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         output = StringIO.StringIO()
         workbook = xlsxwriter.Workbook(output)
         worksheet = workbook.add_worksheet('Page 1')
@@ -173,37 +175,48 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                   'School name', 'School name number'
                   ]
 
+        for idx, col in enumerate(columns):
+            worksheet.write(0, idx, col.label, format)
+
         for idx, title in enumerate(titles):
-            worksheet.write(0, idx, _(title), format)
+            worksheet.write(0, idx+len(columns), _(title), format)
 
         for idx, line in enumerate(data):
-            worksheet.write_string(idx+1, 0, line.partner.name)
-            worksheet.write_string(idx+1, 1, '')
-            worksheet.write_string(idx+1, 2, line.student.full_name)
-            worksheet.write_string(idx+1, 3, line.student.mother_fullname)
-            worksheet.write_string(idx+1, 4, line.student.nationality.name)
-            worksheet.write_number(idx+1, 7, int(line.student.birthday_day))
-            worksheet.write_number(idx+1, 6, int(line.student.birthday_month))
-            worksheet.write_number(idx+1, 5, int(line.student.birthday_year))
-            worksheet.write_string(idx+1, 8, _(line.student.sex))
-            worksheet.write_string(idx+1, 9, line.student.id_number)
-            worksheet.write_string(idx+1, 10, line.student.phone)
-            worksheet.write_string(idx+1, 11, line.location.name if line.location else '')
-            worksheet.write_string(idx+1, 12, line.student.address)
-            worksheet.write_string(idx+1, 13, line.last_education_level.name)
-            worksheet.write_string(idx+1, 14, line.last_education_year)
-            worksheet.write_string(idx+1, 15, line.last_class_level.name)
-            worksheet.write_string(idx+1, 16, line.preferred_language.name)
-            worksheet.write_string(idx+1, 17, line.average_distance)
-            worksheet.write_number(idx+1, 18, int(line.exam_day))
-            worksheet.write_number(idx+1, 19, int(line.exam_month))
-            worksheet.write_number(idx+1, 20, int(line.exam_year))
-            worksheet.write_string(idx+1, 21, line.school.name)
-            worksheet.write_string(idx+1, 22, line.school.number)
+            worksheet.write_string(idx+1, 0+len(columns), line.partner.name)
+            worksheet.write_string(idx+1, 1+len(columns), '')
+            worksheet.write_string(idx+1, 2+len(columns), line.student.full_name)
+            worksheet.write_string(idx+1, 3+len(columns), line.student.mother_fullname)
+            worksheet.write_string(idx+1, 4+len(columns), line.student.nationality.name)
+            worksheet.write_number(idx+1, 7+len(columns), int(line.student.birthday_day))
+            worksheet.write_number(idx+1, 6+len(columns), int(line.student.birthday_month))
+            worksheet.write_number(idx+1, 5+len(columns), int(line.student.birthday_year))
+            worksheet.write_string(idx+1, 8+len(columns), _(line.student.sex))
+            worksheet.write_string(idx+1, 9+len(columns), line.student.id_number)
+            worksheet.write_string(idx+1, 10+len(columns), line.student.phone)
+            worksheet.write_string(idx+1, 11+len(columns), line.location.name if line.location else '')
+            worksheet.write_string(idx+1, 12+len(columns), line.student.address)
+            worksheet.write_string(idx+1, 13+len(columns), line.last_education_level.name)
+            worksheet.write_string(idx+1, 14+len(columns), line.last_education_year)
+            worksheet.write_string(idx+1, 15+len(columns), line.last_class_level.name)
+            worksheet.write_string(idx+1, 16+len(columns), line.preferred_language.name)
+            worksheet.write_string(idx+1, 17+len(columns), line.average_distance)
+            worksheet.write_number(idx+1, 18+len(columns), int(line.exam_day))
+            worksheet.write_number(idx+1, 19+len(columns), int(line.exam_month))
+            worksheet.write_number(idx+1, 20+len(columns), int(line.exam_year))
+            worksheet.write_string(idx+1, 21+len(columns), line.school.name)
+            worksheet.write_string(idx+1, 22+len(columns), line.school.number)
+
+            extra_fields = json.loads(line.extra_fields)
+            for cidx, col in enumerate(columns):
+                field_name = col.name.replace('column', 'field')+'-'+str(line.id)
+                field_value = '';
+                if field_name in extra_fields:
+                    field_value = extra_fields[field_name]
+                worksheet.write(idx+1, cidx, field_value)
 
         workbook.close()
 
-        filename = 'ExcelReport.xlsx'
+        filename = 'outreach_report_'+current_date+'.xlsx'
         output.seek(0)
 
         response = HttpResponse(output.read(), content_type="application/ms-excel")
