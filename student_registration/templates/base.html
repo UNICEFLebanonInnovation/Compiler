@@ -2,11 +2,11 @@
 {% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
 {#<html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %}>#}
-{% if request.user.is_superuser %}
-    <html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %}>
-{% else %}
+{#{% if request.user.is_superuser %}#}
+{#    <html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %}>#}
+{#{% else %}#}
     <html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %} manifest="{% static 'manifest.appcache' %}">
-{% endif %}
+{#{% endif %}#}
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
