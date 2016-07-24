@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.appcache.html" %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 
@@ -7,52 +7,6 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">
-
-    <style>
-
-        th {
-            border-color: black;
-            background-color: lightskyblue;
-            text-align: right;
-        }
-        th, td {
-            font-size:14px;
-        }
-        .required {
-            border: 1px solid #ac2925;
-        }
-        [class^="icon-"], [class*=" icon-"] {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            line-height: 14px;
-            vertical-align: text-top;
-            background-image: url("{% static 'images/glyphicons-halflings.png' %}");
-            background-position: 14px 14px;
-            background-repeat: no-repeat;
-        }
-        .icon-white {
-            background-image: url("{% static 'images/glyphicons-halflings-white.png' %}");
-        }
-        .icon-trash {
-            background-position: -456px 0;
-        }
-        .icon-delete {
-            background-position: -312px 0;
-        }
-        .icon-plus-sign {
-            background-position: -408px -96px;
-        }
-        .icon-synch-sign {
-            background-position: -216px -24px;
-        }
-        .icon-info-sign {
-           background-position: -96px -95px;
-        }
-        .icon-export-sign {
-           background-position: -96px -24px;
-        }
-    </style>
 
 {% endblock %}
 

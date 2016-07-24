@@ -18,62 +18,6 @@ class Nationality(models.Model):
         return self.name
 
 
-class School(models.Model):
-    name = models.CharField(max_length=555L)
-    number = models.CharField(max_length=45L, unique=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class Course(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class Language(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class EducationLevel(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
-
-    def __unicode__(self):
-        return self.name
-
-
-class ClassLevel(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
-
-    def __unicode__(self):
-        return self.name
-
-
-class Governorate(models.Model):
-    name = models.CharField(max_length=45L)
-    p_code = models.CharField(max_length=32L, blank=True, null=True)
-
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        ordering = ['name']
-
-
 class LocationType(models.Model):
     name = models.CharField(max_length=64L, unique=True)
 
@@ -119,6 +63,105 @@ class Location(MPTTModel):
 
     class Meta:
         unique_together = ('name', 'gateway', 'p_code')
+        ordering = ['name']
+
+
+class School(models.Model):
+    name = models.CharField(max_length=555L)
+    number = models.CharField(max_length=45L, unique=True)
+
+    location = models.ForeignKey(
+        Location,
+        blank=False, null=True,
+        related_name='+',
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+
+class Course(models.Model):
+    name = models.CharField(max_length=45L, unique=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+
+class Language(models.Model):
+    name = models.CharField(max_length=45L, unique=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+
+class EducationLevel(models.Model):
+    name = models.CharField(max_length=45L, unique=True)
+
+    school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+    )
+
+    def __unicode__(self):
+        return self.name
+
+
+class ClassLevel(models.Model):
+    name = models.CharField(max_length=45L, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Grade(models.Model):
+    name = models.CharField(max_length=45L, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Section(models.Model):
+    name = models.CharField(max_length=45L, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class ClassRoom(models.Model):
+    name = models.CharField(max_length=45L, unique=True)
+    grade = models.ForeignKey(
+        Grade,
+        blank=False, null=True,
+        related_name='+',
+    )
+    section = models.ForeignKey(
+        Section,
+        blank=False, null=True,
+        related_name='+',
+    )
+
+    def __unicode__(self):
+        return self.name
+
+
+class Governorate(models.Model):
+    name = models.CharField(max_length=45L)
+    p_code = models.CharField(max_length=32L, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
         ordering = ['name']
 
 

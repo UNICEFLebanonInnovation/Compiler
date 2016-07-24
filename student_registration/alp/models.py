@@ -120,3 +120,42 @@ class ExtraColumn(models.Model):
         related_name='+',
     )
 
+
+class Registration(models.Model):
+    student = models.ForeignKey(
+        Student,
+        blank=False, null=True,
+        related_name='+',
+    )
+    school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+    )
+    registration_date = models.DateField(blank=True, null=True)
+    year = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        choices=((str(x), x) for x in range(2016, 2051))
+    )
+    # owner = models.ForeignKey(
+    #     settings.AUTH_USER_MODEL,
+    #     blank=False, null=True,
+    #     related_name='+',
+    # )
+
+
+class Attendance(models.Model):
+    student = models.ForeignKey(
+        Student,
+        blank=False, null=True,
+        related_name='attendances',
+    )
+    status = models.BooleanField(default=False)
+    attendance_date = models.DateField(blank=True, null=True)
+    # owner = models.ForeignKey(
+    #     settings.AUTH_USER_MODEL,
+    #     blank=False, null=True,
+    #     related_name='+',
+    # )

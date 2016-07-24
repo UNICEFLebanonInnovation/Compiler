@@ -406,10 +406,10 @@ msgstr "اسم الأم وشهرتها (بالعربي)"
 msgid "Mother fullname tooltip"
 msgstr "اسم الأم وشهرتها (بالعربي)"
 
-msgid "Student fullname"
+msgid "Student fullname (in arabic)"
 msgstr "إسم التلميذ الثلاثي (بالعربي)"
 
-msgid "Student fullname tooltip"
+msgid "Student fullname tooltip (in arabic)"
 msgstr "إسم التلميذ الثلاثي (بالعربي)"
 
 msgid "Student number"
@@ -471,3 +471,24 @@ msgstr "هذا العامود الأضافي يحتوي على هذه المعل
 
 msgid "Synchronization done"
 msgstr "التطابق تم بنجاح"
+
+msgid "Registration"
+msgstr "التسجيل"
+
+msgid "Attendance"
+msgstr "الحضور"
+
+msgid "Class"
+msgstr "الصف"
+
+msgid "Registered by"
+msgstr "تم التسجيل من قبل"
+
+msgid "Registration date"
+msgstr "تاريخ التسجيل"
+
+msgid "Student fullname"
+msgstr "إسم التلميذ الثلاثي"
+
+msgid "School year"
+msgstr "السنة الدراسية"

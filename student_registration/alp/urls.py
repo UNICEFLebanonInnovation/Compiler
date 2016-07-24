@@ -12,9 +12,14 @@ urlpatterns = [
         name='outreach'
     ),
     url(
-        regex=r'^outreach-aggregated/$',
-        view=views.OutreachOnlineView.as_view(),
-        name='outreach-aggregated'
+        regex=r'^registration/$',
+        view=views.RegistrationView.as_view(),
+        name='registration'
+    ),
+    url(
+        regex=r'^attendance/$',
+        view=views.AttendanceView.as_view(),
+        name='attendance'
     ),
     url(regex=r'^outreach/export/$', view=views.ExportViewSet.as_view(), name='outreach_export'),
 ]

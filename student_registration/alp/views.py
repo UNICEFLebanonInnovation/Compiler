@@ -14,7 +14,7 @@ import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
 
-from .models import Outreach, ExtraColumn
+from .models import Outreach, ExtraColumn, Registration, Attendance
 from .serializers import OutreachSerializer, ExtraColumnSerializer
 from .forms import OutreachForm, OutreachFormSet
 from student_registration.students.models import (
@@ -113,8 +113,13 @@ class OutreachView(LoginRequiredMixin, ListView):
     template_name = 'alp/outreach_list.html'
 
     def get_context_data(self, **kwargs):
+        data = []
+        if self.request.user.is_superuser:
+            data = Outreach.objects.all()
+            self.template_name = 'alp/outreach.html'
 
         return {
+            'outreaches': data,
             'schools': School.objects.all(),
             'languages': Language.objects.all(),
             'education_levels': EducationLevel.objects.all(),
@@ -127,24 +132,31 @@ class OutreachView(LoginRequiredMixin, ListView):
         }
 
 
-class OutreachOnlineView(LoginRequiredMixin, ListView):
-    model = Outreach
-    template_name = 'alp/outreach.html'
+class RegistrationView(LoginRequiredMixin, ListView):
+    model = Registration
+    template_name = 'alp/registration.html'
 
     def get_context_data(self, **kwargs):
+        if self.request.user.is_superuser:
+            self.template_name = 'alp/registration_list.html'
 
         return {
-            'outreaches': Outreach.objects.all(),
-            'columns': ExtraColumn.objects.all(),
-            'schools': School.objects.all(),
-            'languages': Language.objects.all(),
-            'education_levels': EducationLevel.objects.all(),
-            'levels': ClassLevel.objects.all(),
-            'locations': Location.objects.all(),
-            'nationalities': Nationality.objects.all(),
-            'partners': PartnerOrganization.objects.all(),
-            'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km'),
-            'genders': (u'Male', u'Female'),
+
+        }
+
+
+class AttendanceView(LoginRequiredMixin, ListView):
+    model = Attendance
+    template_name = 'alp/attendance.html'
+
+    def get_context_data(self, **kwargs):
+        if self.request.user.is_superuser:
+            self.template_name = 'alp/attendance_list.html'
+
+        print self.template_name
+
+        return {
+
         }
 
 
