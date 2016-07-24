@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from student_registration.students.models import PartnerOrganization
+from student_registration.students.models import PartnerOrganization, School, EducationLevel
 from django.db.models.signals import post_save
 
 
@@ -26,6 +26,11 @@ class User(AbstractUser):
         max_length=20,
         null=True,
         blank=True
+    )
+    school = models.ForeignKey(
+        School,
+        blank=True, null=True,
+        related_name='+',
     )
 
     def __str__(self):
