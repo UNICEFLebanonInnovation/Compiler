@@ -36,3 +36,45 @@
 [hidden][style="display: block;"] {
   display: block !important;
 }
+.table th {
+    border-color: black;
+    background-color: lightskyblue;
+    text-align: right;
+}
+.table th, td {
+    font-size:14px;
+}
+input.required, select.required {
+    border: 1px solid #ac2925;
+}
+[class^="icon-"], [class*=" icon-"] {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    vertical-align: text-top;
+    background-image: url("../images/glyphicons-halflings.png");
+    background-position: 14px 14px;
+    background-repeat: no-repeat;
+}
+.icon-white {
+    background-image: url("../images/glyphicons-halflings-white.png");
+}
+.icon-trash {
+    background-position: -456px 0;
+}
+.icon-delete {
+    background-position: -312px 0;
+}
+.icon-plus-sign {
+    background-position: -408px -96px;
+}
+.icon-synch-sign {
+    background-position: -216px -24px;
+}
+.icon-info-sign {
+   background-position: -96px -95px;
+}
+.icon-export-sign {
+   background-position: -96px -24px;
+}

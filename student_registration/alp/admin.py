@@ -5,7 +5,9 @@ from django.db import models
 from django.contrib import admin
 
 from .models import (
-    Outreach
+    # Outreach
+    Registration
 )
 
-admin.site.register(Outreach)
+# admin.site.register(Outreach)
+admin.site.register(Registration)
