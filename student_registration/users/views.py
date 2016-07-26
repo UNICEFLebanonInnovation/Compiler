@@ -59,4 +59,4 @@ class UserChangeLanguageRedirectView(LoginRequiredMixin, RedirectView):
         user_language = kwargs['language']
         translation.activate(user_language)
         self.request.session[translation.LANGUAGE_SESSION_KEY] = user_language
-        return reverse('alp:outreach')
+        return reverse('home')
