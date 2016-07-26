@@ -1,7 +1,17 @@
 
 from rest_framework import serializers
-from .models import Outreach, ExtraColumn
+from .models import Outreach, ExtraColumn, Registration, Attendance
 from student_registration.students.serializers import StudentSerializer
+
+
+class RegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Registration
+
+
+class AttendanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attendance
 
 
 class ExtraColumnSerializer(serializers.ModelSerializer):

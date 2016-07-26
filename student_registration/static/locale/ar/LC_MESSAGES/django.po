@@ -492,3 +492,12 @@ msgstr "إسم التلميذ الثلاثي"
 
 msgid "School year"
 msgstr "السنة الدراسية"
+
+msgid "synchronize"
+msgstr "احفظ"
+
+msgid "Grade"
+msgstr "الدرجة"
+
+msgid "Section"
+msgstr "القسم"
