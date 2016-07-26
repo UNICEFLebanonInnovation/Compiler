@@ -1,6 +1,36 @@
 
 from rest_framework import serializers
-from .models import Student
+from .models import (
+    Student,
+    School,
+    ClassRoom,
+    Section,
+    Grade
+)
+
+
+class SchoolSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = School
+
+
+class ClassRoomSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ClassRoom
+
+
+class SectionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Section
+
+
+class GradeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Grade
 
 
 class StudentSerializer(serializers.ModelSerializer):

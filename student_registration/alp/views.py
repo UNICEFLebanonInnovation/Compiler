@@ -15,11 +15,13 @@ from rest_framework import status
 from django.utils.translation import ugettext as _
 
 from .models import Outreach, ExtraColumn, Registration, Attendance
-from .serializers import OutreachSerializer, ExtraColumnSerializer
-from .forms import OutreachForm, OutreachFormSet
+from .serializers import OutreachSerializer, ExtraColumnSerializer, RegistrationSerializer, AttendanceSerializer
 from student_registration.students.models import (
     Student,
     School,
+    ClassRoom,
+    Grade,
+    Section,
     Language,
     EducationLevel,
     ClassLevel,
@@ -55,7 +57,7 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
 
     def delete(self, request, *args, **kwargs):
-        instance = Outreach.objects.get(id=kwargs['pk'])
+        instance = self.model.objects.get(id=kwargs['pk'])
         student = instance.student
         instance.delete()
         if student:
@@ -63,12 +65,12 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
     def update(self, request, *args, **kwargs):
-        instance = Outreach.objects.get(id=kwargs['pk'])
+        instance = self.model.objects.get(id=kwargs['pk'])
         return JsonResponse({'status': status.HTTP_200_OK})
 
     def partial_update(self, request, *args, **kwargs):
         extra_fields = json.dumps(request.data)
-        instance = Outreach.objects.get(id=kwargs['pk'])
+        instance = self.model.objects.get(id=kwargs['pk'])
         instance.extra_fields = extra_fields
         instance.save()
         return JsonResponse({'status': status.HTTP_200_OK})
@@ -108,6 +110,74 @@ class ExtraColumnViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
+class RegistrationViewSet(mixins.RetrieveModelMixin,
+                      mixins.ListModelMixin,
+                      mixins.CreateModelMixin,
+                      mixins.UpdateModelMixin,
+                      viewsets.GenericViewSet):
+
+    model = Registration
+    queryset = Registration.objects.all()
+    serializer_class = RegistrationSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        """
+        :return: JSON
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.instance = serializer.save()
+
+        return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+    def update(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+
+class AttendanceViewSet(mixins.RetrieveModelMixin,
+                      mixins.ListModelMixin,
+                      mixins.CreateModelMixin,
+                      mixins.UpdateModelMixin,
+                      viewsets.GenericViewSet):
+
+    model = Attendance
+    queryset = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        """
+        :return: JSON
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.instance = serializer.save()
+
+        return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+    def update(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+
 class OutreachView(LoginRequiredMixin, ListView):
     model = Outreach
     template_name = 'alp/outreach_list.html'
@@ -115,7 +185,7 @@ class OutreachView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         data = []
         if self.request.user.is_superuser:
-            data = Outreach.objects.all()
+            data = self.model.objects.all()
             self.template_name = 'alp/outreach.html'
 
         return {
@@ -137,11 +207,19 @@ class RegistrationView(LoginRequiredMixin, ListView):
     template_name = 'alp/registration.html'
 
     def get_context_data(self, **kwargs):
+        data = []
         if self.request.user.is_superuser:
+            data = self.model.objects.all()
             self.template_name = 'alp/registration_list.html'
 
         return {
-
+            'registrations': data,
+            'schools': School.objects.all(),
+            'grades': Grade.objects.all(),
+            'section': Section.objects.all(),
+            'locations': Location.objects.all(),
+            'nationalities': Nationality.objects.all(),
+            'genders': (u'Male', u'Female'),
         }
 
 
