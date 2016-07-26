@@ -46,11 +46,9 @@
                                     <tr>
                                         <th>{% trans "School number" %}</th>
                                         <th>{% trans "School" %}</th>
-                                        <th>{% trans "Class" %}</th>
-                                        <th>{% trans "School year" %}</th>
+                                        <th>{% trans "Grade" %}</th>
+                                        <th>{% trans "Section" %}</th>
                                         <th>{% trans "Student fullname" %}</th>
-                                        <th>{% trans "Registered by" %}</th>
-                                        <th>{% trans "Registration date" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -58,11 +56,9 @@
                                         <tr>
                                             <td>{% if registry.school %}{{ registry.school.number }}{% endif %}</td>
                                             <td>{% if registry.school %}{{ registry.school.name }}{% endif %}</td>
-                                            <td>{% if registry.education_level %}{{ registry.education_level.name }}{% endif %}</td>
-                                            <td>{{ registry.year }}</td>
+                                            <td>{% if registry.grade %}{{ registry.grade.name }}{% endif %}</td>
+                                            <td>{% if registry.section %}{{ registry.section.name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.fullname }}{% endif %}</td>
-                                            <td>{% if registry.owner %}{{ registry.owner.fullname }}{% endif %}</td>
-                                            <td></td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

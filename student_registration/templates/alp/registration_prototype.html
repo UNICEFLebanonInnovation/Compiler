@@ -1,0 +1,114 @@
+{% load staticfiles i18n %}
+{% load util_tags %}
+
+{% get_range 1990 2051 as years1 %}
+{% get_range 1 12 as months1 %}
+{% get_range 1 31 as days1 %}
+
+<table style="display:none;" id="registration_prototype">
+    <tr id="line-$$itemscope_id$$" class="registration-line" itemscope="$$itemscope_id$$">
+        <td>
+            <button class="btn btn-danger delete-registration-row" itemscope="$$itemscope_id$$">
+                <i class="icon-trash icon-white"></i>
+                {% trans "Delete" %}
+            </button>
+        </td>
+        <td>
+            <input type="hidden" name="id" value="$$itemscope_id$$" class="registration-field-id" />
+            <input type="text" name="school_number" class="registration-field school_number_$$itemscope_id$$" readonly="readonly"
+                   itemscope="$$itemscope_id$$" id="school_number" value=""/>
+        </td>
+        <td>
+            <select name="school" id="school" class="registration-school registration-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for schl in schools %}
+                    <option value="{{ schl.id }}" itemcontent="{{ schl.number }}">
+                        {{ schl.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="grade" id="grade" class="registration-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in grades %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="section" id="section" class="registration-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in sections %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <input type="text" name="student_address" id="student_address" class="registration-field" itemscope="$$itemscope_id$$" />
+        </td>
+        <td>
+            <select name="location" id="location" class="registration-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in locations %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <input type="text" name="student_phone" id="student_phone" class="registration-field" itemscope="$$itemscope_id$$" />
+        </td>
+        <td>
+            <input type="text" name="student_id_number" value="0" id="student_id_number" class="registration-field" itemscope="$$itemscope_id$$" />
+        </td>
+        <td>
+            <select name="student_sex" id="student_sex" class="registration-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in genders %}
+                    <option value="{{ item }}">{% trans item %}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="student_birthday_year" id="student_birthday_year" class="registration-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in years1 %}
+                    <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="student_birthday_month" id="student_birthday_month" class="registration-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in months1 %}
+                    <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="student_birthday_day" id="student_birthday_day" class="registration-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in days1 %}
+                    <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="student_nationality" id="student_nationality" class="registration-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in nationalities %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <input type="text" name="student_mother_fullname" id="student_mother_fullname" class="registration-field" itemscope="$$itemscope_id$$" />
+        </td>
+        <td>
+            <input type="text" name="student_full_name" id="student_full_name" class="registration-field" itemscope="$$itemscope_id$$" />
+        </td>
+        <td>
+
+        </td>
+    </tr>
+</table>

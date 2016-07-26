@@ -5,9 +5,12 @@ from django.db import models
 from django.contrib import admin
 
 from .models import (
-    # Outreach
     Registration
 )
 
-# admin.site.register(Outreach)
-admin.site.register(Registration)
+
+class RegistrationAdmin(admin.ModelAdmin):
+    fields = ('student', 'school', 'section', 'grade')
+
+
+admin.site.register(Registration, RegistrationAdmin)

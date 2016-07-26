@@ -8,12 +8,31 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
 from rest_framework_nested import routers
-from student_registration.alp.views import OutreachViewSet, ExtraColumnViewSet
+from student_registration.alp.views import (
+    OutreachViewSet,
+    ExtraColumnViewSet,
+    RegistrationViewSet,
+    AttendanceViewSet
+)
+from student_registration.students.views import (
+    StudentViewSet,
+    SchoolViewSet,
+    ClassRoomViewSet,
+    SectionViewSet,
+    GradeViewSet
+)
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
 api.register(r'extra-column', ExtraColumnViewSet, base_name='extra-column')
+api.register(r'registration', RegistrationViewSet, base_name='registration')
+api.register(r'attendance', AttendanceViewSet, base_name='attendance')
 
+api.register(r'students', StudentViewSet, base_name='students')
+api.register(r'schools', SchoolViewSet, base_name='schools')
+api.register(r'classrooms', ClassRoomViewSet, base_name='classrooms')
+api.register(r'sections', SectionViewSet, base_name='sections')
+api.register(r'grades', GradeViewSet, base_name='grades')
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
