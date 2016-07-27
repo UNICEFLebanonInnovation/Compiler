@@ -297,7 +297,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             extra_fields = json.loads(line.extra_fields)
             for cidx, col in enumerate(columns):
                 field_name = col.name.replace('column', 'field')+'-'+str(line.id)
-                field_value = '';
+                field_value = ''
                 if field_name in extra_fields:
                     field_value = extra_fields[field_name]
                 worksheet.write(idx+1, cidx, field_value)
@@ -340,7 +340,7 @@ class RegistrationExportViewSet(LoginRequiredMixin, ListView):
         for idx, title in enumerate(titles):
             worksheet.write(0, idx, _(title), format)
 
-        ctr = 1;
+        ctr = 1
         for idx, line in enumerate(data):
             ctr = idx+1
             worksheet.write_string(ctr, ctr, '')
