@@ -9,8 +9,8 @@ from .models import (
 )
 
 
-class RegistrationAdmin(admin.ModelAdmin):
-    fields = ('student', 'school', 'section', 'grade')
-
-
-admin.site.register(Registration, RegistrationAdmin)
+# class RegistrationAdmin(admin.ModelAdmin):
+#     fields = ('student', 'school', 'section', 'grade')
+#
+#
+# admin.site.register(Registration, RegistrationAdmin)

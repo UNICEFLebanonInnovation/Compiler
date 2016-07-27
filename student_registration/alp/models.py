@@ -152,6 +152,11 @@ class Registration(models.Model):
         null=True,
         choices=((str(x), x) for x in range(2016, 2051))
     )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
 
 
 class Attendance(models.Model):
@@ -162,4 +167,9 @@ class Attendance(models.Model):
     )
     status = models.BooleanField(default=False)
     attendance_date = models.DateField(blank=True, null=True)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
 
