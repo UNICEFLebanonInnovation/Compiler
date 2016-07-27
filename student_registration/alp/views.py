@@ -136,7 +136,10 @@ class RegistrationViewSet(mixins.RetrieveModelMixin,
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
+        student = instance.student
         instance.delete()
+        if student:
+            student.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
     def update(self, request, *args, **kwargs):
@@ -167,11 +170,6 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
         serializer.instance = serializer.save()
 
         return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
-
-    def delete(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
-        instance.delete()
-        return JsonResponse({'status': status.HTTP_200_OK})
 
     def update(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
@@ -307,6 +305,64 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         workbook.close()
 
         filename = 'outreach_report_'+current_date+'.xlsx'
+        output.seek(0)
+
+        response = HttpResponse(output.read(), content_type="application/ms-excel")
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+        return response
+
+
+class RegistrationExportViewSet(LoginRequiredMixin, ListView):
+    model = Registration
+
+    def get(self, request, *args, **kwargs):
+        current_date = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
+        output = StringIO.StringIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet('Page 1')
+
+        data = self.model.objects.all()
+
+        if not self.request.user.is_superuser:
+            data = data.filter(owner=self.request.user)
+
+        format = workbook.add_format({'bold': True, 'font_color': '#383D3F', 'bg_color': '#92CEFB', 'font_size': 16})
+
+        titles = ['Student number', 'Student fullname', 'Mother fullname', 'Nationality',
+                  'Day of birth', 'Month of birth', 'Year of birth',
+                  'Sex', 'ID Number tooltip',
+                  'Phone number', 'Governorate', 'Student living address',
+                  'Section', 'Grade',
+                  'School', 'School number'
+                  ]
+
+        for idx, title in enumerate(titles):
+            worksheet.write(0, idx, _(title), format)
+
+        ctr = 1;
+        for idx, line in enumerate(data):
+            ctr = idx+1
+            worksheet.write_string(ctr, ctr, '')
+            worksheet.write_string(ctr, ctr, line.student.full_name)
+            worksheet.write_string(ctr, ctr, line.student.mother_fullname)
+            worksheet.write_string(ctr, ctr, line.student.nationality.name)
+            worksheet.write_number(ctr, ctr, int(line.student.birthday_day))
+            worksheet.write_number(ctr, ctr, int(line.student.birthday_month))
+            worksheet.write_number(ctr, ctr, int(line.student.birthday_year))
+            worksheet.write_string(ctr, ctr, _(line.student.sex))
+            worksheet.write_string(ctr, ctr, line.student.id_number)
+            worksheet.write_string(ctr, ctr, line.student.phone)
+            worksheet.write_string(ctr, ctr, line.location.name if line.location else '')
+            worksheet.write_string(ctr, ctr, line.student.address)
+            worksheet.write_string(ctr, ctr, line.section.name)
+            worksheet.write_string(ctr, ctr, line.grade.name)
+            worksheet.write_string(ctr, ctr, line.school.name)
+            worksheet.write_string(ctr, ctr, line.school.number)
+
+        workbook.close()
+
+        filename = 'registration_report_'+current_date+'.xlsx'
         output.seek(0)
 
         response = HttpResponse(output.read(), content_type="application/ms-excel")
