@@ -48,14 +48,6 @@
             <input type="text" name="student_address" id="student_address" class="registration-field" itemscope="$$itemscope_id$$" />
         </td>
         <td>
-            <select name="location" id="location" class="registration-field" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
-                {% for item in locations %}
-                    <option value="{{ item.id }}">{{ item.name }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td>
             <input type="text" name="student_phone" id="student_phone" class="registration-field" itemscope="$$itemscope_id$$" />
         </td>
         <td>
