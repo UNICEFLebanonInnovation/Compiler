@@ -599,7 +599,7 @@
             var csrftoken = getCookie('csrftoken');
             var data = item;
             data['csrfmiddlewaretoken'] = csrftoken;
-
+            console.log(data);
             $.ajax({
                 type: "POST",
                 url: synchro_path,
@@ -608,6 +608,7 @@
                 headers: {"X-CSRFToken":csrftoken},
                 dataType: 'json',
                 success: function (response) {
+                    console.log(response);
                     if(response.status == '201'){
                         $('#line-'+item.id).find('.outreach-field').removeClass('required');
                         update_item_store(item.id, 'synchronized', true);
