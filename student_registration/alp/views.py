@@ -6,13 +6,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
-from copy import deepcopy
 from datetime import datetime
-import xlsxwriter
-import StringIO
+import tablib
 import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
+from import_export.formats import base_formats
 
 from .models import Outreach, ExtraColumn, Registration, Attendance
 from .serializers import OutreachSerializer, ExtraColumnSerializer, RegistrationSerializer, AttendanceSerializer
@@ -214,8 +213,7 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'registrations': data,
             'schools': School.objects.all(),
             'grades': Grade.objects.all(),
-            'section': Section.objects.all(),
-            'locations': Location.objects.all(),
+            'sections': Section.objects.all(),
             'nationalities': Nationality.objects.all(),
             'genders': (u'Male', u'Female'),
         }
@@ -236,80 +234,83 @@ class AttendanceView(LoginRequiredMixin, ListView):
         }
 
 
-class ExportViewSet(LoginRequiredMixin, ListView):
+class OutreachExportViewSet(LoginRequiredMixin, ListView):
     model = Outreach
 
     def get(self, request, *args, **kwargs):
-        current_date = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
-        output = StringIO.StringIO()
-        workbook = xlsxwriter.Workbook(output)
-        worksheet = workbook.add_worksheet('Page 1')
-
-        data = Outreach.objects.all()
+        queryset = Outreach.objects.all()
         columns = ExtraColumn.objects.all()
 
         if not self.request.user.is_superuser:
-            data = data.filter(owner=self.request.user)
+            queryset = queryset.filter(owner=self.request.user)
             columns = columns.filter(owner=self.request.user)
 
-        format = workbook.add_format({'bold': True, 'font_color': '#383D3F', 'bg_color': '#92CEFB', 'font_size': 16})
+        data = tablib.Dataset()
 
-        titles = ['Partner', 'Student number', 'Student fullname', 'Mother fullname', 'Nationality',
-                  'Day of birth', 'Month of birth', 'Year of birth',
-                  'Sex', 'ID Number tooltip',
-                  'Phone number', 'Governorate', 'Student living address', 'Last education level',
-                  'Last education year', 'Last training level', 'Preferred language', 'Average distance',
-                  'Outreach exam - day', 'Outreach exam - month', 'Outreach exam - year',
-                  'School name', 'School name number'
-                  ]
+        headers = [
+                    _('Partner'), _('Student number'), _('Student fullname'), _('Mother fullname'), _('Nationality'),
+                    _('Day of birth'), _('Month of birth'), _('Year of birth'), _('Sex'),
+                    _('ID Number tooltip'), _('Phone number'), _('Governorate'), _('Student living address'),
+                    _('Last education level'), _('Last education year'), _('Last training level'), _('Preferred language'),
+                    _('Average distance'), _('Outreach exam - day'), _('Outreach exam - month'), _('Outreach exam - year'),
+                    _('School name'), _('School name number')
+        ]
 
         for idx, col in enumerate(columns):
-            worksheet.write(0, idx, col.label, format)
+            headers = [col.label] + headers
 
-        for idx, title in enumerate(titles):
-            worksheet.write(0, idx+len(columns), _(title), format)
+        data.headers = headers
 
-        for idx, line in enumerate(data):
-            worksheet.write_string(idx+1, 0+len(columns), line.partner.name)
-            worksheet.write_string(idx+1, 1+len(columns), '')
-            worksheet.write_string(idx+1, 2+len(columns), line.student.full_name)
-            worksheet.write_string(idx+1, 3+len(columns), line.student.mother_fullname)
-            worksheet.write_string(idx+1, 4+len(columns), line.student.nationality.name)
-            worksheet.write_number(idx+1, 7+len(columns), int(line.student.birthday_day))
-            worksheet.write_number(idx+1, 6+len(columns), int(line.student.birthday_month))
-            worksheet.write_number(idx+1, 5+len(columns), int(line.student.birthday_year))
-            worksheet.write_string(idx+1, 8+len(columns), _(line.student.sex))
-            worksheet.write_string(idx+1, 9+len(columns), line.student.id_number)
-            worksheet.write_string(idx+1, 10+len(columns), line.student.phone)
-            worksheet.write_string(idx+1, 11+len(columns), line.location.name if line.location else '')
-            worksheet.write_string(idx+1, 12+len(columns), line.student.address)
-            worksheet.write_string(idx+1, 13+len(columns), line.last_education_level.name)
-            worksheet.write_string(idx+1, 14+len(columns), line.last_education_year)
-            worksheet.write_string(idx+1, 15+len(columns), line.last_class_level.name)
-            worksheet.write_string(idx+1, 16+len(columns), line.preferred_language.name)
-            worksheet.write_string(idx+1, 17+len(columns), line.average_distance)
-            worksheet.write_number(idx+1, 18+len(columns), int(line.exam_day))
-            worksheet.write_number(idx+1, 19+len(columns), int(line.exam_month))
-            worksheet.write_number(idx+1, 20+len(columns), int(line.exam_year))
-            worksheet.write_string(idx+1, 21+len(columns), line.school.name)
-            worksheet.write_string(idx+1, 22+len(columns), line.school.number)
+        content = []
+        for line in queryset:
+            if not line.student:
+                continue
+            content = [
+                line.partner.name,
+                '',
+                line.student.full_name,
+                line.student.mother_fullname,
+                line.student.nationality.name,
+                int(line.student.birthday_day),
+                int(line.student.birthday_month),
+                int(line.student.birthday_year),
+                _(line.student.sex),
+                line.student.id_number,
+                line.student.phone,
+                line.location.name if line.location else '',
+                line.student.address,
+                line.last_education_level.name,
+                line.last_education_year,
+                line.last_class_level.name,
+                line.preferred_language.name,
+                line.average_distance,
+                int(line.exam_day),
+                int(line.exam_month),
+                int(line.exam_year),
+                line.school.name,
+                line.school.number
+            ]
 
-            extra_fields = json.loads(line.extra_fields)
+            print line.extra_fields
+            try:
+                extra_fields = json.loads(line.extra_fields)
+            except TypeError:
+                extra_fields = []
             for cidx, col in enumerate(columns):
                 field_name = col.name.replace('column', 'field')+'-'+str(line.id)
                 field_value = ''
                 if field_name in extra_fields:
                     field_value = extra_fields[field_name]
-                worksheet.write(idx+1, cidx, field_value)
+                content = [field_value] + content
 
-        workbook.close()
+        data.append(content)
 
-        filename = 'outreach_report_'+current_date+'.xlsx'
-        output.seek(0)
-
-        response = HttpResponse(output.read(), content_type="application/ms-excel")
-        response['Content-Disposition'] = 'attachment; filename=%s' % filename
-
+        file_format = base_formats.XLS()
+        response = HttpResponse(
+            file_format.export_data(data),
+            content_type='application/application/ms-excel',
+        )
+        response['Content-Disposition'] = 'attachment; filename=outreach_list.xls'
         return response
 
 
@@ -317,55 +318,45 @@ class RegistrationExportViewSet(LoginRequiredMixin, ListView):
     model = Registration
 
     def get(self, request, *args, **kwargs):
-        current_date = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
-        output = StringIO.StringIO()
-        workbook = xlsxwriter.Workbook(output)
-        worksheet = workbook.add_worksheet('Page 1')
 
-        data = self.model.objects.all()
+        queryset = self.model.objects.all()
 
         if not self.request.user.is_superuser:
-            data = data.filter(owner=self.request.user)
+            queryset = queryset.filter(owner=self.request.user)
 
-        format = workbook.add_format({'bold': True, 'font_color': '#383D3F', 'bg_color': '#92CEFB', 'font_size': 16})
+        data = tablib.Dataset()
+        data.headers = [
+                    _('Student number'), _('Student fullname'), _('Mother fullname'), _('Nationality'),
+                    _('Day of birth'), _('Month of birth'), _('Year of birth'), _('Sex'),
+                    _('ID Number tooltip'), _('Phone number'), _('Student living address'),
+                    _('Section'), _('Grade'), _('School'), _('School number')
+        ]
 
-        titles = ['Student number', 'Student fullname', 'Mother fullname', 'Nationality',
-                  'Day of birth', 'Month of birth', 'Year of birth',
-                  'Sex', 'ID Number tooltip',
-                  'Phone number', 'Governorate', 'Student living address',
-                  'Section', 'Grade',
-                  'School', 'School number'
-                  ]
+        for line in queryset:
+            if not line.student or not line.grade or not line.section or not line.school:
+                continue
+            data.append([
+                '',
+                line.student.full_name,
+                line.student.mother_fullname,
+                line.student.nationality.name,
+                int(line.student.birthday_day),
+                int(line.student.birthday_month),
+                int(line.student.birthday_year),
+                _(line.student.sex),
+                line.student.id_number,
+                line.student.phone,
+                line.student.address,
+                line.section.name,
+                line.grade.name,
+                line.school.name,
+                line.school.number
+            ])
 
-        for idx, title in enumerate(titles):
-            worksheet.write(0, idx, _(title), format)
-
-        ctr = 1
-        for idx, line in enumerate(data):
-            ctr = idx+1
-            worksheet.write_string(ctr, ctr, '')
-            worksheet.write_string(ctr, ctr, line.student.full_name)
-            worksheet.write_string(ctr, ctr, line.student.mother_fullname)
-            worksheet.write_string(ctr, ctr, line.student.nationality.name)
-            worksheet.write_number(ctr, ctr, int(line.student.birthday_day))
-            worksheet.write_number(ctr, ctr, int(line.student.birthday_month))
-            worksheet.write_number(ctr, ctr, int(line.student.birthday_year))
-            worksheet.write_string(ctr, ctr, _(line.student.sex))
-            worksheet.write_string(ctr, ctr, line.student.id_number)
-            worksheet.write_string(ctr, ctr, line.student.phone)
-            worksheet.write_string(ctr, ctr, line.location.name if line.location else '')
-            worksheet.write_string(ctr, ctr, line.student.address)
-            worksheet.write_string(ctr, ctr, line.section.name)
-            worksheet.write_string(ctr, ctr, line.grade.name)
-            worksheet.write_string(ctr, ctr, line.school.name)
-            worksheet.write_string(ctr, ctr, line.school.number)
-
-        workbook.close()
-
-        filename = 'registration_report_'+current_date+'.xlsx'
-        output.seek(0)
-
-        response = HttpResponse(output.read(), content_type="application/ms-excel")
-        response['Content-Disposition'] = 'attachment; filename=%s' % filename
-
+        file_format = base_formats.XLS()
+        response = HttpResponse(
+            file_format.export_data(data),
+            content_type='application/application/ms-excel',
+        )
+        response['Content-Disposition'] = 'attachment; filename=registration_list.xls'
         return response
