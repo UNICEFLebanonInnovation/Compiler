@@ -92,11 +92,12 @@ class Outreach(models.Model):
         null=True,
         choices=((str(x), x) for x in range(1, 33))
     )
-
     extra_fields = JSONField(
         blank=True,
         null=True,
     )
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     class Meta:
         ordering = ['id']
@@ -122,6 +123,8 @@ class ExtraColumn(models.Model):
         blank=False, null=True,
         related_name='+',
     )
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
 class Registration(models.Model):
@@ -145,7 +148,6 @@ class Registration(models.Model):
         blank=False, null=True,
         related_name='+',
     )
-    registration_date = models.DateField(blank=True, null=True)
     year = models.CharField(
         max_length=4,
         blank=True,
@@ -157,6 +159,8 @@ class Registration(models.Model):
         blank=False, null=True,
         related_name='+',
     )
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
 class Attendance(models.Model):
