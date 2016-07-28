@@ -21,6 +21,6 @@ urlpatterns = [
         view=views.AttendanceView.as_view(),
         name='attendance'
     ),
-    url(regex=r'^outreach/export/$', view=views.ExportViewSet.as_view(), name='outreach_export'),
+    url(regex=r'^outreach/export/$', view=views.OutreachExportViewSet.as_view(), name='outreach_export'),
     url(regex=r'^registration/export/$', view=views.RegistrationExportViewSet.as_view(), name='registration_export'),
 ]
