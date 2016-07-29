@@ -177,13 +177,14 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
 
 class OutreachView(LoginRequiredMixin, ListView):
     model = Outreach
-    template_name = 'alp/outreach_list.html'
+    template_name = 'alp/outreach.html'
 
     def get_context_data(self, **kwargs):
-        data = []
-        if self.request.user.is_superuser:
-            data = self.model.objects.all()
-            self.template_name = 'alp/outreach.html'
+
+        data = self.model.objects.all()
+        if not self.request.user.is_superuser:
+            data = data.filter(owner=self.request.user)
+            self.template_name = 'alp/outreach_list.html'
 
         return {
             'outreaches': data,
@@ -201,13 +202,13 @@ class OutreachView(LoginRequiredMixin, ListView):
 
 class RegistrationView(LoginRequiredMixin, ListView):
     model = Registration
-    template_name = 'alp/registration.html'
+    template_name = 'alp/registration_list.html'
 
     def get_context_data(self, **kwargs):
-        data = []
-        if self.request.user.is_superuser:
-            data = self.model.objects.all()
-            self.template_name = 'alp/registration_list.html'
+        data = self.model.objects.all()
+        if not self.request.user.is_superuser:
+            data = data.filter(owner=self.request.user)
+            self.template_name = 'alp/registration.html'
 
         return {
             'registrations': data,
