@@ -4,9 +4,9 @@
 
 {% block extra_head %}
 
-	<link rel="stylesheet" type="text/css" href="/static/css/jquery.dataTables.min.css">
-	<link rel="stylesheet" type="text/css" href="/static/css/buttons.dataTables.min.css">
-	<link rel="stylesheet" type="text/css" href="/static/css/select.dataTables.min.css">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">
 
 {% endblock %}
 
@@ -159,13 +159,13 @@
 
 {% block extra_js %}
 
-    <script type="text/javascript" language="javascript" src="/static/js/jquery-1.12.3.min.js"></script>
-    <script type="text/javascript" src="/static/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="/static/js/dataTables.bootstrap.min.js"></script>
-    <script type="text/javascript" src="/static/js/util.js"></script>
-    <script type="text/javascript" src="/static/js/tooltip.js' %}"></script>
-    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/static/js/bootbox.js"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
     <script type="text/javascript">
         var oTable = null;
         var db = null;
