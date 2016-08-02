@@ -148,6 +148,11 @@ class Registration(models.Model):
         blank=False, null=True,
         related_name='+',
     )
+    classroom = models.ForeignKey(
+        ClassRoom,
+        blank=False, null=True,
+        related_name='+'
+    )
     year = models.CharField(
         max_length=4,
         blank=True,
@@ -168,6 +173,11 @@ class Attendance(models.Model):
         Student,
         blank=False, null=True,
         related_name='attendances',
+    )
+    classroom = models.ForeignKey(
+        ClassRoom,
+        blank=False, null=True,
+        related_name='+'
     )
     status = models.BooleanField(default=False)
     attendance_date = models.DateField(blank=True, null=True)

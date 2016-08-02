@@ -121,7 +121,8 @@ class RegistrationViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user)
+        return self.queryset
+        # return self.queryset.filter(owner=self.request.user)
 
     def create(self, request, *args, **kwargs):
         """
@@ -158,7 +159,8 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user)
+        return self.queryset
+        # return self.queryset.filter(owner=self.request.user)
 
     def create(self, request, *args, **kwargs):
         """
@@ -212,6 +214,7 @@ class RegistrationView(LoginRequiredMixin, ListView):
 
         return {
             'registrations': data,
+            'classrooms': ClassRoom.objects.all(),
             'schools': School.objects.all(),
             'grades': Grade.objects.all(),
             'sections': Section.objects.all(),
@@ -222,16 +225,17 @@ class RegistrationView(LoginRequiredMixin, ListView):
 
 class AttendanceView(LoginRequiredMixin, ListView):
     model = Attendance
-    template_name = 'alp/attendance.html'
+    template_name = 'alp/attendance_list.html'
 
     def get_context_data(self, **kwargs):
-        if self.request.user.is_superuser:
-            self.template_name = 'alp/attendance_list.html'
-
-        print self.template_name
+        data = self.model.objects.all()
 
         return {
-
+            'attendances': data,
+            'locations': Location.objects.all(),
+            'schools': School.objects.all(),
+            'grades': Grade.objects.all(),
+            'sections': Section.objects.all()
         }
 
 
