@@ -139,6 +139,11 @@ class Section(models.Model):
 
 class ClassRoom(models.Model):
     name = models.CharField(max_length=45L, unique=True)
+    school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+    )
     grade = models.ForeignKey(
         Grade,
         blank=False, null=True,
