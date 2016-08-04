@@ -56,7 +56,8 @@
 
             <div class="container-main" id="classes-list"></div>
             <span class="badge" id="other-classes" style="display: none;">Other classes</span>
-            <table id="attendance-sheet" class="table table-hover table-striped"
+            <table id="attendance-sheet" {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}
+                   class="table table-hover table-striped"
                    data-height="500"
                    data-pagination="true"
                    data-search="true"
@@ -66,7 +67,7 @@
                 <thead>
                   <tr>
                     <th>{% trans 'Student fullname' %}</th>
-                    <th><input class="toggle-status" type="checkbox" data-on-text="{% trans 'Present' %}" data-off-text="{% trans 'Absent' %}"></th>
+                    <th><input class="toggle-status" type="checkbox" data-on-text="{% trans 'All Present' %}" data-off-text="{% trans 'All Absent' %}"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -94,8 +95,8 @@
         var user_id = {{ request.user.id }};
         var user_username = '{{ request.user.username }}';
         var user_email = '{{ request.user.email }}';
-        var columns = 0;
         var rows = 1;
+
         var protocol = 'http://';
         {% if request.is_secure %}
             protocol = 'https://';
@@ -117,7 +118,7 @@
 
             setInterval(function(){
                 if(navigator.onLine) {
-                    synchronize_data(false);
+{#                    synchronize_data(false);#}
                 }
             }, 3600000);
 
@@ -149,10 +150,6 @@
                 $('#attendance-sheet').hide();
             });
 
-            $(document).on('blur', '.attendance-field', function(){
-                update_item_store($(this).attr('itemscope'), $(this).attr('name'), $(this).val());
-            });
-
             $(document).on('click', '#attendance-synchro', function(){
                 synchronize_data(true);
             });
@@ -163,126 +160,6 @@
             });
 
         });
-
-        function scrollToBottom()
-        {
-            $("html, body").animate({ scrollTop: $(document).height() }, 10);
-        }
-
-        function add_attendance_newline(itemid)
-        {
-            var line_html =  $('#attendance_prototype').find('tbody').html().replace(/\$\$itemscope_id\$\$/g, itemid);
-            $('#attendances-table').find('tbody').append(line_html);
-        }
-
-        function duplicate_item_values(duplicata, fields)
-        {
-            var new_item = create_item_store_default_keys();
-            $.each(fields, function(field, flag){
-                if(flag){
-                    new_item[field] = duplicata[field];
-                }
-            });
-
-            add_to_store(new_item);
-            add_fill_line_data(new_item);
-            scrollToBottom();
-        }
-
-        function create_item_store_default_keys()
-        {
-            var item = {id: rows, synchronized: false, deleted: false, owner: user_id};
-            var fields = $('#attendance_prototype').find('.attendance-field');
-            $(fields).each(function(i, field){
-                item[$(field).attr('name')] = '';
-            });
-
-            return item;
-        }
-
-        function add_to_store(data)
-        {
-            var store = getObjectStore();
-            var request = store.put(data);
-            add_attendance_newline(data.id);
-            rows = rows + 1;
-        }
-
-        function delete_from_store(itemid)
-        {
-            var store = getObjectStore();
-            var request = store.get(parseInt(itemid));
-            request.onsuccess = function(){
-                result = request.result;
-                if(result.synchronized == true){
-                    update_item_store(itemid, 'deleted', true);
-                }else{
-                    store.delete(parseInt(itemid));
-                    rows = rows - 1;
-                }
-            }
-        }
-
-        function update_item_store(itemid, name, value)
-        {
-            var store = getObjectStore();
-            var request = store.get(parseInt(itemid));
-            request.onsuccess = function(){
-                var item = request.result;
-                item[name] = value;
-                store.put(item);
-            };
-        }
-
-        function patch_item_store(item)
-        {
-            var store = getObjectStore();
-            var request = store.get(parseInt(item.id));
-            request.onsuccess = function(){
-                store.put(item);
-            };
-        }
-
-        function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie != '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
-        function build_datatable()
-        {
-            var store = getObjectStore();
-            var request = store.getAll();
-            request.onsuccess = function() {
-                var result = request.result;
-                $(result).each(function(i, item){
-                    rows = item.id;
-                    if(item.deleted == false){
-                        add_attendance_newline(item.id);
-                        add_fill_line_data(item);
-                    }
-                });
-                rows = rows + 1;
-            };
-        }
-
-        function add_fill_line_data(item)
-        {
-            var fields = $('#line-'+item.id).find('.attendance-field');
-            $(fields).each(function(i, field){
-                $(field).val(item[$(field).attr('name')]);
-            });
-        }
 
         function display_classes(school)
         {
@@ -295,15 +172,59 @@
             request.onsuccess = function(){
                 var result = request.result;
                 $(result).each(function(i, item){
-                    var row = $('<div>').addClass('row').addClass('row-class').attr('itemid', item.id);
-                    var total = 'Total: '+'<span class="badge">12</span>';
-                    var col4 = $('<div>').addClass('col-md-4').html(total);
+
+                    var row = $('<div>').addClass('row').addClass('row-class').attr('id', 'row-class-'+item.id).attr('itemid', item.id);
+                    var total = '{% trans "Total" %}'+ ': '+'<span class="badge ttl_students">0</span><br/>';
+                    var ttl_present = '{% trans "Total present" %}'+ ': '+'<span class="badge ttl_present">0</span><br/>';
+                    var ttl_absent = '{% trans "Total absent" %}'+ ': '+'<span class="badge ttl_absent">0</span>';
+                    var col4 = $('<div>').addClass('col-md-4').html(total+ttl_present+ttl_absent);
                     var col8 = $('<div>').addClass('col-md-8').html(item.name+'<br>'+item.grade_name+' - '+item.section_name);
 
                     row.append(col4);
                     row.append(col8);
                     container.append(row);
+
+                    check_attendance_sheet(item.id);
                 });
+            };
+        }
+
+        function calculate_attendances(classroom)
+        {
+            var attendance = $('#row-class-'+classroom);
+            var store = getStoreByName("attendances");
+            var index = store.index("classroomAndDateAndStatus");
+
+            var request1 = index.getAll([parseInt(classroom), getCurrentDate(), 1]);
+            var request2 = index.getAll([parseInt(classroom), getCurrentDate(), 0]);
+
+            attendance.find('.ttl_students').text(0);
+
+            request1.onsuccess = function(){
+                var result = request1.result;
+                attendance.find('.ttl_present').text(result.length);
+                attendance.find('.ttl_students').text(result.length);
+            };
+            request2.onsuccess = function(){
+                var result = request2.result;
+                attendance.find('.ttl_absent').text(result.length);
+                var ttl_present = parseInt(attendance.find('.ttl_students').text());
+                attendance.find('.ttl_students').text(result.length+ttl_present);
+            };
+        }
+
+        function check_attendance_sheet(classroom)
+        {
+            var store = getStoreByName("attendances");
+            var index = store.index("classroomAndDate");
+            var request = index.getAll([parseInt(classroom), getCurrentDate()]);
+            request.onsuccess = function(){
+                var result = request.result;
+                if(result.length){
+                    calculate_attendances(classroom);
+                }else{
+                    create_new_attendance_data(classroom);
+                }
             };
         }
 
@@ -321,8 +242,6 @@
                     $(result).each(function(i, item){
                         create_attendance_row(item);
                     });
-                }else{
-                    create_new_attendance_data(classroom);
                 }
             };
         }
@@ -335,12 +254,16 @@
             }
             var tr = $('<tr>');
             var col1 = $('<td>').html(item.student_full_name);
-            var col2 = $('<td>').html($('<input class="status-checkbox" type="checkbox" '+status+' data-on-text="{% trans 'Present' %}" data-off-text="{% trans 'Absent' %}">'));
+            var check_input = $('<input class="status-checkbox" type="checkbox" '+status+' data-on-text="{% trans 'Present' %}" data-off-text="{% trans 'Absent' %}">');
+            var col2 = $('<td>').html(check_input);
 
             tr.append(col1);
             tr.append(col2);
             $('#attendance-sheet').find('tbody').append(tr);
-            $("[class='status-checkbox']").bootstrapSwitch();
+            check_input.bootstrapSwitch();
+            check_input.on('switchChange.bootstrapSwitch', function(event, state) {
+                setAttendance(item.classroom, item.student_id, state);
+            });
         }
 
         function create_new_attendance_data(classroom)
@@ -354,23 +277,28 @@
                     var data = {
                         original_id: 0,
                         synchronized: false,
-                        student: item.student,
+                        student_id: item.student_id,
                         student_full_name: item.student_full_name,
                         classroom: item.classroom,
                         classroom_name: item.classroom_name,
-                        status: 0,
+                        status: false,
+                        state: 0,
                         owner: user_id,
-                        attendance_date: ''
+                        attendance_date: getCurrentDate(),
+                        validation_status: false,
+                        validation_state: 0,
+                        validation_date: null,
+                        validation_owner: null
                     };
                     getStoreByName('attendances').put(data);
-                    create_attendance_row(data);
                 });
+                calculate_attendances(classroom);
             }
         }
 
         function synchronize_data(showFeedback)
         {
-            var store = getObjectStore();
+            var store = getStoreByName('attendances');
             var request = store.getAll();
             request.onsuccess = function() {
                 var result = request.result;
@@ -451,27 +379,6 @@
             });
         }
 
-        function delete_data_from_server(item)
-        {
-            var csrftoken = getCookie('csrftoken');
-            $.ajax({
-                type: "DELETE",
-                url: synchro_path+item.original_id+'/',
-                cache: false,
-                headers: {"X-CSRFToken":csrftoken},
-                dataType: 'json',
-                success: function (response) {
-                    if(response.status = '200') {
-                        var store = getObjectStore();
-                        store.delete(parseInt(item.id));
-                    }
-                },
-                error: function (response) {
-
-                }
-            });
-        }
-
         function pull_data_from_server(url, store_name)
         {
             var store = getStoreByName(store_name);
@@ -515,7 +422,7 @@
 
         function createStores()
         {
-            var request = indexedDB.open("compile_bd_3", 3);
+            var request = indexedDB.open("comp1_attendances", 3);
 
             request.onupgradeneeded = function() {
                 // The database did not previously exist, so create object stores and indexes.
@@ -532,6 +439,10 @@
 
                     var store1 = db.createObjectStore("attendances", {keyPath: "id", autoIncrement:true});
                     store1.createIndex('classroom', 'classroom', { unique: false, multiEntry: true });
+                    store1.createIndex('attendance_date', 'attendance_date', { unique: false, multiEntry: true });
+                    store1.createIndex('classroomAndDate', ['classroom', 'attendance_date']);
+                    store1.createIndex('classroomAndDateAndStudent', ['classroom', 'attendance_date', 'student_id']);
+                    store1.createIndex('classroomAndDateAndStatus', ['classroom', 'attendance_date', 'state']);
 
                     var store2 = db.createObjectStore("students", {keyPath: "id", autoIncrement:true});
 
@@ -560,14 +471,7 @@
             request.onsuccess = function() {
                 db = request.result;
                 load_base_data();
-{#                build_datatable();#}
             };
-        }
-
-        function getObjectStore()
-        {
-            var store = db.transaction(["attendances"], "readwrite").objectStore("attendances");
-            return store;
         }
 
         function getStoreByName(store_name)
@@ -576,11 +480,19 @@
             return store;
         }
 
-        function getRecord(itemid)
+        function setAttendance(classroom, student, status)
         {
-            var store = getObjectStore();
-            var request = store.get(parseInt(itemid));
-            return request;
+
+            var store = getStoreByName("attendances");
+            var index = store.index("classroomAndDateAndStudent");
+            var request = index.get([parseInt(classroom), getCurrentDate(), parseInt(student)]);
+            request.onsuccess = function() {
+                var result = request.result;
+                result.status = status;
+                result.state = status ? 1 : 0;
+                store.put(result);
+                calculate_attendances(classroom);
+            }
         }
 
     </script>
