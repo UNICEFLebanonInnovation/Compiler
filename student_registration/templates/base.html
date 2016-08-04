@@ -1,7 +1,7 @@
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %}>
+<html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -138,7 +138,7 @@
       <!-- Your stuff: Third-party javascript libraries go here -->
 
       <!-- place project specific Javascript in this file -->
-{#      <script src="{% static 'js/project.js' %}"></script>#}
+      <script src="{% static 'js/project.js' %}"></script>
     {% endblock javascript %}
     {% block extra_js %}
     {% endblock %}

@@ -60,7 +60,7 @@
                                             <td>{% if registry.classroom %}{{ registry.classroom.name }}{% endif %}</td>
 {#                                            <td>{% if registry.grade %}{{ registry.grade.name }}{% endif %}</td>#}
 {#                                            <td>{% if registry.section %}{{ registry.section.name }}{% endif %}</td>#}
-                                            <td>{% if registry.student %}{{ registry.student.fullname }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.full_name }}{% endif %}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
