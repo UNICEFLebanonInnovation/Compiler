@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from model_utils import Choices
+from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
 from paintstore.fields import ColorPickerField
 from django.utils.translation import ugettext as _
@@ -177,7 +178,7 @@ class PartnerOrganization(models.Model):
         return self.name
 
 
-class Student(models.Model):
+class Student(TimeStampedModel):
 
     first_name = models.CharField(max_length=64L, blank=True, null=True)
     last_name = models.CharField(max_length=64L, blank=True, null=True)
