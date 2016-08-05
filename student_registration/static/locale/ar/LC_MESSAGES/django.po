@@ -504,3 +504,6 @@ msgstr "الدرجة"
 
 msgid "Section"
 msgstr "القسم"
+
+msgid "Students"
+msgstr "التلاميذ"
