@@ -56,24 +56,29 @@
 
             <div class="container-main" id="classes-list"></div>
             <span class="badge" id="other-classes" style="display: none;">Other classes</span>
-            <table id="attendance-sheet" {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}
-                   class="table table-hover table-striped"
-                   data-height="500"
-                   data-pagination="true"
-                   data-search="true"
-                   cellspacing="0"
-                   width="100%"
-                   style="display: none;">
-                <thead>
-                  <tr>
-                    <th>{% trans 'Student fullname' %}</th>
-                    <th><input class="toggle-status" type="checkbox" data-on-text="{% trans 'All Present' %}" data-off-text="{% trans 'All Absent' %}"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
+            <div id="attendance-sheet" style="display: none;">
 
+                <table id="attendance-table" {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}
+                       class="table table-hover table-striped"
+                       data-height="500"
+                       data-pagination="true"
+                       data-search="true"
+                       cellspacing="0"
+                       width="100%">
+                    <thead>
+                      <tr>
+                        <th>{% trans 'Student fullname' %}</th>
+                        <th><input class="toggle-status" type="checkbox" data-on-text="{% trans 'All Present' %}" data-off-text="{% trans 'All Absent' %}"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                  <a class="btn btn-info" id="attendance-save" href="#">
+                    <i class="icon-synch-sign icon-white"></i>&nbsp;
+                        {% trans "Save" %}
+                  </a>
+            </div>
          </section>
 
 {% endblock %}
@@ -146,6 +151,11 @@
 
             $(document).on('click', '#other-classes', function(){
                 $(this).hide();
+                $('.row-class').show();
+                $('#attendance-sheet').hide();
+            });
+
+            $(document).on('click', '#attendance-save', function(){
                 $('.row-class').show();
                 $('#attendance-sheet').hide();
             });
@@ -263,7 +273,7 @@
             var store = getStoreByName("attendances");
             var index = store.index("classroomAndDate");
             var request = index.getAll([parseInt(classroom), getCurrentDate()]);
-            $('#attendance-sheet').find('tbody').empty();
+            $('#attendance-table').find('tbody').empty();
             $('#attendance-sheet').show();
 
             request.onsuccess = function(){
@@ -283,13 +293,14 @@
                 status = 'checked';
             }
             var tr = $('<tr>');
-            var col1 = $('<td>').html(item.student_full_name);
+            var sex_icon = $('<span>').addClass('icon-'+item.student_sex);
+            var col1 = $('<td>').append(sex_icon).append(item.student_full_name);
             var check_input = $('<input class="status-checkbox" type="checkbox" '+status+' data-on-text="{% trans 'Present' %}" data-off-text="{% trans 'Absent' %}">');
             var col2 = $('<td>').html(check_input);
 
             tr.append(col1);
             tr.append(col2);
-            $('#attendance-sheet').find('tbody').append(tr);
+            $('#attendance-table').find('tbody').append(tr);
             check_input.bootstrapSwitch();
             check_input.on('switchChange.bootstrapSwitch', function(event, state) {
                 setAttendance(item.classroom, item.student_id, state);
@@ -321,6 +332,7 @@
                 classroom_name: item.classroom_name,
                 status: false,
                 state: 0,
+                sex: item.student_sex,
                 owner: user_id,
                 attendance_date: getCurrentDate(),
                 validation_status: false,
