@@ -1,0 +1,80 @@
+/* These styles are generated from project.scss. */
+
+.alert-debug {
+  color: black;
+  background-color: white;
+  border-color: #d6e9c6;
+}
+
+.alert-error {
+  color: #b94a48;
+  background-color: #f2dede;
+  border-color: #eed3d7;
+}
+
+/* This is a fix for the bootstrap4 alpha release */
+@media (max-width: 47.9em) {
+  .navbar-nav .nav-item {
+    float: none;
+    width: 100%;
+    display: inline-block;
+  }
+
+  .navbar-nav .nav-item + .nav-item {
+    margin-left: 0;
+  }
+
+  .nav.navbar-nav.pull-xs-right {
+    float: none !important;
+  }
+}
+
+/* Display django-debug-toolbar.
+   See https://github.com/django-debug-toolbar/django-debug-toolbar/issues/742
+   and https://github.com/pydanny/cookiecutter-django/issues/317
+*/
+[hidden][style="display: block;"] {
+  display: block !important;
+}
+.table th {
+    border-color: black;
+    background-color: lightskyblue;
+    text-align: right;
+}
+.table th, td {
+    font-size:14px;
+}
+input.required, select.required {
+    border: 1px solid #ac2925;
+}
+[class^="icon-"], [class*=" icon-"] {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    vertical-align: text-top;
+    background-image: url("../images/glyphicons-halflings.png");
+    background-position: 14px 14px;
+    background-repeat: no-repeat;
+}
+.icon-white {
+    background-image: url("../images/glyphicons-halflings-white.png");
+}
+.icon-trash {
+    background-position: -456px 0;
+}
+.icon-delete {
+    background-position: -312px 0;
+}
+.icon-plus-sign {
+    background-position: -408px -96px;
+}
+.icon-synch-sign {
+    background-position: -216px -24px;
+}
+.icon-info-sign {
+   background-position: -96px -95px;
+}
+.icon-export-sign {
+   background-position: -96px -24px;
+}
