@@ -221,9 +221,39 @@
             request.onsuccess = function(){
                 var result = request.result;
                 if(result.length){
-                    calculate_attendances(classroom);
+                    check_attendance_students(classroom, result);
                 }else{
                     create_new_attendance_data(classroom);
+                }
+            };
+        }
+
+        function check_attendance_students(classroom, classroomStudents)
+        {
+            var store = getStoreByName('registrations');
+            var index = store.index('classroom');
+            var request = index.getAll(parseInt(classroom));
+            request.onsuccess = function(){
+                var result = request.result;
+                if(result.length != classroomStudents.length){
+                    $(result).each(function(i, item){
+                        check_attendance_new_student(classroom, item);
+                    });
+                }
+                calculate_attendances(classroom);
+            }
+        }
+
+        function check_attendance_new_student(classroom, registration)
+        {
+            var store = getStoreByName("attendances");
+            var index = store.index("classroomAndDateAndStudent");
+            var request = index.get([parseInt(classroom), getCurrentDate(), parseInt(registration.student_id)]);
+
+            request.onsuccess = function(){
+                if(!request.result) {
+                    create_student_row(registration);
+                    calculate_attendances(classroom);
                 }
             };
         }
@@ -231,8 +261,8 @@
         function display_attendance_sheet(classroom)
         {
             var store = getStoreByName("attendances");
-            var index = store.index("classroom");
-            var request = index.getAll(parseInt(classroom));
+            var index = store.index("classroomAndDate");
+            var request = index.getAll([parseInt(classroom), getCurrentDate()]);
             $('#attendance-sheet').find('tbody').empty();
             $('#attendance-sheet').show();
 
@@ -274,26 +304,31 @@
             request.onsuccess = function(){
                 var result = request.result;
                 $(result).each(function(i, item){
-                    var data = {
-                        original_id: 0,
-                        synchronized: false,
-                        student_id: item.student_id,
-                        student_full_name: item.student_full_name,
-                        classroom: item.classroom,
-                        classroom_name: item.classroom_name,
-                        status: false,
-                        state: 0,
-                        owner: user_id,
-                        attendance_date: getCurrentDate(),
-                        validation_status: false,
-                        validation_state: 0,
-                        validation_date: null,
-                        validation_owner: null
-                    };
-                    getStoreByName('attendances').put(data);
+                    create_student_row(item);
                 });
                 calculate_attendances(classroom);
             }
+        }
+
+        function create_student_row(item)
+        {
+            var data = {
+                original_id: 0,
+                synchronized: false,
+                student_id: item.student_id,
+                student_full_name: item.student_full_name,
+                classroom: item.classroom,
+                classroom_name: item.classroom_name,
+                status: false,
+                state: 0,
+                owner: user_id,
+                attendance_date: getCurrentDate(),
+                validation_status: false,
+                validation_state: 0,
+                validation_date: null,
+                validation_owner: null
+            };
+            getStoreByName('attendances').put(data);
         }
 
         function synchronize_data(showFeedback)
