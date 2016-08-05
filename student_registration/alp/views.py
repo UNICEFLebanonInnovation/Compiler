@@ -296,7 +296,6 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
                 line.school.number
             ]
 
-            print line.extra_fields
             try:
                 extra_fields = json.loads(line.extra_fields)
             except TypeError:
@@ -308,7 +307,7 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
                     field_value = extra_fields[field_name]
                 content = [field_value] + content
 
-        data.append(content)
+            data.append(content)
 
         file_format = base_formats.XLS()
         response = HttpResponse(
@@ -334,13 +333,17 @@ class RegistrationExportViewSet(LoginRequiredMixin, ListView):
                     _('Student number'), _('Student fullname'), _('Mother fullname'), _('Nationality'),
                     _('Day of birth'), _('Month of birth'), _('Year of birth'), _('Sex'),
                     _('ID Number tooltip'), _('Phone number'), _('Student living address'),
-                    _('Section'), _('Grade'), _('School'), _('School number')
+                    # _('Section'), _('Grade'),
+                    _('Class room'),
+                    _('School'), _('School number')
         ]
 
+        content = []
         for line in queryset:
-            if not line.student or not line.grade or not line.section or not line.school:
+            # if not line.student or not line.grade or not line.section or not line.school:
+            if not line.student or not line.classroom or not line.school:
                 continue
-            data.append([
+            content = [
                 '',
                 line.student.full_name,
                 line.student.mother_fullname,
@@ -352,11 +355,13 @@ class RegistrationExportViewSet(LoginRequiredMixin, ListView):
                 line.student.id_number,
                 line.student.phone,
                 line.student.address,
-                line.section.name,
-                line.grade.name,
+                line.classroom.name,
+                # line.section.name,
+                # line.grade.name,
                 line.school.name,
                 line.school.number
-            ])
+            ]
+            data.append(content)
 
         file_format = base_formats.XLS()
         response = HttpResponse(
