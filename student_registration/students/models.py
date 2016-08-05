@@ -232,6 +232,7 @@ class Student(TimeStampedModel):
 
         return ''
 
+    @property
     def birthday(self):
         return u'{}/{}/{}'.format(
             self.birthday_day,

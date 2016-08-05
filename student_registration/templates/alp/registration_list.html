@@ -49,7 +49,18 @@
                                         <th>{% trans "Class room" %}</th>
 {#                                        <th>{% trans "Grade" %}</th>#}
 {#                                        <th>{% trans "Section" %}</th>#}
+                                        <th>{% trans "Student living address" %}</th>
+                                        <th>{% trans "Phone number" %}</th>
+                                        <th>
+                                            {% trans "ID Number" %}
+                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"></i>
+                                        </th>
+                                        <th>{% trans "Sex" %}</th>
+                                        <th>{% trans "Birthday" %}</th>
+                                        <th>{% trans "Nationality" %}</th>
+                                        <th>{% trans "Mother fullname" %}</th>
                                         <th>{% trans "Student fullname" %}</th>
+                                        <th>{% trans "Student number" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -60,7 +71,15 @@
                                             <td>{% if registry.classroom %}{{ registry.classroom.name }}{% endif %}</td>
 {#                                            <td>{% if registry.grade %}{{ registry.grade.name }}{% endif %}</td>#}
 {#                                            <td>{% if registry.section %}{{ registry.section.name }}{% endif %}</td>#}
+                                            <td>{% if registry.student %}{{ registry.student.address }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.phone }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.id_number }}{% endif %}</td>
+                                            <td>{% if registry.student %}{%  trans registry.student.sex %}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.birthday }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.nationality_name }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.mother_fullname }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.full_name }}{% endif %}</td>
+                                            <td></td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -91,8 +110,8 @@
 
             oTable = $('#registrations-table').DataTable({
                 fixedHeader: true,
-                paging:   false,
-                ordering: false,
+                paging:   true,
+                ordering: true,
                 info:     true,
                 autoWidth: false,
                 scrollY: '50vh',
