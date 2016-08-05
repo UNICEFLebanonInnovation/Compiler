@@ -42,10 +42,10 @@ SECURITY_MIDDLEWARE = (
 )
 # Use Whitenoise to serve static files
 # See: https://whitenoise.readthedocs.io/
-WHITENOISE_MIDDLEWARE = (
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-)
-MIDDLEWARE_CLASSES = WHITENOISE_MIDDLEWARE + MIDDLEWARE_CLASSES
+# WHITENOISE_MIDDLEWARE = (
+#     'whitenoise.middleware.WhiteNoiseMiddleware',
+# )
+# MIDDLEWARE_CLASSES = WHITENOISE_MIDDLEWARE + MIDDLEWARE_CLASSES
 RAVEN_MIDDLEWARE = (
     'raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware',
 )
@@ -109,7 +109,8 @@ MEDIA_URL = 'https://s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
 
 # Static Assets
 # ------------------------
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 
 # EMAIL
