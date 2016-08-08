@@ -72,4 +72,4 @@ student_registration/media/
 mailhog
 
 deis
-#staticfiles
+staticfiles
