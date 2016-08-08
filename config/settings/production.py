@@ -42,10 +42,10 @@ SECURITY_MIDDLEWARE = (
 )
 # Use Whitenoise to serve static files
 # See: https://whitenoise.readthedocs.io/
-# WHITENOISE_MIDDLEWARE = (
-#     'whitenoise.middleware.WhiteNoiseMiddleware',
-# )
-# MIDDLEWARE_CLASSES = WHITENOISE_MIDDLEWARE + MIDDLEWARE_CLASSES
+WHITENOISE_MIDDLEWARE = (
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+)
+MIDDLEWARE_CLASSES = WHITENOISE_MIDDLEWARE + MIDDLEWARE_CLASSES
 RAVEN_MIDDLEWARE = (
     'raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware',
 )
