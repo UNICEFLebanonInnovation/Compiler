@@ -78,6 +78,9 @@ input.required, select.required {
 .icon-export-sign {
    background-position: -96px -24px;
 }
+.icon-validation-sign {
+  background-position: -288px 0px;
+}
 
 .icon-Male {
   background-position: 0px 0px;

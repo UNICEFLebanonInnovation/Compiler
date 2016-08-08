@@ -79,6 +79,14 @@
                         {% trans "Save" %}
                   </a>
             </div>
+              <a class="btn btn-info" id="attendance-validate-all" href="#" style="display: none;">
+                <i class="icon-validation-sign icon-white"></i>&nbsp;
+                    {% trans "Validate All" %}
+              </a>
+{#              <a class="btn btn-info" id="attendance-export" href="{% url "alp:attendance_export" %}" target="_blank">#}
+{#                <i class="icon-export-sign icon-white"></i>&nbsp;#}
+{#                    {% trans "Export" %}#}
+{#              </a>#}
          </section>
 
 {% endblock %}
@@ -153,11 +161,22 @@
                 $(this).hide();
                 $('.row-class').show();
                 $('#attendance-sheet').hide();
+                $("#attendance-validate-all").show();
             });
 
             $(document).on('click', '#attendance-save', function(){
                 $('.row-class').show();
                 $('#attendance-sheet').hide();
+                $('#other-classes').hide();
+                $("#attendance-validate-all").show();
+            });
+
+            $(document).on('click', '#attendance-validate-all', function(){
+                bootbox.confirm("{% trans 'Are you sure to validate all Attendances' %}", function(result) {
+                    if (result === true) {
+                        validate_attendances();
+                    }
+                });
             });
 
             $(document).on('click', '#attendance-synchro', function(){
@@ -173,6 +192,7 @@
 
         function display_classes(school)
         {
+            $("#attendance-validate-all").show();
             var store = getStoreByName("classrooms");
             var index = store.index("school");
             var request = index.getAll(parseInt(school));
@@ -187,11 +207,13 @@
                     var total = '{% trans "Total" %}'+ ': '+'<span class="badge ttl_students">0</span><br/>';
                     var ttl_present = '{% trans "Total present" %}'+ ': '+'<span class="badge ttl_present">0</span><br/>';
                     var ttl_absent = '{% trans "Total absent" %}'+ ': '+'<span class="badge ttl_absent">0</span>';
-                    var col4 = $('<div>').addClass('col-md-4').html(total+ttl_present+ttl_absent);
-                    var col8 = $('<div>').addClass('col-md-8').html(item.name+'<br>'+item.grade_name+' - '+item.section_name);
+                    var col1 = $('<div>').addClass('col-md-4').html(total+ttl_present+ttl_absent);
+                    var col2 = $('<div>').addClass('col-md-8').html(item.name+'<br>'+item.grade_name+' - '+item.section_name);
+                    var col3 = $('<div>').addClass('col-md-4').html();
 
-                    row.append(col4);
-                    row.append(col8);
+                    row.append(col1);
+                    row.append(col2);
+                    row.append(col3);
                     container.append(row);
 
                     check_attendance_sheet(item.id);
@@ -220,6 +242,36 @@
                 attendance.find('.ttl_absent').text(result.length);
                 var ttl_present = parseInt(attendance.find('.ttl_students').text());
                 attendance.find('.ttl_students').text(result.length+ttl_present);
+            };
+        }
+
+        function validate_attendances()
+        {
+{#            $('#classes-list').find('.row-class').each(function(i, item){#}
+{#                var selected_date = get_current_attendance_date();#}
+{#                var classroom = parseInt(item.attr('itemid'));#}
+{#                #}
+{#                console.log(item);#}
+{#                #}
+{#                var store = getStoreByName('classroomsAttendances');#}
+{#                var index = store.index('classroomAndDate');#}
+{#                var request = index.getAll([classroom, selected_date]);#}
+{#                request.onsuccess = function(){#}
+{#                    var result = request.result;#}
+{#                    $(result).each()#}
+{#                };#}
+{#            });#}
+
+            var selected_date = get_current_attendance_date();
+            var store = getStoreByName('classroomsAttendances');
+            var index = store.index('date');
+            var request = index.getAll(selected_date);
+            request.onsuccess = function(){
+                var result = request.result;
+                $(result).each(function(i, item){
+                    item.validated = 1;
+                    store.put(item);
+                });
             };
         }
 
@@ -270,6 +322,7 @@
 
         function display_attendance_sheet(classroom)
         {
+            $("#attendance-validate-all").hide();
             var store = getStoreByName("attendances");
             var index = store.index("classroomAndDate");
             var request = index.getAll([parseInt(classroom), getCurrentDate()]);
@@ -293,6 +346,7 @@
                 status = 'checked';
             }
             var tr = $('<tr>');
+{#            var sex_icon = $('<span>').addClass('icon-'+item.sex); //tmp#}
             var sex_icon = $('<span>').addClass('icon-'+item.student_sex);
             var col1 = $('<td>').append(sex_icon).append(item.student_full_name);
             var check_input = $('<input class="status-checkbox" type="checkbox" '+status+' data-on-text="{% trans 'Present' %}" data-off-text="{% trans 'Absent' %}">');
@@ -332,7 +386,7 @@
                 classroom_name: item.classroom_name,
                 status: false,
                 state: 0,
-                sex: item.student_sex,
+                student_sex: item.student_sex,
                 owner: user_id,
                 attendance_date: getCurrentDate(),
                 validation_status: false,
@@ -469,7 +523,7 @@
 
         function createStores()
         {
-            var request = indexedDB.open("comp1_attendances", 3);
+            var request = indexedDB.open("comp1_attendances", 5);
 
             request.onupgradeneeded = function() {
                 // The database did not previously exist, so create object stores and indexes.
@@ -481,6 +535,7 @@
                     }
                 }catch(err) {
                     flag = true;
+                    console.log(err);
                 }
                 if(flag){
 
@@ -504,8 +559,10 @@
 
                     var store5 = db.createObjectStore("registrations", {keyPath: "id", autoIncrement:true});
                     store5.createIndex('classroom', 'classroom', { unique: false, multiEntry: true });
-{#                    store5.createIndex('section', 'section', { unique: false, multiEntry: true });#}
-{#                    store5.createIndex('grade', 'grade', { unique: false, multiEntry: true });#}
+
+                    var store6 = db.createObjectStore("classroomsAttendances", {keyPath: "id", autoIncrement:true});
+                    store6.createIndex('date', 'attendance_date');
+                    store6.createIndex('classroomAndDate', ['classroom', 'attendance_date']);
 
                     db.createObjectStore("grades", {keyPath: "id", autoIncrement:true});
                     db.createObjectStore("sections", {keyPath: "id", autoIncrement:true});
@@ -540,6 +597,15 @@
                 store.put(result);
                 calculate_attendances(classroom);
             }
+        }
+
+        function get_current_attendance_date()
+        {
+            var selected_date = $('.attendance-date').attr('itemid');
+            if(!selected_date){
+                selected_date = getCurrentDate();
+            }
+            return selected_date;
         }
 
     </script>
