@@ -1,6 +1,7 @@
 import json
 from django import template
 from django.utils.safestring import mark_safe
+from rest_framework.authtoken.models import Token
 
 register = template.Library()
 
@@ -43,3 +44,8 @@ def json_load_value(data, key):
         return list[key]
     return ''
 
+
+@register.assignment_tag
+def get_user_token(user_id):
+    token = Token.objects.get(user_id=user_id)
+    return token.key
