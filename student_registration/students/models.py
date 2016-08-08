@@ -107,12 +107,6 @@ class Language(models.Model):
 class EducationLevel(models.Model):
     name = models.CharField(max_length=45L, unique=True)
 
-    school = models.ForeignKey(
-        School,
-        blank=False, null=True,
-        related_name='+',
-    )
-
     def __unicode__(self):
         return self.name
 
