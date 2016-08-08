@@ -1,11 +1,13 @@
 {% extends "base.appcache.html" %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
 
 {% block extra_head %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-switch.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-button-group.css' %}">
     <style>
         .row-class {
             border: 1px solid;
@@ -47,6 +49,8 @@
                                         <option value="{{ item.id }}" itemscope="{% if item.location %}{{ item.location.id }}{% else %}0{% endif %}">{{ item.name }}</option>
                                     {% endfor %}
                                 </select>
+                                <div class="btn-group" role="group" aria-label="days" id="attendance-days">
+                                </div>
                             </h4>
                           </div>
                      </div>
@@ -55,7 +59,7 @@
             </section>
 
             <div class="container-main" id="classes-list"></div>
-            <span class="badge" id="other-classes" style="display: none;">Other classes</span>
+            <span class="badge" id="other-classes" style="display: none;">{% trans 'Other classes' %}</span>
             <div id="attendance-sheet" style="display: none;">
 
                 <table id="attendance-table" {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}
@@ -92,6 +96,7 @@
 {% endblock %}
 
 {% block extra_js %}
+    {% get_user_token request.user.id as user_token %}
 
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
@@ -108,6 +113,7 @@
         var user_id = {{ request.user.id }};
         var user_username = '{{ request.user.username }}';
         var user_email = '{{ request.user.email }}';
+        var user_token = '{{ user_token }}';
         var rows = 1;
 
         var protocol = 'http://';
@@ -148,6 +154,17 @@
                 $('#attendance-sheet').hide();
                 $('.row-class').show();
                 display_classes($(this).val());
+                display_attendance_days(getCurrentDate());
+            });
+
+            $(document).on('click', '.btn-attendance-day', function(){
+                $('.btn-attendance-day').removeClass('active');
+                $(this).addClass('active');
+                $('#other-classes').hide();
+                $('#attendance-sheet').hide();
+                $('.row-class').show();
+                $("#attendance-validate-all").show();
+                calculate_attendances($('#school-filter').val());
             });
 
             $(document).on('click', '.row-class', function(){
@@ -221,14 +238,41 @@
             };
         }
 
+        function display_attendance_days(selected)
+        {
+            var container = $('#attendance-days');
+            container.empty();
+            var days = new Array();
+            var store = getStoreByName('classroomsAttendances');
+            var request = store.getAll();
+            request.onsuccess = function(){
+                var result = request.result;
+                $(result).each(function(i, item){
+                    if(days[item.attendance_date] == undefined){
+                        days[item.attendance_date] = item.attendance_date;
+                        var day = $('<button>').attr('type', 'button')
+                                .addClass('btn')
+                                .addClass('btn-default')
+                                .addClass('btn-attendance-day')
+                                .attr('itemid', item.attendance_date)
+                                .text(item.attendance_date);
+                        if(selected == item.attendance_date){
+                            day.addClass('active');
+                        }
+                        container.append(day);
+                    }
+                });
+            };
+        }
+
         function calculate_attendances(classroom)
         {
             var attendance = $('#row-class-'+classroom);
             var store = getStoreByName("attendances");
             var index = store.index("classroomAndDateAndStatus");
 
-            var request1 = index.getAll([parseInt(classroom), getCurrentDate(), 1]);
-            var request2 = index.getAll([parseInt(classroom), getCurrentDate(), 0]);
+            var request1 = index.getAll([parseInt(classroom), get_current_attendance_date(), 1]);
+            var request2 = index.getAll([parseInt(classroom), get_current_attendance_date(), 0]);
 
             attendance.find('.ttl_students').text(0);
 
@@ -247,21 +291,6 @@
 
         function validate_attendances()
         {
-{#            $('#classes-list').find('.row-class').each(function(i, item){#}
-{#                var selected_date = get_current_attendance_date();#}
-{#                var classroom = parseInt(item.attr('itemid'));#}
-{#                #}
-{#                console.log(item);#}
-{#                #}
-{#                var store = getStoreByName('classroomsAttendances');#}
-{#                var index = store.index('classroomAndDate');#}
-{#                var request = index.getAll([classroom, selected_date]);#}
-{#                request.onsuccess = function(){#}
-{#                    var result = request.result;#}
-{#                    $(result).each()#}
-{#                };#}
-{#            });#}
-
             var selected_date = get_current_attendance_date();
             var store = getStoreByName('classroomsAttendances');
             var index = store.index('date');
@@ -279,7 +308,7 @@
         {
             var store = getStoreByName("attendances");
             var index = store.index("classroomAndDate");
-            var request = index.getAll([parseInt(classroom), getCurrentDate()]);
+            var request = index.getAll([parseInt(classroom), get_current_attendance_date()]);
             request.onsuccess = function(){
                 var result = request.result;
                 if(result.length){
@@ -310,7 +339,7 @@
         {
             var store = getStoreByName("attendances");
             var index = store.index("classroomAndDateAndStudent");
-            var request = index.get([parseInt(classroom), getCurrentDate(), parseInt(registration.student_id)]);
+            var request = index.get([parseInt(classroom), get_current_attendance_date(), parseInt(registration.student_id)]);
 
             request.onsuccess = function(){
                 if(!request.result) {
@@ -325,7 +354,7 @@
             $("#attendance-validate-all").hide();
             var store = getStoreByName("attendances");
             var index = store.index("classroomAndDate");
-            var request = index.getAll([parseInt(classroom), getCurrentDate()]);
+            var request = index.getAll([parseInt(classroom), get_current_attendance_date()]);
             $('#attendance-table').find('tbody').empty();
             $('#attendance-sheet').show();
 
@@ -372,7 +401,14 @@
                     create_student_row(item);
                 });
                 calculate_attendances(classroom);
-            }
+                create_classroom_attendance(classroom);
+            };
+        }
+
+        function create_classroom_attendance(classroom)
+        {
+            var store = getStoreByName('classroomsAttendances');
+            store.put({classroom: parseInt(classroom), attendance_date: getCurrentDate(), validated: 0});
         }
 
         function create_student_row(item)
@@ -388,7 +424,7 @@
                 state: 0,
                 student_sex: item.student_sex,
                 owner: user_id,
-                attendance_date: getCurrentDate(),
+                attendance_date: get_current_attendance_date(),
                 validation_status: false,
                 validation_state: 0,
                 validation_date: null,
@@ -575,6 +611,18 @@
             request.onsuccess = function() {
                 db = request.result;
                 load_base_data();
+{#                var store = getStoreByName('classroomsAttendances');#}
+{#                store.put({classroom: 1, attendance_date: '04/08/2016', validated: 0});#}
+{#                store.put({classroom: 2, attendance_date: '04/08/2016', validated: 0});#}
+{#                store.put({classroom: 4, attendance_date: '04/08/2016', validated: 0});#}
+{##}
+{#                store.put({classroom: 1, attendance_date: '05/08/2016', validated: 0});#}
+{#                store.put({classroom: 2, attendance_date: '05/08/2016', validated: 0});#}
+{#                store.put({classroom: 4, attendance_date: '05/08/2016', validated: 0});#}
+{##}
+{#                store.put({classroom: 1, attendance_date: '08/08/2016', validated: 0});#}
+{#                store.put({classroom: 2, attendance_date: '08/08/2016', validated: 0});#}
+{#                store.put({classroom: 4, attendance_date: '08/08/2016', validated: 0});#}
             };
         }
 
@@ -589,7 +637,7 @@
 
             var store = getStoreByName("attendances");
             var index = store.index("classroomAndDateAndStudent");
-            var request = index.get([parseInt(classroom), getCurrentDate(), parseInt(student)]);
+            var request = index.get([parseInt(classroom), get_current_attendance_date(), parseInt(student)]);
             request.onsuccess = function() {
                 var result = request.result;
                 result.status = status;
@@ -601,7 +649,7 @@
 
         function get_current_attendance_date()
         {
-            var selected_date = $('.attendance-date').attr('itemid');
+            var selected_date = $('#attendance-days').find('.active').attr('itemid');
             if(!selected_date){
                 selected_date = getCurrentDate();
             }
