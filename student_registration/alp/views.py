@@ -229,8 +229,12 @@ class AttendanceView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         data = self.model.objects.all()
+        extands = 'base.html'
+        if not self.request.user.is_superuser:
+            extands = 'base.appcache.html'
 
         return {
+            'extands_template': extands,
             'attendances': data,
             'locations': Location.objects.all(),
             'schools': School.objects.all(),
