@@ -1,4 +1,8 @@
-{% extends "base.appcache.html" %}
+{% if request.user.is_superuser %}
+    {% extends "base.html" %}
+{% else %}
+    {% extends "base.appcache.html" %}
+{% endif %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
@@ -456,16 +460,16 @@
 
         function push_data_to_server(item)
         {
-            var csrftoken = getCookie('csrftoken');
+{#            var csrftoken = getCookie('csrftoken');#}
             var data = item;
-            data['csrfmiddlewaretoken'] = csrftoken;
+{#            data['csrfmiddlewaretoken'] = csrftoken;#}
 
             $.ajax({
                 type: "POST",
                 url: synchro_path,
                 data: data,
                 cache: false,
-                headers: {"X-CSRFToken":csrftoken},
+                headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
                     if(response.status == '201'){
@@ -488,16 +492,16 @@
 
         function update_data_into_server(item)
         {
-            var csrftoken = getCookie('csrftoken');
+{#            var csrftoken = getCookie('csrftoken');#}
             var data = item;
-            data['csrfmiddlewaretoken'] = csrftoken;
+{#            data['csrfmiddlewaretoken'] = csrftoken;#}
 
             $.ajax({
                 type: "PUT",
                 url: synchro_path+item.original_id+'/',
                 data: data,
                 cache: false,
-                headers: {"X-CSRFToken":csrftoken},
+                headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
                     if(response.status == '200'){
@@ -519,14 +523,14 @@
         function pull_data_from_server(url, store_name)
         {
             var store = getStoreByName(store_name);
-            var csrftoken = getCookie('csrftoken');
-            data = {csrfmiddlewaretoken: csrftoken};
+{#            var csrftoken = getCookie('csrftoken');#}
+{#            data = {csrfmiddlewaretoken: csrftoken};#}
 
             $.ajax({
                 type: "GET",
                 url: url,
                 cache: false,
-                headers: {"X-CSRFToken":csrftoken},
+                headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
                     $(response).each(function(i, item){
@@ -654,6 +658,13 @@
                 selected_date = getCurrentDate();
             }
             return selected_date;
+        }
+
+        function getHeader()
+        {
+            var csrftoken = getCookie('csrftoken');
+            var header = {'Authorization': 'Token '+user_token, 'X-CSRFToken': csrftoken};
+            return header;
         }
 
     </script>
