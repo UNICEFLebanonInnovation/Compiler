@@ -1,6 +1,7 @@
 {% extends "base.appcache.html" %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
 
 {% block extra_head %}
 
@@ -159,6 +160,7 @@
 
 {% block extra_js %}
 
+    {% get_user_token request.user.id as user_token %}
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
@@ -173,6 +175,7 @@
         var user_id = {{ request.user.id }};
         var user_username = '{{ request.user.username }}';
         var user_email = '{{ request.user.email }}';
+        var user_token = '{{ user_token }}';
         var columns = 0;
         var rows = 1;
         var protocol = 'http://';
@@ -616,16 +619,16 @@
 
         function push_data_to_server(item)
         {
-            var csrftoken = getCookie('csrftoken');
+{#            var csrftoken = getCookie('csrftoken');#}
             var data = item;
-            data['csrfmiddlewaretoken'] = csrftoken;
+{#            data['csrfmiddlewaretoken'] = csrftoken;#}
             console.log(data);
             $.ajax({
                 type: "POST",
                 url: synchro_path,
                 data: data,
                 cache: false,
-                headers: {"X-CSRFToken":csrftoken},
+                headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
                     console.log(response);
@@ -651,16 +654,16 @@
 
         function update_data_into_server(item)
         {
-            var csrftoken = getCookie('csrftoken');
+{#            var csrftoken = getCookie('csrftoken');#}
             var data = item;
-            data['csrfmiddlewaretoken'] = csrftoken;
+{#            data['csrfmiddlewaretoken'] = csrftoken;#}
 
             $.ajax({
                 type: "PUT",
                 url: synchro_path+item.original_id+'/',
                 data: data,
                 cache: false,
-                headers: {"X-CSRFToken":csrftoken},
+                headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
                     if(response.status == '200'){
@@ -698,7 +701,7 @@
 
         function patch_extra_field_data_on_server(item)
         {
-            var csrftoken = getCookie('csrftoken');
+{#            var csrftoken = getCookie('csrftoken');#}
             var data = item.extra_fields;
 
             $.ajax({
@@ -706,7 +709,7 @@
                 url: synchro_path+item.original_id+'/',
                 data: data,
                 cache: false,
-                headers: {"X-CSRFToken":csrftoken},
+                headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
                     console.log(response);
@@ -721,12 +724,12 @@
 
         function delete_data_from_server(item)
         {
-            var csrftoken = getCookie('csrftoken');
+{#            var csrftoken = getCookie('csrftoken');#}
             $.ajax({
                 type: "DELETE",
                 url: synchro_path+item.original_id+'/',
                 cache: false,
-                headers: {"X-CSRFToken":csrftoken},
+                headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
                     if(response.status = '200') {
@@ -742,14 +745,14 @@
 
         function pull_data_from_server()
         {
-            var csrftoken = getCookie('csrftoken');
-            data['csrfmiddlewaretoken'] = csrftoken;
+{#            var csrftoken = getCookie('csrftoken');#}
+{#            data['csrfmiddlewaretoken'] = csrftoken;#}
 
             $.ajax({
                 type: "GET",
                 url: synchro_path,
                 cache: false,
-                headers: {"X-CSRFToken":csrftoken},
+                headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
                     if(response.status == '201'){
@@ -772,16 +775,16 @@
 
         function push_extra_columns_to_server(item)
         {
-            var csrftoken = getCookie('csrftoken');
+{#            var csrftoken = getCookie('csrftoken');#}
             var data = item;
-            data['csrfmiddlewaretoken'] = csrftoken;
+{#            data['csrfmiddlewaretoken'] = csrftoken;#}
 
             $.ajax({
                 type: "POST",
                 url: synchro_path_extra,
                 data: data,
                 cache: false,
-                headers: {"X-CSRFToken":csrftoken},
+                headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
                     if(response.status == '201'){
@@ -797,12 +800,11 @@
 
         function update_extra_columns_on_server(item)
         {
-            var csrftoken = getCookie('csrftoken');
             $.ajax({
                 type: "PUT",
                 url: synchro_path_extra+item.original_id+'/',
                 cache: false,
-                headers: {"X-CSRFToken":csrftoken},
+                headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
                     if(response.status = '200') {
@@ -818,12 +820,11 @@
 
         function delete_extra_columns_from_server(item)
         {
-            var csrftoken = getCookie('csrftoken');
             $.ajax({
                 type: "DELETE",
                 url: synchro_path_extra+item.original_id+'/',
                 cache: false,
-                headers: {"X-CSRFToken":csrftoken},
+                headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
                     if(response.status = '200') {
@@ -901,6 +902,13 @@
                 item[name] = value;
                 store.put(item);
             };
+        }
+
+        function getHeader()
+        {
+            var csrftoken = getCookie('csrftoken');
+            var header = {'Authorization': 'Token '+user_token, 'X-CSRFToken': csrftoken};
+            return header;
         }
 
     </script>
