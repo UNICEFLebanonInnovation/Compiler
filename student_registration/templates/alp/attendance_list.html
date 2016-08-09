@@ -1,8 +1,5 @@
-{% if request.user.is_superuser %}
-    {% extends "base.html" %}
-{% else %}
-    {% extends "base.appcache.html" %}
-{% endif %}
+{% extends extands_template %}
+
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
