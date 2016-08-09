@@ -632,10 +632,13 @@
                 dataType: 'json',
                 success: function (response) {
                     console.log(response);
-                    if(response.status == '201'){
+                    if(response.status == '201' || response.status == 201){
+                        console.log(response.status);
                         $('#line-'+item.id).find('.outreach-field').removeClass('required');
-                        update_item_store(item.id, 'synchronized', true);
                         item.original_id = response.data.id;
+                        item.synchronized = true;
+
+                        update_item_store(item.id, 'synchronized', true);
                         update_item_store(item.id, 'original_id', response.data.id);
                         create_extra_field_store(item, response.data.id);
                         patch_extra_field_data_on_server(item);
