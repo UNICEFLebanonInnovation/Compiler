@@ -375,8 +375,10 @@
                 success: function (response) {
                     if(response.status == '201'){
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
-                        update_item_store(item.id, 'synchronized', true);
+                        item.synchronized = true;
                         item.original_id = response.data.id;
+
+                        update_item_store(item.id, 'synchronized', true);
                         update_item_store(item.id, 'original_id', response.data.id);
                     }
                 },
