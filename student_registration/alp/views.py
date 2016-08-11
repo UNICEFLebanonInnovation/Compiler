@@ -13,8 +13,8 @@ from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 
-from .models import Outreach, ExtraColumn, Registration, Attendance
-from .serializers import OutreachSerializer, ExtraColumnSerializer, RegistrationSerializer, AttendanceSerializer
+from .models import Outreach, ExtraColumn, Registration
+from .serializers import OutreachSerializer, ExtraColumnSerializer, RegistrationSerializer
 from student_registration.students.models import (
     Student,
     School,
@@ -121,8 +121,13 @@ class RegistrationViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+        if not self.request.user.is_superuser:
+            if self.request.user.school:
+                return self.queryset.filter(school=self.request.user.school.id)
+            else:
+                return []
+
         return self.queryset
-        # return self.queryset.filter(owner=self.request.user)
 
     def create(self, request, *args, **kwargs):
         """
@@ -141,36 +146,6 @@ class RegistrationViewSet(mixins.RetrieveModelMixin,
         if student:
             student.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
-
-    def update(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
-        return JsonResponse({'status': status.HTTP_200_OK})
-
-
-class AttendanceViewSet(mixins.RetrieveModelMixin,
-                      mixins.ListModelMixin,
-                      mixins.CreateModelMixin,
-                      mixins.UpdateModelMixin,
-                      viewsets.GenericViewSet):
-
-    model = Attendance
-    queryset = Attendance.objects.all()
-    serializer_class = AttendanceSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get_queryset(self):
-        return self.queryset
-        # return self.queryset.filter(owner=self.request.user)
-
-    def create(self, request, *args, **kwargs):
-        """
-        :return: JSON
-        """
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.instance = serializer.save()
-
-        return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
 
     def update(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
@@ -220,26 +195,6 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'sections': Section.objects.all(),
             'nationalities': Nationality.objects.all(),
             'genders': (u'Male', u'Female'),
-        }
-
-
-class AttendanceView(LoginRequiredMixin, ListView):
-    model = Attendance
-    template_name = 'alp/attendance_list.html'
-
-    def get_context_data(self, **kwargs):
-        data = self.model.objects.all()
-        extands = 'base.html'
-        if not self.request.user.is_superuser:
-            extands = 'base.appcache.html'
-
-        return {
-            'extands_template': extands,
-            'attendances': data,
-            'locations': Location.objects.all(),
-            'schools': School.objects.all(),
-            'grades': Grade.objects.all(),
-            'sections': Section.objects.all()
         }
 
 

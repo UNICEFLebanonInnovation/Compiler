@@ -62,6 +62,8 @@
                                     </select>
                                     </a></li>
                                 {% endif %}
+                            </ol>
+                            <ol class="breadcrumb">
                                 <li><a><div class="btn-group" role="group" aria-label="days" id="attendance-days"></div></a></li>
                             </ol>
                             </h4>
@@ -100,10 +102,6 @@
                 <i class="icon-validation-sign icon-white"></i>&nbsp;
                     {% trans "Validate All" %}
               </a>
-{#              <a class="btn btn-info" id="attendance-export" href="{% url "alp:attendance_export" %}" target="_blank">#}
-{#                <i class="icon-export-sign icon-white"></i>&nbsp;#}
-{#                    {% trans "Export" %}#}
-{#              </a>#}
          </section>
 
 {% endblock %}
@@ -135,7 +133,7 @@
             protocol = 'https://';
         {% endif %}
         var host = '{{ request.get_host }}';
-        var synchro_path = protocol+host+'/api/attendance/';
+        var synchro_path = protocol+host+'/api/attendances/';
 
         window.addEventListener("offline", function(e) {
           $('#attendance-synchro').hide();
@@ -564,7 +562,7 @@
             pull_data_from_server('/api/sections/', 'sections');
             pull_data_from_server('/api/students/', 'students');
             pull_data_from_server('/api/registration/', 'registrations');
-            pull_data_from_server('/api/attendance/', 'attendances');
+            pull_data_from_server('/api/attendances/', 'attendances');
         }
 
         function createStores()
