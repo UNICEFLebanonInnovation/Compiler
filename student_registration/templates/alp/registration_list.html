@@ -47,8 +47,8 @@
                                         <th>{% trans "School number" %}</th>
                                         <th>{% trans "School" %}</th>
                                         <th>{% trans "Class room" %}</th>
-{#                                        <th>{% trans "Grade" %}</th>#}
-{#                                        <th>{% trans "Section" %}</th>#}
+                                        <th>{% trans "Grade" %}</th>
+                                        <th>{% trans "Section" %}</th>
                                         <th>{% trans "Student living address" %}</th>
                                         <th>{% trans "Phone number" %}</th>
                                         <th>
@@ -69,8 +69,8 @@
                                             <td>{% if registry.school %}{{ registry.school.number }}{% endif %}</td>
                                             <td>{% if registry.school %}{{ registry.school.name }}{% endif %}</td>
                                             <td>{% if registry.classroom %}{{ registry.classroom.name }}{% endif %}</td>
-{#                                            <td>{% if registry.grade %}{{ registry.grade.name }}{% endif %}</td>#}
-{#                                            <td>{% if registry.section %}{{ registry.section.name }}{% endif %}</td>#}
+                                            <td>{% if registry.grade %}{{ registry.grade.name }}{% endif %}</td>
+                                            <td>{% if registry.section %}{{ registry.section.name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.address }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.phone }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.id_number }}{% endif %}</td>
