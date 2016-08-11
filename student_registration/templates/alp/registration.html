@@ -62,14 +62,14 @@
                                             {% trans "Class room" %}
                                             <input type="checkbox" name="duplicate_classroom" id="duplicate_classroom" />
                                         </th>
-{#                                        <th rowspan="2">#}
-{#                                            {% trans "Grade" %}#}
-{#                                            <input type="checkbox" name="duplicate_grade" id="duplicate_grade" />#}
-{#                                        </th>#}
-{#                                        <th rowspan="2">#}
-{#                                            {% trans "Section" %}#}
-{#                                            <input type="checkbox" name="duplicate_section" id="duplicate_section" />#}
-{#                                        </th>#}
+                                        <th rowspan="2">
+                                            {% trans "Grade" %}
+                                            <input type="checkbox" name="duplicate_grade" id="duplicate_grade" />
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Section" %}
+                                            <input type="checkbox" name="duplicate_section" id="duplicate_section" />
+                                        </th>
                                         <th rowspan="2">
                                             {% trans "Student living address" %}
                                         </th>
@@ -181,6 +181,7 @@
 
                         var params = {
                             school: $('#duplicate_school').is(':checked'),
+                            classroom: $('#duplicate_classroom').is(':checked'),
                             section: $('#duplicate_section').is(':checked'),
                             grade: $('#duplicate_grade').is(':checked'),
                         };
