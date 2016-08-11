@@ -116,7 +116,7 @@
             <input type="text" name="student_phone" id="student_phone" class="outreach-field" itemscope="$$itemscope_id$$" />
         </td>
         <td>
-            <input type="text" name="student_id_number" value="0" id="student_id_number" class="outreach-field" itemscope="$$itemscope_id$$" />
+            <input type="text" name="student_id_number" value="00000" id="student_id_number" class="outreach-field" itemscope="$$itemscope_id$$" />
         </td>
         <td>
             <select name="student_sex" id="student_sex" class="outreach-field" itemscope="$$itemscope_id$$">
@@ -165,7 +165,7 @@
             <input type="text" name="student_full_name" id="student_full_name" class="outreach-field" itemscope="$$itemscope_id$$" />
         </td>
         <td>
-
+            <input type="text" readonly="readonly" name="student_number" id="student_number" class="outreach-field" itemscope="$$itemscope_id$$" />
         </td>
         <td>
             <select name="partner" id="partner" class="outreach-field" itemscope="$$itemscope_id$$">
@@ -175,8 +175,5 @@
                 {% endfor %}
             </select>
         </td>
-{#        <td>#}
-{#            <button class="btn btn-danger delete-outreach-row" itemscope="$$itemscope_id$$">{% trans "Delete" %}</button>#}
-{#        </td>#}
     </tr>
 </table>

@@ -212,6 +212,10 @@
                 update_item_store($(this).attr('itemscope'), $(this).attr('name'), $(this).val());
             });
 
+            $(document).on('change', 'input[name=student_full_name]', function(){
+                generate_student_number($(this).attr('itemscope'));
+            });
+
             $(document).on('click', '#registration-synchro', function(){
                 synchronize_data(true);
             });
@@ -361,9 +365,7 @@
 
         function push_data_to_server(item)
         {
-{#            var csrftoken = getCookie('csrftoken');#}
             var data = item;
-{#            data['csrfmiddlewaretoken'] = csrftoken;#}
 
             $.ajax({
                 type: "POST",
@@ -395,9 +397,7 @@
 
         function update_data_into_server(item)
         {
-{#            var csrftoken = getCookie('csrftoken');#}
             var data = item;
-{#            data['csrfmiddlewaretoken'] = csrftoken;#}
 
             $.ajax({
                 type: "PUT",
@@ -425,7 +425,6 @@
 
         function delete_data_from_server(item)
         {
-{#            var csrftoken = getCookie('csrftoken');#}
             $.ajax({
                 type: "DELETE",
                 url: synchro_path+item.original_id+'/',
@@ -446,9 +445,6 @@
 
         function pull_data_from_server()
         {
-{#            var csrftoken = getCookie('csrftoken');#}
-{#            data['csrfmiddlewaretoken'] = csrftoken;#}
-
             $.ajax({
                 type: "GET",
                 url: synchro_path,
