@@ -233,3 +233,10 @@ class Student(TimeStampedModel):
             self.birthday_month,
             self.birthday_year,
         )
+
+    @property
+    def attendance_list(self):
+        attendances = {}
+        for item in self.attendances.all():
+            attendances[item.attendance_date] = item.status
+        return attendances
