@@ -481,6 +481,9 @@ msgstr "الحضور"
 msgid "Class"
 msgstr "الصف"
 
+msgid "Class room"
+msgstr "الصف"
+
 msgid "Registered by"
 msgstr "تم التسجيل من قبل"
 
@@ -501,3 +504,6 @@ msgstr "الدرجة"
 
 msgid "Section"
 msgstr "القسم"
+
+msgid "Students"
+msgstr "التلاميذ"

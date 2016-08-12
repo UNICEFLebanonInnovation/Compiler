@@ -52,5 +52,7 @@ django-filter==0.13.0
 django-rest-swagger==0.3.5
 drf-nested-routers==0.11.1
 xlsxwriter==0.9.2
+tablib==0.11.2
+django-import-export==0.4.5
 
 # Your custom requirements go here

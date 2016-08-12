@@ -11,6 +11,8 @@ CACHE MANIFEST
 /static/css/jquery.dataTables.min.css
 /static/css/buttons.dataTables.min.css
 /static/css/select.dataTables.min.css
+/static/css/bootstrap-switch.min.css
+/static/css/bootstrap-badge.css
 /static/js/project.js
 /static/js/angular.min.js
 /static/js/jquery.min.js
@@ -20,6 +22,7 @@ CACHE MANIFEST
 /static/js/jquery-1.12.3.min.js
 /static/js/jquery.dataTables.min.js
 /static/js/dataTables.bootstrap.min.js
+/static/js/bootstrap-switch.min.js
 /static/js/util.js
 /static/js/tooltip.js
 /static/js/bootbox.js

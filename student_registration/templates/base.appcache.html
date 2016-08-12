@@ -1,8 +1,9 @@
 {% load staticfiles i18n %}
+{#{% load static from staticfiles %}#}
 {% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-{#<html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %} manifest="{% static 'manifest.appcache' %}">#}
-<html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %}>
+<html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %} manifest="{% static 'manifest.appcache' %}">
+{#<html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %}>#}
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -38,7 +39,7 @@
     <div class="m-b">
       <nav class="navbar navbar-dark navbar-static-top bg-inverse">
         <div class="container">
-          <a class="navbar-brand" href="/">{% trans "Student Registration" %}</a>
+          <a class="navbar-brand" href="/?ln={{ LANGUAGE_CODE }}">{% trans "Student Registration" %}</a>
           <button type="button" class="navbar-toggler hidden-sm-up pull-xs-right" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
             &#9776;
           </button>
@@ -53,13 +54,13 @@
                 {% endif %}
             {% if request.user.is_authenticated %}
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'alp:outreach' %}">{% trans "Outreach" %}</a>
+                    <a class="nav-link" href="{% url 'alp:outreach' %}?ln={{ LANGUAGE_CODE }}">{% trans "Outreach" %}</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'alp:registration' %}">{% trans "Registration" %}</a>
+                    <a class="nav-link" href="{% url 'alp:registration' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'alp:attendance' %}">{% trans "Attendance" %}</a>
+                    <a class="nav-link" href="{% url 'alp:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>
                   </li>
             {% endif %}
             </ul>
@@ -139,7 +140,7 @@
       <!-- Your stuff: Third-party javascript libraries go here -->
 
       <!-- place project specific Javascript in this file -->
-{#      <script src="{% static 'js/project.js' %}"></script>#}
+      <script src="{% static 'js/project.js' %}"></script>
     {% endblock javascript %}
     {% block extra_js %}
     {% endblock %}
