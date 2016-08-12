@@ -29,21 +29,29 @@
             </select>
         </td>
         <td>
-            <select name="grade" id="grade" class="registration-field" itemscope="$$itemscope_id$$">
+            <select name="classroom" id="classroom" class="registration-field" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
-                {% for item in grades %}
+                {% for item in classrooms %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
         </td>
-        <td>
-            <select name="section" id="section" class="registration-field" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
-                {% for item in sections %}
-                    <option value="{{ item.id }}">{{ item.name }}</option>
-                {% endfor %}
-            </select>
-        </td>
+{#        <td>#}
+{#            <select name="grade" id="grade" class="registration-field" itemscope="$$itemscope_id$$">#}
+{#                <option value="">-------</option>#}
+{#                {% for item in grades %}#}
+{#                    <option value="{{ item.id }}">{{ item.name }}</option>#}
+{#                {% endfor %}#}
+{#            </select>#}
+{#        </td>#}
+{#        <td>#}
+{#            <select name="section" id="section" class="registration-field" itemscope="$$itemscope_id$$">#}
+{#                <option value="">-------</option>#}
+{#                {% for item in sections %}#}
+{#                    <option value="{{ item.id }}">{{ item.name }}</option>#}
+{#                {% endfor %}#}
+{#            </select>#}
+{#        </td>#}
         <td>
             <input type="text" name="student_address" id="student_address" class="registration-field" itemscope="$$itemscope_id$$" />
         </td>

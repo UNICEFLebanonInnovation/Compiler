@@ -78,3 +78,21 @@ input.required, select.required {
 .icon-export-sign {
    background-position: -96px -24px;
 }
+.icon-validation-sign {
+  background-position: -288px 0px;
+}
+
+.icon-Male {
+  background-position: 0px 0px;
+  width: 55px;
+  height: 55px;
+  vertical-align: middle;
+  background-image: url("../images/icon-Male.png");
+}
+.icon-Female {
+  background-position: 0px 0px;
+  width: 55px;
+  height: 55px;
+  vertical-align: middle;
+  background-image: url("../images/icon-Female.png");
+}
