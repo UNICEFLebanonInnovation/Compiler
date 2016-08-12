@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from model_utils import Choices
+from model_utils.models import TimeStampedModel
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from student_registration.students.models import (
@@ -18,7 +19,7 @@ from student_registration.students.models import (
 )
 
 
-class Outreach(models.Model):
+class Outreach(TimeStampedModel):
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
@@ -92,7 +93,6 @@ class Outreach(models.Model):
         null=True,
         choices=((str(x), x) for x in range(1, 33))
     )
-
     extra_fields = JSONField(
         blank=True,
         null=True,
@@ -114,7 +114,7 @@ class Outreach(models.Model):
         return ''
 
 
-class ExtraColumn(models.Model):
+class ExtraColumn(TimeStampedModel):
     name = models.CharField(max_length=64L, blank=True, null=True)
     label = models.CharField(max_length=64L, blank=True, null=True)
     owner = models.ForeignKey(
@@ -124,7 +124,7 @@ class ExtraColumn(models.Model):
     )
 
 
-class Registration(models.Model):
+class Registration(TimeStampedModel):
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
@@ -145,7 +145,11 @@ class Registration(models.Model):
         blank=False, null=True,
         related_name='+',
     )
-    registration_date = models.DateField(blank=True, null=True)
+    classroom = models.ForeignKey(
+        ClassRoom,
+        blank=False, null=True,
+        related_name='+'
+    )
     year = models.CharField(
         max_length=4,
         blank=True,
@@ -159,11 +163,16 @@ class Registration(models.Model):
     )
 
 
-class Attendance(models.Model):
+class Attendance(TimeStampedModel):
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
         related_name='attendances',
+    )
+    classroom = models.ForeignKey(
+        ClassRoom,
+        blank=False, null=True,
+        related_name='+'
     )
     status = models.BooleanField(default=False)
     attendance_date = models.DateField(blank=True, null=True)
@@ -172,4 +181,12 @@ class Attendance(models.Model):
         blank=False, null=True,
         related_name='+',
     )
+    validation_status = models.BooleanField(default=False)
+    validation_date = models.DateField(blank=True, null=True)
+    validation_owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+    )
+
 
