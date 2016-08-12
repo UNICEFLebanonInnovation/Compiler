@@ -31,7 +31,7 @@ class Attendance(TimeStampedModel):
     attendance_date = models.DateField(blank=True, null=True)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     validation_status = models.BooleanField(default=False)

@@ -18,6 +18,7 @@ from student_registration.students.models import (
     School,
     Section,
 )
+from student_registration.alp.models import Registration
 from .models import Attendance
 from .serializers import AttendanceSerializer
 
@@ -62,12 +63,11 @@ class AttendanceView(LoginRequiredMixin, ListView):
     template_name = 'attendances/index.html'
 
     def get_context_data(self, **kwargs):
-        data = self.model.objects.all()
-        extands = 'base.html'
         selected_school = 0
         school = 0
-        if not self.request.user.is_superuser:
-            extands = 'base.appcache.html'
+
+        if self.request.user.is_superuser:
+            self.template_name = 'attendances/list.html'
         if self.request.user.school:
             selected_school = self.request.user.school.id
             school = self.request.user.school
@@ -75,8 +75,6 @@ class AttendanceView(LoginRequiredMixin, ListView):
         return {
             'school': school,
             'selected_school': selected_school,
-            'extands_template': extands,
-            'attendances': data,
             'locations': Location.objects.all(),
             'schools': School.objects.all(),
             'grades': Grade.objects.all(),

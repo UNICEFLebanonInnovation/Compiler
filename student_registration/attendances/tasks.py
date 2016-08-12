@@ -55,31 +55,46 @@ def set_app_attendances():
     docs = []
     from student_registration.students.models import ClassRoom
     from student_registration.alp.models import Registration
+    from student_registration.attendances.models import Attendance
     classes = ClassRoom.objects.all()
     for item in classes:
         students = []
-        registrations = Registration.objects.filter(classroom_id=item.id)
+        attstudent = {}
+        attendances = {}
+        registrations = Registration.objects.filter(classroom_id=item.id, school_id=item.school.id)
         for reg in registrations:
             student = {
-                "student": reg.student.id,
+                "student_id": reg.student.id,
                 "student_name": reg.student.full_name,
                 "gender": reg.student.sex,
-                "attendance": reg.student.attendance_list
             }
+            attstudent[reg.student.id] = False
             students.append(student)
 
+        attendqueryset = Attendance.objects.filter(classroom_id=item.id, school_id=item.school.id)
+        for att in attendqueryset:
+            attendances = {
+                att.attendance_date.strftime('%Y-%m-%d'): {
+                    "validation_date": att.validation_date.strftime('%Y-%m-%d'),
+                    "students": attstudent
+                }
+            }
+            attendances[att.attendance_date.strftime('%Y-%m-%d')]["students"][att.student.id] = att.status
+
         doc = {
-            "class": item.id,
+            "class_id": item.id,
             "class_name": item.name,
-            "grade": item.grade.id,
+            "grade_id": item.grade.id,
             "grade_name": item.grade.name,
-            "location": item.school.location.id,
+            "location_id": item.school.location.id,
             "location_name": item.school.location.name,
-            "school": item.school.id,
+            "location_pcode": item.school.location.p_code,
+            "school_id": item.school.id,
             "school_name": item.school.name,
-            "section": item.section.id,
+            "section_id": item.section.id,
             "section_name": item.section.name,
-            "students": students
+            "students": students,
+            "attendance": attendances
         }
         docs.append(doc)
 
@@ -100,3 +115,33 @@ def import_docs(**kwargs):
         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
     ).json()
 
+    for row in data['rows']:
+        if 'attendance' in row['doc']:
+            classroom = row['doc']['class_id']
+            school = row['doc']['school_id']
+            attendance = row['doc']['attendance']
+            validation_date = attendance['validation_date']
+            attendance_date = attendance[0]
+            students = attendance['students']
+            try:
+                for student_id, status in students:
+                    instance = Attendance.objects.get(
+                        student_id=student_id,
+                        classroom_id=classroom,
+                        school_id=school,
+                        attendance_date=attendance_date
+                    )
+                instance.status = status
+                instance.validation_date = validation_date
+                instance.save()
+            except Attendance.DoesNotExist:
+                Attendance.objects.create(
+                        student_id=student_id,
+                        classroom_id=classroom,
+                        school_id=school,
+                        attendance_date=attendance_date,
+                        status=status,
+                        validation_date=validation_date
+                )
+            except Exception as exp:
+                print exp.message
