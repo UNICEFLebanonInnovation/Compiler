@@ -16,6 +16,10 @@ function getCookie(name) {
     return cookieValue;
 }
 
+/**
+ *
+ * @returns yyyy-mm-dd
+ */
 function getCurrentDate()
 {
     var today = new Date();
@@ -29,7 +33,7 @@ function getCurrentDate()
     if(mm<10){
         mm='0'+mm
     }
-    return dd+'/'+mm+'/'+yyyy;
+    return yyyy+'-'+mm+'-'+dd;
 }
 
 function generate_student_number(itemscope)
