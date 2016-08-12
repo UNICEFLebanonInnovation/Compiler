@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from model_utils import Choices
+from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
 from paintstore.fields import ColorPickerField
 from django.utils.translation import ugettext as _
@@ -106,12 +107,6 @@ class Language(models.Model):
 class EducationLevel(models.Model):
     name = models.CharField(max_length=45L, unique=True)
 
-    school = models.ForeignKey(
-        School,
-        blank=False, null=True,
-        related_name='+',
-    )
-
     def __unicode__(self):
         return self.name
 
@@ -139,6 +134,11 @@ class Section(models.Model):
 
 class ClassRoom(models.Model):
     name = models.CharField(max_length=45L, unique=True)
+    school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+    )
     grade = models.ForeignKey(
         Grade,
         blank=False, null=True,
@@ -172,7 +172,7 @@ class PartnerOrganization(models.Model):
         return self.name
 
 
-class Student(models.Model):
+class Student(TimeStampedModel):
 
     first_name = models.CharField(max_length=64L, blank=True, null=True)
     last_name = models.CharField(max_length=64L, blank=True, null=True)
@@ -226,6 +226,7 @@ class Student(models.Model):
 
         return ''
 
+    @property
     def birthday(self):
         return u'{}/{}/{}'.format(
             self.birthday_day,
