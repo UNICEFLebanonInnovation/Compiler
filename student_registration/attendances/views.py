@@ -68,11 +68,23 @@ class AttendanceView(LoginRequiredMixin, ListView):
 
         if self.request.user.is_superuser:
             self.template_name = 'attendances/list.html'
+            queryset = self.model.objects.order_by('attendance_date')\
+                                    .values_list('attendance_date', 'classroom_id', 'validation_status')\
+                                    .distinct('attendance_date')
         if self.request.user.school:
             selected_school = self.request.user.school.id
             school = self.request.user.school
 
+        data = []
+        for item in queryset:
+            data.append({
+                "attendance_date": item[0].strftime('%Y-%m-%d'),
+                "classroom": item[1],
+                "validated": item[2],
+            })
+
         return {
+            'days': json.dumps(data),
             'school': school,
             'selected_school': selected_school,
             'locations': Location.objects.all(),
