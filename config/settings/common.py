@@ -78,7 +78,7 @@ MIGRATION_MODULES = {
 # DEBUG
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = env.bool('DJANGO_DEBUG', False)
+DEBUG = env.bool('DJANGO_DEBUG', True)
 
 # FIXTURE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -246,6 +246,10 @@ INSTALLED_APPS += ('student_registration.taskapp.celery.CeleryConfig',)
 # if you are not using the django database broker (e.g. rabbitmq, redis, memcached), you can remove the next line.
 # INSTALLED_APPS += ('kombu.transport.django',)
 BROKER_URL = env('CELERY_BROKER_URL', default='django://')
+
+COUCHBASE_URL = env('COUCHBASE_URL')
+COUCHBASE_USER = env('COUCHBASE_USER')
+COUCHBASE_PASS = env('COUCHBASE_PASS')
 ########## END CELERY
 
 

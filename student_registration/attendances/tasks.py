@@ -89,7 +89,7 @@ def set_app_attendances():
             "location_id": item.school.location.id,
             "location_name": item.school.location.name,
             "location_pcode": item.school.location.p_code,
-            "school_id": item.school.id,
+            "school_id": item.school.number,
             "school_name": item.school.name,
             "section_id": item.section.id,
             "section_name": item.section.name,
@@ -120,28 +120,29 @@ def import_docs(**kwargs):
             classroom = row['doc']['class_id']
             school = row['doc']['school_id']
             attendance = row['doc']['attendance']
-            validation_date = attendance['validation_date']
-            attendance_date = attendance[0]
-            students = attendance['students']
-            try:
-                for student_id, status in students:
-                    instance = Attendance.objects.get(
-                        student_id=student_id,
-                        classroom_id=classroom,
-                        school_id=school,
-                        attendance_date=attendance_date
+            if 'validation_date' in attendance:
+                validation_date = attendance['validation_date']
+                attendance_date = attendance[0]
+                students = attendance['students']
+                try:
+                    for student_id, status in students:
+                        instance = Attendance.objects.get(
+                            student_id=student_id,
+                            classroom_id=classroom,
+                            school_id=school,
+                            attendance_date=attendance_date
+                        )
+                    instance.status = status
+                    instance.validation_date = validation_date
+                    instance.save()
+                except Attendance.DoesNotExist:
+                    Attendance.objects.create(
+                            student_id=student_id,
+                            classroom_id=classroom,
+                            school_id=school,
+                            attendance_date=attendance_date,
+                            status=status,
+                            validation_date=validation_date
                     )
-                instance.status = status
-                instance.validation_date = validation_date
-                instance.save()
-            except Attendance.DoesNotExist:
-                Attendance.objects.create(
-                        student_id=student_id,
-                        classroom_id=classroom,
-                        school_id=school,
-                        attendance_date=attendance_date,
-                        status=status,
-                        validation_date=validation_date
-                )
-            except Exception as exp:
-                print exp.message
+                except Exception as exp:
+                    print exp.message
