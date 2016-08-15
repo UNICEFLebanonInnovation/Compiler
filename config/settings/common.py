@@ -50,6 +50,7 @@ LOCAL_APPS = (
     'student_registration.users',  # custom users app
     'student_registration.students',  # custom students app
     'student_registration.alp',  # custom students app
+    'student_registration.attendances',  # custom students app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

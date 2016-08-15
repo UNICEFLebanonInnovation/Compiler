@@ -113,6 +113,9 @@ class Outreach(TimeStampedModel):
             return self.student.mother_fullname
         return ''
 
+    def __unicode__(self):
+        return self.student_fullname
+
 
 class ExtraColumn(TimeStampedModel):
     name = models.CharField(max_length=64L, blank=True, null=True)
@@ -162,12 +165,26 @@ class Registration(TimeStampedModel):
         related_name='+',
     )
 
+    @property
+    def student_fullname(self):
+        if self.student:
+            return self.student.full_name
+        return ''
+
+    def __unicode__(self):
+        return self.student_fullname
+
 
 class Attendance(TimeStampedModel):
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
-        related_name='attendances',
+        related_name='+',
+    )
+    school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
     )
     classroom = models.ForeignKey(
         ClassRoom,
@@ -189,4 +206,11 @@ class Attendance(TimeStampedModel):
         related_name='+',
     )
 
+    @property
+    def student_fullname(self):
+        if self.student:
+            return self.student.full_name
+        return ''
 
+    def __unicode__(self):
+        return self.student_fullname
