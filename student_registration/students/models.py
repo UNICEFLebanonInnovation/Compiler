@@ -136,17 +136,17 @@ class ClassRoom(models.Model):
     name = models.CharField(max_length=45L, unique=True)
     school = models.ForeignKey(
         School,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     grade = models.ForeignKey(
         Grade,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     section = models.ForeignKey(
         Section,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
 
@@ -233,3 +233,10 @@ class Student(TimeStampedModel):
             self.birthday_month,
             self.birthday_year,
         )
+
+    @property
+    def attendance_list(self):
+        attendances = {}
+        for item in self.attendances.all():
+            attendances[item.attendance_date] = item.status
+        return attendances

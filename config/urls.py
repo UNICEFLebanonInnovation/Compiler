@@ -12,6 +12,8 @@ from student_registration.alp.views import (
     OutreachViewSet,
     ExtraColumnViewSet,
     RegistrationViewSet,
+)
+from student_registration.attendances.views import (
     AttendanceViewSet
 )
 from student_registration.students.views import (
@@ -26,7 +28,7 @@ api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
 api.register(r'extra-column', ExtraColumnViewSet, base_name='extra-column')
 api.register(r'registration', RegistrationViewSet, base_name='registration')
-api.register(r'attendance', AttendanceViewSet, base_name='attendance')
+api.register(r'attendances', AttendanceViewSet, base_name='attendances')
 
 api.register(r'students', StudentViewSet, base_name='students')
 api.register(r'schools', SchoolViewSet, base_name='schools')
@@ -47,6 +49,7 @@ urlpatterns = [
 
     url(r'^students/', include('student_registration.students.urls', namespace='students')),
     url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
+    url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/docs/', include('rest_framework_swagger.urls')),
