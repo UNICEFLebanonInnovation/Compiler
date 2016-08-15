@@ -65,6 +65,8 @@ class AttendanceView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         selected_school = 0
         school = 0
+        queryset = []
+        data= []
 
         if self.request.user.is_superuser:
             self.template_name = 'attendances/list.html'
@@ -75,7 +77,6 @@ class AttendanceView(LoginRequiredMixin, ListView):
             selected_school = self.request.user.school.id
             school = self.request.user.school
 
-        data = []
         for item in queryset:
             data.append({
                 "attendance_date": item[0].strftime('%Y-%m-%d'),
