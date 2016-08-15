@@ -1,4 +1,4 @@
-{% extends extands_template %}
+{% extends 'base.html' %}
 
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
@@ -40,29 +40,23 @@
                           <div class="panel-heading">
                           <h4 class="panel-title">
                           <ol class="breadcrumb">
-                              <li><a>{% trans "Attendance" %}</a></li>
-                                {% if selected_school %}
-                                    <li><a>{{ school.location.name }}</a></li>
-                                    <li><a>{{ school.name }}</a></li>
-                                {% else %}
-                                    <li><a>
-                                    <select id="location-filter">
-                                        <option value="0">{% trans 'Select a Location' %}</option>
-                                        {% for item in locations %}
-                                            <option value="{{ item.id }}">{{ item.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    </a></li>
-                                    <li><a>
-                                    <select id="school-filter">
-                                        <option value="0">{% trans 'Select a School' %}</option>
-                                        {% for item in schools %}
-                                            <option value="{{ item.id }}" itemscope="{% if item.location %}{{ item.location.id }}{% else %}0{% endif %}">{{ item.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    </a></li>
-                                {% endif %}
-                                <li><a><div class="btn-group" role="group" aria-label="days" id="attendance-days"></div></a></li>
+                              <li><a>{% trans "All Attendances" %}</a></li>
+                                <li><a>
+                                <select id="location-filter">
+                                    <option value="0">{% trans 'Select a Location' %}</option>
+                                    {% for item in locations %}
+                                        <option value="{{ item.id }}">{{ item.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                </a></li>
+                                <li><a>
+                                <select id="school-filter">
+                                    <option value="0">{% trans 'Select a School' %}</option>
+                                    {% for item in schools %}
+                                        <option value="{{ item.id }}" itemscope="{% if item.location %}{{ item.location.id }}{% else %}0{% endif %}">{{ item.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                </a></li>
                             </ol>
                             </h4>
                           </div>
@@ -70,7 +64,6 @@
                 </div>
             </div>
             </section>
-
             <div class="container-main" id="classes-list"></div>
             <span class="badge" id="other-classes" style="display: none;">{% trans 'Other classes' %}</span>
             <div id="attendance-sheet" style="display: none;">
@@ -85,31 +78,18 @@
                     <thead>
                       <tr>
                         <th>{% trans 'Student fullname' %}</th>
-                        <th><input class="toggle-status" type="checkbox" data-on-text="{% trans 'All Present' %}" data-off-text="{% trans 'All Absent' %}"></th>
+                        <th>&nbsp;</th>
                       </tr>
                     </thead>
                     <tbody>
                     </tbody>
                 </table>
-                  <a class="btn btn-info" id="attendance-save" href="#">
-                    <i class="icon-synch-sign icon-white"></i>&nbsp;
-                        {% trans "Save" %}
-                  </a>
             </div>
-              <a class="btn btn-info" id="attendance-validate-all" href="#" style="display: none;">
-                <i class="icon-validation-sign icon-white"></i>&nbsp;
-                    {% trans "Validate All" %}
-              </a>
-{#              <a class="btn btn-info" id="attendance-export" href="{% url "alp:attendance_export" %}" target="_blank">#}
-{#                <i class="icon-export-sign icon-white"></i>&nbsp;#}
-{#                    {% trans "Export" %}#}
-{#              </a>#}
          </section>
 
 {% endblock %}
 
 {% block extra_js %}
-    {% get_user_token request.user.id as user_token %}
 
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
@@ -135,15 +115,7 @@
             protocol = 'https://';
         {% endif %}
         var host = '{{ request.get_host }}';
-        var synchro_path = protocol+host+'/api/attendance/';
-
-        window.addEventListener("offline", function(e) {
-          $('#attendance-synchro').hide();
-        }, false);
-
-        window.addEventListener("online", function(e) {
-          $('#attendance-synchro').show();
-        }, false);
+        var synchro_path = protocol+host+'/api/attendances/';
 
         $(document).ready(function(){
 
@@ -196,13 +168,6 @@
                 $("#attendance-validate-all").show();
             });
 
-            $(document).on('click', '#attendance-save', function(){
-                $('.row-class').show();
-                $('#attendance-sheet').hide();
-                $('#other-classes').hide();
-                $("#attendance-validate-all").show();
-            });
-
             $(document).on('click', '#attendance-validate-all', function(){
                 bootbox.confirm("{% trans 'Are you sure to validate all Attendances' %}", function(result) {
                     if (result === true) {
@@ -211,20 +176,10 @@
                 });
             });
 
-            $(document).on('click', '#attendance-synchro', function(){
-                synchronize_data(true);
-            });
-
-            $("[class='toggle-status']").bootstrapSwitch();
-            $("[class='toggle-status']").on('switchChange.bootstrapSwitch', function(event, state) {
-                $("[class='status-checkbox']").bootstrapSwitch('state', state);
-            });
-
         });
 
         function display_classes(school)
         {
-            $("#attendance-validate-all").show();
             var store = getStoreByName("classrooms");
             var index = store.index("school");
             var request = index.getAll(parseInt(school));
@@ -247,8 +202,7 @@
                     row.append(col2);
                     row.append(col3);
                     container.append(row);
-
-                    check_attendance_sheet(item.id);
+                    calculate_attendances(item.id);
                 });
             };
         }
@@ -319,54 +273,8 @@
             };
         }
 
-        function check_attendance_sheet(classroom)
-        {
-            var store = getStoreByName("attendances");
-            var index = store.index("classroomAndDate");
-            var request = index.getAll([parseInt(classroom), get_current_attendance_date()]);
-            request.onsuccess = function(){
-                var result = request.result;
-                if(result.length){
-                    check_attendance_students(classroom, result);
-                }else{
-                    create_new_attendance_data(classroom);
-                }
-            };
-        }
-
-        function check_attendance_students(classroom, classroomStudents)
-        {
-            var store = getStoreByName('registrations');
-            var index = store.index('classroom');
-            var request = index.getAll(parseInt(classroom));
-            request.onsuccess = function(){
-                var result = request.result;
-                if(result.length != classroomStudents.length){
-                    $(result).each(function(i, item){
-                        check_attendance_new_student(classroom, item);
-                    });
-                }
-                calculate_attendances(classroom);
-            }
-        }
-
-        function check_attendance_new_student(classroom, registration)
-        {
-            var store = getStoreByName("attendances");
-            var index = store.index("classroomAndDateAndStudent");
-            var request = index.get([parseInt(classroom), get_current_attendance_date(), parseInt(registration.student_id)]);
-
-            request.onsuccess = function(){
-                if(!request.result) {
-                    create_student_row(registration);
-                    calculate_attendances(classroom);
-                }
-            };
-        }
-
         function display_attendance_sheet(classroom)
         {
-            $("#attendance-validate-all").hide();
             var store = getStoreByName("attendances");
             var index = store.index("classroomAndDate");
             var request = index.getAll([parseInt(classroom), get_current_attendance_date()]);
@@ -390,142 +298,20 @@
                 status = 'checked';
             }
             var tr = $('<tr>');
-{#            var sex_icon = $('<span>').addClass('icon-'+item.sex); //tmp#}
             var sex_icon = $('<span>').addClass('icon-'+item.student_sex);
             var col1 = $('<td>').append(sex_icon).append(item.student_full_name);
-            var check_input = $('<input class="status-checkbox" type="checkbox" '+status+' data-on-text="{% trans 'Present' %}" data-off-text="{% trans 'Absent' %}">');
+            var check_input = $('<input class="status-checkbox" type="checkbox" readonly="readonly" '+status+' data-on-text="{% trans 'Present' %}" data-off-text="{% trans 'Absent' %}">');
             var col2 = $('<td>').html(check_input);
-
             tr.append(col1);
             tr.append(col2);
             $('#attendance-table').find('tbody').append(tr);
             check_input.bootstrapSwitch();
-            check_input.on('switchChange.bootstrapSwitch', function(event, state) {
-                setAttendance(item.classroom, item.student_id, state);
-            });
-        }
-
-        function create_new_attendance_data(classroom)
-        {
-            var store = getStoreByName('registrations');
-            var index = store.index('classroom');
-            var request = index.getAll(parseInt(classroom));
-            request.onsuccess = function(){
-                var result = request.result;
-                $(result).each(function(i, item){
-                    create_student_row(item);
-                });
-                calculate_attendances(classroom);
-                create_classroom_attendance(classroom);
-            };
         }
 
         function create_classroom_attendance(classroom)
         {
             var store = getStoreByName('classroomsAttendances');
             store.put({classroom: parseInt(classroom), attendance_date: get_current_attendance_date(), validated: 0});
-        }
-
-        function create_student_row(item)
-        {
-            var data = {
-                original_id: 0,
-                synchronized: false,
-                student_id: item.student_id,
-                student_full_name: item.student_full_name,
-                school: item.school,
-                classroom: item.classroom,
-                classroom_name: item.classroom_name,
-                status: false,
-                state: 0,
-                student_sex: item.student_sex,
-                owner: user_id,
-                attendance_date: get_current_attendance_date(),
-                validation_status: false,
-                validation_state: 0,
-                validation_date: null,
-                validation_owner: null
-            };
-            getStoreByName('attendances').put(data);
-        }
-
-        function synchronize_data(showFeedback)
-        {
-            var store = getStoreByName('attendances');
-            var request = store.getAll();
-            request.onsuccess = function() {
-                var result = request.result;
-                $(result).each(function(i, item){
-                    if(item.synchronized == false) {
-                        push_data_to_server(item);
-                    }else if(item.deleted == true){
-                        delete_data_from_server(item);
-                    }else{
-                        update_data_into_server(item);
-                    }
-                });
-                if(showFeedback){
-                    bootbox.alert("{% trans 'Synchronization done' %}", function() {});
-                }
-            };
-        }
-
-        function push_data_to_server(item)
-        {
-            var data = item;
-
-            $.ajax({
-                type: "POST",
-                url: synchro_path,
-                data: data,
-                cache: false,
-                headers: getHeader(),
-                dataType: 'json',
-                success: function (response) {
-                    if(response.status == '201'){
-                        $('#line-'+item.id).find('.attendance-field').removeClass('required');
-                        update_item_store(item.id, 'synchronized', true);
-                        item.original_id = response.data.id;
-                        update_item_store(item.id, 'original_id', response.data.id);
-                    }
-                },
-                error: function (response) {
-                    var required_fields = JSON.parse(response.responseText);
-                    $('#line-'+item.id).find('.attendance-field').removeClass('required');
-                    $.each(required_fields, function(field_name, field_msg){
-                        $('#line-'+item.id).find('#'+field_name).addClass('required');
-                    });
-                    console.log(response);
-                }
-            });
-        }
-
-        function update_data_into_server(item)
-        {
-            var data = item;
-
-            $.ajax({
-                type: "PUT",
-                url: synchro_path+item.original_id+'/',
-                data: data,
-                cache: false,
-                headers: getHeader(),
-                dataType: 'json',
-                success: function (response) {
-                    if(response.status == '200'){
-                        $('#line-'+item.id).find('.attendance-field').removeClass('required');
-                        update_item_store(item.id, 'synchronized', true);
-                    }
-                },
-                error: function (response) {
-                    var required_fields = JSON.parse(response.responseText);
-                    $('#line-'+item.id).find('.attendance-field').removeClass('required');
-                    $.each(required_fields, function(field_name, field_msg){
-                        $('#line-'+item.id).find('#'+field_name).addClass('required');
-                    });
-                    console.log(response);
-                }
-            });
         }
 
         function pull_data_from_server(url, store_name)
@@ -563,13 +349,13 @@
             pull_data_from_server('/api/grades/', 'grades');
             pull_data_from_server('/api/sections/', 'sections');
             pull_data_from_server('/api/students/', 'students');
-            pull_data_from_server('/api/registration/', 'registrations');
-            pull_data_from_server('/api/attendance/', 'attendances');
+{#            pull_data_from_server('/api/registration/', 'registrations');#}
+            pull_data_from_server('/api/attendances/', 'attendances');
         }
 
         function createStores()
         {
-            var request = indexedDB.open("comp1_attendances", 5);
+            var request = indexedDB.open("comp2_attendances", 3);
 
             request.onupgradeneeded = function() {
                 // The database did not previously exist, so create object stores and indexes.
@@ -586,6 +372,7 @@
                 if(flag){
 
                     var store1 = db.createObjectStore("attendances", {keyPath: "id", autoIncrement:true});
+                    store1.createIndex('school', 'school', { unique: false, multiEntry: true });
                     store1.createIndex('classroom', 'classroom', { unique: false, multiEntry: true });
                     store1.createIndex('attendance_date', 'attendance_date', { unique: false, multiEntry: true });
                     store1.createIndex('classroomAndDate', ['classroom', 'attendance_date']);
@@ -625,18 +412,6 @@
                     display_classes(selected_school);
                     display_attendance_days(getCurrentDate());
                 }
-{#                var store = getStoreByName('classroomsAttendances');#}
-{#                store.put({classroom: 1, attendance_date: '04/08/2016', validated: 0});#}
-{#                store.put({classroom: 2, attendance_date: '04/08/2016', validated: 0});#}
-{#                store.put({classroom: 4, attendance_date: '04/08/2016', validated: 0});#}
-{##}
-{#                store.put({classroom: 1, attendance_date: '05/08/2016', validated: 0});#}
-{#                store.put({classroom: 2, attendance_date: '05/08/2016', validated: 0});#}
-{#                store.put({classroom: 4, attendance_date: '05/08/2016', validated: 0});#}
-{##}
-{#                store.put({classroom: 1, attendance_date: '08/08/2016', validated: 0});#}
-{#                store.put({classroom: 2, attendance_date: '08/08/2016', validated: 0});#}
-{#                store.put({classroom: 4, attendance_date: '08/08/2016', validated: 0});#}
             };
         }
 
@@ -644,21 +419,6 @@
         {
             var store = db.transaction([store_name], "readwrite").objectStore(store_name);
             return store;
-        }
-
-        function setAttendance(classroom, student, status)
-        {
-
-            var store = getStoreByName("attendances");
-            var index = store.index("classroomAndDateAndStudent");
-            var request = index.get([parseInt(classroom), get_current_attendance_date(), parseInt(student)]);
-            request.onsuccess = function() {
-                var result = request.result;
-                result.status = status;
-                result.state = status ? 1 : 0;
-                store.put(result);
-                calculate_attendances(classroom);
-            }
         }
 
         function get_current_attendance_date()
