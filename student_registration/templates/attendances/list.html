@@ -142,22 +142,10 @@
                 display_classes($(this).val());
             });
 
-{#            $(document).on('click', '.btn-attendance-day', function(){#}
-{#                $('.btn-attendance-day').removeClass('active');#}
-{#                $(this).addClass('active');#}
-{#                $('#other-classes').hide();#}
-{#                $('#attendance-sheet').hide();#}
-{#                $('.row-class').hide('slow');#}
-{#                $('.row-class').show('slow');#}
-{#                $("#attendance-validate-all").show();#}
-{#                calculate_attendances($('#school-filter').val());#}
-{#            });#}
-
             $(document).on('click', '.row-class', function(){
                 $('.row-class').hide();
                 $(this).show();
                 $('#other-classes').show();
-{#                display_attendance_sheet($(this).attr('itemid'));#}
                 display_attendance_days($(this).attr('itemid'));
                 display_registered_students($(this).attr('itemid'));
             });
@@ -204,7 +192,7 @@
                     row.append(col2);
                     row.append(col3);
                     container.append(row);
-{#                    calculate_attendances(item.id);#}
+                    calculate_total_students(item.id);
                 });
             };
         }
@@ -212,6 +200,7 @@
         function display_attendance_days(classroom)
         {
             var container = $('#attendance-table').find('thead').find('tr');
+            container.find('.attendance-date').remove();
             var store = getStoreByName('classroomsAttendances');
             var index = store.index("classroom");
             var request = index.getAll(parseInt(classroom));
@@ -224,33 +213,48 @@
                             .addClass('btn-attendance-day')
                             .attr('itemid', item.attendance_date)
                             .text(item.attendance_date);
-                    var th = $('<th>').addClass('attendance-date').append(day);
+                    var ttl_present = '{% trans "Total present" %}'+ ': '+'<span class="badge ttl_present">0</span><br/>';
+                    var ttl_absent = '{% trans "Total absent" %}'+ ': '+'<span class="badge ttl_absent">0</span>';
+                    var th = $('<th>').addClass('attendance-date')
+                            .append(day)
+                            .append('<br/>')
+                            .append(ttl_present)
+                            .append(ttl_absent);
                     container.append(th);
+                    calculate_attendances(classroom, item.attendance_date, th);
                 });
             };
         }
 
-        function calculate_attendances(classroom)
+        function calculate_total_students(classroom)
         {
             var attendance = $('#row-class-'+classroom);
+            var store = getStoreByName("registrations");
+            var index = store.index("classroom");
+            var request = index.getAll(parseInt(classroom));
+            request.onsuccess = function(){
+                var result = request.result;
+                if(result && result.length){
+                    attendance.find('.ttl_students').text(result.length);
+                }
+            }
+        }
+
+        function calculate_attendances(classroom, attendance_date, container)
+        {
             var store = getStoreByName("attendances");
             var index = store.index("classroomAndDateAndStatus");
 
-            var request1 = index.getAll([parseInt(classroom), get_current_attendance_date(), 1]);
-            var request2 = index.getAll([parseInt(classroom), get_current_attendance_date(), 0]);
-
-            attendance.find('.ttl_students').text(0);
+            var request1 = index.getAll([parseInt(classroom), attendance_date, 1]);
+            var request2 = index.getAll([parseInt(classroom), attendance_date, 0]);
 
             request1.onsuccess = function(){
                 var result = request1.result;
-                attendance.find('.ttl_present').text(result.length);
-                attendance.find('.ttl_students').text(result.length);
+                container.find('.ttl_present').text(result.length);
             };
             request2.onsuccess = function(){
                 var result = request2.result;
-                attendance.find('.ttl_absent').text(result.length);
-                var ttl_present = parseInt(attendance.find('.ttl_students').text());
-                attendance.find('.ttl_students').text(result.length+ttl_present);
+                container.find('.ttl_absent').text(result.length);
             };
         }
 
@@ -330,13 +334,9 @@
                     $(result).each(function(i, item){
                         var store1 = getStoreByName("attendances");
                         var index1 = store1.index("classroomAndDateAndStudent");
-                        console.log(classroom);
-                        console.log(item.attendance_date);
-                        console.log(student_id);
                         var request1 = index1.get([parseInt(classroom), item.attendance_date, parseInt(student_id)]);
                         request1.onsuccess = function() {
                             var result1 = request1.result;
-                            console.log(result1);
                             var status = '';
                             if(result1 && result1.status){
                                 status = 'checked';

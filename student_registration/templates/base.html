@@ -61,9 +61,11 @@
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'alp:registration' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
                   </li>
+                {% if request.user.is_superuser %}
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'attendances:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>
                   </li>
+                {% endif %}
             {% endif %}
             </ul>
 
