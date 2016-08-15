@@ -66,7 +66,7 @@ class AttendanceView(LoginRequiredMixin, ListView):
         selected_school = 0
         school = 0
         queryset = []
-        data= []
+        data = []
 
         if self.request.user.is_superuser:
             self.template_name = 'attendances/list.html'

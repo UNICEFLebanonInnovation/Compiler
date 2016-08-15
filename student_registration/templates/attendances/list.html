@@ -40,7 +40,7 @@
                           <div class="panel-heading">
                           <h4 class="panel-title">
                           <ol class="breadcrumb">
-                              <li><a>{% trans "All Attendances" %}</a></li>
+                              <li><a>{% trans "Attendances" %}</a></li>
                                 <li><a>
                                 <select id="location-filter">
                                     <option value="0">{% trans 'Select a Location' %}</option>
@@ -78,6 +78,7 @@
                     <thead>
                       <tr>
                           <th>{% trans 'Student fullname' %}</th>
+                          <th></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -331,7 +332,11 @@
             request.onsuccess = function(){
                 var result = request.result;
                 if(result){
+                    var total = 0;
+                    var ttl_present = 0;
+                    var ttl_absent = 0;
                     $(result).each(function(i, item){
+                        total = total + 1;
                         var store1 = getStoreByName("attendances");
                         var index1 = store1.index("classroomAndDateAndStudent");
                         var request1 = index1.get([parseInt(classroom), item.attendance_date, parseInt(student_id)]);
@@ -340,6 +345,7 @@
                             var status = '';
                             if(result1 && result1.status){
                                 status = 'checked';
+                                ttl_present = ttl_present + 1;
                             }
                             var check_input = $('<input class="status-checkbox" type="checkbox" readonly="readonly" '+status+' data-on-text="{% trans 'Present' %}" data-off-text="{% trans 'Absent' %}">');
                             var col2 = $('<td>').html(check_input);
@@ -347,6 +353,8 @@
                             check_input.bootstrapSwitch();
                         };
                     });
+                    var col3 = $('<td>').html(ttl_present+'/'+total);
+                    container.append(col3);
                 }
             };
         }

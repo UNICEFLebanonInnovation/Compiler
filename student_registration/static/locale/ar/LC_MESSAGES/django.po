@@ -507,3 +507,30 @@ msgstr "القسم"
 
 msgid "Students"
 msgstr "التلاميذ"
+
+msgid "Attendances"
+msgstr "الحضور"
+
+msgid "Select a Location"
+msgstr "أختر قضاء"
+
+msgid "Select a School"
+msgstr "أختر مدرسة"
+
+msgid "Total"
+msgstr "مجموع التلاميذ"
+
+msgid "Other classes"
+msgstr "باقي الصفوف"
+
+msgid "Total present"
+msgstr "الحضور"
+
+msgid "Total absent"
+msgstr "الغياب"
+
+msgid "Absent"
+msgstr "غائب"
+
+msgid "Present"
+msgstr "حاضر"
