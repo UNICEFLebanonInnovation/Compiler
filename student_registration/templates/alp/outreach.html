@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
 
 {% block extra_head %}
 
@@ -113,9 +114,44 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for line in outreaches %}
+                                    {% for outreach in outreaches %}
                                         <tr>
-                                            {% include 'alp/outreach_new_line.html' with outreach=line %}
+{#                                            {% include 'alp/outreach_new_line.html' with outreach=line %}#}
+                                            <td>{{ outreach.school.number }}</td>
+                                            <td>{% if outreach.school %}{{ outreach.school.name }}{% endif %}</td>
+                                            <td>{{ outreach.exam_year }}</td>
+                                            <td>{{ outreach.exam_month }}</td>
+                                            <td>{{ outreach.exam_day }}</td>
+                                            <td>{{ outreach.average_distance }}</td>
+                                            <td>{% if outreach.preferred_language %}{{ outreach.preferred_language.name }}{% endif %}</td>
+                                            <td>{% if outreach.last_class_level %}{{ outreach.last_class_level.name }}{% endif %}</td>
+                                            <td>{{ outreach.last_education_year }}</td>
+                                            <td>{% if outreach.last_education_level %}{{ outreach.last_education_level.name }}{% endif %}</td>
+                                            <td>{% if outreach.student %}{{ outreach.student.address }}{% endif %}</td>
+                                            <td>{% if outreach.location %}{{ outreach.location.name }}{% endif %}</td>
+                                            <td>{% if outreach.student %}{{ outreach.student.phone }}{% endif %}</td>
+                                            <td>{% if outreach.student %}{{ outreach.student.id_number }}{% endif %}</td>
+                                            <td>{% if outreach.student %}{{ outreach.student.sex }}{% endif %}</td>
+                                            <td>{% if outreach.student %}{{ outreach.student.birthday_year }}{% endif %}</td>
+                                            <td>{% if outreach.student %}{{ outreach.student.birthday_month }}{% endif %}</td>
+                                            <td>{% if outreach.student %}{{ outreach.student.birthday_day }}{% endif %}</td>
+                                            <td>{% if outreach.student and outreach.student.nationality %}{{ outreach.student.nationality.name }}{% endif %}</td>
+                                            <td>{% if outreach.student %}{{ outreach.student.mother_fullname }}{% endif %}</td>
+                                            <td>{% if outreach.student %}{{ outreach.student.full_name }}{% endif %}</td>
+                                            <td></td>
+                                            <td>{% if outreach.partner %}{{ outreach.partner.name }}{% endif %}</td>
+                                            {% for col in columns %}
+                                                {% with outreach.id|stringformat:"s" as outreach_id %}
+                                                {% with col_name=col.name|add:'-'|add:outreach_id %}
+                                                    {% json_load_value outreach.extra_fields col_name as field_value %}
+                                                    {% if field_value %}
+                                                        <td>{{ field_value }}</td>
+                                                    {% else %}
+                                                        <td>&nbsp;</td>
+                                                    {% endif %}
+                                                {% endwith %}
+                                                {% endwith %}
+                                            {% endfor %}
                                         </tr>
                                     {% endfor %}
                                 </tbody>

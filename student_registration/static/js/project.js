@@ -16,6 +16,10 @@ function getCookie(name) {
     return cookieValue;
 }
 
+/**
+ *
+ * @returns yyyy-mm-dd
+ */
 function getCurrentDate()
 {
     var today = new Date();
@@ -29,6 +33,22 @@ function getCurrentDate()
     if(mm<10){
         mm='0'+mm
     }
-    return dd+'/'+mm+'/'+yyyy;
+    return yyyy+'-'+mm+'-'+dd;
 }
 
+function generate_student_number(itemscope)
+{
+    var line = $('#line-'+itemscope);
+    var name = line.find('#student_full_name').val();
+
+    var id_number = line.find('#student_id_number').val();
+    var bd_year = line.find('#student_birthday_year').val();
+    var bd_month = line.find('#student_birthday_month').val();
+    var bd_day = line.find('#student_birthday_day').val();
+    var code_char1 = String(name.charCodeAt(0));
+    var code_char2 = String(name.charCodeAt(1));
+    var number = code_char1+code_char2+id_number+bd_year+bd_month+bd_day;
+
+    line.find('#student_number').val(number);
+    line.find('#student_number').trigger('blur');
+}

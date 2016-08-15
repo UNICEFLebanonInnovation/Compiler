@@ -62,14 +62,14 @@
                                             {% trans "Class room" %}
                                             <input type="checkbox" name="duplicate_classroom" id="duplicate_classroom" />
                                         </th>
-{#                                        <th rowspan="2">#}
-{#                                            {% trans "Grade" %}#}
-{#                                            <input type="checkbox" name="duplicate_grade" id="duplicate_grade" />#}
-{#                                        </th>#}
-{#                                        <th rowspan="2">#}
-{#                                            {% trans "Section" %}#}
-{#                                            <input type="checkbox" name="duplicate_section" id="duplicate_section" />#}
-{#                                        </th>#}
+                                        <th rowspan="2">
+                                            {% trans "Grade" %}
+                                            <input type="checkbox" name="duplicate_grade" id="duplicate_grade" />
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Section" %}
+                                            <input type="checkbox" name="duplicate_section" id="duplicate_section" />
+                                        </th>
                                         <th rowspan="2">
                                             {% trans "Student living address" %}
                                         </th>
@@ -181,6 +181,7 @@
 
                         var params = {
                             school: $('#duplicate_school').is(':checked'),
+                            classroom: $('#duplicate_classroom').is(':checked'),
                             section: $('#duplicate_section').is(':checked'),
                             grade: $('#duplicate_grade').is(':checked'),
                         };
@@ -210,6 +211,10 @@
 
             $(document).on('blur', '.registration-field', function(){
                 update_item_store($(this).attr('itemscope'), $(this).attr('name'), $(this).val());
+            });
+
+            $(document).on('change', 'input[name=student_full_name]', function(){
+                generate_student_number($(this).attr('itemscope'));
             });
 
             $(document).on('click', '#registration-synchro', function(){
@@ -361,9 +366,7 @@
 
         function push_data_to_server(item)
         {
-{#            var csrftoken = getCookie('csrftoken');#}
             var data = item;
-{#            data['csrfmiddlewaretoken'] = csrftoken;#}
 
             $.ajax({
                 type: "POST",
@@ -395,9 +398,7 @@
 
         function update_data_into_server(item)
         {
-{#            var csrftoken = getCookie('csrftoken');#}
             var data = item;
-{#            data['csrfmiddlewaretoken'] = csrftoken;#}
 
             $.ajax({
                 type: "PUT",
@@ -425,7 +426,6 @@
 
         function delete_data_from_server(item)
         {
-{#            var csrftoken = getCookie('csrftoken');#}
             $.ajax({
                 type: "DELETE",
                 url: synchro_path+item.original_id+'/',
@@ -446,9 +446,6 @@
 
         function pull_data_from_server()
         {
-{#            var csrftoken = getCookie('csrftoken');#}
-{#            data['csrfmiddlewaretoken'] = csrftoken;#}
-
             $.ajax({
                 type: "GET",
                 url: synchro_path,
