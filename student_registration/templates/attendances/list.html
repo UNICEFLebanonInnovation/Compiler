@@ -77,8 +77,7 @@
                        width="100%">
                     <thead>
                       <tr>
-                        <th>{% trans 'Student fullname' %}</th>
-                        <th>&nbsp;</th>
+                          <th>{% trans 'Student fullname' %}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -108,6 +107,7 @@
         var user_email = '{{ request.user.email }}';
         var user_token = '{{ user_token }}';
         var selected_school = {{ selected_school }};
+        var attendance_days = {{ days|safe }};
         var rows = 1;
 
         var protocol = 'http://';
@@ -140,25 +140,26 @@
                 $('#attendance-sheet').hide();
                 $('.row-class').show();
                 display_classes($(this).val());
-                display_attendance_days(get_current_attendance_date());
             });
 
-            $(document).on('click', '.btn-attendance-day', function(){
-                $('.btn-attendance-day').removeClass('active');
-                $(this).addClass('active');
-                $('#other-classes').hide();
-                $('#attendance-sheet').hide();
-                $('.row-class').hide('slow');
-                $('.row-class').show('slow');
-                $("#attendance-validate-all").show();
-                calculate_attendances($('#school-filter').val());
-            });
+{#            $(document).on('click', '.btn-attendance-day', function(){#}
+{#                $('.btn-attendance-day').removeClass('active');#}
+{#                $(this).addClass('active');#}
+{#                $('#other-classes').hide();#}
+{#                $('#attendance-sheet').hide();#}
+{#                $('.row-class').hide('slow');#}
+{#                $('.row-class').show('slow');#}
+{#                $("#attendance-validate-all").show();#}
+{#                calculate_attendances($('#school-filter').val());#}
+{#            });#}
 
             $(document).on('click', '.row-class', function(){
                 $('.row-class').hide();
                 $(this).show();
                 $('#other-classes').show();
-                display_attendance_sheet($(this).attr('itemid'));
+{#                display_attendance_sheet($(this).attr('itemid'));#}
+                display_attendance_days($(this).attr('itemid'));
+                display_registered_students($(this).attr('itemid'));
             });
 
             $(document).on('click', '#other-classes', function(){
@@ -192,9 +193,10 @@
 
                     var row = $('<div>').addClass('row').addClass('row-class').attr('id', 'row-class-'+item.id).attr('itemid', item.id);
                     var total = '{% trans "Total" %}'+ ': '+'<span class="badge ttl_students">0</span><br/>';
-                    var ttl_present = '{% trans "Total present" %}'+ ': '+'<span class="badge ttl_present">0</span><br/>';
-                    var ttl_absent = '{% trans "Total absent" %}'+ ': '+'<span class="badge ttl_absent">0</span>';
-                    var col1 = $('<div>').addClass('col-md-4').html(total+ttl_present+ttl_absent);
+{#                    var ttl_present = '{% trans "Total present" %}'+ ': '+'<span class="badge ttl_present">0</span><br/>';#}
+{#                    var ttl_absent = '{% trans "Total absent" %}'+ ': '+'<span class="badge ttl_absent">0</span>';#}
+{#                    var col1 = $('<div>').addClass('col-md-4').html(total+ttl_present+ttl_absent);#}
+                    var col1 = $('<div>').addClass('col-md-4').html(total);
                     var col2 = $('<div>').addClass('col-md-8').html(item.name+'<br>'+item.grade_name+' - '+item.section_name);
                     var col3 = $('<div>').addClass('col-md-4').html();
 
@@ -202,34 +204,28 @@
                     row.append(col2);
                     row.append(col3);
                     container.append(row);
-                    calculate_attendances(item.id);
+{#                    calculate_attendances(item.id);#}
                 });
             };
         }
 
-        function display_attendance_days(selected)
+        function display_attendance_days(classroom)
         {
-            var container = $('#attendance-days');
-            container.empty();
-            var days = new Array();
+            var container = $('#attendance-table').find('thead').find('tr');
             var store = getStoreByName('classroomsAttendances');
-            var request = store.getAll();
+            var index = store.index("classroom");
+            var request = index.getAll(parseInt(classroom));
             request.onsuccess = function(){
                 var result = request.result;
                 $(result).each(function(i, item){
-                    if(days[item.attendance_date] == undefined){
-                        days[item.attendance_date] = item.attendance_date;
-                        var day = $('<button>').attr('type', 'button')
-                                .addClass('btn')
-                                .addClass('btn-default')
-                                .addClass('btn-attendance-day')
-                                .attr('itemid', item.attendance_date)
-                                .text(item.attendance_date);
-                        if(selected == item.attendance_date){
-                            day.addClass('active');
-                        }
-                        container.append(day);
-                    }
+                    var day = $('<button>').attr('type', 'button')
+                            .addClass('btn')
+                            .addClass('btn-default')
+                            .addClass('btn-attendance-day')
+                            .attr('itemid', item.attendance_date)
+                            .text(item.attendance_date);
+                    var th = $('<th>').addClass('attendance-date').append(day);
+                    container.append(th);
                 });
             };
         }
@@ -273,6 +269,24 @@
             };
         }
 
+        function display_registered_students(classroom)
+        {
+            $('#attendance-table').find('tbody').empty();
+            $('#attendance-sheet').show();
+
+            var store = getStoreByName("registrations");
+            var index = store.index("classroom");
+            var request = index.getAll(parseInt(classroom));
+            request.onsuccess = function(){
+                var result = request.result;
+                if(result && result.length){
+                    $(result).each(function(i, item){
+                        create_attendance_row(item, classroom);
+                    });
+                }
+            }
+        }
+
         function display_attendance_sheet(classroom)
         {
             var store = getStoreByName("attendances");
@@ -285,13 +299,13 @@
                 var result = request.result;
                 if(result.length){
                     $(result).each(function(i, item){
-                        create_attendance_row(item);
+                        create_attendance_row(item, classroom);
                     });
                 }
             };
         }
 
-        function create_attendance_row(item)
+        function create_attendance_row(item, classroom)
         {
             var status = '';
             if(item.status){
@@ -300,18 +314,58 @@
             var tr = $('<tr>');
             var sex_icon = $('<span>').addClass('icon-'+item.student_sex);
             var col1 = $('<td>').append(sex_icon).append(item.student_full_name);
-            var check_input = $('<input class="status-checkbox" type="checkbox" readonly="readonly" '+status+' data-on-text="{% trans 'Present' %}" data-off-text="{% trans 'Absent' %}">');
-            var col2 = $('<td>').html(check_input);
             tr.append(col1);
-            tr.append(col2);
             $('#attendance-table').find('tbody').append(tr);
-            check_input.bootstrapSwitch();
+            display_student_attendances(item.student_id, classroom, tr);
         }
 
-        function create_classroom_attendance(classroom)
+        function display_student_attendances(student_id, classroom, container)
         {
             var store = getStoreByName('classroomsAttendances');
-            store.put({classroom: parseInt(classroom), attendance_date: get_current_attendance_date(), validated: 0});
+            var index = store.index("classroom");
+            var request = index.getAll(parseInt(classroom));
+            request.onsuccess = function(){
+                var result = request.result;
+                if(result){
+                    $(result).each(function(i, item){
+                        var store1 = getStoreByName("attendances");
+                        var index1 = store1.index("classroomAndDateAndStudent");
+                        console.log(classroom);
+                        console.log(item.attendance_date);
+                        console.log(student_id);
+                        var request1 = index1.get([parseInt(classroom), item.attendance_date, parseInt(student_id)]);
+                        request1.onsuccess = function() {
+                            var result1 = request1.result;
+                            console.log(result1);
+                            var status = '';
+                            if(result1 && result1.status){
+                                status = 'checked';
+                            }
+                            var check_input = $('<input class="status-checkbox" type="checkbox" readonly="readonly" '+status+' data-on-text="{% trans 'Present' %}" data-off-text="{% trans 'Absent' %}">');
+                            var col2 = $('<td>').html(check_input);
+                            container.append(col2);
+                            check_input.bootstrapSwitch();
+                        };
+                    });
+                }
+            };
+        }
+
+        function create_attendance_days(list)
+        {
+            $(list).each(function(i, item){
+                var store = getStoreByName('classroomsAttendances');
+                var index = store.index("classroomAndDate");
+                var request = index.get([parseInt(item.classroom), item.attendance_date]);
+                request.onsuccess = function(){
+                    var result = request.result;
+                    if(result){
+
+                    }else{
+                        store.put(item);
+                    }
+                };
+            });
         }
 
         function pull_data_from_server(url, store_name)
@@ -349,13 +403,14 @@
             pull_data_from_server('/api/grades/', 'grades');
             pull_data_from_server('/api/sections/', 'sections');
             pull_data_from_server('/api/students/', 'students');
-{#            pull_data_from_server('/api/registration/', 'registrations');#}
+            pull_data_from_server('/api/registration/', 'registrations');
             pull_data_from_server('/api/attendances/', 'attendances');
+            create_attendance_days(attendance_days);
         }
 
         function createStores()
         {
-            var request = indexedDB.open("comp2_attendances", 3);
+            var request = indexedDB.open("comp3_attendances", 3);
 
             request.onupgradeneeded = function() {
                 // The database did not previously exist, so create object stores and indexes.
@@ -395,6 +450,7 @@
 
                     var store6 = db.createObjectStore("classroomsAttendances", {keyPath: "id", autoIncrement:true});
                     store6.createIndex('date', 'attendance_date');
+                    store6.createIndex('classroom', 'classroom');
                     store6.createIndex('classroomAndDate', ['classroom', 'attendance_date']);
 
                     db.createObjectStore("grades", {keyPath: "id", autoIncrement:true});
@@ -408,10 +464,6 @@
             request.onsuccess = function() {
                 db = request.result;
                 load_base_data();
-                if(selected_school){
-                    display_classes(selected_school);
-                    display_attendance_days(getCurrentDate());
-                }
             };
         }
 
