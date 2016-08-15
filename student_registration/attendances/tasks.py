@@ -64,11 +64,11 @@ def set_app_attendances():
         registrations = Registration.objects.filter(classroom_id=item.id, school_id=item.school.id)
         for reg in registrations:
             student = {
-                "student_id": reg.student.id,
+                "student_id": str(reg.student.id),
                 "student_name": reg.student.full_name,
                 "gender": reg.student.sex,
             }
-            attstudent[reg.student.id] = False
+            attstudent[str(reg.student.id)] = False
             students.append(student)
 
         attendqueryset = Attendance.objects.filter(classroom_id=item.id, school_id=item.school.id)
@@ -79,19 +79,20 @@ def set_app_attendances():
                     "students": attstudent
                 }
             }
-            attendances[att.attendance_date.strftime('%Y-%m-%d')]["students"][att.student.id] = att.status
+            attendances[att.attendance_date.strftime('%Y-%m-%d')]["students"][str(att.student.id)] = att.status
 
         doc = {
-            "class_id": item.id,
+            "class_id": str(item.id),
             "class_name": item.name,
-            "grade_id": item.grade.id,
+            "grade_id": str(item.grade.id),
             "grade_name": item.grade.name,
-            "location_id": item.school.location.id,
+            "location_id": str(item.school.location.id),
             "location_name": item.school.location.name,
             "location_pcode": item.school.location.p_code,
+            "school": str(item.school.id),
             "school_id": item.school.number,
             "school_name": item.school.name,
-            "section_id": item.section.id,
+            "section_id": str(item.section.id),
             "section_name": item.section.name,
             "students": students,
             "attendance": attendances
@@ -115,10 +116,11 @@ def import_docs(**kwargs):
         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
     ).json()
 
+    print data
     for row in data['rows']:
         if 'attendance' in row['doc']:
             classroom = row['doc']['class_id']
-            school = row['doc']['school_id']
+            school = row['doc']['school']
             attendance = row['doc']['attendance']
             if 'validation_date' in attendance:
                 validation_date = attendance['validation_date']
