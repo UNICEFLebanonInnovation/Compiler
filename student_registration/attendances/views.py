@@ -72,7 +72,7 @@ class AttendanceView(LoginRequiredMixin, ListView):
             self.template_name = 'attendances/list.html'
             queryset = self.model.objects.order_by('attendance_date')\
                                     .values_list('attendance_date', 'classroom_id', 'validation_status')\
-                                    .distinct('attendance_date')
+                                    .distinct('attendance_date', 'classroom_id', 'validation_status')
         if self.request.user.school:
             selected_school = self.request.user.school.id
             school = self.request.user.school
