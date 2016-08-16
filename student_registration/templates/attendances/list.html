@@ -78,7 +78,7 @@
                     <thead>
                       <tr>
                           <th>{% trans 'Student fullname' %}</th>
-                          <th></th>
+{#                          <th></th>#}
                       </tr>
                     </thead>
                     <tbody>
@@ -214,15 +214,15 @@
                             .addClass('btn-attendance-day')
                             .attr('itemid', item.attendance_date)
                             .text(item.attendance_date);
-                    var ttl_present = '{% trans "Total present" %}'+ ': '+'<span class="badge ttl_present">0</span><br/>';
-                    var ttl_absent = '{% trans "Total absent" %}'+ ': '+'<span class="badge ttl_absent">0</span>';
+{#                    var ttl_present = '{% trans "Total present" %}'+ ': '+'<span class="badge ttl_present">0</span><br/>';#}
+{#                    var ttl_absent = '{% trans "Total absent" %}'+ ': '+'<span class="badge ttl_absent">0</span>';#}
                     var th = $('<th>').addClass('attendance-date')
                             .append(day)
-                            .append('<br/>')
-                            .append(ttl_present)
-                            .append(ttl_absent);
+                            .append('<br/>');
+{#                            .append(ttl_present)#}
+{#                            .append(ttl_absent);#}
                     container.append(th);
-                    calculate_attendances(classroom, item.attendance_date, th);
+{#                    calculate_attendances(classroom, item.attendance_date, th);#}
                 });
             };
         }
@@ -353,8 +353,8 @@
                             check_input.bootstrapSwitch();
                         };
                     });
-                    var col3 = $('<td>').html(ttl_present+'/'+total);
-                    container.append(col3);
+{#                    var col3 = $('<td>').html(ttl_present+'/'+total);#}
+{#                    container.append(col3);#}
                 }
             };
         }
