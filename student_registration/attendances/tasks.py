@@ -3,6 +3,7 @@ __author__ = 'jcranwellward'
 import datetime
 import json
 import os
+from datetime import datetime
 
 import requests
 from django.conf import settings
@@ -74,12 +75,12 @@ def set_app_attendances():
         attendqueryset = Attendance.objects.filter(classroom_id=item.id, school_id=item.school.id)
         for att in attendqueryset:
             attendances = {
-                att.attendance_date.strftime('%Y-%m-%d'): {
-                    "validation_date": att.validation_date.strftime('%Y-%m-%d'),
+                att.attendance_date.strftime('%d-%m-%Y'): {
+                    "validation_date": att.validation_date.strftime('%d-%m-%Y'),
                     "students": attstudent
                 }
             }
-            attendances[att.attendance_date.strftime('%Y-%m-%d')]["students"][str(att.student.id)] = att.status
+            attendances[att.attendance_date.strftime('%d-%m-%Y')]["students"][str(att.student.id)] = att.status
 
         doc = {
             "class_id": str(item.id),
@@ -116,18 +117,30 @@ def import_docs(**kwargs):
         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
     ).json()
 
-    print data
     for row in data['rows']:
         if 'attendance' in row['doc']:
             classroom = row['doc']['class_id']
             school = row['doc']['school']
-            attendance = row['doc']['attendance']
-            if 'validation_date' in attendance:
-                validation_date = attendance['validation_date']
-                attendance_date = attendance[0]
+            attendances = row['doc']['attendance']
+            for key in attendances.keys():
+                attendance = attendances[key]
                 students = attendance['students']
+                validation_date = attendance['validation_date']
+                attendance_date = key
+                if not validation_date:
+                    continue
                 try:
-                    for student_id, status in students:
+                    validation_date = datetime.strptime(validation_date, '%d-%m-%Y').strftime('%Y-%m-%d')
+                except Exception as exp:
+                    pass
+                try:
+                    attendance_date = datetime.strptime(attendance_date, '%d-%m-%Y').strftime('%Y-%m-%d')
+                except Exception as exp:
+                    pass
+
+                try:
+                    for student_id in students.keys():
+                        status = students[student_id]
                         instance = Attendance.objects.get(
                             student_id=student_id,
                             classroom_id=classroom,
