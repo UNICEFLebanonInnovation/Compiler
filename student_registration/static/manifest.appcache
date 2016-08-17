@@ -1,5 +1,13 @@
 CACHE MANIFEST
+
+# v0.2
+
 /alp/outreach/
+/alp/outreach/?ln=ar-ar
+/alp/outreach/?ln=en-us
+/alp/registration/
+/alp/registration/?ln=ar-ar
+/alp/registration/?ln=en-us
 /static/images/icon-unknown.gif
 /static/images/glyphicons-halflings.png
 /static/images/glyphicons-halflings-white.png
