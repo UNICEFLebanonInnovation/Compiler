@@ -1,7 +1,7 @@
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-{% if request.user.is_superuser %}
+{% if request.user.is_staff %}
     <html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>
 {% else %}
     <html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %} manifest="{% static 'manifest.appcache' %}">
@@ -49,7 +49,7 @@
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-toggleable-xs" id="bs-navbar-collapse-1">
             <ul class="nav navbar-nav">
-               {% if request.user.is_superuser %}
+               {% if request.user.is_staff %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
               </li>
@@ -59,11 +59,13 @@
                     <a class="nav-link" href="{% url 'alp:outreach' %}?ln={{ LANGUAGE_CODE }}">{% trans "Outreach" %}</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'alp:registration' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
+                    <a class="nav-link" href="{% url 'registrations:registration' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
                   </li>
+                {% if request.user.is_staff %}
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'attendances:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>
                   </li>
+                {% endif %}
             {% endif %}
             </ul>
 
