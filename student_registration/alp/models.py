@@ -7,16 +7,18 @@ from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from student_registration.students.models import (
     Student,
-    School,
     Language,
+)
+from student_registration.schools.models import (
+    School,
     EducationLevel,
     ClassLevel,
-    Location,
     PartnerOrganization,
     ClassRoom,
     Section,
     Grade
 )
+from student_registration.locations.models import Location
 
 
 class Outreach(TimeStampedModel):
@@ -125,92 +127,3 @@ class ExtraColumn(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
-
-
-class Registration(TimeStampedModel):
-    student = models.ForeignKey(
-        Student,
-        blank=False, null=True,
-        related_name='+',
-    )
-    school = models.ForeignKey(
-        School,
-        blank=False, null=True,
-        related_name='+',
-    )
-    section = models.ForeignKey(
-        Section,
-        blank=False, null=True,
-        related_name='+',
-    )
-    grade = models.ForeignKey(
-        Grade,
-        blank=False, null=True,
-        related_name='+',
-    )
-    classroom = models.ForeignKey(
-        ClassRoom,
-        blank=False, null=True,
-        related_name='+'
-    )
-    year = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        choices=((str(x), x) for x in range(2016, 2051))
-    )
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        blank=False, null=True,
-        related_name='+',
-    )
-
-    @property
-    def student_fullname(self):
-        if self.student:
-            return self.student.full_name
-        return ''
-
-    def __unicode__(self):
-        return self.student_fullname
-
-
-class Attendance(TimeStampedModel):
-    student = models.ForeignKey(
-        Student,
-        blank=False, null=True,
-        related_name='+',
-    )
-    school = models.ForeignKey(
-        School,
-        blank=False, null=True,
-        related_name='+',
-    )
-    classroom = models.ForeignKey(
-        ClassRoom,
-        blank=False, null=True,
-        related_name='+'
-    )
-    status = models.BooleanField(default=False)
-    attendance_date = models.DateField(blank=True, null=True)
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        blank=False, null=True,
-        related_name='+',
-    )
-    validation_status = models.BooleanField(default=False)
-    validation_date = models.DateField(blank=True, null=True)
-    validation_owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        blank=True, null=True,
-        related_name='+',
-    )
-
-    @property
-    def student_fullname(self):
-        if self.student:
-            return self.student.full_name
-        return ''
-
-    def __unicode__(self):
-        return self.student_fullname

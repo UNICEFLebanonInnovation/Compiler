@@ -1,4 +1,4 @@
-{% extends "base.appcache.html" %}
+{% extends "base.html" %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
@@ -29,7 +29,7 @@
                             <h3 class="panel-title">{% trans "Outreach" %}
                               <a class="btn btn-info" id="outreach-synchro" href="#">
                                 <i class="icon-synch-sign icon-white"></i>&nbsp;
-                                    {% trans "outreach synchronize" %}
+                                    {% trans "synchronize" %}
                               </a>
                               <a class="btn btn-info" id="outreach-add-column" href="#">
                                 <i class="icon-plus-sign icon-white"></i>&nbsp;

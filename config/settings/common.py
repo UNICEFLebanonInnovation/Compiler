@@ -49,8 +49,11 @@ THIRD_PARTY_APPS = (
 LOCAL_APPS = (
     'student_registration.users',  # custom users app
     'student_registration.students',  # custom students app
-    'student_registration.alp',  # custom students app
-    'student_registration.attendances',  # custom students app
+    'student_registration.alp',  # custom alp app
+    'student_registration.attendances',  # custom attendances app
+    'student_registration.registrations',  # custom registrations app
+    'student_registration.schools',  # custom schools app
+    'student_registration.locations',  # custom locations app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -78,7 +81,7 @@ MIGRATION_MODULES = {
 # DEBUG
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = env.bool('DJANGO_DEBUG', False)
+DEBUG = env.bool('DJANGO_DEBUG', True)
 
 # FIXTURE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -246,6 +249,10 @@ INSTALLED_APPS += ('student_registration.taskapp.celery.CeleryConfig',)
 # if you are not using the django database broker (e.g. rabbitmq, redis, memcached), you can remove the next line.
 # INSTALLED_APPS += ('kombu.transport.django',)
 BROKER_URL = env('CELERY_BROKER_URL', default='django://')
+
+COUCHBASE_URL = env('COUCHBASE_URL')
+COUCHBASE_USER = env('COUCHBASE_USER')
+COUCHBASE_PASS = env('COUCHBASE_PASS')
 ########## END CELERY
 
 
