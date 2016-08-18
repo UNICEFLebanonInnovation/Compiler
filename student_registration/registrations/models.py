@@ -10,17 +10,29 @@ from student_registration.students.models import (
 from student_registration.schools.models import (
     School,
     ClassRoom,
+    Section,
+    Grade,
 )
 
 
-class Attendance(TimeStampedModel):
+class Registration(TimeStampedModel):
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
-        related_name='attendances',
+        related_name='+',
     )
     school = models.ForeignKey(
         School,
+        blank=False, null=True,
+        related_name='+',
+    )
+    section = models.ForeignKey(
+        Section,
+        blank=False, null=True,
+        related_name='+',
+    )
+    grade = models.ForeignKey(
+        Grade,
         blank=False, null=True,
         related_name='+',
     )
@@ -29,18 +41,15 @@ class Attendance(TimeStampedModel):
         blank=False, null=True,
         related_name='+'
     )
-    status = models.BooleanField(default=False)
-    attendance_date = models.DateField(blank=True, null=True)
+    year = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        choices=((str(x), x) for x in range(2016, 2051))
+    )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        blank=True, null=True,
-        related_name='+',
-    )
-    validation_status = models.BooleanField(default=False)
-    validation_date = models.DateField(blank=True, null=True)
-    validation_owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        blank=True, null=True,
+        blank=False, null=True,
         related_name='+',
     )
 
