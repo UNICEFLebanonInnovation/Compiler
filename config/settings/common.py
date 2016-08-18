@@ -49,8 +49,11 @@ THIRD_PARTY_APPS = (
 LOCAL_APPS = (
     'student_registration.users',  # custom users app
     'student_registration.students',  # custom students app
-    'student_registration.alp',  # custom students app
-    'student_registration.attendances',  # custom students app
+    'student_registration.alp',  # custom alp app
+    'student_registration.attendances',  # custom attendances app
+    'student_registration.registrations',  # custom registrations app
+    'student_registration.schools',  # custom schools app
+    'student_registration.locations',  # custom locations app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
