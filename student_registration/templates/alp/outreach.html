@@ -116,7 +116,6 @@
                                 <tbody>
                                     {% for outreach in outreaches %}
                                         <tr>
-{#                                            {% include 'alp/outreach_new_line.html' with outreach=line %}#}
                                             <td>{{ outreach.school.number }}</td>
                                             <td>{% if outreach.school %}{{ outreach.school.name }}{% endif %}</td>
                                             <td>{{ outreach.exam_year }}</td>
