@@ -12,13 +12,13 @@ import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
-from student_registration.students.models import (
-    Location,
-    Grade,
+from student_registration.schools.models import (
     School,
-    Section,
+    Grade,
+    Section
 )
-from student_registration.alp.models import Registration
+from student_registration.locations.models import Location
+from student_registration.registrations.models import Registration
 from .models import Attendance
 from .serializers import AttendanceSerializer
 
@@ -65,14 +65,27 @@ class AttendanceView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         selected_school = 0
         school = 0
+        queryset = []
+        data = []
 
         if self.request.user.is_superuser:
             self.template_name = 'attendances/list.html'
+            queryset = self.model.objects.order_by('attendance_date')\
+                                    .values_list('attendance_date', 'classroom_id', 'validation_status')\
+                                    .distinct('attendance_date', 'classroom_id', 'validation_status')
         if self.request.user.school:
             selected_school = self.request.user.school.id
             school = self.request.user.school
 
+        for item in queryset:
+            data.append({
+                "attendance_date": item[0].strftime('%Y-%m-%d'),
+                "classroom": item[1],
+                "validated": item[2],
+            })
+
         return {
+            'days': json.dumps(data),
             'school': school,
             'selected_school': selected_school,
             'locations': Location.objects.all(),

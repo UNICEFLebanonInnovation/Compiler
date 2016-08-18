@@ -1,4 +1,4 @@
-{% extends "base.appcache.html" %}
+{% extends "base.html" %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
@@ -13,7 +13,7 @@
 
 {% block content-full-page %}
 
-    {% include 'alp/registration_prototype.html' %}
+    {% include 'registrations/prototype.html' %}
 
          <section class="main-content-wrapper">
             <section id="main-content">
@@ -31,7 +31,7 @@
                                 <i class="icon-synch-sign icon-white"></i>&nbsp;
                                     {% trans "synchronize" %}
                               </a>
-                              <a class="btn btn-info" id="registration-export" href="{% url "alp:registration_export" %}" target="_blank">
+                              <a class="btn btn-info" id="registration-export" href="{% url "registrations:registration_export" %}" target="_blank">
                                 <i class="icon-export-sign icon-white"></i>&nbsp;
                                     {% trans "Export" %}
                               </a>
@@ -143,7 +143,7 @@
             protocol = 'https://';
         {% endif %}
         var host = '{{ request.get_host }}';
-        var synchro_path = protocol+host+'/api/registration/';
+        var synchro_path = protocol+host+'/api/registrations/';
 
         window.addEventListener("offline", function(e) {
           $('#registration-synchro').hide();
@@ -181,6 +181,7 @@
 
                         var params = {
                             school: $('#duplicate_school').is(':checked'),
+                            school_number: $('#duplicate_school').is(':checked'),
                             classroom: $('#duplicate_classroom').is(':checked'),
                             section: $('#duplicate_section').is(':checked'),
                             grade: $('#duplicate_grade').is(':checked'),
