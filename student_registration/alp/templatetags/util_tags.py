@@ -47,8 +47,5 @@ def json_load_value(data, key):
 
 @register.assignment_tag
 def get_user_token(user_id):
-    try:
-        token = Token.objects.get(user_id=user_id)
-    except Token.DoesNotExist:
-        token = Token.objects.create(user_id=user_id)
+    token = Token.objects.get_or_create(user_id=user_id)
     return token.key

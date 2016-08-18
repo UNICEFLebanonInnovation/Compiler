@@ -13,6 +13,7 @@ from student_registration.schools.models import (
     Section,
     Grade,
 )
+from student_registration.eav.registry import Registry as eav
 
 
 class Registration(TimeStampedModel):
@@ -61,3 +62,6 @@ class Registration(TimeStampedModel):
 
     def __unicode__(self):
         return self.student_fullname
+
+
+eav.register(Registration)
