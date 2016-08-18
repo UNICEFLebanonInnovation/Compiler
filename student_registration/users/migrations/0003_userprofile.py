@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('phone_number', models.CharField(blank=True, max_length=20, null=True)),
-                ('partner', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='students.PartnerOrganization')),
+                ('partner', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.PartnerOrganization')),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='profile', to=settings.AUTH_USER_MODEL)),
             ],
         ),
