@@ -54,8 +54,8 @@ def set_app_attendances():
     Creates or edits a attendance document in Couchbase
     """
     docs = []
-    from student_registration.students.models import ClassRoom
-    from student_registration.alp.models import Registration
+    from student_registration.schools.models import ClassRoom
+    from student_registration.registrations.models import Registration
     from student_registration.attendances.models import Attendance
     classes = ClassRoom.objects.all()
     for item in classes:

@@ -11,23 +11,27 @@ from rest_framework_nested import routers
 from student_registration.alp.views import (
     OutreachViewSet,
     ExtraColumnViewSet,
-    RegistrationViewSet,
+)
+from student_registration.registrations.views import (
+    RegistrationViewSet
 )
 from student_registration.attendances.views import (
     AttendanceViewSet
 )
 from student_registration.students.views import (
     StudentViewSet,
+)
+from student_registration.schools.views import (
     SchoolViewSet,
     ClassRoomViewSet,
     SectionViewSet,
-    GradeViewSet
+    GradeViewSet,
 )
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
 api.register(r'extra-column', ExtraColumnViewSet, base_name='extra-column')
-api.register(r'registration', RegistrationViewSet, base_name='registration')
+api.register(r'registrations', RegistrationViewSet, base_name='registrations')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
 
 api.register(r'students', StudentViewSet, base_name='students')
@@ -50,6 +54,9 @@ urlpatterns = [
     url(r'^students/', include('student_registration.students.urls', namespace='students')),
     url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
     url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
+    url(r'^registrations/', include('student_registration.registrations.urls', namespace='registrations')),
+    url(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
+    url(r'^locations/', include('student_registration.locations.urls', namespace='locations')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/docs/', include('rest_framework_swagger.urls')),
