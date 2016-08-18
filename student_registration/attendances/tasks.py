@@ -142,28 +142,17 @@ def import_docs(**kwargs):
                 try:
                     for student_id in students.keys():
                         status = students[student_id]
-                        instance = Attendance.objects.get(
+                        instance = Attendance.objects.get_or_create(
                             student_id=student_id,
                             classroom_id=classroom,
                             school_id=school,
                             attendance_date=attendance_date
                         )
-                    instance.status = status
-                    if validation_date:
-                        instance.validation_date = validation_date
-                        instance.validation_status = True
-                    instance.save()
-                except Attendance.DoesNotExist:
-                    instance = Attendance.objects.create(
-                            student_id=student_id,
-                            classroom_id=classroom,
-                            school_id=school,
-                            attendance_date=attendance_date,
-                            status=status,
-                    )
-                    if validation_date:
-                        instance.validation_date = validation_date
-                        instance.validation_status = True
-                    instance.save()
+                        instance.status = status
+
+                        if validation_date:
+                            instance.validation_date = validation_date
+                            instance.validation_status = True
+                        instance.save()
                 except Exception as exp:
                     print exp.message

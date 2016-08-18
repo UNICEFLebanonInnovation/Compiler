@@ -54,6 +54,7 @@ LOCAL_APPS = (
     'student_registration.registrations',  # custom registrations app
     'student_registration.schools',  # custom schools app
     'student_registration.locations',  # custom locations app
+    'student_registration.eav',  # custom EAV app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
