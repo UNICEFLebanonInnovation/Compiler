@@ -184,7 +184,8 @@
         {% endif %}
         var host = '{{ request.get_host }}';
         var synchro_path = protocol+host+'/api/outreach/';
-        var synchro_path_extra = protocol+host+'/api/extra-column/';
+{#        var synchro_path_extra = protocol+host+'/api/extra-column/';#}
+        var synchro_path_extra = protocol+host+'/api/eav/attributes/';
 
         window.addEventListener("offline", function(e) {
           $('#outreach-synchro').hide();

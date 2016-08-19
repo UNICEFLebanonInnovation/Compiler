@@ -19,6 +19,7 @@ from student_registration.schools.models import (
     Grade
 )
 from student_registration.locations.models import Location
+from student_registration.eav.registry import Registry as eav
 
 
 class Outreach(TimeStampedModel):
@@ -127,3 +128,5 @@ class ExtraColumn(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
+
+eav.register(Outreach)
