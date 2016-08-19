@@ -27,6 +27,10 @@ from student_registration.schools.views import (
     SectionViewSet,
     GradeViewSet,
 )
+from student_registration.eav.views import (
+    AttributeViewSet,
+    ValueViewSet,
+)
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
@@ -39,6 +43,8 @@ api.register(r'schools', SchoolViewSet, base_name='schools')
 api.register(r'classrooms', ClassRoomViewSet, base_name='classrooms')
 api.register(r'sections', SectionViewSet, base_name='sections')
 api.register(r'grades', GradeViewSet, base_name='grades')
+api.register(r'eav/attributes', AttributeViewSet, base_name='eav-attributes')
+api.register(r'eav/values', ValueViewSet, base_name='eav-values')
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
