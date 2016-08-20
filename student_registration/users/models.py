@@ -7,6 +7,7 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from student_registration.schools.models import PartnerOrganization, School, EducationLevel
+from student_registration.locations.models import Location
 from django.db.models.signals import post_save
 
 
@@ -29,6 +30,11 @@ class User(AbstractUser):
     )
     school = models.ForeignKey(
         School,
+        blank=True, null=True,
+        related_name='+',
+    )
+    location = models.ForeignKey(
+        Location,
         blank=True, null=True,
         related_name='+',
     )

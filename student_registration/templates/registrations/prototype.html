@@ -59,6 +59,14 @@
             <input type="text" name="student_phone" id="student_phone" class="registration-field" itemscope="$$itemscope_id$$" />
         </td>
         <td>
+            <select name="student_id_type" id="student_id_type" class="outreach-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in idtypes %}
+                    <option value="{{ item }}">{% trans item %}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
             <input type="text" name="student_id_number" value="0" id="student_id_number" class="registration-field" itemscope="$$itemscope_id$$" />
         </td>
         <td>

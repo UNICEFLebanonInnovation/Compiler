@@ -18,6 +18,7 @@ from .serializers import RegistrationSerializer
 from student_registration.students.models import (
     Student,
     Nationality,
+    IDType,
 )
 from student_registration.schools.models import (
     School,
@@ -89,6 +90,7 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'sections': Section.objects.all(),
             'nationalities': Nationality.objects.all(),
             'genders': (u'Male', u'Female'),
+            'idtypes': IDType.objects.all(),
         }
 
 

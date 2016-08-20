@@ -20,6 +20,7 @@ from student_registration.students.models import (
     Student,
     Language,
     Nationality,
+    IDType,
 )
 from student_registration.schools.models import (
     School,
@@ -113,14 +114,14 @@ class ExtraColumnViewSet(mixins.RetrieveModelMixin,
 
 class OutreachView(LoginRequiredMixin, ListView):
     model = Outreach
-    template_name = 'alp/outreach.html'
+    template_name = 'alp/list.html'
 
     def get_context_data(self, **kwargs):
 
         data = self.model.objects.all()
         if not self.request.user.is_superuser:
             data = data.filter(owner=self.request.user)
-            self.template_name = 'alp/outreach_list.html'
+            self.template_name = 'alp/index.html'
 
         return {
             'outreaches': data,
@@ -133,6 +134,7 @@ class OutreachView(LoginRequiredMixin, ListView):
             'partners': PartnerOrganization.objects.all(),
             'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km'),
             'genders': (u'Male', u'Female'),
+            'idtypes': IDType.objects.all(),
         }
 
 
