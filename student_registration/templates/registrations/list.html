@@ -52,6 +52,10 @@
                                         <th>{% trans "Student living address" %}</th>
                                         <th>{% trans "Phone number" %}</th>
                                         <th>
+                                            {% trans "ID Number type" %}
+                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number type tooltip" %}"></i>
+                                        </th>
+                                        <th>
                                             {% trans "ID Number" %}
                                             <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"></i>
                                         </th>
@@ -73,6 +77,7 @@
                                             <td>{% if registry.section %}{{ registry.section.name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.address }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.phone }}{% endif %}</td>
+                                            <td>{% if outreach.student and outreach.student.id_type %}{{ outreach.student.id_type.name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.id_number }}{% endif %}</td>
                                             <td>{% if registry.student %}{%  trans registry.student.sex %}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.birthday }}{% endif %}</td>
