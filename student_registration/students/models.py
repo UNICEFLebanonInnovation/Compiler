@@ -29,6 +29,16 @@ class Language(models.Model):
         return self.name
 
 
+class IDType(models.Model):
+    name = models.CharField(max_length=45L, unique=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+
 class Student(TimeStampedModel):
 
     first_name = models.CharField(max_length=64L, blank=True, null=True)
@@ -36,6 +46,8 @@ class Student(TimeStampedModel):
     father_name = models.CharField(max_length=64L, blank=True, null=True)
     full_name = models.CharField(max_length=225L, blank=True, null=True)
     mother_fullname = models.CharField(max_length=64L, blank=True, null=True)
+    mother_firstname = models.CharField(max_length=64L, blank=True, null=True)
+    mother_lastname = models.CharField(max_length=64L, blank=True, null=True)
     sex = models.CharField(
         max_length=50,
         blank=True,
@@ -65,6 +77,10 @@ class Student(TimeStampedModel):
     )
     phone = models.CharField(max_length=64L, blank=True, null=True)
     id_number = models.CharField(max_length=45L, blank=True, null=True)
+    id_type = models.ForeignKey(
+        IDType,
+        blank=True, null=True,
+    )
     nationality = models.ForeignKey(
         Nationality,
         blank=True, null=True,

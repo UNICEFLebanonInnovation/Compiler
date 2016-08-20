@@ -7,9 +7,11 @@ from .models import (
     Student,
     Nationality,
     Language,
+    IDType,
 )
 
 
 admin.site.register(Student)
 admin.site.register(Nationality)
 admin.site.register(Language)
+admin.site.register(IDType)

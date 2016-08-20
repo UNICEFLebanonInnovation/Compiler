@@ -27,10 +27,10 @@
                         <div class="panel panel-default">
                           <div class="panel-heading">
                             <h3 class="panel-title">{% trans "Registration" %}
-                              <a class="btn btn-info" id="registration-synchro" href="#">
+                              <button class="btn btn-info" id="registration-synchro">
                                 <i class="icon-synch-sign icon-white"></i>&nbsp;
                                     {% trans "synchronize" %}
-                              </a>
+                              </button>
                               <a class="btn btn-info" id="registration-export" href="{% url "registrations:registration_export" %}" target="_blank">
                                 <i class="icon-export-sign icon-white"></i>&nbsp;
                                     {% trans "Export" %}
@@ -77,6 +77,10 @@
                                             {% trans "Phone number" %}
                                         </th>
                                         <th rowspan="2">
+                                            {% trans "ID Number type" %}
+                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number type tooltip" %}"></i>
+                                        </th>
+                                        <th rowspan="2">
                                             {% trans "ID Number" %}
                                             <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"></i>
                                         </th>
@@ -101,14 +105,18 @@
                                 </tbody>
                             </table>
                         </div>
-                          <a class="btn btn-success" id="add_datatable_line" href="#">
+                          <button class="btn btn-success" id="add_datatable_line">
                             <i class="icon-plus-sign icon-white"></i>&nbsp;
                                 {% trans "Add empty line" %}
-                          </a>
-                          <a class="btn btn-success" id="duplicate_last_line_select" href="#">
+                          </button>
+                          <button class="btn btn-success" id="add_defined_lines">
+                            <i class="icon-plus-sign icon-white"></i>&nbsp;
+                                {% trans "Add defined number of lines" %}
+                          </button>
+                          <button class="btn btn-success" id="duplicate_last_line_select">
                             <i class="icon-plus-sign icon-white"></i>&nbsp;
                                 {% trans "duplicate last line with selected option" %}
-                          </a>
+                          </button>
                      </div>
                 </div>
             </div>
@@ -164,6 +172,19 @@
             }, 3600000);
 
             $('[data-toggle="tooltip"]').tooltip();
+
+
+            $(document).on('click', '#add_defined_lines', function(){
+                bootbox.prompt("{% trans 'Please enter extra column name' %}", function(result) {
+                    if (result === null) {
+                    } else {
+                        var number = parseInt(result);
+                        for (var i = 0; i < number; i++) {
+                            $('#add_datatable_line').trigger('click');
+                        }
+                    }
+                });
+            });
 
             $(document).on('click', '#add_datatable_line', function(){
                 var item = create_item_store_default_keys();
