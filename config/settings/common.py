@@ -131,7 +131,7 @@ LANGUAGE_CODE = 'ar-ar'
 
 LANGUAGES = (
     ('en-us', 'english'),
-    ('fr-fr', 'french'),
+    # ('fr-fr', 'french'),
     ('ar-ar', 'arabic'),
 )
 

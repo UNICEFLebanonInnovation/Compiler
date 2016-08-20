@@ -20,6 +20,7 @@ class StudentSerializer(serializers.ModelSerializer):
             'birthday_day',
             'phone',
             'id_number',
+            'id_type',
             'nationality',
             'address',
         )
