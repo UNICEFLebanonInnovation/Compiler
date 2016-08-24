@@ -10,13 +10,12 @@ from django.views import defaults as default_views
 from rest_framework_nested import routers
 from student_registration.alp.views import (
     OutreachViewSet,
-    ExtraColumnViewSet,
 )
 from student_registration.registrations.views import (
-    RegistrationViewSet
+    RegistrationViewSet,
 )
 from student_registration.attendances.views import (
-    AttendanceViewSet
+    AttendanceViewSet,
 )
 from student_registration.students.views import (
     StudentViewSet,
@@ -34,7 +33,6 @@ from student_registration.eav.views import (
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
-api.register(r'extra-column', ExtraColumnViewSet, base_name='extra-column')
 api.register(r'registrations', RegistrationViewSet, base_name='registrations')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
 

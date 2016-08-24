@@ -29,6 +29,13 @@ class AttributeViewSet(mixins.RetrieveModelMixin,
     def get_queryset(self):
         return self.queryset.filter(owner=self.request.user)
 
+    def get(self, request, *args, **kwargs):
+        print args
+        print kwargs
+        data = self.queryset.filter(type='outreach', shared=True)
+        print data
+        return JsonResponse({'status': status.HTTP_200_OK, 'data': data})
+
     def create(self, request, *args, **kwargs):
         """
         :return: JSON
@@ -36,9 +43,10 @@ class AttributeViewSet(mixins.RetrieveModelMixin,
         data = {
             "name": request.data['label'],
             "slug": request.data['name'],
-            "type": "outreach",
+            "type": request.data['type'],
             "datatype": "text",
-            "site": 1
+            "site": 1,
+            "owner": request.data['owner']
         }
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
