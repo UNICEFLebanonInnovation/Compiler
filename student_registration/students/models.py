@@ -89,6 +89,7 @@ class Student(TimeStampedModel):
         blank=True,
         null=True
     )
+    number = models.CharField(max_length=45L, blank=True, null=True, unique=True)
 
     def __unicode__(self):
         return self.full_name

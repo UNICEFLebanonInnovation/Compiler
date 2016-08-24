@@ -1,12 +1,7 @@
 
 from rest_framework import serializers
-from .models import Outreach, ExtraColumn
+from .models import Outreach
 from student_registration.students.serializers import StudentSerializer
-
-
-class ExtraColumnSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ExtraColumn
 
 
 class OutreachSerializer(serializers.ModelSerializer):
@@ -20,6 +15,9 @@ class OutreachSerializer(serializers.ModelSerializer):
     student_birthday_day = serializers.CharField(source='student.birthday_day')
     student_phone = serializers.CharField(source='student.phone')
     student_id_number = serializers.CharField(source='student.id_number')
+    student_id_type = serializers.CharField(source='student.id_type')
+    student_id_type_name = serializers.CharField(source='student.id_type.name', read_only=True)
+    student_number = serializers.CharField(source='student.number')
     student_nationality = serializers.CharField(source='student.nationality')
     student_address = serializers.CharField(source='student.address')
     partner_name = serializers.CharField(source='partner.name', read_only=True)
@@ -61,6 +59,9 @@ class OutreachSerializer(serializers.ModelSerializer):
             'student_birthday_day',
             'student_phone',
             'student_id_number',
+            'student_id_type',
+            'student_id_type_name',
+            'student_number',
             'student_nationality',
             'student_address',
             'partner',
@@ -82,5 +83,4 @@ class OutreachSerializer(serializers.ModelSerializer):
             'exam_month',
             'exam_day',
             'owner',
-            # 'extra_fields',
         )

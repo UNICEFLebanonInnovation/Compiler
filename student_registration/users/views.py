@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -56,7 +57,11 @@ class UserChangeLanguageRedirectView(LoginRequiredMixin, RedirectView):
     pattern_name = 'set_language'
 
     def get_redirect_url(self, *args, **kwargs):
+        # next = self.request.GET.get('next')
         user_language = kwargs['language']
         translation.activate(user_language)
         self.request.session[translation.LANGUAGE_SESSION_KEY] = user_language
+        # url_redirect = self.request.META['HTTP_REFERER']
+        # return reverse(url_redirect)
+        # return redirect(next)
         return reverse('home')
