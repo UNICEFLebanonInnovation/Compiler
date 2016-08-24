@@ -7,6 +7,45 @@ window.applicationCache.addEventListener('updateready', function(){ // when an u
         window.applicationCache.swapCache(); //swap to the newest version of the cache
 }, false);
 
+hashCode = function(str){
+    var hash = 0;
+    if (str.length == 0) return hash;
+    for (i = 0; i < str.length; i++) {
+        char = str.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash);
+};
+
+djb2Code = function(str){
+    var hash = 5381;
+    for (i = 0; i < str.length; i++) {
+        char = str.charCodeAt(i);
+        hash = ((hash << 5) + hash) + char; /* hash * 33 + c */
+    }
+    return hash;
+};
+
+sdbmCode = function(str){
+    var hash = 0;
+    for (i = 0; i < str.length; i++) {
+        char = str.charCodeAt(i);
+        hash = char + (hash << 6) + (hash << 16) - hash;
+    }
+    return hash;
+};
+
+loseCode = function(str){
+    var hash = 0;
+    for (i = 0; i < str.length; i++) {
+        char = str.charCodeAt(i);
+        hash += char;
+    }
+    return hash;
+};
+
+
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
@@ -43,19 +82,23 @@ function getCurrentDate()
     return yyyy+'-'+mm+'-'+dd;
 }
 
-function generate_student_number(itemscope)
+function generate_student_number(student)
 {
-    var line = $('#line-'+itemscope);
-    var name = line.find('#student_full_name').val();
+    var name = student.student_full_name;
+    var mother_name = student.student_mother_fullname;
+    var gender = student.student_sex;
+    var bd_year = student.student_birthday_year;
+    var bd_month = student.student_birthday_month;
+    var bd_day = student.student_birthday_day;
 
-    var id_number = line.find('#student_id_number').val();
-    var bd_year = line.find('#student_birthday_year').val();
-    var bd_month = line.find('#student_birthday_month').val();
-    var bd_day = line.find('#student_birthday_day').val();
-    var code_char1 = String(name.charCodeAt(0));
-    var code_char2 = String(name.charCodeAt(1));
-    var number = code_char1+code_char2+id_number+bd_year+bd_month+bd_day;
+    var ttl_char_student = name.length;
+    var ttl_char_mother = mother_name.length;
+    var gender_char = gender.charAt(0);
+    var fullname_sections = name.split(' ');
+    //console.log(fullname_sections);
+    var fullname_code = hashCode(name);
+    var mother_name_code = hashCode(mother_name);
 
-    line.find('#student_number').val(number);
-    line.find('#student_number').trigger('blur');
+    var number = String(ttl_char_student)+String(ttl_char_mother)+String(fullname_code)+String(mother_name_code)+gender_char+bd_day+bd_month+bd_year;
+    return number;
 }

@@ -235,8 +235,17 @@
                 update_item_store($(this).attr('itemscope'), $(this).attr('name'), $(this).val());
             });
 
-            $(document).on('change', 'input[name=student_full_name]', function(){
-                generate_student_number($(this).attr('itemscope'));
+            $(document).on('blur', 'input[name=student_full_name]', function(){
+                var line = $('#line-'+$(this).attr('itemscope'));
+                var request = getRecord($(this).attr('itemscope'));
+                request.onsuccess = function(){
+                    var result = request.result;
+                    if(result){
+                        var number = generate_student_number(result);
+                        line.find('#student_number').val(number);
+                        line.find('#student_number').trigger('blur');
+                    }
+                };
             });
 
             $(document).on('click', '#registration-synchro', function(){

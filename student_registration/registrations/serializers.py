@@ -16,6 +16,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
     student_birthday_day = serializers.CharField(source='student.birthday_day')
     student_phone = serializers.CharField(source='student.phone')
     student_id_number = serializers.CharField(source='student.id_number')
+    student_id_type = serializers.CharField(source='student.id_type')
+    student_id_type_name = serializers.CharField(source='student.id_type.name', read_only=True)
+    student_number = serializers.CharField(source='student.number')
     student_nationality = serializers.CharField(source='student.nationality')
     student_address = serializers.CharField(source='student.address')
     school_name = serializers.CharField(source='school.name', read_only=True)
@@ -25,7 +28,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     classroom_name = serializers.CharField(source='classroom.name', read_only=True)
 
     def create(self, validated_data):
-        
+
         student_data = validated_data.pop('student', None)
         student_serializer = StudentSerializer(data=student_data)
         student_serializer.is_valid(raise_exception=True)
@@ -55,6 +58,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'student_birthday_day',
             'student_phone',
             'student_id_number',
+            'student_id_type',
+            'student_id_type_name',
+            'student_number',
             'student_nationality',
             'student_address',
             'school',
