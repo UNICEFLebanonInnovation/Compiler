@@ -62,7 +62,7 @@
             <select name="student_id_type" id="student_id_type" class="outreach-field" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
                 {% for item in idtypes %}
-                    <option value="{{ item }}">{% trans item %}</option>
+                    <option value="{{ item.id }}">{% trans item.name %}</option>
                 {% endfor %}
             </select>
         </td>

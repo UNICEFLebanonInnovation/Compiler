@@ -21,6 +21,7 @@ class StudentSerializer(serializers.ModelSerializer):
             'phone',
             'id_number',
             'id_type',
+            'number',
             'nationality',
             'address',
         )
