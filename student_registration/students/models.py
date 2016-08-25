@@ -1,12 +1,13 @@
 from __future__ import unicode_literals, absolute_import, division
 
+from django.contrib.gis.db import models
 from django.db import models
+from django.utils.translation import ugettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from mptt.models import MPTTModel, TreeForeignKey
-from paintstore.fields import ColorPickerField
-from django.utils.translation import ugettext as _
-from django.contrib.gis.db import models
+from mptt.models import MPTTModel
+
+from student_registration.registrations.models import RegisteringAdult
 
 
 class Nationality(models.Model):
@@ -39,7 +40,7 @@ class IDType(models.Model):
         return self.name
 
 
-class Student(TimeStampedModel):
+class Person(TimeStampedModel):
 
     first_name = models.CharField(max_length=64L, blank=True, null=True)
     last_name = models.CharField(max_length=64L, blank=True, null=True)
@@ -107,6 +108,12 @@ class Student(TimeStampedModel):
             self.birthday_month,
             self.birthday_year,
         )
+
+    class Meta:
+        abstract = True
+
+
+class Student(Person):
 
     @property
     def attendance_list(self):
