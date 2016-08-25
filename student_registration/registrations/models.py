@@ -1,12 +1,13 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
+from django.utils.translation import ugettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from django.conf import settings
 from student_registration.students.models import (
     Student,
-)
+    Person)
 from student_registration.schools.models import (
     School,
     ClassRoom,
@@ -16,12 +17,66 @@ from student_registration.schools.models import (
 from student_registration.eav.registry import Registry as eav
 
 
+class RegisteringAdult(Person):
+
+    STATUS = Choices(
+        ('pending', _('Pending')),
+    )
+
+    RELATION_TYPE = Choices(
+        ('head', _('Household Head')),
+        ('spouse', _('Spouse')),
+        ('parent', _('Farther/Mother')),
+        ('relative', _('Other Relative')),
+        ('other', _('Other non-Relative')),
+    )
+
+    status = models.CharField(choices=STATUS)
+    previously_registered = models.BooleanField(default=False)
+    relation_to_child = models.CharField(max_length=50, choices=RELATION_TYPE)
+    wfp_case_number = models.CharField(models=50, blank=True, null=True)
+    csc_case_number = models.CharField(models=50, blank=True, null=True)
+    card_issue_requested = models.BooleanField(default=False)
+    child_enrolled_in_this_school = models.PositiveIntegerField()
+    child_enrolled_in_other_schools = models.PositiveIntegerField()
+
+    # add a seperate model for contact infomation
+
+
 class Registration(TimeStampedModel):
+
+    RELATION_TYPE = Choices(
+        ('child', _('Son/Daughter')),
+        ('grandchild', _('Grandchild')),
+        ('nibling', _('Niece/Nephew')),
+        ('relative', _('Other Relative')),
+        ('other', _('Other non-Relative')),
+    )
+
+    ENROLLMENT_TYPE = Choices(
+        ('no', _('No')),
+        ('second', _('Yes - in 2nd shift')),
+        ('first', _('Yes - in 1st shift')),
+        ('private', _('Yes - in private school')),
+        ('other', _('Yes - in another type of school')),
+    )
+
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
         related_name='+',
     )
+
+    registering_adult = models.ForeignKey(RegisteringAdult)
+    relation_to_adult = models.CharField(
+        max_length=50,
+        choices=RELATION_TYPE
+    )
+    enrolled_last_year = models.CharField(
+        max_length=50,
+        choices=ENROLLMENT_TYPE
+    )
+
     school = models.ForeignKey(
         School,
         blank=False, null=True,
@@ -65,3 +120,4 @@ class Registration(TimeStampedModel):
 
 
 eav.register(Registration)
+
