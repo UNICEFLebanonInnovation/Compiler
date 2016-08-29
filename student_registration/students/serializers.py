@@ -12,7 +12,9 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = (
             'id',
-            'full_name',
+            'first_name',
+            'father_name',
+            'last_name',
             'mother_fullname',
             'sex',
             'birthday_year',
