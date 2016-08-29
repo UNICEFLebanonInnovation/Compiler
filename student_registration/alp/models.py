@@ -23,6 +23,9 @@ from student_registration.eav.registry import Registry as eav
 
 
 class Outreach(TimeStampedModel):
+
+    EAV_TYPE = 'outreach'
+
     student = models.ForeignKey(
         Student,
         blank=False, null=True,

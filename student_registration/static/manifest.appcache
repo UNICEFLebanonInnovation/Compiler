@@ -34,3 +34,8 @@ CACHE MANIFEST
 /static/js/util.js
 /static/js/tooltip.js
 /static/js/bootbox.js
+
+NETWORK:
+*
+http://*
+https://*

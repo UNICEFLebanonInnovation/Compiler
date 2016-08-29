@@ -98,6 +98,8 @@ class OutreachView(LoginRequiredMixin, ListView):
             'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km'),
             'genders': (u'Male', u'Female'),
             'idtypes': IDType.objects.all(),
+            'columns': Attribute.objects.filter(type=Outreach.EAV_TYPE),
+            'eav_type': Outreach.EAV_TYPE
         }
 
 
@@ -106,7 +108,7 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         queryset = Outreach.objects.all()
-        columns = Attribute.objects.filter(type='outreach')
+        columns = Attribute.objects.filter(type=Outreach.EAV_TYPE)
 
         if not self.request.user.is_superuser:
             queryset = queryset.filter(owner=self.request.user)
