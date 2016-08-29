@@ -1,11 +1,7 @@
 /* Project specific Javascript goes here. */
 
-setInterval(function () { window.applicationCache.update(); }, 3600000); // Check for an updated manifest file every 60 minutes. If it's updated, download a new cache as defined by the new manifest file.
-
-window.applicationCache.addEventListener('updateready', function(){ // when an updated cache is downloaded and ready to be used
-        console.log('update page');
-        window.applicationCache.swapCache(); //swap to the newest version of the cache
-}, false);
+var user_token = null;
+var db = null;
 
 hashCode = function(str){
     var hash = 0;
@@ -101,4 +97,88 @@ function generate_student_number(student)
 
     var number = String(ttl_char_student)+String(ttl_char_mother)+String(fullname_code)+String(mother_name_code)+gender_char+bd_day+bd_month+bd_year;
     return number;
+}
+
+function scrollToBottom()
+{
+    $("html, body").animate({ scrollTop: $(document).height() }, 10);
+}
+
+function getHeader()
+{
+    var csrftoken = getCookie('csrftoken');
+    var header = {'Authorization': 'Token '+user_token, 'X-CSRFToken': csrftoken};
+    return header;
+}
+
+function getStoreByName(name)
+{
+    var store = db.transaction([name], "readwrite").objectStore(name);
+    return store;
+}
+
+function pull_data_from_server(url, store_name)
+{
+    $.ajax({
+        type: "GET",
+        url: url,
+        cache: false,
+        async: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            var store = getStoreByName(store_name);
+            $(response.data).each(function(i, item){
+                store.put(item);
+            });
+        },
+        error: function(response) {
+            console.log(response);
+        }
+    });
+}
+
+function delete_data_from_server(url, original_id, itemid, store_name)
+{
+    $.ajax({
+        type: "DELETE",
+        url: url+original_id+'/',
+        cache: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            if(response.status = '200') {
+                var store = getStoreByName(store_name);
+                store.delete(parseInt(itemid));
+            }
+        },
+        error: function (response) {
+            console.log(response);
+        }
+    });
+}
+
+function update_data_server(url, itemid, callback_success, callback_error)
+{
+    $.ajax({
+        type: "PUT",
+        url: url+itemid+'/',
+        data: item,
+        cache: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            if(response.status == '200'){
+                if(callback_success){
+                    callback_success();
+                }
+            }
+        },
+        error: function (response) {
+            if(callback_error){
+                callback_error();
+            }
+            console.log(response);
+        }
+    });
 }

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
-{% load util_tags %}
+{% load eav_tags %}
 
 {% block extra_head %}
 
@@ -103,8 +103,8 @@
                                             <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "Partner tooltip" %}"></i>
                                         </th>
                                         {% for col in columns %}
-                                            <th rowspan="2" class="extra-column" id="{{ col.name }}" itemscope="{{ col.id }}">
-                                                {{ col.label }}
+                                            <th rowspan="2" class="extra-column" id="{{ col.slug }}" itemscope="{{ col.id }}">
+                                                {{ col.name }}
                                             </th>
                                         {% endfor %}
                                     </tr>
@@ -142,19 +142,15 @@
                                             <td>{% if outreach.student and outreach.student.nationality %}{{ outreach.student.nationality.name }}{% endif %}</td>
                                             <td>{% if outreach.student %}{{ outreach.student.mother_fullname }}{% endif %}</td>
                                             <td>{% if outreach.student %}{{ outreach.student.full_name }}{% endif %}</td>
-                                            <td></td>
+                                            <td>{% if outreach.student %}{{ outreach.student.number }}{% endif %}</td>
                                             <td>{% if outreach.partner %}{{ outreach.partner.name }}{% endif %}</td>
                                             {% for col in columns %}
-                                                {% with outreach.id|stringformat:"s" as outreach_id %}
-                                                {% with col_name=col.name|add:'-'|add:outreach_id %}
-                                                    {% json_load_value outreach.extra_fields col_name as field_value %}
-                                                    {% if field_value %}
-                                                        <td>{{ field_value }}</td>
-                                                    {% else %}
-                                                        <td>&nbsp;</td>
-                                                    {% endif %}
-                                                {% endwith %}
-                                                {% endwith %}
+                                                {% eav_column_value outreach.id 17 col.id as value %}
+                                                {% if value %}
+                                                    <td>{{ value }}</td>
+                                                {% else %}
+                                                    <td></td>
+                                                {% endif %}
                                             {% endfor %}
                                         </tr>
                                     {% endfor %}
