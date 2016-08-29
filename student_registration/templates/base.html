@@ -4,6 +4,7 @@
 {% if request.user.is_staff %}
     <html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>
 {% else %}
+{#    <html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>#}
     <html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %} manifest="{% static 'manifest.appcache' %}">
 {% endif %}
   <head>

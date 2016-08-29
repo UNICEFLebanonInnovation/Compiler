@@ -27,13 +27,27 @@ class AttributeViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user)
+        try:
+            queryset = self.queryset.filter(type=self.request.GET['type'], shared=True)
+        except Exception as exp:
+            print exp.message
+            queryset = []
 
-    def get(self, request, *args, **kwargs):
-        print args
-        print kwargs
-        data = self.queryset.filter(type='outreach', shared=True)
-        print data
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        data = []
+        for item in queryset:
+            data.append({
+                "id": item.id,
+                "name": item.slug,
+                "label": item.name,
+                "original_id": item.id,
+                "owner": item.owner.id
+            })
+
         return JsonResponse({'status': status.HTTP_200_OK, 'data': data})
 
     def create(self, request, *args, **kwargs):

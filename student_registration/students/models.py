@@ -7,8 +7,6 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel
 
-from student_registration.registrations.models import RegisteringAdult
-
 
 class Nationality(models.Model):
     name = models.CharField(max_length=45L, unique=True)
@@ -76,6 +74,7 @@ class Person(TimeStampedModel):
         null=True,
         choices=((str(x), x) for x in range(1, 33))
     )
+    age = models.CharField(max_length=4L, blank=True, null=True)
     phone = models.CharField(max_length=64L, blank=True, null=True)
     id_number = models.CharField(max_length=45L, blank=True, null=True)
     id_type = models.ForeignKey(
