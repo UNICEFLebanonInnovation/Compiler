@@ -80,19 +80,19 @@ function getCurrentDate()
 
 function generate_student_number(student)
 {
-    var name = student.student_full_name;
+    var first_name = student.student_first_name;
+    var father_name = student.student_father_name;
+    var last_name = student.student_last_name;
     var mother_name = student.student_mother_fullname;
     var gender = student.student_sex;
     var bd_year = student.student_birthday_year;
     var bd_month = student.student_birthday_month;
     var bd_day = student.student_birthday_day;
 
-    var ttl_char_student = name.length;
+    var ttl_char_student = first_name.length+father_name.length+last_name.length;
     var ttl_char_mother = mother_name.length;
     var gender_char = gender.charAt(0);
-    var fullname_sections = name.split(' ');
-    //console.log(fullname_sections);
-    var fullname_code = hashCode(name);
+    var fullname_code = hashCode(first_name)+hashCode(father_name)+hashCode(last_name);
     var mother_name_code = hashCode(mother_name);
 
     var number = String(ttl_char_student)+String(ttl_char_mother)+String(fullname_code)+String(mother_name_code)+gender_char+bd_day+bd_month+bd_year;
