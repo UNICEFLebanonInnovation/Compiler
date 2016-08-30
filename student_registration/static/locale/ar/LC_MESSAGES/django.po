@@ -534,3 +534,25 @@ msgstr "غائب"
 
 msgid "Present"
 msgstr "حاضر"
+
+msgid "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 6 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month."
+msgstr ""
+
+msgid "This cash is intended to help children regularly attend 2nd shift school in order that their future opportunities are improved."
+msgstr ""
+
+msgid "If a student stops attending school, you will receive an SMS reminder of the purpose of this cash."
+msgstr ""
+
+msgid "If the student does not return to school, you will receive a household visit to help us understand why the student cannot attend and to offer you more services to help the student attend school."
+msgstr ""
+
+msgid "If your address or phone number changes, you must inform us by calling 81-312940. If your household cannot be found after 2 months you will stop receiving benefits."
+msgstr ""
+
+msgid "Please take a leaflet now so you have this important phone number with you."
+msgstr ""
+
+msgid "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card."
+msgstr ""
+

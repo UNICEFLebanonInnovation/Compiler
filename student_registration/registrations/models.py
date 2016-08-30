@@ -39,6 +39,11 @@ class RegisteringAdult(Person):
     card_issue_requested = models.BooleanField(default=False)
     child_enrolled_in_this_school = models.PositiveIntegerField()
     child_enrolled_in_other_schools = models.PositiveIntegerField()
+    school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+    )
 
 
 class Phone(models.Model):
