@@ -4,6 +4,103 @@
 
 {% block extra_head %}
 
+<style type="text/css">
+.frame {
+    height: 250px;
+    overflow: hidden;
+}
+.frame ul {
+    height: 100%;
+}
+.frame ul li.framebox {
+    /*background: none repeat scroll 0 0 #333333;*/
+    color: #DDDDDD;
+    cursor: pointer;
+    float: left;
+    height: 90%;
+    margin: 0 0 0 10px;
+    padding: 15px 0 0 15px;
+
+    text-align: center;
+    width: 227px;
+
+    position: relative;
+    -webkit-box-shadow: inset -1px -1px 2px 2px rgba(1, 1, 1, 0.1);
+    box-shadow: inset -1px -1px 2px 2px rgba(1, 1, 1, 0.1);
+    -moz-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    border-radius: 6px 6px 6px 6px;
+    background: #eeeeee;
+    background: -moz-linear-gradient(top,  #eeeeee 0%, #ffffff 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#ffffff));
+    background: -webkit-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);
+    background: -o-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);
+    background: -ms-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);
+    background: linear-gradient(to bottom,  #eeeeee 0%,#ffffff 100%);
+}
+.frame ul li.active {
+    color: #FFFFFF;
+}
+.scrollbar {
+    height: 2px;
+    line-height: 0;
+    margin: 0 0 1em;
+}
+.scrollbar .handle {
+    cursor: pointer;
+    height: 100%;
+    width: 100px;
+}
+.scrollbar .handle .mousearea {
+    height: 20px;
+    left: 0;
+    position: absolute;
+    top: -9px;
+    width: 100%;
+}
+.pages {
+    list-style: none outside none;
+    margin: 0px 0;
+    padding: 0;
+    text-align: center;
+    padding-top: 10px;
+}
+.pages li {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2) inset;
+    cursor: pointer;
+    display: inline-block;
+    height: 14px;
+    margin: 0 4px;
+    overflow: hidden;
+    text-indent: -999px;
+    width: 14px;
+}
+.pages li.framebox:hover {
+    background: none repeat scroll 0 0 #AAAAAA;
+}
+.pages li.active {
+    background: none repeat scroll 0 0 #666666;
+}
+.controls {
+    margin: 10px 0;
+    text-align: center;
+}
+.oneperframe {
+    height: 425px;
+    width: 805px;
+}
+.oneperframe ul li.framebox {
+    height: 410px;
+    width: 785px;
+}
+label {
+    line-height: 15px;
+}
+
+
+</style>
 
 {% endblock %}
 
@@ -28,8 +125,63 @@
                                 <i class="fa fa-times"></i>
                             </div>
                           </div>
+
                           <div class="panel-body">
-                              {{ form.first_name }}
+                            <div class="scrollbar">
+                                <div class="handle">
+                                    <div class="mousearea"></div>
+                                </div>
+                            </div>
+
+                            <div id="oneperframe" class="frame oneperframe">
+                                <ul class="slidee">
+
+                                    {# 1 Slide select a school #}
+                                    <li class="active framebox">
+                                        {{ form.school }}
+                                    </li>
+
+                                    {# 2 Slide introduction part 1 #}
+                                    <li class="framebox">
+                                        {% trans "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 6 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month." %}
+                                        {% trans "This cash is intended to help children regularly attend 2nd shift school in order that their future opportunities are improved." %}
+                                    </li>
+
+                                    {# 3 Slide introduction part 2 #}
+                                    <li class="framebox">
+                                        {% trans "If a student stops attending school, you will receive an SMS reminder of the purpose of this cash." %}
+                                        {% trans "If the student does not return to school, you will receive a household visit to help us understand why the student cannot attend and to offer you more services to help the student attend school." %}
+                                    </li>
+
+                                    {# 4 Slide introduction part 3 #}
+                                    <li class="framebox">
+                                        {% trans "If your address or phone number changes, you must inform us by calling 81-312940. If your household cannot be found after 2 months you will stop receiving benefits." %}
+                                        {% trans "Please take a leaflet now so you have this important phone number with you." %}
+                                    </li>
+
+                                    {# 5 Slide introduction part 4 #}
+                                    <li class="framebox">
+                                        {% trans "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card." %}
+                                    </li>
+
+                                </ul>
+                            </div>
+
+                            <ul class="pages">
+                                <li class="active">1</li>
+                                <li>2</li>
+                                <li>3</li>
+                                <li>4</li>
+                                <li>5</li>
+                            </ul>
+
+                            <div class="controls center">
+                                <button class="btn prev">prev</button>
+                                <button class="btn next">next</button>
+                            </div>
+
+                        </div>
+
                         </div>
                      </div>
                 </div>
@@ -44,7 +196,80 @@
 
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
     <script type="text/javascript">
+
+jQuery(function($){
+	'use strict';
+
+	// -------------------------------------------------------------
+	//   Centered Navigation
+	// -------------------------------------------------------------
+	(function () {
+		var $frame = $('#oneperframe');
+		var $wrap  = $frame.parent();
+
+		// Call Sly on frame
+		$frame.sly({
+			horizontal: 1,
+			itemNav: 'basic',
+			smart: 1,
+			activateOn: 'click',
+			mouseDragging: 1,
+			touchDragging: 1,
+			releaseSwing: 1,
+			startAt: 0,
+            scrollBar: $wrap.find('.scrollbar'),
+            scrollBy: 1,
+            pagesBar: $wrap.find('.pages'),
+			speed: 300,
+			elasticBounds: 1,
+			easing: 'easeOutExpo',
+			dragHandle: 1,
+			dynamicHandle: 1,
+			clickBar: 1,
+
+			// Buttons
+			prev: $wrap.find('.prev'),
+			next: $wrap.find('.next')
+		});
+	}());
+
+
+});
+
+    $(document).ready(function() {
+{##}
+{#        var $frame = $('#oneperframe');#}
+{#        var $wrap = $frame.parent();#}
+{##}
+{#        // Call Sly on frame#}
+{#        $frame.sly({#}
+{#            horizontal: 1,#}
+{#            itemNav: 'forceCentered',#}
+{#            smart: 1,#}
+{#            activateMiddle: 1,#}
+{#            mouseDragging: 0,#}
+{#            touchDragging: 1,#}
+{#            releaseSwing: 1,#}
+{#            startAt: 0,#}
+{#            scrollBar: $wrap.find('.scrollbar'),#}
+{#            scrollBy: 1,#}
+{#            pagesBar: $wrap.find('.pages'),#}
+{#            activatePageOn: 'click',#}
+{#            speed: 300,#}
+{#            elasticBounds: 1,#}
+{#            easing: 'easeOutExpo',#}
+{#            dragHandle: 1,#}
+{#            dynamicHandle: 1,#}
+{#            clickBar: 1,#}
+{##}
+{#            // Buttons#}
+{#            prev: $wrap.find('.prev'),#}
+{#            next: $wrap.find('.next')#}
+{#        });#}
+    });
     </script>
 
 {% endblock %}
