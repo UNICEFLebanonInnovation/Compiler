@@ -95,10 +95,10 @@
     height: 410px;
     width: 785px;
 }
-label {
-    line-height: 15px;
-}
 
+#signature-pad canvas {
+    border: 1px solid #000;
+}
 
 </style>
 
@@ -164,6 +164,23 @@ label {
                                         {% trans "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card." %}
                                     </li>
 
+                                    {# Signature #}
+                                    <li class="framebox">
+                                      <div id="signature-pad" class="m-signature-pad">
+                                        <div class="m-signature-pad--body">
+                                          <canvas></canvas>
+                                        </div>
+                                        <div class="m-signature-pad--footer">
+                                            <button type="button" class="btn btn-warning" data-action="clear">
+                                                <i class="icon-clear-sign icon-white"></i>{% trans "clear" %}
+                                            </button>
+                                            <button type="button" class="btn btn-success" data-action="save">
+                                                <i class="icon-validation-sign icon-white"></i>{% trans "confirm" %}
+                                            </button>
+                                        </div>
+                                      </div>
+                                    </li>
+
                                 </ul>
                             </div>
 
@@ -176,8 +193,12 @@ label {
                             </ul>
 
                             <div class="controls center">
-                                <button class="btn prev">prev</button>
-                                <button class="btn next">next</button>
+                                <button class="btn prev btn-primary">
+                                    <i class="icon-prev-sign icon-white"></i>{% trans "prev" %}
+                                </button>
+                                <button class="btn next btn-primary">
+                                    {% trans "next" %}<i class="icon-next-sign icon-white"></i>
+                                </button>
                             </div>
 
                         </div>
@@ -198,7 +219,14 @@ label {
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/signature_pad.js' %}"></script>
     <script type="text/javascript">
+
+    var wrapper = document.getElementById("signature-pad"),
+        clearButton = wrapper.querySelector("[data-action=clear]"),
+        saveButton = wrapper.querySelector("[data-action=save]"),
+        canvas = wrapper.querySelector("canvas"),
+        signaturePad;
 
     $(document).ready(function() {
 
@@ -211,8 +239,8 @@ label {
             itemNav: 'forceCentered',
             smart: 1,
             activateMiddle: 1,
-            mouseDragging: 1,
-            touchDragging: 1,
+            mouseDragging: 0,
+            touchDragging: 0,
             releaseSwing: 1,
             startAt: 0,
             scrollBar: $wrap.find('.scrollbar'),
@@ -230,7 +258,51 @@ label {
             prev: $wrap.find('.prev'),
             next: $wrap.find('.next')
         });
+
+        signaturePad = new SignaturePad(canvas);
+
+        clearButton.addEventListener("click", function (event) {
+            signaturePad.clear();
+        });
+
+        saveButton.addEventListener("click", function (event) {
+            if (signaturePad.isEmpty()) {
+            } else {
+                console.log(signaturePad.toDataURL());
+            }
+        });
+
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        // Returns signature image as data URL (see https://mdn.io/todataurl for the list of possible paramters)
+        signaturePad.toDataURL(); // save image as PNG
+        signaturePad.toDataURL("image/jpeg"); // save image as JPEG
+
+        // Draws signature image from data URL
+{#        signaturePad.fromDataURL("data:image/png;");#}
+
+        // Clears the canvas
+        signaturePad.clear();
+
+        // Returns true if canvas is empty, otherwise returns false
+        signaturePad.isEmpty();
+
+        // Unbinds all event handlers
+        signaturePad.off();
+
+        // Rebinds all event handlers
+        signaturePad.on();
+
     });
+
+    function resizeCanvas() {
+        var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+{#        signaturePad.clear(); // otherwise isEmpty() might return incorrect value#}
+    }
     </script>
 
 {% endblock %}

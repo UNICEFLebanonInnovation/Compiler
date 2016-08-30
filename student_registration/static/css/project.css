@@ -81,6 +81,15 @@ input.required, select.required {
 .icon-validation-sign {
   background-position: -288px 0px;
 }
+.icon-clear-sign {
+  background-position: -313px 0px;
+}
+.icon-next-sign {
+  background-position: -455px -71px;
+}
+.icon-prev-sign {
+  background-position: -430px -71px;
+}
 
 .icon-Male {
   background-position: 0px 0px;
