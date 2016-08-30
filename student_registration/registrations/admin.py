@@ -5,7 +5,9 @@ from django.contrib import admin
 
 from .models import (
     Registration,
+    RegisteringAdult,
 )
 
 
 admin.site.register(Registration)
+admin.site.register(RegisteringAdult)

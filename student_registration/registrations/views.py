@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView
+from django.views.generic import DetailView, ListView, RedirectView, UpdateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
@@ -13,7 +13,7 @@ from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 
-from .models import Registration
+from .models import Registration, RegisteringAdult
 from .serializers import RegistrationSerializer
 from student_registration.students.models import (
     Student,
@@ -27,6 +27,7 @@ from student_registration.schools.models import (
     Section,
 )
 from student_registration.students.serializers import StudentSerializer
+from student_registration.registrations.forms import RegisteringAdultForm
 
 
 class RegistrationViewSet(mixins.RetrieveModelMixin,
@@ -92,6 +93,22 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'genders': (u'Male', u'Female'),
             'idtypes': IDType.objects.all(),
         }
+
+
+class RegisteringAdultView(LoginRequiredMixin, FormView):
+    template_name = 'registration-pilot/index.html'
+    form_class = RegisteringAdultForm
+    success_url = 'complete'
+
+    def get_context_data(self, **kwargs):
+        context = super(RegisteringAdultView, self).get_context_data(**kwargs)
+        return context
+
+    def form_valid(self, form):
+        pass
+
+    def get_initial(self):
+        pass
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):
