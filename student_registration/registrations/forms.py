@@ -11,12 +11,7 @@ from student_registration.registrations.models import (
 )
 
 
-class RegisteringAdultForm(forms.Form):
-
-    first_name = forms.CharField(
-        max_length=255,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
+class RegisteringAdultForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(RegisteringAdultForm, self).__init__(*args, **kwargs)
