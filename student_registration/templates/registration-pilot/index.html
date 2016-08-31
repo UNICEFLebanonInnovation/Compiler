@@ -125,7 +125,7 @@
                                 <i class="fa fa-times"></i>
                             </div>
                           </div>
-
+<form method="post" action="" class="inlineForm">
                           <div class="panel-body">
                             <div class="scrollbar">
                                 <div class="handle">
@@ -165,21 +165,97 @@
                                     </li>
 
                                     <li class="framebox">
-                                        {{ form.id_type }}
-{#                                        {{ form.id_number }}#}
-{#                                         {{ form.nationality }}#}
+                                         <h5 class="panel-title">{% trans "Register New Household" %}</h5>
+                                                                                <div class="line">
+                                            <label class="text">{% trans "Nationality" %}<span class="asterisque">*</span></label>
+                                            {{ form.nationality }}
+                                        </div>
+                                         <div class="line">
+                                            <label class="text">{% trans "ID Type" %}<span class="asterisque">*</span></label>
+                                            {{ form.id_type }}
 
-                                        <select id ="options">
-                                          <option value="Option1">Option1</option>
-                                          <option value="Option2">Option2</option>
-                                          <option value="Option3">Option3</option>
-                                        </select>
+                                             <select id ="options">
+                                                 <option value="None">None</option>
+                                                 <option value="OptionUNHCR">OptionUNHCR</option>
+                                                 <option value="OptionOtherID">OptionOtherID</option>
+                                                 <option value="OptionNoID">OptionNoID</option>
+                                             </select>
+                                         </div>
 
-                                        <div id = "Section1" style = "display:none">Section1</div>
+                                        <div id = "HouseholdUNHCR" style = "display:none">
+                                            <div class="line">
+                                                <label class="text">{% trans "Is the principal applicant still with your household?" %}<span class="asterisque">*</span></label>
+                                                <label><input id ="PrincipalHouseHoldYes" type="radio" name="PrincipalHouseHoldCB" value="1">{% trans "Yes" %}</label>
+                                                <label><input id ="PrincipalHouseHoldNo" type="radio" name="PrincipalHouseHoldCB" value="0">{% trans "No" %}</label>
+                                            </div>
 
-                                        <div id = "Section2" style = "display:none">Section2</div>
 
-                                        <div id = "Section3" style = "display:none">Section3</div>
+                                            <!-- <input id="PrincipalHouseHoldCB" type="checkbox" name="isPrincipal" value="1" checked/> -->
+                                            <br/>
+                                            <div class="line">
+                                                <label class="text" id="HouseholdRegistrationNumber" style = "display:none">{% trans "UNHCR Household Registration Number" %}<span class="asterisque">*</span></label>
+                                                <label class="text" id="IndividualRegistrationNumber" style = "display:none">{% trans "UNHCR Individual Registration Number of the Household Representative" %}<span class="asterisque">*</span></label>
+                                            </div>
+                                        </div>
+
+                                        <div id = "HouseholdOtherID" style = "display:none">
+                                            <div class="line">
+                                                <label class="text">{% trans "NOTE: in order to register with other ID, the ID Holder must be present AND must be 18 years of age or older." %}</label> </br>
+                                                <label class="text" >{% trans "ID Number" %}<span class="asterisque">*</span></label>
+                                            </div>
+                                        </div>
+
+                                        <div id = "HouseholdUNHCROtherID" style = "display:none">
+                                            <div id = "idNumber" class="line" style="display:none">
+                                                {{ form.id_number }}
+                                            </div>
+                                            </br>
+                                        </div>
+
+
+
+                                        <div id = "HouseholdUNHCRNote" style = "display:none">
+                                            <div class="line">
+                                                <label class="text" id="IndividualRegistrationNote" style = "display:none">{% trans "NOTE: If the Household Representative is not listed on the UNHCR Certificate, it cannot be used to regiter for the Pilot. Another form of ID must be used." %}</label>
+                                            </div>
+                                        </div>
+
+                                        <div id = "HouseholdOtherNoID" style = "display:none">
+                                            <div class="line">
+                                                <label class="text">{% trans "First Name" %}<span class="asterisque">*</span></label>
+                                                {{ form.first_name }}
+                                            </div>
+                                            <div class="line">
+                                                <label class="text">{% trans "Father's Name" %}<span class="asterisque">*</span></label>
+                                                {{ form.father_name }}
+                                            </div>
+                                            <div class="line">
+                                                <label class="text">{% trans "Last Name" %}<span class="asterisque">*</span></label>
+                                                {{ form.last_name }}
+                                            </div>
+                                            <div class="line">
+                                                <label class="text">{% trans "Mother Full name" %}<span class="asterisque">*</span></label>
+                                                {{ form.mother_fullname }}
+                                            </div>
+                                            <div class="line">
+                                                <label class="text">{% trans "Age" %}<span class="asterisque">*</span></label>
+                                                {{ form.age }}
+                                            </div>
+                                            <div class="line">
+                                                <label class="text">{% trans "Date of birth" %}<span class="asterisque">*</span></label>
+                                                {{ form.birthday_day }}
+                                                {{ form.birthday_month }}
+                                                {{ form.birthday_year }}
+                                            </div>
+                                            <div class="line">
+                                                <label class="text">{% trans "Gender" %}<span class="asterisque">*</span></label>
+                                                {{ form.sex }}
+                                            </div>
+                                            <div class="line">
+                                                <label class="text">{% trans "Relationship to Houshold head" %}<span class="asterisque">*</span></label>
+                                                {{ form.relation_to_householdhead }}
+                                            </div>
+                                        </div>
 
                                     </li>
 
@@ -221,8 +297,10 @@
                             </div>
 
                         </div>
+</form>
 
                         </div>
+                      </div>
                      </div>
                 </div>
             </div>
@@ -263,7 +341,7 @@
             releaseSwing: 1,
             startAt: 0,
             scrollBar: $wrap.find('.scrollbar'),
-            scrollBy: 1,
+            scrollBy: 0,
             pagesBar: $wrap.find('.pages'),
             activatePageOn: 'click',
             speed: 300,
@@ -318,12 +396,84 @@
                 function ()
                 {
                    var selectedOption = this.value;
-
-                    alert(selectedOption);
                 }
         );
 
     });
+    $("#options").change
+        (
+                function ()
+                {
+                   var selectedOption = this.value;
+
+				   if(selectedOption == "OptionUNHCR")
+				   {
+					   hideAll();
+					   $("#HouseholdUNHCR").show();
+                       $("#HouseholdUNHCROtherID").show();
+                       $("#HouseholdUNHCRNote").show();
+
+				   }
+				   else if (selectedOption == "OptionOtherID")
+				   {
+					   hideAll();
+					   $("#HouseholdOtherID").show();
+                       $("#HouseholdUNHCROtherID").show();
+                       $("#HouseholdOtherNoID").show();
+				   }
+				   else if (selectedOption == "OptionNoID")
+				   {
+					   hideAll();
+					   $("#HouseholdOtherNoID").show();
+				   }
+				   else
+				   {
+					   hideAll();
+				   }
+                }
+        );
+
+
+
+    //$("#PrincipalHouseHoldCB").change
+    $('input[type=radio][name=PrincipalHouseHoldCB]').change
+        (
+                function ()
+                {
+				   var PrincipalHouseHoldCBChecked = $("input[name=PrincipalHouseHoldCB]:checked").val();
+
+                   //var PrincipalHouseHoldCBChecked = $('#PrincipalHouseHoldCB:checkbox:checked').length > 0;
+
+				   if(PrincipalHouseHoldCBChecked==1)
+				   {
+					   $("#HouseholdRegistrationNumber").show();
+					   $("#IndividualRegistrationNumber").hide();
+					   $("#IndividualRegistrationNote").hide();
+                       $("#idNumber").show();
+				   }
+                   else
+				   {
+					   $("#HouseholdRegistrationNumber").hide();
+					   $("#IndividualRegistrationNumber").show();
+					   $("#IndividualRegistrationNote").show();
+
+                       $("#idNumber").show();
+				   }
+                }
+        );
+
+
+    function hideAll()
+    {
+        $("#HouseholdUNHCR").hide();
+        $("#HouseholdUNHCROtherID").hide();
+        $("#HouseholdUNHCRNote").hide();
+        $("#HouseholdOtherID").hide();
+        $("#HouseholdOtherNoID").hide();
+    }
+
+
+
 
     function resizeCanvas() {
         var ratio =  Math.max(window.devicePixelRatio || 1, 1);
@@ -332,6 +482,8 @@
         canvas.getContext("2d").scale(ratio, ratio);
 {#        signaturePad.clear(); // otherwise isEmpty() might return incorrect value#}
     }
+
+
     </script>
 
 {% endblock %}
