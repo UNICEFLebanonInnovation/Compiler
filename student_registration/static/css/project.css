@@ -149,6 +149,9 @@ label.text {
     padding-right: 20px;
     text-align: right;
 }
+.inlineForm .hidden-field {
+    display: none;
+}
 .error {
     color: red;
     font-weight: bold;
@@ -172,4 +175,9 @@ div.error, span.error {
 }
 .asterisque {
     color: red;
+}
+
+#radioBtn .notActive{
+    color: #3276b1;
+    background-color: #fff;
 }

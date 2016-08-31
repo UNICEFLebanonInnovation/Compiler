@@ -83,6 +83,7 @@
     width: 750px;
 }
 .oneperframe ul li.framebox {
+    overflow: auto;
     height: 610px;
     width: 735px;
 }
