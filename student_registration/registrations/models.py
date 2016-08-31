@@ -39,6 +39,11 @@ class RegisteringAdult(Person):
     card_issue_requested = models.BooleanField(default=False)
     child_enrolled_in_this_school = models.PositiveIntegerField()
     child_enrolled_in_other_schools = models.PositiveIntegerField()
+    primary_phone = models.CharField(max_length=50, blank=True, null=True)
+    primary_phone_answered = models.CharField(max_length=50, blank=True, null=True)
+    secondary_phone = models.CharField(max_length=50, blank=True, null=True)
+    secondary_phone_answered = models.CharField(max_length=50, blank=True, null=True)
+    signature = models.TextField(blank=True, null=True)
     school = models.ForeignKey(
         School,
         blank=False, null=True,

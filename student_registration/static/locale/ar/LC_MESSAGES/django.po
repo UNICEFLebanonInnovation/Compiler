@@ -556,3 +556,33 @@ msgstr ""
 msgid "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card."
 msgstr ""
 
+msgid "To benefit from the cash pilot, you must provide us with an address where carefully selected, trained officers who work for the pilot can visit your household and a phone number where we can reach you. These officers will be trained to handle your information carefully and will only visit you if a child you have registered drops out of school."
+msgstr ""
+
+msgid "If you change your phone number or address, please inform the program by calling 81-312940, or you will be removed after we are unable to locate you."
+msgstr ""
+
+msgid "By signing this agreement you also consent to allow us to share the data collected today with UNHCR and WFP in order to help ensure that you are paid. Some data will also be shared with the Ministry of Education and Higher Education (MEHE). We will ensure that your data is handled carefully and confidentially. If you have any questions please ask them before signing."
+msgstr ""
+
+msgid "Please indicate that you understand the above as it has been read to you and that you consent to be contacted by telephone and by household visit by officers of the program by signing below. Those knowingly providing false information or committing fraud against the program will be removed from the pilot."
+msgstr ""
+
+msgid "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments. Therefore if you change your phone number or address, it is very important that you please inform us by calling 81-312940."
+msgstr ""
+
+msgid "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 6 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school."
+msgstr ""
+
+msgid "This number is on the leaflet provided to you."
+msgstr ""
+
+msgid "If you change your phone number or address, please inform the program by calling 81-312940, or you will be removed after we are unable to locate you."
+msgstr ""
+
+msgid "Officers of the Min Ila Cash Pilot must be able to reach you by phone and household visit in order for your household to benefit from the pilot. Your information will only be provided to officers of the pilot who will be trained to handle your information carefully and will only visit you if your child drops out of school."
+msgstr ""
+
+msgid "To ensure that your household receives complete payment you must provide the ID Number under which your other registration took place. You can either come back tomorrow, or you can call the hotline to do this. It is important taht your do this in order to not delay your payment"
+msgstr ""
+
