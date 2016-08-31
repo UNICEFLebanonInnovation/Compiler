@@ -31,14 +31,16 @@ class RegisteringAdult(Person):
         ('other', _('Other non-Relative')),
     )
 
-    status = models.CharField(max_length=50, blank=True, null=True, choices=STATUS)
+    # status = models.CharField(max_length=50, blank=True, null=True, choices=STATUS)
+    status = models.BooleanField(default=False)
     previously_registered = models.BooleanField(default=False)
     relation_to_child = models.CharField(max_length=50, choices=RELATION_TYPE)
     wfp_case_number = models.CharField(max_length=50, blank=True, null=True)
     csc_case_number = models.CharField(max_length=50, blank=True, null=True)
     card_issue_requested = models.BooleanField(default=False)
     child_enrolled_in_this_school = models.PositiveIntegerField()
-    child_enrolled_in_other_schools = models.PositiveIntegerField()
+    # child_enrolled_in_other_schools = models.PositiveIntegerField()
+    child_enrolled_in_other_schools = models.BooleanField(default=False)
     primary_phone = models.CharField(max_length=50, blank=True, null=True)
     primary_phone_answered = models.CharField(max_length=50, blank=True, null=True)
     secondary_phone = models.CharField(max_length=50, blank=True, null=True)
