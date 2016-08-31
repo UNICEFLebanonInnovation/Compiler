@@ -107,10 +107,13 @@ input.required, select.required {
 }
 
 .inlineForm {
+    color: #7b7b7b;
     padding: 15px;
 }
+.inlineForm .line input[type=radio] {
+    margin: 3px 10px 5px 0;
+}
 .inlineForm .line label.text, .inlineForm .line input, .inlineForm .line select, .inlineForm .line textarea {
-    padding: 5px;
     display: block;
     clear: right;
     float: left;
