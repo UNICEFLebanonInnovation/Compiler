@@ -105,3 +105,68 @@ input.required, select.required {
   vertical-align: middle;
   background-image: url("../images/icon-Female.png");
 }
+
+.inlineForm {
+    padding: 15px;
+}
+.inlineForm .line label.text, .inlineForm .line input, .inlineForm .line select, .inlineForm .line textarea {
+    padding: 5px;
+    display: block;
+    clear: right;
+    float: left;
+}
+.inlineForm .line label.text {
+    font-weight: bold;
+    width: 200px;
+}
+.inlineForm .line {
+    /*width: 100%;*/
+    /*padding-top: 5px;*/
+    /*padding-bottom: 7px;*/
+    /*padding-left: 0px;*/
+    /*float:left;*/
+    height: 50px;
+    clear: both;
+}
+.inlineForm .line span.left {
+    padding-top: 7px;
+}
+label.text {
+    text-align: left !important;
+    font-size: 16px;
+}
+
+.inlineForm label.text {
+    float: left;
+    width: 170px;
+    padding-top: 2px;
+    padding-bottom: 3px;
+    font-size: 13px;
+    color:#7b7b7b;
+    padding-right: 20px;
+    text-align: right;
+}
+.error {
+    color: red;
+    font-weight: bold;
+    padding-left: 5px;
+}
+div.error, span.error {
+    padding-top: 3px;
+    float: right;
+}
+.form_errors {
+    padding-left: 140px;
+    clear: both;
+    height: 24px;
+}
+.form_errors div {
+    float: left;
+    width: 100px;
+}
+.field_error {
+    border: 1px solid red !important;
+}
+.asterisque {
+    color: red;
+}
