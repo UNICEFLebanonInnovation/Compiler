@@ -97,7 +97,7 @@ class RegistrationView(LoginRequiredMixin, ListView):
 
 class RegisteringAdultView(LoginRequiredMixin, FormView):
     template_name = 'registration-pilot/index.html'
-    # template_name = 'registration-pilot/add_child.html'
+    template_name = 'registration-pilot/register_children.html'
     # template_name = 'registration-pilot/declaration_signature.html'
     form_class = RegisteringAdultForm
     success_url = 'complete'

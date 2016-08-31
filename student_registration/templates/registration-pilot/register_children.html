@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block extra_head %}
+
+	<link rel="stylesheet" type="text/css" href="{% static 'css/sly.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/signature_pad.css' %}">
+
+{% endblock %}
+
+
+{% block content %}
+
+         <section class="main-content-wrapper">
+            <section id="main-content">
+                 <div class="row">
+                    <div class="col-md-12">
+                        </br>
+                    </div>
+                </div>
+            <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">{% trans "Registration" %}</h3>
+                            <div class="actions pull-right">
+                                <i class="fa fa-chevron-down"></i>
+                                <i class="fa fa-times"></i>
+                            </div>
+                          </div>
+<form method="post" action="" class="inlineForm">
+                          <div class="panel-body">
+                            <div class="scrollbar">
+                                <div class="handle">
+                                    <div class="mousearea"></div>
+                                </div>
+                            </div>
+
+                            <div id="oneperframe" class="frame oneperframe">
+                                <ul class="slidee">
+
+                                    {# 1 Registre Child #}
+                                    <li class="active framebox">
+                                        <h5 class="panel-title">{% trans "Register Children in Pilot" %}</h5>
+                                        <div class="line">
+                                            <label class="text">{% trans "Do you have any children enrolled in other schools?" %}</label>
+                                            {% for choice in form.child_enrolled_in_other_schools %}
+                                                {{ choice }}
+                                            {% endfor %}
+                                        </div>
+                                        <div class="line" id="registration_status_block" style="display: none;">
+                                            <label class="text">{% trans "Have you already completed teh registration process for this pilot in other school?" %}</label>
+                                            {% for choice in form.status %}
+                                                {{ choice }}
+                                            {% endfor %}
+                                        </div>
+                                        <div class="line" id="previously_registered_block" style="display: none;">
+                                            <label class="text">{% trans "Do you have the ID under which the registration take place" %}</label>
+                                            {% for choice in form.previously_registered %}
+                                                {{ choice }}
+                                            {% endfor %}
+                                        </div>
+                                        <span class="error" id="previously_registered_error" style="display: none;">
+                                            {% trans "To ensure that your household receives complete payment you must provide the ID Number under which your other registration took place. You can either come back tomorrow, or you can call the hotline to do this. It is important taht your do this in order to not delay your payment" %}
+                                        </span>
+                                        <div class="line" id="id_number_block" style="display: none;">
+                                            <label class="text">{% trans "ID Number" %}<span class="asterisque">*</span></label>
+                                            {{ form.id_number }}
+                                        </div>
+                                        <div id="no_id_block">
+                                            <table class="table table-striped table-bordered cell-border"
+                                                   data-height="500"
+                                                   data-pagination="true"
+                                                   data-search="true"
+                                                   cellspacing="0"
+                                                   width="100%">
+                                                <thead>
+                                                    <th>{% trans "School" %}</th>
+                                                    <th>ID</th>
+                                                    <th>{% trans "First name" %}</th>
+                                                    <th>{% trans "Father's First name" %}</th>
+                                                    <th>{% trans "Last Name" %}</th>
+                                                    <th>{% trans "Mother's Full name" %}</th>
+                                                    <th>{% trans "Date of birth" %}</th>
+                                                    <th>{% trans "Age" %}</th>
+                                                    <th>{% trans "Relationship to household Head" %}</th>
+                                                    <th>{% trans "Was this child enrolled in any school last year" %}</th>
+                                                </thead>
+                                                <tbody>
+                                                    {% for child in registred_children %}
+
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>>
+                                        </div>
+                                    </li>
+
+                                    {# 1 Slide select a school #}
+                                    <li class="active framebox">
+                                        <h5 class="panel-title">{% trans "Contact Information" %}</h5>
+                                        <p>
+                                            {% trans "Officers of the Min Ila Cash Pilot must be able to reach you by phone and household visit in order for your household to benefit from the pilot. Your information will only be provided to officers of the pilot who will be trained to handle your information carefully and will only visit you if your child drops out of school." %}
+                                        </p>
+                                        <p>
+                                            <strong>{% trans "If you change your phone number or address, please inform the program by calling 81-312940, or you will be removed after we are unable to locate you." %}</strong>
+                                        </p>
+                                        <p>
+                                            <strong>{% trans "This number is on the leaflet provided to you." %}</strong>
+                                        </p>
+                                    </li>
+
+                                    {# 2 Declaration and Signature #}
+                                    <li class="framebox">
+                                        <h5 class="panel-title">{% trans "Declaration and Consent" %}</h5>
+                                        <p>
+                                            {% trans "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 6 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school." %}
+                                        </p>
+                                        <p>
+                                            {% trans "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments. Therefore if you change your phone number or address, it is very important that you please inform us by calling 81-312940." %}
+                                        </p>
+                                        <p>
+                                            {% trans "Please indicate that you understand the above as it has been read to you and that you consent to be contacted by telephone and by household visit by officers of the program by signing below. Those knowingly providing false information or committing fraud against the program will be removed from the pilot." %}
+                                        </p>
+                                        <p>
+                                            {% trans "By signing this agreement you also consent to allow us to share the data collected today with UNHCR and WFP in order to help ensure that you are paid. Some data will also be shared with the Ministry of Education and Higher Education (MEHE). We will ensure that your data is handled carefully and confidentially. If you have any questions please ask them before signing." %}
+                                        </p>
+                                        <h6>{% trans "Signature" %}</h6>
+                                            <div style="display: none;">
+                                                {{ form.signature }}
+                                            </div>
+                                          <div id="signature-pad" class="m-signature-pad">
+                                            <div class="m-signature-pad--body">
+                                              <canvas></canvas>
+                                            </div>
+                                            <div class="m-signature-pad--footer">
+                                                <button type="button" class="btn btn-warning" data-action="clear">
+                                                    <i class="icon-clear-sign icon-white"></i>{% trans "clear" %}
+                                                </button>
+                                                <button type="button" class="btn btn-success" data-action="save">
+                                                    <i class="icon-validation-sign icon-white"></i>{% trans "confirm" %}
+                                                </button>
+                                            </div>
+                                          </div>
+                                    </li>
+
+                                    {# 3 Contact information #}
+                                    <li class="framebox">
+                                        <h5 class="panel-title">{% trans "Contact Information" %}</h5>
+                                        <p>
+                                            {% trans "To benefit from the cash pilot, you must provide us with an address where carefully selected, trained officers who work for the pilot can visit your household and a phone number where we can reach you. These officers will be trained to handle your information carefully and will only visit you if a child you have registered drops out of school." %}
+                                            <strong>{% trans "If you change your phone number or address, please inform the program by calling 81-312940, or you will be removed after we are unable to locate you." %}</strong>
+                                        </p>
+                                        <div class="line">
+                                            <label class="text">{% trans "Address" %}<span class="asterisque">*</span></label>
+                                            {{ form.address }}
+                                        </div>
+                                        <div class="line">
+                                            <label class="text">{% trans "Primary Phone Number" %}<span class="asterisque">*</span></label>
+                                            {{ form.primary_phone }}
+                                        </div>
+                                        <div class="line">
+                                            <label class="text">{% trans "Phone Number are normally answered by" %}<span class="asterisque">*</span></label>
+                                            {{ form.primary_phone_answered }}
+                                        </div>
+                                        <div class="line">
+                                            <label class="text">{% trans "Secondary Phone Number" %}</label>
+                                            {{ form.secondary_phone }}
+                                        </div>
+                                        <div class="line">
+                                            <label class="text">{% trans "Phone Number are normally answered by" %}</label>
+                                            {{ form.secondary_phone_answered }}
+                                        </div>
+                                        <button class="btn btn-success" type="submit">{% trans "Save" %}</button>
+                                    </li>
+
+                                </ul>
+                            </div>
+
+                            <ul class="pages">
+                                <li class="active">1</li>
+                                <li>2</li>
+                                <li>3</li>
+                            </ul>
+
+                            <div class="controls center">
+                                <button class="btn prev btn-primary">
+                                    <i class="icon-prev-sign icon-white"></i>{% trans "prev" %}
+                                </button>
+                                <button class="btn next btn-primary">
+                                    {% trans "next" %}<i class="icon-next-sign icon-white"></i>
+                                </button>
+                            </div>
+                        </div>
+</form>
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+            </section>
+         </section>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/signature_pad.js' %}"></script>
+    <script type="text/javascript">
+
+    $(document).ready(function() {
+
+        initializeSly($('#oneperframe'));
+        initializeSignature();
+
+        $('input[name=child_enrolled_in_other_schools]').click(function(){
+            if($(this).val() == 1){
+                $('#registration_status_block').show();
+            }else{
+                $('#registration_status_block').hide();
+            }
+        });
+
+        $('input[name=status]').click(function(){
+            if($(this).val() == 1){
+                $('#previously_registered_block').show();
+            }else{
+                $('#previously_registered_block').hide();
+            }
+        });
+
+        $('input[name=previously_registered]').click(function(){
+            if($(this).val() == 1){
+                $('#previously_registered_error').hide();
+                $('#id_number_block').show();
+            }else{
+                $('#previously_registered_error').show();
+            }
+        });
+    });
+
+    </script>
+
+{% endblock %}
