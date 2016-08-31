@@ -4,103 +4,7 @@
 
 {% block extra_head %}
 
-<style type="text/css">
-.frame {
-    height: 250px;
-    overflow: hidden;
-}
-.frame ul {
-    height: 100%;
-}
-.frame ul li.framebox {
-    /*background: none repeat scroll 0 0 #333333;*/
-    color: #DDDDDD;
-    cursor: pointer;
-    float: left;
-    height: 90%;
-    margin: 0 0 0 10px;
-    padding: 15px 0 0 15px;
-
-    text-align: center;
-    width: 227px;
-
-    position: relative;
-    -webkit-box-shadow: inset -1px -1px 2px 2px rgba(1, 1, 1, 0.1);
-    box-shadow: inset -1px -1px 2px 2px rgba(1, 1, 1, 0.1);
-    -moz-border-radius: 6px 6px 6px 6px;
-    -webkit-border-radius: 6px 6px 6px 6px;
-    border-radius: 6px 6px 6px 6px;
-    background: #eeeeee;
-    background: -moz-linear-gradient(top,  #eeeeee 0%, #ffffff 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#ffffff));
-    background: -webkit-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);
-    background: -o-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);
-    background: -ms-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);
-    background: linear-gradient(to bottom,  #eeeeee 0%,#ffffff 100%);
-}
-.frame ul li.active {
-    color: #FFFFFF;
-}
-.scrollbar {
-    height: 2px;
-    line-height: 0;
-    margin: 0 0 1em;
-}
-.scrollbar .handle {
-    cursor: pointer;
-    height: 100%;
-    width: 100px;
-}
-.scrollbar .handle .mousearea {
-    height: 20px;
-    left: 0;
-    position: absolute;
-    top: -9px;
-    width: 100%;
-}
-.pages {
-    list-style: none outside none;
-    margin: 0px 0;
-    padding: 0;
-    text-align: center;
-    padding-top: 10px;
-}
-.pages li {
-    background: none repeat scroll 0 0 #FFFFFF;
-    border-radius: 10px;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2) inset;
-    cursor: pointer;
-    display: inline-block;
-    height: 14px;
-    margin: 0 4px;
-    overflow: hidden;
-    text-indent: -999px;
-    width: 14px;
-}
-.pages li.framebox:hover {
-    background: none repeat scroll 0 0 #AAAAAA;
-}
-.pages li.active {
-    background: none repeat scroll 0 0 #666666;
-}
-.controls {
-    margin: 10px 0;
-    text-align: center;
-}
-.oneperframe {
-    height: 425px;
-    width: 805px;
-}
-.oneperframe ul li.framebox {
-    height: 410px;
-    width: 785px;
-}
-
-#signature-pad canvas {
-    border: 1px solid #000;
-}
-
-</style>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/sly.css' %}">
 
 {% endblock %}
 
@@ -138,30 +42,34 @@
 
                                     {# 1 Slide select a school #}
                                     <li class="active framebox">
-                                        {{ form.school }}
+                                        <h5 class="panel-title"></h5>
+                                        <div class="line">
+                                            <label class="text">{% trans "Select School" %}</label>
+                                            {{ form.school }}
+                                        </div>
                                     </li>
 
                                     {# 2 Slide introduction part 1 #}
                                     <li class="framebox">
-                                        {% trans "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 6 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month." %}
-                                        {% trans "This cash is intended to help children regularly attend 2nd shift school in order that their future opportunities are improved." %}
+                                        <p>{% trans "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 6 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month." %}</p>
+                                        <p>{% trans "This cash is intended to help children regularly attend 2nd shift school in order that their future opportunities are improved." %}</p>
                                     </li>
 
                                     {# 3 Slide introduction part 2 #}
                                     <li class="framebox">
-                                        {% trans "If a student stops attending school, you will receive an SMS reminder of the purpose of this cash." %}
-                                        {% trans "If the student does not return to school, you will receive a household visit to help us understand why the student cannot attend and to offer you more services to help the student attend school." %}
+                                        <p>{% trans "If a student stops attending school, you will receive an SMS reminder of the purpose of this cash." %}</p>
+                                        <p>{% trans "If the student does not return to school, you will receive a household visit to help us understand why the student cannot attend and to offer you more services to help the student attend school." %}</p>
                                     </li>
 
                                     {# 4 Slide introduction part 3 #}
                                     <li class="framebox">
-                                        {% trans "If your address or phone number changes, you must inform us by calling 81-312940. If your household cannot be found after 2 months you will stop receiving benefits." %}
-                                        {% trans "Please take a leaflet now so you have this important phone number with you." %}
+                                        <p>{% trans "If your address or phone number changes, you must inform us by calling 81-312940. If your household cannot be found after 2 months you will stop receiving benefits." %}</p>
+                                        <p>{% trans "Please take a leaflet now so you have this important phone number with you." %}</p>
                                     </li>
 
                                     {# 5 Slide introduction part 4 #}
                                     <li class="framebox">
-                                        {% trans "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card." %}
+                                        <p>{% trans "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card." %}</p>
                                     </li>
 
                                     <li class="framebox">
@@ -185,8 +93,12 @@
                                         <div id = "HouseholdUNHCR" style = "display:none">
                                             <div class="line">
                                                 <label class="text">{% trans "Is the principal applicant still with your household?" %}<span class="asterisque">*</span></label>
-                                                <label><input id ="PrincipalHouseHoldYes" type="radio" name="PrincipalHouseHoldCB" value="1">{% trans "Yes" %}</label>
-                                                <label><input id ="PrincipalHouseHoldNo" type="radio" name="PrincipalHouseHoldCB" value="0">{% trans "No" %}</label>
+                                                <input id="PrincipalHouseHold_1" type="radio" name="PrincipalHouseHoldCB" value="1" class="hidden-field" />
+                                                <input id="PrincipalHouseHold_0" type="radio" name="PrincipalHouseHoldCB" value="0" class="hidden-field" />
+                                                <div id="radioBtn" class="btn-group">
+                                                    <a class="btn btn-primary btn-sm notActive" data-toggle="id_PrincipalHouseHold" data-title="1">YES</a>
+                                                    <a class="btn btn-primary btn-sm notActive" data-toggle="id_PrincipalHouseHold" data-title="0">NO</a>
+                                                </div>
                                             </div>
 
 
@@ -199,8 +111,8 @@
                                         </div>
 
                                         <div id = "HouseholdOtherID" style = "display:none">
+                                            <p>{% trans "NOTE: in order to register with other ID, the ID Holder must be present AND must be 18 years of age or older." %}</p>
                                             <div class="line">
-                                                <label class="text">{% trans "NOTE: in order to register with other ID, the ID Holder must be present AND must be 18 years of age or older." %}</label> </br>
                                                 <label class="text" >{% trans "ID Number" %}<span class="asterisque">*</span></label>
                                             </div>
                                         </div>
@@ -215,9 +127,7 @@
 
 
                                         <div id = "HouseholdUNHCRNote" style = "display:none">
-                                            <div class="line">
-                                                <label class="text" id="IndividualRegistrationNote" style = "display:none">{% trans "NOTE: If the Household Representative is not listed on the UNHCR Certificate, it cannot be used to regiter for the Pilot. Another form of ID must be used." %}</label>
-                                            </div>
+                                            <p id="IndividualRegistrationNote" style = "display:none">{% trans "NOTE: If the Household Representative is not listed on the UNHCR Certificate, it cannot be used to regiter for the Pilot. Another form of ID must be used." %}</p>
                                         </div>
 
                                         <div id = "HouseholdOtherNoID" style = "display:none">
@@ -256,24 +166,7 @@
                                                 {{ form.relation_to_householdhead }}
                                             </div>
                                         </div>
-
-                                    </li>
-
-                                    {# Signature #}
-                                    <li class="framebox">
-                                      <div id="signature-pad" class="m-signature-pad">
-                                        <div class="m-signature-pad--body">
-                                          <canvas></canvas>
-                                        </div>
-                                        <div class="m-signature-pad--footer">
-                                            <button type="button" class="btn btn-warning" data-action="clear">
-                                                <i class="icon-clear-sign icon-white"></i>{% trans "clear" %}
-                                            </button>
-                                            <button type="button" class="btn btn-success" data-action="save">
-                                                <i class="icon-validation-sign icon-white"></i>{% trans "confirm" %}
-                                            </button>
-                                        </div>
-                                      </div>
+                                        <button class="btn btn-success" type="submit">{% trans "Save" %}</button>
                                     </li>
 
                                 </ul>
@@ -316,80 +209,10 @@
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/signature_pad.js' %}"></script>
     <script type="text/javascript">
 
-    var wrapper = document.getElementById("signature-pad"),
-        clearButton = wrapper.querySelector("[data-action=clear]"),
-        saveButton = wrapper.querySelector("[data-action=save]"),
-        canvas = wrapper.querySelector("canvas"),
-        signaturePad;
-
     $(document).ready(function() {
-
-        var $frame = $('#oneperframe');
-        var $wrap = $frame.parent();
-
-        // Call Sly on frame
-        $frame.sly({
-            horizontal: 1,
-            itemNav: 'forceCentered',
-            smart: 1,
-            activateMiddle: 1,
-            mouseDragging: 0,
-            touchDragging: 0,
-            releaseSwing: 1,
-            startAt: 0,
-            scrollBar: $wrap.find('.scrollbar'),
-            scrollBy: 0,
-            pagesBar: $wrap.find('.pages'),
-            activatePageOn: 'click',
-            speed: 300,
-            elasticBounds: 1,
-            easing: 'easeOutExpo',
-            dragHandle: 1,
-            dynamicHandle: 1,
-            clickBar: 1,
-
-            // Buttons
-            prev: $wrap.find('.prev'),
-            next: $wrap.find('.next')
-        });
-
-        signaturePad = new SignaturePad(canvas);
-
-        clearButton.addEventListener("click", function (event) {
-            signaturePad.clear();
-        });
-
-        saveButton.addEventListener("click", function (event) {
-            if (signaturePad.isEmpty()) {
-            } else {
-                console.log(signaturePad.toDataURL());
-            }
-        });
-
-        window.addEventListener("resize", resizeCanvas);
-        resizeCanvas();
-
-        // Returns signature image as data URL (see https://mdn.io/todataurl for the list of possible paramters)
-        signaturePad.toDataURL(); // save image as PNG
-        signaturePad.toDataURL("image/jpeg"); // save image as JPEG
-
-        // Draws signature image from data URL
-{#        signaturePad.fromDataURL("data:image/png;");#}
-
-        // Clears the canvas
-        signaturePad.clear();
-
-        // Returns true if canvas is empty, otherwise returns false
-        signaturePad.isEmpty();
-
-        // Unbinds all event handlers
-        signaturePad.off();
-
-        // Rebinds all event handlers
-        signaturePad.on();
+        initializeSly($('#oneperframe'));
 
         $("#options").change
         (
@@ -399,8 +222,7 @@
                 }
         );
 
-    });
-    $("#options").change
+        $("#options").change
         (
                 function ()
                 {
@@ -462,7 +284,7 @@
                 }
         );
 
-
+    });
     function hideAll()
     {
         $("#HouseholdUNHCR").hide();
@@ -470,17 +292,6 @@
         $("#HouseholdUNHCRNote").hide();
         $("#HouseholdOtherID").hide();
         $("#HouseholdOtherNoID").hide();
-    }
-
-
-
-
-    function resizeCanvas() {
-        var ratio =  Math.max(window.devicePixelRatio || 1, 1);
-        canvas.width = canvas.offsetWidth * ratio;
-        canvas.height = canvas.offsetHeight * ratio;
-        canvas.getContext("2d").scale(ratio, ratio);
-{#        signaturePad.clear(); // otherwise isEmpty() might return incorrect value#}
     }
 
 
