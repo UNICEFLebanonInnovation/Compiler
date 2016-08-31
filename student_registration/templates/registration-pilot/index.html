@@ -164,6 +164,25 @@
                                         {% trans "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card." %}
                                     </li>
 
+                                    <li class="framebox">
+                                        {{ form.id_type }}
+{#                                        {{ form.id_number }}#}
+{#                                         {{ form.nationality }}#}
+
+                                        <select id ="options">
+                                          <option value="Option1">Option1</option>
+                                          <option value="Option2">Option2</option>
+                                          <option value="Option3">Option3</option>
+                                        </select>
+
+                                        <div id = "Section1" style = "display:none">Section1</div>
+
+                                        <div id = "Section2" style = "display:none">Section2</div>
+
+                                        <div id = "Section3" style = "display:none">Section3</div>
+
+                                    </li>
+
                                     {# Signature #}
                                     <li class="framebox">
                                       <div id="signature-pad" class="m-signature-pad">
@@ -293,6 +312,16 @@
 
         // Rebinds all event handlers
         signaturePad.on();
+
+        $("#options").change
+        (
+                function ()
+                {
+                   var selectedOption = this.value;
+
+                    alert(selectedOption);
+                }
+        );
 
     });
 
