@@ -182,3 +182,89 @@ function update_data_server(url, itemid, callback_success, callback_error)
         }
     });
 }
+
+function initializeSly(block)
+{
+    var $frame = block;
+    var $wrap = $frame.parent();
+
+    // Call Sly on frame
+    $frame.sly({
+        horizontal: 1,
+        itemNav: 'forceCentered',
+        smart: 1,
+        activateMiddle: 1,
+        mouseDragging: 0,
+        touchDragging: 0,
+        releaseSwing: 1,
+        startAt: 0,
+        scrollBar: $wrap.find('.scrollbar'),
+        scrollBy: 1,
+        pagesBar: $wrap.find('.pages'),
+        activatePageOn: 'click',
+        speed: 300,
+        elasticBounds: 1,
+        easing: 'easeOutExpo',
+        dragHandle: 1,
+        dynamicHandle: 1,
+        clickBar: 1,
+
+        // Buttons
+        prev: $wrap.find('.prev'),
+        next: $wrap.find('.next')
+    });
+}
+
+function initializeSignature()
+{
+    var wrapper = document.getElementById("signature-pad"),
+        clearButton = wrapper.querySelector("[data-action=clear]"),
+        saveButton = wrapper.querySelector("[data-action=save]"),
+        canvas = wrapper.querySelector("canvas"),
+        signaturePad;
+
+    signaturePad = new SignaturePad(canvas);
+
+    clearButton.addEventListener("click", function (event) {
+        signaturePad.clear();
+    });
+
+    saveButton.addEventListener("click", function (event) {
+        if (signaturePad.isEmpty()) {
+        } else {
+            $('#id_signature').val(signaturePad.toDataURL());
+            console.log(signaturePad.toDataURL());
+        }
+    });
+
+    window.addEventListener("resize", resizeCanvas(canvas));
+    resizeCanvas(canvas);
+
+    // Returns signature image as data URL (see https://mdn.io/todataurl for the list of possible paramters)
+    signaturePad.toDataURL(); // save image as PNG
+    signaturePad.toDataURL("image/jpeg"); // save image as JPEG
+
+    // Draws signature image from data URL
+    //signaturePad.fromDataURL("data:image/png;");
+
+    // Clears the canvas
+    signaturePad.clear();
+
+    // Returns true if canvas is empty, otherwise returns false
+    signaturePad.isEmpty();
+
+    // Unbinds all event handlers
+    signaturePad.off();
+
+    // Rebinds all event handlers
+    signaturePad.on();
+}
+
+function resizeCanvas(canvas) {
+    var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
+    //signaturePad.clear(); // otherwise isEmpty() might return incorrect value
+}
+
