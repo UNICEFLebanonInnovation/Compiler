@@ -34,7 +34,7 @@ class RegisteringAdult(Person):
     # status = models.CharField(max_length=50, blank=True, null=True, choices=STATUS)
     status = models.BooleanField(default=False)
     previously_registered = models.BooleanField(default=False)
-    relation_to_child = models.CharField(max_length=50, choices=RELATION_TYPE)
+    relation_to_householdhead = models.CharField(max_length=50, choices=RELATION_TYPE)
     wfp_case_number = models.CharField(max_length=50, blank=True, null=True)
     csc_case_number = models.CharField(max_length=50, blank=True, null=True)
     card_issue_requested = models.BooleanField(default=False)
