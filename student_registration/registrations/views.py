@@ -97,20 +97,40 @@ class RegistrationView(LoginRequiredMixin, ListView):
 
 class RegisteringAdultView(LoginRequiredMixin, FormView):
     template_name = 'registration-pilot/index.html'
-    template_name = 'registration-pilot/register_children.html'
+    # template_name = 'registration-pilot/register_children.html'
     # template_name = 'registration-pilot/declaration_signature.html'
     form_class = RegisteringAdultForm
     success_url = 'complete'
 
     def get_context_data(self, **kwargs):
         context = super(RegisteringAdultView, self).get_context_data(**kwargs)
+
         return context
 
     def form_valid(self, form):
-        pass
 
-    def get_initial(self):
-        pass
+        ra = RegisteringAdult()
+
+        # ra.first_name = form.cleaned_data['first_name']
+
+        ra.save()
+
+        return super(RegisteringAdultView, self).form_valid(form)
+
+    # def form_invalid(self, form, **kwargs):
+    #     context = self.get_context_data(**kwargs)
+    #     context['form'] = form
+    #
+    #     ra = RegisteringAdult()
+    #
+    #     ra.first_name = form.cleaned_data['first_name']
+    #
+    #     ra.save()
+    #
+    #     return self.render_to_response(context)
+    #
+    # def get_initial(self):
+    #     pass
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):

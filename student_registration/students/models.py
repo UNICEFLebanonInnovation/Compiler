@@ -92,7 +92,8 @@ class Person(TimeStampedModel):
     number = models.CharField(max_length=45L, blank=True, null=True, unique=True)
 
     def __unicode__(self):
-        return self.full_name
+        return self.first_name
+        # return self.full_name
 
     def nationality_name(self):
         if self.nationality:
