@@ -33,6 +33,16 @@ class RegisteringAdultForm(forms.ModelForm):
         fields = '__all__'
 
 
+class RegisteringChildForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RegisteringChildForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Registration
+        fields = '__all__'
+
+
 class RegistrationForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
