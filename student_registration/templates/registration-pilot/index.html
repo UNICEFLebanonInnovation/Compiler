@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.app.html" %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 
@@ -30,8 +30,21 @@
                             </div>
                           </div>
 <form method="post" action="" class="inlineForm">
-     {% csrf_token %}
-    {{ form.errors }}
+    {% csrf_token %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
                           <div class="panel-body">
                             <div class="scrollbar">
                                 <div class="handle">
@@ -55,6 +68,10 @@
                                     <li class="framebox">
                                         <p>{% trans "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 6 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month." %}</p>
                                         <p>{% trans "This cash is intended to help children regularly attend 2nd shift school in order that their future opportunities are improved." %}</p>
+                                    </li>
+
+                                    <li class="framebox">
+                                        <p>{% trans "Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them." %}</p>
                                     </li>
 
                                     {# 3 Slide introduction part 2 #}
@@ -83,54 +100,43 @@
                                          <div class="line">
                                             <label class="text">{% trans "ID Type" %}<span class="asterisque">*</span></label>
                                             {{ form.id_type }}
-
-                                             <select id ="options">
-                                                 <option value="None">None</option>
-                                                 <option value="OptionUNHCR">OptionUNHCR</option>
-                                                 <option value="OptionOtherID">OptionOtherID</option>
-                                                 <option value="OptionNoID">OptionNoID</option>
-                                             </select>
+{##}
+{#                                             <select id="options">#}
+{#                                                 <option value="None">None</option>#}
+{#                                                 <option value="OptionUNHCR">OptionUNHCR</option>#}
+{#                                                 <option value="OptionOtherID">OptionOtherID</option>#}
+{#                                                 <option value="OptionNoID">OptionNoID</option>#}
+{#                                             </select>#}
                                          </div>
 
-                                        <div id = "HouseholdUNHCR" style = "display:none">
+                                        <div id="HouseholdUNHCR" style="display:none">
                                             <div class="line">
                                                 <label class="text">{% trans "Is the principal applicant still with your household?" %}<span class="asterisque">*</span></label>
-                                                <input id="PrincipalHouseHold_1" type="radio" name="PrincipalHouseHoldCB" value="1" class="hidden-field" />
-                                                <input id="PrincipalHouseHold_0" type="radio" name="PrincipalHouseHoldCB" value="0" class="hidden-field" />
+                                                <span class="hidden-field"><input id="PrincipalHouseHold_1" type="radio" name="PrincipalHouseHoldCB" value="1" /></span>
+                                                <span class="hidden-field"><input id="PrincipalHouseHold_0" type="radio" name="PrincipalHouseHoldCB" value="0" /></span>
                                                 <div id="radioBtn" class="btn-group">
-                                                    <a class="btn btn-primary btn-sm notActive" data-toggle="id_PrincipalHouseHold" data-title="1">YES</a>
-                                                    <a class="btn btn-primary btn-sm notActive" data-toggle="id_PrincipalHouseHold" data-title="0">NO</a>
+                                                    <a class="btn btn-primary btn-sm notActive" data-toggle="PrincipalHouseHold" data-title="1">{% trans "Yes" %}</a>
+                                                    <a class="btn btn-primary btn-sm notActive" data-toggle="PrincipalHouseHold" data-title="0">{% trans "No" %}</a>
                                                 </div>
                                             </div>
-
-
-                                            <!-- <input id="PrincipalHouseHoldCB" type="checkbox" name="isPrincipal" value="1" checked/> -->
-                                            <br/>
-                                            <div class="line">
-                                                <label class="text" id="HouseholdRegistrationNumber" style = "display:none">{% trans "UNHCR Household Registration Number" %}<span class="asterisque">*</span></label>
-                                                <label class="text" id="IndividualRegistrationNumber" style = "display:none">{% trans "UNHCR Individual Registration Number of the Household Representative" %}<span class="asterisque">*</span></label>
-                                            </div>
                                         </div>
 
-                                        <div id = "HouseholdOtherID" style = "display:none">
+                                        <div class="line" id="HouseholdID_block">
+                                            <label class="text" id="HouseholdRegistrationNumber" style = "display:none">{% trans "UNHCR Household Registration Number" %}<span class="asterisque">*</span></label>
+                                            <label class="text" id="IndividualRegistrationNumber" style = "display:none">{% trans "UNHCR Individual Registration Number of the Household Representative" %}<span class="asterisque">*</span></label>
+                                            <label class="text" id="HouseholdOtherID" style="display: none;">{% trans "ID Number" %}<span class="asterisque">*</span></label>
+                                            <span id="HouseholdUNHCR_OtherID" style="display: none;">{{ form.id_number }}</span>
+                                        </div>
+
+                                        <div class="line" id="HouseholdOtherID_Note" style="display: none;">
                                             <p>{% trans "NOTE: in order to register with other ID, the ID Holder must be present AND must be 18 years of age or older." %}</p>
-                                            <div class="line">
-                                                <label class="text" >{% trans "ID Number" %}<span class="asterisque">*</span></label>
-                                            </div>
                                         </div>
 
-                                        <div id = "HouseholdUNHCR_OtherID" style = "display:none">
-                                                {{ form.id_number }}
-                                            </br>
+                                        <div class="line" id="HouseholdUNHCRNote" style="display:none">
+                                            <p id="IndividualRegistrationNote" style="display:none">{% trans "NOTE: If the Household Representative is not listed on the UNHCR Certificate, it cannot be used to regiter for the Pilot. Another form of ID must be used." %}</p>
                                         </div>
 
-
-
-                                        <div id = "HouseholdUNHCRNote" style = "display:none">
-                                            <p id="IndividualRegistrationNote" style = "display:none">{% trans "NOTE: If the Household Representative is not listed on the UNHCR Certificate, it cannot be used to regiter for the Pilot. Another form of ID must be used." %}</p>
-                                        </div>
-
-                                        <div id = "HouseholdOtherNoID" style = "display:none">
+                                        <div id="HouseholdOtherNoID" style="display:none">
                                             <div class="line">
                                                 <label class="text">{% trans "First Name" %}<span class="asterisque">*</span></label>
                                                 {{ form.first_name }}
@@ -166,7 +172,20 @@
                                                 {{ form.relation_to_householdhead }}
                                             </div>
                                         </div>
-                                        <button class="btn btn-success" type="submit">{% trans "Save" %}</button>
+                                    </li>
+
+                                    <li class="framebox">
+                                        <h5 class="panel-title">{% trans "Collect existing ATM acse number" %}</h5>
+
+                                        <div class="line">
+                                            <label class="text">{% trans "Blue Card Case Number" %}</label>
+                                            {{ form.wfp_case_number }}
+                                        </div>
+                                        <div class="line">
+                                            <label class="text">{% trans "White Card Case Number" %}</label>
+                                            {{ form.csc_case_number }}
+                                        </div>
+                                        <button class="btn btn-success" type="submit">{% trans "Next Step" %}</button>
                                     </li>
 
                                 </ul>
@@ -178,6 +197,8 @@
                                 <li>3</li>
                                 <li>4</li>
                                 <li>5</li>
+                                <li>6</li>
+                                <li>7</li>
                             </ul>
 
                             <div class="controls center">
@@ -214,102 +235,64 @@
     $(document).ready(function() {
         initializeSly($('#oneperframe'));
 
-        $("#options").change
-        (
-                function ()
-                {
-                   var selectedOption = this.value;
-                }
-        );
+        $("#id_id_type").change(function () {
+{#        $("#options").change(function () {#}
+            hideAll();
+            $("#HouseholdID_block").show();
+            var selectedOption = $(this).val();
 
-        $("#options").change
-        (
-                function ()
-                {
-                   var selectedOption = this.value;
+{#           if(selectedOption == "OptionUNHCR") {#}
+           if(selectedOption == 1) {
+               $("#HouseholdUNHCR").show();
+               $("#HouseholdUNHCR_OtherID").show();
+               $("#HouseholdUNHCRNote").show();
+               $("#HouseholdRegistrationNumber").show();
 
-				   if(selectedOption == "OptionUNHCR")
-				   {
-					   hideAll();
-					   $("#HouseholdUNHCR").show();
-                       $("#HouseholdUNHCR_OtherID").show();
-                       $("#HouseholdUNHCRNote").show();
+{#           }else if (selectedOption == "OptionOtherID") {#}
+           }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4) {
+               $("#HouseholdOtherID").show();
+               $("#HouseholdOtherID_Note").show();
+               $("#HouseholdUNHCR_OtherID").show();
+               $("#HouseholdOtherNoID").show();
+               $("#HouseholdRegistrationNumber").hide();
+{#           }else if (selectedOption == "OptionNoID") {#}
+           }else if (selectedOption == 5) {
+               $("#HouseholdOtherNoID").show();
+               $("#HouseholdID_block").hide();
+           }
+        });
 
-				   }
-				   else if (selectedOption == "OptionOtherID")
-				   {
-					   hideAll();
-					   $("#HouseholdOtherID").show();
-                       $("#HouseholdUNHCR_OtherID").show();
-                       $("#HouseholdOtherNoID").show();
-				   }
-				   else if (selectedOption == "OptionNoID")
-				   {
-					   hideAll();
-					   $("#HouseholdOtherNoID").show();
-				   }
-				   else
-				   {
-					   hideAll();
-				   }
-                }
-        );
+    $('input[type=radio][name=PrincipalHouseHoldCB]').change(function () {
+        var PrincipalHouseHoldCBChecked = $(this).val();
 
+           if(PrincipalHouseHoldCBChecked==1) {
+               $("#HouseholdRegistrationNumber").show();
+               $("#IndividualRegistrationNumber").hide();
+               $("#IndividualRegistrationNote").hide();
+               $("#HouseholdUNHCR_OtherID").show();
+           } else {
+               $("#HouseholdRegistrationNumber").hide();
+               $("#IndividualRegistrationNumber").show();
+               $("#IndividualRegistrationNote").show();
 
-
-    //$("#PrincipalHouseHoldCB").change
-    $('input[type=radio][name=PrincipalHouseHoldCB]').change
-        (
-                function ()
-                {
-				   var PrincipalHouseHoldCBChecked = $("input[name=PrincipalHouseHoldCB]:checked").val();
-
-                   //var PrincipalHouseHoldCBChecked = $('#PrincipalHouseHoldCB:checkbox:checked').length > 0;
-
-				   if(PrincipalHouseHoldCBChecked==1)
-				   {
-					   $("#HouseholdRegistrationNumber").show();
-					   $("#IndividualRegistrationNumber").hide();
-					   $("#IndividualRegistrationNote").hide();
-                       $("#HouseholdUNHCR_OtherID").show();
-				   }
-                   else
-				   {
-					   $("#HouseholdRegistrationNumber").hide();
-					   $("#IndividualRegistrationNumber").show();
-					   $("#IndividualRegistrationNote").show();
-
-                       $("#HouseholdUNHCR_OtherID").show();
-				   }
-                }
-        );
+               $("#HouseholdUNHCR_OtherID").show();
+           }
+        });
 
     });
+
     function hideAll()
     {
         $("#HouseholdUNHCR").hide();
         $("#HouseholdUNHCR_OtherID").hide();
         $("#HouseholdUNHCRNote").hide();
         $("#HouseholdOtherID").hide();
+        $("#HouseholdOtherID_Note").hide();
         $("#HouseholdOtherNoID").hide();
+        $("#HouseholdRegistrationNumber").hide();
     }
 
 
     </script>
 
 {% endblock %}
-
-{% if form.errors %}
-    {% for field in form %}
-        {% for error in field.errors %}
-            <div class="alert alert-danger">
-                <strong>{{ error|escape }}</strong>
-            </div>
-        {% endfor %}
-    {% endfor %}
-    {% for error in form.non_field_errors %}
-        <div class="alert alert-danger">
-            <strong>{{ error|escape }}</strong>
-        </div>
-    {% endfor %}
-{% endif %}
