@@ -5,6 +5,7 @@
 {% block extra_head %}
 
 	<link rel="stylesheet" type="text/css" href="{% static 'css/sly.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 
 {% endblock %}
 
@@ -22,7 +23,11 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                           <div class="panel-heading">
-                            <h3 class="panel-title">{% trans "Registration" %}
+                            <h3 class="panel-title">
+                                <ol class="breadcrumb">
+                                    <li><a class="nav-link" href="{% url 'registrations:registering_adult' %}?ln={{ LANGUAGE_CODE }}">{% trans "Home" %}</a></li>
+                                    <li><a>{% trans "Registration" %}</a></li>
+                                </ol>
                             </h3>
                             <div class="actions pull-right">
                                 <i class="fa fa-chevron-down"></i>

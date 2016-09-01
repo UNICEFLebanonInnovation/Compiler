@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
@@ -49,6 +50,9 @@ class RegisteringAdult(Person):
         blank=True, null=True,
         related_name='+',
     )
+
+    def get_absolute_url(self):
+        return reverse('registrations:registering_child', kwargs={'pk': self.pk})
 
 
 class Phone(models.Model):
