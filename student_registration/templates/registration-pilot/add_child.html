@@ -1,181 +1,63 @@
-{% extends "base.html" %}
 {% load staticfiles i18n %}
-{% get_current_language as LANGUAGE_CODE %}
 
-{% block extra_head %}
+<div id="add_child_noid_block" style="display: none;">
+    <form class="inlineForm">
+        <h5 class="panel-title">{% trans "Add Child" %} - {% trans "Other or no ID" %}</h5>
+        <div class="line">
+            <label class="text">{% trans "First Name" %}<span class="asterisque">*</span></label>
+            {{ student_form.first_name }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "Father's Name" %}<span class="asterisque">*</span></label>
+            {{ student_form.father_name }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "Last Name" %}<span class="asterisque">*</span></label>
+            {{ student_form.last_name }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "Mother Full name" %}<span class="asterisque">*</span></label>
+            {{ student_form.mother_fullname }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "Age" %}<span class="asterisque">*</span></label>
+            {{ student_form.age }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "Date of birth" %}<span class="asterisque">*</span></label>
+            {{ student_form.birthday_day }}
+            {{ student_form.birthday_month }}
+            {{ student_form.birthday_year }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "Gender" %}<span class="asterisque">*</span></label>
+            {{ student_form.sex }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "Relationship to Houshold head" %}<span class="asterisque">*</span></label>
+            {{ student_form.relation_to_adult }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "Was this child enrolled in any school last year" %}</label>
+            {{ student_form.enrolled_last_year }}
+        </div>
+    </form>
+</div>
 
-	<link rel="stylesheet" type="text/css" href="{% static 'css/sly.css' %}">
-
-{% endblock %}
-
-
-{% block content %}
-
-         <section class="main-content-wrapper">
-            <section id="main-content">
-                 <div class="row">
-                    <div class="col-md-12">
-                        </br>
-                    </div>
-                </div>
-            <div class="row">
-                    <div class="col-md-12">
-                        <div class="panel panel-default">
-                          <div class="panel-heading">
-                            <h3 class="panel-title">{% trans "Registration" %}</h3>
-                            <div class="actions pull-right">
-                                <i class="fa fa-chevron-down"></i>
-                                <i class="fa fa-times"></i>
-                            </div>
-                          </div>
-<form method="post" action="" class="inlineForm">
-                          <div class="panel-body">
-                            <div class="scrollbar">
-                                <div class="handle">
-                                    <div class="mousearea"></div>
-                                </div>
-                            </div>
-
-                            <div id="oneperframe" class="frame oneperframe">
-                                <ul class="slidee">
-
-                                    {# 1 Registre Child #}
-                                    <li class="active framebox">
-                                        <h5 class="panel-title">{% trans "Register Children in Pilot" %}</h5>
-                                        <div class="line">
-                                            <label class="text">{% trans "Do you have any children enrolled in other schools?" %}</label>
-                                            {{ form.child_enrolled_in_other_schools }}
-                                        </div>
-                                        <div class="line" id="registration_status_block">
-                                            <label class="text">{% trans "Have you already completed teh registration process for this pilot in other school?" %}</label>
-                                            {{ form.status }}
-                                        </div>
-                                        <div class="line" id="previously_registered_block">
-                                            <label class="text">{% trans "Do you have the ID under which the registration take place" %}</label>
-                                            {{ form.previously_registered }}
-                                        </div>
-                                        <span class="error" id="previously_registered_error" style="display: none;">
-                                            {% trans "To ensure that your household receives complete payment you must provide the ID Number under which your other registration took place. You can either come back tomorrow, or you can call the hotline to do this. It is important taht your do this in order to not delay your payment" %}
-                                        </span>
-                                        <div class="line" id="id_number_block">
-                                            <label class="text">{% trans "ID Number" %}</label>
-                                            {{ form.id_number }}
-                                        </div>
-                                    </li>
-
-
-                                    {# 3 Contact information #}
-                                    <li class="framebox">
-                                        <h5 class="panel-title">{% trans "Child Information" %}</h5>
-                                        <div class="line">
-                                            <label class="text">{% trans "First Name" %}<span class="asterisque">*</span></label>
-                                            {{ form.first_name }}
-                                        </div>
-                                        <div class="line">
-                                            <label class="text">{% trans "Father's Name" %}<span class="asterisque">*</span></label>
-                                            {{ form.father_name }}
-                                        </div>
-                                        <div class="line">
-                                            <label class="text">{% trans "Last Name" %}<span class="asterisque">*</span></label>
-                                            {{ form.last_name }}
-                                        </div>
-                                        <div class="line">
-                                            <label class="text">{% trans "Mother Full name" %}<span class="asterisque">*</span></label>
-                                            {{ form.mother_fullname }}
-                                        </div>
-                                        <div class="line">
-                                            <label class="text">{% trans "Age" %}<span class="asterisque">*</span></label>
-                                            {{ form.age }}
-                                        </div>
-                                        <div class="line">
-                                            <label class="text">{% trans "Date of birth" %}<span class="asterisque">*</span></label>
-                                            {{ form.birthday_day }}
-                                            {{ form.birthday_month }}
-                                            {{ form.birthday_year }}
-                                        </div>
-                                        <div class="line">
-                                            <label class="text">{% trans "Gender" %}<span class="asterisque">*</span></label>
-                                            {{ form.sex }}
-                                        </div>
-                                        <div class="line">
-                                            <label class="text">{% trans "Nationality" %}<span class="asterisque">*</span></label>
-                                            {{ form.nationality }}
-                                        </div>
-                                        <div class="line">
-                                            <label class="text">{% trans "Relationship to Houshold head" %}<span class="asterisque">*</span></label>
-                                            {{ form.relation_to_adult }}
-                                        </div>
-{#                                        <button class="btn btn-success" type="submit">{% trans "Save" %}</button>#}
-                                    </li>
-
-                                </ul>
-                            </div>
-
-                            <ul class="pages">
-                                <li class="active">1</li>
-                                <li>2</li>
-                                <li>3</li>
-                            </ul>
-
-                            <div class="controls center">
-                                <button class="btn prev btn-primary">
-                                    <i class="icon-prev-sign icon-white"></i>{% trans "prev" %}
-                                </button>
-                                <button class="btn next btn-primary">
-                                    {% trans "next" %}<i class="icon-next-sign icon-white"></i>
-                                </button>
-                            </div>
-                        </div>
-</form>
-                        </div>
-                     </div>
-                </div>
-            </div>
-
-            </section>
-         </section>
-
-{% endblock %}
-
-{% block extra_js %}
-
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
-    <script type="text/javascript">
-
-    $(document).ready(function() {
-
-        var $frame = $('#oneperframe');
-        var $wrap = $frame.parent();
-
-        // Call Sly on frame
-        $frame.sly({
-            horizontal: 1,
-            itemNav: 'forceCentered',
-            smart: 1,
-            activateMiddle: 1,
-            mouseDragging: 0,
-            touchDragging: 0,
-            releaseSwing: 1,
-            startAt: 0,
-            scrollBar: $wrap.find('.scrollbar'),
-            scrollBy: 1,
-            pagesBar: $wrap.find('.pages'),
-            activatePageOn: 'click',
-            speed: 300,
-            elasticBounds: 1,
-            easing: 'easeOutExpo',
-            dragHandle: 1,
-            dynamicHandle: 1,
-            clickBar: 1,
-
-            // Buttons
-            prev: $wrap.find('.prev'),
-            next: $wrap.find('.next')
-        });
-    });
-    </script>
-
-{% endblock %}
+<div id="add_child_withid_block" style="display: none;">
+    <form class="inlineForm">
+        <h5 class="panel-title">{% trans "Add Child" %}</h5>
+        <div class="line">
+            <label class="text">{% trans "ID Number" %}<span class="asterisque">*</span></label>
+            {{ student_form.id_number }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "Relationship to Houshold head" %}<span class="asterisque">*</span></label>
+            {{ student_form.relation_to_adult }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "Was this child enrolled in any school last year" %}</label>
+            {{ student_form.enrolled_last_year }}
+        </div>
+    </form>
+</div>
