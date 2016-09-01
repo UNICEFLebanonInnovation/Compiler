@@ -16,13 +16,13 @@ class RegisteringAdultForm(forms.ModelForm):
     YESNO_CHOICES = ((0, _('No')), (1, _('Yes')))
 
     previously_registered = forms.TypedChoiceField(
-                     choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int
+                     choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
                 )
     status = forms.TypedChoiceField(
-                     choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int
+                     choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
                 )
     child_enrolled_in_other_schools = forms.TypedChoiceField(
-                     choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int
+                     choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
                 )
 
     def __init__(self, *args, **kwargs):
