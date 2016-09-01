@@ -6,6 +6,7 @@
 
 	<link rel="stylesheet" type="text/css" href="{% static 'css/sly.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/signature_pad.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 
 {% endblock %}
 
@@ -23,7 +24,12 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                           <div class="panel-heading">
-                            <h3 class="panel-title">{% trans "Registration" %}</h3>
+                            <h3 class="panel-title">
+                                <ol class="breadcrumb">
+                                    <li><a class="nav-link" href="{% url 'registrations:registering_adult' %}?ln={{ LANGUAGE_CODE }}">{% trans "Home" %}</a></li>
+                                    <li><a>{% trans "Registration" %}</a></li>
+                                </ol>
+                            </h3>
                             <div class="actions pull-right">
                                 <i class="fa fa-chevron-down"></i>
                                 <i class="fa fa-times"></i>
@@ -31,7 +37,22 @@
                           </div>
 
 <form method="post" action="" class="inlineForm">
-        <input type="hidden" id="id_id_type" name="id_type" value="{{ registry.id_type.id }}" />
+        {% csrf_token %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }} - {{ field.label }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+        <input type="hidden" id="id_id_type" name="id_type" value="{{ form.id_type.value }}" />
                           <div class="panel-body">
                             <div class="scrollbar">
                                 <div class="handle">
@@ -42,16 +63,8 @@
                             <div id="oneperframe" class="frame oneperframe">
                                 <ul class="slidee">
 
-                                    {# 1 Register Child #}
+                                    {# 1 Registre Child #}
                                     <li class="active framebox">
-                                        <p>{% trans "Today I will ask you for the details of all your children who are enrolled in 2nd shift schools, even if they will go to a different school. I will collect their details here today, but they should attend the school they are enrolled in.  I will ask you for the name of the school each child is enrolled in later on." %}</p>
-                                        <p>{% trans "Please do not register your child for the Min Ila pilot more than one time. Double registration is considered as fraud against the program and those registered twice will be removed from the Min Ila Pilot." %}</p>
-                                        <p>{% trans "If you have already done this by mistake, it is not a problem. Please just let me know when I collect the child’s details and I will fix the error." %}</p>
-                                        <p>{% trans "Do you have any questions about this?" %}</p>
-                                    </li>
-
-                                    {# 2 Register Child #}
-                                    <li class="framebox">
                                         <h5 class="panel-title">{% trans "Register Children in Pilot" %}</h5>
                                         <div class="line">
                                             <label class="text">{% trans "Do you have any children enrolled in other schools?" %}</label>
@@ -126,7 +139,7 @@
                                                     {% endfor %}
                                                 </tbody>
                                             </table>
-                                            <button class="btn btn-success" id="add_child_noid">
+                                            <button class="btn btn-success" id="add_child_noid" type="button">
                                                 {% trans "Add Child" %}
                                                 <i class="icon-plus-sign icon-white"></i>
                                             </button>
@@ -154,7 +167,7 @@
                                                     {% endfor %}
                                                 </tbody>
                                             </table>
-                                            <button class="btn btn-success" id="add_child_noid">
+                                            <button class="btn btn-success" id="add_child_withid" type="button">
                                                 {% trans "Add Child" %}
                                                 <i class="icon-plus-sign icon-white"></i>
                                             </button>
@@ -191,7 +204,9 @@
                                         <p>
                                             {% trans "By signing this agreement you also consent to allow us to share the data collected today with UNHCR and WFP in order to help ensure that you are paid. Some data will also be shared with the Ministry of Education and Higher Education (MEHE). We will ensure that your data is handled carefully and confidentially. If you have any questions please ask them before signing." %}
                                         </p>
-                                        <h6>{% trans "Signature" %}</h6>
+                                    </li>
+                                    <li class="framebox">
+                                        <h5 class="panel-title">{% trans "Signature" %}</h5>
                                             <div style="display: none;">
                                                 {{ form.signature }}
                                             </div>
@@ -267,6 +282,8 @@
             </section>
          </section>
 
+    {% include 'registration-pilot/add_child.html' %}
+
 {% endblock %}
 
 {% block extra_js %}
@@ -276,6 +293,8 @@
     <script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/signature_pad.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
     <script type="text/javascript">
 
     $(document).ready(function() {
@@ -294,7 +313,7 @@
                 $('#previously_registered_block').hide();
                 $('#previously_registered_error').hide();
                 $('#id_number_block').hide();
-                if(id_type){
+                if(id_type && id_type !== 'None'){
                     $('#with_id_block').show();
                 }else{
                     $('#no_id_block').show();
@@ -311,7 +330,7 @@
                 $('#previously_registered_block').hide();
                 $('#previously_registered_error').hide();
                 $('#id_number_block').hide();
-                if(id_type){
+                if(id_type && id_type !== 'None'){
                     $('#with_id_block').show();
                 }else{
                     $('#no_id_block').show();
@@ -327,6 +346,38 @@
                 $('#previously_registered_error').show();
                 $('#id_number_block').hide();
             }
+        });
+
+        $('#add_child_noid').click(function(){
+            bootbox.dialog({
+                            title: "This is a form in a modal.",
+                            message: $('#add_child_noid_block').html(),
+                            buttons: {
+                                success: {
+                                    label: "Save",
+                                    className: "btn-success",
+                                    callback: function () {
+
+                                    }
+                                }
+                            }
+                        });
+        });
+
+       $('#add_child_withid').click(function(){
+            bootbox.dialog({
+                            title: "This is a form in a modal.",
+                            message: $('#add_child_withid_block').html(),
+                            buttons: {
+                                success: {
+                                    label: "Save",
+                                    className: "btn-success",
+                                    callback: function () {
+
+                                    }
+                                }
+                            }
+                        });
         });
     });
 

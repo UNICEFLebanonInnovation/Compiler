@@ -17,7 +17,7 @@ urlpatterns = [
         name='registering_adult'
     ),
     url(
-        regex=r'^registering-child/$',
+        regex=r'^registering-child/(?P<pk>\d+)/',
         view=views.RegisteringChildView.as_view(),
         name='registering_child'
     ),
