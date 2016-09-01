@@ -111,8 +111,6 @@ class RegisteringAdultView(LoginRequiredMixin, FormView):
 
         ra = RegisteringAdult()
 
-        # ra.first_name = form.cleaned_data['first_name']
-
         ra.save()
 
         return super(RegisteringAdultView, self).form_valid(form)

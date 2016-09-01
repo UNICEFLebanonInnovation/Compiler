@@ -32,13 +32,13 @@ class RegisteringAdult(Person):
     )
 
     # status = models.CharField(max_length=50, blank=True, null=True, choices=STATUS)
-    status = models.BooleanField(default=False)
+    status = models.BooleanField(blank=True, default=False)
     previously_registered = models.BooleanField(default=False)
-    relation_to_householdhead = models.CharField(max_length=50, choices=RELATION_TYPE)
+    relation_to_householdhead = models.CharField(max_length=50, blank=True, null=True, choices=RELATION_TYPE)
     wfp_case_number = models.CharField(max_length=50, blank=True, null=True)
     csc_case_number = models.CharField(max_length=50, blank=True, null=True)
     card_issue_requested = models.BooleanField(default=False)
-    child_enrolled_in_this_school = models.PositiveIntegerField()
+    child_enrolled_in_this_school = models.PositiveIntegerField(blank=True, null=True)
     # child_enrolled_in_other_schools = models.PositiveIntegerField()
     child_enrolled_in_other_schools = models.BooleanField(default=False)
     primary_phone = models.CharField(max_length=50, blank=True, null=True)
@@ -48,7 +48,7 @@ class RegisteringAdult(Person):
     signature = models.TextField(blank=True, null=True)
     school = models.ForeignKey(
         School,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
 
