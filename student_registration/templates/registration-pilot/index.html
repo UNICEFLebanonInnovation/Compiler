@@ -100,13 +100,6 @@
                                          <div class="line">
                                             <label class="text">{% trans "ID Type" %}<span class="asterisque">*</span></label>
                                             {{ form.id_type }}
-{##}
-{#                                             <select id="options">#}
-{#                                                 <option value="None">None</option>#}
-{#                                                 <option value="OptionUNHCR">OptionUNHCR</option>#}
-{#                                                 <option value="OptionOtherID">OptionOtherID</option>#}
-{#                                                 <option value="OptionNoID">OptionNoID</option>#}
-{#                                             </select>#}
                                          </div>
 
                                         <div id="HouseholdUNHCR" style="display:none">
@@ -115,7 +108,7 @@
                                                 <span class="hidden-field"><input id="PrincipalHouseHold_1" type="radio" name="PrincipalHouseHoldCB" value="1" /></span>
                                                 <span class="hidden-field"><input id="PrincipalHouseHold_0" type="radio" name="PrincipalHouseHoldCB" value="0" /></span>
                                                 <div id="radioBtn" class="btn-group">
-                                                    <a class="btn btn-primary btn-sm notActive" data-toggle="PrincipalHouseHold" data-title="1">{% trans "Yes" %}</a>
+                                                    <a class="btn btn-primary btn-sm active" data-toggle="PrincipalHouseHold" data-title="1">{% trans "Yes" %}</a>
                                                     <a class="btn btn-primary btn-sm notActive" data-toggle="PrincipalHouseHold" data-title="0">{% trans "No" %}</a>
                                                 </div>
                                             </div>
@@ -240,6 +233,7 @@
             hideAll();
             $("#HouseholdID_block").show();
             var selectedOption = $(this).val();
+            console.log(selectedOption);
 
 {#           if(selectedOption == "OptionUNHCR") {#}
            if(selectedOption == 1) {
@@ -255,6 +249,7 @@
                $("#HouseholdUNHCR_OtherID").show();
                $("#HouseholdOtherNoID").show();
                $("#HouseholdRegistrationNumber").hide();
+               $("#IndividualRegistrationNumber").hide();
 {#           }else if (selectedOption == "OptionNoID") {#}
            }else if (selectedOption == 5) {
                $("#HouseholdOtherNoID").show();
@@ -274,7 +269,6 @@
                $("#HouseholdRegistrationNumber").hide();
                $("#IndividualRegistrationNumber").show();
                $("#IndividualRegistrationNote").show();
-
                $("#HouseholdUNHCR_OtherID").show();
            }
         });
@@ -290,6 +284,7 @@
         $("#HouseholdOtherID_Note").hide();
         $("#HouseholdOtherNoID").hide();
         $("#HouseholdRegistrationNumber").hide();
+        $("#IndividualRegistrationNumber").hide();
     }
 
 
