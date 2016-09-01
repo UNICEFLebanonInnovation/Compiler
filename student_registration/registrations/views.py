@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView, FormView
+from django.views.generic import DetailView, ListView, RedirectView, UpdateView, FormView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
@@ -12,7 +12,7 @@ import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
-
+from django.core.urlresolvers import reverse
 from .models import Registration, RegisteringAdult
 from .serializers import RegistrationSerializer
 from student_registration.students.models import (
@@ -31,6 +31,7 @@ from student_registration.registrations.forms import (
     RegisteringAdultForm,
     RegisteringChildForm,
 )
+from student_registration.students.forms import StudentForm
 
 
 class RegistrationViewSet(mixins.RetrieveModelMixin,
@@ -98,10 +99,10 @@ class RegistrationView(LoginRequiredMixin, ListView):
         }
 
 
-class RegisteringAdultView(LoginRequiredMixin, FormView):
+class RegisteringAdultView(LoginRequiredMixin, CreateView):
     template_name = 'registration-pilot/index.html'
     form_class = RegisteringAdultForm
-    success_url = 'complete'
+    model = RegisteringAdult
 
     def get_context_data(self, **kwargs):
         context = super(RegisteringAdultView, self).get_context_data(**kwargs)
@@ -116,33 +117,18 @@ class RegisteringAdultView(LoginRequiredMixin, FormView):
 
         return super(RegisteringAdultView, self).form_valid(form)
 
-    # def form_invalid(self, form, **kwargs):
-    #     context = self.get_context_data(**kwargs)
-    #     context['form'] = form
-    #
-    #     ra = RegisteringAdult()
-    #
-    #     ra.first_name = form.cleaned_data['first_name']
-    #
-    #     ra.save()
-    #
-    #     return self.render_to_response(context)
-    #
-    # def get_initial(self):
-    #     pass
 
-
-class RegisteringChildView(LoginRequiredMixin, FormView):
+class RegisteringChildView(LoginRequiredMixin, UpdateView):
     template_name = 'registration-pilot/register_children.html'
     form_class = RegisteringAdultForm
-    success_url = 'next-step'
+    model = RegisteringAdult
 
     def get_context_data(self, **kwargs):
         context = super(RegisteringChildView, self).get_context_data(**kwargs)
 
         return {
             'form': context['form'],
-            'student_form': RegisteringChildForm
+            'student_form': StudentForm
         }
 
     def form_valid(self, form):
@@ -152,6 +138,9 @@ class RegisteringChildView(LoginRequiredMixin, FormView):
         ra.save()
 
         return super(RegisteringChildView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('registrations:registering_adult')
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):

@@ -89,7 +89,7 @@ class Person(TimeStampedModel):
         blank=True,
         null=True
     )
-    number = models.CharField(max_length=45L, blank=True, null=True, unique=True)
+    number = models.CharField(max_length=45L, blank=True, null=True)
 
     def __unicode__(self):
         return self.first_name
