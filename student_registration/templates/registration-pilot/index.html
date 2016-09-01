@@ -30,6 +30,7 @@
                             </div>
                           </div>
 <form method="post" action="" class="inlineForm">
+     {% csrf_token %}
                           <div class="panel-body">
                             <div class="scrollbar">
                                 <div class="handle">
@@ -117,10 +118,8 @@
                                             </div>
                                         </div>
 
-                                        <div id = "HouseholdUNHCROtherID" style = "display:none">
-                                            <div id = "idNumber" class="line" style="display:none">
+                                        <div id = "HouseholdUNHCR_OtherID" style = "display:none">
                                                 {{ form.id_number }}
-                                            </div>
                                             </br>
                                         </div>
 
@@ -232,7 +231,7 @@
 				   {
 					   hideAll();
 					   $("#HouseholdUNHCR").show();
-                       $("#HouseholdUNHCROtherID").show();
+                       $("#HouseholdUNHCR_OtherID").show();
                        $("#HouseholdUNHCRNote").show();
 
 				   }
@@ -240,7 +239,7 @@
 				   {
 					   hideAll();
 					   $("#HouseholdOtherID").show();
-                       $("#HouseholdUNHCROtherID").show();
+                       $("#HouseholdUNHCR_OtherID").show();
                        $("#HouseholdOtherNoID").show();
 				   }
 				   else if (selectedOption == "OptionNoID")
@@ -271,7 +270,7 @@
 					   $("#HouseholdRegistrationNumber").show();
 					   $("#IndividualRegistrationNumber").hide();
 					   $("#IndividualRegistrationNote").hide();
-                       $("#idNumber").show();
+                       $("#HouseholdUNHCR_OtherID").show();
 				   }
                    else
 				   {
@@ -279,7 +278,7 @@
 					   $("#IndividualRegistrationNumber").show();
 					   $("#IndividualRegistrationNote").show();
 
-                       $("#idNumber").show();
+                       $("#HouseholdUNHCR_OtherID").show();
 				   }
                 }
         );
@@ -288,7 +287,7 @@
     function hideAll()
     {
         $("#HouseholdUNHCR").hide();
-        $("#HouseholdUNHCROtherID").hide();
+        $("#HouseholdUNHCR_OtherID").hide();
         $("#HouseholdUNHCRNote").hide();
         $("#HouseholdOtherID").hide();
         $("#HouseholdOtherNoID").hide();
@@ -298,3 +297,18 @@
     </script>
 
 {% endblock %}
+
+{% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
