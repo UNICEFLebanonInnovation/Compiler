@@ -16,5 +16,10 @@ urlpatterns = [
         view=views.RegisteringAdultView.as_view(),
         name='registering_adult'
     ),
+    url(
+        regex=r'^registering-child/$',
+        view=views.RegisteringChildView.as_view(),
+        name='registering_child'
+    ),
     url(regex=r'^registration/export/$', view=views.ExportViewSet.as_view(), name='registration_export'),
 ]

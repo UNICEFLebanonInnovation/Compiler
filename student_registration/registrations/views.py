@@ -27,7 +27,10 @@ from student_registration.schools.models import (
     Section,
 )
 from student_registration.students.serializers import StudentSerializer
-from student_registration.registrations.forms import RegisteringAdultForm
+from student_registration.registrations.forms import (
+    RegisteringAdultForm,
+    RegisteringChildForm,
+)
 
 
 class RegistrationViewSet(mixins.RetrieveModelMixin,
@@ -97,8 +100,6 @@ class RegistrationView(LoginRequiredMixin, ListView):
 
 class RegisteringAdultView(LoginRequiredMixin, FormView):
     template_name = 'registration-pilot/index.html'
-    # template_name = 'registration-pilot/register_children.html'
-    # template_name = 'registration-pilot/declaration_signature.html'
     form_class = RegisteringAdultForm
     success_url = 'complete'
 
@@ -129,6 +130,28 @@ class RegisteringAdultView(LoginRequiredMixin, FormView):
     #
     # def get_initial(self):
     #     pass
+
+
+class RegisteringChildView(LoginRequiredMixin, FormView):
+    template_name = 'registration-pilot/register_children.html'
+    form_class = RegisteringAdultForm
+    success_url = 'next-step'
+
+    def get_context_data(self, **kwargs):
+        context = super(RegisteringChildView, self).get_context_data(**kwargs)
+
+        return {
+            'form': context['form'],
+            'student_form': RegisteringChildForm
+        }
+
+    def form_valid(self, form):
+
+        ra = RegisteringAdult()
+
+        ra.save()
+
+        return super(RegisteringChildView, self).form_valid(form)
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):

@@ -150,7 +150,8 @@ class Registration(TimeStampedModel):
         return ''
 
     def __unicode__(self):
-        return self.student_fullname
+        return 'none'
+        # return self.student_fullname
 
 
 eav.register(Registration)
