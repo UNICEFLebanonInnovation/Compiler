@@ -62,20 +62,9 @@
               </li>
                 {% endif %}
             {% if request.user.is_authenticated %}
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'alp:outreach' %}?ln={{ LANGUAGE_CODE }}">{% trans "Outreach" %}</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'registrations:registration' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
-                  </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'registrations:registering_adult' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration pilot" %}</a>
                   </li>
-                {% if request.user.is_staff %}
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'attendances:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>
-                  </li>
-                {% endif %}
             {% endif %}
             </ul>
 
@@ -126,12 +115,6 @@
 
     </div> <!-- /container -->
     <div class="container-full-page" style="position: relative;width: 100%;min-width: 980px;padding: 15px;">
-      {% if messages %}
-          {% for message in messages %}
-              <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
-          {% endfor %}
-      {% endif %}
-
       {% block content-full-page %}
       {% endblock content-full-page %}
     </div>
