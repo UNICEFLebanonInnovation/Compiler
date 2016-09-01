@@ -586,3 +586,5 @@ msgstr ""
 msgid "To ensure that your household receives complete payment you must provide the ID Number under which your other registration took place. You can either come back tomorrow, or you can call the hotline to do this. It is important taht your do this in order to not delay your payment"
 msgstr ""
 
+msgid "Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them."
+msgstr ""
