@@ -18,7 +18,10 @@ from student_registration.eav.registry import Registry as eav
 
 
 class RegisteringAdult(Person):
-
+    """
+    Captures the details of the adult who
+    is registering the child in the pilot
+    """
     STATUS = Choices(
         ('pending', _('Pending')),
     )
@@ -52,7 +55,7 @@ class RegisteringAdult(Person):
         related_name='+',
     )
 
-
+# TODO: To be deleted
 class Phone(models.Model):
 
     PHONE_TYPE = Choices(
@@ -74,7 +77,9 @@ class Phone(models.Model):
 
 
 class Registration(TimeStampedModel):
-
+    """
+    Captures the details of the child in the cash pilot
+    """
     EAV_TYPE = 'registration'
 
     RELATION_TYPE = Choices(
@@ -99,7 +104,10 @@ class Registration(TimeStampedModel):
         related_name='+',
     )
 
-    registering_adult = models.ForeignKey(RegisteringAdult, blank=True, null=True)
+    registering_adult = models.ForeignKey(
+        RegisteringAdult,
+        blank=True, null=True
+    )
     relation_to_adult = models.CharField(
         max_length=50,
         blank=True,
