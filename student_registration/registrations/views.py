@@ -116,21 +116,22 @@ class RegisteringAdultView(LoginRequiredMixin, FormView):
 class ExportViewSet(LoginRequiredMixin, ListView):
     model = Registration
 
+    def get_queryset(self):
+        if not self.request.user.is_superuser:
+            return self.queryset.filter(owner=self.request.user)
+        return self.queryset
+
     def get(self, request, *args, **kwargs):
 
-        queryset = self.model.objects.all()
-
-        if not self.request.user.is_superuser:
-            queryset = queryset.filter(owner=self.request.user)
-
+        queryset = self.queryset
         data = tablib.Dataset()
         data.headers = [
-                    _('Student number'), _('Student fullname'), _('Mother fullname'), _('Nationality'),
-                    _('Day of birth'), _('Month of birth'), _('Year of birth'), _('Sex'),
-                    _('ID Number tooltip'), _('Phone number'), _('Student living address'),
-                    # _('Section'), _('Grade'),
-                    _('Class room'),
-                    _('School'), _('School number')
+            _('Student number'), _('Student fullname'), _('Mother fullname'), _('Nationality'),
+            _('Day of birth'), _('Month of birth'), _('Year of birth'), _('Sex'),
+            _('ID Number tooltip'), _('Phone number'), _('Student living address'),
+            # _('Section'), _('Grade'),
+            _('Class room'),
+            _('School'), _('School number')
         ]
 
         content = []
@@ -161,7 +162,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         file_format = base_formats.XLS()
         response = HttpResponse(
             file_format.export_data(data),
-            content_type='application/application/ms-excel',
+            content_type='application/vnd.ms-excel',
         )
         response['Content-Disposition'] = 'attachment; filename=registration_list.xls'
         return response
