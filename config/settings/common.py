@@ -43,6 +43,7 @@ THIRD_PARTY_APPS = (
     'rest_framework_swagger',
     'rest_framework.authtoken',
     'django_makemessages_xgettext',
+    'import_export',
 )
 
 # Apps specific for this project go here.
@@ -84,12 +85,21 @@ MIGRATION_MODULES = {
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = env.bool('DJANGO_DEBUG', True)
 
+
+
 # FIXTURE CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-FIXTURE_DIRS
 FIXTURE_DIRS = (
     str(APPS_DIR.path('fixtures')),
 )
+
+
+IMPORT_EXPORT_USE_TRANSACTIONS = False
+IMPORT_EXPORT_SKIP_ADMIN_LOG = False
+
+# If not set default  is TempFolderStorage
+# IMPORT_EXPORT_TMP_STORAGE_CLASS =
 
 # EMAIL CONFIGURATION
 # ------------------------------------------------------------------------------
