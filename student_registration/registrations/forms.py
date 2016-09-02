@@ -12,18 +12,20 @@ from student_registration.registrations.models import (
 
 
 class RegisteringAdultForm(forms.ModelForm):
-
+    """
+    Override model form to use custom Yes/No choices
+    """
     YESNO_CHOICES = ((0, _('No')), (1, _('Yes')))
 
     previously_registered = forms.TypedChoiceField(
-                     choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int
-                )
+        choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int
+    )
     status = forms.TypedChoiceField(
-                     choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int
-                )
+        choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int
+    )
     child_enrolled_in_other_schools = forms.TypedChoiceField(
-                     choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int
-                )
+        choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int
+    )
 
     def __init__(self, *args, **kwargs):
         super(RegisteringAdultForm, self).__init__(*args, **kwargs)
