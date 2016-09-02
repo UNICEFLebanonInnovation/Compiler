@@ -1,5 +1,5 @@
 .frame {
-    height: 650px;
+    height: 750px;
     overflow: hidden;
 }
 .frame ul {
@@ -28,6 +28,34 @@
     background: -o-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);
     background: -ms-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);
     background: linear-gradient(to bottom,  #eeeeee 0%,#ffffff 100%);
+}
+.oneperframe {
+    /*-webkit-box-shadow: inset -1px -1px 2px 2px rgba(1, 1, 1, 0.1);*/
+    /*box-shadow: inset -1px -1px 2px 2px rgba(1, 1, 1, 0.1);*/
+    /*-moz-border-radius: 6px 6px 6px 6px;*/
+    /*-webkit-border-radius: 6px 6px 6px 6px;*/
+    /*border-radius: 6px 6px 6px 6px;*/
+    /*background: #eeeeee;*/
+    /*background: -moz-linear-gradient(top,  #eeeeee 0%, #ffffff 100%);*/
+    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#ffffff));*/
+    /*background: -webkit-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);*/
+    /*background: -o-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);*/
+    /*background: -ms-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);*/
+    /*background: linear-gradient(to bottom,  #eeeeee 0%,#ffffff 100%);*/
+}
+body, .app-container {
+     /*-webkit-box-shadow: inset -1px -1px 2px 2px rgba(1, 1, 1, 0.1);*/
+    /*box-shadow: inset -1px -1px 2px 2px rgba(1, 1, 1, 0.1);*/
+    /*-moz-border-radius: 6px 6px 6px 6px;*/
+    /*-webkit-border-radius: 6px 6px 6px 6px;*/
+    /*border-radius: 6px 6px 6px 6px;*/
+    background: #eeeeee;
+    /*background: -moz-linear-gradient(top,  #eeeeee 0%, #ffffff 100%);*/
+    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#ffffff));*/
+    /*background: -webkit-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);*/
+    /*background: -o-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);*/
+    /*background: -ms-linear-gradient(top,  #eeeeee 0%,#ffffff 100%);*/
+    /*background: linear-gradient(to bottom,  #eeeeee 0%,#ffffff 100%);*/
 }
 .frame ul li.active {
 
@@ -79,12 +107,12 @@
     text-align: center;
 }
 .oneperframe {
-    height: 625px;
+    height: 725px;
     width: 750px;
 }
 .oneperframe ul li.framebox {
     overflow: auto;
-    height: 610px;
+    height: 710px;
     width: 735px;
 }
 

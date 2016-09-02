@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
@@ -34,15 +35,13 @@ class RegisteringAdult(Person):
         ('other', _('Other non-Relative')),
     )
 
-    # status = models.CharField(max_length=50, blank=True, null=True, choices=STATUS)
-    status = models.BooleanField(default=False)
+    status = models.BooleanField(blank=True, default=False)
     previously_registered = models.BooleanField(default=False)
-    relation_to_householdhead = models.CharField(max_length=50, choices=RELATION_TYPE)
+    relation_to_householdhead = models.CharField(max_length=50, blank=True, null=True, choices=RELATION_TYPE)
     wfp_case_number = models.CharField(max_length=50, blank=True, null=True)
     csc_case_number = models.CharField(max_length=50, blank=True, null=True)
     card_issue_requested = models.BooleanField(default=False)
-    child_enrolled_in_this_school = models.PositiveIntegerField()
-    # child_enrolled_in_other_schools = models.PositiveIntegerField()
+    child_enrolled_in_this_school = models.PositiveIntegerField(blank=True, null=True)
     child_enrolled_in_other_schools = models.BooleanField(default=False)
     primary_phone = models.CharField(max_length=50, blank=True, null=True)
     primary_phone_answered = models.CharField(max_length=50, blank=True, null=True)
@@ -51,11 +50,14 @@ class RegisteringAdult(Person):
     signature = models.TextField(blank=True, null=True)
     school = models.ForeignKey(
         School,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
 
-# TODO: To be deleted
+    def get_absolute_url(self):
+        return reverse('registrations:registering_child', kwargs={'pk': self.pk})
+
+
 class Phone(models.Model):
 
     PHONE_TYPE = Choices(
@@ -160,7 +162,8 @@ class Registration(TimeStampedModel):
         return ''
 
     def __unicode__(self):
-        return self.student_fullname
+        return 'none'
+        # return self.student_fullname
 
 
 eav.register(Registration)
