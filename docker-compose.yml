@@ -19,6 +19,8 @@ services:
       context: .
       dockerfile: ./compose/django/Dockerfile
     user: django
+    volumes:
+      - .:/app
     depends_on:
       - postgres
       - redis
