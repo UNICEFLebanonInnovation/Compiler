@@ -108,6 +108,8 @@ input.required, select.required {
 
 .inlineForm {
     color: #7b7b7b;
+    font-weight: bold;
+    font-size: 20px !important;
     padding: 15px;
 }
 .inlineForm .line input[type=radio] {
@@ -118,36 +120,30 @@ input.required, select.required {
     clear: right;
     float: left;
 }
-.inlineForm .line label.text {
-    font-weight: bold;
-    width: 200px;
-}
+
 .inlineForm .line {
     /*width: 100%;*/
     /*padding-top: 5px;*/
     /*padding-bottom: 7px;*/
     /*padding-left: 0px;*/
     /*float:left;*/
-    height: 50px;
+    min-height: 50px;
+    height: auto;
     clear: both;
 }
 .inlineForm .line span.left {
     padding-top: 7px;
 }
-label.text {
-    text-align: left !important;
-    font-size: 16px;
-}
 
 .inlineForm label.text {
     float: left;
-    width: 170px;
+    width: 300px;
     padding-top: 2px;
     padding-bottom: 3px;
-    font-size: 13px;
+    text-align: left !important;
     color:#7b7b7b;
     padding-right: 20px;
-    text-align: right;
+    font-weight: bold;
 }
 .inlineForm .hidden-field {
     display: none;
@@ -168,7 +164,7 @@ div.error, span.error {
 }
 .form_errors div {
     float: left;
-    width: 100px;
+    width: 300px;
 }
 .field_error {
     border: 1px solid red !important;
