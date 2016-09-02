@@ -126,12 +126,6 @@
 
     </div> <!-- /container -->
     <div class="container-full-page" style="position: relative;width: 100%;min-width: 980px;padding: 15px;">
-      {% if messages %}
-          {% for message in messages %}
-              <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
-          {% endfor %}
-      {% endif %}
-
       {% block content-full-page %}
       {% endblock content-full-page %}
     </div>
