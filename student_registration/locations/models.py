@@ -23,7 +23,7 @@ class LocationType(models.Model):
 class Location(MPTTModel):
 
     name = models.CharField(max_length=254L)
-    type = models.ForeignKey(LocationType, verbose_name='Location Type')
+    gateway = models.ForeignKey(LocationType, verbose_name='Location Type')
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     p_code = models.CharField(max_length=32L, blank=True, null=True)
@@ -53,5 +53,5 @@ class Location(MPTTModel):
     #     )
 
     class Meta:
-        unique_together = ('name', 'type', 'p_code')
+        unique_together = ('name', 'gateway', 'p_code')
         ordering = ['name']
