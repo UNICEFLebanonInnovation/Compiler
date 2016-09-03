@@ -273,7 +273,7 @@ ADMIN_URL = r'^admin/'
 # Your common stuff: Below this line define 3rd party library settings
 
 LOCALE_PATHS = [
-    str(APPS_DIR)+'/static/locale',
+    str(APPS_DIR.path('static/locale')),
 ]
 
 REST_FRAMEWORK = {
