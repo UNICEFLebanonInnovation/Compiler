@@ -12,51 +12,29 @@
 
 {% block content %}
 
-         <section class="main-content-wrapper">
-            <section id="main-content">
-                 <div class="row">
-                    <div class="col-md-12">
-                        </br>
-                    </div>
-                </div>
-            <div class="row">
-                    <div class="col-md-12">
-                        <div class="panel panel-default">
-                          <div class="panel-heading">
-                            <h3 class="panel-title">
-                                <ol class="breadcrumb">
-                                    <li><a class="nav-link" href="{% url 'registrations:registering_adult' %}?ln={{ LANGUAGE_CODE }}">{% trans "Home" %}</a></li>
-                                    <li><a>{% trans "Registration" %}</a></li>
-                                </ol>
-                            </h3>
-                            <div class="actions pull-right">
-                                <i class="fa fa-chevron-down"></i>
-                                <i class="fa fa-times"></i>
-                            </div>
-                          </div>
 <form method="post" action="" class="inlineForm">
-    {% csrf_token %}
-    {% if form.errors %}
-        {% for field in form %}
-            {% for error in field.errors %}
-                <div class="alert alert-danger">
-                    <strong>{{ error|escape }}</strong>
-                </div>
-            {% endfor %}
-        {% endfor %}
-        {% for error in form.non_field_errors %}
+{% csrf_token %}
+{% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
             <div class="alert alert-danger">
                 <strong>{{ error|escape }}</strong>
             </div>
         {% endfor %}
-    {% endif %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
                           <div class="panel-body">
-                            <div class="scrollbar">
-                                <div class="handle">
-                                    <div class="mousearea"></div>
-                                </div>
-                            </div>
-
+                            <h3 class="panel-title">
+                                <ol class="breadcrumb">
+                                    <li><a class="nav-link" href="{% url 'registrations:registering_adult' %}?ln={{ LANGUAGE_CODE }}">{% trans "Pilot" %}</a></li>
+                                    <li><a>{% trans "Registration Household" %}</a></li>
+                                </ol>
+                            </h3>
                             <div id="oneperframe" class="frame oneperframe">
                                 <ul class="slidee">
 
@@ -217,15 +195,6 @@
                         </div>
 </form>
 
-                        </div>
-                      </div>
-                     </div>
-                </div>
-            </div>
-
-            </section>
-         </section>
-
 {% endblock %}
 
 {% block extra_js %}
@@ -234,26 +203,24 @@
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
     <script type="text/javascript">
 
     $(document).ready(function() {
         initializeSly($('#oneperframe'));
 
         $("#id_id_type").change(function () {
-{#        $("#options").change(function () {#}
             hideAll();
             $("#HouseholdID_block").show();
             var selectedOption = $(this).val();
             console.log(selectedOption);
 
-{#           if(selectedOption == "OptionUNHCR") {#}
            if(selectedOption == 1) {
                $("#HouseholdUNHCR").show();
                $("#HouseholdUNHCR_OtherID").show();
                $("#HouseholdUNHCRNote").show();
                $("#HouseholdRegistrationNumber").show();
 
-{#           }else if (selectedOption == "OptionOtherID") {#}
            }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5)  {
                $("#HouseholdOtherID").show();
                $("#HouseholdOtherID_Note").show();
@@ -261,12 +228,13 @@
                $("#HouseholdOtherNoID").show();
                $("#HouseholdRegistrationNumber").hide();
                $("#IndividualRegistrationNumber").hide();
-{#           }else if (selectedOption == "OptionNoID") {#}
            }else if (selectedOption == 6) {
                $("#HouseholdOtherNoID").show();
                $("#HouseholdID_block").hide();
-               x=  alert("Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them.");
-               x.focus();
+
+               bootbox.alert("{% trans 'Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them.' %}", function() {});
+{#               x=  alert("Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them.");#}
+{#               x.focus();#}
            }
         });
 

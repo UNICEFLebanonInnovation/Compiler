@@ -193,6 +193,28 @@ function update_data_server(url, itemid, callback_success, callback_error)
     });
 }
 
+function submitForm(url, form, callback)
+{
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: form.serialize(),
+        cache: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            if(response.status == '200'){
+                if(callback){
+                    callback();
+                }
+            }
+        },
+        error: function (response) {
+            console.log(response);
+        }
+    });
+}
+
 function initializeSly(block)
 {
     var $frame = block;
@@ -247,8 +269,8 @@ function initializeSignature()
         }
     });
 
-    window.addEventListener("resize", resizeCanvas(canvas));
-    resizeCanvas(canvas);
+    //window.addEventListener("resize", resizeCanvas(canvas));
+    //resizeCanvas(canvas);
 
     // Returns signature image as data URL (see https://mdn.io/todataurl for the list of possible paramters)
     signaturePad.toDataURL(); // save image as PNG
@@ -275,6 +297,9 @@ function resizeCanvas(canvas) {
     canvas.width = canvas.offsetWidth * ratio;
     canvas.height = canvas.offsetHeight * ratio;
     canvas.getContext("2d").scale(ratio, ratio);
+    //alert(canvas.width);
+    //alert(canvas.height);
+    //alert(ratio);
     //signaturePad.clear(); // otherwise isEmpty() might return incorrect value
 }
 
