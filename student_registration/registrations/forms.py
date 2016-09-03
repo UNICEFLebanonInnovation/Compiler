@@ -17,7 +17,7 @@ class RegisteringAdultForm(forms.ModelForm):
     previously_registered = forms.TypedChoiceField(
         choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
     )
-    status = forms.TypedChoiceField(
+    previously_registered_status = forms.TypedChoiceField(
         choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
     )
     child_enrolled_in_other_schools = forms.TypedChoiceField(
