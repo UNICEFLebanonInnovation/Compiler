@@ -110,7 +110,7 @@ input.required, select.required {
     color: #7b7b7b;
     font-weight: bold;
     font-size: 20px !important;
-    padding: 15px;
+    /*padding: 15px;*/
 }
 .inlineForm .line input[type=radio] {
     margin: 3px 10px 5px 0;
