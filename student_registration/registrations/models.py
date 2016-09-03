@@ -19,17 +19,26 @@ from student_registration.eav.registry import Registry as eav
 
 
 class RegisteringAdult(Person):
-
+    """
+    Captures the details of the adult who
+    is registering the child in the pilot
+    """
     STATUS = Choices(
         ('pending', _('Pending')),
     )
 
     RELATION_TYPE = Choices(
-        ('head', _('Household Head')),
+        ('head', _('I am the household head')),
         ('spouse', _('Spouse')),
-        ('parent', _('Farther/Mother')),
+        ('parent', _('Father/Mother')),
         ('relative', _('Other Relative')),
         ('other', _('Other non-Relative')),
+    )
+
+    PHONE_ANSWEREDBY = Choices(
+        ('me', _('Me personally')),
+        ('relay', _('Someone who always relays the message to me')),
+        ('notrelay', _('Someone who may not relay the message to me')),
     )
 
     status = models.BooleanField(blank=True, default=False)
@@ -41,9 +50,11 @@ class RegisteringAdult(Person):
     child_enrolled_in_this_school = models.PositiveIntegerField(blank=True, null=True)
     child_enrolled_in_other_schools = models.BooleanField(default=False)
     primary_phone = models.CharField(max_length=50, blank=True, null=True)
-    primary_phone_answered = models.CharField(max_length=50, blank=True, null=True)
+    # primary_phone_answered = models.CharField(max_length=50, blank=True, null=True)
+    primary_phone_answered = models.CharField(max_length=50, blank=True, null=True, choices=PHONE_ANSWEREDBY)
     secondary_phone = models.CharField(max_length=50, blank=True, null=True)
-    secondary_phone_answered = models.CharField(max_length=50, blank=True, null=True)
+    # secondary_phone_answered = models.CharField(max_length=50, blank=True, null=True)
+    secondary_phone_answered = models.CharField(max_length=50, blank=True, null=True, choices=PHONE_ANSWEREDBY)
     signature = models.TextField(blank=True, null=True)
     school = models.ForeignKey(
         School,
@@ -76,7 +87,9 @@ class Phone(models.Model):
 
 
 class Registration(TimeStampedModel):
-
+    """
+    Captures the details of the child in the cash pilot
+    """
     EAV_TYPE = 'registration'
 
     RELATION_TYPE = Choices(
@@ -101,7 +114,10 @@ class Registration(TimeStampedModel):
         related_name='+',
     )
 
-    registering_adult = models.ForeignKey(RegisteringAdult, blank=True, null=True)
+    registering_adult = models.ForeignKey(
+        RegisteringAdult,
+        blank=True, null=True
+    )
     relation_to_adult = models.CharField(
         max_length=50,
         blank=True,
