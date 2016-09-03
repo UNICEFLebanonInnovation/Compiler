@@ -75,10 +75,6 @@
                                         <p>{% trans "This cash is intended to help children regularly attend 2nd shift school in order that their future opportunities are improved." %}</p>
                                     </li>
 
-                                    <li class="framebox">
-                                        <p>{% trans "Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them." %}</p>
-                                    </li>
-
                                     {# 3 Slide introduction part 2 #}
                                     <li class="framebox">
                                         <p>{% trans "If a student stops attending school, you will receive an SMS reminder of the purpose of this cash." %}</p>
@@ -87,13 +83,15 @@
 
                                     {# 4 Slide introduction part 3 #}
                                     <li class="framebox">
-                                        <p>{% trans "If your address or phone number changes, you must inform us by calling 81-312940. If your household cannot be found after 2 months you will stop receiving benefits." %}</p>
-                                        <p>{% trans "Please take a leaflet now so you have this important phone number with you." %}</p>
+                                        <p>{% trans "This desk is to Register for the Min Ila Pilot, not to enroll in school. Children must already be enrolled in school in order to Register for the Pilot." %}</p>
+                                        <p>{% trans "If your child does not enroll in school he/she will be removed from the Min Ila Pilot." %}</p>
+                                        <p>{% trans "If your child is not already enrolled in school, please go and do so now, then return to Register for the Pilot" %}</p>
                                     </li>
 
                                     {# 5 Slide introduction part 4 #}
                                     <li class="framebox">
-                                        <p>{% trans "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card." %}</p>
+                                        <p>{% trans "If your address or phone number changes, you must inform us by calling 81-312940. If your household cannot be found after 2 months you will stop receiving benefits." %}</p>
+                                        <p>{% trans "Please take a leaflet now so you have this important phone number with you." %}</p>
                                     </li>
 
                                     <li class="framebox">
@@ -172,8 +170,16 @@
                                         </div>
                                     </li>
 
+                                    {# Slide card introduction part 1 #}
                                     <li class="framebox">
-                                        <h5 class="panel-title">{% trans "Collect existing ATM acse number" %}</h5>
+                                        <p>{% trans "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card." %}</p>
+                                        <p>{% trans "Note: It is very important that you provide us a working phone number so we can send you the details of where and when to collect your ATM Card" %}</p>
+                                    </li>
+
+                                    {# Slide card introduction part 2 #}
+                                    <li class="framebox">
+                                        <h5 class="panel-title">{% trans "Collect existing ATM case number" %}</h5>
+                                        <label class="text">{% trans "Please copy case number directly from card" %}<span class="asterisque">*</span></label>
 
                                         <div class="line">
                                             <label class="text">{% trans "Blue Card Case Number" %}</label>
@@ -248,7 +254,7 @@
                $("#HouseholdRegistrationNumber").show();
 
 {#           }else if (selectedOption == "OptionOtherID") {#}
-           }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4) {
+           }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5)  {
                $("#HouseholdOtherID").show();
                $("#HouseholdOtherID_Note").show();
                $("#HouseholdUNHCR_OtherID").show();
@@ -256,9 +262,11 @@
                $("#HouseholdRegistrationNumber").hide();
                $("#IndividualRegistrationNumber").hide();
 {#           }else if (selectedOption == "OptionNoID") {#}
-           }else if (selectedOption == 5) {
+           }else if (selectedOption == 6) {
                $("#HouseholdOtherNoID").show();
                $("#HouseholdID_block").hide();
+               x=  alert("Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them.");
+               x.focus();
            }
         });
 
