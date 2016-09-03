@@ -87,7 +87,7 @@
                                             </div>
                                         </div>
                                         <div class="line" id="previously_registered_block" style="display: none;">
-                                            <label class="text">{% trans "Do you have the ID under which the registration take place" %}</label>
+                                            <label class="text">{% trans "You would have been required to present your ID when completing the Pilot Registration Process in the other school. Do you have the ID Number that was presented during  your previous Pilot Registration?" %}</label>
                                             {% for choice in form.previously_registered %}
                                                 <span class="hidden-field">{{ choice }}</span>
                                             {% endfor %}
@@ -189,15 +189,20 @@
                                         </p>
                                     </li>
 
-                                    {# 2 Declaration and Signature #}
+                                    {# 2 Declaration}
                                     <li class="framebox">
                                         <h5 class="panel-title">{% trans "Declaration and Consent" %}</h5>
                                         <p>
                                             {% trans "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 6 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school." %}
                                         </p>
                                         <p>
-                                            {% trans "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments. Therefore if you change your phone number or address, it is very important that you please inform us by calling 81-312940." %}
+                                            {% trans "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments." %}
                                         </p>
+                                    </li>
+
+                                    {# 3 Declaration and Signature #}
+                                    <li class="framebox">
+                                        <h5 class="panel-title">{% trans "Declaration and Consent" %}</h5>
                                         <p>
                                             {% trans "Please indicate that you understand the above as it has been read to you and that you consent to be contacted by telephone and by household visit by officers of the program by signing below. Those knowingly providing false information or committing fraud against the program will be removed from the pilot." %}
                                         </p>
@@ -206,7 +211,7 @@
                                         </p>
                                     </li>
                                     <li class="framebox">
-                                        <h5 class="panel-title">{% trans "Signature" %}</h5>
+                                        <h5 class="panel-title">{% trans "Signature of Household Representative" %}</h5>
                                             <div style="display: none;">
                                                 {{ form.signature }}
                                             </div>
