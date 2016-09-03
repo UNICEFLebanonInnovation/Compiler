@@ -105,7 +105,13 @@ class RegisteringAdultView(LoginRequiredMixin, CreateView):
     model = RegisteringAdult
 
     def get_context_data(self, **kwargs):
+        schools = School.objects.all()
+        if self.request.user.location:
+            schools = schools.filter(location_id=self.request.user.location.id)
         context = super(RegisteringAdultView, self).get_context_data(**kwargs)
+        context.update({
+            'school': schools
+        })
 
         return context
 
