@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='location',
-            name='gateway',
+            name='type',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='locations.LocationType', verbose_name='Location Type'),
         ),
         migrations.AddField(
@@ -59,6 +59,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='location',
-            unique_together=set([('name', 'gateway', 'p_code')]),
+            unique_together=set([('name', 'type', 'p_code')]),
         ),
     ]
