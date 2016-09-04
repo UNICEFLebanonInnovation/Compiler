@@ -33,5 +33,12 @@
     "fields": {
       "name": "No ID"
     }
+  },
+  {
+    "model": "students.idtype",
+    "pk": 6,
+    "fields": {
+      "name": "Other ID"
+    }
   }
 ]
