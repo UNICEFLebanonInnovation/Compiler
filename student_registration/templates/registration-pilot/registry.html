@@ -32,7 +32,7 @@
                           <div class="panel-body">
                             <h3 class="panel-title">
                                 <ol class="breadcrumb">
-                                    <li><a>{% trans "Registration Household" %}</a></li>
+                                    <li><a>{% trans "Registration Pilot" %}</a></li>
                                 </ol>
                             </h3>
                             <div id="oneperframe" class="frame oneperframe" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
@@ -40,7 +40,7 @@
 
                                     {# 1 Slide select a school #}
                                     <li class="active framebox">
-                                        <h5 class="panel-title"></h5>
+                                        <h5 class="panel-title">{% trans "Registration household" %}</h5>
                                         <div class="line">
                                             <label class="text">{% trans "Select School" %}</label>
                                             {{ form.school }}
@@ -134,7 +134,7 @@
                                                 <label class="text">{% trans "Age" %}<span class="asterisque">*</span></label>
                                                 {{ form.age }}
                                             </div>
-                                            <div class="line">
+                                            <div class="line field-select-small-size">
                                                 <label class="text">{% trans "Date of birth" %}<span class="asterisque">*</span></label>
                                                 {{ form.birthday_day }}
                                                 {{ form.birthday_month }}
@@ -213,7 +213,7 @@
                                             {{ form.id_number }}
                                         </div>
                                         <div id="no_id_block" style="display: none;">
-                                            <table class="table table-striped table-bordered cell-border"
+                                            <table class="table table-striped table-bordered cell-border" id="no_id_table"
                                                    data-height="500"
                                                    data-pagination="true"
                                                    data-search="true"
@@ -251,7 +251,7 @@
                                         </div>
 
                                         <div id="with_id_block" style="display: none;">
-                                            <table class="table table-striped table-bordered cell-border"
+                                            <table class="table table-striped table-bordered cell-border" id="with_id_table"
                                                    data-height="500"
                                                    data-pagination="true"
                                                    data-search="true"
@@ -260,6 +260,7 @@
                                                 <thead>
                                                     <th>{% trans "School" %}</th>
                                                     <th>{% trans "Child's UNHCR Individual Number" %}</th>
+                                                    <th>{% trans "Relationship to household Head" %}</th>
                                                     <th>{% trans "Was this child enrolled in any school last year" %}</th>
                                                 </thead>
                                                 <tbody>
@@ -267,6 +268,7 @@
                                                         <tr>
                                                             <td>{% if register.school %}{{ register.school.name }}{% endif %}</td>
                                                             <td>{% if register.student %}{{ register.student.id_number }}{% endif %}</td>
+                                                            <td>{{ register.relation_to_adult }}</td>
                                                             <td>{% if register.enrolled_last_year %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
                                                         </tr>
                                                     {% endfor %}
@@ -439,7 +441,6 @@
            }
         });
 
-
         $('input[type=radio][name=PrincipalHouseHoldCB]').change(function () {
             var PrincipalHouseHoldCBChecked = $(this).val();
 
@@ -456,8 +457,6 @@
            }
         });
 
-        var id_type = $('#id_id_type').val();
-
         $('input[name=child_enrolled_in_other_schools]').click(function(){
             if($(this).val() == 1){
                 $('#registration_status_block').show();
@@ -468,7 +467,7 @@
                 $('#previously_registered_block').hide();
                 $('#previously_registered_error').hide();
                 $('#id_number_block').hide();
-                if(id_type && id_type !== 'None'){
+                if($('#id_id_type').val() == 1){
                     $('#with_id_block').show();
                 }else{
                     $('#no_id_block').show();
@@ -485,7 +484,7 @@
                 $('#previously_registered_block').hide();
                 $('#previously_registered_error').hide();
                 $('#id_number_block').hide();
-                if(id_type && id_type !== 'None'){
+                if($('#id_id_type').val() == 1){
                     $('#with_id_block').show();
                 }else{
                     $('#no_id_block').show();
@@ -509,26 +508,48 @@
                             message: $('#add_child_noid_block').html(),
                             buttons: {
                                 success: {
-                                    label: "Save",
+                                    label: "{% trans "Save" %}",
                                     className: "btn-success",
                                     callback: function () {
+                                        var tr = $('<tr>');
+                                        var form = $('.bootbox-body').find('#add_child_noid_form');
+                                        tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
+                                        tr.append($('<td>').html('&nbsp;'));
+                                        tr.append($('<td>').html(form.find('#id_first_name').val()+' '+ form.find('#id_father_name').val()+' '+form.find('#id_last_name').val()));
+                                        tr.append($('<td>').html(form.find('#id_mother_fullname').val()));
+                                        tr.append($('<td>').html(form.find('#id_birthday_day').find(':selected').text()+'/'+form.find('#id_birthday_month').find(':selected').text()+'/'+form.find('#id_birthday_year').find(':selected').text()));
+                                        tr.append($('<td>').html(form.find('#id_age').val()));
+                                        tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
+                                        tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
+                                        $('#no_id_table').find('tbody').append(tr);
 
+                                        console.log($('#add_child_noid_form').find('input'));
+                                        console.log($('#add_child_noid_form').find('select'));
                                     }
                                 }
                             }
-                        });
+            });
         });
 
-        $('#add_child_withid').click(function(){
+       $('#add_child_withid').click(function(){
             bootbox.dialog({
                             title: "This is a form in a modal.",
                             message: $('#add_child_withid_block').html(),
                             buttons: {
                                 success: {
-                                    label: "Save",
+                                    label: "{% trans "Save" %}",
                                     className: "btn-success",
                                     callback: function () {
+                                        var tr = $('<tr>');
+                                        var form = $('.bootbox-body').find('#add_child_withid_form');
+                                        tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
+                                        tr.append($('<td>').html(form.find('#id_id_number').val()));
+                                        tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
+                                        tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
+                                        $('#with_id_table').find('tbody').append(tr);
 
+                                        console.log($('#add_child_withid_form').find('input'));
+                                        console.log($('#add_child_withid_form').find('select'));
                                     }
                                 }
                             }

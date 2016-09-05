@@ -162,6 +162,9 @@ class RegisteringPilotView(LoginRequiredMixin, FormView):
             'student_form': StudentForm
         }
 
+    def get_success_url(self):
+        return reverse('registrations:registering_pilot')
+
 
 class ExportViewSet(LoginRequiredMixin, ListView):
     model = Registration
