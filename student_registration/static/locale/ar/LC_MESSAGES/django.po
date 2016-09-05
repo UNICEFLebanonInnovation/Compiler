@@ -536,10 +536,10 @@ msgid "Present"
 msgstr "حاضر"
 
 msgid "Registration Household"
-msgstr ""
+msgstr "تسجيل رب الأسرة"
 
 msgid "Select School"
-msgstr ""
+msgstr "إختر المدرسة"
 
 msgid "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 6 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month."
 msgstr ""
@@ -566,13 +566,13 @@ msgid "If your address or phone number changes, you must inform us by calling 81
 msgstr ""
 
 msgid "Please take a leaflet now so you have this important phone number with you."
-msgstr ""
+msgstr "يرجى أخذ النشرة الآن حتى يكون لديك رقم الهاتف المهم معك"
 
 msgid "Register New Household"
 msgstr "تسجيل الأسرة"
 
 msgid "ID Type"
-msgstr ""
+msgstr "نوع البطاقة"
 
 msgid "Is the principal applicant still with your household?"
 msgstr "هل مقدم الطلب الرئيسي ما زال مع أسرتك ؟"
@@ -584,7 +584,7 @@ msgid "UNHCR Individual Registration Number of the Household Representative"
 msgstr ""
 
 msgid "NOTE: in order to register with other ID, the ID Holder must be present AND must be 18 years of age or older."
-msgstr ""
+msgstr "ملاحظة : من أجل التسجيل ببطاقة أخرى، يجب أن يكون حامل البطاقة موجود و يجب أن يكون عمرة 18 سنة أو أكثر"
 
 msgid "NOTE: If the Household Representative is not listed on the UNHCR Certificate, it cannot be used to regiter for the Pilot. Another form of ID must be used."
 msgstr ""
