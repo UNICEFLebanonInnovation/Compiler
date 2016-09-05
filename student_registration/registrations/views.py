@@ -149,6 +149,20 @@ class RegisteringChildView(LoginRequiredMixin, UpdateView):
         return reverse('registrations:registering_adult')
 
 
+class RegisteringPilotView(LoginRequiredMixin, FormView):
+    template_name = 'registration-pilot/registry.html'
+    form_class = RegisteringAdultForm
+    model = RegisteringAdult
+
+    def get_context_data(self, **kwargs):
+        context = super(RegisteringPilotView, self).get_context_data(**kwargs)
+
+        return {
+            'form': context['form'],
+            'student_form': StudentForm
+        }
+
+
 class ExportViewSet(LoginRequiredMixin, ListView):
     model = Registration
 
