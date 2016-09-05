@@ -48,6 +48,14 @@
     <form class="inlineForm">
         <h5 class="panel-title">{% trans "Add Child" %}</h5>
         <div class="line">
+            <label class="text">{% trans "Location" %}</label>
+            {{ student_form.location }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "School" %}</label>
+            {{ student_form.school }}
+        </div>
+        <div class="line">
             <label class="text">{% trans "Child's ID Number" %}</label>
             {{ student_form.id_number }}
         </div>
