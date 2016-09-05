@@ -289,9 +289,6 @@ msgstr "رقم المدرسة"
 msgid "School name number"
 msgstr "رقم المركز التربوي للمدرسة"
 
-msgid "School"
-msgstr "إسم المدرسة"
-
 msgid "School name"
 msgstr "المدرسة التي سيقام فيها امتحان الدخول "
 
@@ -649,9 +646,6 @@ msgstr "المدرسة"
 msgid "Full Name"
 msgstr "الاسم الكامل"
 
-msgid "Was this child enrolled in any school last year"
-msgstr ""
-
 msgid "Child's UNHCR Individual Number"
 msgstr ""
 
@@ -665,9 +659,6 @@ msgid "Contact Information"
 msgstr "معلومات التواصل"
 
 msgid "Officers of the Min Ila Cash Pilot must be able to reach you by phone and household visit in order for your household to benefit from the pilot. Your information will only be provided to officers of the pilot who will be trained to handle your information carefully and will only visit you if your child drops out of school."
-msgstr ""
-
-msgid "If you change your phone number or address, please inform the program by calling 81-312940, or you will be removed after we are unable to locate you."
 msgstr ""
 
 msgid "This number is on the leaflet provided to you."

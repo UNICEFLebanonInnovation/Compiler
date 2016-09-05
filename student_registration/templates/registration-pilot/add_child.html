@@ -1,8 +1,12 @@
 {% load staticfiles i18n %}
 
 <div id="add_child_noid_block" style="display: none;">
-    <form class="inlineForm">
+    <form class="inlineForm form-medium-size" id="add_child_noid_form">
         <h5 class="panel-title">{% trans "Add Child" %} - {% trans "Other or no ID" %}</h5>
+        <div class="line">
+            <label class="text">{% trans "School" %}</label>
+            {{ form.school }}
+        </div>
         <div class="line">
             <label class="text">{% trans "First Name" %}<span class="asterisque">*</span></label>
             {{ student_form.first_name }}
@@ -23,7 +27,7 @@
             <label class="text">{% trans "Age" %}<span class="asterisque">*</span></label>
             {{ student_form.age }}
         </div>
-        <div class="line">
+        <div class="line field-select-small-size">
             <label class="text">{% trans "Date of birth" %}<span class="asterisque">*</span></label>
             {{ student_form.birthday_day }}
             {{ student_form.birthday_month }}
@@ -45,15 +49,11 @@
 </div>
 
 <div id="add_child_withid_block" style="display: none;">
-    <form class="inlineForm">
+    <form class="inlineForm form-medium-size" id="add_child_withid_form">
         <h5 class="panel-title">{% trans "Add Child" %}</h5>
         <div class="line">
-            <label class="text">{% trans "Location" %}</label>
-            {{ student_form.location }}
-        </div>
-        <div class="line">
             <label class="text">{% trans "School" %}</label>
-            {{ student_form.school }}
+            {{ form.school }}
         </div>
         <div class="line">
             <label class="text">{% trans "Child's ID Number" %}</label>
@@ -67,5 +67,13 @@
             <label class="text">{% trans "Was this child enrolled in any school last year" %}</label>
             {{ student_form.enrolled_last_year }}
         </div>
+{#        <div class="line">#}
+{#            <label class="text">{% trans "Location" %}</label>#}
+{#            {{ student_form.location }}#}
+{#        </div>#}
+{#        <div class="line">#}
+{#            <label class="text">{% trans "School" %}</label>#}
+{#            {{  student_form.enrolled_last_year_school }}#}
+{#        </div>#}
     </form>
 </div>

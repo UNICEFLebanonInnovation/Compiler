@@ -12,17 +12,23 @@ from student_registration.schools.models import School
 
 class StudentForm(forms.ModelForm):
 
-    location = forms.ChoiceField(
-                     choices=Location.objects.all(), widget=forms.Select, required=False
-                )
-    school = forms.ChoiceField(
-                     choices=School.objects.all(), widget=forms.Select, required=False
+    school = forms.ModelChoiceField(
+                     queryset=School.objects.all(), widget=forms.Select,
+                     required=False, to_field_name='name'
                 )
     relation_to_adult = forms.ChoiceField(
                      choices=Registration.RELATION_TYPE, widget=forms.Select, required=False
                 )
     enrolled_last_year = forms.ChoiceField(
                      choices=Registration.ENROLLMENT_TYPE, widget=forms.Select, required=False
+                )
+    location = forms.ModelChoiceField(
+                     queryset=Location.objects.all(), widget=forms.Select,
+                     required=False, to_field_name='name'
+                )
+    enrolled_last_year_school = forms.ModelChoiceField(
+                     queryset=School.objects.all(), widget=forms.Select,
+                     required=False, to_field_name='name'
                 )
 
     def __init__(self, *args, **kwargs):
