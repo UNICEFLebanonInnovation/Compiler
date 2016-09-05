@@ -575,7 +575,7 @@ msgid "Is the principal applicant still with your household?"
 msgstr "هل مقدم الطلب الرئيسي ما زال مع أسرتك ؟"
 
 msgid "UNHCR Household Registration Number"
-msgstr ""
+msgstr "UNHCR رقم التسجيل رب المنزل لدى المفوضية"
 
 msgid "UNHCR Individual Registration Number of the Household Representative"
 msgstr ""
@@ -595,7 +595,7 @@ msgstr "إسم الأب"
 msgid "Last Name"
 msgstr "إسم العائلة"
 
-msgid "Mother Full name"
+msgid "Mother's Full name"
 msgstr "إسم الأم الكامل"
 
 msgid "Age"
@@ -617,25 +617,25 @@ msgid "Note: It is very important that you provide us a working phone number so 
 msgstr ""
 
 msgid "Collect existing ATM case number"
-msgstr ""
+msgstr "جمع بطاقات أجهزة الصراف الآلي"
 
 msgid "Please copy case number directly from card"
-msgstr ""
+msgstr "يرجى نسخ الرقم مباشرة من بطاقة"
 
 msgid "Blue Card Case Number"
-msgstr ""
+msgstr "البطاقة الزرقاء"
 
 msgid "White Card Case Number"
-msgstr ""
+msgstr "البطاقة البيضاء"
 
 msgid "Register Children in Pilot"
-msgstr ""
+msgstr "تسجيل الأطفال في البرنامج"
 
 msgid "Do you have any children enrolled in other schools?"
-msgstr ""
+msgstr "هل لديك أي الأطفال مسجلين في مدارس أخرى؟"
 
 msgid "Have you already completed the registration process for this pilot in other school?"
-msgstr ""
+msgstr "هل أنجزت بالفعل عملية التسجيل لهذا البرنامج في مدرسة أخرى؟"
 
 msgid "You would have been required to present your ID when completing the Pilot Registration Process in the other school. Do you have the ID Number that was presented during your previous Pilot Registration?"
 msgstr ""
@@ -723,3 +723,7 @@ msgstr "مرحبا بكم في مكتب التسجيل من الى التجري�
 
 msgid "Class Assignment"
 msgstr "توزيع التلاميذ"
+
+msgid "Other or no ID"
+msgstr "لا يوجد بطاقة رسمية"
+
