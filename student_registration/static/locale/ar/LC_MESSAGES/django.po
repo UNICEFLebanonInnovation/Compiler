@@ -721,6 +721,5 @@ msgstr ""
 msgid "Welcome to the Registration Desk of the Min Ila Pilot"
 msgstr "مرحبا بكم في مكتب التسجيل من الى التجريبي"
 
-
-
-
+msgid "Class Assignment"
+msgstr "توزيع التلاميذ"
