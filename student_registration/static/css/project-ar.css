@@ -123,6 +123,18 @@ input.required, select.required {
 .inlineForm .line input[type=text], .inlineForm .line select {
     width: 361px;
 }
+.form-medium-size .line label.text {
+    width: 200px;
+}
+.form-medium-size .line input[type=text], .form-medium-size .line select {
+    width: 250px;
+}
+.inlineForm .line.field-select-small-size select {
+    width: 120px;
+}
+.form-medium-size .line.field-select-small-size select {
+    width: 83px;
+}
 .inlineForm .line textarea {
     margin-bottom: 10px;
 }
