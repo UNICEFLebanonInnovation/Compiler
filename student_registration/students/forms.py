@@ -6,10 +6,18 @@ from student_registration.students.models import (
     Student
 )
 from student_registration.registrations.models import Registration
+from student_registration.locations.models import Location
+from student_registration.schools.models import School
 
 
 class StudentForm(forms.ModelForm):
 
+    location = forms.ChoiceField(
+                     choices=Location.objects.all(), widget=forms.Select, required=False
+                )
+    school = forms.ChoiceField(
+                     choices=School.objects.all(), widget=forms.Select, required=False
+                )
     relation_to_adult = forms.ChoiceField(
                      choices=Registration.RELATION_TYPE, widget=forms.Select, required=False
                 )
