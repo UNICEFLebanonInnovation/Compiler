@@ -60,7 +60,7 @@ class Person(TimeStampedModel):
         max_length=4,
         blank=True,
         null=True,
-        choices=((str(x), x) for x in range(1990, 2051))
+        choices=((str(x), x) for x in range(1930, 2051))
     )
     birthday_month = models.CharField(
         max_length=2,
