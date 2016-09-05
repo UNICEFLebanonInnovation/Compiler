@@ -75,6 +75,7 @@
                                         <p>{% trans "Please take a leaflet now so you have this important phone number with you." %}</p>
                                     </li>
 
+                                    {# 6 #}
                                     <li class="framebox">
                                          <h5 class="panel-title">{% trans "Register New Household" %}</h5>
                                         <div class="line">
@@ -127,7 +128,7 @@
                                                 {{ form.last_name }}
                                             </div>
                                             <div class="line">
-                                                <label class="text">{% trans "Mother Full name" %}<span class="asterisque">*</span></label>
+                                                <label class="text">{% trans "Mother's Full name" %}<span class="asterisque">*</span></label>
                                                 {{ form.mother_fullname }}
                                             </div>
                                             <div class="line">
@@ -151,13 +152,13 @@
                                         </div>
                                     </li>
 
-                                    {# Slide card introduction part 1 #}
+                                    {# 7 Slide card introduction part 1 #}
                                     <li class="framebox">
                                         <p>{% trans "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card." %}</p>
                                         <p>{% trans "Note: It is very important that you provide us a working phone number so we can send you the details of where and when to collect your ATM Card" %}</p>
                                     </li>
 
-                                    {# Slide card introduction part 2 #}
+                                    {# 8 Slide card introduction part 2 #}
                                     <li class="framebox">
                                         <h5 class="panel-title">{% trans "Collect existing ATM case number" %}</h5>
                                         <label class="text">{% trans "Please copy case number directly from card" %}<span class="asterisque">*</span></label>
@@ -172,7 +173,7 @@
                                         </div>
                                     </li>
 
-                                    {# 1 Registre Child #}
+                                    {# 9 Registre Child #}
                                     <li class="framebox">
                                         <h5 class="panel-title">{% trans "Register Children in Pilot" %}</h5>
                                         <div class="line">
@@ -181,8 +182,8 @@
                                                 <span class="hidden-field">{{ choice }}</span>
                                             {% endfor %}
                                             <div id="radioBtn" class="btn-group">
-                                                <a class="btn btn-primary btn-sm notActive" data-toggle="id_child_enrolled_in_other_schools" data-title="1">YES</a>
-                                                <a class="btn btn-primary btn-sm notActive" data-toggle="id_child_enrolled_in_other_schools" data-title="0">NO</a>
+                                                <a class="btn btn-primary btn-sm notActive" data-toggle="id_child_enrolled_in_other_schools" data-title="1">{% trans "Yes" %}</a>
+                                                <a class="btn btn-primary btn-sm notActive" data-toggle="id_child_enrolled_in_other_schools" data-title="0">{% trans "No" %}</a>
                                             </div>
                                         </div>
                                         <div class="line" id="registration_status_block" style="display: none;">
@@ -191,8 +192,8 @@
                                                 <span class="hidden-field">{{ choice }}</span>
                                             {% endfor %}
                                             <div id="radioBtn" class="btn-group">
-                                                <a class="btn btn-primary btn-sm notActive" data-toggle="id_previously_registered_status" data-title="1">YES</a>
-                                                <a class="btn btn-primary btn-sm notActive" data-toggle="id_previously_registered_status" data-title="0">NO</a>
+                                                <a class="btn btn-primary btn-sm notActive" data-toggle="id_previously_registered_status" data-title="1">{% trans "Yes" %}</a>
+                                                <a class="btn btn-primary btn-sm notActive" data-toggle="id_previously_registered_status" data-title="0">{% trans "No" %}</a>
                                             </div>
                                         </div>
                                         <div class="line" id="previously_registered_block" style="display: none;">
@@ -201,8 +202,8 @@
                                                 <span class="hidden-field">{{ choice }}</span>
                                             {% endfor %}
                                             <div id="radioBtn" class="btn-group">
-                                                <a class="btn btn-primary btn-sm notActive" data-toggle="id_previously_registered" data-title="1">YES</a>
-                                                <a class="btn btn-primary btn-sm notActive" data-toggle="id_previously_registered" data-title="0">NO</a>
+                                                <a class="btn btn-primary btn-sm notActive" data-toggle="id_previously_registered" data-title="1">{% trans "Yes" %}</a>
+                                                <a class="btn btn-primary btn-sm notActive" data-toggle="id_previously_registered" data-title="0">{% trans "No" %}</a>
                                             </div>
                                         </div>
                                         <span class="error" id="previously_registered_error" style="display: none;">
@@ -226,7 +227,7 @@
                                                     <th>{% trans "Mother's Full name" %}</th>
                                                     <th>{% trans "Date of birth" %}</th>
                                                     <th>{% trans "Age" %}</th>
-                                                    <th>{% trans "Relationship to household Head" %}</th>
+                                                    <th>{% trans "Relationship to Household head" %}</th>
                                                     <th>{% trans "Was this child enrolled in any school last year" %}</th>
                                                 </thead>
                                                 <tbody>
@@ -260,7 +261,7 @@
                                                 <thead>
                                                     <th>{% trans "School" %}</th>
                                                     <th>{% trans "Child's UNHCR Individual Number" %}</th>
-                                                    <th>{% trans "Relationship to household Head" %}</th>
+                                                    <th>{% trans "Relationship to Household head" %}</th>
                                                     <th>{% trans "Was this child enrolled in any school last year" %}</th>
                                                 </thead>
                                                 <tbody>
@@ -282,7 +283,7 @@
 
                                     </li>
 
-                                    {# 2 Contact information #}
+                                    {# 10 Contact information #}
                                     <li class="framebox">
                                         <h5 class="panel-title">{% trans "Contact Information" %}</h5>
                                         <p>
@@ -296,7 +297,7 @@
                                         </p>
                                     </li>
 
-                                    {# 2 Declaration #}
+                                    {# 11 Declaration #}
                                     <li class="framebox">
                                         <h5 class="panel-title">{% trans "Declaration and Consent" %}</h5>
                                         <p>
@@ -313,7 +314,7 @@
                                         </p>
                                     </li>
 
-                                    {# 4 Signature #}
+                                    {# 12 Signature #}
                                     <li class="framebox">
                                         <h5 class="panel-title">{% trans "Signature of Household Representative" %}</h5>
                                             <div style="display: none;">
@@ -334,7 +335,7 @@
                                           </div>
                                     </li>
 
-                                    {# 5 Contact information #}
+                                    {# 13 Contact information #}
                                     <li class="framebox">
                                         <h5 class="panel-title">{% trans "Contact Information" %}</h5>
                                         <p>
@@ -381,6 +382,7 @@
                                 <li>10</li>
                                 <li>11</li>
                                 <li>12</li>
+                                <li>13</li>
                             </ul>
 
                             <div class="controls center" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr" {% endif %}>
