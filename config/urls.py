@@ -30,6 +30,7 @@ from student_registration.eav.views import (
     AttributeViewSet,
     ValueViewSet,
 )
+from .views import acme_view
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
@@ -66,6 +67,8 @@ urlpatterns = [
     url(r'^api/docs/', include('rest_framework_swagger.urls')),
 
     url(r'^api/', include(api.urls)),
+
+    url(r'^.well-known/acme-challenge/(?P<slug>.*)/', acme_view),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
