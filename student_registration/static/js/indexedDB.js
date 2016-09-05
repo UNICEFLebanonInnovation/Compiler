@@ -4,6 +4,31 @@
 
 var db = null;
 
+function createDataStore(database_name, version,  store_name)
+{
+    var request = indexedDB.open(database_name, version);
+
+    request.onupgradeneeded = function() {
+        // The database did not previously exist, so create object stores and indexes.
+        db = request.result;
+        var flag = false;
+        try {
+            if(!db.objectStoreNames().contains(store_name)) {
+                flag = true;
+            }
+        }catch(err) {
+            flag = true;
+        }
+        if(flag){
+            db.createObjectStore(store_name, {keyPath: "id", autoIncrement:true});
+        }
+    };
+
+    request.onsuccess = function() {
+        db = request.result;
+    };
+}
+
 function getStoreByName(name)
 {
     var store = db.transaction([name], "readwrite").objectStore(name);

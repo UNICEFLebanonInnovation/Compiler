@@ -117,8 +117,8 @@ input.required, select.required {
 }
 .inlineForm .line label.text, .inlineForm .line input, .inlineForm .line select, .inlineForm .line textarea {
     display: block;
-    clear: right;
-    float: left;
+    clear: left;
+    float: right;
 }
 .inlineForm .line input[type=text], .inlineForm .line select {
     width: 361px;
@@ -142,11 +142,11 @@ input.required, select.required {
 }
 
 .inlineForm label.text {
-    float: left;
+    float: right;
     width: 300px;
     padding-top: 2px;
     padding-bottom: 3px;
-    text-align: left !important;
+    text-align: right !important;
     color:#7b7b7b;
     padding-right: 20px;
     font-weight: bold;
@@ -157,19 +157,19 @@ input.required, select.required {
 .error {
     color: red;
     font-weight: bold;
-    padding-left: 5px;
+    padding-right: 5px;
 }
 div.error, span.error {
     padding-top: 3px;
     float: right;
 }
 .form_errors {
-    padding-left: 140px;
+    padding-right: 140px;
     clear: both;
     height: 24px;
 }
 .form_errors div {
-    float: left;
+    float: right;
     width: 300px;
 }
 .field_error {
