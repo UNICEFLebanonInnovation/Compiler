@@ -371,7 +371,7 @@ msgid "ID Number tooltip"
 msgstr "رقم المفوضية العليا لللاجئين ID Number أو رقم دفتر العائلة أو رقم الهوية الزرقاء للفلسطنيين أو رقم الهوية "
 
 msgid "ID Number"
-msgstr "ID Number"
+msgstr "رقم الهوية"
 
 msgid "Sex"
 msgstr "الجنس"
@@ -535,6 +535,12 @@ msgstr "غائب"
 msgid "Present"
 msgstr "حاضر"
 
+msgid "Registration Household"
+msgstr ""
+
+msgid "Select School"
+msgstr ""
+
 msgid "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 6 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month."
 msgstr ""
 
@@ -547,14 +553,149 @@ msgstr ""
 msgid "If the student does not return to school, you will receive a household visit to help us understand why the student cannot attend and to offer you more services to help the student attend school."
 msgstr ""
 
+msgid "This desk is to Register for the Min Ila Pilot, not to enroll in school. Children must already be enrolled in school in order to Register for the Pilot."
+msgstr ""
+
+msgid "If your child does not enroll in school he/she will be removed from the Min Ila Pilot."
+msgstr ""
+
+msgid "If your child is not already enrolled in school, please go and do so now, then return to Register for the Pilot"
+msgstr ""
+
 msgid "If your address or phone number changes, you must inform us by calling 81-312940. If your household cannot be found after 2 months you will stop receiving benefits."
 msgstr ""
 
 msgid "Please take a leaflet now so you have this important phone number with you."
 msgstr ""
 
+msgid "Register New Household"
+msgstr "تسجيل الأسرة"
+
+msgid "ID Type"
+msgstr ""
+
+msgid "Is the principal applicant still with your household?"
+msgstr "هل مقدم الطلب الرئيسي ما زال مع أسرتك ؟"
+
+msgid "UNHCR Household Registration Number"
+msgstr ""
+
+msgid "UNHCR Individual Registration Number of the Household Representative"
+msgstr ""
+
+msgid "NOTE: in order to register with other ID, the ID Holder must be present AND must be 18 years of age or older."
+msgstr ""
+
+msgid "NOTE: If the Household Representative is not listed on the UNHCR Certificate, it cannot be used to regiter for the Pilot. Another form of ID must be used."
+msgstr ""
+
+msgid "First Name"
+msgstr "الاسم الأول"
+
+msgid "Father's Name"
+msgstr "إسم الأب"
+
+msgid "Last Name"
+msgstr "إسم العائلة"
+
+msgid "Mother Full name"
+msgstr "إسم الأم الكامل"
+
+msgid "Age"
+msgstr "العمر"
+
+msgid "Date of birth"
+msgstr "تاريخ الميلاد"
+
+msgid "Gender"
+msgstr "الجنس"
+
+msgid "Relationship to Household head"
+msgstr "العلاقة برب الأسرة"
+
 msgid "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card."
 msgstr ""
+
+msgid "Note: It is very important that you provide us a working phone number so we can send you the details of where and when to collect your ATM Card"
+msgstr ""
+
+msgid "Collect existing ATM case number"
+msgstr ""
+
+msgid "Please copy case number directly from card"
+msgstr ""
+
+msgid "Blue Card Case Number"
+msgstr ""
+
+msgid "White Card Case Number"
+msgstr ""
+
+msgid "Register Children in Pilot"
+msgstr ""
+
+msgid "Do you have any children enrolled in other schools?"
+msgstr ""
+
+msgid "Have you already completed the registration process for this pilot in other school?"
+msgstr ""
+
+msgid "You would have been required to present your ID when completing the Pilot Registration Process in the other school. Do you have the ID Number that was presented during your previous Pilot Registration?"
+msgstr ""
+
+msgid "School"
+msgstr "المدرسة"
+
+msgid "Full Name"
+msgstr "الاسم الكامل"
+
+msgid "Was this child enrolled in any school last year"
+msgstr ""
+
+msgid "Child's UNHCR Individual Number"
+msgstr ""
+
+msgid "Was this child enrolled in any school last year"
+msgstr "هل كان هذا الطفل مسجل في أي مدرسة العام الماضي"
+
+msgid "Add Child"
+msgstr "أضف طفل"
+
+msgid "Contact Information"
+msgstr "معلومات التواصل"
+
+msgid "Officers of the Min Ila Cash Pilot must be able to reach you by phone and household visit in order for your household to benefit from the pilot. Your information will only be provided to officers of the pilot who will be trained to handle your information carefully and will only visit you if your child drops out of school."
+msgstr ""
+
+msgid "If you change your phone number or address, please inform the program by calling 81-312940, or you will be removed after we are unable to locate you."
+msgstr ""
+
+msgid "This number is on the leaflet provided to you."
+msgstr ""
+
+msgid "Declaration and Consent"
+msgstr "الإعلان و الموافقة"
+
+msgid "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 6 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school."
+msgstr ""
+
+msgid "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments."
+msgstr ""
+
+msgid "Please indicate that you understand the above as it has been read to you and that you consent to be contacted by telephone and by household visit by officers of the program by signing below. Those knowingly providing false information or committing fraud against the program will be removed from the pilot."
+msgstr ""
+
+msgid "By signing this agreement you also consent to allow us to share the data collected today with UNHCR and WFP in order to help ensure that you are paid. Some data will also be shared with the Ministry of Education and Higher Education (MEHE). We will ensure that your data is handled carefully and confidentially. If you have any questions please ask them before signing."
+msgstr ""
+
+msgid "Signature of Household Representative"
+msgstr "توقيع ممثل العائلة"
+
+msgid "clear"
+msgstr "إلغاء"
+
+msgid "confirm"
+msgstr "تأكيد"
 
 msgid "To benefit from the cash pilot, you must provide us with an address where carefully selected, trained officers who work for the pilot can visit your household and a phone number where we can reach you. These officers will be trained to handle your information carefully and will only visit you if a child you have registered drops out of school."
 msgstr ""
@@ -562,29 +703,33 @@ msgstr ""
 msgid "If you change your phone number or address, please inform the program by calling 81-312940, or you will be removed after we are unable to locate you."
 msgstr ""
 
-msgid "By signing this agreement you also consent to allow us to share the data collected today with UNHCR and WFP in order to help ensure that you are paid. Some data will also be shared with the Ministry of Education and Higher Education (MEHE). We will ensure that your data is handled carefully and confidentially. If you have any questions please ask them before signing."
+msgid "Address"
+msgstr "العنوان"
+
+msgid "Primary Phone Number"
+msgstr "رقم الهاتف الرئيسي"
+
+msgid "Phone Number are normally answered by"
+msgstr "يتم الرد على رقم الهاتف عادة"
+
+msgid "Secondary Phone Number"
+msgstr "رقم الهاتف الثانوي"
+
+msgid "Save"
+msgstr "حفظ"
+
+msgid "previous"
+msgstr "السابق"
+
+msgid "next"
+msgstr "التالي"
+
+msgid "Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them"
 msgstr ""
 
-msgid "Please indicate that you understand the above as it has been read to you and that you consent to be contacted by telephone and by household visit by officers of the program by signing below. Those knowingly providing false information or committing fraud against the program will be removed from the pilot."
-msgstr ""
+msgid "Welcome to the Registration Desk of the Min Ila Pilot"
+msgstr "مرحبا بكم في مكتب التسجيل من الى التجريبي"
 
-msgid "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments. Therefore if you change your phone number or address, it is very important that you please inform us by calling 81-312940."
-msgstr ""
 
-msgid "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 6 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school."
-msgstr ""
 
-msgid "This number is on the leaflet provided to you."
-msgstr ""
 
-msgid "If you change your phone number or address, please inform the program by calling 81-312940, or you will be removed after we are unable to locate you."
-msgstr ""
-
-msgid "Officers of the Min Ila Cash Pilot must be able to reach you by phone and household visit in order for your household to benefit from the pilot. Your information will only be provided to officers of the pilot who will be trained to handle your information carefully and will only visit you if your child drops out of school."
-msgstr ""
-
-msgid "To ensure that your household receives complete payment you must provide the ID Number under which your other registration took place. You can either come back tomorrow, or you can call the hotline to do this. It is important taht your do this in order to not delay your payment"
-msgstr ""
-
-msgid "Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them."
-msgstr ""
