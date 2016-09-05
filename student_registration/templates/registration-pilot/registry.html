@@ -30,17 +30,17 @@
     {% endfor %}
 {% endif %}
                           <div class="panel-body">
-                            <h3 class="panel-title">
-                                <ol class="breadcrumb">
-                                    <li><a>{% trans "Registration Pilot" %}</a></li>
-                                </ol>
-                            </h3>
+{#                            <h3 class="panel-title">#}
+{#                                <ol class="breadcrumb">#}
+{#                                    <li><a>{% trans "Registration Pilot" %}</a></li>#}
+{#                                </ol>#}
+{#                            </h3>#}
                             <div id="oneperframe" class="frame oneperframe" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
-                                <ul class="slidee" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr" {% endif %}>
+                                <ul class="slidee" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
 
                                     {# 1 Slide select a school #}
                                     <li class="active framebox">
-                                        <h5 class="panel-title">{% trans "Registration household" %}</h5>
+                                        <h5 class="panel-title">{% trans "Registration Household" %}</h5>
                                         <div class="line">
                                             <label class="text">{% trans "Select School" %}</label>
                                             {{ form.school }}
@@ -504,7 +504,7 @@
 
         $('#add_child_noid').click(function(){
             bootbox.dialog({
-                            title: "This is a form in a modal.",
+                            title: "{% trans "Add Child" %}",
                             message: $('#add_child_noid_block').html(),
                             buttons: {
                                 success: {
@@ -533,7 +533,7 @@
 
        $('#add_child_withid').click(function(){
             bootbox.dialog({
-                            title: "This is a form in a modal.",
+                            title: "{% trans "Add Child" %}",
                             message: $('#add_child_withid_block').html(),
                             buttons: {
                                 success: {
