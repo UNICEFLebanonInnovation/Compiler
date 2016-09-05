@@ -50,11 +50,10 @@
 
   <body>
 
-  {% if request.user.is_staff == false %}
     <div class="m-b">
       <nav class="navbar navbar-dark navbar-static-top bg-inverse">
         <div class="container">
-          <a class="navbar-brand" href="/?ln={{ LANGUAGE_CODE }}">{% trans "Student Registration" %}</a>
+          <a class="navbar-brand">{% trans "Pilot" %}</a>
           <button type="button" class="navbar-toggler hidden-sm-up pull-xs-right" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
             &#9776;
           </button>
@@ -69,8 +68,11 @@
                 {% endif %}
             {% if request.user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'registrations:registering_adult' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration pilot" %}</a>
-                </li>
+                    <a class="nav-link" href="{% url 'registrations:registering_pilot' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignment" %}</a>
+                  </li>
             {% endif %}
             </ul>
 
@@ -107,7 +109,7 @@
         </div>
       </nav>
     </div>
-  {% endif %}
+
     <div class="container app-container">
 
       {% if messages %}

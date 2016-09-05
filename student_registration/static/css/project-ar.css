@@ -111,6 +111,10 @@ input.required, select.required {
     font-weight: bold;
     font-size: 20px !important;
     /*padding: 15px;*/
+    padding-top: 15px;
+}
+.inlineForm h4, .inlineForm h5, .inlineForm p {
+    text-align: right !important;
 }
 .inlineForm .line input[type=radio] {
     margin: 3px 10px 5px 0;
