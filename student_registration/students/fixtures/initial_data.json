@@ -31,14 +31,39 @@
     "model": "students.idtype",
     "pk": 5,
     "fields": {
-      "name": "No ID"
+      "name": "Other ID"
     }
   },
   {
     "model": "students.idtype",
     "pk": 6,
     "fields": {
-      "name": "Other ID"
+      "name": "No ID"
+    }
+  }
+,
+  {
+    "model": "students.nationality",
+    "pk": 1,
+    "fields": {
+      "name": "Syrian"
+    }
+  },
+  {
+    "model": "students.nationality",
+    "pk": 2,
+    "fields": {
+      "name": "palestinian"
+    }
+  },
+  {
+    "model": "students.nationality",
+    "pk": 3,
+    "fields": {
+      "name": "Other"
     }
   }
 ]
+
+
+
