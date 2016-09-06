@@ -554,7 +554,7 @@ msgid "This desk is to Register for the Min Ila Pilot, not to enroll in school. 
 msgstr ""
 
 msgid "If your child does not enroll in school he/she will be removed from the Min Ila Pilot."
-msgstr ""
+msgstr "إذا لم يلتحق طفلك في المدرسة سوف يتم شطبه من البرنامج التجريبي من إلى"
 
 msgid "If your child is not already enrolled in school, please go and do so now, then return to Register for the Pilot"
 msgstr ""
@@ -692,7 +692,7 @@ msgid "To benefit from the cash pilot, you must provide us with an address where
 msgstr ""
 
 msgid "If you change your phone number or address, please inform the program by calling 81-312940, or you will be removed after we are unable to locate you."
-msgstr ""
+msgstr "إذا قمت بتغيير رقم هاتفك أو عنوانك ، يرجى إبلاغ البرنامج من خلال الإتصال على 81-312940 ، أو سوف يتم إزالتك إذا كنا غير قادرين على تحديد مكان وجودك"
 
 msgid "Address"
 msgstr "العنوان"
