@@ -29,4 +29,5 @@ class LocationAdmin(ImportExportModelAdmin):
     resource_class = LocationResource
 
 admin.site.register(Location, LocationAdmin)
+admin.site.register(LocationType)
 
