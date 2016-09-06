@@ -560,7 +560,7 @@ msgid "If your child is not already enrolled in school, please go and do so now,
 msgstr ""
 
 msgid "If your address or phone number changes, you must inform us by calling 81-312940. If your household cannot be found after 2 months you will stop receiving benefits."
-msgstr ""
+msgstr "إذا تم تغير عنوانك أو رقم هاتفك ، يجب عليك اعلامنا عن طريق الاتصال على 81-312940 . إذا لم نتمكن من العثور على منزلك بعد شهرين سوف إيقاف تسديد الدفعات"
 
 msgid "Please take a leaflet now so you have this important phone number with you."
 msgstr "يرجى أخذ النشرة الآن حتى يكون لديك رقم الهاتف المهم معك"
@@ -578,7 +578,7 @@ msgid "UNHCR Household Registration Number"
 msgstr "UNHCR رقم التسجيل رب المنزل لدى المفوضية"
 
 msgid "UNHCR Individual Registration Number of the Household Representative"
-msgstr ""
+msgstr "الرقم ألفردي لممثل ألعائلة الصادر عن المفوضية"
 
 msgid "NOTE: in order to register with other ID, the ID Holder must be present AND must be 18 years of age or older."
 msgstr "ملاحظة : من أجل التسجيل ببطاقة أخرى، يجب أن يكون حامل البطاقة موجود و يجب أن يكون عمرة 18 سنة أو أكثر"
@@ -609,6 +609,9 @@ msgstr "الجنس"
 
 msgid "Relationship to Household head"
 msgstr "العلاقة برب الأسرة"
+
+msgid "Relationship to Household reprentative"
+msgstr "العلاقة بممثل الأسرة"
 
 msgid "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card."
 msgstr ""
@@ -647,7 +650,7 @@ msgid "Full Name"
 msgstr "الاسم الكامل"
 
 msgid "Child's UNHCR Individual Number"
-msgstr ""
+msgstr "الرقم ألفردي للطفل الصادر عن المفوضية"
 
 msgid "Was this child enrolled in any school last year"
 msgstr "هل كان هذا الطفل مسجل في أي مدرسة العام الماضي"
@@ -662,7 +665,7 @@ msgid "Officers of the Min Ila Cash Pilot must be able to reach you by phone and
 msgstr ""
 
 msgid "This number is on the leaflet provided to you."
-msgstr ""
+msgstr "هذا الرقم موجود في النشرة المقدمة لك "
 
 msgid "Declaration and Consent"
 msgstr "الإعلان و الموافقة"
