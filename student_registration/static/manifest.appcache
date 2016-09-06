@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# v0.2
+# v0.3
 
 /alp/outreach/
 /alp/outreach/?ln=ar-ar
@@ -34,6 +34,12 @@ CACHE MANIFEST
 /static/js/util.js
 /static/js/tooltip.js
 /static/js/bootbox.js
+/static/js/plugins.js
+/static/js/sly.min.js
+/static/js/signature_pad.js
+/static/js/indexedDB.js
+/static/js/appcache.js
+/static/js/eav.js
 
 NETWORK:
 *
