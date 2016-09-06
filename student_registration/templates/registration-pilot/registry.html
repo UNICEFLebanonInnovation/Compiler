@@ -301,6 +301,11 @@
                                         <p>
                                             {% trans "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments." %}
                                         </p>
+                                        </li>
+                                 {# 12 Declaration #}
+                                    <li class="framebox">
+                                        <h5 class="panel-title">{% trans "Declaration and Consent" %}</h5>
+                                        <p>
                                         <p>
                                             {% trans "Please indicate that you understand the above as it has been read to you and that you consent to be contacted by telephone and by household visit by officers of the program by signing below. Those knowingly providing false information or committing fraud against the program will be removed from the pilot." %}
                                         </p>
@@ -309,7 +314,7 @@
                                         </p>
                                     </li>
 
-                                    {# 12 Signature #}
+                                    {# 13 Signature #}
                                     <li class="framebox">
                                         <h5 class="panel-title">{% trans "Signature of Household Representative" %}</h5>
                                             <div style="display: none;">
@@ -330,7 +335,7 @@
                                           </div>
                                     </li>
 
-                                    {# 13 Contact information #}
+                                    {# 14 Contact information #}
                                     <li class="framebox">
                                         <h5 class="panel-title">{% trans "Contact Information" %}</h5>
                                         <p>
@@ -378,6 +383,7 @@
                                 <li>11</li>
                                 <li>12</li>
                                 <li>13</li>
+                                <li>14</li>
                             </ul>
 
                             <div class="controls center" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr" {% endif %}>
