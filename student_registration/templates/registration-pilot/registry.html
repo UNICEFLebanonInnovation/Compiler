@@ -30,11 +30,6 @@
     {% endfor %}
 {% endif %}
                           <div class="panel-body">
-{#                            <h3 class="panel-title">#}
-{#                                <ol class="breadcrumb">#}
-{#                                    <li><a>{% trans "Registration Pilot" %}</a></li>#}
-{#                                </ol>#}
-{#                            </h3>#}
                             <div id="oneperframe" class="frame oneperframe" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
                                 <ul class="slidee" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
 
@@ -386,10 +381,10 @@
                             </ul>
 
                             <div class="controls center" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr" {% endif %}>
-                                <button class="btn prev btn-primary" type="button">
+                                <button class="btn btn-primary disabled" type="button" id="previousButton">
                                     <i class="icon-prev-sign icon-white"></i>{% trans "previous" %}
                                 </button>
-                                <button class="btn next btn-primary" type="button">
+                                <button class="btn btn-primary" type="button" id="nextButton">
                                     {% trans "next" %}<i class="icon-next-sign icon-white"></i>
                                 </button>
                             </div>
@@ -412,8 +407,12 @@
     <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
     <script type="text/javascript">
 
+    var $frame;
+
+    var onePerFrameSly;
+
     $(document).ready(function() {
-        initializeSly($('#oneperframe'));
+        onePerFrameSly = initializeSly($('#oneperframe'));
         initializeSignature();
 {#        createDataStore('db_pilot', 1, 'registrations');#}
 
@@ -570,6 +569,67 @@
             calculateDateOfBirth();
         });
 
+
+        $("#previousButton").click
+         (
+            function()
+            {
+                if(!$("#previousButton").hasClass("disabled"))
+                {
+                       onePerFrameSly.prev();
+                }
+            }
+         );
+
+        $("#nextButton").click
+         (
+            function()
+            {
+                if(!$("#nextButton").hasClass("disabled"))
+                {
+                    if(onePerFrameSly.rel.activeItem == 8)
+                    {
+                        bootbox.confirm("{% trans 'Are all the children enrolled in the 2nd shift schools have been registered?' %}", function(result) {
+                        if(result == true)
+                        {
+                           onePerFrameSly.next();
+                        }
+                        });
+                    }
+                    else
+                    {
+                        onePerFrameSly.next();
+                    }
+                }
+            }
+         );
+
+        onePerFrameSly.on
+        (
+            'active',
+            function (eventName, itemIndex)
+            {
+                if(onePerFrameSly.rel.activeItem == 6 || onePerFrameSly.rel.activeItem == 0)
+                {
+                    $("#previousButton").addClass("disabled");
+                }
+                else
+                {
+                    $("#previousButton").removeClass("disabled");
+                }
+
+
+                if(onePerFrameSly.rel.activeItem == onePerFrameSly.items.length-1)
+                {
+                    $("#nextButton").addClass("disabled");
+                }
+                else
+                {
+                    $("#nextButton").removeClass("disabled");
+                }
+            }
+        );
+
     });
 
     function hideAll()
@@ -584,14 +644,50 @@
         $("#IndividualRegistrationNumber").hide();
     }
 
-    var birthday_day = $('#id_birthday_day').val();
-    var birthday_month = $('#id_birthday_month').val();
-    var birthday_year = $('#id_birthday_year').val();
-
     function calculateDateOfBirth()
     {
-        bootbox.alert("{% trans 'Age less than 18.' %}", function() {});
+        var birthday_day = $('#id_birthday_day').val();
+        var birthday_month = $('#id_birthday_month').val()-1;
+        var birthday_year = $('#id_birthday_year').val();
 
+        var birthDate = new Date(birthday_year, birthday_month, birthday_day);
+
+        if(birthday_day != "" && birthday_month != "" && birthday_year != "" )
+        {
+            var age = calculateAge(birthDate,new Date());;
+
+            $('#id_age').val(age);
+
+            if(age < 18)
+            {
+               bootbox.alert("{% trans 'Age less than 18.' %}", function() {});
+            }
+        }
+        else
+        {
+            $('#id_age').val("");
+        }
+
+    }
+
+    function calculateAge(dateOfBirth, dateToCalculate) {
+        var calculateYear = dateToCalculate.getFullYear();
+        var calculateMonth = dateToCalculate.getMonth();
+        var calculateDay = dateToCalculate.getDate();
+
+        var birthYear = dateOfBirth.getFullYear();
+        var birthMonth = dateOfBirth.getMonth();
+        var birthDay = dateOfBirth.getDate();
+
+        var age = calculateYear - birthYear;
+        var ageMonth = calculateMonth - birthMonth;
+        var ageDay = calculateDay - birthDay;
+
+        if (ageMonth < 0 || (ageMonth == 0 && ageDay < 0)) {
+            age = parseInt(age) - 1;
+        }
+
+        return age;
     }
 
     </script>
