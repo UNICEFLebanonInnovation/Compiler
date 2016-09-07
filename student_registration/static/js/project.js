@@ -126,17 +126,20 @@ function getStoreByName(name)
     return store;
 }
 
-function synchronize_offline_data(store_name, url)
+function synchronize_offline_data(store_name, url, callback)
 {
     var store = getStoreByName(store_name);
     var request = store.getAll();
     request.onsuccess = function() {
         var result = request.result;
         $(result).each(function(i, item){
-            if(item.synchronized == false && item.deleted == false) {
+            if(item.synchronized == false && item.completed == true) {
                 push_data_to_server_item(item, url, store_name);
             }
         });
+        if(callback){
+            callback();
+        }
     };
 }
 
