@@ -113,8 +113,12 @@ input.required, select.required {
     /*padding: 15px;*/
     padding-top: 15px;
 }
-.inlineForm h4, .inlineForm h5, .inlineForm p {
+.inlineForm h3, .inlineForm h4, .inlineForm h5, .inlineForm p {
     text-align: right !important;
+    padding-bottom: 5px;
+}
+.inlineForm h3, .inlineForm h4, .inlineForm h5 {
+    padding-bottom: 5px;
 }
 .inlineForm .line input[type=radio] {
     margin: 3px 10px 5px 0;
@@ -166,6 +170,9 @@ input.required, select.required {
     color:#7b7b7b;
     padding-right: 20px;
     font-weight: bold;
+}
+.inlineForm .line button {
+    float: right;
 }
 .inlineForm .hidden-field {
     display: none;

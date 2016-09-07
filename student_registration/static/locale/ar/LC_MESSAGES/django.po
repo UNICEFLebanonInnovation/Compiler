@@ -93,7 +93,7 @@ msgstr ""
 
 #: student_registration/templates/account/email_confirm.html:23
 msgid "Confirm"
-msgstr ""
+msgstr "تأكيد"
 
 #: student_registration/templates/account/email_confirm.html:30
 #, python-format
@@ -685,11 +685,14 @@ msgstr ""
 msgid "Signature of Household Representative"
 msgstr "توقيع ممثل العائلة"
 
-msgid "clear"
+msgid "Clear"
 msgstr "إلغاء"
 
-msgid "confirm"
-msgstr "تأكيد"
+msgid "Ok"
+msgstr "نعم"
+
+msgid "Cancel"
+msgstr "الغاء"
 
 msgid "To benefit from the cash pilot, you must provide us with an address where carefully selected, trained officers who work for the pilot can visit your household and a phone number where we can reach you. These officers will be trained to handle your information carefully and will only visit you if a child you have registered drops out of school."
 msgstr ""
@@ -730,3 +733,8 @@ msgstr "توزيع التلاميذ"
 msgid "Other or no ID"
 msgstr "لا يوجد بطاقة رسمية"
 
+msgid "Are you sure you want to submit this application?"
+msgstr "هل أنت متأكد أنك تريد أن تقدم هذا الطلب؟"
+
+msgid "Submit this application"
+msgstr "حفظ وارسال هذا الطلب"
