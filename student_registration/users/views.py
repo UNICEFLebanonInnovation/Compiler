@@ -57,11 +57,7 @@ class UserChangeLanguageRedirectView(LoginRequiredMixin, RedirectView):
     pattern_name = 'set_language'
 
     def get_redirect_url(self, *args, **kwargs):
-        # next = self.request.GET.get('next')
         user_language = kwargs['language']
         translation.activate(user_language)
         self.request.session[translation.LANGUAGE_SESSION_KEY] = user_language
-        # url_redirect = self.request.META['HTTP_REFERER']
-        # return reverse(url_redirect)
-        # return redirect(next)
-        return reverse('home')
+        return reverse('home') + '?' + user_language

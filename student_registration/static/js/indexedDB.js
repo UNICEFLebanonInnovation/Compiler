@@ -4,7 +4,7 @@
 
 var db = null;
 
-function createDataStore(database_name, version,  store_name)
+function createDataStore(database_name, version,  store_name, create_default_item, callback)
 {
     var request = indexedDB.open(database_name, version);
 
@@ -26,6 +26,59 @@ function createDataStore(database_name, version,  store_name)
 
     request.onsuccess = function() {
         db = request.result;
+        if(create_default_item){
+            create_default_values(store_name);
+        }
+        if(callback){
+            callback();
+        }
+    };
+}
+
+function create_default_values(store_name)
+{
+    var store = getStoreByName(store_name);
+    var item = {synchronized: false, deleted: false, completed: false, pending: true};
+    item = collect_form_values($('#mainForm'), item);
+
+    var request = store.put(item);
+    request.onsuccess = function(){
+        var result = request.result;
+        $("#main_id").val(result);
+    };
+}
+
+function collect_form_values(form, item)
+{
+    $(form.find('input')).each(function(i, field){
+        item[$(field).attr('name')] = $(field).val();
+    });
+
+    $(form.find('select')).each(function(i, field){
+        item[$(field).attr('name')] = $(field).val();
+    });
+
+    $(form.find('textarea')).each(function(i, field){
+        item[$(field).attr('name')] = $(field).val();
+    });
+
+    return item;
+}
+
+function append_item_store(itemid, name, value, store_name)
+{
+    var store = getStoreByName(store_name);
+    var request = store.get(itemid);
+    request.onsuccess = function(){
+        var result = request.result;
+        var item = result[name];
+        if(item == undefined){
+            item = [];
+        }
+        item.push(value);
+        result[name] = item;
+        store.put(result);
+        console.log(result);
     };
 }
 
