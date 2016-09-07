@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Registration
+from .models import Registration, RegisteringAdult
 from student_registration.students.serializers import StudentSerializer
 
 
@@ -78,3 +78,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'classroom_name',
             'owner',
         )
+
+
+class RegisteringAdultSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RegisteringAdult
