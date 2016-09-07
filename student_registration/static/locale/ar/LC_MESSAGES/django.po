@@ -738,3 +738,15 @@ msgstr "هل أنت متأكد أنك تريد أن تقدم هذا الطلب؟
 
 msgid "Submit this application"
 msgstr "حفظ وارسال هذا الطلب"
+
+msgid "Application submission success"
+msgstr "لقد تم حفظ البيانات بنجاح"
+
+msgid "Please click"
+msgstr "الرجاء الضغط"
+
+msgid "here"
+msgstr "هنا"
+
+msgid "to start a new application"
+msgstr "لبداية طلب جديد"
