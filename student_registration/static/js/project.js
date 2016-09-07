@@ -49,8 +49,7 @@ $('#radioBtn a').on('click', function(){
 
     $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
     $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
-})
-
+});
 
 function getCookie(name) {
     var cookieValue = null;
@@ -125,6 +124,42 @@ function getStoreByName(name)
 {
     var store = db.transaction([name], "readwrite").objectStore(name);
     return store;
+}
+
+function synchronize_offline_data(store_name, url)
+{
+    var store = getStoreByName(store_name);
+    var request = store.getAll();
+    request.onsuccess = function() {
+        var result = request.result;
+        $(result).each(function(i, item){
+            if(item.synchronized == false && item.deleted == false) {
+                push_data_to_server_item(item, url, store_name);
+            }
+        });
+    };
+}
+
+function push_data_to_server_item(item, url, store_name)
+{
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: item,
+        cache: false,
+        async: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            if(response.status == '201' || response.status == 201){
+                update_item_store(parseInt(item.id), 'synchronized', true, store_name);
+            }
+        },
+        error: function (response) {
+            var required_fields = JSON.parse(response.responseText);
+            console.log(response);
+        }
+    });
 }
 
 function pull_data_from_server(url, store_name)
@@ -220,7 +255,6 @@ function initializeSly(block)
     var $frame = block;
     var $wrap = $frame.parent();
 
-
     var sly = new Sly(block,
         {
         horizontal: 1,
@@ -247,36 +281,9 @@ function initializeSly(block)
         next: $wrap.find('.next')
     });
 
-
-        sly.init();
+    sly.init();
 
     return sly;
-
-    // // Call Sly on frame
-    // $frame.sly({
-    //     horizontal: 1,
-    //     itemNav: 'forceCentered',
-    //     smart: 1,
-    //     activateMiddle: 1,
-    //     mouseDragging: 0,
-    //     touchDragging: 0,
-    //     releaseSwing: 1,
-    //     startAt: 0,
-    //     scrollBar: $wrap.find('.scrollbar'),
-    //     scrollBy: 1,
-    //     pagesBar: $wrap.find('.pages'),
-    //     activatePageOn: 'click',
-    //     speed: 300,
-    //     elasticBounds: 1,
-    //     easing: 'easeOutExpo',
-    //     dragHandle: 1,
-    //     dynamicHandle: 1,
-    //     clickBar: 1,
-    //
-    //     // Buttons
-    //     prev: $wrap.find('.prev'),
-    //     next: $wrap.find('.next')
-    // });
 }
 
 function initializeSignature()
