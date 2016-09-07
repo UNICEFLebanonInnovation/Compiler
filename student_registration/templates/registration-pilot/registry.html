@@ -222,7 +222,7 @@
                                                     <th>{% trans "Mother's Full name" %}</th>
                                                     <th>{% trans "Date of birth" %}</th>
                                                     <th>{% trans "Age" %}</th>
-                                                    <th>{% trans "Relationship to Household head" %}</th>
+                                                    <th>{% trans "Relationship to Household reprentative" %}</th>
                                                     <th>{% trans "Was this child enrolled in any school last year" %}</th>
                                                 </thead>
                                                 <tbody>
@@ -256,7 +256,7 @@
                                                 <thead>
                                                     <th>{% trans "School" %}</th>
                                                     <th>{% trans "Child's UNHCR Individual Number" %}</th>
-                                                    <th>{% trans "Relationship to Household head" %}</th>
+                                                    <th>{% trans "Relationship to Household reprentative" %}</th>
                                                     <th>{% trans "Was this child enrolled in any school last year" %}</th>
                                                 </thead>
                                                 <tbody>
@@ -617,7 +617,7 @@
             'active',
             function (eventName, itemIndex)
             {
-                if(onePerFrameSly.rel.activeItem == 6 || onePerFrameSly.rel.activeItem == 0)
+                if(onePerFrameSly.rel.activeItem == 8 || onePerFrameSly.rel.activeItem == 0)
                 {
                     $("#previousButton").addClass("disabled");
                 }
