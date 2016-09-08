@@ -128,3 +128,15 @@ body, .app-container {
     width: 93%;
     text-align: justify;
 }
+
+@media (min-width: 768px) {
+    #oneperframe {
+      width: 705px;
+    }
+    /*#oneperframe .slidee {*/
+      /*max-width: 700px;*/
+    /*}*/
+    #oneperframe ul li.framebox {
+      width: 700px;
+    }
+}
