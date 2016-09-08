@@ -202,3 +202,9 @@ div.error, span.error {
     color: #3276b1;
     background-color: #fff;
 }
+
+@media (min-width: 768px) {
+    .navbar {
+      border-radius: 0;
+    }
+}
