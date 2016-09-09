@@ -630,7 +630,7 @@
         });
 
         $("#nextButton").click(function() {
-            if(!$("#nextButton").hasClass("disabled")) {
+            if(!$("#nextButton").hasClass("disabled") && ValidateSection(onePerFrameSly.rel.activeItem)  ) {
                 if(onePerFrameSly.rel.activeItem == 8) {
                     var check1 = $('.child_enrolled_in_other_schools_block').find('a.active').attr('data-title');
                     var check2 = $('.previously_registered_status_block').find('a.active').attr('data-title');
@@ -650,6 +650,133 @@
                 }
             }
         });
+
+
+        function ValidateSection(sectionIndex)
+        {
+            var result = true;
+
+            if(sectionIndex==5)
+            {
+                result = ValidateSection5();
+            }
+
+            return result;
+        }
+
+        function ValidateSection5(sectionIndex)
+        {
+            var selectedOption = $("#id_id_type").val();
+
+            var validationResult =
+            {
+               ValidationMessage : "",
+               IsValid : true
+            };
+
+            if(selectedOption == 1) {
+
+           }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5) {
+            validationResult = ValidateTextBoxRequired(validationResult,"The first name is required.","id_first_name");
+            validationResult = ValidateTextBoxRequired(validationResult,"The father name is required.","id_father_name");
+{#            validationResult = ValidateTextBoxMaximumSize(validationResult,"The first name should be less than 10 characters.","id_first_name", 10);#}
+           }else if (selectedOption == 6) { }
+
+
+            if(!validationResult.IsValid)
+            {
+               bootbox.alert(validationResult.ValidationMessage, function() {});
+            }
+
+            return validationResult.IsValid;
+        }
+
+
+        function ValidateTextBoxMaximumSize(validationResult, message, id, size)
+        {
+            return ValidateField
+            (
+                    validationResult,
+                    message,
+                    id,
+                    function(id)
+                    {
+                        return $('#'+id).val().length <= size
+                    }
+            );
+
+            return validationResult;
+        }
+
+        function ValidateTextBoxRequired(validationResult, message, id)
+        {
+            return ValidateField
+            (
+                    validationResult,
+                    message,
+                    id,
+                    function(id)
+                    {
+                        return $('#'+id).val()!=""
+                    }
+            );
+
+            return validationResult;
+        }
+
+        function ValidateField(validationResult, message, id, isValidFunction)
+        {
+            var isFieldValid = isValidFunction(id);
+
+            if(!isFieldValid)
+            {
+                validationResult.ValidationMessage += message+"<br/>";
+            }
+
+            validationResult.IsValid = validationResult.IsValid && isFieldValid;
+
+            return validationResult;
+        }
+
+        AddArabicCheck("id_first_name");
+
+        function AddArabicCheck(id)
+        {
+            $("#"+id).keyup
+            (
+                function()
+                {
+                   CheckArabicOnly(this);
+                }
+            );
+        }
+
+        function CheckArabicOnly(field)
+        {
+            var sNewVal = "";
+
+            var sFieldVal = field.value;
+
+            for(var i = 0; i < sFieldVal.length; i++) {
+
+                var ch = sFieldVal.charAt(i);;
+
+                var c = ch.charCodeAt(0);
+
+                if((c < 1536 || c > 1791) && ch != " ") {
+                    // Discard
+                }
+
+                else {
+                    sNewVal += ch;
+                }
+            }
+
+            if(field.value != sNewVal) {
+                field.value = sNewVal;
+            }
+        }
+
 
         onePerFrameSly.on('active', function (eventName, itemIndex) {
             if (onePerFrameSly.rel.activeItem == 8 || onePerFrameSly.rel.activeItem == 0) {

@@ -269,7 +269,7 @@ function initializeSly(block)
         releaseSwing: 1,
         startAt: 0,
         scrollBar: $wrap.find('.scrollbar'),
-        scrollBy: 1,
+        scrollBy: 0,
         pagesBar: $wrap.find('.pages'),
         activatePageOn: 'click',
         speed: 300,
