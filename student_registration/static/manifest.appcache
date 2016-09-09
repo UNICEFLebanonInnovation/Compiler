@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# v0.6
+# v0.7
 
 /alp/outreach/
 /alp/outreach/?ln=ar-ar
@@ -17,6 +17,7 @@ CACHE MANIFEST
 /static/locale/ar-ar.json
 /static/locale/en-us.json
 /static/css/project.css
+/static/js/project-ar.css
 /static/css/bootstrap.css
 /static/css/jquery.dataTables.min.css
 /static/css/buttons.dataTables.min.css

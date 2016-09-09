@@ -73,14 +73,14 @@
 {#                  </li>#}
 {#                {% endif %}#}
 {#            {% endif %}#}
-            {% if request.user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'registrations:registering_pilot' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignment" %}</a>
-                  </li>
-            {% endif %}
+{#            {% if request.user.is_authenticated %}#}
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link" href="{% url 'registrations:registering_pilot' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>#}
+{#                  </li>#}
+{#                  <li class="nav-item">#}
+{#                    <a class="nav-link" href="?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignment" %}</a>#}
+{#                  </li>#}
+{#            {% endif %}#}
             </ul>
 
             <ul class="nav navbar-nav pull-xs-right">

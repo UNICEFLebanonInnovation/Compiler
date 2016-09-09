@@ -1,10 +1,10 @@
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
 <!DOCTYPE html>
 {% if request.user.is_staff %}
     <html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>
 {% else %}
-{#    <html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>#}
     <html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %} manifest="{% static 'manifest.appcache' %}">
 {% endif %}
   <head>
@@ -65,26 +65,28 @@
                 <a class="nav-link" href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
               </li>
                 {% endif %}
-{#            {% if request.user.is_authenticated %}#}
-{#                  <li class="nav-item">#}
-{#                    <a class="nav-link" href="{% url 'alp:outreach' %}?ln={{ LANGUAGE_CODE }}">{% trans "Outreach" %}</a>#}
-{#                  </li>#}
-{#                  <li class="nav-item">#}
-{#                    <a class="nav-link" href="{% url 'registrations:registration' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>#}
-{#                  </li>#}
-{#                {% if request.user.is_staff %}#}
-{#                  <li class="nav-item">#}
-{#                    <a class="nav-link" href="{% url 'attendances:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>#}
-{#                  </li>#}
-{#                {% endif %}#}
-{#            {% endif %}#}
             {% if request.user.is_authenticated %}
+                {% if request.user|has_group:"ALP" %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'alp:outreach' %}?ln={{ LANGUAGE_CODE }}">{% trans "Outreach" %}</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'registrations:registration' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
+                  </li>
+                {% if request.user.is_staff %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'attendances:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>
+                  </li>
+                {% endif %}
+                {% endif %}
+                {% if request.user|has_group:"PILOT" %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'registrations:registering_pilot' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
                   </li>
-                  <li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignment" %}</a>
-                  </li>
+                </li>
+                {% endif %}
             {% endif %}
             </ul>
 

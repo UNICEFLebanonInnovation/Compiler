@@ -301,13 +301,17 @@ function initializeSignature()
 
     clearButton.addEventListener("click", function (event) {
         signaturePad.clear();
+        $('.m-signature-pad--footer').find('.btn-success').show();
+        $('#alert-signature-error').hide();
     });
 
     saveButton.addEventListener("click", function (event) {
+        $('#alert-signature-error').hide();
         if (signaturePad.isEmpty()) {
+            $('#alert-signature-error').show();
         } else {
             $('#id_signature').val(signaturePad.toDataURL());
-            console.log(signaturePad.toDataURL());
+            $('.m-signature-pad--footer').find('.btn-success').hide();
         }
     });
 
