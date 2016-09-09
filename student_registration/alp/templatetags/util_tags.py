@@ -2,6 +2,7 @@ import json
 from django import template
 from django.utils.safestring import mark_safe
 from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import Group
 
 register = template.Library()
 
@@ -53,3 +54,12 @@ def get_user_token(user_id):
     except Token.DoesNotExist:
         token = Token.objects.create(user_id=user_id)
     return token.key
+
+
+@register.filter(name='has_group')
+def has_group(user, group_name):
+    try:
+        group = Group.objects.get(name=group_name)
+        return True if group in user.groups.all() else False
+    except Group.DoesNotExist:
+        return False

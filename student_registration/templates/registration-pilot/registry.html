@@ -325,6 +325,9 @@
                 {# 13 Signature #}
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Signature of Household Representative" %}</h3>
+                        <div class="alert alert-error" role="alert" id="alert-signature-error" style="display: none;">
+                            {% trans "Signature is empty" %}
+                        </div>
                         <div style="display: none;">
                             {{ form.signature }}
                         </div>
@@ -630,21 +633,20 @@
         });
 
         $("#nextButton").click(function() {
-            if(!$("#nextButton").hasClass("disabled") && ValidateSection(onePerFrameSly.rel.activeItem)  ) {
+            if(!$("#nextButton").hasClass("disabled")) {
                 if(onePerFrameSly.rel.activeItem == 8) {
                     var check1 = $('.child_enrolled_in_other_schools_block').find('a.active').attr('data-title');
                     var check2 = $('.previously_registered_status_block').find('a.active').attr('data-title');
 
-                    if(check1 == 1 && check2 == 1){
+                    if(check1 == 0 || (check1 == 1 && check2 == 0)) {
+                        bootbox.confirm("{% trans 'Are all the children enrolled in the 2nd shift schools have been registered?' %}", function(result) {
+                            if(result == true) {
+                               onePerFrameSly.next();
+                            }
+                        });
+                    }else{
                         onePerFrameSly.next();
-                        return false;
                     }
-
-                    bootbox.confirm("{% trans 'Are all the children enrolled in the 2nd shift schools have been registered?' %}", function(result) {
-                        if(result == true) {
-                           onePerFrameSly.next();
-                        }
-                    });
                 } else {
                     onePerFrameSly.next();
                 }
