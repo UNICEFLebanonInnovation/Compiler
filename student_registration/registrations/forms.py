@@ -24,6 +24,14 @@ class RegisteringAdultForm(forms.ModelForm):
         choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
     )
     address = forms.CharField(widget=forms.Textarea(attrs=({'rows': 2, 'cols': 30})), required=False)
+    wfp_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 10, 'placeholder': '12346788'})),
+                                      required=False)
+    csc_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 10, 'placeholder': '12346788'})),
+                                      required=False)
+    primary_phone = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': '70123456'})),
+                                    required=False)
+    secondary_phone = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': '70123456'})),
+                                      required=False)
 
     def __init__(self, *args, **kwargs):
         super(RegisteringAdultForm, self).__init__(*args, **kwargs)
