@@ -122,18 +122,22 @@
                         <div class="line">
                             <label class="text">{% trans "First Name" %}<span class="asterisque">*</span></label>
                             {{ form.first_name }}
+                            <span class="error" id="first_name_error">{% trans "This field is required" %}</span>
                         </div>
                         <div class="line">
                             <label class="text">{% trans "Father's Name" %}<span class="asterisque">*</span></label>
                             {{ form.father_name }}
+                            <span class="error" id="father_name_error">{% trans "This field is required" %}</span>
                         </div>
                         <div class="line">
                             <label class="text">{% trans "Last Name" %}<span class="asterisque">*</span></label>
                             {{ form.last_name }}
+                            <span class="error" id="last_name_error">{% trans "This field is required" %}</span>
                         </div>
                         <div class="line">
                             <label class="text">{% trans "Mother's Full name" %}<span class="asterisque">*</span></label>
                             {{ form.mother_fullname }}
+                            <span class="error" id="mother_fullname_error">{% trans "This field is required" %}</span>
                         </div>
                         <div class="line">
                             <label class="text">{% trans "Age" %}<span class="asterisque">*</span></label>
@@ -438,6 +442,7 @@
     <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/appcache.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/indexedDB.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
     <script type="text/javascript">
         var db = null;
         var language  = '{{ LANGUAGE_CODE }}';
@@ -454,6 +459,9 @@
         {% endif %}
         var host = protocol+'{{ request.get_host }}';
         var synchro_path = host+'/api/registering-pilot/';
+        var arabic_fields = "#id_first_name, #id_last_name";
+        var validation_mapping = new Array();
+        validation_mapping[6] = function() { validateSection6() };
 
     $(document).ready(function() {
         onePerFrameSly = initializeSly($('#oneperframe'));
@@ -468,6 +476,10 @@
 
         $(document).on('blur', '#mainForm input, #mainForm select', function(){
             update_item_store(parseInt($('#main_id').val()), $(this).attr('name'), $(this).val(), 'registrations');
+        });
+
+        $(document).on('blur', arabic_fields, function(){
+            checkArabicOnly($(this));
         });
 
         $('#registration_save').click(function(e){
@@ -653,141 +665,110 @@
             }
         });
 
+{#        function ValidateSection(sectionIndex)#}
+{#        {#}
+{#            var result = true;#}
+{##}
+{#            if(sectionIndex==5)#}
+{#            {#}
+{#                result = ValidateSection5();#}
+{#            }#}
+{##}
+{#            return result;#}
+{#        }#}
 
-        function ValidateSection(sectionIndex)
-        {
-            var result = true;
-
-            if(sectionIndex==5)
-            {
-                result = ValidateSection5();
-            }
-
-            return result;
-        }
-
-        function ValidateSection5(sectionIndex)
-        {
-            var selectedOption = $("#id_id_type").val();
-
-            var validationResult =
-            {
-               ValidationMessage : "",
-               IsValid : true
-            };
-
-            if(selectedOption == 1) {
-
-           }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5) {
-            validationResult = ValidateTextBoxRequired(validationResult,"The first name is required.","id_first_name");
-            validationResult = ValidateTextBoxRequired(validationResult,"The father name is required.","id_father_name");
+{#        function ValidateSection5(sectionIndex)#}
+{#        {#}
+{#            var selectedOption = $("#id_id_type").val();#}
+{##}
+{#            var validationResult =#}
+{#            {#}
+{#               ValidationMessage : "",#}
+{#               IsValid : true#}
+{#            };#}
+{##}
+{#            if(selectedOption == 1) {#}
+{##}
+{#           }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5) {#}
+{#            validationResult = ValidateTextBoxRequired(validationResult,"The first name is required.","id_first_name");#}
+{#            validationResult = ValidateTextBoxRequired(validationResult,"The father name is required.","id_father_name");#}
 {#            validationResult = ValidateTextBoxMaximumSize(validationResult,"The first name should be less than 10 characters.","id_first_name", 10);#}
-           }else if (selectedOption == 6) { }
+{#           }else if (selectedOption == 6) { }#}
+{##}
+{##}
+{#            if(!validationResult.IsValid)#}
+{#            {#}
+{#               bootbox.alert(validationResult.ValidationMessage, function() {});#}
+{#            }#}
+{##}
+{#            return validationResult.IsValid;#}
+{#        }#}
 
 
-            if(!validationResult.IsValid)
-            {
-               bootbox.alert(validationResult.ValidationMessage, function() {});
-            }
+{#        function ValidateTextBoxMaximumSize(validationResult, message, id, size)#}
+{#        {#}
+{#            return ValidateField#}
+{#            (#}
+{#                    validationResult,#}
+{#                    message,#}
+{#                    id,#}
+{#                    function(id)#}
+{#                    {#}
+{#                        return $('#'+id).val().length <= size#}
+{#                    }#}
+{#            );#}
+{##}
+{#            return validationResult;#}
+{#        }#}
 
-            return validationResult.IsValid;
-        }
+{#        function ValidateTextBoxRequired(validationResult, message, id)#}
+{#        {#}
+{#            return ValidateField#}
+{#            (#}
+{#                    validationResult,#}
+{#                    message,#}
+{#                    id,#}
+{#                    function(id)#}
+{#                    {#}
+{#                        return $('#'+id).val()!=""#}
+{#                    }#}
+{#            );#}
+{##}
+{#            return validationResult;#}
+{#        }#}
 
+{#        function ValidateField(validationResult, message, id, isValidFunction)#}
+{#        {#}
+{#            var isFieldValid = isValidFunction(id);#}
+{##}
+{#            if(!isFieldValid)#}
+{#            {#}
+{#                validationResult.ValidationMessage += message+"<br/>";#}
+{#            }#}
+{##}
+{#            validationResult.IsValid = validationResult.IsValid && isFieldValid;#}
+{##}
+{#            return validationResult;#}
+{#        }#}
 
-        function ValidateTextBoxMaximumSize(validationResult, message, id, size)
-        {
-            return ValidateField
-            (
-                    validationResult,
-                    message,
-                    id,
-                    function(id)
-                    {
-                        return $('#'+id).val().length <= size
-                    }
-            );
+{#        onePerFrameSly.on('active', function (eventName, itemIndex) {#}
+{#            if (onePerFrameSly.rel.activeItem == 8 || onePerFrameSly.rel.activeItem == 0) {#}
+{#                $("#previousButton").addClass("disabled");#}
+{#            } else {#}
+{#                $("#previousButton").removeClass("disabled");#}
+{#            }#}
+{#        });#}
 
-            return validationResult;
-        }
+        onePerFrameSly.on('active', function(eventName, itemIndex) {
 
-        function ValidateTextBoxRequired(validationResult, message, id)
-        {
-            return ValidateField
-            (
-                    validationResult,
-                    message,
-                    id,
-                    function(id)
-                    {
-                        return $('#'+id).val()!=""
-                    }
-            );
+            validateSection(onePerFrameSly, onePerFrameSly.rel.activeItem);
 
-            return validationResult;
-        }
-
-        function ValidateField(validationResult, message, id, isValidFunction)
-        {
-            var isFieldValid = isValidFunction(id);
-
-            if(!isFieldValid)
-            {
-                validationResult.ValidationMessage += message+"<br/>";
-            }
-
-            validationResult.IsValid = validationResult.IsValid && isFieldValid;
-
-            return validationResult;
-        }
-
-        AddArabicCheck("id_first_name");
-
-        function AddArabicCheck(id)
-        {
-            $("#"+id).keyup
-            (
-                function()
-                {
-                   CheckArabicOnly(this);
-                }
-            );
-        }
-
-        function CheckArabicOnly(field)
-        {
-            var sNewVal = "";
-
-            var sFieldVal = field.value;
-
-            for(var i = 0; i < sFieldVal.length; i++) {
-
-                var ch = sFieldVal.charAt(i);;
-
-                var c = ch.charCodeAt(0);
-
-                if((c < 1536 || c > 1791) && ch != " ") {
-                    // Discard
-                }
-
-                else {
-                    sNewVal += ch;
-                }
-            }
-
-            if(field.value != sNewVal) {
-                field.value = sNewVal;
-            }
-        }
-
-
-        onePerFrameSly.on('active', function (eventName, itemIndex) {
-            if (onePerFrameSly.rel.activeItem == 8 || onePerFrameSly.rel.activeItem == 0) {
+            if(onePerFrameSly.rel.activeItem == 8 || onePerFrameSly.rel.activeItem == 0) {
                 $("#previousButton").addClass("disabled");
             } else {
                 $("#previousButton").removeClass("disabled");
             }
-        });
-        onePerFrameSly.on('active', function (eventName, itemIndex) {
+
             if(onePerFrameSly.rel.activeItem == 6 || onePerFrameSly.rel.activeItem == 0) {
                 $("#previousButton").addClass("disabled");
             } else {

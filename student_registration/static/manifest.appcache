@@ -46,6 +46,7 @@ CACHE MANIFEST
 /static/js/indexedDB.js
 /static/js/appcache.js
 /static/js/eav.js
+/static/js/validator.js
 
 NETWORK:
 *
