@@ -176,11 +176,12 @@ input.required, select.required {
 .error {
     color: red;
     font-weight: bold;
-    padding-left: 5px;
+    font-size: 14px;
 }
 div.error, span.error {
     padding-top: 3px;
-    float: right;
+    float: left;
+    display: none;
 }
 .form_errors {
     padding-left: 140px;
