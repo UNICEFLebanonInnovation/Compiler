@@ -10,25 +10,30 @@
         <div class="line">
             <label class="text">{% trans "First Name" %}<span class="asterisque">*</span></label>
             {{ student_form.first_name }}
+            <span class="error" id="first_name_error">{% trans "This field is required" %}</span>
         </div>
         <div class="line">
             <label class="text">{% trans "Father's Name" %}<span class="asterisque">*</span></label>
             {{ student_form.father_name }}
+            <span class="error" id="father_name_error">{% trans "This field is required" %}</span>
         </div>
         <div class="line">
             <label class="text">{% trans "Last Name" %}<span class="asterisque">*</span></label>
             {{ student_form.last_name }}
+            <span class="error" id="last_name_error">{% trans "This field is required" %}</span>
         </div>
         <div class="line">
             <label class="text">{% trans "Mother's Full name" %}<span class="asterisque">*</span></label>
             {{ student_form.mother_fullname }}
+            <span class="error" id="mother_fullname_error">{% trans "This field is required" %}</span>
         </div>
         <div class="line">
             <label class="text">{% trans "Age" %}<span class="asterisque">*</span></label>
             {{ student_form.age }}
+            <span class="error" id="age_error">{% trans "This field is required" %}</span>
         </div>
         <div class="line field-select-small-size">
-            <label class="text">{% trans "Date of birth" %}<span class="asterisque">*</span></label>
+            <label class="text">{% trans "Date of birth" %}</label>
             {{ student_form.birthday_day }}
             {{ student_form.birthday_month }}
             {{ student_form.birthday_year }}
@@ -36,10 +41,12 @@
         <div class="line">
             <label class="text">{% trans "Gender" %}<span class="asterisque">*</span></label>
             {{ student_form.sex }}
+            <span class="error" id="gender_error">{% trans "This field is required" %}</span>
         </div>
         <div class="line">
             <label class="text">{% trans "Relationship to Household reprentative" %}<span class="asterisque">*</span></label>
             {{ student_form.relation_to_adult }}
+            <span class="error" id="relation_to_adult_error">{% trans "This field is required" %}</span>
         </div>
         <div class="line">
             <label class="text">{% trans "Was this child enrolled in any school last year" %}</label>
@@ -70,6 +77,7 @@
         <div class="line">
             <label class="text">{% trans "Relationship to Household reprentative" %}<span class="asterisque">*</span></label>
             {{ student_form.relation_to_adult }}
+            <span class="error" id="relation_to_household_reprentative_error">{% trans "This field is required" %}</span>
         </div>
         <div class="line">
             <label class="text">{% trans "Was this child enrolled in any school last year" %}</label>
@@ -85,3 +93,12 @@
         </div>
     </form>
 </div>
+
+<script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
+
+<script type="text/javascript">
+        var arabic_fields = "#id_first_name, #id_last_name";
+        var validation_mapping = new Array();
+        validation_mapping[6] = function() { validateSection6() };
+</script>
+
