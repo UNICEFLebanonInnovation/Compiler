@@ -7,9 +7,7 @@ var validation_mapping = new Array();
 function validateSection(frame, sectionIndex)
 {
     var result = true;
-    //$('.error').hide();
-
-    if(sectionIndex in validation_mapping)
+    if(sectionIndex.toString() in validation_mapping)
     {
         console.log(validation_mapping[sectionIndex]);
         var callback  = validation_mapping[sectionIndex];
@@ -18,26 +16,59 @@ function validateSection(frame, sectionIndex)
 
     //frame.next();
 
-    //return result;
-    return false;
+    return result;
+    // return false;
 }
 
-function validateSection6()
+function validateSection5()
 {
     var selectedOption = $("#id_id_type").val();
 
     if(selectedOption == 1) {
-
+        $('#id_number_UNHCR_Other_error').show();
+        return false ;
     }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5) {
+        $('#id_number_UNHCR_Other_error').show();
         $('#first_name_error').show();
         $('#father_name_error').show();
+        $('#last_name_error').show();
+        $('#mother_fullname_error').show();
+        $('#age_error').show();
+        $('#gender_error').show();
+        $('#relationship_householdhead_error').show();
         return false;
 
-    }else if (selectedOption == 6) { }
+    }else if (selectedOption == 6) {
+        $('#first_name_error').show();
+        $('#father_name_error').show();
+        $('#last_name_error').show();
+        $('#mother_fullname_error').show();
+        $('#age_error').show();
+        $('#gender_error').show();
+        $('#relationship_householdhead_error').show();
+        return false;
+    }
 
     return true;
 }
 
+function validate_add_child_noid()
+{
+        $('#first_name_error').show();
+        $('#father_name_error').show();
+        $('#last_name_error').show();
+        $('#mother_fullname_error').show();
+        $('#age_error').show();
+        $('#gender_error').show();
+        $('#relation_to_adult_error').show();
+        return false;
+ }
+
+ function validate_add_child_withid()
+{
+        $('#relation_to_household_reprentative_error').show();
+        return false;
+}
 
 function ValidateTextBoxMaximumSize(validationResult, message, id, size)
 {

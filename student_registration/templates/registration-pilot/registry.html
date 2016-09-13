@@ -85,10 +85,13 @@
                     <div class="line">
                         <label class="text">{% trans "Nationality" %}<span class="asterisque">*</span></label>
                         {{ form.nationality }}
+                        <span class="error" id="nationality_error">{% trans "This field is required" %}</span>
+
                     </div>
                      <div class="line">
                         <label class="text">{% trans "ID Type" %}<span class="asterisque">*</span></label>
                         {{ form.id_type }}
+                          <span class="error" id="id_type_error">{% trans "This field is required" %}</span>
                      </div>
 
                     <div id="HouseholdUNHCR" style="display:none">
@@ -108,6 +111,7 @@
                         <label class="text" id="IndividualRegistrationNumber" style = "display:none">{% trans "UNHCR Individual Registration Number of the Household Representative" %}<span class="asterisque">*</span></label>
                         <label class="text" id="HouseholdOtherID" style="display: none;">{% trans "ID Number" %}<span class="asterisque">*</span></label>
                         <span id="HouseholdUNHCR_OtherID" style="display: none;">{{ form.id_number }}</span>
+                        <span class="error" id="id_number_UNHCR_Other_error">{% trans "This field is required" %}</span>
                     </div>
 
                     <div class="line" id="HouseholdOtherID_Note" style="display: none;">
@@ -142,9 +146,10 @@
                         <div class="line">
                             <label class="text">{% trans "Age" %}<span class="asterisque">*</span></label>
                             {{ form.age }}
+                             <span class="error" id="age_error">{% trans "This field is required" %}</span>
                         </div>
                         <div class="line field-select-small-size">
-                            <label class="text">{% trans "Date of birth" %}<span class="asterisque">*</span></label>
+                            <label class="text">{% trans "Date of birth" %}</label>
                             {{ form.birthday_day }}
                             {{ form.birthday_month }}
                             {{ form.birthday_year }}
@@ -152,10 +157,12 @@
                         <div class="line">
                             <label class="text">{% trans "Gender" %}<span class="asterisque">*</span></label>
                             {{ form.sex }}
+                             <span class="error" id="gender_error">{% trans "This field is required" %}</span>
                         </div>
                         <div class="line">
                             <label class="text">{% trans "Relationship to Household head" %}<span class="asterisque">*</span></label>
                             {{ form.relation_to_householdhead }}
+                             <span class="error" id="relationship_householdhead_error">{% trans "This field is required" %}</span>
                         </div>
                     </div>
                 </li>
@@ -169,7 +176,7 @@
                 {# 8 Slide card introduction part 2 #}
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Collect existing ATM case number" %}</h3>
-                    <label class="text">{% trans "Please copy case number directly from card" %}<span class="asterisque">*</span></label>
+                    <label class="text">{% trans "Please copy case number directly from card" %}</label>
 
                     <div class="line">
                         <label class="text">{% trans "Blue Card Case Number" %}</label>
@@ -388,7 +395,7 @@
             </ul>
         </div>
 
-        <ul class="pages">
+        <ul class="pages"   >
             <li class="active">1</li>
             <li>2</li>
             <li>3</li>
@@ -461,7 +468,7 @@
         var synchro_path = host+'/api/registering-pilot/';
         var arabic_fields = "#id_first_name, #id_last_name";
         var validation_mapping = new Array();
-        validation_mapping[6] = function() { validateSection6() };
+        validation_mapping['5'] = function() { validateSection5() };
 
     $(document).ready(function() {
         onePerFrameSly = initializeSly($('#oneperframe'));
@@ -587,23 +594,31 @@
                                     label: "{% trans "Save" %}",
                                     className: "btn-success",
                                     callback: function () {
-                                        var tr = $('<tr>');
-                                        var form = $('.bootbox-body').find('#add_child_noid_form');
-                                        tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
-                                        tr.append($('<td>').html('&nbsp;'));
-                                        tr.append($('<td>').html(form.find('#id_first_name').val()+' '+ form.find('#id_father_name').val()+' '+form.find('#id_last_name').val()));
-                                        tr.append($('<td>').html(form.find('#id_mother_fullname').val()));
-                                        tr.append($('<td>').html(form.find('#id_birthday_day').find(':selected').text()+'/'+form.find('#id_birthday_month').find(':selected').text()+'/'+form.find('#id_birthday_year').find(':selected').text()));
-                                        tr.append($('<td>').html(form.find('#id_age').val()));
-                                        tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
-                                        tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
-                                        $('#no_id_table').find('tbody').append(tr);
+                                        var reslt = validate_add_child_noid();
+                                        if (reslt)
+                                        {
+                                            var tr = $('<tr>');
+                                            var form = $('.bootbox-body').find('#add_child_noid_form');
+                                            tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
+                                            tr.append($('<td>').html('&nbsp;'));
+                                            tr.append($('<td>').html(form.find('#id_first_name').val()+' '+ form.find('#id_father_name').val()+' '+form.find('#id_last_name').val()));
+                                            tr.append($('<td>').html(form.find('#id_mother_fullname').val()));
+                                            tr.append($('<td>').html(form.find('#id_birthday_day').find(':selected').text()+'/'+form.find('#id_birthday_month').find(':selected').text()+'/'+form.find('#id_birthday_year').find(':selected').text()));
+                                            tr.append($('<td>').html(form.find('#id_age').val()));
+                                            tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
+                                            tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
+                                            $('#no_id_table').find('tbody').append(tr);
 
                                         var item  = {};
                                         item = collect_form_values(form, item);
                                         append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations');
-                                    }
+                                        }
+                                        else
+                                        {
+                                        return false;
+                                        }
                                 }
+                            }
                             }
             });
         });
@@ -645,124 +660,38 @@
         });
 
         $("#nextButton").click(function() {
-            if(!$("#nextButton").hasClass("disabled")) {
-                if(onePerFrameSly.rel.activeItem == 8) {
+            if(!$("#nextButton").hasClass("disabled"))
+            {
+                var sectionCheck = validateSection(onePerFrameSly, onePerFrameSly.rel.activeItem);
+                if(sectionCheck)
+                {
+                    if(onePerFrameSly.rel.activeItem == 8)
+                    {
                     var check1 = $('.child_enrolled_in_other_schools_block').find('a.active').attr('data-title');
                     var check2 = $('.previously_registered_status_block').find('a.active').attr('data-title');
 
-                    if(check1 == 0 || (check1 == 1 && check2 == 0)) {
+                        if(check1 == 0 || (check1 == 1 && check2 == 0)) {
                         bootbox.confirm("{% trans 'Are all the children enrolled in the 2nd shift schools have been registered?' %}", function(result) {
                             if(result == true) {
                                onePerFrameSly.next();
                             }
                         });
-                    }else{
-                        onePerFrameSly.next();
+                        }
+                        else
+                            {
+                                onePerFrameSly.next();
+                            }
                     }
-                } else {
-                    onePerFrameSly.next();
+                    else
+                        {
+                            onePerFrameSly.next();
+                        }
                 }
             }
         });
 
-{#        function ValidateSection(sectionIndex)#}
-{#        {#}
-{#            var result = true;#}
-{##}
-{#            if(sectionIndex==5)#}
-{#            {#}
-{#                result = ValidateSection5();#}
-{#            }#}
-{##}
-{#            return result;#}
-{#        }#}
-
-{#        function ValidateSection5(sectionIndex)#}
-{#        {#}
-{#            var selectedOption = $("#id_id_type").val();#}
-{##}
-{#            var validationResult =#}
-{#            {#}
-{#               ValidationMessage : "",#}
-{#               IsValid : true#}
-{#            };#}
-{##}
-{#            if(selectedOption == 1) {#}
-{##}
-{#           }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5) {#}
-{#            validationResult = ValidateTextBoxRequired(validationResult,"The first name is required.","id_first_name");#}
-{#            validationResult = ValidateTextBoxRequired(validationResult,"The father name is required.","id_father_name");#}
-{#            validationResult = ValidateTextBoxMaximumSize(validationResult,"The first name should be less than 10 characters.","id_first_name", 10);#}
-{#           }else if (selectedOption == 6) { }#}
-{##}
-{##}
-{#            if(!validationResult.IsValid)#}
-{#            {#}
-{#               bootbox.alert(validationResult.ValidationMessage, function() {});#}
-{#            }#}
-{##}
-{#            return validationResult.IsValid;#}
-{#        }#}
-
-
-{#        function ValidateTextBoxMaximumSize(validationResult, message, id, size)#}
-{#        {#}
-{#            return ValidateField#}
-{#            (#}
-{#                    validationResult,#}
-{#                    message,#}
-{#                    id,#}
-{#                    function(id)#}
-{#                    {#}
-{#                        return $('#'+id).val().length <= size#}
-{#                    }#}
-{#            );#}
-{##}
-{#            return validationResult;#}
-{#        }#}
-
-{#        function ValidateTextBoxRequired(validationResult, message, id)#}
-{#        {#}
-{#            return ValidateField#}
-{#            (#}
-{#                    validationResult,#}
-{#                    message,#}
-{#                    id,#}
-{#                    function(id)#}
-{#                    {#}
-{#                        return $('#'+id).val()!=""#}
-{#                    }#}
-{#            );#}
-{##}
-{#            return validationResult;#}
-{#        }#}
-
-{#        function ValidateField(validationResult, message, id, isValidFunction)#}
-{#        {#}
-{#            var isFieldValid = isValidFunction(id);#}
-{##}
-{#            if(!isFieldValid)#}
-{#            {#}
-{#                validationResult.ValidationMessage += message+"<br/>";#}
-{#            }#}
-{##}
-{#            validationResult.IsValid = validationResult.IsValid && isFieldValid;#}
-{##}
-{#            return validationResult;#}
-{#        }#}
-
-{#        onePerFrameSly.on('active', function (eventName, itemIndex) {#}
-{#            if (onePerFrameSly.rel.activeItem == 8 || onePerFrameSly.rel.activeItem == 0) {#}
-{#                $("#previousButton").addClass("disabled");#}
-{#            } else {#}
-{#                $("#previousButton").removeClass("disabled");#}
-{#            }#}
-{#        });#}
 
         onePerFrameSly.on('active', function(eventName, itemIndex) {
-
-            validateSection(onePerFrameSly, onePerFrameSly.rel.activeItem);
-
             if(onePerFrameSly.rel.activeItem == 8 || onePerFrameSly.rel.activeItem == 0) {
                 $("#previousButton").addClass("disabled");
             } else {
@@ -816,7 +745,7 @@
             $('#id_age').val(age);
 
             if(age < 18) {
-               bootbox.alert("{% trans 'Age less than 18.' %}", function() {});
+               bootbox.alert("{% trans 'Currently ATM Cards can only be issued for those over the age of 18. We are working on a solution for this. You can continue the Registration Process so we have your information in case a solution is found. However, until then you will not receive payments.' %}", function() {});
             }
         } else {
             $('#id_age').val("");
