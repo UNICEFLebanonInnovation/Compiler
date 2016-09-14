@@ -32,6 +32,10 @@ from student_registration.registrations.forms import (
     RegisteringChildForm,
 )
 from student_registration.students.forms import StudentForm
+from student_registration.eav.models import (
+    Attribute,
+    Value,
+)
 
 
 class RegistrationViewSet(mixins.RetrieveModelMixin,
@@ -96,6 +100,8 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'nationalities': Nationality.objects.all(),
             'genders': (u'Male', u'Female'),
             'idtypes': IDType.objects.all(),
+            'columns': Attribute.objects.filter(type=Registration.EAV_TYPE),
+            'eav_type': Registration.EAV_TYPE
         }
 
 

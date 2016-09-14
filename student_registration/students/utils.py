@@ -26,3 +26,5 @@ def generate_id(
 
     full_name_hash = int(hashlib.sha1(full_name.encode('UTF-8')).hexdigest(), 16) % 100000
     mother_name_hash = int(hashlib.sha1(mother_full_name.encode('UTF-8')).hexdigest(), 16) % 100000
+
+    return str(full_name_char_count)+str(mother_name_char_count)+str(full_name_hash)+str(mother_name_hash)+gender

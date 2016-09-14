@@ -23,13 +23,22 @@
                     </div>
                 </div>
             <div class="row">
+                <div class="alert alert-success" role="alert" id="alert-synchro-success" style="display: none;"><strong>{% trans 'Well done' %}</strong> {% trans 'Synchronization success' %}</div>
+                <div class="alert alert-warning" role="alert" id="alert-synchro-warning" style="display: none;"><strong>{% trans 'Warning' %}</strong> {% trans 'Please check fill required field' %}</div>
+                <div class="alert alert-danger" role="alert" id="alert-connection" style="display: none;">{% trans 'Please check you internet connectivity' %}</div>
+            </div>
+            <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
                           <div class="panel-heading">
                             <h3 class="panel-title">{% trans "Registration" %}
                               <button class="btn btn-info" id="registration-synchro">
                                 <i class="icon-synch-sign icon-white"></i>&nbsp;
-                                    {% trans "synchronize" %}
+                                    {% trans "Save" %}
+                              </button>
+                              <button class="btn btn-info" id="registration-add-column">
+                                <i class="icon-plus-sign icon-white"></i>&nbsp;
+                                    {% trans "add column" %}
                               </button>
                               <a class="btn btn-info" id="registration-export" href="{% url "registrations:registration_export" %}" target="_blank">
                                 <i class="icon-export-sign icon-white"></i>&nbsp;
@@ -138,6 +147,10 @@
     <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/appcache.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/indexedDB.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/eav.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
     <script type="text/javascript">
         var oTable = null;
         var db = null;
@@ -148,12 +161,20 @@
         var user_token = '{{ user_token }}';
         var columns = 0;
         var rows = 1;
+        var entity_ct = 20;
+        var eav_type = '{{ eav_type }}';
+        var synchro_result = true;
+        var prototype = $('#registration_prototype');
+        var table = $('#registrations-table');
         var protocol = 'http://';
         {% if request.is_secure %}
             protocol = 'https://';
         {% endif %}
-        var host = '{{ request.get_host }}';
-        var synchro_path = protocol+host+'/api/registrations/';
+        var host = protocol+'{{ request.get_host }}';
+        var synchro_path = host+'/api/registrations/';
+        var synchro_path_extra = host+'/api/eav/attributes/';
+        var synchro_path_extra2 = host+'/api/eav/values/';
+        var arabic_fields = "#student_mother_fullname, #student_first_name, #student_father_name, #student_last_name";
 
         window.addEventListener("offline", function(e) {
           $('#registration-synchro').hide();
@@ -168,13 +189,36 @@
             createStores();
 
             setInterval(function(){
+                synchro_result = true;
+                $('.alert').hide();
                 if(navigator.onLine) {
                     synchronize_data(false);
+                }else{
+                    $('#alert-connection').show();
                 }
             }, 3600000);
 
+            $(document).on("click", ".delete-column", function(e) {
+                var itemid = $(this).parent().attr('itemscope');
+                var iremref = $(this).parent().attr('itemref');
+                var breakline = '<br/>';
+                var field_values = breakline + '{% trans "This column contains there following data:" %}' + breakline;
+                $('#registrations-table').find('.extra-field-'+itemid).each(function(){
+                    field_values = field_values + $(this).val() + breakline;
+                });
+                bootbox.confirm("{% trans 'are you sure you want to delete this column?' %}"+field_values, function(result) {
+                    if(result == true){
+                        delete_extra_column(itemid, iremref);
+                        delete_column_values(itemid);
+                    }
+                });
+            });
+
             $('[data-toggle="tooltip"]').tooltip();
 
+            $(document).on('blur', arabic_fields, function(){
+                checkArabicOnly($(this));
+            });
 
             $(document).on('click', '#add_defined_lines', function(){
                 bootbox.prompt("{% trans 'Please enter extra column name' %}", function(result) {
@@ -199,7 +243,7 @@
                     return false;
                 }else{
                     var lastid = $('.registration-field-id:last').val();
-                    var request = getRecord(lastid);
+                    var request = getRecord(parseInt(lastid), 'registrations');
                     request.onsuccess = function(){
 
                         var params = {
@@ -218,7 +262,7 @@
                 var item = $(this);
                 bootbox.confirm("{% trans 'are you sure you want to delete this row?' %}", function(result) {
                     if(result == true){
-                        delete_from_store(item.attr('itemscope'));
+                        delete_from_store(item.attr('itemscope'), 'registrations');
                         item.parents('tr').remove();
                     }
                 });
@@ -227,45 +271,65 @@
             $(document).on('change', '.registration-school', function(){
                 if($(this).val()){
                     var option = $(this).find('option:selected');
-                    update_item_store($(this).attr('itemscope'), 'school_number', option.attr('itemcontent'));
+                    update_item_store(parseInt($(this).attr('itemscope')), 'school_number', option.attr('itemcontent'), 'registrations');
                     var itemblock = '.school_number_'+$(this).attr('itemscope');
                     $(itemblock).val(option.attr('itemcontent'));
                 }
             });
 
             $(document).on('blur', '.registration-field', function(){
-                update_item_store($(this).attr('itemscope'), $(this).attr('name'), $(this).val());
-            });
-
-            $(document).on('blur', 'input[name=student_full_name]', function(){
-                var line = $('#line-'+$(this).attr('itemscope'));
-                var request = getRecord($(this).attr('itemscope'));
-                request.onsuccess = function(){
-                    var result = request.result;
-                    if(result){
-                        var number = generate_student_number(result);
-                        line.find('#student_number').val(number);
-                        line.find('#student_number').trigger('blur');
-                    }
-                };
+                if($(this).hasClass('extra-field')){
+                    update_one_by_index('name', $(this).attr('name'), 'value_text', $(this).val(), 'eav-columns-values')
+                }else{
+                    update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'registrations');
+                }
             });
 
             $(document).on('click', '#registration-synchro', function(){
-                synchronize_data(true);
+                synchro_result = true;
+                $('.alert').hide();
+                if(navigator.onLine) {
+                    synchronize_data(true);
+                }else{
+                    $('#alert-connection').show();
+                }
             });
 
+            $(document).on('click', '#registration-pull', function(){
+                load_base_data();
+            });
+
+            $(document).on('click', '#registration-add-column', function(){
+                bootbox.prompt("{% trans 'Please enter extra column name' %}", function(result) {
+                  if (result === null) {
+                  } else {
+                    columns = columns + 1;
+                    var column_name = 'extra-column-'+user_id+'-'+columns;
+                    var column_label = result;
+                    var column = {id: columns, name: column_name, label: column_label, synchronized: false, owner: user_id, deleted: false, type: eav_type};
+
+                    add_column_to_store(column);
+                    create_extra_columns_html(column, true);
+
+                    var store = getStoreByName('registrations');
+                    var request = store.getAll();
+                    request.onsuccess = function(){
+                        var result = request.result;
+                        if(result){
+                            $(result).each(function(i, item){
+                                if(item.deleted == false){
+                                    var td = create_extra_field_html(columns, item.id, user_id);
+                                    $('#line-'+item.id).append(td);
+                                    var field_name = 'extra-field-'+user_id+'-'+columns+'-'+item.id;
+                                    create_column_values(item, field_name, {id: columns, original_id: 0});
+                                }
+                            });
+                        }
+                    };
+                  }
+                });
+            });
         });
-
-        function scrollToBottom()
-        {
-            $("html, body").animate({ scrollTop: $(document).height() }, 10);
-        }
-
-        function add_registration_newline(itemid)
-        {
-            var line_html =  $('#registration_prototype').find('tbody').html().replace(/\$\$itemscope_id\$\$/g, itemid);
-            $('#registrations-table').find('tbody').append(line_html);
-        }
 
         function duplicate_item_values(duplicata, fields)
         {
@@ -283,85 +347,62 @@
 
         function create_item_store_default_keys()
         {
-            var item = {id: rows, synchronized: false, deleted: false, owner: user_id};
+            var item = {id: rows, synchronized: false, deleted: false, owner: user_id, original_id: 0};
             var fields = $('#registration_prototype').find('.registration-field');
             $(fields).each(function(i, field){
                 item[$(field).attr('name')] = '';
             });
+
+            var store1 = getStoreByName('eav-shared-columns');
+            var request1 = store1.getAll();
+            request1.onsuccess = function(){
+                var result1 = request1.result;
+                if(result1){
+                    $(result1).each(function(i, col){
+                        var field_name = 'extra-field-'+col.owner+'-'+col.id+'-'+item.id;
+                        create_column_values(item, field_name, col);
+                    });
+                }
+            };
+
+            var store = getStoreByName('eav-columns');
+            var request = store.getAll();
+            request.onsuccess = function(){
+                var result = request.result;
+                if(result){
+                    $(result).each(function(i, col){
+                        if(col.deleted == false){
+                            var field_name = 'extra-field-'+user_id+'-'+col.id+'-'+item.id;
+                            create_column_values(item, field_name, col);
+                        }
+                    });
+                }
+            };
 
             return item;
         }
 
         function add_to_store(data)
         {
-            var store = getObjectStore();
+            var store = getStoreByName('registrations');
             var request = store.put(data);
-            add_registration_newline(data.id);
+            add_table_newline(data.id, prototype, table);
             rows = rows + 1;
-        }
-
-        function delete_from_store(itemid)
-        {
-            var store = getObjectStore();
-            var request = store.get(parseInt(itemid));
-            request.onsuccess = function(){
-                result = request.result;
-                if(result.synchronized == true){
-                    update_item_store(itemid, 'deleted', true);
-                }else{
-                    store.delete(parseInt(itemid));
-                    rows = rows - 1;
-                }
-            }
-        }
-
-        function update_item_store(itemid, name, value)
-        {
-            var store = getObjectStore();
-            var request = store.get(parseInt(itemid));
-            request.onsuccess = function(){
-                var item = request.result;
-                item[name] = value;
-                store.put(item);
-            };
-        }
-
-        function patch_item_store(item)
-        {
-            var store = getObjectStore();
-            var request = store.get(parseInt(item.id));
-            request.onsuccess = function(){
-                store.put(item);
-            };
-        }
-
-        function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie != '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
         }
 
         function build_datatable()
         {
-            var store = getObjectStore();
+            add_extra_columns();
+            var store = getStoreByName('registrations');
             var request = store.getAll();
             request.onsuccess = function() {
                 var result = request.result;
                 $(result).each(function(i, item){
                     rows = item.id;
                     if(item.deleted == false){
-                        add_registration_newline(item.id);
+                        add_table_newline(item.id, prototype, table);
                         add_fill_line_data(item);
+                        add_fill_extra_fields_data(item.id);
                     }
                 });
                 rows = rows + 1;
@@ -378,7 +419,7 @@
 
         function synchronize_data(showFeedback)
         {
-            var store = getObjectStore();
+            var store = getStoreByName('registrations');
             var request = store.getAll();
             request.onsuccess = function() {
                 var result = request.result;
@@ -386,14 +427,49 @@
                     if(item.synchronized == false) {
                         push_data_to_server(item);
                     }else if(item.deleted == true){
-                        delete_data_from_server(item);
+                        delete_data_from_server(synchro_path, item.original_id, item.id, 'registrations');
                     }else{
                         update_data_into_server(item);
                     }
                 });
-                if(showFeedback){
-                    bootbox.alert("{% trans 'Synchronization done' %}", function() {});
+                if(showFeedback && synchro_result == true){
+                    $('#alert-synchro-success').show();
                 }
+                if(showFeedback && synchro_result == false){
+                    $('#alert-synchro-warning').show();
+                }
+            };
+
+            var col_store = getStoreByName('eav-columns');
+            var col_request = col_store.getAll();
+            col_request.onsuccess = function() {
+                var col_result = col_request.result;
+                $(col_result).each(function(i, col){
+                    if(col.synchronized == false && col.deleted == false) {
+                        push_extra_columns_to_server(col);
+                    }else if(col.synchronized == true && col.deleted == true){
+                        delete_data_from_server(synchro_path_extra, col.original_id, col.id, 'eav-columns');
+                    }else{
+                        col_store.delete(parseInt(col.id));
+                    }
+                });
+            };
+
+            var colv_store = getStoreByName('eav-columns-values');
+            var colv_request = colv_store.getAll();
+            colv_request.onsuccess = function() {
+                var colv_result = colv_request.result;
+                $(colv_result).each(function(i, colv){
+                    if(colv.entity_id && colv.attribute) {
+                        if (colv.synchronized == false && colv.deleted == false) {
+                            push_column_values_to_server(colv);
+                        } else if (colv.synchronized == true && colv.deleted == true) {
+                            delete_data_from_server(synchro_path_extra2, colv.original_id, colv.id, 'eav-columns-values');
+                        } else {
+                            update_data_server(synchro_path_extra2, colv, colv.original_id);
+                        }
+                    }
+                });
             };
         }
 
@@ -406,6 +482,7 @@
                 url: synchro_path,
                 data: data,
                 cache: false,
+                async: false,
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
@@ -414,8 +491,10 @@
                         item.synchronized = true;
                         item.original_id = response.data.id;
 
-                        update_item_store(item.id, 'synchronized', true);
-                        update_item_store(item.id, 'original_id', response.data.id);
+                        update_item_store(parseInt(item.id), 'synchronized', true, 'registrations');
+                        update_item_store(parseInt(item.id), 'original_id', response.data.id, 'registrations');
+                        update_items_by_index('entity', parseInt(item.id), 'entity_id', response.data.id, 'eav-columns-values');
+                        synchro_result = true;
                     }
                 },
                 error: function (response) {
@@ -425,6 +504,7 @@
                         $('#line-'+item.id).find('#'+field_name).addClass('required');
                     });
                     console.log(response);
+                    synchro_result = false;
                 }
             });
         }
@@ -443,7 +523,9 @@
                 success: function (response) {
                     if(response.status == '200'){
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
-                        update_item_store(item.id, 'synchronized', true);
+                        update_item_store(parseInt(item.id), 'synchronized', true, 'registrations');
+                        update_items_by_index('entity', parseInt(item.id), 'entity_id', item.original_id, 'eav-columns-values');
+                        synchro_result = true;
                     }
                 },
                 error: function (response) {
@@ -453,60 +535,19 @@
                         $('#line-'+item.id).find('#'+field_name).addClass('required');
                     });
                     console.log(response);
+                    synchro_result = false;
                 }
             });
         }
 
-        function delete_data_from_server(item)
+        function load_base_data()
         {
-            $.ajax({
-                type: "DELETE",
-                url: synchro_path+item.original_id+'/',
-                cache: false,
-                headers: getHeader(),
-                dataType: 'json',
-                success: function (response) {
-                    if(response.status = '200') {
-                        var store = getObjectStore();
-                        store.delete(parseInt(item.id));
-                    }
-                },
-                error: function (response) {
-
-                }
-            });
-        }
-
-        function pull_data_from_server()
-        {
-            $.ajax({
-                type: "GET",
-                url: synchro_path,
-                cache: false,
-                headers: getHeader(),
-                dataType: 'json',
-                success: function (response) {
-                    if(response.status == '201'){
-                        var store = getObjectStore();
-                        $(response.data).each(function(i, item){
-                            rows = item.id;
-                            item.synchronized = true;
-                            item.deleted = false;
-                            store.put(item);
-                            add_registration_newline();
-                        });
-                        rows = rows + 1;
-                    }
-                },
-                error: function (response) {
-                    console.log(response);
-                }
-            });
+            pull_data_from_server(host+'/api/eav/attributes/?type='+eav_type, 'eav-shared-columns');
         }
 
         function createStores()
         {
-            var request = indexedDB.open("compile_bd_2", 3);
+            var request = indexedDB.open("compile_bd_4", 3);
 
             request.onupgradeneeded = function() {
                 // The database did not previously exist, so create object stores and indexes.
@@ -521,7 +562,17 @@
                 }
                 if(flag){
                     db.createObjectStore("registrations", {keyPath: "id", autoIncrement:true});
-                    db.createObjectStore("students", {keyPath: "id", autoIncrement:true});
+                    var store1 = db.createObjectStore("eav-shared-columns", {keyPath: "id", autoIncrement:true});
+                    store1.createIndex('name', 'name');
+
+                    var store2 = db.createObjectStore("eav-columns", {keyPath: "id", autoIncrement:true});
+                    store2.createIndex('name', 'name');
+                    var store3 = db.createObjectStore("eav-columns-values", {keyPath: "id", autoIncrement:true});
+                    store3.createIndex('name', 'name');
+                    store3.createIndex('entity', 'entity');
+                    store3.createIndex('column', 'column');
+                    store3.createIndex('attribute', 'attribute');
+
                     var profile_store = db.createObjectStore("user", {keyPath: "id"});
                     profile_store.put({id: user_id, username: user_username, email: user_email});
                 }
@@ -529,28 +580,11 @@
 
             request.onsuccess = function() {
                 db = request.result;
-                build_datatable();
+                load_base_data();
+                setTimeout(function(){
+                    build_datatable();
+                }, 5000);
             };
-        }
-
-        function getObjectStore()
-        {
-            var store = db.transaction(["registrations"], "readwrite").objectStore("registrations");
-            return store;
-        }
-
-        function getRecord(itemid)
-        {
-            var store = getObjectStore();
-            var request = store.get(parseInt(itemid));
-            return request;
-        }
-
-        function getHeader()
-        {
-            var csrftoken = getCookie('csrftoken');
-            var header = {'Authorization': 'Token '+user_token, 'X-CSRFToken': csrftoken};
-            return header;
         }
 
     </script>
