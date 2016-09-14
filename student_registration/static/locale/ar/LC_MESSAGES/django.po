@@ -559,8 +559,8 @@ msgstr "إذا لم يلتحق طفلك في المدرسة سوف يتم شطب
 msgid "If your child is not already enrolled in school, please go and do so now, then return to Register for the Pilot"
 msgstr ""
 
-msgid "If your address or phone number changes, you must inform us by calling 81-312940. If your household cannot be found after 2 months you will stop receiving benefits."
-msgstr "إذا تم تغير عنوانك أو رقم هاتفك ، يجب عليك اعلامنا عن طريق الاتصال على 81-312940 . إذا لم نتمكن من العثور على منزلك بعد شهرين سوف إيقاف تسديد الدفعات"
+msgid "If your address or phone number changes, you must inform us by calling 81-313940. If your household cannot be found after 2 months you will stop receiving benefits."
+msgstr "إذا تم تغير عنوانك أو رقم هاتفك ، يجب عليك اعلامنا عن طريق الاتصال على 81-313940 . إذا لم نتمكن من العثور على منزلك بعد شهرين سوف إيقاف تسديد الدفعات"
 
 msgid "Please take a leaflet now so you have this important phone number with you."
 msgstr "يرجى أخذ النشرة الآن حتى يكون لديك رقم الهاتف المهم معك"
@@ -697,8 +697,8 @@ msgstr "الغاء"
 msgid "To benefit from the cash pilot, you must provide us with an address where carefully selected, trained officers who work for the pilot can visit your household and a phone number where we can reach you. These officers will be trained to handle your information carefully and will only visit you if a child you have registered drops out of school."
 msgstr ""
 
-msgid "If you change your phone number or address, please inform the program by calling 81-312940, or you will be removed after we are unable to locate you."
-msgstr "إذا قمت بتغيير رقم هاتفك أو عنوانك ، يرجى إبلاغ البرنامج من خلال الإتصال على 81-312940 ، أو سوف يتم إزالتك إذا كنا غير قادرين على تحديد مكان وجودك"
+msgid "If you change your phone number or address, please inform the program by calling 81-313940, or you will be removed after we are unable to locate you."
+msgstr "إذا قمت بتغيير رقم هاتفك أو عنوانك ، يرجى إبلاغ البرنامج من خلال الإتصال على 81-313940 ، أو سوف يتم إزالتك إذا كنا غير قادرين على تحديد مكان وجودك"
 
 msgid "Address"
 msgstr "العنوان"
