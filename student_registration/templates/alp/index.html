@@ -35,7 +35,7 @@
                             <h3 class="panel-title">{% trans "Outreach" %}
                               <button class="btn btn-info" id="outreach-synchro">
                                 <i class="icon-synch-sign icon-white"></i>&nbsp;
-                                    {% trans "synchronize" %}
+                                    {% trans "Save" %}
                               </button>
                               <button class="btn btn-info" id="outreach-add-column">
                                 <i class="icon-plus-sign icon-white"></i>&nbsp;
@@ -187,6 +187,7 @@
     <script type="text/javascript" src="{% static 'js/appcache.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/indexedDB.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/eav.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
     <script type="text/javascript">
         var oTable = null;
         var db = null;
@@ -211,6 +212,7 @@
         var synchro_path = host+'/api/outreach/';
         var synchro_path_extra = host+'/api/eav/attributes/';
         var synchro_path_extra2 = host+'/api/eav/values/';
+        var arabic_fields = "#student_mother_fullname, #student_first_name, #student_father_name, #student_last_name";
 
         $(document).ready(function(){
 
@@ -243,6 +245,10 @@
             });
 
             $('[data-toggle="tooltip"]').tooltip();
+
+            $(document).on('blur', arabic_fields, function(){
+                checkArabicOnly($(this));
+            });
 
             $(document).on('click', '#add_defined_lines', function(){
                 bootbox.prompt("{% trans 'Please enter extra column name' %}", function(result) {
@@ -318,7 +324,7 @@
                 var item = $(this);
                 bootbox.confirm("{% trans 'are you sure you want to delete this row?' %}", function(result) {
                     if(result == true){
-                        delete_from_store(item.attr('itemscope'));
+                        delete_from_store(item.attr('itemscope'), 'outreaches');
                         item.parents('tr').remove();
                     }
                 });
@@ -339,19 +345,6 @@
                 }else{
                     update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches');
                 }
-            });
-
-            $(document).on('blur', 'input[name=student_last_name]', function(){
-                var line = $('#line-'+$(this).attr('itemscope'));
-                var request = getRecord($(this).attr('itemscope'), 'outreaches');
-                request.onsuccess = function(){
-                    var result = request.result;
-                    if(result){
-                        var number = generate_student_number(result);
-                        line.find('#student_number').val(number);
-                        line.find('#student_number').trigger('blur');
-                    }
-                };
             });
 
             $(document).on('click', '#outreach-synchro', function(){
@@ -535,7 +528,7 @@
                         } else if (colv.synchronized == true && colv.deleted == true) {
                             delete_data_from_server(synchro_path_extra2, colv.original_id, colv.id, 'eav-columns-values');
                         } else {
-                            update_data_server(synchro_path_extra2, colv.original_id);
+                            update_data_server(synchro_path_extra2, colv, colv.original_id);
                         }
                     }
                 });
