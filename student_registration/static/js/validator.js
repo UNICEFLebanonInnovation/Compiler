@@ -142,20 +142,74 @@ function validateSection5()
 
 function validate_add_child_noid()
 {
-        $('#first_name_error').show();
-        $('#father_name_error').show();
-        $('#last_name_error').show();
-        $('#mother_fullname_error').show();
-        $('#age_error').show();
-        $('#gender_error').show();
-        $('#relation_to_adult_error').show();
-        return false;
+    var valid = true ;
+    var form = $('.bootbox-body').find('#add_child_noid_form');
+    // tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
+
+    if(form.find('#id_first_name').val() == ""){
+        form.find('#first_name_error').show();
+        valid = false ;
+    }else{
+        form.find('#first_name_error').hide();
+    }
+
+    if(form.find('#id_father_name').val() == ""){
+        form.find('#father_name_error').show();
+        valid = false ;
+    }else{
+        form.find('#father_name_error').hide();
+    }
+
+    if(form.find('#id_last_name').val() == ""){
+        form.find('#last_name_error').show();
+        valid = false ;
+    }else{
+        form.find('#last_name_error').hide();
+    }
+
+    if(form.find('#id_mother_fullname').val() == ""){
+        form.find('#mother_fullname_error').show();
+        valid = false ;
+    }else{
+        form.find('#mother_fullname_error').hide();
+    }
+
+    if(form.find('#id_age').val() == ""){
+        form.find('#age_error').show();
+        valid = false ;
+    }else{
+        form.find('#age_error').hide();
+    }
+
+    if(form.find('#id_sex').val() == ""){
+        form.find('#gender_error').show();
+        valid = false ;
+    }else{
+        form.find('#gender_error').hide();
+    }
+
+    if(form.find('#id_relation_to_adult').val() == ""){
+        form.find('#relation_to_adult_error').show();
+        valid = false ;
+    }else{
+        form.find('#relation_to_adult_error').hide();
+    }
+
+    return valid;
  }
 
  function validate_add_child_withid()
 {
-        $('#relation_to_household_reprentative_error').show();
-        return false;
+    var valid = true ;
+    var form = $('.bootbox-body').find('#add_child_withid_form');
+
+    if(form.find('#id_relation_to_adult').val() == ""){
+        form.find('#relation_to_household_reprentative_error').show();
+        valid = false ;
+    }else{
+        form.find('#relation_to_household_reprentative_error').hide();
+    }
+     return valid;
 }
 
 function ValidateTextBoxMaximumSize(validationResult, message, id, size)
