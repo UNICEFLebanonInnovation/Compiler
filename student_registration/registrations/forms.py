@@ -32,6 +32,7 @@ class RegisteringAdultForm(forms.ModelForm):
                                     required=False)
     secondary_phone = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': '70123456'})),
                                       required=False)
+    old_registry_id = forms.CharField(widget=forms.TextInput, required=False)
 
     def __init__(self, *args, **kwargs):
         super(RegisteringAdultForm, self).__init__(*args, **kwargs)
