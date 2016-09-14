@@ -1,11 +1,13 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.contrib.gis.db import models
+from django.db.models.signals import pre_save
 from django.db import models
 from django.utils.translation import ugettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel
+from .utils import *
 
 
 class Nationality(models.Model):
@@ -127,3 +129,8 @@ class Student(Person):
         for item in self.attendances.all():
             attendances[item.attendance_date] = item.status
         return attendances
+
+    # def save(self):
+    #     print self.sender
+    #     self.number = generate_id(self.first_name, self.father_name, self.last_name, self.mother_fullname, self.sex)
+    #     super(Student, self).save()

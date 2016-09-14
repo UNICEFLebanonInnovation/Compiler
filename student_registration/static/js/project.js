@@ -206,7 +206,7 @@ function delete_data_from_server(url, original_id, itemid, store_name)
     });
 }
 
-function update_data_server(url, itemid, callback_success, callback_error)
+function update_data_server(url, item, itemid, callback_success, callback_error)
 {
     $.ajax({
         type: "PUT",
