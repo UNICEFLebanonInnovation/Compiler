@@ -105,19 +105,18 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
                               mixins.UpdateModelMixin,
                               viewsets.GenericViewSet):
 
+    lookup_field = 'id_number'
     model = RegisteringAdult
     queryset = RegisteringAdult.objects.all()
     serializer_class = RegisteringAdultSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        if not self.request.user.is_superuser:
-            if self.request.user.school:
-                return self.queryset.filter(school=self.request.user.school.id)
-            else:
-                return []
-
-        return self.queryset
+        queryset = super(RegisteringAdultViewSet, self).get_queryset()
+        id_number = self.kwargs.get('id_number')
+        if id_number:
+            return queryset.filter(id_number=id_number)
+        return queryset
 
     def create(self, request, *args, **kwargs):
         """
