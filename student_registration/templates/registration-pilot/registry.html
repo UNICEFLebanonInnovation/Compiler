@@ -466,9 +466,10 @@
         {% endif %}
         var host = protocol+'{{ request.get_host }}';
         var synchro_path = host+'/api/registering-pilot/';
-        var arabic_fields = "#id_first_name, #id_last_name";
+        var arabic_fields = "#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname";
         var validation_mapping = new Array();
         validation_mapping['5'] = function() { validateSection5() };
+
 
     $(document).ready(function() {
         onePerFrameSly = initializeSly($('#oneperframe'));
@@ -586,6 +587,10 @@
         });
 
         $('#add_child_noid').click(function(){
+            if($('#no_id_table tr').length==1){
+                 bootbox.alert("{% trans 'You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them.' %}", function() {});
+            }
+
             bootbox.dialog({
                             title: "{% trans "Add Child" %}",
                             message: $('#add_child_noid_block').html(),
@@ -624,6 +629,9 @@
         });
 
        $('#add_child_withid').click(function(){
+           if($('#with_id_table tr').length==1){
+               bootbox.alert("{% trans 'You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them.' %}", function() {});
+           }
             bootbox.dialog({
                             title: "{% trans "Add Child" %}",
                             message: $('#add_child_withid_block').html(),
@@ -632,6 +640,9 @@
                                     label: "{% trans "Save" %}",
                                     className: "btn-success",
                                     callback: function () {
+                                        var reslt = validate_add_child_withid();
+                                        if (reslt)
+                                        {
                                         var tr = $('<tr>');
                                         var form = $('.bootbox-body').find('#add_child_withid_form');
                                         tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
@@ -643,6 +654,11 @@
                                         var item  = {};
                                         item = collect_form_values(form, item);
                                         append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations');
+                                        }
+                                        else
+                                        {
+                                        return false;
+                                        }
                                     }
                                 }
                             }
@@ -663,6 +679,7 @@
             if(!$("#nextButton").hasClass("disabled"))
             {
                 var sectionCheck = validateSection(onePerFrameSly, onePerFrameSly.rel.activeItem);
+
                 if(sectionCheck)
                 {
                     if(onePerFrameSly.rel.activeItem == 8)
