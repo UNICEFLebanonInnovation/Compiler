@@ -20,7 +20,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     student_id_number = serializers.CharField(source='student.id_number')
     student_id_type = serializers.CharField(source='student.id_type')
     student_id_type_name = serializers.CharField(source='student.id_type.name', read_only=True)
-    student_number = serializers.CharField(source='student.number')
+    student_number = serializers.CharField(source='student.number', read_only=True)
     student_nationality = serializers.CharField(source='student.nationality')
     student_address = serializers.CharField(source='student.address')
     school_name = serializers.CharField(source='school.name', read_only=True)
