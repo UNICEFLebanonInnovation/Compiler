@@ -750,3 +750,6 @@ msgstr "هنا"
 
 msgid "to start a new application"
 msgstr "لبداية طلب جديد"
+
+msgid "You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them."
+msgstr ""
