@@ -50,7 +50,7 @@ class RegistrationViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        if not self.request.user.is_superuser:
+        if not self.request.user.is_staff:
             if self.request.user.school:
                 return self.queryset.filter(school=self.request.user.school.id)
             else:
@@ -87,7 +87,7 @@ class RegistrationView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         data = self.model.objects.all()
-        if not self.request.user.is_superuser:
+        if not self.request.user.is_staff:
             data = data.filter(owner=self.request.user)
             self.template_name = 'registrations/index.html'
 
@@ -156,7 +156,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
     model = Registration
 
     def get_queryset(self):
-        if not self.request.user.is_superuser:
+        if not self.request.user.is_staff:
             return self.queryset.filter(owner=self.request.user)
         return self.queryset
 

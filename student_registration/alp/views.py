@@ -82,7 +82,7 @@ class OutreachView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
 
         data = self.model.objects.all()
-        if not self.request.user.is_superuser:
+        if not self.request.user.is_staff:
             data = data.filter(owner=self.request.user)
             self.template_name = 'alp/index.html'
 
@@ -110,7 +110,7 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
         queryset = Outreach.objects.all()
         columns = Attribute.objects.filter(type=Outreach.EAV_TYPE)
 
-        if not self.request.user.is_superuser:
+        if not self.request.user.is_staff:
             queryset = queryset.filter(owner=self.request.user)
             columns = columns.filter(owner=self.request.user)
 
