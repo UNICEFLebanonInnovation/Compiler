@@ -489,7 +489,8 @@
             protocol = 'https://';
         {% endif %}
         var host = protocol+'{{ request.get_host }}';
-        var synchro_path = host+'/api/registering-pilot/';
+        var checking_id_number_url = host+'/api/registering-adult/';
+        var synchro_path = host+'/api/registrations-pilot/';
         var arabic_fields = "#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname";
         var validation_mapping = new Array();
         validation_mapping['0'] = function() { return validateSection0() };
