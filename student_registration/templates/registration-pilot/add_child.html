@@ -48,17 +48,39 @@
             {{ student_form.relation_to_adult }}
             <span class="error" id="relation_to_adult_error">{% trans "This field is required" %}</span>
         </div>
+{#        <div class="line">#}
+{#            <label class="text">{% trans "Have the child been out of school for more than 2 years?" %}</label>#}
+{#            <span class="hidden-field"><input id="out_of_school_two_years_1" type="radio" name="out_of_school_two_yearsCB" value="1" /></span>#}
+{#            <span class="hidden-field"><input id="out_of_school_two_years_0" type="radio" name="out_of_school_two_yearsCB" value="0" /></span>#}
+{#            <div id="radioBtn" class="btn-group">#}
+{#                <a class="btn btn-primary btn-sm active" data-toggle="out_of_school_two_years" data-title="1">{% trans "Yes" %}</a>#}
+{#                <a class="btn btn-primary btn-sm notActive" data-toggle="out_of_school_two_years" data-title="0">{% trans "No" %}</a>#}
+{#            </div>#}
+{#        </div>#}
+
+        <div class="line" >
+            <label class="text">{% trans "Have the child been out of school for more than 2 years?" %}</label>
+            {% for choice in student_form.out_of_school_two_years %}
+                <span class="hidden-field">{{ choice }}</span>
+            {% endfor %}
+            <div id="radioBtn" class="btn-group out_of_school_two_years_block">
+                <a class="btn btn-primary btn-sm notActive" data-toggle="id_out_of_school_two_years" data-title="1">{% trans "Yes" %}</a>
+                <a class="btn btn-primary btn-sm notActive" data-toggle="id_out_of_school_two_years" data-title="0">{% trans "No" %}</a>
+            </div>
+        </div>
         <div class="line">
             <label class="text">{% trans "Was this child enrolled in any school last year" %}</label>
             {{ student_form.enrolled_last_year }}
         </div>
-        <div class="line">
-            <label class="text">{% trans "Select a Location" %}</label>
-            {{ student_form.location }}
-        </div>
-        <div class="line">
-            <label class="text">{% trans "Select a School" %}</label>
-            {{  student_form.enrolled_last_year_school }}
+        <div id="enrolled_in_school_location" style="display:none">
+            <div class="line">
+                <label class="text">{% trans "Select a Location" %}</label>
+                {{ student_form.location }}
+            </div>
+            <div class="line">
+                <label class="text">{% trans "Select a School" %}</label>
+                {{  student_form.enrolled_last_year_school }}
+            </div>
         </div>
     </form>
 </div>
@@ -79,17 +101,29 @@
             {{ student_form.relation_to_adult }}
             <span class="error" id="relation_to_household_reprentative_error">{% trans "This field is required" %}</span>
         </div>
+        <div class="line" >
+            <label class="text">{% trans "Have the child been out of school for more than 2 years?" %}</label>
+            {% for choice in student_form.out_of_school_two_years %}
+                <span class="hidden-field">{{ choice }}</span>
+            {% endfor %}
+{#            <div id="radioBtn" class="btn-group out_of_school_two_years_block">#}
+{#                <a class="btn btn-primary btn-sm notActive" data-toggle="id_out_of_school_two_years" data-title="1">{% trans "Yes" %}</a>#}
+{#                <a class="btn btn-primary btn-sm notActive" data-toggle="id_out_of_school_two_years" data-title="0">{% trans "No" %}</a>#}
+{#            </div>#}
+        </div>
         <div class="line">
             <label class="text">{% trans "Was this child enrolled in any school last year" %}</label>
             {{ student_form.enrolled_last_year }}
         </div>
-        <div class="line">
-            <label class="text">{% trans "Select a Location" %}</label>
-            {{ student_form.location }}
-        </div>
-        <div class="line">
-            <label class="text">{% trans "Select a School" %}</label>
-            {{  student_form.enrolled_last_year_school }}
+        <div id="enrolled_in_school_location" style="display:none">
+            <div class="line">
+                <label class="text">{% trans "Select a Location" %}</label>
+                {{ student_form.location }}
+            </div>
+            <div class="line">
+                <label class="text">{% trans "Select a School" %}</label>
+                {{  student_form.enrolled_last_year_school }}
+            </div>
         </div>
     </form>
 </div>
@@ -98,7 +132,9 @@
 
 <script type="text/javascript">
         var arabic_fields = "#id_first_name, #id_last_name";
-        var validation_mapping = new Array();
-        validation_mapping[6] = function() { validateSection6() };
+{#        var validation_mapping = new Array();#}
+{#        validation_mapping[6] = function() { validateSection6() };#}
 </script>
+
+
 

@@ -162,7 +162,7 @@ class Registration(TimeStampedModel):
         related_name='+',
     )
     status = models.BooleanField(blank=True, default=True)
-    out_of_school_tow_years = models.BooleanField(blank=True, default=False)
+    out_of_school_two_years = models.BooleanField(blank=True, default=False)
     related_to_family = models.BooleanField(blank=True, default=False)
 
     @property
