@@ -13,7 +13,9 @@ class RegisteringAdultForm(forms.ModelForm):
     Override model form to use custom Yes/No choices
     """
     YESNO_CHOICES = ((0, _('No')), (1, _('Yes')))
-
+    PrincipalHouseHold = forms.TypedChoiceField(
+        choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
+    )
     previously_registered = forms.TypedChoiceField(
         choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
     )
@@ -32,6 +34,16 @@ class RegisteringAdultForm(forms.ModelForm):
                                     required=False)
     secondary_phone = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': '70123456'})),
                                       required=False)
+    first_name = forms.CharField(widget=forms.TextInput(attrs=({ 'placeholder': _('Enter household first name')})),
+                                      required=False)
+    father_name = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _("Enter household father's name")})),
+                                 required=False)
+    last_name = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _('Enter household last name')})),
+                                 required=False)
+    mother_fullname = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _('Enter household mother full name')})),
+                                 required=False)
+    age = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _('Enter household age')})),
+                                 required=False)
     old_registry_id = forms.CharField(widget=forms.TextInput, required=False)
 
     def __init__(self, *args, **kwargs):

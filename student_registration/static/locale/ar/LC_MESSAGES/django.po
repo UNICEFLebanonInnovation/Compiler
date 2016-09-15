@@ -789,3 +789,8 @@ msgstr "تشرين الثاني"
 
 msgid "December"
 msgstr "كانون الأول"
+
+msgid "NOTE: Your household will receive a visit to confirm this child belongs to your household."
+msgstr ""
+
+
