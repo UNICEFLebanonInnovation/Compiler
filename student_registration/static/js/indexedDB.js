@@ -109,6 +109,7 @@ function update_item_store(itemid, name, value, store_name)
 function update_one_by_index(index_name, index_value, name, value, store_name)
 {
     var store = getStoreByName(store_name);
+    var request = store.index(index_name).get(index_value);
 
     request.onsuccess = function(){
         var item = request.result;
