@@ -54,6 +54,7 @@
                     <div class="line">
                         <label class="text">{% trans "Select School" %}</label>
                         {{ form.school }}
+                        <span class="error" id="school_error">{% trans "This field is required" %}</span>
                     </div>
                 </li>
 
@@ -232,7 +233,7 @@
                     </span>
                     <div class="line" id="id_number_block" style="display: none;">
                         <label class="text">{% trans "ID Number" %}<span class="asterisque">*</span></label>
-                        {{ form.id_number }}
+                        {{ form.old_registry_id }}
                     </div>
                     <span class="error" id="confirm_child_belong" style="display: none;">
                         {% trans "You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them" %}
@@ -486,6 +487,7 @@
         var synchro_path = host+'/api/registering-pilot/';
         var arabic_fields = "#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname";
         var validation_mapping = new Array();
+        validation_mapping['0'] = function() { return validateSection0() };
         validation_mapping['5'] = function() { return validateSection5() };
 
 
@@ -618,10 +620,10 @@
 
             var mainForm = $('#mainForm');
             var templateChildForm = $("#add_child_noid_block").find('#add_child_noid_form');
-
             var childFormSchool = templateChildForm.find('#id_school');
             childFormSchool.find('option:selected').removeAttr('selected');
             childFormSchool.find('option[value="'+mainForm.find("#id_school").val()+'"]').attr("selected",true);
+            {#            childFormSchool.val(mainForm.find("#id_school").val());#}
 
             var isSaved = false;
 
@@ -684,6 +686,12 @@
 {#           if($('#with_id_table tr').length==1){#}
 {#               bootbox.alert("{% trans 'You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them.' %}", function() {});#}
 {#           }#}
+
+            var mainForm = $('#mainForm');
+            var templateChildForm = $("#add_child_withid_block").find('#add_child_withid_form');
+            var childFormSchool = templateChildForm.find('#id_school');
+            childFormSchool.find('option:selected').removeAttr('selected');
+            childFormSchool.find('option[value="'+mainForm.find("#id_school").val()+'"]').attr("selected",true);
             bootbox.dialog({
                             title: "{% trans "Add Child" %}",
                             message: $('#add_child_withid_block').html(),
