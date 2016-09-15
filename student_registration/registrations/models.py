@@ -41,7 +41,7 @@ class RegisteringAdult(Person):
         ('notrelay', _('Someone who may not relay the message to me')),
     )
 
-    status = models.BooleanField(blank=True, default=False)
+    status = models.BooleanField(blank=True, default=True)
     previously_registered = models.BooleanField(default=False)
     previously_registered_status = models.BooleanField(default=False)
     relation_to_householdhead = models.CharField(max_length=50, blank=True, null=True, choices=RELATION_TYPE)
@@ -161,6 +161,9 @@ class Registration(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
+    status = models.BooleanField(blank=True, default=True)
+    out_of_school_tow_years = models.BooleanField(blank=True, default=False)
+    related_to_family = models.BooleanField(blank=True, default=False)
 
     @property
     def student_fullname(self):

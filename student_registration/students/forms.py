@@ -12,6 +12,8 @@ from student_registration.schools.models import School
 
 class StudentForm(forms.ModelForm):
 
+    YESNO_CHOICES = ((0, _('No')), (1, _('Yes')))
+
     school = forms.ModelChoiceField(
                      queryset=School.objects.all(), widget=forms.Select,
                      required=False, to_field_name='name'
@@ -30,6 +32,12 @@ class StudentForm(forms.ModelForm):
                      queryset=School.objects.all(), widget=forms.Select,
                      required=False, to_field_name='name'
                 )
+    related_to_family = forms.TypedChoiceField(
+        choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
+    )
+    out_of_school_tow_years = forms.TypedChoiceField(
+        choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
+    )
 
     def __init__(self, *args, **kwargs):
         super(StudentForm, self).__init__(*args, **kwargs)
