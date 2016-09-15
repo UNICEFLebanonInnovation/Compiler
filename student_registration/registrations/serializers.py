@@ -82,5 +82,55 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 class RegisteringAdultSerializer(serializers.ModelSerializer):
 
+    children = StudentSerializer(many=True, read_only=True)
+
+    def create(self, validated_data):
+        print validated_data
+        children = validated_data.pop('children', [])
+        print children
+        for child in children:
+            student_serializer = StudentSerializer(data=child)
+            student_serializer.is_valid(raise_exception=True)
+            student_serializer.instance = student_serializer.save()
+
+        try:
+            instance = RegisteringAdult.objects.create(**validated_data)
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'instance': ex.message})
+
+        return instance
+
     class Meta:
         model = RegisteringAdult
+        fields = (
+            'school',
+            'id_type',
+            'id_number',
+            'first_name',
+            'father_name',
+            'last_name',
+            'mother_fullname',
+            'sex',
+            'age',
+            'nationality',
+            'birthday_day',
+            'birthday_month',
+            'birthday_year',
+            'wfp_case_number',
+            'csc_case_number',
+            'relation_to_householdhead',
+            'child_enrolled_in_other_schools',
+            'previously_registered',
+            'previously_registered_status',
+            'signature',
+            'address',
+            'primary_phone',
+            'primary_phone_answered',
+            'secondary_phone',
+            'secondary_phone_answered',
+            'children'
+        )
+
+# u'age': u'', u'card_issue_requested': False, u'signature': u'', u'previously_registered_status': True}

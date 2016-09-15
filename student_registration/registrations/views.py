@@ -120,17 +120,18 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        queryset = super(RegisteringAdultViewSet, self).get_queryset()
+        queryset = []
         id_number = self.kwargs.get('id_number')
         if id_number:
-            return queryset.filter(id_number=id_number)
+            queryset = self.queryset.filter(id_number=id_number)
         return queryset
 
     def create(self, request, *args, **kwargs):
         """
         :return: JSON
         """
-        serializer = self.get_serializer(data=request.data)
+        data = dict(request.data.iterlists())
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.instance = serializer.save()
 

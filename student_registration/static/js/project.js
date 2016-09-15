@@ -41,7 +41,7 @@ loseCode = function(str){
     return hash;
 };
 
-$('#radioBtn a').on('click', function(){
+$(document).on('click', '#radioBtn a', function(){
     var sel = $(this).data('title');
     var tog = $(this).data('toggle');
     $('#'+tog).prop('value', sel);

@@ -110,7 +110,7 @@ class Person(TimeStampedModel):
 
     def __unicode__(self):
         if not self.first_name:
-            return self.number
+            return 'No name'
 
         return u'{} {} {}'.format(
             self.first_name,
