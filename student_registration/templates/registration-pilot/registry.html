@@ -416,6 +416,11 @@
 
         <div class="controls center">
         {% if LANGUAGE_CODE == 'ar-ar' %}
+
+            <button class="btn btn-primary" type="button" id="cancelButton" style="float:left">
+                {% trans "Cancel" %}
+            </button>
+
             <button class="btn btn-primary disabled" type="button" id="previousButton">
                 <i class="icon-next-sign icon-white"></i> {% trans "previous" %}
             </button>
@@ -423,6 +428,11 @@
                 {% trans "next" %} <i class="icon-prev-sign icon-white"></i>
             </button>
         {% else %}
+
+            <button class="btn btn-primary" type="button" id="cancelButton" style="float:left">
+                {% trans "Cancel" %}
+            </button>
+
             <button class="btn btn-primary disabled" type="button" id="previousButton">
                 <i class="icon-prev-sign icon-white"></i> {% trans "previous" %}
             </button>
@@ -470,7 +480,7 @@
         var synchro_path = host+'/api/registering-pilot/';
         var arabic_fields = "#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname";
         var validation_mapping = new Array();
-        validation_mapping['5'] = function() { validateSection5() };
+        validation_mapping['5'] = function() { return validateSection5() };
 
 
     $(document).ready(function() {
@@ -600,6 +610,15 @@
 {#                 bootbox.alert("{% trans 'You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them.' %}", function() {});#}
 {#            }#}
 
+            var mainForm = $('#mainForm');
+            var templateChildForm = $("#add_child_noid_block").find('#add_child_noid_form');
+
+            var childFormSchool = templateChildForm.find('#id_school');
+            childFormSchool.find('option:selected').removeAttr('selected');
+            childFormSchool.find('option[value="'+mainForm.find("#id_school").val()+'"]').attr("selected",true);
+
+            var isSaved = false;
+
             bootbox.dialog({
                             title: "{% trans "Add Child" %}",
                             message: $('#add_child_noid_block').html(),
@@ -626,6 +645,23 @@
                                         var item  = {};
                                         item = collect_form_values(form, item);
                                         append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations');
+
+
+                                            if(!isSaved)
+                                            {
+                                                templateChildForm.html(form.html());
+
+                                                isSaved = true;
+                                            }
+{#                                           var registrationsStore = getStoreByName('registrations');#}
+{#                                           //var registrationsIndex = registrationsStore.index('children');#}
+{#                                           alert(registrationsStore.count());#}
+{##}
+{#                                            //if(registrationsIndex.count()==1)#}
+{#                                            //{#}
+{#                                            //    alert("Saving");#}
+{#                                            //}#}
+
                                         }
                                         else
                                         {
@@ -635,6 +671,7 @@
                             }
                             }
             });
+
         });
 
        $('#add_child_withid').click(function(){
@@ -678,6 +715,11 @@
             calculateDateOfBirth();
         });
 
+
+        $("#cancelButton").click(function() {
+             location.reload();
+        });
+
         $("#previousButton").click(function() {
             if(!$("#previousButton").hasClass("disabled")) {
                onePerFrameSly.prev();
@@ -718,18 +760,23 @@
 
 
         onePerFrameSly.on('active', function(eventName, itemIndex) {
-            if(onePerFrameSly.rel.activeItem == 8 || onePerFrameSly.rel.activeItem == 0) {
+            if(onePerFrameSly.rel.activeItem == 0) {
                 $("#previousButton").addClass("disabled");
             } else {
                 $("#previousButton").removeClass("disabled");
             }
 
-            if(onePerFrameSly.rel.activeItem == 6 || onePerFrameSly.rel.activeItem == 0) {
-                $("#previousButton").addClass("disabled");
-            } else {
-                $("#previousButton").removeClass("disabled");
-            }
+{#            if(onePerFrameSly.rel.activeItem == 6 || onePerFrameSly.rel.activeItem == 0) {#}
+{#                $("#previousButton").addClass("disabled");#}
+{#            } else {#}
+{#                $("#previousButton").removeClass("disabled");#}
+{#            }#}
 
+            if (onePerFrameSly.rel.activeItem == 6 ) {
+      $("#id_id_type").prop("disabled", "disabled");
+   } else {
+      //$("#id_id_type").prop("disabled", false);
+   }
             if(onePerFrameSly.rel.activeItem == onePerFrameSly.items.length-1) {
                 $("#nextButton").addClass("disabled");
             } else {
