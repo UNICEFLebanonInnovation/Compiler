@@ -36,7 +36,7 @@ from .views import acme_view
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
 api.register(r'registrations', RegistrationViewSet, base_name='registrations')
-api.register(r'registering-pilot', RegisteringAdultViewSet, base_name='registrations_pilot')
+api.register(r'registrations-pilot', RegisteringAdultViewSet, base_name='registrations_pilot')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
 
 api.register(r'students', StudentViewSet, base_name='students')
