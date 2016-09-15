@@ -42,6 +42,21 @@ class IDType(models.Model):
 
 class Person(TimeStampedModel):
 
+    MONTHS = Choices(
+        (1, _('January')),
+        (2, _('February')),
+        (3, _('March')),
+        (4, _('April')),
+        (5, _('May')),
+        (6, _('June')),
+        (7, _('July')),
+        (8, _('August')),
+        (9, _('September')),
+        (10, _('October')),
+        (11, _('November')),
+        (12, _('December')),
+    )
+
     first_name = models.CharField(max_length=64L, blank=True, null=True)
     last_name = models.CharField(max_length=64L, blank=True, null=True)
     father_name = models.CharField(max_length=64L, blank=True, null=True)
@@ -68,7 +83,7 @@ class Person(TimeStampedModel):
         max_length=2,
         blank=True,
         null=True,
-        choices=((str(x), x) for x in range(1, 13))
+        choices=MONTHS
     )
     birthday_day = models.CharField(
         max_length=2,
