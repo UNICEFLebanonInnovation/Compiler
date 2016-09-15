@@ -16,6 +16,7 @@ from django.core.urlresolvers import reverse
 from .models import Registration, RegisteringAdult
 from .serializers import RegistrationSerializer, RegisteringAdultSerializer
 from student_registration.students.models import (
+    Person,
     Student,
     Nationality,
     IDType,
@@ -99,6 +100,7 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'sections': Section.objects.all(),
             'nationalities': Nationality.objects.all(),
             'genders': (u'Male', u'Female'),
+            'months': Person.MONTHS,
             'idtypes': IDType.objects.all(),
             'columns': Attribute.objects.filter(type=Registration.EAV_TYPE),
             'eav_type': Registration.EAV_TYPE
