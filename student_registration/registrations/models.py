@@ -7,6 +7,7 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from django.conf import settings
 from student_registration.students.models import (
+    Person,
     Student,
     Person)
 from student_registration.schools.models import (

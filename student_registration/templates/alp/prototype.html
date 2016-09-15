@@ -6,9 +6,6 @@
 {% get_range 1990 2051 as years %}
 {% get_range 1990 2051 as years1 %}
 
-{% get_range 1 12 as months %}
-{% get_range 1 12 as months1 %}
-
 {% get_range 1 31 as days %}
 {% get_range 1 31 as days1 %}
 
@@ -42,14 +39,12 @@
                     <option value="{{ item }}">{{ item }}</option>
                 {% endfor %}
             </select>
-{#            <input type="hidden" name="exam_year" id="exam_year" class="outreach-field" itemscope="$$itemscope_id$$" />#}
-{#            {{ outreach.exam_year }}#}
         </td>
         <td>
             <select name="exam_month" id="exam_month" class="outreach-field" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
-                {% for item in months %}
-                    <option value="{{ item }}">{{ item }}</option>
+                {% for key, name in months %}
+                    <option value="{{ key }}">{{ name }}</option>
                 {% endfor %}
             </select>
         </td>
@@ -145,8 +140,8 @@
         <td>
             <select name="student_birthday_month" id="student_birthday_month" class="outreach-field" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
-                {% for item in months1 %}
-                    <option value="{{ item }}">{{ item }}</option>
+                {% for key, name in months %}
+                    <option value="{{ key }}">{{ name }}</option>
                 {% endfor %}
             </select>
         </td>
