@@ -16,11 +16,36 @@ function validateSection(frame, sectionIndex)
     }
     return result;
 }
+function validateSection0()
+{
+    var valid = true ;
+
+    if($('#id_school').val() == ""){
+            $('#school_error').show();
+            valid = false ;
+        }else{
+            $('#school_error').hide();
+        }
+    return valid;
+}
 
 function validateSection5()
 {
     var valid = true ;
     var selectedOption = $("#id_id_type").val();
+
+    if($('#id_nationality').val() == ""){
+            $('#nationality_error').show();
+            valid = false ;
+        }else{
+            $('#nationality_error').hide();
+        }
+    if($('#id_id_type').val() == ""){
+            $('#id_type_error').show();
+            valid = false ;
+        }else{
+            $('#id_type_error').hide();
+        }
     if(selectedOption == 1) {
         if($('#id_id_number').val() == ""){
             $('#id_number_UNHCR_Other_error').show();
@@ -44,7 +69,7 @@ function validateSection5()
             $('#first_name_error').hide();
         }
 
-         if($('#id_father_name').val() == ""){
+        if($('#id_father_name').val() == ""){
             $('#father_name_error').show();
             valid = false ;
         }else{
@@ -85,6 +110,7 @@ function validateSection5()
         }else{
             $('#relationship_householdhead_error').hide();
         }
+
 
     }else if (selectedOption == 6) {
          if($('#id_first_name').val() == ""){
@@ -210,52 +236,6 @@ function validate_add_child_noid()
         form.find('#relation_to_household_reprentative_error').hide();
     }
      return valid;
-}
-
-function ValidateTextBoxMaximumSize(validationResult, message, id, size)
-{
-    return ValidateField
-    (
-            validationResult,
-            message,
-            id,
-            function(id)
-            {
-                return $('#'+id).val().length <= size
-            }
-    );
-
-    return validationResult;
-}
-
-function ValidateTextBoxRequired(validationResult, message, id)
-{
-    return ValidateField
-    (
-            validationResult,
-            message,
-            id,
-            function(id)
-            {
-                return $('#'+id).val()!=""
-            }
-    );
-
-    return validationResult;
-}
-
-function ValidateField(validationResult, message, id, isValidFunction)
-{
-    var isFieldValid = isValidFunction(id);
-
-    if(!isFieldValid)
-    {
-        validationResult.ValidationMessage += message+"<br/>";
-    }
-
-    validationResult.IsValid = validationResult.IsValid && isFieldValid;
-
-    return validationResult;
 }
 
 function checkArabicOnly(field)
