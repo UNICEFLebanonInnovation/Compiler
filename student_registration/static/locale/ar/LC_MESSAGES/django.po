@@ -753,3 +753,39 @@ msgstr "لبداية طلب جديد"
 
 msgid "You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them."
 msgstr ""
+
+msgid "January"
+msgstr "كانون الثاني"
+
+msgid "February"
+msgstr "شباط"
+
+msgid "March"
+msgstr "آذار"
+
+msgid "April"
+msgstr "نيسان"
+
+msgid "May"
+msgstr "أيار"
+
+msgid "June"
+msgstr "حزيران"
+
+msgid "July"
+msgstr "تموز"
+
+msgid "August"
+msgstr "آب"
+
+msgid "September"
+msgstr "أيلول"
+
+msgid "October"
+msgstr "تشرين الأول"
+
+msgid "November"
+msgstr "تشرين الثاني"
+
+msgid "December"
+msgstr "كانون الأول"

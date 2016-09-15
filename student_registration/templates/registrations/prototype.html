@@ -2,7 +2,6 @@
 {% load util_tags %}
 
 {% get_range 1990 2051 as years1 %}
-{% get_range 1 12 as months1 %}
 {% get_range 1 31 as days1 %}
 
 <table style="display:none;" id="registration_prototype">
@@ -88,8 +87,8 @@
         <td>
             <select name="student_birthday_month" id="student_birthday_month" class="registration-field" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
-                {% for item in months1 %}
-                    <option value="{{ item }}">{{ item }}</option>
+                {% for key, name in months %}
+                    <option value="{{ key }}">{{ name }}</option>
                 {% endfor %}
             </select>
         </td>

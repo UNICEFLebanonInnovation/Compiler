@@ -17,6 +17,7 @@ from .models import Outreach
 from .serializers import OutreachSerializer
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
+    Person,
     Student,
     Language,
     Nationality,
@@ -96,6 +97,7 @@ class OutreachView(LoginRequiredMixin, ListView):
             'nationalities': Nationality.objects.all(),
             'partners': PartnerOrganization.objects.all(),
             'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km'),
+            'months': Person.MONTHS,
             'genders': (u'Male', u'Female'),
             'idtypes': IDType.objects.all(),
             'columns': Attribute.objects.filter(type=Outreach.EAV_TYPE),
