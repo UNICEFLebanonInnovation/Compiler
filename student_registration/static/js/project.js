@@ -176,7 +176,11 @@ function pull_data_from_server(url, store_name)
         dataType: 'json',
         success: function (response) {
             var store = getStoreByName(store_name);
-            $(response.data).each(function(i, item){
+            var data = response;
+            if(response.data) {
+                data = response.data;
+            }
+            $(data).each(function(i, item){
                 store.put(item);
             });
         },
