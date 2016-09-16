@@ -21,6 +21,8 @@ function createDataStore(database_name, version,  store_name, create_default_ite
         }
         if(flag){
             db.createObjectStore(store_name, {keyPath: "id", autoIncrement:true});
+            var store1 = db.createObjectStore("schools", {keyPath: "id", autoIncrement:true});
+            store1.createIndex('location', 'location', { unique: false, multiEntry: true });
         }
     };
 
