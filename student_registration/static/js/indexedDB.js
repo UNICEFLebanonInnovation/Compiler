@@ -137,13 +137,15 @@ function update_items_by_index(index_name, index_value, name, value, store_name)
     };
 }
 
-function delete_from_store(itemid, store_name)
+function delete_from_store(itemid, store_name, force_delete)
 {
     var store = getStoreByName(store_name);
     var request = store.get(parseInt(itemid));
     request.onsuccess = function(){
         result = request.result;
-        if(result.synchronized == true){
+        if(force_delete == true){
+            store.delete(parseInt(itemid));
+        }else if(result.synchronized == true){
             update_item_store(parseInt(itemid), 'deleted', true, store_name);
         }else{
             store.delete(parseInt(itemid));
