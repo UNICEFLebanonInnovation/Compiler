@@ -17,7 +17,7 @@ CACHE MANIFEST
 /static/locale/ar-ar.json
 /static/locale/en-us.json
 /static/css/project.css
-/static/js/project-ar.css
+/static/css/project-ar.css
 /static/css/bootstrap.css
 /static/css/jquery.dataTables.min.css
 /static/css/buttons.dataTables.min.css

@@ -26,11 +26,11 @@ class StudentForm(forms.ModelForm):
                 )
     location = forms.ModelChoiceField(
                      queryset=Location.objects.all(), widget=forms.Select,
-                     required=False, to_field_name='name'
+                     required=False, to_field_name='id'
                 )
     enrolled_last_year_school = forms.ModelChoiceField(
                      queryset=School.objects.all(), widget=forms.Select,
-                     required=False, to_field_name='name'
+                     required=False, to_field_name='id'
                 )
     related_to_family = forms.TypedChoiceField(
         choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
