@@ -409,7 +409,7 @@
             </ul>
         </div>
 
-        <ul class="pages"   >
+        <ul class="pages"  id="slySlider"  >
             <li class="active">1</li>
             <li>2</li>
             <li>3</li>
@@ -635,9 +635,8 @@
             var mainForm = $('#mainForm');
             var templateChildForm = $("#add_child_noid_block").find('#add_child_noid_form');
             var childFormSchool = templateChildForm.find('#id_school');
-            childFormSchool.find('option:selected').removeAttr('selected');
-            childFormSchool.find('option[value="'+mainForm.find("#id_school").val()+'"]').attr("selected",true);
-            {#            childFormSchool.val(mainForm.find("#id_school").val());#}
+            updateDropDownValue(childFormSchool,mainForm.find("#id_school").val())
+
 
             var isSaved = false;
 
@@ -671,6 +670,24 @@
 
                                             if(!isSaved)
                                             {
+                                                form.find("input").each
+                                                (
+                                                        function()
+                                                        {
+                                                            $(this).attr("value", $(this).val());
+                                                        }
+                                                );
+
+                                                form.find("select").each
+                                                (
+                                                        function()
+                                                        {
+                                                            updateDropDownValue($(this),$(this).val());
+                                                        }
+                                                );
+
+                                                alert(form.html());
+
                                                 templateChildForm.html(form.html());
 
                                                 isSaved = true;
@@ -694,7 +711,25 @@
                             }
             });
 
+
+            var form = $('.bootbox-body').find('#add_child_noid_form');
+            form.find("#id_enrolled_last_year").change(function () {
+                  var selectedOption = $(this).val();
+
+                  if(selectedOption == 1) {
+                      form.find("#enrolled_in_school_location").hide();
+                  }else {
+                      form.find("#enrolled_in_school_location").show();
+                  }
+              });
+
         });
+
+        function updateDropDownValue(dropDownElement, value)
+        {
+            dropDownElement.find('option:selected').removeAttr('selected');
+            dropDownElement.find('option[value="'+value+'"]').attr("selected",true);
+        }
 
        $('#add_child_withid').click(function(){
 {#           if($('#with_id_table tr').length==1){#}
@@ -740,7 +775,17 @@
         });
 
         $("#id_birthday_day, #id_birthday_month, #id_birthday_year").change(function () {
-            calculateDateOfBirth();
+
+                calculateDateOfBirth();
+        });
+
+        $("#id_age").blur(function () {
+
+            var age = $('#id_age').val();
+
+            if(age < 18) {
+               bootbox.alert("{% trans 'Currently ATM Cards can only be issued for those over the age of 18. We are working on a solution for this. You can continue the Registration Process so we have your information in case a solution is found. However, until then you will not receive payments.' %}", function() {});
+            }
         });
 
 
@@ -817,6 +862,10 @@
             }
         });
 
+        $("#slySlider").find("li").click(function() {
+            return false;
+        });
+
     });
 
     function displayFeedback()
@@ -841,14 +890,9 @@
 
     function calculateDateOfBirth()
     {
-        var birthday_day = $('#id_birthday_day').val();
-        var birthday_month = $('#id_birthday_month').val()-1;
-        var birthday_year = $('#id_birthday_year').val();
+        var age = getCalculatedAge();
 
-        var birthDate = new Date(birthday_year, birthday_month, birthday_day);
-
-        if(birthday_day != "" && birthday_month != "" && birthday_year != "" ) {
-            var age = calculateAge(birthDate,new Date());
+        if(age!=null) {
 
             $('#id_age').val(age);
 
@@ -858,6 +902,23 @@
         } else {
             $('#id_age').val("");
         }
+    }
+
+    function getCalculatedAge()
+    {
+        var age = null;
+
+        var birthday_day = $('#id_birthday_day').val();
+        var birthday_month = $('#id_birthday_month').val()-1;
+        var birthday_year = $('#id_birthday_year').val();
+
+        var birthDate = new Date(birthday_year, birthday_month, birthday_day);
+
+        if(birthday_day != "" && birthday_month != "" && birthday_year != "" ) {
+            age = calculateAge(birthDate,new Date());
+        }
+
+        return age;
     }
 
     function calculateAge(dateOfBirth, dateToCalculate) {
