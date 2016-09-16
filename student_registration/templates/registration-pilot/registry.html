@@ -28,9 +28,11 @@
     {% trans 'to start a new application' %}.
 </div>
 
+{#<button type="button" id="registration-synchro">synch</button>#}
+
 <form method="post" action="" class="inlineForm" id="mainForm" style="display: block;">
     <input type="hidden" name="id_registration" id="main_id" />
-    {% csrf_token %}
+{#    {% csrf_token %}#}
     {% if form.errors %}
         {% for field in form %}
             {% for error in field.errors %}
@@ -107,7 +109,7 @@
 
                     <div id="HouseholdUNHCR" style="display:none">
                         <div class="line">
-                            <label class="text">{% trans "Is the principal applicant still with your household?" %}<span class="asterisque">*</span></label>
+                            <label class="text">{% trans "Is the principal applicant still with your household?" %}<span class="asterisque"></span></label>
                             {% for choice in form.PrincipalHouseHold %}
                             <span class="hidden-field">{{ choice }}</span>
                         {% endfor %}
@@ -489,8 +491,9 @@
             protocol = 'https://';
         {% endif %}
         var host = protocol+'{{ request.get_host }}';
-        var checking_id_number_url = host+'/api/registering-adult/';
-        var synchro_path = host+'/api/registrations-pilot/';
+        var checking_id_number_url = host+'/api/registrations-adult/';
+        var synchro_path = host+'/api/registrations-adult/';
+        var synchro_path_2 = host+'/api/registrations-child/';
         var arabic_fields = "#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname";
         var validation_mapping = new Array();
         validation_mapping['0'] = function() { return validateSection0() };
@@ -509,6 +512,12 @@
         });
         bootbox.setLocale(language);
 
+        setInterval(function(){
+            if(navigator.onLine) {
+                synchronize_data(false);
+            }
+        }, 3600000);
+
         $(document).on('blur', '#mainForm input, #mainForm select', function(){
             update_item_store(parseInt($('#main_id').val()), $(this).attr('name'), $(this).val(), 'registrations');
         });
@@ -517,17 +526,21 @@
             checkArabicOnly($(this));
         });
 
-        $(document).on('change', '.bootbox-body #id_location', function(){
+        $(document).on('change', '.bootbox-body #id_enrolled_last_year_location', function(){
             filterSchoolsByLocation(parseInt($(this).val()));
         });
 
         $('#registration_save').click(function(e){
             bootbox.confirm("{% trans 'Are you sure you want to submit this application?' %}", function(result) {
                 if(result == true) {
-                    var callback = function(){ displayFeedback(); };
-                    synchronize_offline_data('registrations', synchro_path, callback);
+                    update_item_store(parseInt($('#main_id').val()), 'completed', true, 'registrations');
+                    displayFeedback();
                 }
             });
+        });
+
+        $(document).on('click', '#registration-synchro', function(){
+            synchronize_data('registrations', synchro_path);
         });
 
         $("#id_id_type").change(function () {
@@ -633,14 +646,13 @@
         });
 
         $('#add_child_noid').click(function(){
-{#            if($('#no_id_table tr').length==1){#}
-{#                 bootbox.alert("{% trans 'You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them.' %}", function() {});#}
-{#            }#}
 
             var templateChildForm = $("#add_child_noid_block").find('#add_child_noid_form');
+
             var isSaved = false;
+
             bootbox.dialog({
-                            title: "{% trans "Add Child" %}",
+                            title: "{% trans "Add Child" %}"+" - "+"{% trans "Other or no ID" %}",
                             message: $('#add_child_noid_block').html(),
                             buttons: {
                                 success: {
@@ -661,17 +673,13 @@
                                             tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
                                             tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
                                             $('#no_id_table').find('tbody').append(tr);
+
                                             var item  = {};
                                             item = collect_form_values(form, item);
                                             append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations');
+
                                             if(!isSaved)
                                             {
-{#                                                form.find("input").each(function() {#}
-{#                                                    $(this).attr("value", $(this).val());#}
-{#                                                });#}
-{#                                                form.find("select").each(function() {#}
-{#                                                    updateDropDownValue($(this),$(this).val());#}
-{#                                                });#}
                                                 form.find("#id_father_name").each(function() {
                                                     $(this).attr("value", $(this).val());
                                                 });
@@ -687,6 +695,13 @@
                                         } else {
                                             return false;
                                         }
+                                    }
+                                },
+                                cancel: {
+                                    label: "{% trans "Cancel" %}",
+                                    className: "btn-default",
+                                    callback: function () {
+                                        bootbox.hideAll();
                                     }
                                 }
                             }
@@ -721,6 +736,13 @@
                                         } else {
                                             return false;
                                         }
+                                    }
+                                },
+                                cancel: {
+                                    label: "{% trans "Cancel" %}",
+                                    className: "btn-default",
+                                    callback: function () {
+                                        bootbox.hideAll();
                                     }
                                 }
                             }
@@ -914,6 +936,73 @@
         }
 
         return age;
+    }
+
+    function synchronize_data(store_name, url, callback)
+    {
+        var store = getStoreByName(store_name);
+        var request = store.getAll();
+        request.onsuccess = function() {
+            var result = request.result;
+            $(result).each(function(i, item){
+                if(item.synchronized == false && item.completed == true) {
+                    push_adult_data(item, url, store_name);
+                }
+                if(item.synchronized == true || (item.synchronized == false && item.completed == false)){
+                    delete_from_store(parseInt(item.id), store_name, true);
+                }
+            });
+            if(callback){
+                callback();
+            }
+        };
+    }
+
+    function push_adult_data(item, url, store_name)
+    {
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: item,
+            cache: false,
+            async: false,
+            headers: getHeader(),
+            dataType: 'json',
+            success: function (response) {
+                console.log(response);
+                if(response.status == '201' || response.status == 201){
+                    update_item_store(parseInt(item.id), 'synchronized', true, store_name);
+                    $(item.children).each(function(i, child){
+                        child.adult = response.data.id;
+                        push_child_data(child);
+                    });
+                }
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function push_child_data(item)
+    {
+        $.ajax({
+            type: "POST",
+            url: synchro_path_2,
+            data: item,
+            cache: false,
+            async: false,
+            headers: getHeader(),
+            dataType: 'json',
+            success: function (response) {
+                if(response.status == '201' || response.status == 201){
+
+                }
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
     }
 
     </script>

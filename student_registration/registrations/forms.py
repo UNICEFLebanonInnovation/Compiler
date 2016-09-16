@@ -6,6 +6,7 @@ from student_registration.registrations.models import (
     RegisteringAdult,
     Registration,
 )
+from student_registration.schools.models import School
 
 
 class RegisteringAdultForm(forms.ModelForm):
@@ -13,6 +14,11 @@ class RegisteringAdultForm(forms.ModelForm):
     Override model form to use custom Yes/No choices
     """
     YESNO_CHOICES = ((0, _('No')), (1, _('Yes')))
+
+    school = forms.ModelChoiceField(
+                     queryset=School.objects.all(), widget=forms.Select,
+                     required=False, to_field_name='id'
+                )
     PrincipalHouseHold = forms.TypedChoiceField(
         choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
     )
@@ -25,7 +31,8 @@ class RegisteringAdultForm(forms.ModelForm):
     child_enrolled_in_other_schools = forms.TypedChoiceField(
         choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
     )
-    address = forms.CharField(widget=forms.Textarea(attrs=({'rows': 2, 'cols': 30})), required=False)
+    address = forms.CharField(widget=forms.Textarea(attrs=({'rows': 2, 'cols': 30})),
+                              required=False)
     wfp_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 10, 'placeholder': '12346788'})),
                                       required=False)
     csc_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 10, 'placeholder': '12346788'})),
@@ -44,10 +51,13 @@ class RegisteringAdultForm(forms.ModelForm):
                                  required=False)
     age = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _('Enter household age')})),
                                  required=False)
-    old_registry_id = forms.CharField(widget=forms.TextInput, required=False)
+    old_registry_id = forms.CharField(widget=forms.TextInput,
+                                      required=False)
 
     def __init__(self, *args, **kwargs):
+        location = args[0]['location']
         super(RegisteringAdultForm, self).__init__(*args, **kwargs)
+        self.fields['school'].queryset = School.objects.filter(location_id=location)
 
     class Meta:
         model = RegisteringAdult

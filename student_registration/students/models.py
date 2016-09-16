@@ -77,18 +77,21 @@ class Person(TimeStampedModel):
         max_length=4,
         blank=True,
         null=True,
+        default=0,
         choices=((str(x), x) for x in range(1930, 2051))
     )
     birthday_month = models.CharField(
         max_length=2,
         blank=True,
         null=True,
+        default=0,
         choices=MONTHS
     )
     birthday_day = models.CharField(
         max_length=2,
         blank=True,
         null=True,
+        default=0,
         choices=((str(x), x) for x in range(1, 33))
     )
     age = models.CharField(max_length=4L, blank=True, null=True)
@@ -146,6 +149,5 @@ class Student(Person):
         return attendances
 
     # def save(self):
-    #     print self.sender
     #     self.number = generate_id(self.first_name, self.father_name, self.last_name, self.mother_fullname, self.sex)
-    #     super(Student, self).save()
+    #     super(Student, self).save(force_insert=True)
