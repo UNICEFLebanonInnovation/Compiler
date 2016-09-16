@@ -409,7 +409,7 @@
             </ul>
         </div>
 
-        <ul class="pages"  id="slySlider"  >
+        <ul class="pages" id="slySlider">
             <li class="active">1</li>
             <li>2</li>
             <li>3</li>
@@ -500,7 +500,8 @@
     $(document).ready(function() {
         onePerFrameSly = initializeSly($('#oneperframe'));
         initializeSignature();
-        createDataStore('db_pilot', 1, 'registrations', true, false);
+        var callback = function(){ load_base_data(); };
+        createDataStore('db_pilot_1', 1, 'registrations', true, callback);
         bootbox.addLocale(language, {
             OK : '{% trans "Ok" %}',
             CANCEL : '{% trans "Cancel" %}',
@@ -514,6 +515,10 @@
 
         $(document).on('blur', arabic_fields, function(){
             checkArabicOnly($(this));
+        });
+
+        $(document).on('change', '.bootbox-body #id_location', function(){
+            filterSchoolsByLocation(parseInt($(this).val()));
         });
 
         $('#registration_save').click(function(e){
@@ -632,10 +637,10 @@
 {#                 bootbox.alert("{% trans 'You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them.' %}", function() {});#}
 {#            }#}
 
-            var mainForm = $('#mainForm');
+{#            var mainForm = $('#mainForm');#}
             var templateChildForm = $("#add_child_noid_block").find('#add_child_noid_form');
-            var childFormSchool = templateChildForm.find('#id_school');
-            updateDropDownValue(childFormSchool,mainForm.find("#id_school").val())
+{#            var childFormSchool = templateChildForm.find('#id_school');#}
+{#            updateDropDownValue(childFormSchool,mainForm.find("#id_school").val())#}
 
 
             var isSaved = false;
@@ -663,84 +668,40 @@
                                             tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
                                             $('#no_id_table').find('tbody').append(tr);
 
-                                        var item  = {};
-                                        item = collect_form_values(form, item);
-                                        append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations');
+                                            var item  = {};
+                                            item = collect_form_values(form, item);
+                                            append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations');
 
 
                                             if(!isSaved)
                                             {
-                                                form.find("input").each
-                                                (
-                                                        function()
-                                                        {
-                                                            $(this).attr("value", $(this).val());
-                                                        }
-                                                );
+                                                form.find("input").each(function() {
+                                                    $(this).attr("value", $(this).val());
+                                                });
 
-                                                form.find("select").each
-                                                (
-                                                        function()
-                                                        {
-                                                            updateDropDownValue($(this),$(this).val());
-                                                        }
-                                                );
-
-                                                alert(form.html());
+                                                form.find("select").each(function() {
+                                                    updateDropDownValue($(this),$(this).val());
+                                                });
 
                                                 templateChildForm.html(form.html());
 
                                                 isSaved = true;
                                             }
-{#                                           var registrationsStore = getStoreByName('registrations');#}
-{#                                           //var registrationsIndex = registrationsStore.index('children');#}
-{#                                           alert(registrationsStore.count());#}
-{##}
-{#                                            //if(registrationsIndex.count()==1)#}
-{#                                            //{#}
-{#                                            //    alert("Saving");#}
-{#                                            //}#}
 
+                                        } else {
+                                            return false;
                                         }
-                                        else
-                                        {
-                                        return false;
-                                        }
+                                    }
                                 }
-                            }
                             }
             });
 
-
-            var form = $('.bootbox-body').find('#add_child_noid_form');
-            form.find("#id_enrolled_last_year").change(function () {
-                  var selectedOption = $(this).val();
-
-                  if(selectedOption == 1) {
-                      form.find("#enrolled_in_school_location").hide();
-                  }else {
-                      form.find("#enrolled_in_school_location").show();
-                  }
-              });
+            $(".bootbox-body").find('#id_school').val($('#mainForm').find("#id_school").val());
 
         });
 
-        function updateDropDownValue(dropDownElement, value)
-        {
-            dropDownElement.find('option:selected').removeAttr('selected');
-            dropDownElement.find('option[value="'+value+'"]').attr("selected",true);
-        }
-
        $('#add_child_withid').click(function(){
-{#           if($('#with_id_table tr').length==1){#}
-{#               bootbox.alert("{% trans 'You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them.' %}", function() {});#}
-{#           }#}
 
-            var mainForm = $('#mainForm');
-            var templateChildForm = $("#add_child_withid_block").find('#add_child_withid_form');
-            var childFormSchool = templateChildForm.find('#id_school');
-            childFormSchool.find('option:selected').removeAttr('selected');
-            childFormSchool.find('option[value="'+mainForm.find("#id_school").val()+'"]').attr("selected",true);
             bootbox.dialog({
                             title: "{% trans "Add Child" %}",
                             message: $('#add_child_withid_block').html(),
@@ -750,44 +711,48 @@
                                     className: "btn-success",
                                     callback: function () {
                                         var reslt = validate_add_child_withid();
-                                        if (reslt)
-                                        {
-                                        var tr = $('<tr>');
-                                        var form = $('.bootbox-body').find('#add_child_withid_form');
-                                        tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
-                                        tr.append($('<td>').html(form.find('#id_id_number').val()));
-                                        tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
-                                        tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
-                                        $('#with_id_table').find('tbody').append(tr);
+                                        if (reslt) {
+                                            var tr = $('<tr>');
+                                            var form = $('.bootbox-body').find('#add_child_withid_form');
+                                            tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
+                                            tr.append($('<td>').html(form.find('#id_id_number').val()));
+                                            tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
+                                            tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
+                                            $('#with_id_table').find('tbody').append(tr);
 
-                                        var item  = {};
-                                        item = collect_form_values(form, item);
-                                        append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations');
-                                        }
-                                        else
-                                        {
-                                        return false;
+                                            var item  = {};
+                                            item = collect_form_values(form, item);
+                                            append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations');
+                                        } else {
+                                            return false;
                                         }
                                     }
                                 }
                             }
-                        });
+            });
+
+            $(".bootbox-body").find('#id_school').val($('#mainForm').find("#id_school").val());
+        });
+
+        $(document).on('change', '.bootbox-body #id_enrolled_last_year', function(){
+
+            if($(this).val() == "no") {
+                $('.bootbox-body').find("#enrolled_in_school_location").hide();
+            }else {
+                $('.bootbox-body').find("#enrolled_in_school_location").show();
+            }
         });
 
         $("#id_birthday_day, #id_birthday_month, #id_birthday_year").change(function () {
-
-                calculateDateOfBirth();
+            calculateDateOfBirth();
         });
 
         $("#id_age").blur(function () {
 
-            var age = $('#id_age').val();
-
-            if(age < 18) {
+            if($('#id_age').val() < 18) {
                bootbox.alert("{% trans 'Currently ATM Cards can only be issued for those over the age of 18. We are working on a solution for this. You can continue the Registration Process so we have your information in case a solution is found. However, until then you will not receive payments.' %}", function() {});
             }
         });
-
 
         $("#cancelButton").click(function() {
             bootbox.confirm("{% trans 'Are you sure you want to cancel this registration?' %}", function(result) {
@@ -817,25 +782,20 @@
                     var check2 = $('.previously_registered_status_block').find('a.active').attr('data-title');
 
                         if(check1 == 0 || (check1 == 1 && check2 == 0)) {
-                        bootbox.confirm("{% trans 'Are all the children enrolled in the 2nd shift schools have been registered?' %}", function(result) {
-                            if(result == true) {
-                               onePerFrameSly.next();
-                            }
-                        });
-                        }
-                        else
-                            {
-                                onePerFrameSly.next();
-                            }
-                    }
-                    else
-                        {
+                            bootbox.confirm("{% trans 'Are all the children enrolled in the 2nd shift schools have been registered?' %}", function(result) {
+                                if(result == true) {
+                                   onePerFrameSly.next();
+                                }
+                            });
+                        }else {
                             onePerFrameSly.next();
                         }
+                    }else {
+                        onePerFrameSly.next();
+                    }
                 }
             }
         });
-
 
         onePerFrameSly.on('active', function(eventName, itemIndex) {
             if(onePerFrameSly.rel.activeItem == 0) {
@@ -850,11 +810,11 @@
 {#                $("#previousButton").removeClass("disabled");#}
 {#            }#}
 
-            if (onePerFrameSly.rel.activeItem == 6 ) {
-      $("#id_id_type").prop("disabled", "disabled");
-   } else {
-      //$("#id_id_type").prop("disabled", false);
-   }
+            if (onePerFrameSly.rel.activeItem == 6) {
+                $("#id_id_type").prop("disabled", "disabled");
+            } else {
+                //$("#id_id_type").prop("disabled", false);
+            }
             if(onePerFrameSly.rel.activeItem == onePerFrameSly.items.length-1) {
                 $("#nextButton").addClass("disabled");
             } else {
@@ -865,13 +825,39 @@
         $("#slySlider").find("li").click(function() {
             return false;
         });
-
     });
+
+
+    function updateDropDownValue(dropDownElement, value)
+    {
+        dropDownElement.find('option:selected').removeAttr('selected');
+        dropDownElement.find('option[value="'+value+'"]').attr("selected",true);
+    }
 
     function displayFeedback()
     {
         $('#mainForm').remove();
         $('#alert-synchro-success').show();
+    }
+
+    function load_base_data()
+    {
+        pull_data_from_server(host+'/api/schools/', 'schools');
+    }
+
+    function filterSchoolsByLocation(location)
+    {
+        $('.bootbox-body').find('#id_enrolled_last_year_school').find('option').hide();
+        var store = getStoreByName('schools');
+        var request = store.index('location').getAll();
+        request.onsuccess = function() {
+            var result = request.result;
+            if(result){
+                $(result).each(function(i, item){
+                    $('.bootbox-body').find('#id_enrolled_last_year_school').find('option[value='+item.id+']').show();
+                });
+            }
+        }
     }
 
     function hideAll()
