@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from .models import Registration, RegisteringAdult
 from student_registration.students.serializers import StudentSerializer
+from student_registration.students.utils import *
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -42,7 +43,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             instance.save()
 
         except Exception as ex:
-            raise serializers.ValidationError({'instance': ex.message})
+            raise serializers.ValidationError({'Registration instance': ex.message})
 
         return instance
 
@@ -80,31 +81,55 @@ class RegistrationSerializer(serializers.ModelSerializer):
         )
 
 
-class RegisteringAdultSerializer(serializers.ModelSerializer):
-
-    children = StudentSerializer(many=True, read_only=True)
+class RegistrationPilotSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
-        print validated_data
-        children = validated_data.pop('children', [])
-        print children
-        for child in children:
-            student_serializer = StudentSerializer(data=child)
-            student_serializer.is_valid(raise_exception=True)
-            student_serializer.instance = student_serializer.save()
 
         try:
-            instance = RegisteringAdult.objects.create(**validated_data)
+            instance = Registration.objects.create(**validated_data)
+            if not instance.related_to_family:
+                instance.status = False
             instance.save()
 
         except Exception as ex:
-            raise serializers.ValidationError({'instance': ex.message})
+            raise serializers.ValidationError({'RegistrationPilot instance': ex.message})
+
+        return instance
+
+    class Meta:
+        model = Registration
+        fields = (
+            'school',
+            'enrolled_last_year_school',
+            'relation_to_adult',
+            'related_to_family',
+            'enrolled_last_year_location',
+            'enrolled_last_year',
+        )
+
+
+class RegisteringAdultSerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField(read_only=True)
+
+    def create(self, validated_data):
+
+        try:
+            instance = RegisteringAdult.objects.create(**validated_data)
+            instance.number = generate_id(instance.first_name, instance.father_name, instance.last_name, instance.mother_fullname, instance.sex)
+            if instance.age < 18 or instance.id_type == 6:
+                instance.status = False
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'RegisteringAdult instance': ex.message})
 
         return instance
 
     class Meta:
         model = RegisteringAdult
         fields = (
+            'id',
             'school',
             'id_type',
             'id_number',
@@ -130,7 +155,4 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'primary_phone_answered',
             'secondary_phone',
             'secondary_phone_answered',
-            'children'
         )
-
-# u'age': u'', u'card_issue_requested': False, u'signature': u'', u'previously_registered_status': True}

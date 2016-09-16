@@ -16,6 +16,7 @@ from student_registration.schools.models import (
     Section,
     Grade,
 )
+from student_registration.locations.models import Location
 from student_registration.eav.registry import Registry as eav
 
 
@@ -129,6 +130,17 @@ class Registration(TimeStampedModel):
         blank=True,
         null=True,
         choices=ENROLLMENT_TYPE
+    )
+
+    enrolled_last_year_school = models.ForeignKey(
+        School,
+        blank=True, null=True,
+        related_name='+',
+    )
+    enrolled_last_year_location = models.ForeignKey(
+        Location,
+        blank=True, null=True,
+        related_name='+',
     )
 
     school = models.ForeignKey(

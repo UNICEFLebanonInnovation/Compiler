@@ -14,17 +14,17 @@ class StudentForm(forms.ModelForm):
 
     YESNO_CHOICES = ((0, _('No')), (1, _('Yes')))
 
-    school = forms.ModelChoiceField(
-                     queryset=School.objects.all(), widget=forms.Select,
-                     required=False, to_field_name='name'
-                )
+    # school = forms.ModelChoiceField(
+    #                  queryset=School.objects.all(), widget=forms.Select,
+    #                  required=False, to_field_name='id'
+    #             )
     relation_to_adult = forms.ChoiceField(
                      choices=Registration.RELATION_TYPE, widget=forms.Select, required=False
                 )
     enrolled_last_year = forms.ChoiceField(
                      choices=Registration.ENROLLMENT_TYPE, widget=forms.Select, required=False
                 )
-    location = forms.ModelChoiceField(
+    enrolled_last_year_location = forms.ModelChoiceField(
                      queryset=Location.objects.all(), widget=forms.Select,
                      required=False, to_field_name='id'
                 )

@@ -14,7 +14,7 @@ from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from django.core.urlresolvers import reverse
 from .models import Registration, RegisteringAdult
-from .serializers import RegistrationSerializer, RegisteringAdultSerializer
+from .serializers import RegistrationSerializer, RegisteringAdultSerializer, RegistrationPilotSerializer
 from student_registration.students.models import (
     Person,
     Student,
@@ -130,24 +130,54 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
         """
         :return: JSON
         """
-        data = dict(request.data.iterlists())
-        serializer = self.get_serializer(data=data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.instance = serializer.save()
 
         return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
 
 
+class RegisteringChildViewSet(mixins.RetrieveModelMixin,
+                              mixins.ListModelMixin,
+                              mixins.CreateModelMixin,
+                              mixins.UpdateModelMixin,
+                              viewsets.GenericViewSet):
+
+    model = Student
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def create(self, request, *args, **kwargs):
+        """
+        :return: JSON
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.instance = serializer.save()
+
+        registration = RegistrationPilotSerializer(data=request.data)
+        registration.is_valid(raise_exception=True)
+        registration.instance = registration.save()
+
+        registration.instance.student = serializer.instance
+        registration.instance.registering_adult = RegisteringAdult.objects.get(pk=request.data['adult'])
+        registration.instance.save()
+
+        return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
+
+
 class RegisteringPilotView(LoginRequiredMixin, FormView):
     template_name = 'registration-pilot/registry.html'
-    form_class = RegisteringAdultForm
+    # form_class = RegisteringAdultForm
     model = RegisteringAdult
 
     def get_context_data(self, **kwargs):
-        context = super(RegisteringPilotView, self).get_context_data(**kwargs)
+        # context = super(RegisteringPilotView, self).get_context_data(**kwargs)
 
         return {
-            'form': context['form'],
+            # 'form': context['form'],
+            'form': RegisteringAdultForm({'location': self.request.user.location_id}),
             'student_form': StudentForm
         }
 

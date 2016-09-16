@@ -315,6 +315,8 @@ function initializeSignature()
             $('#alert-signature-error').show();
         } else {
             $('#id_signature').val(signaturePad.toDataURL());
+            $('#id_signature').trigger('blur');
+            update_item_store(parseInt($('#main_id').val()), 'signature', signaturePad.toDataURL(), 'registrations');
             $('.m-signature-pad--footer').find('.btn-success').hide();
         }
     });
