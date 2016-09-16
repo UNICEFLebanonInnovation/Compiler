@@ -127,11 +127,11 @@
                     </div>
 
                     <div class="line" id="HouseholdOtherID_Note" style="display: none;">
-                        <p>{% trans "NOTE: in order to register with other ID, the ID Holder must be present AND must be 18 years of age or older." %}</p>
+                         <span class="error">{% trans "NOTE: in order to register with other ID, the ID Holder must be present AND must be 18 years of age or older." %}</span>
                     </div>
 
                     <div class="line" id="HouseholdUNHCRNote" style="display:none">
-                        <p id="IndividualRegistrationNote" style="display:none">{% trans "NOTE: If the Household Representative is not listed on the UNHCR Certificate, it cannot be used to regiter for the Pilot. Another form of ID must be used." %}</p>
+                        <span id="IndividualRegistrationNote" class="error" style="display:none">{% trans "NOTE: If the Household Representative is not listed on the UNHCR Certificate, it cannot be used to regiter for the Pilot. Another form of ID must be used." %}</span>
                     </div>
 
                     <div id="HouseholdOtherNoID" style="display:none">
@@ -637,14 +637,8 @@
 {#                 bootbox.alert("{% trans 'You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them.' %}", function() {});#}
 {#            }#}
 
-{#            var mainForm = $('#mainForm');#}
             var templateChildForm = $("#add_child_noid_block").find('#add_child_noid_form');
-{#            var childFormSchool = templateChildForm.find('#id_school');#}
-{#            updateDropDownValue(childFormSchool,mainForm.find("#id_school").val())#}
-
-
             var isSaved = false;
-
             bootbox.dialog({
                             title: "{% trans "Add Child" %}",
                             message: $('#add_child_noid_block').html(),
@@ -667,27 +661,29 @@
                                             tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
                                             tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
                                             $('#no_id_table').find('tbody').append(tr);
-
                                             var item  = {};
                                             item = collect_form_values(form, item);
                                             append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations');
-
-
                                             if(!isSaved)
                                             {
-                                                form.find("input").each(function() {
+{#                                                form.find("input").each(function() {#}
+{#                                                    $(this).attr("value", $(this).val());#}
+{#                                                });#}
+{#                                                form.find("select").each(function() {#}
+{#                                                    updateDropDownValue($(this),$(this).val());#}
+{#                                                });#}
+                                                form.find("#id_father_name").each(function() {
                                                     $(this).attr("value", $(this).val());
                                                 });
-
-                                                form.find("select").each(function() {
-                                                    updateDropDownValue($(this),$(this).val());
+                                                form.find("#id_last_name").each(function() {
+                                                    $(this).attr("value", $(this).val());
                                                 });
-
+                                                form.find("#id_mother_fullname").each(function() {
+                                                    $(this).attr("value", $(this).val());
+                                                });
                                                 templateChildForm.html(form.html());
-
                                                 isSaved = true;
                                             }
-
                                         } else {
                                             return false;
                                         }
@@ -697,7 +693,6 @@
             });
 
             $(".bootbox-body").find('#id_school').val($('#mainForm').find("#id_school").val());
-
         });
 
        $('#add_child_withid').click(function(){
@@ -803,12 +798,6 @@
             } else {
                 $("#previousButton").removeClass("disabled");
             }
-
-{#            if(onePerFrameSly.rel.activeItem == 6 || onePerFrameSly.rel.activeItem == 0) {#}
-{#                $("#previousButton").addClass("disabled");#}
-{#            } else {#}
-{#                $("#previousButton").removeClass("disabled");#}
-{#            }#}
 
             if (onePerFrameSly.rel.activeItem == 6) {
                 $("#id_id_type").prop("disabled", "disabled");
