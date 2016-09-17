@@ -10,7 +10,6 @@ function validateSection(frame, sectionIndex)
 
     if(sectionIndex.toString() in validation_mapping)
     {
-        console.log(validation_mapping[sectionIndex]);
         var callback  = validation_mapping[sectionIndex];
         result = callback();
     }
@@ -86,7 +85,7 @@ function validate_add_child_noid()
     return valid;
  }
 
- function validate_add_child_withid()
+function validate_add_child_withid()
 {
     var valid = true ;
     var form = $('.bootbox-body').find('#add_child_withid_form');
@@ -94,7 +93,7 @@ function validate_add_child_noid()
     return valid;
 }
 
- function validateTextBox(form,id, errorID, isValid)
+function validateTextBox(form,id, errorID, isValid)
 {
     var valid = isValid;
     if(form.find('#'+id).val() == ""){

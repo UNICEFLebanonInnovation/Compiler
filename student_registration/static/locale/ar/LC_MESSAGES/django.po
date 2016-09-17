@@ -793,4 +793,47 @@ msgstr "كانون الأول"
 msgid "NOTE: Your household will receive a visit to confirm this child belongs to your household."
 msgstr ""
 
+msgid "This field is required"
+msgstr "هذا الحقل الزامي"
 
+msgid "Cancel registration"
+msgstr "إلغاء الطلب"
+
+msgid "Household ID Number"
+msgstr "رقم هوية ممثل العائلة"
+
+msgid "Enter household first name"
+msgstr "ادخل الإسم الأول لممثل العائلة"
+
+msgid "Enter household father's name"
+msgstr "ادخل إسم الأب لممثل العائلة"
+
+msgid "Enter household last name"
+msgstr "ادخل إسم الشهرة لممثل العائلة"
+
+msgid "Enter household mother full name"
+msgstr "ادخل إسم الأم الكامل لممثل العائلة"
+
+msgid "Enter household age"
+msgstr "ادخل عمر ممثل العائلة"
+
+msgid "Child's ID Number"
+msgstr "رقم هوية الطفل"
+
+msgid "Have the child been out of school for more than 2 years?"
+msgstr ""
+
+msgid "Child registered in UNHCR or Family Book?"
+msgstr ""
+
+msgid "Are all the children enrolled in the 2nd shift schools have been registered?"
+msgstr ""
+
+msgid "Signature is empty"
+msgstr "الرجاء إدخال الأمضاء"
+
+msgid "Are you sure you want to cancel this registration?"
+msgstr "هل انت متأكد انك تريد ألغاء هذا الطلب والبدأ من جديد؟"
+
+msgid "Application registration cancelled"
+msgstr "لقد تم ألغاء هذا الطلب"
