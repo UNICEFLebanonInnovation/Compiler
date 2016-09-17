@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# v0.10
+# v0.14
 
 /alp/outreach/
 /alp/outreach/?ln=ar-ar
@@ -16,6 +16,7 @@ CACHE MANIFEST
 /static/images/favicon.ico
 /static/locale/ar-ar.json
 /static/locale/en-us.json
+/static/css/main.css
 /static/css/project.css
 /static/css/project-ar.css
 /static/css/bootstrap.css
