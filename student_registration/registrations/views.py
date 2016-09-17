@@ -14,7 +14,7 @@ from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from django.core.urlresolvers import reverse
 from .models import Registration, RegisteringAdult
-from .serializers import RegistrationSerializer, RegisteringAdultSerializer, RegistrationPilotSerializer
+from .serializers import RegistrationSerializer, RegisteringAdultSerializer, RegistrationChildSerializer
 from student_registration.students.models import (
     Person,
     Student,
@@ -120,10 +120,10 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        queryset = []
+        queryset = super(RegisteringAdultViewSet, self).get_queryset()
         id_number = self.kwargs.get('id_number')
         if id_number:
-            queryset = self.queryset.filter(id_number=id_number)
+            return queryset.filter(id_number=id_number)
         return queryset
 
     def create(self, request, *args, **kwargs):
@@ -156,7 +156,7 @@ class RegisteringChildViewSet(mixins.RetrieveModelMixin,
         serializer.is_valid(raise_exception=True)
         serializer.instance = serializer.save()
 
-        registration = RegistrationPilotSerializer(data=request.data)
+        registration = RegistrationChildSerializer(data=request.data)
         registration.is_valid(raise_exception=True)
         registration.instance = registration.save()
 

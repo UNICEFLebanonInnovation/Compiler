@@ -117,7 +117,8 @@ class Registration(TimeStampedModel):
 
     registering_adult = models.ForeignKey(
         RegisteringAdult,
-        blank=True, null=True
+        blank=True, null=True,
+        related_name='children',
     )
     relation_to_adult = models.CharField(
         max_length=50,
