@@ -38,6 +38,7 @@
 {% else %}
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
 {% endif %}
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
     {% endblock %}
 
     {% block angular %}
@@ -83,9 +84,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'registrations:registering_pilot' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
                   </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignment" %}</a>
-                </li>
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link" href="?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignment" %}</a>#}
+{#                </li>#}
                 {% endif %}
             {% endif %}
             </ul>
