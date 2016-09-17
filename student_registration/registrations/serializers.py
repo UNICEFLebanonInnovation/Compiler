@@ -1,8 +1,8 @@
 
 from rest_framework import serializers
-from .models import Registration, RegisteringAdult
+
 from student_registration.students.serializers import StudentSerializer
-from student_registration.students.utils import *
+from .models import Registration, RegisteringAdult
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -116,7 +116,6 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
 
         try:
             instance = RegisteringAdult.objects.create(**validated_data)
-            instance.number = generate_id(instance.first_name, instance.father_name, instance.last_name, instance.mother_fullname, instance.sex)
             if instance.age < 18 or instance.id_type == 6:
                 instance.status = False
             instance.save()
