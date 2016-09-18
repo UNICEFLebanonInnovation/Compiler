@@ -240,7 +240,7 @@
                     </span>
                     <div class="line" id="id_number_block" style="display: none;">
                         <label class="text">{% trans "ID Number" %}<span class="asterisque">*</span></label>
-                        {{ form.old_registry_id }}
+                        {{ form.previously_registered_number }}
                     </div>
                     <span class="error" id="confirm_child_belong" style="display: none;">
                         {% trans "You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them" %}
@@ -518,7 +518,7 @@
             }
         }, 3600000);
 
-        $(document).on('blur', '#mainForm input, #mainForm select', function(){
+        $(document).on('blur', '#mainForm input, #mainForm select, #mainForm textarea', function(){
             update_item_store(parseInt($('#main_id').val()), $(this).attr('name'), $(this).val(), 'registrations');
         });
 
@@ -533,6 +533,14 @@
         $('#registration_save').click(function(e){
             bootbox.confirm("{% trans 'Are you sure you want to submit this application?' %}", function(result) {
                 if(result == true) {
+                    var store = getStoreByName('registrations');
+                    var request = store.get(parseInt($('#main_id').val()));
+                    request.onsuccess = function(){
+                        var result = request.result;
+                        if(result){
+                            push_adult_data(result, synchro_path, 'registrations');
+                        }
+                    };
                     update_item_store(parseInt($('#main_id').val()), 'completed', true, 'registrations');
                     displayFeedback();
                 }
@@ -676,6 +684,18 @@
 
                                             var item  = {};
                                             item = collect_form_values(form, item);
+                                            item.id_number = "000000";
+                                            item.owner = user_id;
+                                            var year = new Date().getFullYear();
+                                            if(!item.birthday_day) {
+                                                item.birthday_day = 1;
+                                            }
+                                            if(!item.birthday_month){
+                                                item.birthday_month = 1;
+                                            }
+                                            if(!item.birthday_year){
+                                                item.birthday_year = year - parseInt(item.age);
+                                            }
                                             append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations');
 
                                             if(!isSaved)
@@ -732,6 +752,20 @@
 
                                             var item  = {};
                                             item = collect_form_values(form, item);
+                                            if(!item.id_number){
+                                                item.id_number = '00000';
+                                            }
+                                            item.first_name = 'Unknown';
+                                            item.father_name = 'Unknown';
+                                            item.last_name = 'Unknown';
+                                            item.mother_fullname = 'Unknown';
+                                            item.sex = 'Male';
+                                            var year = new Date().getFullYear();
+                                            item.age = 1;
+                                            item.birthday_day = 1;
+                                            item.birthday_month = 1;
+                                            item.birthday_year = year - parseInt(item.age);
+                                            item.owner = user_id;
                                             append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations');
                                         } else {
                                             return false;
@@ -892,6 +926,7 @@
         if(age!=null) {
 
             $('#id_age').val(age);
+            $('#id_age').trigger('blur');
 
             if(age < 18) {
                bootbox.alert("{% trans 'Currently ATM Cards can only be issued for those over the age of 18. We are working on a solution for this. You can continue the Registration Process so we have your information in case a solution is found. However, until then you will not receive payments.' %}", function() {});
@@ -948,9 +983,9 @@
                 if(item.synchronized == false && item.completed == true) {
                     push_adult_data(item, url, store_name);
                 }
-                if(item.synchronized == true || (item.synchronized == false && item.completed == false)){
-                    delete_from_store(parseInt(item.id), store_name, true);
-                }
+{#                if(item.synchronized == true || (item.synchronized == false && item.completed == false)){#}
+{#                    delete_from_store(parseInt(item.id), store_name, true);#}
+{#                }#}
             });
             if(callback){
                 callback();
@@ -969,11 +1004,11 @@
             headers: getHeader(),
             dataType: 'json',
             success: function (response) {
-                console.log(response);
-                if(response.status == '201' || response.status == 201){
+{#                if(response.status == '201' || response.status == 201){#}
+                if(response.id){
                     update_item_store(parseInt(item.id), 'synchronized', true, store_name);
                     $(item.children).each(function(i, child){
-                        child.adult = response.data.id;
+                        child.registering_adult = response.id;
                         push_child_data(child);
                     });
                 }

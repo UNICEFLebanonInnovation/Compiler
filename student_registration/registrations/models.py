@@ -46,6 +46,7 @@ class RegisteringAdult(Person):
     status = models.BooleanField(blank=True, default=True)
     previously_registered = models.BooleanField(default=False)
     previously_registered_status = models.BooleanField(default=False)
+    previously_registered_number = models.CharField(max_length=45L, blank=True, null=True)
     relation_to_householdhead = models.CharField(max_length=50, blank=True, null=True, choices=RELATION_TYPE)
     wfp_case_number = models.CharField(max_length=50, blank=True, null=True)
     csc_case_number = models.CharField(max_length=50, blank=True, null=True)
@@ -186,8 +187,7 @@ class Registration(TimeStampedModel):
         return ''
 
     def __unicode__(self):
-        return 'none'
-        # return self.student_fullname
+        return str(self.pk)
 
 
 eav.register(Registration)
