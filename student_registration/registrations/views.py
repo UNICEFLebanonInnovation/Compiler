@@ -37,6 +37,7 @@ from student_registration.eav.models import (
 
 from .models import Registration, RegisteringAdult
 from .serializers import RegistrationSerializer, RegisteringAdultSerializer, RegistrationPilotSerializer
+from .utils import get_unhcr_principal_applicant
 
 
 class RegistrationView(LoginRequiredMixin, ListView):
@@ -117,11 +118,27 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
         :return:
         """
         try:
-            reg_record = super(RegisteringAdultViewSet, self).get_object()
+            adult = super(RegisteringAdultViewSet, self).get_object()
         except Http404:
-            pass
+            if self.kwargs.get('id_type'):
+                principal_applicant = get_unhcr_principal_applicant(self.kwargs.get('id_number'))
+                if principal_applicant:
+                    adult = RegisteringAdult()
+                    adult.id_number = principal_applicant["CaseNo"]
+                    adult.phone = principal_applicant["CoAPhone"]
+                    adult.first_name = principal_applicant["GivenName"]
+                    adult.last_name = principal_applicant["FamilyName"]
+                    adult.father_name = principal_applicant["FatherName"]
+                    dob = principal_applicant["DOB"]
+                    adult.birthday_day = dob.day
+                    adult.birthday_month = dob.month
+                    adult.birthday_year = dob.year
+                    adult.sex = principal_applicant["Sex"]
+                    adult.save()
+                    return adult
+            raise Http404
         else:
-            return reg_record
+            return adult
 
 
 class RegisteringChildViewSet(mixins.RetrieveModelMixin,

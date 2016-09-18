@@ -156,7 +156,6 @@ class Person(TimeStampedModel):
         super(Person, self).save(**kwargs)
 
 
-
 class Student(Person):
 
     @property
