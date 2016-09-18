@@ -33,26 +33,26 @@ class RegisteringAdultForm(forms.ModelForm):
     )
     address = forms.CharField(widget=forms.Textarea(attrs=({'rows': 2, 'cols': 30})),
                               required=False)
-    wfp_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 10, 'placeholder': '12346788'})),
+    wfp_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 10, 'placeholder': ''})),
                                       required=False)
-    csc_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 10, 'placeholder': '12346788'})),
+    csc_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 10, 'placeholder': ''})),
                                       required=False)
     primary_phone = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': '70123456'})),
                                     required=False)
     secondary_phone = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': '70123456'})),
                                       required=False)
     first_name = forms.CharField(widget=forms.TextInput(attrs=({ 'placeholder': _('Enter household first name')})),
-                                      required=False)
+                                 required=False)
     father_name = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _("Enter household father's name")})),
-                                 required=False)
+                                  required=False)
     last_name = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _('Enter household last name')})),
-                                 required=False)
+                                required=False)
     mother_fullname = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _('Enter household mother full name')})),
-                                 required=False)
-    age = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _('Enter household age')})),
-                                 required=False)
-    old_registry_id = forms.CharField(widget=forms.TextInput,
                                       required=False)
+    age = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _('Enter household age')})),
+                          required=False)
+    previously_registered_number = forms.CharField(widget=forms.TextInput,
+                                                   required=False)
 
     def __init__(self, *args, **kwargs):
         location = args[0]['location']

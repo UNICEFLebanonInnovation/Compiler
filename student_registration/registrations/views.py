@@ -126,16 +126,6 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
             return queryset.filter(id_number=id_number)
         return queryset
 
-    def create(self, request, *args, **kwargs):
-        """
-        :return: JSON
-        """
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.instance = serializer.save()
-
-        return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
-
 
 class RegisteringChildViewSet(mixins.RetrieveModelMixin,
                               mixins.ListModelMixin,
@@ -143,40 +133,19 @@ class RegisteringChildViewSet(mixins.RetrieveModelMixin,
                               mixins.UpdateModelMixin,
                               viewsets.GenericViewSet):
 
-    model = Student
-    queryset = Student.objects.all()
-    serializer_class = StudentSerializer
+    model = Registration
+    queryset = Registration.objects.all()
+    serializer_class = RegistrationChildSerializer
     permission_classes = (permissions.IsAuthenticated,)
-
-    def create(self, request, *args, **kwargs):
-        """
-        :return: JSON
-        """
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.instance = serializer.save()
-
-        registration = RegistrationChildSerializer(data=request.data)
-        registration.is_valid(raise_exception=True)
-        registration.instance = registration.save()
-
-        registration.instance.student = serializer.instance
-        registration.instance.registering_adult = RegisteringAdult.objects.get(pk=request.data['adult'])
-        registration.instance.save()
-
-        return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
 
 
 class RegisteringPilotView(LoginRequiredMixin, FormView):
     template_name = 'registration-pilot/registry.html'
-    # form_class = RegisteringAdultForm
     model = RegisteringAdult
 
     def get_context_data(self, **kwargs):
-        # context = super(RegisteringPilotView, self).get_context_data(**kwargs)
 
         return {
-            # 'form': context['form'],
             'form': RegisteringAdultForm({'location': self.request.user.location_id}),
             'student_form': StudentForm
         }
