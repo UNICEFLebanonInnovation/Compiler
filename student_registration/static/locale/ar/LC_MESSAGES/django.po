@@ -821,10 +821,10 @@ msgid "Child's ID Number"
 msgstr "رقم هوية الطفل"
 
 msgid "Have the child been out of school for more than 2 years?"
-msgstr ""
+msgstr "هل كان الطفل خرج المدرسة لأكثر من سنتين؟"
 
 msgid "Child registered in UNHCR or Family Book?"
-msgstr ""
+msgstr "او في دفتر العائلة UNHCR  هل الطفل مسجل في إفادة مفوضية"
 
 msgid "Are all the children enrolled in the 2nd shift schools have been registered?"
 msgstr ""
