@@ -28,7 +28,7 @@
     {% trans 'to start a new application' %}.
 </div>
 
-{#<button type="button" id="registration-synchro">synch</button>#}
+<button type="button" id="registration-synchro">synch</button>
 
 <form method="post" action="" class="inlineForm" id="mainForm" style="display: block;">
     <input type="hidden" name="id_registration" id="main_id" />
@@ -538,7 +538,7 @@
                     request.onsuccess = function(){
                         var result = request.result;
                         if(result){
-                            push_adult_data(result, synchro_path, 'registrations');
+{#                            push_adult_data(result, synchro_path, 'registrations');#}
                         }
                     };
                     update_item_store(parseInt($('#main_id').val()), 'completed', true, 'registrations');
