@@ -18,10 +18,12 @@ from .models import (
     PartnerOrganization,
 )
 
+
 class schoolResource(resources.ModelResource):
     class Meta:
         model = School
         fields = (
+            'id',
             'name',
             'number',
             'location',
@@ -31,7 +33,6 @@ class schoolResource(resources.ModelResource):
 
 class SchoolAdmin(ImportExportModelAdmin):
     resource_class = schoolResource
-
 
 
 admin.site.register(School, SchoolAdmin)
