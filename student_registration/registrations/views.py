@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView, FormView, CreateView
+from django.http import Http404
+from django.views.generic import ListView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
-from datetime import datetime
 import tablib
-import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from django.core.urlresolvers import reverse
-from .models import Registration, RegisteringAdult
-from .serializers import RegistrationSerializer, RegisteringAdultSerializer, RegistrationChildSerializer
+
 from student_registration.students.models import (
     Person,
     Student,
@@ -38,51 +35,15 @@ from student_registration.eav.models import (
     Value,
 )
 
-
-class RegistrationViewSet(mixins.RetrieveModelMixin,
-                          mixins.ListModelMixin,
-                          mixins.CreateModelMixin,
-                          mixins.UpdateModelMixin,
-                          viewsets.GenericViewSet):
-
-    model = Registration
-    queryset = Registration.objects.all()
-    serializer_class = RegistrationSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get_queryset(self):
-        if not self.request.user.is_staff:
-            if self.request.user.school:
-                return self.queryset.filter(school=self.request.user.school.id)
-            else:
-                return []
-
-        return self.queryset
-
-    def create(self, request, *args, **kwargs):
-        """
-        :return: JSON
-        """
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.instance = serializer.save()
-
-        return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
-
-    def delete(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
-        student = instance.student
-        instance.delete()
-        if student:
-            student.delete()
-        return JsonResponse({'status': status.HTTP_200_OK})
-
-    def update(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
-        return JsonResponse({'status': status.HTTP_200_OK})
+from .models import Registration, RegisteringAdult
+from .serializers import RegistrationSerializer, RegisteringAdultSerializer, RegistrationChildSerializer
+from .utils import get_unhcr_principal_applicant
 
 
 class RegistrationView(LoginRequiredMixin, ListView):
+    """
+    Provides the registration page with lookup types in the context
+    """
     model = Registration
     template_name = 'registrations/list.html'
 
@@ -106,6 +67,31 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'eav_type': Registration.EAV_TYPE
         }
 
+####################### API VIEWS #############################
+
+
+class RegistrationViewSet(mixins.RetrieveModelMixin,
+                          mixins.ListModelMixin,
+                          mixins.CreateModelMixin,
+                          mixins.UpdateModelMixin,
+                          viewsets.GenericViewSet):
+    """
+    Provides API operations around a registration record
+    """
+    model = Registration
+    queryset = Registration.objects.all()
+    serializer_class = RegistrationSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            if self.request.user.school:
+                return self.queryset.filter(school=self.request.user.school.id)
+            else:
+                return []
+
+        return self.queryset
+
 
 class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
                               mixins.ListModelMixin,
@@ -125,6 +111,34 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
         if id_number:
             return queryset.filter(id_number=id_number)
         return queryset
+
+    def get_object(self):
+        """
+        Try to lookup the registering adult from the UNHCR registration database
+        :return:
+        """
+        try:
+            adult = super(RegisteringAdultViewSet, self).get_object()
+        except Http404:
+            if self.kwargs.get('id_type'):
+                principal_applicant = get_unhcr_principal_applicant(self.kwargs.get('id_number'))
+                if principal_applicant:
+                    adult = RegisteringAdult()
+                    adult.id_number = principal_applicant["CaseNo"]
+                    adult.phone = principal_applicant["CoAPhone"]
+                    adult.first_name = principal_applicant["GivenName"]
+                    adult.last_name = principal_applicant["FamilyName"]
+                    adult.father_name = principal_applicant["FatherName"]
+                    dob = principal_applicant["DOB"]
+                    adult.birthday_day = dob.day
+                    adult.birthday_month = dob.month
+                    adult.birthday_year = dob.year
+                    adult.sex = principal_applicant["Sex"]
+                    adult.save()
+                    return adult
+            raise Http404
+        else:
+            return adult
 
 
 class RegisteringChildViewSet(mixins.RetrieveModelMixin,
