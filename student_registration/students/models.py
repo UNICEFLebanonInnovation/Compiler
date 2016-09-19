@@ -69,8 +69,8 @@ class Person(TimeStampedModel):
         blank=True,
         null=True,
         choices=Choices(
-            u'Male',
-            u'Female',
+            ('Male', _('Male')),
+            ('Female', _('Female')),
         )
     )
     birthday_year = models.CharField(
