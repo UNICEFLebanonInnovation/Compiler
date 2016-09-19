@@ -557,7 +557,7 @@ msgid "If your child does not enroll in school he/she will be removed from the M
 msgstr "إذا لم يلتحق طفلك في المدرسة سوف يتم شطبه من البرنامج التجريبي من إلى"
 
 msgid "If your child is not already enrolled in school, please go and do so now, then return to Register for the Pilot"
-msgstr ""
+msgstr "إذا لم يتم تسجيل طفلك بالفعل في المدرسة، يرجى الذهاب والقيام بذلك الآن، ثم العودة للأستفادة من البرنامج التجريبي"
 
 msgid "If your address or phone number changes, you must inform us by calling 81-313940. If your household cannot be found after 2 months you will stop receiving benefits."
 msgstr "إذا تم تغير عنوانك أو رقم هاتفك ، يجب عليك اعلامنا عن طريق الاتصال على 81-313940 . إذا لم نتمكن من العثور على منزلك بعد شهرين سوف إيقاف تسديد الدفعات"
@@ -584,7 +584,7 @@ msgid "NOTE: in order to register with other ID, the ID Holder must be present A
 msgstr "ملاحظة : من أجل التسجيل ببطاقة أخرى، يجب أن يكون حامل البطاقة موجود و يجب أن يكون عمرة 18 سنة أو أكثر"
 
 msgid "NOTE: If the Household Representative is not listed on the UNHCR Certificate, it cannot be used to regiter for the Pilot. Another form of ID must be used."
-msgstr ""
+msgstr "ملاحظة: إذا لم يتم سرد الممثل المنزلية على شهادة المفوضية، فإنه لا يمكن أن تستخدم للتسجيل في البرنامج التجريبي. يجب استخدام شكل آخر من أشكال الهوية"
 
 msgid "First Name"
 msgstr "الاسم الأول"
@@ -614,10 +614,10 @@ msgid "Relationship to Household reprentative"
 msgstr "العلاقة بممثل الأسرة"
 
 msgid "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card."
-msgstr ""
+msgstr "سوف تتلقى المدفوعات الخاصة بك على بطاقة الصراف الآلي. إذا لم يكن لديك واحدة  سوف نقدم لكم واحدة. ستقوم اليونيسف بأرسال لك رسالة نصية قصيرة لأعلامك بتاريخ ووقت ومكان يمكنك جمع بطاقة الصراف الآلي"
 
 msgid "Note: It is very important that you provide us a working phone number so we can send you the details of where and when to collect your ATM Card"
-msgstr ""
+msgstr "ملاحظة: من المهم جدا أن تقدم لنا رقم هاتف العمل حتى نستطيع أن نرسل لك تفاصيل أين ومتى جمع بطاقة الصراف الآلي"
 
 msgid "Collect existing ATM case number"
 msgstr "جمع بطاقات أجهزة الصراف الآلي"
@@ -662,7 +662,7 @@ msgid "Contact Information"
 msgstr "معلومات التواصل"
 
 msgid "Officers of the Min Ila Cash Pilot must be able to reach you by phone and household visit in order for your household to benefit from the pilot. Your information will only be provided to officers of the pilot who will be trained to handle your information carefully and will only visit you if your child drops out of school."
-msgstr ""
+msgstr "يجب أن يكون للضباط الذي يعمل لدى برنامج من الى قادر على الوصول إليك عن طريق الهاتف والزيارة المنزلية من أجل أسرتك للاستفادة من البرنامج التجريبي. وسيتم توفير المعلومات الخاصة بك فقط للضباط الذين سيتم تدريبهم للتعامل مع المعلومات الخاصة بك بعناية وسيزور إلا إذا قطرات طفلك من المدرسة"
 
 msgid "This number is on the leaflet provided to you."
 msgstr "هذا الرقم موجود في النشرة المقدمة لك "
@@ -671,16 +671,16 @@ msgid "Declaration and Consent"
 msgstr "الإعلان و الموافقة"
 
 msgid "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 6 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school."
-msgstr ""
+msgstr "كل شهر سوف يحصل ممثل الأسرة على مبلغ نقدي يهدف إلى مساعدة الأطفال كنت قد سجلت في البرنامج للذهاب إلى المدرسة. ولكل طفل بالغ من العمر ما بين السادس والتاسع سنوات سوف حصل على 20 دولار امريكياً ولكل طفل من العاشرة حتى الرابعة عشرسوف تتلقى 65. إذا توقف طفلك الذهاب إلى المدرسة سوف تتلقى رسالة نصية قصيرة لتذكيرك الغرض من النقد بعد 10 يوما. بعد 20 يوما ستحصل على زيارة الأسر من ضباط من قبل برنامج من الى التجريبية للمساعدة في توجيه لك المزيد من الدعم للحفاظ على أطفالك في المدرسة"
 
 msgid "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments."
-msgstr ""
+msgstr "إذا الضباط البرنامج غير قادر على تحديد موقع لك عن طريق زيارة الأسرة بعد ثلاث محاولات في غضون فترة زمنية (شهرين)، وسوف إيقاف تلقي المدفوعات"
 
 msgid "Please indicate that you understand the above as it has been read to you and that you consent to be contacted by telephone and by household visit by officers of the program by signing below. Those knowingly providing false information or committing fraud against the program will be removed from the pilot."
-msgstr ""
+msgstr "يرجى الإشارة إلى أن تفهم ما سبق كما كان يقرأ لك وأنك توافق على أن يتم الاتصال عبر الهاتف والزيارة المنزلية من قبل ضباط من البرنامج من خلال التوقيع أدناه. تلك التي تقدم بيانات غير صحيحة عمدا أو ارتكاب الغش ضد البرنامج سوف يتم إزالتها من البرنامج"
 
 msgid "By signing this agreement you also consent to allow us to share the data collected today with UNHCR and WFP in order to help ensure that you are paid. Some data will also be shared with the Ministry of Education and Higher Education (MEHE). We will ensure that your data is handled carefully and confidentially. If you have any questions please ask them before signing."
-msgstr ""
+msgstr "من خلال توقيع هذه الاتفاقية عليك أيضا الموافقة على السماح لنا لتبادل البيانات التي تم جمعها اليوم مع المفوضية وبرنامج الأغذية العالمي من أجل المساعدة على ضمان أن تدفع لك. كما سيتم تقاسم بعض البيانات مع وزارة التربية والتعليم والتعليم العالي (MEHE). سنضمن أن يتم التعامل مع البيانات الخاصة بك بعناية وسرية. إذا كان لديك أي أسئلة الرجاء نطلب منهم قبل توقيع"
 
 msgid "Signature of Household Representative"
 msgstr "توقيع ممثل العائلة"
@@ -695,7 +695,7 @@ msgid "Cancel"
 msgstr "الغاء"
 
 msgid "To benefit from the cash pilot, you must provide us with an address where carefully selected, trained officers who work for the pilot can visit your household and a phone number where we can reach you. These officers will be trained to handle your information carefully and will only visit you if a child you have registered drops out of school."
-msgstr ""
+msgstr "للاستفادة من هذا البرنامج يجب أن توفر لنا عنوان حيث يمكن للمدربين الذين يعملون في هذا البرنامج أن يقومون بزيارة أهل بيتك ورقم الهاتف الذي يمكننا الوصول إليك. وسوف يقومون بزيارة لك فقط إذا كان الطفل الذي سجلت يتسرب من المدرسة"
 
 msgid "If you change your phone number or address, please inform the program by calling 81-313940, or you will be removed after we are unable to locate you."
 msgstr "إذا قمت بتغيير رقم هاتفك أو عنوانك ، يرجى إبلاغ البرنامج من خلال الإتصال على 81-313940 ، أو سوف يتم إزالتك إذا كنا غير قادرين على تحديد مكان وجودك"
@@ -752,7 +752,7 @@ msgid "to start a new application"
 msgstr "لبداية طلب جديد"
 
 msgid "You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them."
-msgstr ""
+msgstr "يجب التأكد من أن الطفل ينتمي إلى هذه الأسرة عن طريق التحقق من شهادة المفوضية أو دفتر العائلة. إذا كانت .الأسرة لا تملك أي منهما، اعلمهم أن محقق من البرنامج سيقوم بزيارة أسرهم لتأكيد طفل يعيش معهم"
 
 msgid "January"
 msgstr "كانون الثاني"
@@ -791,7 +791,7 @@ msgid "December"
 msgstr "كانون الأول"
 
 msgid "NOTE: Your household will receive a visit to confirm this child belongs to your household."
-msgstr ""
+msgstr ".ملاحظة: سوف يتم زيارة المنزل للتأكيد من ان هذا الطفل ينتمي إلى العائلة"
 
 msgid "This field is required"
 msgstr "هذا الحقل الزامي"
@@ -827,7 +827,7 @@ msgid "Child registered in UNHCR or Family Book?"
 msgstr "او في دفتر العائلة UNHCR  هل الطفل مسجل في إفادة مفوضية"
 
 msgid "Are all the children enrolled in the 2nd shift schools have been registered?"
-msgstr ""
+msgstr "هل تم تسجيل جميع الأطفال المسجلين في مدارس الدوام ما بعض الظهر؟"
 
 msgid "Signature is empty"
 msgstr "الرجاء إدخال الأمضاء"
