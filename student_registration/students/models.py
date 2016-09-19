@@ -138,6 +138,23 @@ class Person(TimeStampedModel):
     class Meta:
         abstract = True
 
+    def save(self, **kwargs):
+        """
+        Generate unique IDs for every person
+        :param kwargs:
+        :return:
+        """
+        if self.pk is None:
+            self.number = generate_id(
+                self.first_name,
+                self.father_name,
+                self.last_name,
+                self.mother_fullname,
+                self.sex
+            )
+
+        super(Person, self).save(**kwargs)
+
 
 class Student(Person):
 
@@ -148,6 +165,3 @@ class Student(Person):
             attendances[item.attendance_date] = item.status
         return attendances
 
-    # def save(self):
-    #     self.number = generate_id(self.first_name, self.father_name, self.last_name, self.mother_fullname, self.sex)
-    #     super(Student, self).save(force_insert=True)

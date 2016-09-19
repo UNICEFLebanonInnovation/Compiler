@@ -29,6 +29,12 @@ def generate_id(
         mother_name_hash = int(hashlib.sha1(mother_full_name.encode('UTF-8')).hexdigest(), 16) % 100000
         gender_first_char = gender[:1]
 
-        return str(full_name_char_count)+str(mother_name_char_count)+str(full_name_hash)+str(mother_name_hash)+gender_first_char
+        return '{}{}{}{}{}'.format(
+            str(full_name_char_count),
+            str(mother_name_char_count),
+            str(full_name_hash),
+            str(mother_name_hash),
+            gender_first_char
+        )
     except Exception as exp:
         return ''
