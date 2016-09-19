@@ -68,9 +68,11 @@
                 {% endif %}
             {% if request.user.is_authenticated %}
                 {% if request.user|has_group:"ALP" %}
+                    {% if request.user|has_group:"ALP_OUTREACH" %}
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'alp:outreach' %}?ln={{ LANGUAGE_CODE }}">{% trans "Outreach" %}</a>
                   </li>
+                    {% endif %}
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'registrations:registration' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
                   </li>
