@@ -698,7 +698,7 @@ msgid "Please indicate that you understand the above as it has been read to you 
 msgstr "يرجى الإشارة إلى أن تفهم ما سبق كما كان يقرأ لك وأنك توافق على أن يتم الاتصال عبر الهاتف والزيارة المنزلية من قبل ضباط من البرنامج من خلال التوقيع أدناه. تلك التي تقدم بيانات غير صحيحة عمدا أو ارتكاب الغش ضد البرنامج سوف يتم إزالتها من البرنامج"
 
 msgid "By signing this agreement you also consent to allow us to share the data collected today with UNHCR and WFP in order to help ensure that you are paid. Some data will also be shared with the Ministry of Education and Higher Education (MEHE). We will ensure that your data is handled carefully and confidentially. If you have any questions please ask them before signing."
-msgstr "من خلال توقيع هذه الاتفاقية عليك أيضا الموافقة على السماح لنا لتبادل البيانات التي تم جمعها اليوم مع المفوضية وبرنامج الأغذية العالمي من أجل المساعدة على ضمان أن تدفع لك. كما سيتم تقاسم بعض البيانات مع وزارة التربية والتعليم والتعليم العالي (MEHE). سنضمن أن يتم التعامل مع البيانات الخاصة بك بعناية وسرية. إذا كان لديك أي أسئلة الرجاء نطلب منهم قبل توقيع"
+msgstr "من خلال توقيع هذه الاتفاقية عليك أيضا الموافقة على السماح لنا لتبادل البيانات التي تم جمعها اليوم مع المفوضية وبرنامج الأغذية العالمي من أجل المساعدة على ضمان الدفع لك. كما سيتم تقاسم بعض البيانات مع وزارة التربية والتعليم العالي (MEHE). سنضمن أن يتم التعامل مع البيانات الخاصة بك بعناية وسرية. إذا كان لديك أي أسئلة الرجاءالطلب منهم قبل توقيع"
 
 msgid "Signature of Household Representative"
 msgstr "توقيع ممثل العائلة"
@@ -713,7 +713,7 @@ msgid "Cancel"
 msgstr "الغاء"
 
 msgid "To benefit from the cash pilot, you must provide us with an address where carefully selected, trained officers who work for the pilot can visit your household and a phone number where we can reach you. These officers will be trained to handle your information carefully and will only visit you if a child you have registered drops out of school."
-msgstr "للاستفادة من هذا البرنامج يجب أن توفر لنا عنوان حيث يمكن للمدربين الذين يعملون في هذا البرنامج أن يقومون بزيارة أهل بيتك ورقم الهاتف الذي يمكننا الوصول إليك. وسوف يقومون بزيارة لك فقط إذا كان الطفل الذي سجلت يتسرب من المدرسة"
+msgstr "للاستفادة من هذا البرنامج يجب أن توفر لنا عنوان حيث يمكن للمدربين الذين يعملون في هذا البرنامج أن يقومون بزيارة أهل بيتك ورقم الهاتف الذي يمكننا الوصول إليك. وسوف يقومون بزيارة لك فقط إذا كان الطفل الذي سجلته يتسرب من المدرسة"
 
 msgid "If you change your phone number or address, please inform the program by calling 81-313940, or you will be removed after we are unable to locate you."
 msgstr "إذا قمت بتغيير رقم هاتفك أو عنوانك ، يرجى إبلاغ البرنامج من خلال الإتصال على 81-313940 ، أو سوف يتم إزالتك إذا كنا غير قادرين على تحديد مكان وجودك"
@@ -740,7 +740,7 @@ msgid "next"
 msgstr "التالي"
 
 msgid "Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them"
-msgstr ""
+msgstr "الرجاء اعلام  الأسرة أننا حاليا لسنا قادرين على تقديم مدفوعات للذين لا هوية لهم. ومع ذلك، يرجى تقديم لهم الخيار لاستكمال جمع البيانات حتى نتمكن من محاولة شملهم في وقت لاحق عندما نضع حل لهم"
 
 msgid "Welcome to the Registration Desk of the Min Ila Pilot"
 msgstr "مرحبا بكم في مكتب التسجيل من الى التجريبي"
@@ -815,7 +815,7 @@ msgid "This field is required"
 msgstr "هذا الحقل الزامي"
 
 msgid "Cancel registration"
-msgstr "إلغاء الطلب"
+msgstr "إلغاء التجيل"
 
 msgid "Household ID Number"
 msgstr "رقم هوية ممثل العائلة"
@@ -839,13 +839,13 @@ msgid "Child's ID Number"
 msgstr "رقم هوية الطفل"
 
 msgid "Have the child been out of school for more than 2 years?"
-msgstr "هل كان الطفل خرج المدرسة لأكثر من سنتين؟"
+msgstr "هل خرج الطفل من المدرسة لأكثر من سنتين؟"
 
 msgid "Child registered in UNHCR or Family Book?"
-msgstr "او في دفتر العائلة UNHCR  هل الطفل مسجل في إفادة مفوضية"
+msgstr "هل الطفل مسجل في مفوضية شؤون اللاجئين (UNHCR)او في دفتر العائلة "
 
 msgid "Are all the children enrolled in the 2nd shift schools have been registered?"
-msgstr "هل تم تسجيل جميع الأطفال المسجلين في مدارس الدوام ما بعض الظهر؟"
+msgstr "هل تم تسجيل جميع الأطفال الملتحقين في مدارس الدوام ما بعض الظهر؟"
 
 msgid "Signature is empty"
 msgstr "الرجاء إدخال الأمضاء"
@@ -855,3 +855,33 @@ msgstr "هل انت متأكد انك تريد ألغاء هذا الطلب وا
 
 msgid "Application registration cancelled"
 msgstr "لقد تم ألغاء هذا الطلب"
+
+msgid "Son/Daughter"
+msgstr "ابن/ابنة"
+
+msgid "Grandchild"
+msgstr "حفيد"
+
+msgid "Niece/Nephew"
+msgstr "ابنة/إبن أخي"
+
+msgid "Other Relative"
+msgstr "أقارب"
+
+msgid "Other non-Relative"
+msgstr "ليس من الأقارب"
+
+msgid "No"
+msgstr "كلا"
+
+msgid "Yes - in 2nd shift"
+msgstr "نعم - في دوام بعد الظهر"
+
+msgid "Yes - in 1st shift"
+msgstr "نعم - في دوام الصباحي"
+
+msgid "Yes - in private school"
+msgstr "نعم - في مدرسة خاصة"
+
+msgid "Yes - in another type of school"
+msgstr "نعم - في نوع آخر من المدارس"
