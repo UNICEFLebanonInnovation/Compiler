@@ -140,9 +140,9 @@ LANGUAGE_COOKIE_NAME = 'default_language'
 LANGUAGE_CODE = 'ar-ar'
 
 LANGUAGES = (
-    ('en-us', 'english'),
-    # ('fr-fr', 'french'),
     ('ar-ar', 'arabic'),
+    # ('en-us', 'english'),
+    # ('fr-fr', 'french'),
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id

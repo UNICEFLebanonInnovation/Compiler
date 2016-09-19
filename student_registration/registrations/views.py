@@ -34,6 +34,7 @@ from student_registration.eav.models import (
     Attribute,
     Value,
 )
+from student_registration.locations.models import Location
 
 from .models import Registration, RegisteringAdult
 from .serializers import RegistrationSerializer, RegisteringAdultSerializer, RegistrationChildSerializer
@@ -64,7 +65,8 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'months': Person.MONTHS,
             'idtypes': IDType.objects.all(),
             'columns': Attribute.objects.filter(type=Registration.EAV_TYPE),
-            'eav_type': Registration.EAV_TYPE
+            'eav_type': Registration.EAV_TYPE,
+            'locations': Location.objects.filter(gateway_id=2)
         }
 
 ####################### API VIEWS #############################
@@ -169,7 +171,9 @@ class RegisteringPilotView(LoginRequiredMixin, FormView):
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):
+
     model = Registration
+    queryset = Registration.objects.all()
 
     def get_queryset(self):
         if not self.request.user.is_staff:
@@ -182,35 +186,44 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         data = tablib.Dataset()
         data.headers = [
             _('Student number'), _('Student fullname'), _('Mother fullname'), _('Nationality'),
-            _('Day of birth'), _('Month of birth'), _('Year of birth'), _('Sex'),
+            _('Birthday'),
+            # _('Day of birth'), _('Month of birth'), _('Year of birth'),
+            _('Sex'),
+            _('ID Type'),
             _('ID Number tooltip'), _('Phone number'), _('Student living address'),
-            # _('Section'), _('Grade'),
+            _('Section'),
+            # , _('Grade'),
             _('Class room'),
-            _('School'), _('School number')
+            _('School'), _('School number'),
+            _('District'), _('Governorate')
         ]
 
         content = []
         for line in queryset:
-            # if not line.student or not line.grade or not line.section or not line.school:
-            if not line.student or not line.classroom or not line.school:
+            if not line.student or not line.section or not line.school:
+            # if not line.student or not line.classroom or not line.school:
                 continue
             content = [
-                '',
-                line.student.full_name,
+                line.student.number,
+                line.student.__unicode__(),
                 line.student.mother_fullname,
                 line.student.nationality.name,
-                int(line.student.birthday_day),
-                int(line.student.birthday_month),
-                int(line.student.birthday_year),
+                line.student.birthday,
+                # int(line.student.birthday_day),
+                # int(line.student.birthday_month),
+                # int(line.student.birthday_year),
                 _(line.student.sex),
+                line.student.id_type.name,
                 line.student.id_number,
                 line.student.phone,
                 line.student.address,
                 line.classroom.name,
-                # line.section.name,
+                line.section.name,
                 # line.grade.name,
                 line.school.name,
-                line.school.number
+                line.school.number,
+                line.school.location.name,
+                line.school.location.parent.name,
             ]
             data.append(content)
 

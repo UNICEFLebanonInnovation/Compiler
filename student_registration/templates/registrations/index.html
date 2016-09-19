@@ -61,6 +61,12 @@
                                     <tr id="thead-line-1">
                                         <th rowspan="2">&nbsp;</th>
                                         <th rowspan="2">
+                                            {% trans "District" %}
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Governorate" %}
+                                        </th>
+                                        <th rowspan="2">
                                             {% trans "School number" %}
                                         </th>
                                         <th rowspan="2">
@@ -71,10 +77,10 @@
                                             {% trans "Class room" %}
                                             <input type="checkbox" name="duplicate_classroom" id="duplicate_classroom" />
                                         </th>
-                                        <th rowspan="2">
-                                            {% trans "Grade" %}
-                                            <input type="checkbox" name="duplicate_grade" id="duplicate_grade" />
-                                        </th>
+{#                                        <th rowspan="2">#}
+{#                                            {% trans "Grade" %}#}
+{#                                            <input type="checkbox" name="duplicate_grade" id="duplicate_grade" />#}
+{#                                        </th>#}
                                         <th rowspan="2">
                                             {% trans "Section" %}
                                             <input type="checkbox" name="duplicate_section" id="duplicate_section" />
@@ -86,8 +92,8 @@
                                             {% trans "Phone number" %}
                                         </th>
                                         <th rowspan="2">
-                                            {% trans "ID Number type" %}
-                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number type tooltip" %}"></i>
+                                            {% trans "ID Type" %}
+{#                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number type tooltip" %}"></i>#}
                                         </th>
                                         <th rowspan="2">
                                             {% trans "ID Number" %}
@@ -100,9 +106,9 @@
                                         <th rowspan="2">{% trans "Student first name" %}</th>
                                         <th rowspan="2">{% trans "Student father name" %}</th>
                                         <th rowspan="2">{% trans "Student last name" %}</th>
-                                        <th rowspan="2">{% trans "Student number" %}
-                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "Student number tooltip" %}"></i>
-                                        </th>
+{#                                        <th rowspan="2">{% trans "Student number" %}#}
+{#                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "Student number tooltip" %}"></i>#}
+{#                                        </th>#}
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th>{% trans "year" %}</th>
@@ -187,6 +193,12 @@
         $(document).ready(function(){
 
             createStores();
+            bootbox.addLocale(language, {
+                OK : '{% trans "Ok" %}',
+                CANCEL : '{% trans "Cancel" %}',
+                CONFIRM : '{% trans "Confirm" %}'
+            });
+            bootbox.setLocale(language);
 
             setInterval(function(){
                 synchro_result = true;
@@ -221,7 +233,7 @@
             });
 
             $(document).on('click', '#add_defined_lines', function(){
-                bootbox.prompt("{% trans 'Please enter extra column name' %}", function(result) {
+                bootbox.prompt("{% trans 'Please enter the number of lines' %}", function(result) {
                     if (result === null) {
                     } else {
                         var number = parseInt(result);
@@ -251,7 +263,7 @@
                             school_number: $('#duplicate_school').is(':checked'),
                             classroom: $('#duplicate_classroom').is(':checked'),
                             section: $('#duplicate_section').is(':checked'),
-                            grade: $('#duplicate_grade').is(':checked'),
+{#                            grade: $('#duplicate_grade').is(':checked'),#}
                         };
                         duplicate_item_values(request.result, params);
                     };
@@ -266,6 +278,20 @@
                         item.parents('tr').remove();
                     }
                 });
+            });
+
+            $(document).on('change', '.registration-location', function(){
+                if($(this).val()){
+                    var option = $(this).find('option:selected');
+                    var itemblock = '.governorate_name_'+$(this).attr('itemscope');
+                    update_item_store(parseInt($(this).attr('itemscope')), 'governorate_name', option.attr('data-parent'), 'registrations');
+                    $(itemblock).val(option.attr('data-parent'));
+
+                    var school = $('#line-'+$(this).attr('itemscope')).find('.registration-school');
+                    school.find('option').hide();
+                    school.find('option[value=""]').show();
+                    school.find('option[data-parent='+$(this).val()+']').show();
+                }
             });
 
             $(document).on('change', '.registration-school', function(){
