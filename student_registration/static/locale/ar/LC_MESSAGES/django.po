@@ -352,6 +352,9 @@ msgstr "البلدة مكان السكن (بالعربي)"
 msgid "Student living address tooltip"
 msgstr "البلدة مكان السكن (بالعربي)"
 
+msgid "District"
+msgstr "قضاء"
+
 msgid "Governorate"
 msgstr "المحافظة"
 
@@ -403,6 +406,15 @@ msgstr "اسم الأم وشهرتها (بالعربي)"
 msgid "Mother fullname tooltip"
 msgstr "اسم الأم وشهرتها (بالعربي)"
 
+msgid "Student first name"
+msgstr "الاسم الأول"
+
+msgid "Student father name"
+msgstr "إسم الأب"
+
+msgid "Student last name"
+msgstr "إسم الشهرة"
+
 msgid "Student fullname (in arabic)"
 msgstr "إسم التلميذ الثلاثي (بالعربي)"
 
@@ -438,6 +450,12 @@ msgstr "إعدادات"
 
 msgid "Add empty line"
 msgstr "اضف سطر فارغ"
+
+msgid "Add defined number of lines"
+msgstr "إضافة عدد محدد من الأسطر"
+
+msgid "Please enter the number of lines"
+msgstr "الرجاء إدخال عدد الأسطر"
 
 msgid "duplicate last line"
 msgstr "كرر آخر سطر"
@@ -500,7 +518,7 @@ msgid "Grade"
 msgstr "الدرجة"
 
 msgid "Section"
-msgstr "القسم"
+msgstr "الشعبة"
 
 msgid "Students"
 msgstr "التلاميذ"
