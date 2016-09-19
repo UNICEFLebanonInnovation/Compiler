@@ -103,8 +103,8 @@ IMPORT_EXPORT_SKIP_ADMIN_LOG = False
 
 # EMAIL CONFIGURATION
 # ------------------------------------------------------------------------------
-# EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
-EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+# EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -141,7 +141,7 @@ LANGUAGE_CODE = 'ar-ar'
 
 LANGUAGES = (
     ('ar-ar', 'arabic'),
-    # ('en-us', 'english'),
+    ('en-us', 'english'),
     # ('fr-fr', 'french'),
 )
 
