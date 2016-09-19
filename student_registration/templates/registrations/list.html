@@ -44,16 +44,18 @@
                                        width="100%">
                                 <thead>
                                     <tr>
+                                        <th>{% trans "Governorate" %}</th>
+                                        <th>{% trans "District" %}</th>
                                         <th>{% trans "School number" %}</th>
                                         <th>{% trans "School" %}</th>
                                         <th>{% trans "Class room" %}</th>
-                                        <th>{% trans "Grade" %}</th>
+{#                                        <th>{% trans "Grade" %}</th>#}
                                         <th>{% trans "Section" %}</th>
                                         <th>{% trans "Student living address" %}</th>
                                         <th>{% trans "Phone number" %}</th>
                                         <th>
-                                            {% trans "ID Number type" %}
-                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number type tooltip" %}"></i>
+                                            {% trans "ID Type" %}
+{#                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number type tooltip" %}"></i>#}
                                         </th>
                                         <th>
                                             {% trans "ID Number" %}
@@ -72,23 +74,25 @@
                                 <tbody>
                                     {% for registry in registrations %}
                                         <tr>
+                                            <td>{% if registry.school and registry.school.location and registry.school.location.parent %}{{ registry.school.location.parent.name }}{% endif %}</td>
+                                            <td>{% if registry.school and registry.school.location %}{{ registry.school.location.name }}{% endif %}</td>
                                             <td>{% if registry.school %}{{ registry.school.number }}{% endif %}</td>
                                             <td>{% if registry.school %}{{ registry.school.name }}{% endif %}</td>
                                             <td>{% if registry.classroom %}{{ registry.classroom.name }}{% endif %}</td>
-                                            <td>{% if registry.grade %}{{ registry.grade.name }}{% endif %}</td>
+{#                                            <td>{% if registry.grade %}{{ registry.grade.name }}{% endif %}</td>#}
                                             <td>{% if registry.section %}{{ registry.section.name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.address }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.phone }}{% endif %}</td>
-                                            <td>{% if outreach.student and outreach.student.id_type %}{{ outreach.student.id_type.name }}{% endif %}</td>
+                                            <td>{% if registry.student and registry.student.id_type %}{{ registry.student.id_type.name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.id_number }}{% endif %}</td>
                                             <td>{% if registry.student %}{%  trans registry.student.sex %}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.birthday }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.nationality_name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.mother_fullname }}{% endif %}</td>
-                                            <td>{% if outreach.student %}{{ outreach.student.first_name }}{% endif %}</td>
-                                            <td>{% if outreach.student %}{{ outreach.student.father_name }}{% endif %}</td>
-                                            <td>{% if outreach.student %}{{ outreach.student.last_name }}{% endif %}</td>
-                                            <td></td>
+                                            <td>{% if registry.student %}{{ registry.student.first_name }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.father_name }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.last_name }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.number }}{% endif %}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

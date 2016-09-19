@@ -23,3 +23,7 @@ footer .brand {
       border-radius: 0;
     }
 }
+
+input[readonly=readonly] {
+    border: 1px solid !important;
+}
