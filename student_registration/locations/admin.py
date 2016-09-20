@@ -16,6 +16,7 @@ class LocationResource(resources.ModelResource):
     class Meta:
         model = Location
         fields = (
+            'id',
             'name',
             'type',
             'latitude',
