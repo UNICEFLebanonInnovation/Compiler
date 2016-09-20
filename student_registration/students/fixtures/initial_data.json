@@ -8,7 +8,7 @@
   {"model": "students.language", "pk": 1, "fields": {"name": "الفرنسية"}},
   {"model": "students.language", "pk": 2, "fields": {"name": "الانجليزية"}},
 
-  {"model": "students.idtype", "pk": 1, "fields": {"name": "	UNHCR افادة مفوضية"}},
+  {"model": "students.idtype", "pk": 1, "fields": {"name": "UNHCR افادة مفوضية" }},
   {"model": "students.idtype", "pk": 2, "fields": {"name": "بيان قيد عائلي"}},
   {"model": "students.idtype", "pk": 3, "fields": {"name": "بطاقة الهوية الوطنية"}},
   {"model": "students.idtype", "pk": 4, "fields": {"name": "جواز السفر"}},
