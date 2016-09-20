@@ -116,12 +116,12 @@ MEDIA_URL = 'https://s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
 DEFAULT_FROM_EMAIL = env('DJANGO_DEFAULT_FROM_EMAIL',
                          default='Student Registration <noreply@compile.uniceflebanon.org>')
 EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-MAILGUN_ACCESS_KEY = env('MAILGUN_API_KEY')
-MAILGUN_SERVER_NAME = env('MAILGUN_DOMAIN')
+MAILGUN_ACCESS_KEY = env('MAILGUN_API_KEY', default='')
+MAILGUN_SERVER_NAME = env('MAILGUN_DOMAIN', default='')
 EMAIL_SUBJECT_PREFIX = env('EMAIL_SUBJECT_PREFIX', default='[Student Registration] ')
 SERVER_EMAIL = env('SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
-NEW_RELIC_LICENSE_KEY = env('NEW_RELIC_LICENSE_KEY')
-NEW_RELIC_APP_NAME = env('NEW_RELIC_APP_NAME')
+NEW_RELIC_LICENSE_KEY = env('NEW_RELIC_LICENSE_KEY', default='')
+NEW_RELIC_APP_NAME = env('NEW_RELIC_APP_NAME', default='')
 
 # TEMPLATE CONFIGURATION
 # ------------------------------------------------------------------------------
