@@ -557,19 +557,19 @@ msgid "Select School"
 msgstr "إختر المدرسة"
 
 msgid "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 6 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month."
-msgstr ""
+msgstr "برنامج من الى التجريبي سيزود الاطفال المسجلين في الدوام ااثاني بتحويلات نقدية. كل طفل عمرة بين الستة و التسعة سنوات سوف يحصل على 20 دولاراً امريكياً في الشهر. كل طفل عمرة بين العاشرة و الرابعة عشرسوف يتلقى 65 دولاراً امريكياً في الشهر"
 
 msgid "This cash is intended to help children regularly attend 2nd shift school in order that their future opportunities are improved."
-msgstr ""
+msgstr "ويهدف هذا النقد لمساعدة الأطفال على حضور المدرسة بانتظام في الدوام الثاني من أجل تحسين فرصهم المستقبلية."
 
 msgid "If a student stops attending school, you will receive an SMS reminder of the purpose of this cash."
-msgstr ""
+msgstr "اذا توقف أحد الطلاب عن الذهاب إلى المدرسة ، سوف تصلك رسالة نصية قصيرة لتذكيرك بالهدف  من هذه الاموال ."
 
 msgid "If the student does not return to school, you will receive a household visit to help us understand why the student cannot attend and to offer you more services to help the student attend school."
-msgstr ""
+msgstr "إذا لم يعد الطالب إلى المدرسة ، سوف تتلقى الأسرة زيارة لمساعدتنا في فهم لماذا الطالب لا يمكنه أن يحضر و نقدم خدمات اخرى للمساعدة الطالب بالذهاب إلى المدرسة ."
 
 msgid "This desk is to Register for the Min Ila Pilot, not to enroll in school. Children must already be enrolled in school in order to Register for the Pilot."
-msgstr ""
+msgstr "هذا المكثب هو للتسجيل ب من الى التجريبي ،و ليس لإتحاق في المدرسة. يجب على الأطفال أن يكونو قد إلتحقو بالمدرسة من أجل التسجيل في البرنامج التجريبي."
 
 msgid "If your child does not enroll in school he/she will be removed from the Min Ila Pilot."
 msgstr "إذا لم يلتحق طفلك في المدرسة سوف يتم شطبه من البرنامج التجريبي من إلى"
@@ -602,7 +602,7 @@ msgid "NOTE: in order to register with other ID, the ID Holder must be present A
 msgstr "ملاحظة : من أجل التسجيل ببطاقة أخرى، يجب أن يكون حامل البطاقة موجود و يجب أن يكون عمرة 18 سنة أو أكثر"
 
 msgid "NOTE: If the Household Representative is not listed on the UNHCR Certificate, it cannot be used to regiter for the Pilot. Another form of ID must be used."
-msgstr "ملاحظة: إذا لم يتم سرد الممثل المنزلية على شهادة المفوضية، فإنه لا يمكن أن تستخدم للتسجيل في البرنامج التجريبي. يجب استخدام شكل آخر من أشكال الهوية"
+msgstr "ملاحظة: إذا كان اسم ممثل المنزلية غير مسجلا في  شهادة المفوضية، فإنه لا يمكن استخدامها للتسجيل في البرنامج التجريبي. يجب استخدام هوية أخرى"
 
 msgid "First Name"
 msgstr "الاسم الأول"
@@ -632,16 +632,10 @@ msgid "Relationship to Household reprentative"
 msgstr "العلاقة بممثل الأسرة"
 
 msgid "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card."
-msgstr "سوف تتلقى المدفوعات الخاصة بك على بطاقة الصراف الآلي. إذا لم يكن لديك واحدة  سوف نقدم لكم واحدة. ستقوم اليونيسف بأرسال لك رسالة نصية قصيرة لأعلامك بتاريخ ووقت ومكان يمكنك جمع بطاقة الصراف الآلي"
+msgstr "سوف تتلقى المدفوعات الخاصة بك على بطاقة الصراف الآلي. إذا لم يكن لديك بطاقة عنابية اللون  سوف نقدم لكم واحدة. يونيسف سترسل لك رسالة نصية قصيرة لأعلامك بالتاريخ والوقت والمكان لتحصيل بطاقة الصراف الآلي"
 
 msgid "Note: It is very important that you provide us a working phone number so we can send you the details of where and when to collect your ATM Card"
-msgstr "ملاحظة: من المهم جدا أن تقدم لنا رقم هاتف العمل حتى نستطيع أن نرسل لك تفاصيل أين ومتى جمع بطاقة الصراف الآلي"
-
-msgid "Collect existing ATM case number"
-msgstr "جمع بطاقات أجهزة الصراف الآلي"
-
-msgid "Please copy case number directly from card"
-msgstr "يرجى نسخ الرقم مباشرة من بطاقة"
+msgstr "ملاحظة: من المهم جدا أن تقدم لنا رقم هاتف يعمل حتى نستطيع أن نرسل لك تفاصيل أين ومتى يمكنك تحصيل بطاقة الصراف الآلي."
 
 msgid "Blue Card Case Number"
 msgstr "البطاقة الزرقاء"
@@ -653,13 +647,13 @@ msgid "Register Children in Pilot"
 msgstr "تسجيل الأطفال في البرنامج"
 
 msgid "Do you have any children enrolled in other schools?"
-msgstr "هل لديك أي الأطفال مسجلين في مدارس أخرى؟"
+msgstr "هل لديك أطفال مسجلين في مدارس أخرى؟"
 
 msgid "Have you already completed the registration process for this pilot in other school?"
 msgstr "هل أنجزت بالفعل عملية التسجيل لهذا البرنامج في مدرسة أخرى؟"
 
 msgid "You would have been required to present your ID when completing the Pilot Registration Process in the other school. Do you have the ID Number that was presented during your previous Pilot Registration?"
-msgstr ""
+msgstr "لقد طلب منك ابراز بطاقطك عند اكمال التسجيل في البرنامج التجريبي في مدرسة اخرى. هل لديك رقم البطاقة التي ابرزتها  عند التسجيل في البرنامج التجريبي سابقا."
 
 msgid "School"
 msgstr "المدرسة"
@@ -680,7 +674,7 @@ msgid "Contact Information"
 msgstr "معلومات التواصل"
 
 msgid "Officers of the Min Ila Cash Pilot must be able to reach you by phone and household visit in order for your household to benefit from the pilot. Your information will only be provided to officers of the pilot who will be trained to handle your information carefully and will only visit you if your child drops out of school."
-msgstr "يجب أن يكون للضباط الذي يعمل لدى برنامج من الى قادر على الوصول إليك عن طريق الهاتف والزيارة المنزلية من أجل أسرتك للاستفادة من البرنامج التجريبي. وسيتم توفير المعلومات الخاصة بك فقط للضباط الذين سيتم تدريبهم للتعامل مع المعلومات الخاصة بك بعناية وسيزور إلا إذا قطرات طفلك من المدرسة"
+msgstr "يجب أن يكون للضباط برنامج من الى القدرة الى الوصول إليك عن طريق الهاتف والزيارة المنزلية من أجل استفادة أسرتك من البرنامج التجريبي. وسيتم توفير المعلومات الخاصة بك فقط للضباط الذين سيتم تدريبهم للتعامل مع المعلومات الخاصة بك بعناية وسيزورنك فقط إذا توقف طفلك عن الذهاب إلى المدرسة"
 
 msgid "This number is on the leaflet provided to you."
 msgstr "هذا الرقم موجود في النشرة المقدمة لك "
@@ -689,7 +683,7 @@ msgid "Declaration and Consent"
 msgstr "الإعلان و الموافقة"
 
 msgid "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 6 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school."
-msgstr "كل شهر سوف يحصل ممثل الأسرة على مبلغ نقدي يهدف إلى مساعدة الأطفال كنت قد سجلت في البرنامج للذهاب إلى المدرسة. ولكل طفل بالغ من العمر ما بين السادس والتاسع سنوات سوف حصل على 20 دولار امريكياً ولكل طفل من العاشرة حتى الرابعة عشرسوف تتلقى 65. إذا توقف طفلك الذهاب إلى المدرسة سوف تتلقى رسالة نصية قصيرة لتذكيرك الغرض من النقد بعد 10 يوما. بعد 20 يوما ستحصل على زيارة الأسر من ضباط من قبل برنامج من الى التجريبية للمساعدة في توجيه لك المزيد من الدعم للحفاظ على أطفالك في المدرسة"
+msgstr "كل شهر سوف يحصل ممثل الأسرة على مبلغ نقدي يهدف إلى مساعدة الأطفال الذين سجلو في البرنامج للذهاب إلى المدرسة. اذا كان عمر الطفل بين الستة و التسعة سنوات سوف يحصل على 20 دولاراً امريكياً ام اذا كان عمر الطفل بين العاشرة و الرابعة عشرسوف يتلقى 65 دولاراً امريكياً. إذا توقف طفلك عن الذهاب إلى المدرسة سوف تتلقى رسالة نصية قصيرة لتذكيرك بالهدف من النقد بعد 10 ايام. بعد 20 يوما ستحصل على زيارة الأسر من ضباط من قبل البرنامج من الى التجريبي للمساعدة في توجيه لك المزيد من الدعم للحفاظ على أطفالك في المدرسة"
 
 msgid "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments."
 msgstr "إذا الضباط البرنامج غير قادر على تحديد موقع لك عن طريق زيارة الأسرة بعد ثلاث محاولات في غضون فترة زمنية (شهرين)، وسوف إيقاف تلقي المدفوعات"
