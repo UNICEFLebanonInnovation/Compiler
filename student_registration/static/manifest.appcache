@@ -1,15 +1,15 @@
 CACHE MANIFEST
 
-# v0.20
+# v0.21
 
 /alp/outreach/
 /alp/outreach/?ln=ar-ar
 /alp/outreach/?ln=en-us
-/registrations/registration/
-/registrations/registration/?ln=ar-ar
-/registrations/registration/?ln=en-us
-/registrations/registering-pilot/?ln=ar-ar
-/registrations/registering-pilot/?ln=en-us
+#/registrations/registration/
+#/registrations/registration/?ln=ar-ar
+#/registrations/registration/?ln=en-us
+#/registrations/registering-pilot/?ln=ar-ar
+#/registrations/registering-pilot/?ln=en-us
 /static/images/icon-unknown.gif
 /static/images/glyphicons-halflings.png
 /static/images/glyphicons-halflings-white.png
