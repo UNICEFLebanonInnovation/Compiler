@@ -206,7 +206,7 @@
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Register Children in Pilot" %}</h3>
                     <div class="line">
-                        <label class="text">{% trans "Do you have any children enrolled in other schools?" %}</label>
+                        <label class="text">{% trans "Do you have any children enrolled in other 2nd shift schools?" %}</label>
                         {% for choice in form.child_enrolled_in_other_schools %}
                             <span class="hidden-field">{{ choice }}</span>
                         {% endfor %}
@@ -236,7 +236,7 @@
                         </div>
                     </div>
                     <span class="error" id="previously_registered_error" style="display: none;">
-                        {% trans "To ensure that your household receives complete payment you must provide the ID Number under which your other registration took place. You can either come back tomorrow, or you can call the hotline to do this. It is important taht your do this in order to not delay your payment" %}
+                        {% trans "To ensure that your household receives complete payment you must provide the ID Number under which your other registration took place. You can either come back tomorrow, or you can call the hotline to do this. It is important that you do this in order to not delay your payment" %}
                     </span>
                     <div class="line" id="id_number_block" style="display: none;">
                         <label class="text">{% trans "ID Number" %}<span class="asterisque">*</span></label>
