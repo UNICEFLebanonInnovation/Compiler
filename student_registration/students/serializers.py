@@ -7,6 +7,7 @@ from .models import (
 
 class StudentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
+    number = serializers.IntegerField(read_only=True)
 
     def create(self, validated_data):
 
@@ -36,4 +37,5 @@ class StudentSerializer(serializers.ModelSerializer):
             'id_type',
             'nationality',
             'address',
+            'number',
         )

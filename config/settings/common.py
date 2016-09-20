@@ -17,6 +17,9 @@ APPS_DIR = ROOT_DIR.path('student_registration')
 
 env = environ.Env()
 
+#Version
+COMPILER_VERSION = '1.0'
+
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = (
