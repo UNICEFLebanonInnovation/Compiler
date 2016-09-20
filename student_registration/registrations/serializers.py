@@ -83,6 +83,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 class RegistrationChildSerializer(serializers.ModelSerializer):
 
     student_id = serializers.IntegerField(source='student.id', read_only=True)
+    number = serializers.CharField(source='student.number', read_only=True)
     first_name = serializers.CharField(source='student.first_name')
     father_name = serializers.CharField(source='student.father_name')
     last_name = serializers.CharField(source='student.last_name')
@@ -135,12 +136,14 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
             'birthday_day',
             'id_number',
             'owner',
+            'number',
         )
 
 
 class RegisteringAdultSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
+    number = serializers.CharField(read_only=True)
     children = RegistrationChildSerializer(many=True, read_only=True)
 
     def get_children(self):
@@ -190,4 +193,5 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'secondary_phone',
             'secondary_phone_answered',
             'children',
+            'number',
         )
