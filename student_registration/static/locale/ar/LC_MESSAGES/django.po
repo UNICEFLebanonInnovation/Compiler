@@ -865,6 +865,15 @@ msgstr "أقارب"
 msgid "Other non-Relative"
 msgstr "ليس من الأقارب"
 
+msgid "I am the household head"
+msgstr "أنا رب الأسرة"
+
+msgid "Spouse"
+msgstr "الزوجة"
+
+msgid "Father/Mother"
+msgstr "الأم/الأب"
+
 msgid "No"
 msgstr "كلا"
 
