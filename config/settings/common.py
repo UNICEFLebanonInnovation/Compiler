@@ -145,6 +145,8 @@ LANGUAGES = (
     # ('fr-fr', 'french'),
 )
 
+LANGUAGES_BIDI = ["ar-ar"]
+
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
 
