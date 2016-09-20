@@ -13,10 +13,12 @@ from .models import (
     IDType,
 )
 
+
 class NationalityResource(resources.ModelResource):
     class Meta:
         model = Nationality
         fields = (
+            'id',
             'name',
         )
         export_order = ('name', )
@@ -25,13 +27,16 @@ class NationalityResource(resources.ModelResource):
 class NationalityAdmin(ImportExportModelAdmin):
     resource_class = NationalityResource
 
+
 class IDTypeResource(resources.ModelResource):
     class Meta:
         model = IDType
         fields = (
+            'id',
             'name'
         )
         export_order = ('name', )
+
 
 class IDTypeAdmin(ImportExportModelAdmin):
         resource_class = IDTypeResource
