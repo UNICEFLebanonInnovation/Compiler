@@ -3,7 +3,6 @@ from rest_framework import serializers
 from .models import (
     Student,
 )
-from .utils import *
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -13,7 +12,6 @@ class StudentSerializer(serializers.ModelSerializer):
 
         try:
             instance = Student.objects.create(**validated_data)
-            instance.number = generate_id(instance.first_name, instance.father_name, instance.last_name, instance.mother_fullname, instance.sex)
             instance.save()
 
         except Exception as ex:
