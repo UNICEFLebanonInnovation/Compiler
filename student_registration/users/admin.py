@@ -14,6 +14,7 @@ from .models import (
     User,
 )
 
+
 class UserResource(resources.ModelResource):
     class Meta:
         model = User
@@ -29,6 +30,7 @@ class UserResource(resources.ModelResource):
             'password'
         )
         export_order = ('first_name', 'last_name')
+
 
 class UserAdmin(ImportExportModelAdmin):
     resource_class = UserResource
