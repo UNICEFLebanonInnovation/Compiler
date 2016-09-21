@@ -213,3 +213,8 @@ RAVEN_CONFIG = {
 # ADMIN_URL = env('DJANGO_ADMIN_URL')
 
 # Your production stuff: Below this line define 3rd party library settings
+
+# DEBUG
+# ------------------------------------------------------------------------------
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
+DEBUG = env.bool('DJANGO_DEBUG', False)
