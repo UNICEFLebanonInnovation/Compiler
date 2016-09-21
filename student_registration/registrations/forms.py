@@ -56,8 +56,12 @@ class RegisteringAdultForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         location = args[0]['location']
+        locations = args[0]['locations']
         super(RegisteringAdultForm, self).__init__(*args, **kwargs)
-        self.fields['school'].queryset = School.objects.filter(location_id=location)
+        if len(locations):
+            self.fields['school'].queryset = School.objects.filter(location_id__in=locations)
+        else:
+            self.fields['school'].queryset = School.objects.filter(location_id=location)
 
     class Meta:
         model = RegisteringAdult
