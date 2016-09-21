@@ -904,3 +904,8 @@ msgstr "شخص دائما يوصل الرسالة لي"
 msgid "Someone who may not relay the message to me"
 msgstr "شخص ما قد لا يوصل الرسالة لي"
 
+msgid "Currently ATM Cards can only be issued for those over the age of 18. We are working on a solution for this. You can continue the Registration Process so we have your information in case a solution is found. However, until then you will not receive payments."
+msgstr "حاليا يمكن إصدار بطاقات الصراف الآلي فقط لمن هم فوق سن ال 18. ونحن نعمل على حل لهذا. يمكنك متابعة عملية التسجيل حتى يكون لدينا المعلومات الخاصة بك في حال تم العثور على الحل. حتى ذلك الحين لن تتلقى المدفوعات"
+
+msgid "Collect existing ATM case number"
+msgstr "يرجى نسخ رقم القضية مباشرة من البطاقة"

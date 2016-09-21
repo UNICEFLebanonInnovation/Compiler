@@ -33,9 +33,9 @@ class RegisteringAdultForm(forms.ModelForm):
     )
     address = forms.CharField(widget=forms.Textarea(attrs=({'rows': 2, 'cols': 30})),
                               required=False)
-    wfp_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 10, 'placeholder': ''})),
+    wfp_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 12, 'placeholder': ''})),
                                       required=False)
-    csc_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 10, 'placeholder': ''})),
+    csc_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 12, 'placeholder': ''})),
                                       required=False)
     primary_phone = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': '70123456'})),
                                     required=False)
