@@ -35,6 +35,8 @@ class UserResource(resources.ModelResource):
 
 class UserAdmin(ImportExportModelAdmin):
     resource_class = UserResource
+    filter_horizontal = ('groups', 'user_permissions', 'locations',)
+
 
 admin.site.register(User, UserAdmin)
 
