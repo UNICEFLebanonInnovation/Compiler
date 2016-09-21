@@ -162,7 +162,8 @@ class RegisteringPilotView(LoginRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
 
         return {
-            'form': RegisteringAdultForm({'location': self.request.user.location_id}),
+            'form': RegisteringAdultForm({'location': self.request.user.location_id,
+                                          'locations': self.request.user.locations.all()}),
             'student_form': StudentForm
         }
 
