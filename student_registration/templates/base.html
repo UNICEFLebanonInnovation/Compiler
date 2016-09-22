@@ -81,6 +81,9 @@
                     <a class="nav-link" href="{% url 'attendances:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>
                   </li>
                 {% endif %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="/attendances/app/att.apk">{% trans "Attendance App" %}</a>
+                  </li>
                 {% endif %}
                 {% if request.user|has_group:"PILOT" %}
                 <li class="nav-item">
