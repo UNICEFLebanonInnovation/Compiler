@@ -261,6 +261,7 @@
                                 <th>{% trans "Age" %}</th>
                                 <th>{% trans "Relationship to Household reprentative" %}</th>
                                 <th>{% trans "Was this child enrolled in any school last year" %}</th>
+                                <th></th>
                             </thead>
                             <tbody>
                                 {% for register in registred_children %}
@@ -294,6 +295,7 @@
                                 <th>{% trans "Child's UNHCR Individual Number" %}</th>
                                 <th>{% trans "Relationship to Household reprentative" %}</th>
                                 <th>{% trans "Was this child enrolled in any school last year" %}</th>
+                                <th></th>
                             </thead>
                             <tbody>
                                 {% for register in registred_children %}
@@ -653,6 +655,16 @@
             }
         });
 
+        $(document).on('click', '.delete-registration-child-row', function(){
+            var block = $(this);
+            bootbox.confirm("{% trans 'Are you sure you want to delete this child?' %}", function(result) {
+                if(result == true) {
+                    delete_subitem_store(parseInt($('#main_id').val()), 'children', block.attr('itemid'), 'registrations');
+                    $('#child-'+block.attr('itemid')).remove();
+                }
+            });
+        });
+
         $('#add_child_noid').click(function(){
 
             var templateChildForm = $("#add_child_noid_block").find('#add_child_noid_form');
@@ -680,6 +692,8 @@
                                             tr.append($('<td>').html(form.find('#id_age').val()));
                                             tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
                                             tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
+                                            var button = $('<button class="btn btn-danger delete-registration-child-row" type="button" itemid=""><i class="icon-trash icon-white"></i></button>');
+                                            tr.append($('<td>').html(button));
                                             $('#no_id_table').find('tbody').append(tr);
 
                                             var item  = {};
@@ -696,7 +710,11 @@
                                             if(!item.birthday_year){
                                                 item.birthday_year = year - parseInt(item.age);
                                             }
-                                            append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations');
+                                            var callback = function(index){
+                                                button.attr('itemid', index);
+                                                tr.attr('id', 'child-'+index);
+                                            };
+                                            append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations', callback);
 
                                             if(!isSaved)
                                             {
@@ -748,6 +766,8 @@
                                             tr.append($('<td>').html(form.find('#id_id_number').val()));
                                             tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
                                             tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
+                                            var button = $('<button class="btn btn-danger delete-registration-child-row" type="button" itemid=""><i class="icon-trash icon-white"></i></button>')
+                                            tr.append($('<td>').html(button));
                                             $('#with_id_table').find('tbody').append(tr);
 
                                             var item  = {};
@@ -766,7 +786,11 @@
                                             item.birthday_month = 1;
                                             item.birthday_year = year - parseInt(item.age);
                                             item.owner = user_id;
-                                            append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations');
+                                            var callback = function(index){
+                                                button.attr('itemid', index);
+                                                tr.attr('id', 'child-'+index);
+                                            };
+                                            append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations', callback);
                                         } else {
                                             return false;
                                         }

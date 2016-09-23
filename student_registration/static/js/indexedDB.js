@@ -67,7 +67,7 @@ function collect_form_values(form, item)
     return item;
 }
 
-function append_item_store(itemid, name, value, store_name)
+function append_item_store(itemid, name, value, store_name, callback)
 {
     var store = getStoreByName(store_name);
     var request = store.get(itemid);
@@ -77,10 +77,25 @@ function append_item_store(itemid, name, value, store_name)
         if(item == undefined){
             item = [];
         }
-        item.push(value);
+        var index = item.push(value);
         result[name] = item;
         store.put(result);
-        console.log(result);
+        if(callback != undefined){
+            callback(index);
+        }
+    };
+}
+
+function delete_subitem_store(itemid, name, index, store_name)
+{
+    var store = getStoreByName(store_name);
+    var request = store.get(itemid);
+    request.onsuccess = function(){
+        var result = request.result;
+        var subitems = result[name];
+        subitems.splice(parseInt(index)-1, 1);
+        result[name] = subitems;
+        store.put(result);
     };
 }
 
