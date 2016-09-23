@@ -1,7 +1,7 @@
 {% load staticfiles i18n %}
 
 <div id="add_child_noid_block" style="display: none;">
-    <form class="inlineForm form-medium-size" id="add_child_noid_form">
+    <form class="inlineForm form-medium-size" id="add_child_noid_form" onsubmit="return false;">
         <div class="line">
             <label class="text">{% trans "School" %}</label>
             {{ form.school }}
@@ -85,7 +85,7 @@
 </div>
 
 <div id="add_child_withid_block" style="display: none;">
-    <form class="inlineForm form-medium-size" id="add_child_withid_form">
+    <form class="inlineForm form-medium-size" id="add_child_withid_form" onsubmit="return false;">
         <div class="line">
             <label class="text">{% trans "School" %}</label>
             {{ form.school }}
