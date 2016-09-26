@@ -16,12 +16,14 @@ class RegistrationSerializer(serializers.ModelSerializer):
     student_birthday_year = serializers.CharField(source='student.birthday_year')
     student_birthday_month = serializers.CharField(source='student.birthday_month')
     student_birthday_day = serializers.CharField(source='student.birthday_day')
+    student_age = serializers.CharField(source='student.age')
     student_phone = serializers.CharField(source='student.phone')
     student_id_number = serializers.CharField(source='student.id_number')
     student_id_type = serializers.CharField(source='student.id_type')
     student_id_type_name = serializers.CharField(source='student.id_type.name', read_only=True)
     student_number = serializers.CharField(source='student.number', read_only=True)
     student_nationality = serializers.CharField(source='student.nationality')
+    student_mother_nationality = serializers.CharField(source='student.mother_nationality')
     student_address = serializers.CharField(source='student.address')
     school_name = serializers.CharField(source='school.name', read_only=True)
     school_number = serializers.CharField(source='school.number', read_only=True)
@@ -60,12 +62,14 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'student_birthday_year',
             'student_birthday_month',
             'student_birthday_day',
+            'student_age',
             'student_phone',
             'student_id_number',
             'student_id_type',
             'student_id_type_name',
             'student_number',
             'student_nationality',
+            'student_mother_nationality',
             'student_address',
             'school',
             'school_name',
