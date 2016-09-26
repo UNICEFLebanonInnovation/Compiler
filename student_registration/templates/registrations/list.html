@@ -63,8 +63,10 @@
                                         </th>
                                         <th>{% trans "Sex" %}</th>
                                         <th>{% trans "Birthday" %}</th>
+                                        <th>{% trans "Age" %}</th>
                                         <th>{% trans "Nationality" %}</th>
                                         <th>{% trans "Mother fullname" %}</th>
+                                        <th>{% trans "Mother nationality" %}</th>
                                         <th>{% trans "Student first name" %}</th>
                                         <th>{% trans "Student father name" %}</th>
                                         <th>{% trans "Student last name" %}</th>
@@ -87,8 +89,10 @@
                                             <td>{% if registry.student %}{{ registry.student.id_number }}{% endif %}</td>
                                             <td>{% if registry.student %}{%  trans registry.student.sex %}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.birthday }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.age }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.nationality_name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.mother_fullname }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.mother_nationality }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.first_name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.father_name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.last_name }}{% endif %}</td>
