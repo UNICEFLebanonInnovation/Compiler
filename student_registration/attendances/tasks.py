@@ -106,6 +106,56 @@ def set_app_attendances():
 
 
 @app.task
+def set_app_schools():
+
+    docs = []
+    from student_registration.schools.models import School
+    schools = School.objects.all()
+    for school in schools:
+        if not school.location:
+            continue
+        doc[school.location.name] = {
+            "caza": school.location.name,
+            "mouhafaza": school.location.parent.name if school.location.parent else '',
+            "cerd_id": str(school.number),
+            "school_name": school.name
+        }
+        docs.append(doc)
+
+    docs = {
+        "_id": "schools",
+        "type": "schools",
+        "schools": docs
+    }
+
+    response = set_docs(docs)
+    if response.status_code in [requests.codes.ok, requests.codes.created]:
+        return response.text
+
+
+@app.task
+def set_app_users():
+
+    docs = []
+    from student_registration.users.models import User
+    users = User.objects.filter(is_active=True, is_staff=False, is_superuser=False)
+    for user in users:
+        if not user.school:
+            continue
+        doc = {
+            "_id": user.school_id,
+            "school_id": user.school_id,
+            "username": user.username,
+            "password": user.app_password
+        }
+        docs.append(doc)
+
+    response = set_docs(docs)
+    if response.status_code in [requests.codes.ok, requests.codes.created]:
+        return response.text
+
+
+@app.task
 def import_docs(**kwargs):
     """
     Imports docs from couch base
