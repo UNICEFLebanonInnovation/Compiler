@@ -53,7 +53,7 @@
     <div class="m-b">
       <nav class="navbar navbar-dark navbar-static-top bg-inverse">
         <div class="container">
-          <a class="navbar-brand" href="/?ln={{ LANGUAGE_CODE }}">{% trans "Student Registry" %}</a>
+          <a class="navbar-brand" href="/?ln={{ LANGUAGE_CODE }}">{% if request.user|has_group:"PILOT" %}{% trans "Pilot" %}{% else %}{% trans "Compiler" %}{% endif %}</a>
           <button type="button" class="navbar-toggler hidden-sm-up pull-xs-right" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
             &#9776;
           </button>
@@ -81,9 +81,9 @@
                     <a class="nav-link" href="{% url 'attendances:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>
                   </li>
                 {% endif %}
-                  <li class="nav-item">
-                    <a class="nav-link" href="/static/app/att.apk">{% trans "Attendance App" %}</a>
-                  </li>
+{#                  <li class="nav-item">#}
+{#                    <a class="nav-link" href="/static/app/att.apk">{% trans "Attendance App" %}</a>#}
+{#                  </li>#}
                 {% endif %}
                 {% if request.user|has_group:"PILOT" %}
                 <li class="nav-item">
@@ -101,6 +101,11 @@
 {#                <li class="nav-item">#}
 {#                  <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>#}
 {#                </li>#}
+{#                  {% if request.user.is_superuser %}#}
+{#                <li class="nav-item">#}
+{#                  <a class="nav-link" href="{% url 'users:generate-password' %}">{% trans "Generate PWD" %}</a>#}
+{#                </li>#}
+{#                  {% endif %}#}
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
                 </li>
