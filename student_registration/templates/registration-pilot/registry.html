@@ -262,6 +262,7 @@
                                 <th>{% trans "Relationship to Household reprentative" %}</th>
                                 <th>{% trans "Was this child enrolled in any school last year" %}</th>
                                 <th></th>
+                                <th></th>
                             </thead>
                             <tbody>
                                 {% for register in registred_children %}
@@ -387,14 +388,17 @@
                     <div class="line">
                         <label class="text">{% trans "Address" %}<span class="asterisque">*</span></label>
                         {{ form.address }}
+                        <span class="error" id="address_error">{% trans "This field is required" %}</span>
                     </div>
                     <div class="line">
                         <label class="text">{% trans "Primary Phone Number" %}<span class="asterisque">*</span></label>
                         {{ form.primary_phone }}
+                        <span class="error" id="primary_phone_error">{% trans "This field is required" %}</span>
                     </div>
                     <div class="line">
                         <label class="text">{% trans "Phone Number are normally answered by" %}<span class="asterisque">*</span></label>
                         {{ form.primary_phone_answered }}
+                        <span class="error" id="primary_phone_answered_error">{% trans "This field is required" %}</span>
                     </div>
                     <div class="line">
                         <label class="text">{% trans "Secondary Phone Number" %}</label>
@@ -497,9 +501,11 @@
         var synchro_path = host+'/api/registrations-adult/';
         var synchro_path_2 = host+'/api/registrations-child/';
         var arabic_fields = "#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname";
+{#        var numeric_fields = "#id_age";#}
         var validation_mapping = new Array();
         validation_mapping['0'] = function() { return validateSection0() };
         validation_mapping['5'] = function() { return validateSection5() };
+        validation_mapping['13'] = function() { return validateSection13() };
 
 
     $(document).ready(function() {
@@ -528,12 +534,19 @@
             checkArabicOnly($(this));
         });
 
+{#        $(document).on('blur', numeric_fields, function(){#}
+{#            checkIsNumber($(this));#}
+{#        });#}
+
         $(document).on('change', '.bootbox-body #id_enrolled_last_year_location', function(){
             filterSchoolsByLocation(parseInt($(this).val()));
         });
 
         $('#registration_save').click(function(e){
-            bootbox.confirm("{% trans 'Are you sure you want to submit this application?' %}", function(result) {
+            var sectionCheck = validateSection13();
+            if(sectionCheck)
+            {
+                bootbox.confirm("{% trans 'Are you sure you want to submit this application?' %}", function(result) {
                 if(result == true) {
                     var store = getStoreByName('registrations');
                     var request = store.get(parseInt($('#main_id').val()));
@@ -546,7 +559,8 @@
                     update_item_store(parseInt($('#main_id').val()), 'completed', true, 'registrations');
                     displayFeedback();
                 }
-            });
+                });
+            }
         });
 
         $(document).on('click', '#registration-synchro', function(){
@@ -665,6 +679,84 @@
             });
         });
 
+        $(document).on('click', '.edit-registration-child-row', function(){
+            var block = $(this).parent().parent().find(".delete-registration-child-row");
+
+            var templateChildForm = $("#add_child_noid_block").find('#add_child_noid_form');
+
+            var isSaved = false;
+
+            bootbox.dialog({
+                            title: "{% trans "Add Child" %}"+" - "+"{% trans "Other or no ID" %}",
+                            message: $('#add_child_noid_block').html(),
+                            buttons: {
+                                success: {
+                                    label: "{% trans "Save" %}",
+                                    className: "btn-success",
+                                    callback: function () {
+                                        var reslt = validate_add_child_noid();
+                                        if (reslt)
+                                        {
+
+                                            var tr = $('<tr>');
+                                            var form = $('.bootbox-body').find('#add_child_noid_form');
+                                            tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
+                                            tr.append($('<td>').html('&nbsp;'));
+                                            tr.append($('<td>').html(form.find('#id_first_name').val()+' '+ form.find('#id_father_name').val()+' '+form.find('#id_last_name').val()));
+                                            tr.append($('<td>').html(form.find('#id_mother_fullname').val()));
+                                            tr.append($('<td>').html(form.find('#id_birthday_day').find(':selected').text()+'/'+form.find('#id_birthday_month').find(':selected').text()+'/'+form.find('#id_birthday_year').find(':selected').text()));
+                                            tr.append($('<td>').html(form.find('#id_age').val()));
+                                            tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
+                                            tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
+
+                                            var editedIndex = block.attr('itemid');
+
+                                            var button = $('<button class="btn btn-danger delete-registration-child-row" type="button" itemid="'+editedIndex+'"><i class="icon-trash icon-white"></i></button>');
+                                            tr.append($('<td>').html(button));
+
+                                            var editButton = $('<button class="btn edit-registration-child-row" type="button" ><i class="icon-edit icon-white"></i></button>');
+                                            tr.append($('<td>').html(editButton));
+
+                                            tr.attr('id', 'child-'+editedIndex);
+
+                                            $('#no_id_table').find('tbody').find('#child-'+editedIndex).replaceWith(tr);
+
+                                            var updateCallback = function(updateItem)
+                                            {
+                                                collect_form_values(form, updateItem)
+                                                update_subitem_store(parseInt($('#main_id').val()), 'children', editedIndex, 'registrations', updateItem);
+                                            };
+
+                                            get_subitem_store(parseInt($('#main_id').val()), 'children', block.attr('itemid'), 'registrations', updateCallback);
+
+                                        } else {
+                                            return false;
+                                        }
+                                    }
+                                },
+                                cancel: {
+                                    label: "{% trans "Cancel" %}",
+                                    className: "btn-default",
+                                    callback: function () {
+                                        bootbox.hideAll();
+                                    }
+                                }
+                            }
+            });
+
+            $(".bootbox-body").find('#id_school').val($('#mainForm').find("#id_school").val());
+
+            var updateCallback = function(updateItem)
+            {
+                var editForm = $('.bootbox-body').find('#add_child_noid_form');
+                update_form_values(editForm, updateItem);
+            };
+
+            get_subitem_store(parseInt($('#main_id').val()), 'children', block.attr('itemid'), 'registrations', updateCallback);
+
+        });
+
+
         $('#add_child_noid').click(function(){
 
             var templateChildForm = $("#add_child_noid_block").find('#add_child_noid_form');
@@ -694,6 +786,10 @@
                                             tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
                                             var button = $('<button class="btn btn-danger delete-registration-child-row" type="button" itemid=""><i class="icon-trash icon-white"></i></button>');
                                             tr.append($('<td>').html(button));
+
+                                            var editButton = $('<button class="btn edit-registration-child-row" type="button"><i class="icon-edit icon-white"></i></button>');
+                                            tr.append($('<td>').html(editButton));
+
                                             $('#no_id_table').find('tbody').append(tr);
 
                                             var item  = {};
@@ -788,6 +884,7 @@
                                             item.owner = user_id;
                                             var callback = function(index){
                                                 button.attr('itemid', index);
+                                                editButton.attr('itemid', index);
                                                 tr.attr('id', 'child-'+index);
                                             };
                                             append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations', callback);
@@ -892,7 +989,7 @@
         });
 
         $("#slySlider").find("li").click(function() {
-            return false;
+            //return false;
         });
     });
 
