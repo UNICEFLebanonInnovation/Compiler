@@ -246,7 +246,7 @@
                         {% trans "You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them" %}
                     </span>
                     <div id="no_id_block" style="display: none;">
-                        <table class="table table-striped table-bordered cell-border" id="no_id_table"
+                        <table class="table table-striped table-bordered cell-border children_table" id="no_id_table"
                                data-height="500"
                                data-pagination="true"
                                data-search="true"
@@ -265,18 +265,6 @@
                                 <th></th>
                             </thead>
                             <tbody>
-                                {% for register in registred_children %}
-                                    <tr>
-                                        <td>{% if register.school %}{{ register.school.name }}{% endif %}</td>
-                                        <td>{% if register.student %}{{ register.student.number }}{% endif %}</td>
-                                        <td>{% if register.student %}{{ register.student.full_name }}{% endif %}</td>
-                                        <td>{% if register.student %}{{ register.student.mother_fullname }}{% endif %}</td>
-                                        <td>{% if register.student %}{{ register.student.birthday }}{% endif %}</td>
-                                        <td>{% if register.student %}{{ register.student.age }}{% endif %}</td>
-                                        <td>{{ register.relation_to_adult }}</td>
-                                        <td>{% if register.enrolled_last_year %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
-                                    </tr>
-                                {% endfor %}
                             </tbody>
                         </table>
                         <button class="btn btn-success" id="add_child_noid" type="button">
@@ -285,7 +273,7 @@
                         </button>
                     </div>
                     <div id="with_id_block" style="display: none;">
-                        <table class="table table-striped table-bordered cell-border" id="with_id_table"
+                        <table class="table table-striped table-bordered cell-border children_table" id="with_id_table"
                                data-height="500"
                                data-pagination="true"
                                data-search="true"
@@ -299,14 +287,6 @@
                                 <th></th>
                             </thead>
                             <tbody>
-                                {% for register in registred_children %}
-                                    <tr>
-                                        <td>{% if register.school %}{{ register.school.name }}{% endif %}</td>
-                                        <td>{% if register.student %}{{ register.student.id_number }}{% endif %}</td>
-                                        <td>{{ register.relation_to_adult }}</td>
-                                        <td>{% if register.enrolled_last_year %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
-                                    </tr>
-                                {% endfor %}
                             </tbody>
                         </table>
                         <button class="btn btn-success" id="add_child_withid" type="button">
@@ -539,6 +519,7 @@
 {#        });#}
 
         $(document).on('change', '.bootbox-body #id_enrolled_last_year_location', function(){
+            console.log($(this).val());
             filterSchoolsByLocation(parseInt($(this).val()));
         });
 
@@ -673,8 +654,14 @@
             var block = $(this);
             bootbox.confirm("{% trans 'Are you sure you want to delete this child?' %}", function(result) {
                 if(result == true) {
-                    delete_subitem_store(parseInt($('#main_id').val()), 'children', block.attr('itemid'), 'registrations');
                     $('#child-'+block.attr('itemid')).remove();
+                    $('.children_table').find('tr.child-row').each(function(i, item){
+                        $(this).attr('id', 'child-'+(i+1));
+                    });
+                    $('.children_table').find('.delete-registration-child-row').each(function(i, item){
+                        $(this).attr('itemid', i+1);
+                    });
+                    delete_subitem_store(parseInt($('#main_id').val()), 'children', block.attr('itemid'), 'registrations');
                 }
             });
         });
@@ -774,7 +761,7 @@
                                         var reslt = validate_add_child_noid();
                                         if (reslt)
                                         {
-                                            var tr = $('<tr>');
+                                            var tr = $('<tr>').addClass('child-row');
                                             var form = $('.bootbox-body').find('#add_child_noid_form');
                                             tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
                                             tr.append($('<td>').html('&nbsp;'));
@@ -856,7 +843,7 @@
                                     callback: function () {
                                         var reslt = validate_add_child_withid();
                                         if (reslt) {
-                                            var tr = $('<tr>');
+                                            var tr = $('<tr>').addClass('child-row');
                                             var form = $('.bootbox-body').find('#add_child_withid_form');
                                             tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
                                             tr.append($('<td>').html(form.find('#id_id_number').val()));
@@ -1015,7 +1002,7 @@
     {
         $('.bootbox-body').find('#id_enrolled_last_year_school').find('option').hide();
         var store = getStoreByName('schools');
-        var request = store.index('location').getAll();
+        var request = store.index('location').getAll(location);
         request.onsuccess = function() {
             var result = request.result;
             if(result){
