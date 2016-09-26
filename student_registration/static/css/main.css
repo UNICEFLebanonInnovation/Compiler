@@ -1,0 +1,29 @@
+
+#footer {
+    background: #ffffff;
+    display: block;
+    height: 60px;
+}
+
+footer .brand {
+    background: #ffffff;
+    color: #0099ff;
+    font-size: 1.1em;
+    padding: 17px 10px 10px 30px;
+    float: left;
+}
+
+#footer .msg {
+    padding-top: 22px;
+    padding-right: 40px;
+}
+
+@media (min-width: 768px) {
+    .navbar {
+      border-radius: 0;
+    }
+}
+
+input[readonly=readonly] {
+    border: 1px solid !important;
+}

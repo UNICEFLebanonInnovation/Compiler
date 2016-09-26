@@ -22,7 +22,7 @@ from .serializers import (
 
 
 class SchoolViewSet(mixins.ListModelMixin,
-                      viewsets.GenericViewSet):
+                    viewsets.GenericViewSet):
 
     model = School
     queryset = School.objects.all()
@@ -31,7 +31,7 @@ class SchoolViewSet(mixins.ListModelMixin,
 
 
 class ClassRoomViewSet(mixins.ListModelMixin,
-                      viewsets.GenericViewSet):
+                       viewsets.GenericViewSet):
 
     model = ClassRoom
     queryset = ClassRoom.objects.all()
@@ -40,7 +40,7 @@ class ClassRoomViewSet(mixins.ListModelMixin,
 
 
 class SectionViewSet(mixins.ListModelMixin,
-                      viewsets.GenericViewSet):
+                     viewsets.GenericViewSet):
 
     model = Section
     queryset = Section.objects.all()
@@ -49,7 +49,7 @@ class SectionViewSet(mixins.ListModelMixin,
 
 
 class GradeViewSet(mixins.ListModelMixin,
-                      viewsets.GenericViewSet):
+                   viewsets.GenericViewSet):
 
     model = Grade
     queryset = Grade.objects.all()
