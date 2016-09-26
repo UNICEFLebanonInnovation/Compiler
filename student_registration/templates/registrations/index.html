@@ -25,7 +25,7 @@
             <div class="row">
                 <div class="alert alert-success" role="alert" id="alert-synchro-success" style="display: none;"><strong>{% trans 'Well done' %}</strong> {% trans 'Synchronization success' %}</div>
                 <div class="alert alert-warning" role="alert" id="alert-synchro-warning" style="display: none;"><strong>{% trans 'Warning' %}</strong> {% trans 'Please check fill required field' %}</div>
-                <div class="alert alert-danger" role="alert" id="alert-connection" style="display: none;">{% trans 'Please check you internet connectivity' %}</div>
+                <div class="alert alert-danger" role="alert" id="alert-connection" style="display: none;">{% trans 'Please check your internet connectivity' %}</div>
             </div>
             <div class="row">
                     <div class="col-md-12">
@@ -36,10 +36,10 @@
                                 <i class="icon-synch-sign icon-white"></i>&nbsp;
                                     {% trans "Save" %}
                               </button>
-                              <button class="btn btn-info" id="registration-add-column">
-                                <i class="icon-plus-sign icon-white"></i>&nbsp;
-                                    {% trans "add column" %}
-                              </button>
+{#                              <button class="btn btn-info" id="registration-add-column">#}
+{#                                <i class="icon-plus-sign icon-white"></i>&nbsp;#}
+{#                                    {% trans "add column" %}#}
+{#                              </button>#}
                               <a class="btn btn-info" id="registration-export" href="{% url "registrations:registration_export" %}" target="_blank">
                                 <i class="icon-export-sign icon-white"></i>&nbsp;
                                     {% trans "Export" %}
@@ -62,6 +62,7 @@
                                         <th rowspan="2">&nbsp;</th>
                                         <th rowspan="2">
                                             {% trans "District" %}
+                                            <input type="checkbox" name="duplicate_section" id="duplicate_location" />
                                         </th>
                                         <th rowspan="2">
                                             {% trans "Governorate" %}
@@ -101,8 +102,10 @@
                                         </th>
                                         <th rowspan="2">{% trans "Sex" %}</th>
                                         <th colspan="3">{% trans "Birthday" %}</th>
+                                        <th rowspan="2">{% trans "Age" %}</th>
                                         <th rowspan="2">{% trans "Nationality" %}</th>
                                         <th rowspan="2">{% trans "Mother fullname" %}</th>
+                                        <th rowspan="2">{% trans "Mother nationality" %}</th>
                                         <th rowspan="2">{% trans "Student first name" %}</th>
                                         <th rowspan="2">{% trans "Student father name" %}</th>
                                         <th rowspan="2">{% trans "Student last name" %}</th>
@@ -259,6 +262,8 @@
                     request.onsuccess = function(){
 
                         var params = {
+                            location: $('#duplicate_location').is(':checked'),
+                            governorate_name: $('#duplicate_location').is(':checked'),
                             school: $('#duplicate_school').is(':checked'),
                             school_number: $('#duplicate_school').is(':checked'),
                             classroom: $('#duplicate_classroom').is(':checked'),
@@ -300,6 +305,16 @@
                     update_item_store(parseInt($(this).attr('itemscope')), 'school_number', option.attr('itemcontent'), 'registrations');
                     var itemblock = '.school_number_'+$(this).attr('itemscope');
                     $(itemblock).val(option.attr('itemcontent'));
+                }
+            });
+
+            $(document).on('change', '.student_birthday', function(){
+                if($(this).val()) {
+                    var option = $(this).find('option:selected');
+                    var age = calculateAge($(this).attr('itemscope'));
+                    update_item_store(parseInt($(this).attr('itemscope')), 'student_age', age, 'registrations');
+                    var itemblock = '.student_age_'+$(this).attr('itemscope');
+                    $(itemblock).val(age);
                 }
             });
 
@@ -356,6 +371,44 @@
                 });
             });
         });
+
+        function calculateAge(itemid)
+        {
+            var age = 0;
+            var form = $('#line-'+itemid);
+
+            var birthday_day = form.find('#student_birthday_day').val();
+            var birthday_month = form.find('#student_birthday_month').val()-1;
+            var birthday_year = form.find('#student_birthday_year').val();
+
+            var birthDate = new Date(birthday_year, birthday_month, birthday_day);
+
+            if(birthday_day != "" && birthday_month != "" && birthday_year != "" ) {
+                age = getDateDiff(birthDate,new Date());
+            }
+
+            return age;
+        }
+
+        function getDateDiff(dateOfBirth, dateToCalculate) {
+            var calculateYear = dateToCalculate.getFullYear();
+            var calculateMonth = dateToCalculate.getMonth();
+            var calculateDay = dateToCalculate.getDate();
+
+            var birthYear = dateOfBirth.getFullYear();
+            var birthMonth = dateOfBirth.getMonth();
+            var birthDay = dateOfBirth.getDate();
+
+            var age = calculateYear - birthYear;
+            var ageMonth = calculateMonth - birthMonth;
+            var ageDay = calculateDay - birthDay;
+
+            if (ageMonth < 0 || (ageMonth == 0 && ageDay < 0)) {
+                age = parseInt(age) - 1;
+            }
+
+            return age;
+        }
 
         function duplicate_item_values(duplicata, fields)
         {
