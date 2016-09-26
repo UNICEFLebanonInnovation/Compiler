@@ -262,7 +262,7 @@
                                 <th>{% trans "Relationship to Household reprentative" %}</th>
                                 <th>{% trans "Was this child enrolled in any school last year" %}</th>
                                 <th></th>
-                                <th></th>
+{#                                <th></th>#}
                             </thead>
                             <tbody>
                             </tbody>
@@ -701,8 +701,8 @@
                                             var button = $('<button class="btn btn-danger delete-registration-child-row" type="button" itemid="'+editedIndex+'"><i class="icon-trash icon-white"></i></button>');
                                             tr.append($('<td>').html(button));
 
-                                            var editButton = $('<button class="btn edit-registration-child-row" type="button" ><i class="icon-edit icon-white"></i></button>');
-                                            tr.append($('<td>').html(editButton));
+{#                                            var editButton = $('<button class="btn edit-registration-child-row" type="button" ><i class="icon-edit icon-white"></i></button>');#}
+{#                                            tr.append($('<td>').html(editButton));#}
 
                                             tr.attr('id', 'child-'+editedIndex);
 
@@ -774,8 +774,8 @@
                                             var button = $('<button class="btn btn-danger delete-registration-child-row" type="button" itemid=""><i class="icon-trash icon-white"></i></button>');
                                             tr.append($('<td>').html(button));
 
-                                            var editButton = $('<button class="btn edit-registration-child-row" type="button"><i class="icon-edit icon-white"></i></button>');
-                                            tr.append($('<td>').html(editButton));
+{#                                            var editButton = $('<button class="btn edit-registration-child-row" type="button"><i class="icon-edit icon-white"></i></button>');#}
+{#                                            tr.append($('<td>').html(editButton));#}
 
                                             $('#no_id_table').find('tbody').append(tr);
 
@@ -871,7 +871,7 @@
                                             item.owner = user_id;
                                             var callback = function(index){
                                                 button.attr('itemid', index);
-                                                editButton.attr('itemid', index);
+{#                                                editButton.attr('itemid', index);#}
                                                 tr.attr('id', 'child-'+index);
                                             };
                                             append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations', callback);
