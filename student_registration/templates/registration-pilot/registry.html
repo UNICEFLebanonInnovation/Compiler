@@ -118,6 +118,9 @@
                             <a class="btn btn-primary btn-sm notActive" data-toggle="id_PrincipalHouseHold" data-title="0">{% trans "No" %}</a>
                         </div>
                         </div>
+{#                        <button class="btn btn-primary" type="button" id="getUNHCRDatatButton">#}
+{#                            {% trans "Ge Data" %}#}
+{#                        </button>#}
                     </div>
 
                     <div class="line" id="HouseholdID_block">
@@ -478,6 +481,7 @@
         {% endif %}
         var host = protocol+'{{ request.get_host }}';
         var checking_id_number_url = host+'/api/registrations-adult/';
+{#        alert(checking_id_number_url);#}
         var synchro_path = host+'/api/registrations-adult/';
         var synchro_path_2 = host+'/api/registrations-child/';
         var arabic_fields = "#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname";
@@ -543,6 +547,35 @@
                 });
             }
         });
+
+        $('#getUNHCRDatatButton').click(function(e){
+                       $.ajax({
+        type: "GET",
+        //url: checking_id_number_url+$('#id_id_number').val(),
+        url: 'http://192.168.99.100/api/schools/',
+        data: [],
+        cache: false,
+        async: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            $("#HouseholdOtherNoID").show();
+            var firstSchool = response[0];
+
+{#            alert(firstSchool.name);#}
+            $('#id_first_name').val(firstSchool.name);
+
+
+        },
+        error: function (response) {
+            var required_fields = JSON.parse(response.responseText);
+            console.log(response);
+        }
+    });
+           alert("Click");
+        });
+
+
 
         $(document).on('click', '#registration-synchro', function(){
             synchronize_data('registrations', synchro_path);
@@ -743,6 +776,78 @@
 
         });
 
+          $(document).on('click', '.edit-UNHCR-registration-child-row', function(){
+            var block = $(this).parent().parent().find(".delete-registration-child-row");
+
+            var templateChildForm = $("#add_child_withid_block").find('#add_child_withid_form');
+
+            var isSaved = false;
+
+            bootbox.dialog({
+                            title: "{% trans "Add Child" %}",
+                            message: $('#add_child_withid_block').html(),
+                            buttons: {
+                                success: {
+                                    label: "{% trans "Save" %}",
+                                    className: "btn-success",
+                                    callback: function () {
+                                        var reslt = validate_add_child_withid();
+                                        if (reslt)
+                                        {
+                                            var tr = $('<tr>').addClass('child-row');
+                                            var form = $('.bootbox-body').find('#add_child_withid_form');
+                                            tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
+                                            tr.append($('<td>').html(form.find('#id_id_number').val()));
+                                            tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
+                                            tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
+
+                                            var editedIndex = block.attr('itemid');
+
+                                            var button = $('<button class="btn btn-danger delete-registration-child-row" type="button" itemid="'+editedIndex+'"><i class="icon-trash icon-white"></i></button>');
+                                            tr.append($('<td>').html(button));
+
+                                            var editButton = $('<button class="btn edit-UNHCR-registration-child-row" type="button" ><i class="icon-edit icon-white"></i></button>');
+                                            tr.append($('<td>').html(editButton));
+
+                                            tr.attr('id', 'child-'+editedIndex);
+
+                                            $('#with_id_table').find('tbody').find('#child-'+editedIndex).replaceWith(tr);
+
+                                            var updateCallback = function(updateItem)
+                                            {
+                                                collect_form_values(form, updateItem)
+                                                update_subitem_store(parseInt($('#main_id').val()), 'children', editedIndex, 'registrations', updateItem);
+                                            };
+
+                                            get_subitem_store(parseInt($('#main_id').val()), 'children', block.attr('itemid'), 'registrations', updateCallback);
+
+                                        } else {
+                                            return false;
+                                        }
+                                    }
+                                },
+                                cancel: {
+                                    label: "{% trans "Cancel" %}",
+                                    className: "btn-default",
+                                    callback: function () {
+                                        bootbox.hideAll();
+                                    }
+                                }
+                            }
+            });
+
+            $(".bootbox-body").find('#id_school').val($('#mainForm').find("#id_school").val());
+
+            var updateCallback = function(updateItem)
+            {
+                var editForm = $('.bootbox-body').find('#add_child_withid_form');
+                update_form_values(editForm, updateItem);
+            };
+
+            get_subitem_store(parseInt($('#main_id').val()), 'children', block.attr('itemid'), 'registrations', updateCallback);
+
+        });
+
 
         $('#add_child_noid').click(function(){
 
@@ -795,6 +900,7 @@
                                             }
                                             var callback = function(index){
                                                 button.attr('itemid', index);
+                                                editButton.attr('itemid', index);
                                                 tr.attr('id', 'child-'+index);
                                             };
                                             append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations', callback);
@@ -851,6 +957,8 @@
                                             tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
                                             var button = $('<button class="btn btn-danger delete-registration-child-row" type="button" itemid=""><i class="icon-trash icon-white"></i></button>')
                                             tr.append($('<td>').html(button));
+                                            var editButton = $('<button class="btn edit-UNHCR-registration-child-row" type="button"><i class="icon-edit icon-white"></i></button>');
+                                            tr.append($('<td>').html(editButton));
                                             $('#with_id_table').find('tbody').append(tr);
 
                                             var item  = {};
