@@ -1,26 +1,33 @@
 CACHE MANIFEST
 
-# v0.2
+# v0.31
 
-/alp/outreach/
-/alp/outreach/?ln=ar-ar
-/alp/outreach/?ln=en-us
-/registrations/registration/
-/registrations/registration/?ln=ar-ar
-/registrations/registration/?ln=en-us
+#/alp/outreach/
+#/alp/outreach/?ln=ar-ar
+#/alp/outreach/?ln=en-us
+#/registrations/registration/
+#/registrations/registration/?ln=ar-ar
+#/registrations/registration/?ln=en-us
+#/registrations/registering-pilot/?ln=ar-ar
+#/registrations/registering-pilot/?ln=en-us
 /static/images/icon-unknown.gif
 /static/images/glyphicons-halflings.png
 /static/images/glyphicons-halflings-white.png
 /static/images/favicon.ico
 /static/locale/ar-ar.json
 /static/locale/en-us.json
+/static/css/main.css
 /static/css/project.css
+/static/css/project-ar.css
 /static/css/bootstrap.css
 /static/css/jquery.dataTables.min.css
 /static/css/buttons.dataTables.min.css
 /static/css/select.dataTables.min.css
 /static/css/bootstrap-switch.min.css
 /static/css/bootstrap-badge.css
+/static/css/sly.css
+/static/css/signature_pad.css
+/static/css/bootstrap-breadcrumbs.css
 /static/js/project.js
 /static/js/angular.min.js
 /static/js/jquery.min.js
@@ -34,3 +41,15 @@ CACHE MANIFEST
 /static/js/util.js
 /static/js/tooltip.js
 /static/js/bootbox.js
+/static/js/plugins.js
+/static/js/sly.min.js
+/static/js/signature_pad.js
+/static/js/indexedDB.js
+/static/js/appcache.js
+/static/js/eav.js
+/static/js/validator.js
+
+NETWORK:
+*
+http://*
+https://*
