@@ -16,6 +16,16 @@ from .models import (
 )
 
 
+class RegisteringAdultResource(resources.ModelResource):
+    class Meta:
+        model = RegisteringAdult
+
+
+class RegisteringAdultAdmin(ImportExportModelAdmin):
+    resource_class = RegisteringAdultResource
+    list_display = ('first_name', 'father_name', 'last_name','phone')
+
+
 class RegistrationResource(resources.ModelResource):
 
     registering_adult_fname = fields.Field(
@@ -29,7 +39,7 @@ class RegistrationResource(resources.ModelResource):
         widget=ForeignKeyWidget(RegisteringAdult, 'father_name')
     )
     registering_adult_lname = fields.Field(
-        column_name='Registering Adult Last Name',
+        column_name='Registering Adult last Name',
         attribute='registering_adult',
         widget=ForeignKeyWidget(RegisteringAdult, 'last_name')
     )
@@ -119,4 +129,4 @@ class RegistrationAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(Registration, RegistrationAdmin)
-admin.site.register(RegisteringAdult)
+admin.site.register(RegisteringAdult, RegisteringAdultAdmin)
