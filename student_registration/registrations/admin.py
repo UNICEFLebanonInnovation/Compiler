@@ -23,7 +23,7 @@ class RegisteringAdultResource(resources.ModelResource):
 
 class RegisteringAdultAdmin(ImportExportModelAdmin):
     resource_class = RegisteringAdultResource
-    list_display = ('first_name', 'father_name', 'last_name','phone')
+    list_display = ('first_name', 'father_name', 'last_name', 'primary_phone')
 
 
 class RegistrationResource(resources.ModelResource):
