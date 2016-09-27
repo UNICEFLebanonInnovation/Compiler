@@ -2,10 +2,12 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from model_utils import Choices
+from django.utils.translation import ugettext as _
 from model_utils.models import TimeStampedModel
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from student_registration.students.models import (
+    Person,
     Student,
     Language,
 )
@@ -19,9 +21,13 @@ from student_registration.schools.models import (
     Grade
 )
 from student_registration.locations.models import Location
+from student_registration.eav.registry import Registry as eav
 
 
 class Outreach(TimeStampedModel):
+
+    EAV_TYPE = 'outreach'
+
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
@@ -87,7 +93,7 @@ class Outreach(TimeStampedModel):
         max_length=2,
         blank=True,
         null=True,
-        choices=((str(x), x) for x in range(1, 13))
+        choices=Person.MONTHS
     )
     exam_day = models.CharField(
         max_length=2,
@@ -127,3 +133,5 @@ class ExtraColumn(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
+
+eav.register(Outreach)

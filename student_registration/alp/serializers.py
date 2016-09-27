@@ -1,18 +1,15 @@
 
 from rest_framework import serializers
-from .models import Outreach, ExtraColumn
+from .models import Outreach
 from student_registration.students.serializers import StudentSerializer
-
-
-class ExtraColumnSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ExtraColumn
 
 
 class OutreachSerializer(serializers.ModelSerializer):
     original_id = serializers.IntegerField(source='id', read_only=True)
     student_id = serializers.IntegerField(source='student.id', read_only=True)
-    student_full_name = serializers.CharField(source='student.full_name')
+    student_first_name = serializers.CharField(source='student.first_name')
+    student_father_name = serializers.CharField(source='student.father_name')
+    student_last_name = serializers.CharField(source='student.last_name')
     student_mother_fullname = serializers.CharField(source='student.mother_fullname')
     student_sex = serializers.CharField(source='student.sex')
     student_birthday_year = serializers.CharField(source='student.birthday_year')
@@ -20,6 +17,9 @@ class OutreachSerializer(serializers.ModelSerializer):
     student_birthday_day = serializers.CharField(source='student.birthday_day')
     student_phone = serializers.CharField(source='student.phone')
     student_id_number = serializers.CharField(source='student.id_number')
+    student_id_type = serializers.CharField(source='student.id_type')
+    student_id_type_name = serializers.CharField(source='student.id_type.name', read_only=True)
+    student_number = serializers.CharField(source='student.number', read_only=True)
     student_nationality = serializers.CharField(source='student.nationality')
     student_address = serializers.CharField(source='student.address')
     partner_name = serializers.CharField(source='partner.name', read_only=True)
@@ -53,7 +53,9 @@ class OutreachSerializer(serializers.ModelSerializer):
             'id',
             'original_id',
             'student_id',
-            'student_full_name',
+            'student_first_name',
+            'student_father_name',
+            'student_last_name',
             'student_mother_fullname',
             'student_sex',
             'student_birthday_year',
@@ -61,6 +63,9 @@ class OutreachSerializer(serializers.ModelSerializer):
             'student_birthday_day',
             'student_phone',
             'student_id_number',
+            'student_id_type',
+            'student_id_type_name',
+            'student_number',
             'student_nationality',
             'student_address',
             'partner',
@@ -82,5 +87,4 @@ class OutreachSerializer(serializers.ModelSerializer):
             'exam_month',
             'exam_day',
             'owner',
-            # 'extra_fields',
         )

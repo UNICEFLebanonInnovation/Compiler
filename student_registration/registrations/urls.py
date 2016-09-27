@@ -11,5 +11,10 @@ urlpatterns = [
         view=views.RegistrationView.as_view(),
         name='registration'
     ),
+    url(
+        regex=r'^registering-pilot/$',
+        view=views.RegisteringPilotView.as_view(),
+        name='registering_pilot'
+    ),
     url(regex=r'^registration/export/$', view=views.ExportViewSet.as_view(), name='registration_export'),
 ]
