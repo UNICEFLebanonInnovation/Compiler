@@ -25,6 +25,10 @@ class School(models.Model):
 
     def __unicode__(self):
         return self.name
+        # return u'{} - {}'.format(
+        #     self.name,
+        #     self.number
+        # )
 
 
 class Course(models.Model):

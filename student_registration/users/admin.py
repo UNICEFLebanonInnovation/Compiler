@@ -5,8 +5,40 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from import_export import resources, fields
+from import_export import fields
+from import_export.admin import ImportExportModelAdmin
 
-from .models import User
+
+from .models import (
+    User,
+)
 
 
-admin.site.register(User)
+class UserResource(resources.ModelResource):
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'is_active',
+            'phone_number',
+            'school',
+            'location',
+            'password',
+            'app_password'
+        )
+        export_order = ('first_name', 'last_name')
+
+
+class UserAdmin(ImportExportModelAdmin):
+    resource_class = UserResource
+    filter_horizontal = ('groups', 'user_permissions', 'locations',)
+
+
+admin.site.register(User, UserAdmin)
+
+
