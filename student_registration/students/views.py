@@ -26,3 +26,8 @@ class StudentViewSet(mixins.RetrieveModelMixin,
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
+        return []
