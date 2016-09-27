@@ -10,13 +10,14 @@ from django.views import defaults as default_views
 from rest_framework_nested import routers
 from student_registration.alp.views import (
     OutreachViewSet,
-    ExtraColumnViewSet,
 )
 from student_registration.registrations.views import (
-    RegistrationViewSet
+    RegistrationViewSet,
+    RegisteringAdultViewSet,
+    RegisteringChildViewSet,
 )
 from student_registration.attendances.views import (
-    AttendanceViewSet
+    AttendanceViewSet,
 )
 from student_registration.students.views import (
     StudentViewSet,
@@ -27,11 +28,17 @@ from student_registration.schools.views import (
     SectionViewSet,
     GradeViewSet,
 )
+from student_registration.eav.views import (
+    AttributeViewSet,
+    ValueViewSet,
+)
+from .views import acme_view
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
-api.register(r'extra-column', ExtraColumnViewSet, base_name='extra-column')
 api.register(r'registrations', RegistrationViewSet, base_name='registrations')
+api.register(r'registrations-adult', RegisteringAdultViewSet, base_name='registrations_adult')
+api.register(r'registrations-child', RegisteringChildViewSet, base_name='registrations_child')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
 
 api.register(r'students', StudentViewSet, base_name='students')
@@ -39,6 +46,8 @@ api.register(r'schools', SchoolViewSet, base_name='schools')
 api.register(r'classrooms', ClassRoomViewSet, base_name='classrooms')
 api.register(r'sections', SectionViewSet, base_name='sections')
 api.register(r'grades', GradeViewSet, base_name='grades')
+api.register(r'eav/attributes', AttributeViewSet, base_name='eav-attributes')
+api.register(r'eav/values', ValueViewSet, base_name='eav-values')
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
@@ -62,6 +71,8 @@ urlpatterns = [
     url(r'^api/docs/', include('rest_framework_swagger.urls')),
 
     url(r'^api/', include(api.urls)),
+
+    url(r'^.well-known/acme-challenge/(?P<slug>.*)/', acme_view),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

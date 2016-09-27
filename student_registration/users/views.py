@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -59,4 +60,20 @@ class UserChangeLanguageRedirectView(LoginRequiredMixin, RedirectView):
         user_language = kwargs['language']
         translation.activate(user_language)
         self.request.session[translation.LANGUAGE_SESSION_KEY] = user_language
+        return reverse('home') + '?' + user_language
+
+
+class UserGeneratePasswordView(LoginRequiredMixin, RedirectView):
+
+    permanent = False
+    query_string = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        users = User.objects.filter(is_staff=False, is_superuser=False)
+        for user in users:
+            try:
+                user.update_password(int(user.username)*5)
+                user.save()
+            except Exception as ex:
+                pass
         return reverse('home')

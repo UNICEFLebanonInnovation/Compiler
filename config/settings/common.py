@@ -17,6 +17,9 @@ APPS_DIR = ROOT_DIR.path('student_registration')
 
 env = environ.Env()
 
+#Version
+COMPILER_VERSION = '1.0'
+
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = (
@@ -43,6 +46,7 @@ THIRD_PARTY_APPS = (
     'rest_framework_swagger',
     'rest_framework.authtoken',
     'django_makemessages_xgettext',
+    'import_export',
 )
 
 # Apps specific for this project go here.
@@ -54,6 +58,7 @@ LOCAL_APPS = (
     'student_registration.registrations',  # custom registrations app
     'student_registration.schools',  # custom schools app
     'student_registration.locations',  # custom locations app
+    'student_registration.eav',  # custom EAV app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -83,12 +88,21 @@ MIGRATION_MODULES = {
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = env.bool('DJANGO_DEBUG', True)
 
+
+
 # FIXTURE CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-FIXTURE_DIRS
 FIXTURE_DIRS = (
     str(APPS_DIR.path('fixtures')),
 )
+
+
+IMPORT_EXPORT_USE_TRANSACTIONS = False
+IMPORT_EXPORT_SKIP_ADMIN_LOG = False
+
+# If not set default  is TempFolderStorage
+# IMPORT_EXPORT_TMP_STORAGE_CLASS =
 
 # EMAIL CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -129,10 +143,12 @@ LANGUAGE_COOKIE_NAME = 'default_language'
 LANGUAGE_CODE = 'ar-ar'
 
 LANGUAGES = (
-    ('en-us', 'english'),
-    ('fr-fr', 'french'),
     ('ar-ar', 'arabic'),
+    ('en-us', 'english'),
+    # ('fr-fr', 'french'),
 )
+
+LANGUAGES_BIDI = ["ar-ar"]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
@@ -229,7 +245,8 @@ AUTHENTICATION_BACKENDS = (
 # Some really nice defaults
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+# ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 ACCOUNT_ALLOW_REGISTRATION = env.bool('DJANGO_ACCOUNT_ALLOW_REGISTRATION', True)
 ACCOUNT_ADAPTER = 'student_registration.users.adapters.AccountAdapter'
@@ -250,9 +267,9 @@ INSTALLED_APPS += ('student_registration.taskapp.celery.CeleryConfig',)
 # INSTALLED_APPS += ('kombu.transport.django',)
 BROKER_URL = env('CELERY_BROKER_URL', default='django://')
 
-COUCHBASE_URL = env('COUCHBASE_URL')
-COUCHBASE_USER = env('COUCHBASE_USER')
-COUCHBASE_PASS = env('COUCHBASE_PASS')
+COUCHBASE_URL = env('COUCHBASE_URL', default='NO_URL')
+COUCHBASE_USER = env('COUCHBASE_USER', default='NO_USER')
+COUCHBASE_PASS = env('COUCHBASE_PASS', default='NO_PASS')
 ########## END CELERY
 
 
@@ -262,7 +279,7 @@ ADMIN_URL = r'^admin/'
 # Your common stuff: Below this line define 3rd party library settings
 
 LOCALE_PATHS = [
-    str(APPS_DIR)+'/static/locale',
+    str(APPS_DIR.path('static/locale')),
 ]
 
 REST_FRAMEWORK = {

@@ -13,13 +13,15 @@ from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 
-from .models import Outreach, ExtraColumn
-from .serializers import OutreachSerializer, ExtraColumnSerializer
+from .models import Outreach
+from .serializers import OutreachSerializer
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
+    Person,
     Student,
     Language,
     Nationality,
+    IDType,
 )
 from student_registration.schools.models import (
     School,
@@ -31,6 +33,10 @@ from student_registration.schools.models import (
     PartnerOrganization
 )
 from student_registration.locations.models import Location
+from student_registration.eav.models import (
+    Attribute,
+    Value,
+)
 
 
 class OutreachViewSet(mixins.RetrieveModelMixin,
@@ -69,58 +75,17 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         instance = self.model.objects.get(id=kwargs['pk'])
         return JsonResponse({'status': status.HTTP_200_OK})
 
-    def partial_update(self, request, *args, **kwargs):
-        extra_fields = json.dumps(request.data)
-        instance = self.model.objects.get(id=kwargs['pk'])
-        instance.extra_fields = extra_fields
-        instance.save()
-        return JsonResponse({'status': status.HTTP_200_OK})
-
-
-class ExtraColumnViewSet(mixins.RetrieveModelMixin,
-                      mixins.ListModelMixin,
-                      mixins.CreateModelMixin,
-                      mixins.UpdateModelMixin,
-                      viewsets.GenericViewSet):
-
-    model = ExtraColumn
-    queryset = ExtraColumn.objects.all()
-    serializer_class = ExtraColumnSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user)
-
-    def create(self, request, *args, **kwargs):
-        """
-        :return: JSON
-        """
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.instance = serializer.save()
-
-        return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
-
-    def delete(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
-        instance.delete()
-        return JsonResponse({'status': status.HTTP_200_OK})
-
-    def update(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
-        return JsonResponse({'status': status.HTTP_200_OK})
-
 
 class OutreachView(LoginRequiredMixin, ListView):
     model = Outreach
-    template_name = 'alp/outreach.html'
+    template_name = 'alp/list.html'
 
     def get_context_data(self, **kwargs):
 
         data = self.model.objects.all()
-        if not self.request.user.is_superuser:
+        if not self.request.user.is_staff:
             data = data.filter(owner=self.request.user)
-            self.template_name = 'alp/outreach_list.html'
+            self.template_name = 'alp/index.html'
 
         return {
             'outreaches': data,
@@ -132,7 +97,11 @@ class OutreachView(LoginRequiredMixin, ListView):
             'nationalities': Nationality.objects.all(),
             'partners': PartnerOrganization.objects.all(),
             'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km'),
+            'months': Person.MONTHS,
             'genders': (u'Male', u'Female'),
+            'idtypes': IDType.objects.all(),
+            'columns': Attribute.objects.filter(type=Outreach.EAV_TYPE),
+            'eav_type': Outreach.EAV_TYPE
         }
 
 
@@ -141,9 +110,9 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         queryset = Outreach.objects.all()
-        columns = ExtraColumn.objects.all()
+        columns = Attribute.objects.filter(type=Outreach.EAV_TYPE)
 
-        if not self.request.user.is_superuser:
+        if not self.request.user.is_staff:
             queryset = queryset.filter(owner=self.request.user)
             columns = columns.filter(owner=self.request.user)
 
@@ -151,7 +120,7 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
 
         headers = [
                     _('Partner'), _('Student number'), _('Student fullname'), _('Mother fullname'), _('Nationality'),
-                    _('Day of birth'), _('Month of birth'), _('Year of birth'), _('Sex'),
+                    _('Day of birth'), _('Month of birth'), _('Year of birth'), _('Sex'), _('ID Type'),
                     _('ID Number tooltip'), _('Phone number'), _('Governorate'), _('Student living address'),
                     _('Last education level'), _('Last education year'), _('Last training level'), _('Preferred language'),
                     _('Average distance'), _('Outreach exam - day'), _('Outreach exam - month'), _('Outreach exam - year'),
@@ -159,7 +128,7 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
         ]
 
         for idx, col in enumerate(columns):
-            headers = [col.label] + headers
+            headers = [col.name] + headers
 
         data.headers = headers
 
@@ -169,7 +138,7 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
                 continue
             content = [
                 line.partner.name,
-                '',
+                line.student.number,
                 line.student.full_name,
                 line.student.mother_fullname,
                 line.student.nationality.name,
@@ -177,6 +146,7 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
                 int(line.student.birthday_month),
                 int(line.student.birthday_year),
                 _(line.student.sex),
+                line.student.id_type.name,
                 line.student.id_number,
                 line.student.phone,
                 line.location.name if line.location else '',
@@ -193,16 +163,9 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
                 line.school.number
             ]
 
-            try:
-                extra_fields = json.loads(line.extra_fields)
-            except TypeError:
-                extra_fields = []
-            for cidx, col in enumerate(columns):
-                field_name = col.name.replace('column', 'field')+'-'+str(line.id)
-                field_value = ''
-                if field_name in extra_fields:
-                    field_value = extra_fields[field_name]
-                content = [field_value] + content
+            extra_fields = Value.objects.filter(entity_id=line.id, entity_ct=17)
+            for field in extra_fields:
+                content = [field.value_text] + content
 
             data.append(content)
 
