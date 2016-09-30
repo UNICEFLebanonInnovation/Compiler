@@ -17,13 +17,46 @@ from .models import (
 
 
 class RegisteringAdultResource(resources.ModelResource):
+    number = fields.Field(column_name='CaseNumber', attribute='number')
+    name = fields.Field(column_name='BeneficiaryNameAr')
+    phone = fields.Field(column_name='PhoneNumber', attribute='phone')
+    dob = fields.Field(column_name='DOB')
+    sex = fields.Field(column_name='Gender', attribute='sex')
+    registrationdate = fields.Field(column_name='Registration Date', attribute='created')
+    locationKazaa = fields.Field(column_name='District')
+    locationGov = fields.Field(column_name='Governorate')
+    family_size = fields.Field(column_name='Family Size',  attribute='family_size')
+    distributionlist = fields.Field(column_name='WFP Distribution List')
+
+
     class Meta:
         model = RegisteringAdult
+        fields = ('number','name', 'phone', 'dob','sex', 'registrationdate', 'locationKazaa', 'locationGov', 'family_size','distributionlist')
+        export_order = ('number', 'locationGov', 'locationKazaa', 'phone', 'name',  'dob', 'sex', 'registrationdate', 'family_size','distributionlist')
+
+    def dehydrate_name(self, registeringadult):
+        return '%s %s' % (registeringadult.first_name, registeringadult.last_name)
+
+    def dehydrate_dob(self, registeringadult):
+        return '%s-%s-%s' % (registeringadult.birthday_year, registeringadult.birthday_month, registeringadult.birthday_day)
+
+    def dehydrate_locationKazaa(self, registeringadult):
+        return registeringadult.school.location.name
+
+    def dehydrate_locationGov(self, registeringadult):
+        return registeringadult.school.location.parent.name
+
+    def dehydrate_family_size(self, registeringadult):
+        return len(registeringadult.children.all())
+
+    def dehydrate_distributionlist(self, registeringadult):
+        return registeringadult.school.location.distribution_list
 
 
 class RegisteringAdultAdmin(ImportExportModelAdmin):
     resource_class = RegisteringAdultResource
     list_display = ('first_name', 'father_name', 'last_name','phone')
+    search_fields = ('first_name', 'father_name', 'last_name','phone')
 
 
 class RegistrationResource(resources.ModelResource):
