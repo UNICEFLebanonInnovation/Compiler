@@ -16,4 +16,5 @@ def get_unhcr_principal_applicant(case_number):
         "https://www.unhcrmenadagdata.org//RaisWebApiv2/api/GetPAByCase/{id}".format(id=case_number),
         headers=headers
     ).json()
-    print(getDataResponse)
+    return getDataResponse
+    # print(getDataResponse)
