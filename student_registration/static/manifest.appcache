@@ -1,10 +1,10 @@
 CACHE MANIFEST
 
-# v0.27
+# v0.31
 
-/alp/outreach/
-/alp/outreach/?ln=ar-ar
-/alp/outreach/?ln=en-us
+#/alp/outreach/
+#/alp/outreach/?ln=ar-ar
+#/alp/outreach/?ln=en-us
 #/registrations/registration/
 #/registrations/registration/?ln=ar-ar
 #/registrations/registration/?ln=en-us

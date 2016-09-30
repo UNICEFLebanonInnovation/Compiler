@@ -33,6 +33,11 @@ urlpatterns = [
         view=views.UserUpdateView.as_view(),
         name='update'
     ),
+    url(
+        regex=r'^~generate-password/$',
+        view=views.UserGeneratePasswordView.as_view(),
+        name='generate-password'
+    ),
 
     url(r'^set-language/(?P<language>[\w.@+-]+)/$', view=views.UserChangeLanguageRedirectView.as_view(), name='set_language'),
 ]
