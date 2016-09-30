@@ -90,6 +90,9 @@ input.required, select.required {
 .icon-prev-sign {
   background-position: -430px -71px;
 }
+.icon-edit {
+    background-position: -95px -71px;
+}
 
 .icon-Male {
   background-position: 0px 0px;
@@ -185,6 +188,7 @@ input.required, select.required {
 div.error, span.error {
     padding-top: 3px;
     float: right;
+    text-align: right;
     display: none;
 }
 .form_errors {
@@ -211,4 +215,7 @@ div.error, span.error {
     .navbar {
       border-radius: 0;
     }
+}
+table td {
+  text-align: right;
 }
