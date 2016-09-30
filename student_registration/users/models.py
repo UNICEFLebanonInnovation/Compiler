@@ -48,5 +48,9 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    def update_password(self, password):
+        self.app_password = password
+        self.set_password(password)
+
     def get_absolute_url(self):
         return reverse('users:detail', kwargs={'username': self.username})
