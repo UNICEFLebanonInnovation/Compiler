@@ -118,9 +118,9 @@
                             <a class="btn btn-primary btn-sm notActive" data-toggle="id_PrincipalHouseHold" data-title="0">{% trans "No" %}</a>
                         </div>
                         </div>
-{#                        <button class="btn btn-primary" type="button" id="getUNHCRDatatButton">#}
-{#                            {% trans "Ge Data" %}#}
-{#                        </button>#}
+                        <button class="btn btn-primary" type="button" id="getUNHCRDatatButton">
+                            {% trans "UNHCR Data" %}
+                        </button>
                     </div>
 
                     <div class="line" id="HouseholdID_block">
@@ -265,7 +265,7 @@
                                 <th>{% trans "Relationship to Household reprentative" %}</th>
                                 <th>{% trans "Was this child enrolled in any school last year" %}</th>
                                 <th></th>
-{#                                <th></th>#}
+                                <th></th>
                             </thead>
                             <tbody>
                             </tbody>
@@ -287,6 +287,7 @@
                                 <th>{% trans "Child's UNHCR Individual Number" %}</th>
                                 <th>{% trans "Relationship to Household reprentative" %}</th>
                                 <th>{% trans "Was this child enrolled in any school last year" %}</th>
+                                <th></th>
                                 <th></th>
                             </thead>
                             <tbody>
@@ -531,6 +532,7 @@
             var sectionCheck = validateSection13();
             if(sectionCheck)
             {
+
                 bootbox.confirm("{% trans 'Are you sure you want to submit this application?' %}", function(result) {
                 if(result == true) {
                     var store = getStoreByName('registrations');
@@ -545,35 +547,62 @@
                     displayFeedback();
                 }
                 });
+
             }
         });
 
-        $('#getUNHCRDatatButton').click(function(e){
-                       $.ajax({
-        type: "GET",
-        //url: checking_id_number_url+$('#id_id_number').val(),
-        url: 'http://192.168.99.100/api/schools/',
-        data: [],
-        cache: false,
-        async: false,
-        headers: getHeader(),
-        dataType: 'json',
-        success: function (response) {
-            $("#HouseholdOtherNoID").show();
-            var firstSchool = response[0];
+         $('#getUNHCRDatatButton').click(function(e){
+             $.ajax({
+                 type: "GET",
+                 url: checking_id_number_url+$('#id_id_number').val(),
+                 data: [],
+                 cache: false,
+                 async: false,
+                 headers: getHeader(),
+                 dataType: 'json',
+                 success: function (response) {
+                     $("#HouseholdOtherNoID").show();
+                     var household = response;
 
-{#            alert(firstSchool.name);#}
-            $('#id_first_name').val(firstSchool.name);
+                     $('#id_first_name').val(household.first_name);
+                     $('#id_first_name').trigger('blur');
 
+                     $('#id_last_name').val(household.last_name);
+                     $('#id_last_name').trigger('blur');
 
-        },
-        error: function (response) {
-            var required_fields = JSON.parse(response.responseText);
-            console.log(response);
-        }
-    });
-           alert("Click");
+                     $('#id_father_name').val(household.father_name);
+                     $('#id_father_name').trigger('blur');
+
+                     $('#id_mother_fullname').val(household.mother_fullname);
+                     $('#id_mother_fullname').trigger('blur');
+
+                     $('#id_birthday_day').val(household.birthday_day);
+                     $('#id_birthday_day').trigger('blur');
+
+                     $('#id_birthday_month').val(household.birthday_month);
+                     $('#id_birthday_month').trigger('blur');
+
+                     $('#id_birthday_year').val(household.birthday_year);
+                     $('#id_birthday_year').trigger('blur');
+
+                     calculateDateOfBirth();
+                     $('#id_sex').val(household.sex);
+                     $('#id_sex').trigger('blur');
+
+                     for(childIndex in household.children)
+                     {
+                         addChild(household.children[childIndex]);
+                         console.log(household.children[childIndex]);
+                     }
+
+                 },
+                 error: function (response) {
+                    var required_fields = JSON.parse(response.responseText);
+                    console.log(response);
+                 }
+             });
         });
+
 
 
 
@@ -764,7 +793,7 @@
                             }
             });
 
-            $(".bootbox-body").find('#id_school').val($('#mainForm').find("#id_school").val());
+            //$(".bootbox-body").find('#id_school').val($('#mainForm').find("#id_school").val());
 
             var updateCallback = function(updateItem)
             {
@@ -836,7 +865,7 @@
                             }
             });
 
-            $(".bootbox-body").find('#id_school').val($('#mainForm').find("#id_school").val());
+            //$(".bootbox-body").find('#id_school').val($('#mainForm').find("#id_school").val());
 
             var updateCallback = function(updateItem)
             {
@@ -879,8 +908,8 @@
                                             var button = $('<button class="btn btn-danger delete-registration-child-row" type="button" itemid=""><i class="icon-trash icon-white"></i></button>');
                                             tr.append($('<td>').html(button));
 
-{#                                            var editButton = $('<button class="btn edit-registration-child-row" type="button"><i class="icon-edit icon-white"></i></button>');#}
-{#                                            tr.append($('<td>').html(editButton));#}
+                                            var editButton = $('<button class="btn edit-registration-child-row" type="button"><i class="icon-edit icon-white"></i></button>');
+                                            tr.append($('<td>').html(editButton));
 
                                             $('#no_id_table').find('tbody').append(tr);
 
@@ -1088,12 +1117,53 @@
         });
     });
 
+    function addChild(child)
+    {
+        var tr = $('<tr>').addClass('child-row');
+        tr.append($('<td>').html(child.school_name));
+        tr.append($('<td>').html(child.id_number));
+{#        tr.append($('<td>').html(getDropDownValueText($("#id_school"),child.school)));#}
+{#        tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));#}
+{#        tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));#}
+        var button = $('<button class="btn btn-danger delete-registration-child-row" type="button" itemid="" style = "display:none"><i class="icon-trash icon-white"></i></button>')
+        tr.append($('<td>').html(button));
+        var editButton = $('<button class="btn edit-UNHCR-registration-child-row" type="button" style = "display:none"><i class="icon-edit icon-white"></i></button>');
+        tr.append($('<td>').html(editButton));
+        $('#with_id_table').find('tbody').append(tr);
+        var item  = {};
+        item.id_school = child.school
+        if(!item.id_number){
+            item.id_number = '00000';
+        }
+        item.firs_name = 'Unknown';
+        item.father_name = 'Unknown';
+        item.last_name = 'Unknown';
+        item.mother_fullname = 'Unknown';
+        item.sex = 'Male';
+        var year = new Date().getFullYear();
+        item.age = 1;
+        item.birthday_day = 1;
+        item.birthday_month = 1;
+        item.birthday_year = year - parseInt(item.age);
+        item.owner = user_id;
+        var callback = function(index){
+            button.attr('itemid', index);
+            tr.attr('id', 'child-'+index);
+        };
+        append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations', callback);
+    }
 
     function updateDropDownValue(dropDownElement, value)
     {
         dropDownElement.find('option:selected').removeAttr('selected');
         dropDownElement.find('option[value="'+value+'"]').attr("selected",true);
     }
+
+    function getDropDownValueText(dropDownElement, value)
+    {
+        return dropDownElement.find('option[value="'+value+'"]').text();
+    }
+
 
     function displayFeedback()
     {
