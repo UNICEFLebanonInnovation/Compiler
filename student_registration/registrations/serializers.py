@@ -98,6 +98,7 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
     birthday_day = serializers.CharField(source='student.birthday_day')
     id_number = serializers.CharField(source='student.id_number')
     age = serializers.CharField(source='student.age')
+    school_name = serializers.CharField(source='school.name')
 
     def create(self, validated_data):
 
@@ -122,6 +123,7 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
         model = Registration
         fields = (
             'school',
+            'school_name',
             'enrolled_last_year_school',
             'relation_to_adult',
             'related_to_family',
@@ -149,9 +151,6 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     number = serializers.CharField(read_only=True)
     children = RegistrationChildSerializer(many=True, read_only=True)
-
-    def get_children(self):
-        pass
 
     def create(self, validated_data):
 
