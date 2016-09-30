@@ -12,8 +12,14 @@ from .models import (
     RegisteringAdult,
     Student,
     Location,
-    School
+    School,
+    WFPDistributionSite,
 )
+
+
+class WFPSiteAdmin(admin.ModelAdmin):
+
+    filter_horizontal = ('location',)
 
 
 class RegisteringAdultResource(resources.ModelResource):
@@ -25,20 +31,24 @@ class RegisteringAdultResource(resources.ModelResource):
     registrationdate = fields.Field(column_name='Registration Date', attribute='created')
     locationKazaa = fields.Field(column_name='District')
     locationGov = fields.Field(column_name='Governorate')
-    family_size = fields.Field(column_name='Family Size',  attribute='family_size')
-    distributionlist = fields.Field(column_name='WFP Distribution List')
-
+    family_size = fields.Field(column_name='Family Size', attribute='family_size')
+    distributionlist = fields.Field(column_name='WFP Distribution Point')
 
     class Meta:
         model = RegisteringAdult
-        fields = ('number','name', 'phone', 'dob','sex', 'registrationdate', 'locationKazaa', 'locationGov', 'family_size','distributionlist')
-        export_order = ('number', 'locationGov', 'locationKazaa', 'phone', 'name',  'dob', 'sex', 'registrationdate', 'family_size','distributionlist')
+        fields = (
+        'number', 'name', 'phone', 'dob', 'sex', 'registrationdate', 'locationKazaa', 'locationGov', 'family_size',
+        'distributionlist')
+        export_order = (
+        'number', 'locationGov', 'locationKazaa', 'phone', 'name', 'dob', 'sex', 'registrationdate', 'family_size',
+        'distributionlist')
 
     def dehydrate_name(self, registeringadult):
         return '%s %s' % (registeringadult.first_name, registeringadult.last_name)
 
     def dehydrate_dob(self, registeringadult):
-        return '%s-%s-%s' % (registeringadult.birthday_year, registeringadult.birthday_month, registeringadult.birthday_day)
+        return '%s-%s-%s' % (
+        registeringadult.birthday_year, registeringadult.birthday_month, registeringadult.birthday_day)
 
     def dehydrate_locationKazaa(self, registeringadult):
         return registeringadult.school.location.name
@@ -50,17 +60,26 @@ class RegisteringAdultResource(resources.ModelResource):
         return len(registeringadult.children.all())
 
     def dehydrate_distributionlist(self, registeringadult):
-        return registeringadult.school.location.distribution_list
+        return registeringadult.wfp_distribution_site.code
 
 
 class RegisteringAdultAdmin(ImportExportModelAdmin):
     resource_class = RegisteringAdultResource
-    list_display = ('first_name', 'father_name', 'last_name','phone')
-    search_fields = ('first_name', 'father_name', 'last_name','phone')
+    list_display = ('first_name', 'father_name', 'last_name', 'phone')
+    search_fields = ('first_name', 'father_name', 'last_name', 'phone')
+
+    def assign_distribution_site(self, request, queryset):
+        for adult in queryset:
+            site = WFPDistributionSite.objects.filter(location__in=[adult.school.location]).first()
+            adult.wfp_distribution_site = site
+            adult.save()
+
+    assign_distribution_site.short_description = "Assign WFP Distribution site to Adult"
+
+    actions = ('assign_distribution_site',)
 
 
 class RegistrationResource(resources.ModelResource):
-
     registering_adult_fname = fields.Field(
         column_name='Registering Adult First Name',
         attribute='registering_adult',
@@ -151,16 +170,30 @@ class RegistrationResource(resources.ModelResource):
     )
 
     class Meta:
-            model = Registration
-            fields = ('relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school', 'enrolled_last_year_location','section','grade','classroom','year','owner','status','out_of_school_two_years','related_to_family')
-            export_order = ('studentFname','studentFaName','studentLname', 'registering_adult_fname', 'registering_adult_faname', 'registering_adult_lname', 'mother', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school', 'enrolled_last_year_location', 'section', 'grade', 'classroom', 'year', 'owner', 'status','out_of_school_two_years', 'related_to_family')
+        model = Registration
+        fields = ('relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school', 'enrolled_last_year_location',
+                  'section', 'grade', 'classroom', 'year', 'owner', 'status', 'out_of_school_two_years',
+                  'related_to_family')
+        export_order = (
+        'studentFname', 'studentFaName', 'studentLname', 'registering_adult_fname', 'registering_adult_faname',
+        'registering_adult_lname', 'mother', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
+        'enrolled_last_year_location', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
+        'out_of_school_two_years', 'related_to_family')
 
 
 class RegistrationAdmin(ImportExportModelAdmin):
     resource_class = RegistrationResource
-    list_display = ('student', 'registering_adult', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school','enrolled_last_year_location', 'school','section','grade','classroom','year','owner','status','out_of_school_two_years','related_to_family')
-    search_fields = ('student', 'registering_adult', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school','enrolled_last_year_location', 'school','section','grade','classroom','year','owner','status','out_of_school_two_years','related_to_family')
+    list_display = (
+    'student', 'registering_adult', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
+    'enrolled_last_year_location', 'school', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
+    'out_of_school_two_years', 'related_to_family')
+    search_fields = (
+    'student', 'registering_adult', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
+    'enrolled_last_year_location', 'school', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
+    'out_of_school_two_years', 'related_to_family')
     list_filter = ('enrolled_last_year', 'status', 'school');
+
 
 admin.site.register(Registration, RegistrationAdmin)
 admin.site.register(RegisteringAdult, RegisteringAdultAdmin)
+admin.site.register(WFPDistributionSite)
