@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
 import tablib
+import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
@@ -124,26 +125,35 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
         Try to lookup the registering adult from the UNHCR registration database
         :return:
         """
+        adult = []
         try:
+            # first try and look up in our database
             adult = super(RegisteringAdultViewSet, self).get_object()
-        except Http404:
-            if self.kwargs.get('id_type'):
+            return adult
+            #raise Http404()
+
+        except Http404 as exp:
+            # or look up in UNHCR
+            if self.kwargs.get('id_number'):
                 principal_applicant = get_unhcr_principal_applicant(self.kwargs.get('id_number'))
                 if principal_applicant:
+                    print principal_applicant[0]
                     adult = RegisteringAdult()
-                    adult.id_number = principal_applicant["CaseNo"]
-                    adult.phone = principal_applicant["CoAPhone"]
-                    adult.first_name = principal_applicant["GivenName"]
-                    adult.last_name = principal_applicant["FamilyName"]
-                    adult.father_name = principal_applicant["FatherName"]
-                    dob = principal_applicant["DOB"]
+                    applicant = principal_applicant[len(principal_applicant)-1]
+                    adult.id_number = applicant["CaseNo"]
+                    adult.phone = applicant["CoAPhone"]
+                    adult.first_name =applicant["GivenName"]
+                    adult.last_name = applicant["FamilyName"]
+                    adult.father_name = applicant["FatherName"]
+                    from datetime import datetime
+                    dob = datetime.strptime(applicant["DOB"], '%Y-%m-%dT%H:%M:%S')
                     adult.birthday_day = dob.day
                     adult.birthday_month = dob.month
                     adult.birthday_year = dob.year
-                    adult.sex = principal_applicant["Sex"]
-                    adult.save()
+                    adult.sex = applicant["Sex"]
+                    # adult.save()
                     return adult
-            raise Http404
+            raise exp
         else:
             return adult
 
