@@ -104,6 +104,12 @@ class Person(TimeStampedModel):
     nationality = models.ForeignKey(
         Nationality,
         blank=True, null=True,
+        related_name='+'
+    )
+    mother_nationality = models.ForeignKey(
+        Nationality,
+        blank=True, null=True,
+        related_name='+'
     )
     address = models.TextField(
         blank=True,

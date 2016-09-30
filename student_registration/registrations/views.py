@@ -107,12 +107,17 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
     serializer_class = RegisteringAdultSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
+    # def get_queryset(self):
+    #     queryset = super(RegisteringAdultViewSet, self).get_queryset()
+    #     id_number = self.kwargs.get('id_number')
+    #     if id_number:
+    #         return queryset.filter(id_number=id_number)
+    #     return queryset
+
     def get_queryset(self):
-        queryset = super(RegisteringAdultViewSet, self).get_queryset()
-        id_number = self.kwargs.get('id_number')
-        if id_number:
-            return queryset.filter(id_number=id_number)
-        return queryset
+        if self.request.user.is_superuser:
+            return self.queryset
+        return []
 
     def get_object(self):
         """
@@ -153,6 +158,11 @@ class RegisteringChildViewSet(mixins.RetrieveModelMixin,
     queryset = Registration.objects.all()
     serializer_class = RegistrationChildSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
+        return []
 
 
 class RegisteringPilotView(LoginRequiredMixin, FormView):

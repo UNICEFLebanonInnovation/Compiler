@@ -58,6 +58,15 @@ function validateSection5()
     }
     return valid;
 }
+function validateSection13()
+{
+    var valid = true ;
+        valid = validateTextBoxRequired('id_address','address_error',valid);
+        valid = validateTextBoxRequired('id_primary_phone','primary_phone_error',valid);
+        valid = validateTextBoxRequired('id_primary_phone_answered','primary_phone_answered_error',valid);
+    return valid;
+}
+
 
 function validateTextBoxRequired(id, errorID, isValid)
 {
@@ -89,6 +98,8 @@ function validate_add_child_withid()
 {
     var valid = true ;
     var form = $('.bootbox-body').find('#add_child_withid_form');
+
+    valid = validateTextBox(form,'id_id_number','id_number_error',valid);
     valid = validateTextBox(form,'id_relation_to_adult','relation_to_household_reprentative_error',valid);
     return valid;
 }
@@ -129,3 +140,26 @@ function checkArabicOnly(field)
         field.val(sNewVal);
     }
 }
+
+function checkIsNumber(field)
+{
+    var sNewVal = "";
+    var sFieldVal = field.val();
+    alert(isNumber(sFieldVal));
+
+    // alert(!isNaN(parseFloat(sFieldVal)) && isFinite(sFieldVal));
+    // if(!isNaN(parseFloat(sFieldVal)) && isFinite(sFieldVal)) {
+    //     field.val("");
+    // }
+
+}
+
+function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
+
