@@ -20,19 +20,32 @@ from .models import (
 
 
 class schoolResource(resources.ModelResource):
+    locationKazaa = fields.Field(column_name='District')
+    locationGov = fields.Field(column_name='Governorate')
+
     class Meta:
         model = School
         fields = (
             'id',
             'name',
             'number',
-            'location',
+            'locationGov',
+            'locationKazaa'
         )
-        export_order = ('name', )
+        export_order = ('id', 'name', 'number', 'locationGov', 'locationKazaa')
+
+    def dehydrate_locationKazaa(self, school):
+        return school.location.name
+
+    def dehydrate_locationGov(self, school):
+        return school.location.parent.name
 
 
 class SchoolAdmin(ImportExportModelAdmin):
     resource_class = schoolResource
+    list_display = ('name', 'number', 'location', )
+    search_fields = ('name', 'number', )
+    list_filter = ('location', )
 
 
 class EducationLevelResource(resources.ModelResource):
@@ -120,6 +133,7 @@ class PartnerOrganizationResource(resources.ModelResource):
 
 class PartnerOrganizationAdmin(ImportExportModelAdmin):
     resource_class = PartnerOrganizationResource
+    search_fields = ('name', )
 
 
 admin.site.register(School, SchoolAdmin)
