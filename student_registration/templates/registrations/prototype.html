@@ -89,7 +89,7 @@
             </select>
         </td>
         <td>
-            <select name="student_birthday_year" id="student_birthday_year" class="registration-field" itemscope="$$itemscope_id$$">
+            <select name="student_birthday_year" id="student_birthday_year" class="registration-field student_birthday" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
                 {% for item in years1 %}
                     <option value="{{ item }}">{{ item }}</option>
@@ -97,7 +97,7 @@
             </select>
         </td>
         <td>
-            <select name="student_birthday_month" id="student_birthday_month" class="registration-field" itemscope="$$itemscope_id$$">
+            <select name="student_birthday_month" id="student_birthday_month" class="registration-field student_birthday" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
                 {% for key, name in months %}
                     <option value="{{ key }}">{{ name }}</option>
@@ -105,12 +105,16 @@
             </select>
         </td>
         <td>
-            <select name="student_birthday_day" id="student_birthday_day" class="registration-field" itemscope="$$itemscope_id$$">
+            <select name="student_birthday_day" id="student_birthday_day" class="registration-field student_birthday" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
                 {% for item in days1 %}
                     <option value="{{ item }}">{{ item }}</option>
                 {% endfor %}
             </select>
+        </td>
+        <td>
+            <input type="text" name="student_age" class="registration-field student_age_$$itemscope_id$$" readonly="readonly"
+                   itemscope="$$itemscope_id$$" id="student_age" value=""/>
         </td>
         <td>
             <select name="student_nationality" id="student_nationality" class="registration-field" itemscope="$$itemscope_id$$">
@@ -122,6 +126,14 @@
         </td>
         <td>
             <input type="text" name="student_mother_fullname" id="student_mother_fullname" class="registration-field" itemscope="$$itemscope_id$$" />
+        </td>
+        <td>
+            <select name="student_mother_nationality" id="student_mother_nationality" class="registration-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in nationalities %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
         </td>
         <td>
             <input type="text" name="student_first_name" id="student_first_name" class="registration-field" itemscope="$$itemscope_id$$" />

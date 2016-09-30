@@ -67,6 +67,23 @@ function collect_form_values(form, item)
     return item;
 }
 
+function update_form_values(form, item)
+{
+    $(form.find('input')).each(function(i, field){
+        $(field).val(item[$(field).attr('name')]);
+    });
+
+    $(form.find('select')).each(function(i, field){
+        updateDropDownValue($(field),item[$(field).attr('name')]);
+    });
+
+    $(form.find('textarea')).each(function(i, field){
+         $(field).val(item[$(field).attr('name')]);
+    });
+
+    return item;
+}
+
 function append_item_store(itemid, name, value, store_name, callback)
 {
     var store = getStoreByName(store_name);
@@ -96,6 +113,30 @@ function delete_subitem_store(itemid, name, index, store_name)
         subitems.splice(parseInt(index)-1, 1);
         result[name] = subitems;
         store.put(result);
+    };
+}
+
+function update_subitem_store(itemid, name, index, store_name, newValue)
+{
+    var store = getStoreByName(store_name);
+    var request = store.get(itemid);
+    request.onsuccess = function(){
+        var result = request.result;
+        var subitems = result[name];
+        subitems[parseInt(index)-1] = newValue;
+        result[name] = subitems;
+        store.put(result);
+    };
+}
+
+function get_subitem_store(itemid, name, index, store_name, callback)
+{
+    var store = getStoreByName(store_name);
+    var request = store.get(itemid);
+    request.onsuccess = function(){
+        var result = request.result;
+        var subitems = result[name];
+        callback(subitems[parseInt(index)-1]);
     };
 }
 
