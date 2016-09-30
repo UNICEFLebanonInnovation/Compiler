@@ -93,6 +93,7 @@
         <div class="line">
             <label class="text">{% trans "Child's ID Number" %}</label>
             {{ student_form.id_number }}
+            <span class="error" id="id_number_error">{% trans "This field is required" %}</span>
         </div>
         <div class="line">
             <label class="text">{% trans "Relationship to Household reprentative" %}<span class="asterisque">*</span></label>

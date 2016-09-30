@@ -91,6 +91,10 @@ input.required, select.required {
   background-position: -430px -71px;
 }
 
+.icon-edit {
+    background-position: -95px -71px;
+}
+
 .icon-Male {
   background-position: 0px 0px;
   width: 55px;
