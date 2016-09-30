@@ -159,7 +159,8 @@ class RegistrationResource(resources.ModelResource):
 class RegistrationAdmin(ImportExportModelAdmin):
     resource_class = RegistrationResource
     list_display = ('student', 'registering_adult', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school','enrolled_last_year_location', 'school','section','grade','classroom','year','owner','status','out_of_school_two_years','related_to_family')
-
+    search_fields = ('student', 'registering_adult', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school','enrolled_last_year_location', 'school','section','grade','classroom','year','owner','status','out_of_school_two_years','related_to_family')
+    list_filter = ('enrolled_last_year', 'status', 'school');
 
 admin.site.register(Registration, RegistrationAdmin)
 admin.site.register(RegisteringAdult, RegisteringAdultAdmin)
