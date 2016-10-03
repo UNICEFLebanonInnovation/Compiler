@@ -1,14 +1,11 @@
 
 
 def generate_id(
-    first_name,
-    father_name,
-    last_name,
-    mother_full_name,
-    gender,
-    birthday_day,
-    birthday_month,
-    birthday_year
+        first_name,
+        father_name,
+        last_name,
+        mother_full_name,
+        gender
     ):
     """
     Unique Number Proposal:
@@ -29,19 +26,16 @@ def generate_id(
         full_name_char_count = len(full_name)
         mother_name_char_count = len(mother_full_name)
 
-        full_name_hash = int(hashlib.sha1(full_name.encode('UTF-8')).hexdigest(), 16) % 100000
-        mother_name_hash = int(hashlib.sha1(mother_full_name.encode('UTF-8')).hexdigest(), 16) % 100000
+        full_name_hash = int(hashlib.sha1(full_name.encode('UTF-8')).hexdigest(), 16) % 10000
+        mother_name_hash = int(hashlib.sha1(mother_full_name.encode('UTF-8')).hexdigest(), 16) % 10000
         gender_first_char = gender[:1]
 
-        return '{}{}{}{}{}{}{}{}'.format(
+        return '{}{}{}{}{}'.format(
             str(full_name_char_count),
             str(mother_name_char_count),
             str(full_name_hash),
             str(mother_name_hash),
             gender_first_char,
-            birthday_day,
-            birthday_month,
-            birthday_year
         )
     except Exception as exp:
         return ''

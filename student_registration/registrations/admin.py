@@ -22,26 +22,55 @@ class WFPSiteAdmin(admin.ModelAdmin):
     filter_horizontal = ('location',)
 
 
+class RegisteredChildInline(admin.TabularInline):
+    model = Registration
+    extra = 0
+
+
 class RegisteringAdultResource(resources.ModelResource):
-    number = fields.Field(column_name='CaseNumber', attribute='number')
+    """
+    Export the HH registrations to the following format:
+    CaseNumber
+    Governorate
+    District
+    Village
+    WFP Distribution Point
+    PhoneNumber
+    BeneficiaryNameAr
+    DOB
+    Gender
+    MarriageStatus
+    RegistrationDate
+    FamilySize
+    # of Individuals to be assisted
+    OriginCountryCode
+    """
+    number = fields.Field(column_name='CaseNumber', attribute='case_number')
+    location_gov = fields.Field(column_name='Governorate')
+    location_district = fields.Field(column_name='District')
+    distribution_site = fields.Field(column_name='WFP Distribution Point')
+    phone = fields.Field(column_name='PhoneNumber', attribute='primary_phone')
     name = fields.Field(column_name='BeneficiaryNameAr')
-    phone = fields.Field(column_name='PhoneNumber', attribute='phone')
     dob = fields.Field(column_name='DOB')
     sex = fields.Field(column_name='Gender', attribute='sex')
-    registrationdate = fields.Field(column_name='Registration Date', attribute='created')
-    locationKazaa = fields.Field(column_name='District')
-    locationGov = fields.Field(column_name='Governorate')
+    registration_date = fields.Field(column_name='Registration Date', attribute='created')
     family_size = fields.Field(column_name='Family Size', attribute='family_size')
-    distributionlist = fields.Field(column_name='WFP Distribution Point')
 
     class Meta:
         model = RegisteringAdult
         fields = (
-        'number', 'name', 'phone', 'dob', 'sex', 'registrationdate', 'locationKazaa', 'locationGov', 'family_size',
-        'distributionlist')
-        export_order = (
-        'number', 'locationGov', 'locationKazaa', 'phone', 'name', 'dob', 'sex', 'registrationdate', 'family_size',
-        'distributionlist')
+            'number',
+            'id_type',
+            'location_gov',
+            'location_district',
+            'distribution_site',
+            'phone',
+            'name',
+            'dob',
+            'sex',
+            'registration_date',
+            'family_size',
+        )
 
     def dehydrate_name(self, registeringadult):
         return '%s %s' % (registeringadult.first_name, registeringadult.last_name)
@@ -50,23 +79,44 @@ class RegisteringAdultResource(resources.ModelResource):
         return '%s-%s-%s' % (
         registeringadult.birthday_year, registeringadult.birthday_month, registeringadult.birthday_day)
 
-    def dehydrate_locationKazaa(self, registeringadult):
-        return registeringadult.school.location.name
+    def dehydrate_location_district(self, registeringadult):
+        return registeringadult.school.location.name if registeringadult.school else ''
 
-    def dehydrate_locationGov(self, registeringadult):
-        return registeringadult.school.location.parent.name
+    def dehydrate_location_gov(self, registeringadult):
+        return registeringadult.school.location.parent.name if registeringadult.school else ''
 
     def dehydrate_family_size(self, registeringadult):
-        return len(registeringadult.children.all())
+        return registeringadult.children.count()
 
-    def dehydrate_distributionlist(self, registeringadult):
+    def dehydrate_distribution_list(self, registeringadult):
         return registeringadult.wfp_distribution_site.code
 
 
 class RegisteringAdultAdmin(ImportExportModelAdmin):
     resource_class = RegisteringAdultResource
-    list_display = ('first_name', 'father_name', 'last_name', 'phone')
-    search_fields = ('first_name', 'father_name', 'last_name', 'phone')
+    list_display = (
+        'case_number',
+        'id_type',
+        'nationality',
+        'first_name',
+        'father_name',
+        'last_name',
+        'primary_phone',
+        'school',
+    )
+    list_filter = (
+        'id_type',
+        'nationality',
+        'school',
+    )
+    search_fields = (
+        'number',
+        'id_number',
+        'first_name',
+        'father_name',
+        'last_name',
+        'primary_phone')
+    inlines = (RegisteredChildInline,)
 
     def assign_distribution_site(self, request, queryset):
         for adult in queryset:
