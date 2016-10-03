@@ -72,6 +72,12 @@ class RegisteringAdult(Person):
     )
     wfp_distribution_site = models.ForeignKey(WFPDistributionSite, blank=True, null=True)
 
+    @property
+    def case_number(self):
+        if self.id_type and 'UNHCR' in self.id_type.name:
+            return self.id_number
+        return self.number
+
     def get_absolute_url(self):
         return reverse('registrations:registering_child', kwargs={'pk': self.pk})
 
@@ -195,7 +201,7 @@ class Registration(TimeStampedModel):
         return ''
 
     def __unicode__(self):
-        return str(self.pk)
+        return self.student.__unicode__()
 
 
 eav.register(Registration)
