@@ -13,6 +13,7 @@ def get_unhcr_principal_applicant(case_number):
     headers = {'Authorization': auth}
 
     getDataResponse = requests.get(
+        # "https://www.unhcrmenadagdata.org//RaisWebApiv2/api/GetIndividualsByCase/{id}".format(id=case_number),
         "https://www.unhcrmenadagdata.org//RaisWebApiv2/api/GetPAByCase/{id}".format(id=case_number),
         headers=headers
     ).json()
