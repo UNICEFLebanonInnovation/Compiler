@@ -67,7 +67,7 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'idtypes': IDType.objects.all(),
             'columns': Attribute.objects.filter(type=Registration.EAV_TYPE),
             'eav_type': Registration.EAV_TYPE,
-            'locations': Location.objects.filter(gateway_id=2)
+            'locations': Location.objects.filter(type_id=2)
         }
 
 ####################### API VIEWS #############################
