@@ -156,10 +156,7 @@ class Person(TimeStampedModel):
                 self.father_name,
                 self.last_name,
                 self.mother_fullname,
-                self.sex,
-                self.birthday_day,
-                self.birthday_month,
-                self.birthday_year
+                self.sex
             )
 
         super(Person, self).save(**kwargs)
