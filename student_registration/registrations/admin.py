@@ -77,7 +77,7 @@ class RegisteringAdultResource(resources.ModelResource):
 
     def dehydrate_dob(self, registeringadult):
         return '%s-%s-%s' % (
-        registeringadult.birthday_year, registeringadult.birthday_month, registeringadult.birthday_day)
+            registeringadult.birthday_year, registeringadult.birthday_month, registeringadult.birthday_day)
 
     def dehydrate_location_district(self, registeringadult):
         return registeringadult.school.location.name if registeringadult.school else ''
@@ -225,25 +225,25 @@ class RegistrationResource(resources.ModelResource):
                   'section', 'grade', 'classroom', 'year', 'owner', 'status', 'out_of_school_two_years',
                   'related_to_family')
         export_order = (
-        'studentFname', 'studentFaName', 'studentLname', 'registering_adult_fname', 'registering_adult_faname',
-        'registering_adult_lname', 'mother', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
-        'enrolled_last_year_location', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
-        'out_of_school_two_years', 'related_to_family')
+            'studentFname', 'studentFaName', 'studentLname', 'registering_adult_fname', 'registering_adult_faname',
+            'registering_adult_lname', 'mother', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
+            'enrolled_last_year_location', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
+            'out_of_school_two_years', 'related_to_family')
 
 
 class RegistrationAdmin(ImportExportModelAdmin):
     resource_class = RegistrationResource
     list_display = (
-    'student', 'registering_adult', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
-    'enrolled_last_year_location', 'school', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
-    'out_of_school_two_years', 'related_to_family')
+        'student', 'registering_adult', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
+        'enrolled_last_year_location', 'school', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
+        'out_of_school_two_years', 'related_to_family')
     search_fields = (
-    'student', 'registering_adult', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
-    'enrolled_last_year_location', 'school', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
-    'out_of_school_two_years', 'related_to_family')
-    list_filter = ('enrolled_last_year', 'status', 'school');
+        'student', 'registering_adult', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
+        'enrolled_last_year_location', 'school', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
+        'out_of_school_two_years', 'related_to_family')
+    list_filter = ('enrolled_last_year', 'status', 'school')
 
 
 admin.site.register(Registration, RegistrationAdmin)
 admin.site.register(RegisteringAdult, RegisteringAdultAdmin)
-admin.site.register(WFPDistributionSite)
+admin.site.register(WFPDistributionSite, WFPSiteAdmin)
