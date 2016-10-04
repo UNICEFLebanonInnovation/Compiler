@@ -112,7 +112,7 @@ class Outreach(TimeStampedModel):
     @property
     def student_fullname(self):
         if self.student:
-            return self.student.full_name
+            return self.student.__unicode__()
         return ''
 
     @property
@@ -122,7 +122,7 @@ class Outreach(TimeStampedModel):
         return ''
 
     def __unicode__(self):
-        return self.student_fullname
+        return self.student.__unicode__()
 
 
 class ExtraColumn(TimeStampedModel):
