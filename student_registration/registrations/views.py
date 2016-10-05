@@ -70,6 +70,35 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'locations': Location.objects.filter(type_id=2)
         }
 
+
+class ClassassignmentView(LoginRequiredMixin, ListView):
+    """
+    Provides the registration page with lookup types in the context
+    """
+    model = Registration
+    template_name = 'registrations/class-assignment.html'
+
+    def get_context_data(self, **kwargs):
+        data = self.model.objects.all()
+        if not self.request.user.is_staff:
+            data = data.filter(owner=self.request.user)
+            self.template_name = 'registrations/index.html'
+
+        return {
+            'registrations': data,
+            'classrooms': ClassRoom.objects.all(),
+            'schools': School.objects.all(),
+            'grades': Grade.objects.all(),
+            'sections': Section.objects.all(),
+            'nationalities': Nationality.objects.all(),
+            'genders': (u'Male', u'Female'),
+            'months': Person.MONTHS,
+            'idtypes': IDType.objects.all(),
+            'columns': Attribute.objects.filter(type=Registration.EAV_TYPE),
+            'eav_type': Registration.EAV_TYPE,
+            'locations': Location.objects.filter(type_id=2)
+        }
+
 ####################### API VIEWS #############################
 
 
