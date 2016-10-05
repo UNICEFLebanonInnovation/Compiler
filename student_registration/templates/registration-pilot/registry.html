@@ -486,7 +486,7 @@
         var synchro_path = host+'/api/registrations-adult/';
         var synchro_path_2 = host+'/api/registrations-child/';
         var arabic_fields = "#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname";
-{#        var numeric_fields = "#id_age";#}
+        var numeric_fields = "";
         var validation_mapping = new Array();
         validation_mapping['0'] = function() { return validateSection0() };
         validation_mapping['5'] = function() { return validateSection5() };
@@ -516,12 +516,16 @@
         });
 
         $(document).on('blur', arabic_fields, function(){
+            var selectedOption = $(this).val();
+            if(selectedOption == 1) {
+           }else if (selectedOption == 2|| selectedOption == 3 || selectedOption == 4|| selectedOption == 5||selectedOption == 6)  {
             checkArabicOnly($(this));
+           }
         });
 
-{#        $(document).on('blur', numeric_fields, function(){#}
-{#            checkIsNumber($(this));#}
-{#        });#}
+        $(document).on('blur', numeric_fields, function(){
+            checkIsNumber($(this));
+        });
 
         $(document).on('change', '.bootbox-body #id_enrolled_last_year_location', function(){
             console.log($(this).val());
@@ -539,6 +543,8 @@
                     var request = store.get(parseInt($('#main_id').val()));
                     request.onsuccess = function(){
                         var result = request.result;
+
+                        console.log(result);
                         if(result){
                             push_adult_data(result, synchro_path, 'registrations');
                         }
@@ -564,30 +570,26 @@
                      $("#HouseholdOtherNoID").show();
                      var household = response;
 
+                     update_item_store(parseInt($('#main_id').val()), "original_id", household.id, 'registrations');
+                     update_item_store(parseInt($('#main_id').val()), "id", household.id, 'registrations');
+
+
                      $('#id_first_name').val(household.first_name);
-                     $('#id_first_name').trigger('blur');
-
                      $('#id_last_name').val(household.last_name);
-                     $('#id_last_name').trigger('blur');
-
                      $('#id_father_name').val(household.father_name);
-                     $('#id_father_name').trigger('blur');
-
                      $('#id_mother_fullname').val(household.mother_fullname);
-                     $('#id_mother_fullname').trigger('blur');
-
                      $('#id_birthday_day').val(household.birthday_day);
-                     $('#id_birthday_day').trigger('blur');
-
                      $('#id_birthday_month').val(household.birthday_month);
-                     $('#id_birthday_month').trigger('blur');
-
                      $('#id_birthday_year').val(household.birthday_year);
-                     $('#id_birthday_year').trigger('blur');
-
                      calculateDateOfBirth();
                      $('#id_sex').val(household.sex);
-                     $('#id_sex').trigger('blur');
+                     $('#id_address').val(household.address);
+                     $('#id_primary_phone').val(household.primary_phone);
+                     $('#id_primary_phone_answered').val(household.primary_phone_answered);
+                     $('#id_secondary_phone').val(household.secondary_phone);
+                     $('#id_secondary_phone_answered').val(household.secondary_phone_answered);
+                     $('#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname, #id_birthday_day, #id_birthday_month, #id_birthday_year, #id_sex').trigger('blur');
+                     $('#id_address, #id_primary_phone, #id_primary_phone_answered, #id_secondary_phone, #id_secondary_phone_answered').trigger('blur');
 
                      for(childIndex in household.children)
                      {
@@ -1281,9 +1283,13 @@
 
     function push_adult_data(item, url, store_name)
     {
+        //var formID = item.id;
+        //item.id=item.update_id;
+        //item.id_registration=item.update_id;
+        {#            url: url + (item.update_id != null ? item.update_id+"/" : ""),      #}
         $.ajax({
-            type: "POST",
-            url: url,
+            type: item.id_number != null ? "PUT":"POST",
+            url: url + (item.id_number != null ? item.id_number+"/" : ""),
             data: item,
             cache: false,
             async: false,
@@ -1325,6 +1331,7 @@
             }
         });
     }
+
 
     </script>
 
