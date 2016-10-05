@@ -116,12 +116,12 @@ MEDIA_URL = 'https://s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
 DEFAULT_FROM_EMAIL = env('DJANGO_DEFAULT_FROM_EMAIL',
                          default='Student Registration <noreply@monitoring.uniceflebanon.org>')
 EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-MAILGUN_ACCESS_KEY = env('DJANGO_MAILGUN_API_KEY')
-MAILGUN_SERVER_NAME = env('DJANGO_MAILGUN_SERVER_NAME')
+MAILGUN_ACCESS_KEY = env('DJANGO_MAILGUN_API_KEY', default='NO_MAILGUN_API_KEY')
+MAILGUN_SERVER_NAME = env('DJANGO_MAILGUN_SERVER_NAME', default='NO_MAILGUN_SERVER_NAME')
 EMAIL_SUBJECT_PREFIX = env('DJANGO_EMAIL_SUBJECT_PREFIX', default='[Student Registration] ')
 SERVER_EMAIL = env('DJANGO_SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
-NEW_RELIC_LICENSE_KEY = env('NEW_RELIC_LICENSE_KEY')
-NEW_RELIC_APP_NAME = env('NEW_RELIC_APP_NAME')
+NEW_RELIC_LICENSE_KEY = env('NEW_RELIC_LICENSE_KEY', default='NO_RELIC_LICENSE_KEY')
+NEW_RELIC_APP_NAME = env('NEW_RELIC_APP_NAME', default='NO_RELIC_APP_NAME')
 
 # TEMPLATE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -154,7 +154,7 @@ CACHES = {
 
 
 # Sentry Configuration
-SENTRY_DSN = env('DJANGO_SENTRY_DSN')
+SENTRY_DSN = env('DJANGO_SENTRY_DSN', default='NO_SENTRY_DSN')
 SENTRY_CLIENT = env('DJANGO_SENTRY_CLIENT', default='raven.contrib.django.raven_compat.DjangoClient')
 LOGGING = {
     'version': 1,
@@ -210,7 +210,7 @@ RAVEN_CONFIG = {
 }
 
 # Custom Admin URL, use {% url 'admin:index' %}
-ADMIN_URL = env('DJANGO_ADMIN_URL')
+# ADMIN_URL = env('DJANGO_ADMIN_URL')
 
 # Your production stuff: Below this line define 3rd party library settings
 
