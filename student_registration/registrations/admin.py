@@ -60,7 +60,18 @@ class RegisteringAdultResource(resources.ModelResource):
         model = RegisteringAdult
         fields = (
             'number',
-            'id_type',
+            'location_gov',
+            'location_district',
+            'distribution_site',
+            'phone',
+            'name',
+            'dob',
+            'sex',
+            'registration_date',
+            'family_size',
+        )
+        export_order = (
+            'number',
             'location_gov',
             'location_district',
             'distribution_site',
