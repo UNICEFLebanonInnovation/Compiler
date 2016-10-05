@@ -113,13 +113,13 @@ MEDIA_URL = 'https://s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
 
 # EMAIL
 # ------------------------------------------------------------------------------
-DEFAULT_FROM_EMAIL = env('DJANGO_DEFAULT_FROM_EMAIL',
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL',
                          default='Student Registration <noreply@monitoring.uniceflebanon.org>')
 EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-MAILGUN_ACCESS_KEY = env('DJANGO_MAILGUN_API_KEY', default='NO_MAILGUN_API_KEY')
-MAILGUN_SERVER_NAME = env('DJANGO_MAILGUN_SERVER_NAME', default='NO_MAILGUN_SERVER_NAME')
-EMAIL_SUBJECT_PREFIX = env('DJANGO_EMAIL_SUBJECT_PREFIX', default='[Student Registration] ')
-SERVER_EMAIL = env('DJANGO_SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
+MAILGUN_ACCESS_KEY = env('MAILGUN_API_KEY', default='NO_MAILGUN_API_KEY')
+MAILGUN_SERVER_NAME = env('MAILGUN_SERVER_NAME', default='NO_MAILGUN_SERVER_NAME')
+EMAIL_SUBJECT_PREFIX = env('EMAIL_SUBJECT_PREFIX', default='[Student Registration] ')
+SERVER_EMAIL = env('SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
 NEW_RELIC_LICENSE_KEY = env('NEW_RELIC_LICENSE_KEY', default='NO_RELIC_LICENSE_KEY')
 NEW_RELIC_APP_NAME = env('NEW_RELIC_APP_NAME', default='NO_RELIC_APP_NAME')
 
@@ -154,8 +154,8 @@ CACHES = {
 
 
 # Sentry Configuration
-SENTRY_DSN = env('DJANGO_SENTRY_DSN')
-SENTRY_CLIENT = env('DJANGO_SENTRY_CLIENT', default='raven.contrib.django.raven_compat.DjangoClient')
+SENTRY_DSN = env('SENTRY_DSN')
+SENTRY_CLIENT = env('SENTRY_CLIENT', default='raven.contrib.django.raven_compat.DjangoClient')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -203,14 +203,14 @@ LOGGING = {
         },
     },
 }
-SENTRY_CELERY_LOGLEVEL = env.int('DJANGO_SENTRY_LOG_LEVEL', logging.INFO)
+SENTRY_CELERY_LOGLEVEL = env.int('SENTRY_LOG_LEVEL', logging.INFO)
 RAVEN_CONFIG = {
-    'CELERY_LOGLEVEL': env.int('DJANGO_SENTRY_LOG_LEVEL', logging.INFO),
+    'CELERY_LOGLEVEL': env.int('SENTRY_LOG_LEVEL', logging.INFO),
     'DSN': SENTRY_DSN
 }
 
 # Custom Admin URL, use {% url 'admin:index' %}
-# ADMIN_URL = env('DJANGO_ADMIN_URL')
+# ADMIN_URL = env('ADMIN_URL')
 
 # Your production stuff: Below this line define 3rd party library settings
 
