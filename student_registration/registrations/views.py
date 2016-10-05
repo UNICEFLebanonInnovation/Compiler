@@ -151,12 +151,18 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
                     adult.birthday_month = dob.month
                     adult.birthday_year = dob.year
                     adult.sex = applicant["Sex"]
+                    adult.address = applicant["address"]
+                    adult.primary_phone = applicant["primary_phone"]
+                    adult.primary_phone_answered = applicant["primary_phone_answered"]
+                    adult.secondary_phone = applicant["secondary_phone"]
+                    adult.secondary_phone_answered = applicant["secondary_phone_answered"]
+                    adult.wfp_case_number = applicant["wfp_case_number"]
+                    adult.csc_case_number = applicant["csc_case_number"]
                     # adult.save()
                     return adult
             raise exp
         else:
             return adult
-
 
 class RegisteringChildViewSet(mixins.RetrieveModelMixin,
                               mixins.ListModelMixin,
