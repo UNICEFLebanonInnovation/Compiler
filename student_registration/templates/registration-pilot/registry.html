@@ -129,6 +129,7 @@
                         <label class="text" id="HouseholdOtherID" style="display: none;">{% trans "Household ID Number" %}<span class="asterisque">*</span></label>
                         <span id="HouseholdUNHCR_OtherID" style="display: none;">{{ form.id_number }}</span>
                         <span class="error" id="id_number_UNHCR_Other_error">{% trans "This field is required" %}</span>
+                        <span class="error" id="id_number_UNHCR_Other_format_error">{% trans "The UNHCR ID is not valid" %}</span>
                     </div>
 
                     <div class="line" id="HouseholdOtherID_Note" style="display: none;">
@@ -204,6 +205,7 @@
                         {{ form.csc_case_number }}
                     </div>
                 </li>
+
 
                 {# 9 Registre Child #}
                 <li class="framebox">
@@ -486,7 +488,7 @@
         var synchro_path = host+'/api/registrations-adult/';
         var synchro_path_2 = host+'/api/registrations-child/';
         var arabic_fields = "#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname";
-        var numeric_fields = "";
+        var numeric_fields = "#id_age, #id_primary_phone";
         var validation_mapping = new Array();
         validation_mapping['0'] = function() { return validateSection0() };
         validation_mapping['5'] = function() { return validateSection5() };
@@ -532,6 +534,13 @@
             filterSchoolsByLocation(parseInt($(this).val()));
         });
 
+        $(document).on('change', '.bootbox-body #id_age', function(){
+            var age = $(this).val();
+            if(age  <6 || age >17 ) {
+                bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
+            }
+        });
+
         $('#registration_save').click(function(e){
             var sectionCheck = validateSection13();
             if(sectionCheck)
@@ -558,53 +567,64 @@
         });
 
          $('#getUNHCRDatatButton').click(function(e){
-             $.ajax({
-                 type: "GET",
-                 url: checking_id_number_url+$('#id_id_number').val(),
-                 data: [],
-                 cache: false,
-                 async: false,
-                 headers: getHeader(),
-                 dataType: 'json',
-                 success: function (response) {
-                     $("#HouseholdOtherNoID").show();
-                     var household = response;
+             var isValid = true ;
+             isValid = validateUNCHRFormat(isValid);
+             if(isValid)
+             {
+                $.ajax({
+                     type: "GET",
+                     url: checking_id_number_url+$('#id_id_number').val(),
+                     data: [],
+                     cache: false,
+                     async: false,
+                     headers: getHeader(),
+                     dataType: 'json',
+                     success: function (response) {
 
-                     update_item_store(parseInt($('#main_id').val()), "original_id", household.id, 'registrations');
-                     update_item_store(parseInt($('#main_id').val()), "id", household.id, 'registrations');
+
+                         $("#HouseholdOtherNoID").show();
+                         var household = response;
+
+                         update_item_store(parseInt($('#main_id').val()), "original_id", household.id, 'registrations');
+                         //supdate_item_store(parseInt($('#main_id').val()), "id", household.id, 'registrations');
 
 
-                     $('#id_first_name').val(household.first_name);
-                     $('#id_last_name').val(household.last_name);
-                     $('#id_father_name').val(household.father_name);
-                     $('#id_mother_fullname').val(household.mother_fullname);
-                     $('#id_birthday_day').val(household.birthday_day);
-                     $('#id_birthday_month').val(household.birthday_month);
-                     $('#id_birthday_year').val(household.birthday_year);
-                     calculateDateOfBirth();
-                     $('#id_sex').val(household.sex);
-                     $('#id_address').val(household.address);
-                     $('#id_primary_phone').val(household.primary_phone);
-                     $('#id_primary_phone_answered').val(household.primary_phone_answered);
-                     $('#id_secondary_phone').val(household.secondary_phone);
-                     $('#id_secondary_phone_answered').val(household.secondary_phone_answered);
-                     $('#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname, #id_birthday_day, #id_birthday_month, #id_birthday_year, #id_sex').trigger('blur');
-                     $('#id_address, #id_primary_phone, #id_primary_phone_answered, #id_secondary_phone, #id_secondary_phone_answered').trigger('blur');
+                         $('#id_first_name').val(household.first_name);
+                         $('#id_last_name').val(household.last_name);
+                         $('#id_father_name').val(household.father_name);
+                         $('#id_mother_fullname').val(household.mother_fullname);
+                         $('#id_birthday_day').val(household.birthday_day);
+                         $('#id_birthday_month').val(household.birthday_month);
+                         $('#id_birthday_year').val(household.birthday_year);
+                         calculatehousehold_DateOfBirth();
+                         $('#id_sex').val(household.sex);
+                         $('#id_address').val(household.address);
+                         $('#id_primary_phone').val(household.primary_phone);
+                         $('#id_primary_phone_answered').val(household.primary_phone_answered);
+                         $('#id_secondary_phone').val(household.secondary_phone);
+                         $('#id_secondary_phone_answered').val(household.secondary_phone_answered);
+                         $('#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname, #id_birthday_day, #id_birthday_month, #id_birthday_year, #id_sex').trigger('blur');
+                         $('#id_address, #id_primary_phone, #id_primary_phone_answered, #id_secondary_phone, #id_secondary_phone_answered').trigger('blur');
 
-                     for(childIndex in household.children)
-                     {
-                         addChild(household.children[childIndex]);
-                         console.log(household.children[childIndex]);
+                         for(childIndex in household.children)
+                         {
+                             addChild(household.children[childIndex]);
+                             console.log(household.children[childIndex]);
+                         }
+
+                     },
+                     error: function (response) {
+                        var required_fields = JSON.parse(response.responseText);
+                        console.log(response);
                      }
+                 });
+             }
+             else
+             {
+             }
 
-                 },
-                 error: function (response) {
-                    var required_fields = JSON.parse(response.responseText);
-                    console.log(response);
-                 }
-             });
+
         });
-
 
 
 
@@ -1040,9 +1060,8 @@
                 $('.bootbox-body').find("#enrolled_in_school_location").show();
             }
         });
-
         $("#id_birthday_day, #id_birthday_month, #id_birthday_year").change(function () {
-            calculateDateOfBirth();
+            calculatehousehold_DateOfBirth();
         });
 
         $("#id_age").blur(function () {
@@ -1207,9 +1226,12 @@
 
     }
 
-    function calculateDateOfBirth()
+    function calculatehousehold_DateOfBirth()
     {
-        var age = getCalculatedAge();
+        var birthday_day = $('#id_birthday_day').val();
+        var birthday_month = $('#id_birthday_month').val()-1;
+        var birthday_year = $('#id_birthday_year').val();
+        var age = getCalculatedAge(birthday_day, birthday_month, birthday_year);
 
         if(age!=null) {
 
@@ -1224,13 +1246,33 @@
         }
     }
 
-    function getCalculatedAge()
+    function calculate_child_dob()
+    {
+        var birthday_day = $('.bootbox-body').find("#id_birthday_day").val();
+        var birthday_month = $('.bootbox-body').find("#id_birthday_month").val()-1;
+        var birthday_year = $('.bootbox-body').find("#id_birthday_year").val();
+        var age = getCalculatedAge(birthday_day, birthday_month, birthday_year);
+
+        if(age!=null) {
+
+            $('.bootbox-body').find("#id_age").val(age);
+            $('.bootbox-body').find("#id_age").trigger('blur');
+
+            if(age  <6 || age >17 ) {
+               bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
+            }
+        } else {
+            $('.bootbox-body').find("#id_age").val("");
+        }
+    }
+
+    function getCalculatedAge(birthday_day ,birthday_month, birthday_year)
     {
         var age = null;
 
-        var birthday_day = $('#id_birthday_day').val();
-        var birthday_month = $('#id_birthday_month').val()-1;
-        var birthday_year = $('#id_birthday_year').val();
+{#        var birthday_day = $('#id_birthday_day').val();#}
+{#        var birthday_month = $('#id_birthday_month').val()-1;#}
+{#        var birthday_year = $('#id_birthday_year').val();#}
 
         var birthDate = new Date(birthday_year, birthday_month, birthday_day);
 
@@ -1288,8 +1330,8 @@
         //item.id_registration=item.update_id;
         {#            url: url + (item.update_id != null ? item.update_id+"/" : ""),      #}
         $.ajax({
-            type: item.id_number != null ? "PUT":"POST",
-            url: url + (item.id_number != null ? item.id_number+"/" : ""),
+            type: item.original_id != null ? "PUT":"POST",
+            url: url + (item.original_id != null ? item.id_number+"/" : ""),
             data: item,
             cache: false,
             async: false,
