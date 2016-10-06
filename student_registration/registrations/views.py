@@ -12,6 +12,7 @@ from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from django.core.urlresolvers import reverse
+from datetime import datetime
 
 from student_registration.students.models import (
     Person,
@@ -130,7 +131,6 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
             # first try and look up in our database
             adult = super(RegisteringAdultViewSet, self).get_object()
             return adult
-            #raise Http404()
 
         except Http404 as exp:
             # or look up in UNHCR
@@ -142,27 +142,25 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
                     applicant = principal_applicant[len(principal_applicant)-1]
                     adult.id_number = applicant["CaseNo"]
                     adult.phone = applicant["CoAPhone"]
-                    adult.first_name =applicant["GivenName"]
+                    adult.first_name = applicant["GivenName"]
                     adult.last_name = applicant["FamilyName"]
                     adult.father_name = applicant["FatherName"]
-                    from datetime import datetime
                     dob = datetime.strptime(applicant["DOB"], '%Y-%m-%dT%H:%M:%S')
                     adult.birthday_day = dob.day
                     adult.birthday_month = dob.month
                     adult.birthday_year = dob.year
                     adult.sex = applicant["Sex"]
-                    adult.address = applicant["address"]
-                    adult.primary_phone = applicant["primary_phone"]
-                    adult.primary_phone_answered = applicant["primary_phone_answered"]
-                    adult.secondary_phone = applicant["secondary_phone"]
-                    adult.secondary_phone_answered = applicant["secondary_phone_answered"]
-                    adult.wfp_case_number = applicant["wfp_case_number"]
-                    adult.csc_case_number = applicant["csc_case_number"]
+                    adult.address = ''
+                    adult.primary_phone = ''
+                    adult.primary_phone_answered = ''
+                    adult.secondary_phone = ''
+                    adult.secondary_phone_answered = ''
+                    adult.wfp_case_number = ''
+                    adult.csc_case_number = ''
                     # adult.save()
                     return adult
             raise exp
-        else:
-            return adult
+
 
 class RegisteringChildViewSet(mixins.RetrieveModelMixin,
                               mixins.ListModelMixin,
