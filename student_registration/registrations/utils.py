@@ -2,20 +2,32 @@ import json
 import requests
 
 
-def get_unhcr_principal_applicant(case_number):
-
+def get_unhcr_token():
     loginData = {'grant_type': 'password', 'username': 'mbazin@unicef.org', 'password': '?45x6UJa'}
     response = requests.post("https://www.unhcrmenadagdata.org/RaisWebApiv2/Token", loginData)
     parsed_json_response = json.loads(response.text)
-    print(parsed_json_response['access_token'])
 
     auth = 'Bearer ' + parsed_json_response['access_token']
-    headers = {'Authorization': auth}
+    return {'Authorization': auth}
+
+
+def get_unhcr_principal_applicant(case_number):
+
+    headers = get_unhcr_token()
 
     getDataResponse = requests.get(
-        # "https://www.unhcrmenadagdata.org//RaisWebApiv2/api/GetIndividualsByCase/{id}".format(id=case_number),
         "https://www.unhcrmenadagdata.org//RaisWebApiv2/api/GetPAByCase/{id}".format(id=case_number),
         headers=headers
     ).json()
     return getDataResponse
-    # print(getDataResponse)
+
+
+def get_unhcr_individuals(case_number):
+
+    headers = get_unhcr_token()
+
+    getDataResponse = requests.get(
+        "https://www.unhcrmenadagdata.org//RaisWebApiv2/api/GetIndividualsByCase/{id}".format(id=case_number),
+        headers=headers
+    ).json()
+    return getDataResponse
