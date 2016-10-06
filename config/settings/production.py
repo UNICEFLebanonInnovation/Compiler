@@ -113,15 +113,15 @@ MEDIA_URL = 'https://s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
 
 # EMAIL
 # ------------------------------------------------------------------------------
-DEFAULT_FROM_EMAIL = env('DJANGO_DEFAULT_FROM_EMAIL',
-                         default='Student Registration <noreply@compile.uniceflebanon.org>')
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL',
+                         default='Student Registration <noreply@monitoring.uniceflebanon.org>')
 EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-MAILGUN_ACCESS_KEY = env('MAILGUN_API_KEY', default='')
-MAILGUN_SERVER_NAME = env('MAILGUN_DOMAIN', default='')
+MAILGUN_ACCESS_KEY = env('MAILGUN_API_KEY', default='NO_MAILGUN_API_KEY')
+MAILGUN_SERVER_NAME = env('MAILGUN_SERVER_NAME', default='NO_MAILGUN_SERVER_NAME')
 EMAIL_SUBJECT_PREFIX = env('EMAIL_SUBJECT_PREFIX', default='[Student Registration] ')
 SERVER_EMAIL = env('SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
-NEW_RELIC_LICENSE_KEY = env('NEW_RELIC_LICENSE_KEY', default='')
-NEW_RELIC_APP_NAME = env('NEW_RELIC_APP_NAME', default='')
+NEW_RELIC_LICENSE_KEY = env('NEW_RELIC_LICENSE_KEY', default='NO_RELIC_LICENSE_KEY')
+NEW_RELIC_APP_NAME = env('NEW_RELIC_APP_NAME', default='NO_RELIC_APP_NAME')
 
 # TEMPLATE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -203,18 +203,15 @@ LOGGING = {
         },
     },
 }
-SENTRY_CELERY_LOGLEVEL = env.int('DJANGO_SENTRY_LOG_LEVEL', logging.INFO)
+SENTRY_CELERY_LOGLEVEL = env.int('SENTRY_LOG_LEVEL', logging.INFO)
 RAVEN_CONFIG = {
-    'CELERY_LOGLEVEL': env.int('DJANGO_SENTRY_LOG_LEVEL', logging.INFO),
+    'CELERY_LOGLEVEL': env.int('SENTRY_LOG_LEVEL', logging.INFO),
     'DSN': SENTRY_DSN
 }
-#
-# # Custom Admin URL, use {% url 'admin:index' %}
-# ADMIN_URL = env('DJANGO_ADMIN_URL')
+
+# Custom Admin URL, use {% url 'admin:index' %}
+# ADMIN_URL = env('ADMIN_URL')
 
 # Your production stuff: Below this line define 3rd party library settings
 
-# DEBUG
-# ------------------------------------------------------------------------------
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = env.bool('DJANGO_DEBUG', False)
