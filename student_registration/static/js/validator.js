@@ -38,6 +38,10 @@ function validateSection5()
 
     if(selectedOption == 1) {
          valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
+
+         valid = validateUNCHRFormat(valid);
+
+
     }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5) {
         valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
         valid = validateTextBoxRequired('id_first_name','first_name_error',valid);
@@ -56,6 +60,8 @@ function validateSection5()
         valid = validateTextBoxRequired('id_sex','gender_error',valid);
         valid = validateTextBoxRequired('id_relation_to_householdhead','relationship_householdhead_error',valid);
     }
+
+
     return valid;
 }
 function validateSection13()
@@ -67,17 +73,38 @@ function validateSection13()
     return valid;
 }
 
+function validateUNCHRFormat( isValid)
+{
+    return validateCondition('id_number_UNHCR_Other_format_error', isValid, validateUNHCRNumber());
+}
 
-function validateTextBoxRequired(id, errorID, isValid)
+
+function validateCondition(errorID, isValid, validationResult)
 {
     var valid = isValid;
-    if($('#'+id).val() == ""){
+    if(!validationResult){
             $('#'+errorID).show();
             valid = false ;
         }else{
             $('#'+errorID).hide();
     }
     return valid;
+}
+function validateUNHCRNumber()
+{
+    var validrecorded =  /^LEB-1[5-7][C]\d{5}$/i.test($('#id_id_number').val());
+    var validregistered = /^[0-9]{3}-1[1-5][C]\d{5}$/i.test($('#id_id_number').val());
+
+    // for recorded: LEB-1[5-7][C]\d{5}
+    // for registered: \d{3}-1[1-5][C]\d{5}
+    // return /^[0-9]{3}-1[1-5][C]\d{5}$/i.test($('#id_id_number').val());
+    return validrecorded || validregistered;
+}
+
+
+function validateTextBoxRequired(id, errorID, isValid)
+{
+    return validateCondition(errorID, isValid, $('#'+id).val() != "");
 }
 
 function validate_add_child_noid()
@@ -115,7 +142,23 @@ function validateTextBox(form,id, errorID, isValid)
     }
     return valid;
 }
+
+
 function checkArabicOnly(field)
+{
+    checkFieldCharacters
+    (
+        field,
+        function(ch)
+        {
+            var c = ch.charCodeAt(0);
+            return !((c < 1536 || c > 1791) && ch != " ");
+        }
+    );
+}
+
+
+function checkFieldCharacters(field,characterCheck)
 {
     var sNewVal = "";
 
@@ -125,9 +168,7 @@ function checkArabicOnly(field)
 
         var ch = sFieldVal.charAt(i);
 
-        var c = ch.charCodeAt(0);
-
-        if((c < 1536 || c > 1791) && ch != " ") {
+        if(!characterCheck(ch)) {
             // Discard
         }
 
@@ -140,26 +181,24 @@ function checkArabicOnly(field)
         field.val(sNewVal);
     }
 }
-
 function checkIsNumber(field)
 {
-    var sNewVal = "";
-    var sFieldVal = field.val();
-    alert(isNumber(sFieldVal));
+    checkFieldCharacters
+    (
+        field,
+        function(ch)
+        {
+            return checkCharacterIsNumber(ch);
+        }
+    );
+}
 
-    // alert(!isNaN(parseFloat(sFieldVal)) && isFinite(sFieldVal));
-    // if(!isNaN(parseFloat(sFieldVal)) && isFinite(sFieldVal)) {
-    //     field.val("");
-    // }
+function checkCharacterIsNumber(fieldValue)
+{
+    return /^[0-9]+$/.test(fieldValue);
+
 
 }
 
-function isNumber(evt) {
-    evt = (evt) ? evt : window.event;
-    var charCode = (evt.which) ? evt.which : evt.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-        return false;
-    }
-    return true;
-}
+
 
