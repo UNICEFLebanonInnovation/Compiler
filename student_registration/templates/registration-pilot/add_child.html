@@ -48,7 +48,7 @@
             <span class="error" id="relation_to_adult_error">{% trans "This field is required" %}</span>
         </div>
         <div class="line" >
-            <label class="text">{% trans "Have the child been out of school for more than 2 years?" %}</label>
+            <label class="text">{% trans "Have the child been out of formal public school for more than 2 years?" %}</label>
             {% for choice in student_form.out_of_school_two_years %}
                 <span class="hidden-field">{{ choice }}</span>
             {% endfor %}
