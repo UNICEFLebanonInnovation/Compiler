@@ -20,6 +20,13 @@ from student_registration.locations.models import Location
 from student_registration.eav.registry import Registry as eav
 
 
+class WFPDistributionSite(models.Model):
+
+    code = models.IntegerField()
+    name = models.CharField(max_length=30, blank=True, null=True)
+    location = models.ManyToManyField(Location)
+
+
 class RegisteringAdult(Person):
     """
     Captures the details of the adult who
@@ -63,6 +70,13 @@ class RegisteringAdult(Person):
         blank=True, null=True,
         related_name='+',
     )
+    wfp_distribution_site = models.ForeignKey(WFPDistributionSite, blank=True, null=True)
+
+    @property
+    def case_number(self):
+        if self.id_type and 'UNHCR' in self.id_type.name:
+            return self.id_number
+        return self.number
 
     def get_absolute_url(self):
         return reverse('registrations:registering_child', kwargs={'pk': self.pk})
@@ -187,7 +201,7 @@ class Registration(TimeStampedModel):
         return ''
 
     def __unicode__(self):
-        return str(self.pk)
+        return self.student.__unicode__()
 
 
 eav.register(Registration)
