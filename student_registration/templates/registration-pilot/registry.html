@@ -118,9 +118,7 @@
                             <a class="btn btn-primary btn-sm notActive" data-toggle="id_PrincipalHouseHold" data-title="0">{% trans "No" %}</a>
                         </div>
                         </div>
-                        <button class="btn btn-primary" type="button" id="getUNHCRDatatButton">
-                            {% trans "UNHCR Data" %}
-                        </button>
+
                     </div>
 
                     <div class="line" id="HouseholdID_block">
@@ -130,6 +128,10 @@
                         <span id="HouseholdUNHCR_OtherID" style="display: none;">{{ form.id_number }}</span>
                         <span class="error" id="id_number_UNHCR_Other_error">{% trans "This field is required" %}</span>
                         <span class="error" id="id_number_UNHCR_Other_format_error">{% trans "The UNHCR ID is not valid" %}</span>
+
+                        <button class="btn btn-primary" type="button" id="getUNHCRDatatButton" style="display: none">
+                            {% trans "UNHCR Data" %}
+                        </button>
                     </div>
 
                     <div class="line" id="HouseholdOtherID_Note" style="display: none;">
@@ -262,9 +264,9 @@
                                 <th>ID</th>
                                 <th>{% trans "Full Name" %}</th>
                                 <th>{% trans "Mother's Full name" %}</th>
-                                <th>{% trans "Date of birth" %}</th>
+{#                                <th>{% trans "Date of birth" %}</th>#}
                                 <th>{% trans "Age" %}</th>
-                                <th>{% trans "Relationship to Household reprentative" %}</th>
+                                <th>{% trans "Relationship to Household representative" %}</th>
                                 <th>{% trans "Was this child enrolled in any school last year" %}</th>
                                 <th></th>
                                 <th></th>
@@ -287,7 +289,7 @@
                             <thead>
                                 <th>{% trans "School" %}</th>
                                 <th>{% trans "Child's UNHCR Individual Number" %}</th>
-                                <th>{% trans "Relationship to Household reprentative" %}</th>
+                                <th>{% trans "Relationship to Household representative" %}</th>
                                 <th>{% trans "Was this child enrolled in any school last year" %}</th>
                                 <th></th>
                                 <th></th>
@@ -518,11 +520,10 @@
         });
 
         $(document).on('blur', arabic_fields, function(){
-            var selectedOption = $(this).val();
-            if(selectedOption == 1) {
-           }else if (selectedOption == 2|| selectedOption == 3 || selectedOption == 4|| selectedOption == 5||selectedOption == 6)  {
-            checkArabicOnly($(this));
-           }
+            var selectedOption = $("#id_id_type").val();
+            if(selectedOption != 1)  {
+                checkArabicOnly($(this));
+            }
         });
 
         $(document).on('blur', numeric_fields, function(){
@@ -567,6 +568,7 @@
         });
 
          $('#getUNHCRDatatButton').click(function(e){
+             $("#id_number_UNHCR_Other_error").hide();
              var isValid = true ;
              isValid = validateUNCHRFormat(isValid);
              if(isValid)
@@ -580,12 +582,8 @@
                      headers: getHeader(),
                      dataType: 'json',
                      success: function (response) {
-
-
-                         $("#HouseholdOtherNoID").show();
                          var household = response;
-
-                         update_item_store(parseInt($('#main_id').val()), "original_id", household.id, 'registrations');
+{#                         update_item_store(parseInt($('#main_id').val()), "original_id", household.id, 'registrations');#}
                          //supdate_item_store(parseInt($('#main_id').val()), "id", household.id, 'registrations');
 
 
@@ -642,7 +640,8 @@
                $("#HouseholdUNHCR_OtherID").show();
                $("#HouseholdUNHCRNote").show();
                $("#HouseholdRegistrationNumber").show();
-
+               $("#getUNHCRDatatButton").show();
+               $("#HouseholdOtherNoID").show();
            }else if (selectedOption == 2 )  {
                $("#HouseholdOtherID").show();
                $("#HouseholdOtherID_Note").show();
@@ -693,14 +692,15 @@
                 $('#previously_registered_block').hide();
                 $('#previously_registered_error').hide();
                 $('#id_number_block').hide();
-                if($('#id_id_type').val() == 1){
-                    $('#with_id_block').show();
-                    $('#confirm_child_belong').show();
-                }else{
-                    $('#no_id_block').show();
-                    $('#confirm_child_belong').show();
-
-                }
+{#                if($('#id_id_type').val() == 1){#}
+{#                    $('#with_id_block').show();#}
+{#                    $('#confirm_child_belong').show();#}
+{#                }else{#}
+{#                    $('#no_id_block').show();#}
+{#                    $('#confirm_child_belong').show();#}
+{#                }#}
+                $('#no_id_block').show();
+                $('#confirm_child_belong').show();
             }
         });
 
@@ -714,13 +714,15 @@
                 $('#previously_registered_block').hide();
                 $('#previously_registered_error').hide();
                 $('#id_number_block').hide();
-                if($('#id_id_type').val() == 1){
-                    $('#with_id_block').show();
-                    $('#confirm_child_belong').show();
-                }else{
-                    $('#no_id_block').show();
-                    $('#confirm_child_belong').show();
-                }
+{#                if($('#id_id_type').val() == 1){#}
+{#                    $('#with_id_block').show();#}
+{#                    $('#confirm_child_belong').show();#}
+{#                }else{#}
+{#                    $('#no_id_block').show();#}
+{#                    $('#confirm_child_belong').show();#}
+{#                }#}
+                $('#no_id_block').show();
+                $('#confirm_child_belong').show();
             }
         });
 
@@ -772,10 +774,11 @@
                                             var tr = $('<tr>');
                                             var form = $('.bootbox-body').find('#add_child_noid_form');
                                             tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
-                                            tr.append($('<td>').html('&nbsp;'));
+{#                                            tr.append($('<td>').html('&nbsp;'));#}
+                                            tr.append($('<td>').html(form.find('#id_id_number').val()));
                                             tr.append($('<td>').html(form.find('#id_first_name').val()+' '+ form.find('#id_father_name').val()+' '+form.find('#id_last_name').val()));
                                             tr.append($('<td>').html(form.find('#id_mother_fullname').val()));
-                                            tr.append($('<td>').html(form.find('#id_birthday_day').find(':selected').text()+'/'+form.find('#id_birthday_month').find(':selected').text()+'/'+form.find('#id_birthday_year').find(':selected').text()));
+{#                                            tr.append($('<td>').html(form.find('#id_birthday_day').find(':selected').text()+'/'+form.find('#id_birthday_month').find(':selected').text()+'/'+form.find('#id_birthday_year').find(':selected').text()));#}
                                             tr.append($('<td>').html(form.find('#id_age').val()));
                                             tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
                                             tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
@@ -827,7 +830,7 @@
 
         });
 
-          $(document).on('click', '.edit-UNHCR-registration-child-row', function(){
+        $(document).on('click', '.edit-UNHCR-registration-child-row', function(){
             var block = $(this).parent().parent().find(".delete-registration-child-row");
 
             var templateChildForm = $("#add_child_withid_block").find('#add_child_withid_form');
@@ -899,7 +902,6 @@
 
         });
 
-
         $('#add_child_noid').click(function(){
 
             var templateChildForm = $("#add_child_noid_block").find('#add_child_noid_form');
@@ -920,10 +922,11 @@
                                             var tr = $('<tr>').addClass('child-row');
                                             var form = $('.bootbox-body').find('#add_child_noid_form');
                                             tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
-                                            tr.append($('<td>').html('&nbsp;'));
+{#                                            tr.append($('<td>').html('&nbsp;'));#}
+                                            tr.append($('<td>').html(form.find('#id_id_number').val()));
                                             tr.append($('<td>').html(form.find('#id_first_name').val()+' '+ form.find('#id_father_name').val()+' '+form.find('#id_last_name').val()));
                                             tr.append($('<td>').html(form.find('#id_mother_fullname').val()));
-                                            tr.append($('<td>').html(form.find('#id_birthday_day').find(':selected').text()+'/'+form.find('#id_birthday_month').find(':selected').text()+'/'+form.find('#id_birthday_year').find(':selected').text()));
+{#                                            tr.append($('<td>').html(form.find('#id_birthday_day').find(':selected').text()+'/'+form.find('#id_birthday_month').find(':selected').text()+'/'+form.find('#id_birthday_year').find(':selected').text()));#}
                                             tr.append($('<td>').html(form.find('#id_age').val()));
                                             tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
                                             tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
@@ -988,7 +991,7 @@
             $(".bootbox-body").find('#id_school').val($('#mainForm').find("#id_school").val());
         });
 
-       $('#add_child_withid').click(function(){
+        $('#add_child_withid').click(function(){
 
             bootbox.dialog({
                             title: "{% trans "Add Child" %}",
@@ -1067,7 +1070,7 @@
         $("#id_age").blur(function () {
 
             if($('#id_age').val() < 18) {
-               bootbox.alert("{% trans 'Currently ATM Cards can only be issued for those over the age of 18. We are working on a solution for this. You can continue the Registration Process so we have your information in case a solution is found. However, until then you will not receive payments.' %}", function() {});
+                bootbox.alert("{% trans 'Currently ATM Cards can only be issued for those over the age of 18. We are working on a solution for this. You can continue the Registration Process so we have your information in case a solution is found. However, until then you will not receive payments.' %}", function() {});
             }
         });
 
@@ -1143,14 +1146,27 @@
         var tr = $('<tr>').addClass('child-row');
         tr.append($('<td>').html(child.school_name));
         tr.append($('<td>').html(child.id_number));
+        tr.append($('<td>').html(child.first_name+' '+ child.father_name+' '+child.last_name));
+        tr.append($('<td>').html(child.mother_fullname));
+        tr.append($('<td>').html(child.age));
+        tr.append($('<td>').html(child.relation_to_adult));
+        tr.append($('<td>').html(child.enrolled_last_year));
+
+{#        tr.append($('<td>').html(child.relation_to_adult));#}
+{#        tr.append($('<td>').html(child.enrolled_last_year)); #}
 {#        tr.append($('<td>').html(getDropDownValueText($("#id_school"),child.school)));#}
 {#        tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));#}
 {#        tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));#}
+
+
+{#        tr.append($('<td>').html('&nbsp;'));#}
+{#        tr.append($('<td>').html('&nbsp;'));#}
+
         var button = $('<button class="btn btn-danger delete-registration-child-row" type="button" itemid="" style = "display:none"><i class="icon-trash icon-white"></i></button>')
         tr.append($('<td>').html(button));
         var editButton = $('<button class="btn edit-UNHCR-registration-child-row" type="button" style = "display:none"><i class="icon-edit icon-white"></i></button>');
         tr.append($('<td>').html(editButton));
-        $('#with_id_table').find('tbody').append(tr);
+        $('#no_id_table').find('tbody').append(tr);
         var item  = {};
         item.id_school = child.school
         if(!item.id_number){
@@ -1223,6 +1239,7 @@
         $("#HouseholdRegistrationNumber").hide();
         $("#IndividualRegistrationNumber").hide();
         $("#household_visit_note").hide();
+        $("#getUNHCRDatatButton").hide();
 
     }
 
@@ -1234,13 +1251,8 @@
         var age = getCalculatedAge(birthday_day, birthday_month, birthday_year);
 
         if(age!=null) {
-
             $('#id_age').val(age);
             $('#id_age').trigger('blur');
-
-            if(age < 18) {
-               bootbox.alert("{% trans 'Currently ATM Cards can only be issued for those over the age of 18. We are working on a solution for this. You can continue the Registration Process so we have your information in case a solution is found. However, until then you will not receive payments.' %}", function() {});
-            }
         } else {
             $('#id_age').val("");
         }
