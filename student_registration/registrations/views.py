@@ -129,8 +129,13 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
         adult = []
         try:
             # first try and look up in our database
-            adult = super(RegisteringAdultViewSet, self).get_object()
-            return adult
+            adults = RegisteringAdult.objects.filter(id_number=self.kwargs.get('id_number')).order_by('id')
+            if adults:
+                return adults[0]
+
+            raise Http404()
+            # adult = super(RegisteringAdultViewSet, self).get_object()
+            # return adult
 
         except Http404 as exp:
             # or look up in UNHCR
@@ -157,7 +162,7 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
                     adult.secondary_phone_answered = ''
                     adult.wfp_case_number = ''
                     adult.csc_case_number = ''
-                    # adult.save()
+                    adult.save()
                     return adult
             raise exp
 
