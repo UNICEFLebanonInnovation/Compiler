@@ -55,6 +55,7 @@ class RegisteringAdultResource(resources.ModelResource):
     sex = fields.Field(column_name='Gender', attribute='sex')
     registration_date = fields.Field(column_name='Registration Date', attribute='created')
     family_size = fields.Field(column_name='Family Size', attribute='family_size')
+    nationality_code = fields.Field(column_name='Country Of Origin Code')
 
     class Meta:
         model = RegisteringAdult
@@ -69,6 +70,7 @@ class RegisteringAdultResource(resources.ModelResource):
             'sex',
             'registration_date',
             'family_size',
+            'nationality_code',
         )
         export_order = (
             'number',
@@ -81,6 +83,7 @@ class RegisteringAdultResource(resources.ModelResource):
             'sex',
             'registration_date',
             'family_size',
+            'nationality_code',
         )
 
     def dehydrate_name(self, registeringadult):
@@ -99,8 +102,11 @@ class RegisteringAdultResource(resources.ModelResource):
     def dehydrate_family_size(self, registeringadult):
         return registeringadult.children.count()
 
-    def dehydrate_distribution_list(self, registeringadult):
+    def dehydrate_distribution_site(self, registeringadult):
         return registeringadult.wfp_distribution_site.code
+
+    def dehydrate_nationality_code(self, registeringadult):
+        return registeringadult.nationality.code
 
 
 class RegisteringAdultAdmin(ImportExportModelAdmin):
