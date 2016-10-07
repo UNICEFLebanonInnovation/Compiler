@@ -98,7 +98,7 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
     birthday_day = serializers.CharField(source='student.birthday_day')
     id_number = serializers.CharField(source='student.id_number')
     age = serializers.CharField(source='student.age')
-    school_name = serializers.CharField(source='school.name')
+    school_name = serializers.CharField(source='school.name', read_only=True)
 
     def create(self, validated_data):
 
