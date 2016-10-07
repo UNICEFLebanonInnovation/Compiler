@@ -76,14 +76,11 @@
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'registrations:registration' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
                   </li>
-                {% if request.user.is_staff %}
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'attendances:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>
-                  </li>
-                {% endif %}
-{#                  <li class="nav-item">#}
-{#                    <a class="nav-link" href="/static/app/att.apk">{% trans "Attendance App" %}</a>#}
-{#                  </li>#}
+                    {% if request.user.is_staff %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'attendances:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>
+                      </li>
+                    {% endif %}
                 {% endif %}
                 {% if request.user|has_group:"PILOT" %}
                 <li class="nav-item">
@@ -101,11 +98,6 @@
 {#                <li class="nav-item">#}
 {#                  <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>#}
 {#                </li>#}
-{#                  {% if request.user.is_superuser %}#}
-{#                <li class="nav-item">#}
-{#                  <a class="nav-link" href="{% url 'users:generate-password' %}">{% trans "Generate PWD" %}</a>#}
-{#                </li>#}
-{#                  {% endif %}#}
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
                 </li>

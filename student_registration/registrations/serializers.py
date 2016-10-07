@@ -80,6 +80,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'section_name',
             'classroom',
             'classroom_name',
+            'last_year_result',
+            'last_education_level',
+            'last_education_year',
+            'last_class_level',
             'owner',
         )
 
