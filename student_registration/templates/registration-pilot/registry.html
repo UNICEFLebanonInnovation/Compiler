@@ -128,7 +128,6 @@
                         <span id="HouseholdUNHCR_OtherID" style="display: none;">{{ form.id_number }}</span>
                         <span class="error" id="id_number_UNHCR_Other_error">{% trans "This field is required" %}</span>
                         <span class="error" id="id_number_UNHCR_Other_format_error">{% trans "The UNHCR ID is not valid" %}</span>
-
                         <button class="btn btn-primary" type="button" id="getUNHCRDatatButton" style="display: none">
                             {% trans "UNHCR Data" %}
                         </button>
@@ -248,6 +247,9 @@
                     <div class="line" id="id_number_block" style="display: none;">
                         <label class="text">{% trans "ID Number" %}<span class="asterisque">*</span></label>
                         {{ form.previously_registered_number }}
+                        <button class="btn btn-primary" type="button" id="get_household_children_data_button">
+                            {% trans "Edit File" %}
+                        </button>
                     </div>
                     <span class="error" id="confirm_child_belong" style="display: none;">
                         {% trans "You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them" %}
@@ -573,7 +575,8 @@
              isValid = validateUNCHRFormat(isValid);
              if(isValid)
              {
-                $.ajax({
+                 $("#no_id_table").find("tr:gt(0)").remove();
+                 $.ajax({
                      type: "GET",
                      url: checking_id_number_url+$('#id_id_number').val(),
                      data: [],
@@ -583,10 +586,7 @@
                      dataType: 'json',
                      success: function (response) {
                          var household = response;
-{#                         update_item_store(parseInt($('#main_id').val()), "original_id", household.id, 'registrations');#}
-                         //supdate_item_store(parseInt($('#main_id').val()), "id", household.id, 'registrations');
-
-
+                         update_item_store(parseInt($('#main_id').val()), "original_id", household.id, 'registrations');
                          $('#id_first_name').val(household.first_name);
                          $('#id_last_name').val(household.last_name);
                          $('#id_father_name').val(household.father_name);
@@ -624,7 +624,51 @@
 
         });
 
+         $('#get_household_children_data_button').click(function(e){
+             $("#no_id_table").find("tr:gt(0)").remove();
+                $.ajax({
+                     type: "GET",
+                     url: checking_id_number_url+$('#id_previously_registered_number').val(),
+                     data: [],
+                     cache: false,
+                     async: false,
+                     headers: getHeader(),
+                     dataType: 'json',
+                     success: function (response) {
+                         var household = response;
+                         update_item_store(parseInt($('#main_id').val()), "original_id", household.id, 'registrations');
 
+                         $('#id_id_number').val($('#id_previously_registered_number').val());
+                         $('#id_first_name').val(household.first_name);
+                         $('#id_last_name').val(household.last_name);
+                         $('#id_father_name').val(household.father_name);
+                         $('#id_mother_fullname').val(household.mother_fullname);
+                         $('#id_birthday_day').val(household.birthday_day);
+                         $('#id_birthday_month').val(household.birthday_month);
+                         $('#id_birthday_year').val(household.birthday_year);
+                         calculatehousehold_DateOfBirth();
+                         $('#id_sex').val(household.sex);
+                         $('#id_address').val(household.address);
+                         $('#id_primary_phone').val(household.primary_phone);
+                         $('#id_primary_phone_answered').val(household.primary_phone_answered);
+                         $('#id_secondary_phone').val(household.secondary_phone);
+                         $('#id_secondary_phone_answered').val(household.secondary_phone_answered);
+                         $('#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname, #id_birthday_day, #id_birthday_month, #id_birthday_year, #id_sex').trigger('blur');
+                         $('#id_address, #id_primary_phone, #id_primary_phone_answered, #id_secondary_phone, #id_secondary_phone_answered').trigger('blur');
+
+                         for(childIndex in household.children)
+                         {
+                             addChild(household.children[childIndex]);
+                             console.log(household.children[childIndex]);
+                         }
+
+                     },
+                     error: function (response) {
+                        var required_fields = JSON.parse(response.responseText);
+                        console.log(response);
+                     }
+                 });
+        });
 
         $(document).on('click', '#registration-synchro', function(){
             synchronize_data('registrations', synchro_path);
@@ -692,13 +736,6 @@
                 $('#previously_registered_block').hide();
                 $('#previously_registered_error').hide();
                 $('#id_number_block').hide();
-{#                if($('#id_id_type').val() == 1){#}
-{#                    $('#with_id_block').show();#}
-{#                    $('#confirm_child_belong').show();#}
-{#                }else{#}
-{#                    $('#no_id_block').show();#}
-{#                    $('#confirm_child_belong').show();#}
-{#                }#}
                 $('#no_id_block').show();
                 $('#confirm_child_belong').show();
             }
@@ -714,13 +751,6 @@
                 $('#previously_registered_block').hide();
                 $('#previously_registered_error').hide();
                 $('#id_number_block').hide();
-{#                if($('#id_id_type').val() == 1){#}
-{#                    $('#with_id_block').show();#}
-{#                    $('#confirm_child_belong').show();#}
-{#                }else{#}
-{#                    $('#no_id_block').show();#}
-{#                    $('#confirm_child_belong').show();#}
-{#                }#}
                 $('#no_id_block').show();
                 $('#confirm_child_belong').show();
             }
@@ -730,9 +760,11 @@
             if($(this).val() == 1){
                 $('#previously_registered_error').hide();
                 $('#id_number_block').show();
+                $('#no_id_block').show();
             }else{
                 $('#previously_registered_error').show();
                 $('#id_number_block').hide();
+                $('#no_id_block').hide();
             }
         });
 
@@ -758,9 +790,8 @@
             var templateChildForm = $("#add_child_noid_block").find('#add_child_noid_form');
 
             var isSaved = false;
-
             bootbox.dialog({
-                            title: "{% trans "Add Child" %}"+" - "+"{% trans "Other or no ID" %}",
+                            title: "{% trans "Add Child" %}",
                             message: $('#add_child_noid_block').html(),
                             buttons: {
                                 success: {
@@ -909,7 +940,7 @@
             var isSaved = false;
 
             bootbox.dialog({
-                            title: "{% trans "Add Child" %}"+" - "+"{% trans "Other or no ID" %}",
+                            title: "{% trans "Add Child" %}",
                             message: $('#add_child_noid_block').html(),
                             buttons: {
                                 success: {
@@ -1151,17 +1182,6 @@
         tr.append($('<td>').html(child.age));
         tr.append($('<td>').html(child.relation_to_adult));
         tr.append($('<td>').html(child.enrolled_last_year));
-
-{#        tr.append($('<td>').html(child.relation_to_adult));#}
-{#        tr.append($('<td>').html(child.enrolled_last_year)); #}
-{#        tr.append($('<td>').html(getDropDownValueText($("#id_school"),child.school)));#}
-{#        tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));#}
-{#        tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));#}
-
-
-{#        tr.append($('<td>').html('&nbsp;'));#}
-{#        tr.append($('<td>').html('&nbsp;'));#}
-
         var button = $('<button class="btn btn-danger delete-registration-child-row" type="button" itemid="" style = "display:none"><i class="icon-trash icon-white"></i></button>')
         tr.append($('<td>').html(button));
         var editButton = $('<button class="btn edit-UNHCR-registration-child-row" type="button" style = "display:none"><i class="icon-edit icon-white"></i></button>');
@@ -1187,7 +1207,7 @@
             button.attr('itemid', index);
             tr.attr('id', 'child-'+index);
         };
-        append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations', callback);
+{#        append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations', callback);#}
     }
 
     function updateDropDownValue(dropDownElement, value)
