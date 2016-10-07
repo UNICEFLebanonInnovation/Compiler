@@ -229,6 +229,11 @@ class RegistrationResource(resources.ModelResource):
         attribute='student',
         widget=ForeignKeyWidget(Student, 'mother_fullname')
     )
+    id_number = fields.Field(
+        column_name='ID Number',
+        attribute='student',
+        widget=ForeignKeyWidget(Student, 'id_number')
+    )
 
     class Meta:
         model = Registration
@@ -236,7 +241,7 @@ class RegistrationResource(resources.ModelResource):
                   'section', 'grade', 'classroom', 'year', 'owner', 'status', 'out_of_school_two_years',
                   'related_to_family')
         export_order = (
-            'studentFname', 'studentFaName', 'studentLname', 'registering_adult_fname', 'registering_adult_faname',
+            'id_number','studentFname', 'studentFaName', 'studentLname', 'registering_adult_fname', 'registering_adult_faname',
             'registering_adult_lname', 'mother', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
             'enrolled_last_year_location', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
             'out_of_school_two_years', 'related_to_family')
