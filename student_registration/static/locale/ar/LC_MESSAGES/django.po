@@ -930,3 +930,12 @@ msgstr "يرجى التحقق من ملء الحقول الإلزامية"
 
 msgid "Please check your internet connectivity"
 msgstr " يرجى التحقق من الاتصال بالإنترنت والمعاودة لاحقاً"
+
+msgid "Select a School Please"
+msgstr " يرجى إختبار مدرسة"
+
+msgid "Enrolled in this school"
+msgstr " مسجّل في هذه المدرسة"
+
+msgid "Class Assignments"
+msgstr "تعيينات الصف"
