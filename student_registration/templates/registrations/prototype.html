@@ -2,6 +2,7 @@
 {% load util_tags %}
 
 {% get_range 1990 2051 as years1 %}
+{% get_range_str 1990 2051 as education_years %}
 {% get_range 1 31 as days1 %}
 
 <table style="display:none;" id="registration_prototype">
@@ -23,6 +24,38 @@
         <td>
             <input type="text" name="governorate_name" class="registration-field governorate_name_$$itemscope_id$$" readonly="readonly"
                    itemscope="$$itemscope_id$$" id="governorate_name" value=""/>
+        </td>
+        <td>
+            <select name="last_class_level" id="last_class_level" class="outreach-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in levels %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="last_education_year" id="last_education_year" class="outreach-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in education_years %}
+                    <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="last_education_level" id="last_education_level" class="outreach-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in education_levels %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="last_year_result" id="last_year_result" class="outreach-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for key, item in last_year_result %}
+                    <option value="{{ key }}">{{ item }}</option>
+                {% endfor %}
+            </select>
         </td>
         <td>
             <input type="hidden" name="id" value="$$itemscope_id$$" class="registration-field-id" />
@@ -144,8 +177,8 @@
         <td>
             <input type="text" name="student_last_name" id="student_last_name" class="registration-field" itemscope="$$itemscope_id$$" />
         </td>
-{#        <td>#}
-{#            <input type="text" readonly="readonly" name="student_number" id="student_number" class="registration-field" itemscope="$$itemscope_id$$" />#}
-{#        </td>#}
+        <td>
+            <input type="text" readonly="readonly" name="student_number" id="student_number" class="registration-field" itemscope="$$itemscope_id$$" />
+        </td>
     </tr>
 </table>

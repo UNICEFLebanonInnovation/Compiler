@@ -123,6 +123,10 @@ class Registration(TimeStampedModel):
         ('private', _('Yes - in private school')),
         ('other', _('Yes - in another type of school')),
     )
+    RESULT = Choices(
+        ('graduated', _('Graduated')),
+        ('failed', _('Failed'))
+    )
 
     student = models.ForeignKey(
         Student,
@@ -166,17 +170,17 @@ class Registration(TimeStampedModel):
     )
     section = models.ForeignKey(
         Section,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     grade = models.ForeignKey(
         Grade,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     classroom = models.ForeignKey(
         ClassRoom,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+'
     )
     year = models.CharField(
@@ -193,6 +197,18 @@ class Registration(TimeStampedModel):
     status = models.BooleanField(blank=True, default=True)
     out_of_school_two_years = models.BooleanField(blank=True, default=False)
     related_to_family = models.BooleanField(blank=True, default=False)
+    last_year_result = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=RESULT
+    )
+    result = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=RESULT
+    )
 
     @property
     def student_fullname(self):

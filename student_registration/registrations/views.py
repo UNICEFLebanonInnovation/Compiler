@@ -24,6 +24,7 @@ from student_registration.schools.models import (
     ClassRoom,
     Grade,
     Section,
+    EducationLevel,
 )
 from student_registration.students.serializers import StudentSerializer
 from student_registration.registrations.forms import (
@@ -50,13 +51,17 @@ class RegistrationView(LoginRequiredMixin, ListView):
     template_name = 'registrations/list.html'
 
     def get_context_data(self, **kwargs):
-        data = self.model.objects.all()
+        data = []
         if not self.request.user.is_staff:
             data = data.filter(owner=self.request.user)
             self.template_name = 'registrations/index.html'
+        else:
+            data = self.model.objects.all()
 
         return {
             'registrations': data,
+            'education_levels': ClassRoom.objects.all(),
+            'levels': EducationLevel.objects.all(),
             'classrooms': ClassRoom.objects.all(),
             'schools': School.objects.all(),
             'grades': Grade.objects.all(),
@@ -67,7 +72,8 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'idtypes': IDType.objects.all(),
             'columns': Attribute.objects.filter(type=Registration.EAV_TYPE),
             'eav_type': Registration.EAV_TYPE,
-            'locations': Location.objects.filter(type_id=2)
+            'locations': Location.objects.filter(type_id=2),
+            'last_year_result': Registration.RESULT,
         }
 
 ####################### API VIEWS #############################

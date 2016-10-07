@@ -512,7 +512,7 @@ msgid "School year"
 msgstr "السنة الدراسية"
 
 msgid "synchronize"
-msgstr "احفظ"
+msgstr "ارسل البيانات"
 
 msgid "Grade"
 msgstr "الدرجة"
@@ -930,3 +930,15 @@ msgstr "يرجى التحقق من ملء الحقول الإلزامية"
 
 msgid "Please check your internet connectivity"
 msgstr " يرجى التحقق من الاتصال بالإنترنت والمعاودة لاحقاً"
+
+msgid "duplicate defined number of lines with selected option"
+msgstr "كرر آخر سطر مع الخيارات المحددة لعدد محدد من الأسطر"
+
+msgid "Last year result"
+msgstr "نتيجة السنة السابقة"
+
+msgid "Graduated"
+msgstr "ناجح"
+
+msgid "Failed"
+msgstr "معيد"

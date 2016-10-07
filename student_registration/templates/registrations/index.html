@@ -68,6 +68,23 @@
                                             {% trans "Governorate" %}
                                         </th>
                                         <th rowspan="2">
+                                            {% trans "Last training level" %}
+                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "Last training level tooltip" %}"></i>
+                                            <input type="checkbox" name="duplicate_last_class_level" id="duplicate_last_class_level" />
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Last education year" %}
+                                            <input type="checkbox" name="duplicate_last_education_year" id="duplicate_last_education_year" />
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Last education level" %}
+                                            <input type="checkbox" name="duplicate_last_education_level" id="duplicate_last_education_level" />
+                                        </th>
+                                        <th rowspan="2">
+                                            {% trans "Last year result" %}
+                                            <input type="checkbox" name="duplicate_last_year_result" id="duplicate_last_year_result" />
+                                        </th>
+                                        <th rowspan="2">
                                             {% trans "School number" %}
                                         </th>
                                         <th rowspan="2">
@@ -109,9 +126,7 @@
                                         <th rowspan="2">{% trans "Student first name" %}</th>
                                         <th rowspan="2">{% trans "Student father name" %}</th>
                                         <th rowspan="2">{% trans "Student last name" %}</th>
-{#                                        <th rowspan="2">{% trans "Student number" %}#}
-{#                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "Student number tooltip" %}"></i>#}
-{#                                        </th>#}
+                                        <th rowspan="2">{% trans "Student number" %}</th>
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th>{% trans "year" %}</th>
@@ -136,6 +151,10 @@
                           <button class="btn btn-success" id="duplicate_last_line_select">
                             <i class="icon-plus-sign icon-white"></i>&nbsp;
                                 {% trans "duplicate last line with selected option" %}
+                          </button>
+                          <button class="btn btn-success" id="duplicate_defined_lines_select">
+                            <i class="icon-plus-sign icon-white"></i>&nbsp;
+                                {% trans "duplicate defined number of lines with selected option" %}
                           </button>
                      </div>
                 </div>
@@ -203,15 +222,15 @@
             });
             bootbox.setLocale(language);
 
-            setInterval(function(){
-                synchro_result = true;
-                $('.alert').hide();
-                if(navigator.onLine) {
-                    synchronize_data(false);
-                }else{
-                    $('#alert-connection').show();
-                }
-            }, 3600000);
+{#            setInterval(function(){#}
+{#                synchro_result = true;#}
+{#                $('.alert').hide();#}
+{#                if(navigator.onLine) {#}
+{#                    synchronize_data(false);#}
+{#                }else{#}
+{#                    $('#alert-connection').show();#}
+{#                }#}
+{#            }, 3600000);#}
 
             $(document).on("click", ".delete-column", function(e) {
                 var itemid = $(this).parent().attr('itemscope');
@@ -268,10 +287,30 @@
                             school_number: $('#duplicate_school').is(':checked'),
                             classroom: $('#duplicate_classroom').is(':checked'),
                             section: $('#duplicate_section').is(':checked'),
+                            last_class_level: $('#duplicate_last_class_level').is(':checked'),
+                            last_education_level: $('#duplicate_last_education_level').is(':checked'),
+                            last_education_year: $('#duplicate_last_education_year').is(':checked'),
+                            last_year_result: $('#duplicate_last_year_result').is(':checked'),
 {#                            grade: $('#duplicate_grade').is(':checked'),#}
                         };
                         duplicate_item_values(request.result, params);
                     };
+                }
+            });
+
+            $(document).on('click', '#duplicate_defined_lines_select', function(){
+                if(rows == 0) {
+                    return false;
+                }else{
+                    bootbox.prompt("{% trans 'Please enter the number of lines' %}", function(result) {
+                        if (result === null) {
+                        } else {
+                            var number = parseInt(result);
+                            for (var i = 0; i < number; i++) {
+                                $('#duplicate_last_line_select').trigger('click');
+                            }
+                        }
+                    });
                 }
             });
 
@@ -566,6 +605,7 @@
                 dataType: 'json',
                 success: function (response) {
                     if(response.status == '201'){
+                        $('#line-'+item.id).find('#student_number').val(response.data.number);
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
                         item.synchronized = true;
                         item.original_id = response.data.id;
