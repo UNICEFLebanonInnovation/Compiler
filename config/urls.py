@@ -15,6 +15,7 @@ from student_registration.registrations.views import (
     RegistrationViewSet,
     RegisteringAdultViewSet,
     RegisteringChildViewSet,
+    ClassAssignmentViewSet,
 )
 from student_registration.attendances.views import (
     AttendanceViewSet,
@@ -40,6 +41,7 @@ api.register(r'registrations', RegistrationViewSet, base_name='registrations')
 api.register(r'registrations-adult', RegisteringAdultViewSet, base_name='registrations_adult')
 api.register(r'registrations-child', RegisteringChildViewSet, base_name='registrations_child')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
+api.register(r'class-assignment', ClassAssignmentViewSet, base_name='class_assignment')
 
 api.register(r'students', StudentViewSet, base_name='students')
 api.register(r'schools', SchoolViewSet, base_name='schools')
