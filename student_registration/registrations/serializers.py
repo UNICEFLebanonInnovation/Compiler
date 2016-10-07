@@ -81,6 +81,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'classroom',
             'classroom_name',
             'owner',
+            'enrolled_in_this_school',
         )
 
 
