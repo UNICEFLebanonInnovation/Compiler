@@ -38,7 +38,12 @@ from student_registration.eav.models import (
 from student_registration.locations.models import Location
 
 from .models import Registration, RegisteringAdult
-from .serializers import RegistrationSerializer, RegisteringAdultSerializer, RegistrationChildSerializer
+from .serializers import (
+    RegistrationSerializer,
+    RegisteringAdultSerializer,
+    RegistrationChildSerializer,
+    ClassAssignmentSerializer
+)
 from .utils import get_unhcr_principal_applicant
 
 
@@ -224,6 +229,17 @@ class RegisteringPilotView(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         return reverse('registrations:registering_pilot')
+
+
+class ClassAssignmentViewSet(mixins.UpdateModelMixin,
+                             viewsets.GenericViewSet):
+    """
+    Provides API operations around a registration record
+    """
+    model = Registration
+    queryset = Registration.objects.all()
+    serializer_class = ClassAssignmentSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):

@@ -81,7 +81,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'classroom',
             'classroom_name',
             'owner',
-            'enrolled_in_this_school',
         )
 
 
@@ -199,3 +198,16 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'children',
             'number',
         )
+
+
+class ClassAssignmentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Registration
+        fields = (
+            'id',
+            'classroom',
+            'section',
+            'enrolled_in_this_school',
+        )
+
