@@ -12,6 +12,7 @@ from .utils import *
 
 class Nationality(models.Model):
     name = models.CharField(max_length=45L, unique=True)
+    code = models.CharField(max_length=5L, unique=True, null=True)
 
     class Meta:
         ordering = ['name']
