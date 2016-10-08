@@ -18,7 +18,7 @@ urlpatterns = [
     ),
     url(
         regex=r'^class-assignment/$',
-        view=views.ClassassignmentView.as_view(),
+        view=views.ClassAssignmentView.as_view(),
         name='class_assignment'
     ),
     url(regex=r'^registration/export/$', view=views.ExportViewSet.as_view(), name='registration_export'),
