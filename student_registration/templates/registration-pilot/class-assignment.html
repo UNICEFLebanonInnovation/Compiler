@@ -45,7 +45,9 @@
                                              <select class="form-control" id="id_school">
                                                  <option value="">----</option>
                                                   {% for school in schools %}
-                                                    <option value="{{ school.id }}" {% if selectedSchool == school.id %}{{ 'selected' }}{% endif %}>{{ school.name }} - {% if school.location %}{{ school.location.name }}{% endif %}</option>
+                                                    <option value="{{ school.id }}" {% if selectedSchool == school.id %}selected="selected"{% endif %}>
+                                                        {{ school.name }} - {% if school.location %}{{ school.location.name }}{% endif %}
+                                                    </option>
                                                   {% endfor %}
                                              </select>
                                         </div>
@@ -78,13 +80,13 @@
                                 <tbody>
                                     {% for registry in registrations %}
                                         <tr>
-                                            <td>{% if registry.student %}{{ registry.student.first_name}} {{registry.student.father_name}} {{registry.student.last_name }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.get_age }}{% endif %}</td>
                                             <td>
-                                                <select name="classroom" class="classroom" data-regid = "{{ registry.id }}">
+                                                <select name="classroom" class="classroom" data-regid="{{ registry.id }}">
                                                     <option value="">----</option>
                                                     {% for classroom in classrooms %}
-                                                        <option value="{{ classroom.id }}" {% if registry.classroom.id == classroom.id %}{{ 'selected' }}{% endif %}>{{ classroom.name }}</option>
+                                                        <option value="{{ classroom.id }}" {% if registry.classroom.id == classroom.id %}selected="selected"{% endif %}>{{ classroom.name }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </td>
@@ -92,13 +94,13 @@
                                                 <select name="section" class="section" data-regid="{{ registry.id }}">
                                                     <option value="">----</option>
                                                     {% for section in sections %}
-                                                        <option value="{{ section.id }}" {% if registry.section.id == section.id %}{{ 'selected' }}{% endif %}>{{ section.name }}</option>
+                                                        <option value="{{ section.id }}" {% if registry.section.id == section.id %}selected="selected"{% endif %}>{{ section.name }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </td>
                                             <td>
                                                 {% if registry.enrolled_in_this_school %}
-                                                    <input checked class="enrolled" data-regid="{{ registry.id }}" type="checkbox"/>
+                                                    <input checked="checked" class="enrolled" data-regid="{{ registry.id }}" type="checkbox"/>
                                                 {% else %}
                                                     <input class="enrolled"  data-regid="{{ registry.id }}" type="checkbox"/>
                                                 {% endif %}
@@ -126,12 +128,6 @@
     <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap-switch.min.js' %}"></script>
-    <style>
-        .loader{background: url("{% static 'images/loader.gif' %}");
-            position: fixed;top:200px;left:48%;z-index:1; width:120px; height:120px;
-            display: none;}
-        .alert{position:fixed; top:70px;width:30%; left:35%; display:none; z-index: 1;}
-    </style>
     <script type="text/javascript">
         var oTable = null;
         var language  = '{{ LANGUAGE_CODE }}';
