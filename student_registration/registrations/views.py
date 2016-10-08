@@ -76,7 +76,7 @@ class RegistrationView(LoginRequiredMixin, ListView):
         }
 
 
-class ClassassignmentView(LoginRequiredMixin, ListView):
+class ClassAssignmentView(LoginRequiredMixin, ListView):
     """
     Provides the registration page with lookup types in the context
     """
@@ -84,14 +84,10 @@ class ClassassignmentView(LoginRequiredMixin, ListView):
     template_name = 'registration-pilot/class-assignment.html'
 
     def get_context_data(self, **kwargs):
-        data = self.model.objects.all()
-
-        schoolId = self.request.GET.get("school", "0")
-        if schoolId:
-            data = data.filter(school=schoolId)
-        if not self.request.user.is_staff:
-            data = data.filter(owner=self.request.user)
-            self.template_name = 'registrations/index.html'
+        data = []
+        school = self.request.GET.get("school", "0")
+        if school:
+            data = Registration.objects.filter(school=school).order_by('id')
 
         location = self.request.user.location_id
         locations = self.request.user.locations.all()
@@ -100,15 +96,14 @@ class ClassassignmentView(LoginRequiredMixin, ListView):
         else:
             schools = School.objects.filter(location_id=location)
 
-
         return {
             'registrations': data,
             'classrooms': ClassRoom.objects.all(),
             'schools': schools,
-            'selectedSchool': int(schoolId),
+            'selectedSchool': int(school),
             'sections': Section.objects.all()
-
         }
+
 
 ####################### API VIEWS #############################
 
@@ -234,7 +229,7 @@ class RegisteringPilotView(LoginRequiredMixin, FormView):
 class ClassAssignmentViewSet(mixins.UpdateModelMixin,
                              viewsets.GenericViewSet):
     """
-    Provides API operations around a registration record
+    Provides API operations around a class assignment record
     """
     model = Registration
     queryset = Registration.objects.all()
