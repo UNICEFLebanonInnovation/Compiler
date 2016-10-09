@@ -39,7 +39,7 @@
 .table th {
     border-color: black;
     background-color: lightskyblue;
-    text-align: right;
+    text-align: left;
 }
 .table th, td {
     font-size:14px;
@@ -212,4 +212,9 @@ div.error, span.error {
     .navbar {
       border-radius: 0;
     }
+}
+
+table.dataTable, table.dataTable th, table.dataTable td
+{
+  box-sizing: inherit !important;
 }
