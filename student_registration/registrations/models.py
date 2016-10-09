@@ -193,6 +193,7 @@ class Registration(TimeStampedModel):
     status = models.BooleanField(blank=True, default=True)
     out_of_school_two_years = models.BooleanField(blank=True, default=False)
     related_to_family = models.BooleanField(blank=True, default=False)
+    enrolled_in_this_school = models.BooleanField(blank=True, default=True)
 
     @property
     def student_fullname(self):

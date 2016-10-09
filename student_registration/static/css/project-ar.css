@@ -219,3 +219,8 @@ div.error, span.error {
 table td {
   text-align: right;
 }
+
+table.dataTable, table.dataTable th, table.dataTable td
+{
+  box-sizing: inherit !important;
+}
