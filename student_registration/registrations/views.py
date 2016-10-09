@@ -38,7 +38,12 @@ from student_registration.eav.models import (
 from student_registration.locations.models import Location
 
 from .models import Registration, RegisteringAdult
-from .serializers import RegistrationSerializer, RegisteringAdultSerializer, RegistrationChildSerializer
+from .serializers import (
+    RegistrationSerializer,
+    RegisteringAdultSerializer,
+    RegistrationChildSerializer,
+    ClassAssignmentSerializer
+)
 from .utils import get_unhcr_principal_applicant
 
 
@@ -69,6 +74,36 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'eav_type': Registration.EAV_TYPE,
             'locations': Location.objects.filter(type_id=2)
         }
+
+
+class ClassAssignmentView(LoginRequiredMixin, ListView):
+    """
+    Provides the registration page with lookup types in the context
+    """
+    model = Registration
+    template_name = 'registration-pilot/class-assignment.html'
+
+    def get_context_data(self, **kwargs):
+        data = []
+        school = self.request.GET.get("school", "0")
+        if school:
+            data = Registration.objects.filter(school=school).order_by('id')
+
+        location = self.request.user.location_id
+        locations = self.request.user.locations.all()
+        if len(locations):
+            schools = School.objects.filter(location_id__in=locations)
+        else:
+            schools = School.objects.filter(location_id=location)
+
+        return {
+            'registrations': data,
+            'classrooms': ClassRoom.objects.all(),
+            'schools': schools,
+            'selectedSchool': int(school),
+            'sections': Section.objects.all()
+        }
+
 
 ####################### API VIEWS #############################
 
@@ -189,6 +224,17 @@ class RegisteringPilotView(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         return reverse('registrations:registering_pilot')
+
+
+class ClassAssignmentViewSet(mixins.UpdateModelMixin,
+                             viewsets.GenericViewSet):
+    """
+    Provides API operations around a class assignment record
+    """
+    model = Registration
+    queryset = Registration.objects.all()
+    serializer_class = ClassAssignmentSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):
