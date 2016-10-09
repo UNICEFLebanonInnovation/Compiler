@@ -146,8 +146,8 @@ class Person(TimeStampedModel):
     def get_age(self):
         if self.age:
             return self.age
-        this_year = datetime.datetime.now().year
-        return int(this_year)-int(self.birthday_year)
+        current_year = datetime.datetime.now().year
+        return int(current_year)-int(self.birthday_year)
 
     class Meta:
         abstract = True
