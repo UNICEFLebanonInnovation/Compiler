@@ -27,3 +27,23 @@ footer .brand {
 input[readonly=readonly] {
     border: 1px solid !important;
 }
+
+.loader{
+  background: url("../images/loader.gif");
+  position: fixed;
+  top:200px;
+  left:48%;
+  z-index:1;
+  width:120px;
+  height:120px;
+  display: none;
+}
+
+.alert{
+  position:fixed;
+  top:70px;
+  width:30%;
+  left:35%;
+  display:none;
+  z-index: 1;
+}

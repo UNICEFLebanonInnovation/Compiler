@@ -8,10 +8,12 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel
 from .utils import *
-
+import datetime
+import math
 
 class Nationality(models.Model):
     name = models.CharField(max_length=45L, unique=True)
+    code = models.CharField(max_length=5L, unique=True, null=True)
 
     class Meta:
         ordering = ['name']
@@ -140,6 +142,12 @@ class Person(TimeStampedModel):
             self.birthday_month,
             self.birthday_year,
         )
+
+    def get_age(self):
+        if self.age:
+            return self.age
+        current_year = datetime.datetime.now().year
+        return int(current_year)-int(self.birthday_year)
 
     class Meta:
         abstract = True
