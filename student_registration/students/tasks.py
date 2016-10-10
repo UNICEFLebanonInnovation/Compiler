@@ -6,6 +6,7 @@ import os
 from datetime import datetime
 from student_registration.taskapp.celery import app
 from student_registration.registrations.utils import get_unhcr_individuals
+from student_registration.students.utils import generate_id
 
 
 @app.task
@@ -32,3 +33,34 @@ def synchronize_child_age():
                 print ex.message
                 continue
 
+
+@app.task
+def generate_adult_unique_number():
+    from student_registration.registrations.models import RegisteringAdult
+
+    adults = RegisteringAdult.objects.all()
+    for adult in adults:
+        try:
+            adult.number = generate_id(adult.first_name, adult.father_name, adult.last_name,
+                                         adult.mother_fullname, adult.sex)
+            print adult.number
+            adult.save()
+        except Exception as ex:
+            print ex.message
+            continue
+
+
+@app.task
+def generate_child_unique_number():
+    from student_registration.students.models import Student
+
+    students = Student.objects.all()
+    for student in students:
+        try:
+            student.number = generate_id(student.first_name, student.father_name, student.last_name,
+                                         student.mother_fullname, student.sex)
+            print student.number
+            student.save()
+        except Exception as ex:
+            print ex.message
+            continue
