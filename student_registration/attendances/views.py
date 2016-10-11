@@ -93,3 +93,35 @@ class AttendanceView(LoginRequiredMixin, ListView):
             'grades': Grade.objects.all(),
             'sections': Section.objects.all()
         }
+
+
+class ExportViewSet(LoginRequiredMixin, ListView):
+
+    model = Attendance
+
+    def get(self, request, *args, **kwargs):
+
+        school = request.GET.get("school")
+
+        queryset = self.queryset
+        data = tablib.Dataset()
+        data.headers = [
+            _('Student number'), _('Student fullname'), _('Mother fullname'),
+        ]
+
+        content = []
+        for line in queryset:
+            content = [
+                line.student.number,
+                line.student.__unicode__(),
+                line.student.mother_fullname,
+            ]
+            data.append(content)
+
+        file_format = base_formats.XLS()
+        response = HttpResponse(
+            file_format.export_data(data),
+            content_type='application/vnd.ms-excel',
+        )
+        response['Content-Disposition'] = 'attachment; filename=registration_list.xls'
+        return response
