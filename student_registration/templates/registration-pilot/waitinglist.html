@@ -1,0 +1,116 @@
+{% extends "base.app.html" %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+{% block extra_head %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sly.css' %}"
+          xmlns:font-weight="http://www.w3.org/1999/xhtml" xmlns:font-weight="http://www.w3.org/1999/xhtml">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/signature_pad.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
+
+{% endblock %}
+
+
+{% block content %}
+
+<form method="post" action="" class="inlineForm" id="mainForm" style="display: block;">
+  <h3 class="panel-title">{% trans "Waiting List" %}</h3>
+  <p>
+      {% trans "Info" %}
+  </p>
+
+  <div class="line">
+      <label class="text">{% trans "Household Representative Name" %}<span class="asterisque">*</span></label>
+      <span><input id="full_name" maxlength="100" name="full_name" type="text" /></span>
+      <span class="error" id="full_name_error">{% trans "This field is required" %}</span>
+  </div>
+
+  <div class="line">
+      <label class="text">{% trans "UNHCR ID" %}</label>
+      <span><input id="unhcr_id" maxlength="100" name="unhcr_id" type="text" /></span>
+      <!--<span class="error" id="unhcr_id_error">{% trans "This field is required" %}</span>-->
+  </div>
+  <div class="line">
+      <label class="text">{% trans "Number of Children" %}<span class="asterisque">*</span></label>
+      <span><input id="number_of_children" maxlength="100" name="number_of_children" type="text" /></span>
+      <span class="error" id="number_of_children_error">{% trans "This field is required" %}</span>
+  </div>
+  <div class="line">
+      <label class="text">{% trans "Phone Number" %}<span class="asterisque">*</span></label>
+      <span><input id="phone_number" maxlength="100" name="phone_number" type="text" /></span>
+      <span class="error" id="phone_number_error">{% trans "This field is required" %}</span>
+  </div>
+  <div class="line">
+      <label class="text">{% trans "Alternate Phone Number" %}</label>
+      <span><input id="alternate_phone_number" maxlength="100" name="alternate_phone_number" type="text" /></span>
+  </div>
+  <div class="line">
+      <label class="text">{% trans "Village" %}<span class="asterisque">*</span></label>
+      <span><input id="village" maxlength="100" name="village" type="text" /></span>
+      <span class="error" id="village_error">{% trans "This field is required" %}</span>
+  </div>
+  <div class="line">
+      <label class="text">{% trans "Distict" %}<span class="asterisque">*</span></label>
+      <span>
+        <select name="location">
+          {% for location in locations %}
+            <option value="{{ location.id }}">
+                {{ location.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </span>
+      <span class="error" id="address_error">{% trans "This field is required" %}</span>
+  </div>
+  <div class="line">
+      <label class="text">&nbsp;</label>
+      <button class="btn btn-success" type="button" id="waiting_list_save">{% trans "Save" %}</button>
+  </div>
+</form>
+
+
+{% endblock %}
+
+{% block extra_js %}
+  <script type="text/javascript" src="{% static 'js/indexedDB.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
+  <script type="text/javascript">
+      var db = null;
+      var language  = '{{ LANGUAGE_CODE }}';
+      var user_id = {{ request.user.id }};
+      var protocol = 'http://';
+      {% if request.is_secure %}
+          protocol = 'https://';
+      {% endif %}
+
+      var validation_mapping = function() { return validate_waiting_list() };
+ $(document).ready(function() {
+    $('#waiting_list_save').click(function(e){
+              var sectionCheck = validateSection13();
+              if(sectionCheck)
+              {
+
+                  bootbox.confirm("{% trans 'Are you sure you want to submit this application?' %}", function(result) {
+                  if(result == true) {
+                      var store = getStoreByName('registrations');
+                      var request = store.get(parseInt($('#main_id').val()));
+                      request.onsuccess = function(){
+                          var result = request.result;
+
+                          console.log(result);
+                          if(result){
+                              push_adult_data(result, synchro_path, 'registrations');
+                          }
+                      };
+                      update_item_store(parseInt($('#main_id').val()), 'completed', true, 'registrations');
+                      displayFeedback();
+                  }
+                  });
+
+              }
+          });
+  });
+</script>
+{% endblock %}
