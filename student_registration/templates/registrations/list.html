@@ -3,7 +3,7 @@
 {% get_current_language as LANGUAGE_CODE %}
 
 {% block extra_head %}
-
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">
@@ -24,11 +24,33 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                           <div class="panel-heading">
-                            <h3 class="panel-title">{% trans "Registration" %}
-                              <a class="btn btn-info" id="registration-export" href="{% url "registrations:registration_export" %}" target="_blank">
-                                <i class="icon-export-sign icon-white"></i>&nbsp;
-                                    {% trans "Export" %}
-                              </a>
+                            <h3 class="panel-title">
+                                <ol class="breadcrumb">
+                                    <li><a>{% trans "Registration" %}</a></li>
+                                    <li>
+                                        <div style="display: inline-block;">
+                                            <label for="id_school">{% trans 'School' %}</label>
+                                        </div>
+                                        <div style="display: inline-block;">
+                                             <select class="form-control" id="id_school">
+                                                 <option value="">----</option>
+                                                  {% for school in schools %}
+                                                    <option value="{{ school.id }}" {% if selectedSchool == school.id %}selected="selected"{% endif %}>
+                                                        {{ school.name }} - {% if school.location %}{{ school.location.name }}{% endif %}
+                                                    </option>
+                                                  {% endfor %}
+                                             </select>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-info" id="registration-export" href="{% url "registrations:registration_export" %}" target="_blank">
+                                            <i class="icon-export-sign icon-white"></i>&nbsp;
+                                                {% trans "Export" %}
+                                          </a>
+                                    </li>
+                                 </ol>
+
+
                             </h3>
                             <div class="actions pull-right">
                                 <i class="fa fa-chevron-down"></i>
@@ -141,6 +163,18 @@
                     $('[data-toggle="tooltip"]').tooltip();
                 }
             });
+
+            // get the list of school and fill the table with it
+            $("#id_school").change(function(){
+                var selected_school = $(this).val();
+               // reload the page with the school id passed in post
+                if(selected_school)
+                    window.location.href = '/registrations/registration/?school='+selected_school;
+                else
+                    window.location.href = '/registrations/registration/';
+
+            });
+
         });
     </script>
 
