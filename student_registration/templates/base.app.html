@@ -1,16 +1,15 @@
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-{% if request.user.is_staff %}
-    <html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>
-{% else %}
-{#    <html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>#}
+{% if request.user.is_authenticated and not request.user.is_staff %}
     <html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %} manifest="{% static 'manifest.appcache' %}">
+{% else %}
+    <html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>
 {% endif %}
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>{% block title %}Student Registration{% endblock title %}</title>
+    <title>{% block title %}Pilot{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
