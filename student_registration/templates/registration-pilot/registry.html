@@ -128,9 +128,9 @@
                         <span id="HouseholdUNHCR_OtherID" style="display: none;">{{ form.id_number }}</span>
                         <span class="error" id="id_number_UNHCR_Other_error">{% trans "This field is required" %}</span>
                         <span class="error" id="id_number_UNHCR_Other_format_error">{% trans "The UNHCR ID is not valid" %}</span>
-                        <button class="btn btn-primary" type="button" id="getUNHCRDatatButton" style="display: none">
-                            {% trans "UNHCR Data" %}
-                        </button>
+{#                        <button class="btn btn-primary" type="button" id="getUNHCRDatatButton" style="display: none">#}
+{#                            {% trans "UNHCR Data" %}#}
+{#                        </button>#}
                     </div>
 
                     <div class="line" id="HouseholdOtherID_Note" style="display: none;">
@@ -247,9 +247,9 @@
                     <div class="line" id="id_number_block" style="display: none;">
                         <label class="text">{% trans "ID Number" %}<span class="asterisque">*</span></label>
                         {{ form.previously_registered_number }}
-                        <button class="btn btn-primary" type="button" id="get_household_children_data_button">
-                            {% trans "Edit File" %}
-                        </button>
+{#                        <button class="btn btn-primary" type="button" id="get_household_children_data_button">#}
+{#                            {% trans "Edit File" %}#}
+{#                        </button>#}
                     </div>
                     <span class="error" id="confirm_child_belong" style="display: none;">
                         {% trans "You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them" %}
@@ -488,7 +488,6 @@
         {% endif %}
         var host = protocol+'{{ request.get_host }}';
         var checking_id_number_url = host+'/api/registrations-adult/';
-{#        alert(checking_id_number_url);#}
         var synchro_path = host+'/api/registrations-adult/';
         var synchro_path_2 = host+'/api/registrations-child/';
         var arabic_fields = "#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname";
@@ -537,11 +536,11 @@
             filterSchoolsByLocation(parseInt($(this).val()));
         });
         $(document).on('change', '.bootbox-body #id_age', function(){
-        var age = $(this).val();
-        if(age  <5 || age >17 ) {
-            bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
-        }
-    });
+            var age = $(this).val();
+            if(age  <5 || age >17 ) {
+                bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
+            }
+        });
 
         $(document).on('change', '.bootbox-body #id_age', function(){
             var age = $(this).val();
@@ -690,8 +689,8 @@
                $("#HouseholdUNHCR_OtherID").show();
                $("#HouseholdUNHCRNote").show();
                $("#HouseholdRegistrationNumber").show();
-               $("#getUNHCRDatatButton").show();
-               $("#HouseholdOtherNoID").show();
+{#               $("#getUNHCRDatatButton").show();#}
+{#               $("#HouseholdOtherNoID").show();#}
            }else if (selectedOption == 2 )  {
                $("#HouseholdOtherID").show();
                $("#HouseholdOtherID_Note").show();
@@ -834,7 +833,7 @@
 
                                             var updateCallback = function(updateItem)
                                             {
-                                                collect_form_values(form, updateItem)
+                                                collect_form_values(form, updateItem);
                                                 update_subitem_store(parseInt($('#main_id').val()), 'children', editedIndex, 'registrations', updateItem);
                                             };
 
@@ -906,7 +905,7 @@
 
                                             var updateCallback = function(updateItem)
                                             {
-                                                collect_form_values(form, updateItem)
+                                                collect_form_values(form, updateItem);
                                                 update_subitem_store(parseInt($('#main_id').val()), 'children', editedIndex, 'registrations', updateItem);
                                             };
 

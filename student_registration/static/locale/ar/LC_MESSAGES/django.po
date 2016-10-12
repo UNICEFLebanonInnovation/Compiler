@@ -628,7 +628,7 @@ msgstr "الجنس"
 msgid "Relationship to Household head"
 msgstr "العلاقة برب الأسرة"
 
-msgid "Relationship to Household reprentative"
+msgid "Relationship to Household representative"
 msgstr "العلاقة بممثل الأسرة"
 
 msgid "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card."
