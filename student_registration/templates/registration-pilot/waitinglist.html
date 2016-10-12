@@ -105,6 +105,7 @@
       {% if request.is_secure %}
           protocol = 'https://';
       {% endif %}
+      var host = protocol+'{{ request.get_host }}';
       var synchro_path = host+'/api/waiting-list/';
 
       var arabic_fields = "#id_first_name, #id_last_name, #id_father_name";
