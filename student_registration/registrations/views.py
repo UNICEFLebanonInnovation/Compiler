@@ -30,6 +30,7 @@ from student_registration.students.serializers import StudentSerializer
 from student_registration.registrations.forms import (
     RegisteringAdultForm,
     RegisteringChildForm,
+    WaitingListForm,
 )
 from student_registration.students.forms import StudentForm
 from student_registration.eav.models import (
@@ -38,12 +39,13 @@ from student_registration.eav.models import (
 )
 from student_registration.locations.models import Location
 
-from .models import Registration, RegisteringAdult
+from .models import Registration, RegisteringAdult, WaitingList
 from .serializers import (
     RegistrationSerializer,
     RegisteringAdultSerializer,
     RegistrationChildSerializer,
-    ClassAssignmentSerializer
+    ClassAssignmentSerializer,
+    WaitingListSerializer,
 )
 from .utils import get_unhcr_principal_applicant
 
@@ -56,9 +58,13 @@ class RegistrationView(LoginRequiredMixin, ListView):
     template_name = 'registrations/list.html'
 
     def get_context_data(self, **kwargs):
-        data = self.model.objects.all()
+        data = []
+        school = self.request.GET.get("school", "0")
+        if school:
+            data = self.model.objects.filter(school=school).order_by('id')
+
         if not self.request.user.is_staff:
-            data = data.filter(owner=self.request.user)
+            data = self.model.filter(owner=self.request.user)
             self.template_name = 'registrations/index.html'
 
         return {
@@ -73,7 +79,8 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'idtypes': IDType.objects.all(),
             'columns': Attribute.objects.filter(type=Registration.EAV_TYPE),
             'eav_type': Registration.EAV_TYPE,
-            'locations': Location.objects.filter(type_id=2)
+            'locations': Location.objects.filter(type_id=2),
+            'selectedSchool': int(school),
         }
 
 
@@ -103,6 +110,21 @@ class ClassAssignmentView(LoginRequiredMixin, ListView):
             'schools': schools,
             'selectedSchool': int(school),
             'sections': Section.objects.all()
+        }
+
+
+class WaitingListView(LoginRequiredMixin, ListView):
+    """
+    Provides the registration page with lookup types in the context
+    """
+    model = WaitingList
+    template_name = 'registration-pilot/waitinglist.html'
+
+    def get_context_data(self, **kwargs):
+
+        return {
+            'form': WaitingListForm({'location': self.request.user.location_id,
+                                     'locations': self.request.user.locations.all()}),
         }
 
 
@@ -244,6 +266,26 @@ class ClassAssignmentViewSet(mixins.UpdateModelMixin,
     queryset = Registration.objects.all()
     serializer_class = ClassAssignmentSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+
+class WaitingListViewSet(mixins.RetrieveModelMixin,
+                         mixins.ListModelMixin,
+                         mixins.CreateModelMixin,
+                         mixins.UpdateModelMixin,
+                         viewsets.GenericViewSet):
+    """
+    Provides API operations around a registration record
+    """
+    model = WaitingList
+    queryset = WaitingList.objects.all()
+    serializer_class = WaitingListSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return []
+
+        return self.queryset
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):

@@ -66,7 +66,7 @@
                     <p>
                         <strong>{% trans "Welcome to the Registration Desk of the Min Ila Pilot" %}</strong>
                     </p>
-                    <p>{% trans "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 6 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month." %}</p>
+                    <p>{% trans "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 5 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month." %}</p>
                     <p>{% trans "This cash is intended to help children regularly attend 2nd shift school in order that their future opportunities are improved." %}</p>
                 </li>
 
@@ -325,7 +325,7 @@
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Declaration and Consent" %}</h3>
                     <p>
-                        {% trans "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 6 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school." %}
+                        {% trans "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 5 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school." %}
                     </p>
                     <p>
                         {% trans "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments." %}
@@ -536,6 +536,12 @@
             console.log($(this).val());
             filterSchoolsByLocation(parseInt($(this).val()));
         });
+        $(document).on('change', '.bootbox-body #id_age', function(){
+        var age = $(this).val();
+        if(age  <5 || age >17 ) {
+            bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
+        }
+    });
 
         $(document).on('change', '.bootbox-body #id_age', function(){
             var age = $(this).val();
