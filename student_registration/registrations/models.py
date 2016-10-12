@@ -212,12 +212,14 @@ class WaitingList(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
-
-    # full_name = models.CharField(max_length=225L, blank=True, null=True)
+    school = models.ForeignKey(
+        School,
+        blank=True, null=True,
+        related_name='+',
+    )
     first_name = models.CharField(max_length=64L, blank=True, null=True)
     last_name = models.CharField(max_length=64L, blank=True, null=True)
     father_name = models.CharField(max_length=64L, blank=True, null=True)
-    mother_fullname = models.CharField(max_length=64L, blank=True, null=True)
     unhcr_id = models.CharField(max_length=15L, unique=False)
     number_of_children = models.IntegerField()
     phone_number = models.CharField(max_length=15L, unique=False)
