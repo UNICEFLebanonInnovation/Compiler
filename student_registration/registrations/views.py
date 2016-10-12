@@ -55,7 +55,11 @@ class RegistrationView(LoginRequiredMixin, ListView):
     template_name = 'registrations/list.html'
 
     def get_context_data(self, **kwargs):
-        data = self.model.objects.all()
+        data = []
+        school = self.request.GET.get("school", "0")
+        if school:
+            data = self.model.objects.filter(school=school).order_by('id')
+
         if not self.request.user.is_staff:
             data = data.filter(owner=self.request.user)
             self.template_name = 'registrations/index.html'
@@ -72,7 +76,8 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'idtypes': IDType.objects.all(),
             'columns': Attribute.objects.filter(type=Registration.EAV_TYPE),
             'eav_type': Registration.EAV_TYPE,
-            'locations': Location.objects.filter(type_id=2)
+            'locations': Location.objects.filter(type_id=2),
+            'selectedSchool': int(school),
         }
 
 
