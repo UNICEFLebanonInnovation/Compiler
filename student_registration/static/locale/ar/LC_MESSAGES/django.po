@@ -832,8 +832,8 @@ msgstr "ادخل عمر ممثل العائلة"
 msgid "Child's ID Number"
 msgstr "رقم هوية الطفل"
 
-msgid "Have the child been out of school for more than 2 years?"
-msgstr "هل خرج الطفل من المدرسة لأكثر من سنتين؟"
+msgid "Has the child been out of formal public school for more than 2 years?"
+msgstr  "هل كان الطفل خارج المدرسةالرسمية لفترة اكثر من سنتين"
 
 msgid "Child registered in UNHCR or Family Book?"
 msgstr "هل الطفل مسجل في مفوضية شؤون اللاجئين (UNHCR)او في دفتر العائلة "
@@ -930,6 +930,15 @@ msgstr "يرجى التحقق من ملء الحقول الإلزامية"
 
 msgid "Please check your internet connectivity"
 msgstr " يرجى التحقق من الاتصال بالإنترنت والمعاودة لاحقاً"
+
+msgid "Select a School Please"
+msgstr " يرجى إختبار مدرسة"
+
+msgid "Enrolled in this school"
+msgstr "ملتحق في هذة المدرسة"
+
+msgid "Class Assignments"
+msgstr "تعيينات الصف"
 
 msgid "duplicate defined number of lines with selected option"
 msgstr "كرر آخر سطر مع الخيارات المحددة لعدد محدد من الأسطر"
