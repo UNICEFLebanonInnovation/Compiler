@@ -227,5 +227,6 @@ class WaitingListSerializer(serializers.ModelSerializer):
             'phone_number',
             'alternate_phone_number',
             'village',
+            'owner',
         )
 
