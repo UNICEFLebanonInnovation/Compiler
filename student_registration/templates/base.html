@@ -2,10 +2,10 @@
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
 <!DOCTYPE html>
-{% if request.user.is_staff %}
-    <html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>
-{% else %}
+{% if request.user.is_authenticated and not request.user.is_staff %}
     <html lang="ar" ng-app {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %} manifest="{% static 'manifest.appcache' %}">
+{% else %}
+    <html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>
 {% endif %}
   <head>
     <meta charset="utf-8">

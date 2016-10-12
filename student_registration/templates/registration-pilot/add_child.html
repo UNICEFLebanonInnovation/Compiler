@@ -7,6 +7,11 @@
             {{ form.school }}
         </div>
         <div class="line">
+            <label class="text">{% trans "Child's ID Number" %}</label>
+            {{ student_form.id_number }}
+            <span class="error" id="id_number_error">{% trans "This field is required" %}</span>
+        </div>
+        <div class="line">
             <label class="text">{% trans "First Name" %}<span class="asterisque">*</span></label>
             {{ student_form.first_name }}
             <span class="error" id="first_name_error">{% trans "This field is required" %}</span>
@@ -43,12 +48,12 @@
             <span class="error" id="gender_error">{% trans "This field is required" %}</span>
         </div>
         <div class="line">
-            <label class="text">{% trans "Relationship to Household reprentative" %}<span class="asterisque">*</span></label>
+            <label class="text">{% trans "Relationship to Household representative" %}<span class="asterisque">*</span></label>
             {{ student_form.relation_to_adult }}
             <span class="error" id="relation_to_adult_error">{% trans "This field is required" %}</span>
         </div>
         <div class="line" >
-            <label class="text">{% trans "Have the child been out of school for more than 2 years?" %}</label>
+            <label class="text">{% trans "Have the child been out of formal public school for more than 2 years?" %}</label>
             {% for choice in student_form.out_of_school_two_years %}
                 <span class="hidden-field">{{ choice }}</span>
             {% endfor %}
@@ -94,9 +99,10 @@
             <label class="text">{% trans "Child's ID Number" %}</label>
             {{ student_form.id_number }}
             <span class="error" id="id_number_error">{% trans "This field is required" %}</span>
+            <span class="error" id="id_number_UNHCR_format_error">{% trans "The UNHCR ID is not valid" %}</span>
         </div>
         <div class="line">
-            <label class="text">{% trans "Relationship to Household reprentative" %}<span class="asterisque">*</span></label>
+            <label class="text">{% trans "Relationship to Household representative" %}<span class="asterisque">*</span></label>
             {{ student_form.relation_to_adult }}
             <span class="error" id="relation_to_household_reprentative_error">{% trans "This field is required" %}</span>
         </div>

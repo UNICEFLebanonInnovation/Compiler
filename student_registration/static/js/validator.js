@@ -38,7 +38,11 @@ function validateSection5()
 
     if(selectedOption == 1) {
          valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
+<<<<<<< HEAD
+         valid = validateUNCHRFormat(valid);
+=======
          valid = validateUNCHRFormat(valid,'id_id_number');
+>>>>>>> develop
     }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5) {
         valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
     }else if (selectedOption == 6) {
@@ -61,9 +65,15 @@ function validateSection13()
     return valid;
 }
 
+<<<<<<< HEAD
+function validateUNCHRFormat( isValid)
+{
+    return validateCondition('id_number_UNHCR_Other_format_error', isValid, validateUNHCRNumber());
+=======
 function validateUNCHRFormat( isValid, id)
 {
     return validateCondition('id_number_UNHCR_Other_format_error', isValid, validateUNHCRNumber(id));
+>>>>>>> develop
 }
 
 function validateChildUNCHRFormat(form,id, errorID, isValid)
@@ -80,6 +90,8 @@ function validateChildUNCHRFormat(form,id, errorID, isValid)
 
 }
 
+<<<<<<< HEAD
+=======
 function validate_waiting_list()
 {
     var valid = true ;
@@ -96,6 +108,7 @@ function validate_waiting_list()
     return valid;
 }
 
+>>>>>>> develop
 
 function validateCondition(errorID, isValid, validationResult)
 {
@@ -108,10 +121,17 @@ function validateCondition(errorID, isValid, validationResult)
     }
     return valid;
 }
+<<<<<<< HEAD
+function validateUNHCRNumber()
+{
+    var validrecorded =  /^LEB-1[5-7][C]\d{5}$/i.test($('#id_id_number').val());
+    var validregistered = /^[0-9]{3}-1[1-6][C]\d{5}$/i.test($('#id_id_number').val());
+=======
 function validateUNHCRNumber(id)
 {
     var validrecorded =  /^LEB-1[5-7][C]\d{5}$/i.test($('#'+id).val());
     var validregistered = /^[0-9]{3}-1[1-6][C]\d{5}$/i.test($('#'+id).val());
+>>>>>>> develop
 
     // for recorded: LEB-1[5-7][C]\d{5}
     // for registered: \d{3}-1[1-5][C]\d{5}
