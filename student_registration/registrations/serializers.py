@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Registration, RegisteringAdult
+from .models import Registration, RegisteringAdult, WaitingList
 from student_registration.students.serializers import StudentSerializer
 
 
@@ -209,5 +209,23 @@ class ClassAssignmentSerializer(serializers.ModelSerializer):
             'classroom',
             'section',
             'enrolled_in_this_school',
+        )
+
+
+class WaitingListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = WaitingList
+        fields = (
+            'location',
+            'school',
+            'first_name',
+            'last_name',
+            'father_name',
+            'unhcr_id',
+            'number_of_children',
+            'phone_number',
+            'alternate_phone_number',
+            'village',
         )
 
