@@ -556,8 +556,8 @@ msgstr "تسجيل رب الأسرة"
 msgid "Select School"
 msgstr "إختر المدرسة"
 
-msgid "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 6 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month."
-msgstr "برنامج من الى التجريبي سيزود الاطفال المسجلين في الدوام الثاني بتحويلات نقدية. كل طفل عمرة بين الستة و التسعة سنوات سوف يحصل على 20 دولاراً امريكياً في الشهر. كل طفل عمرة بين العاشرة و الرابعة عشر سوف يحصل على 65 دولاراً امريكياً في الشهر"
+msgid "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 5 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month."
+msgstr "برنامج من الى التجريبي سيزود الاطفال المسجلين في الدوام الثاني بتحويلات نقدية. كل طفل عمرة بين الخمسة و التسعة سنوات سوف يحصل على 20 دولاراً امريكياً في الشهر. كل طفل عمرة بين العاشرة و الرابعة عشر سوف يحصل على 65 دولاراً امريكياً في الشهر"
 
 msgid "This cash is intended to help children regularly attend 2nd shift school in order that their future opportunities are improved."
 msgstr "ويهدف هذا النقد إلى  مساعدة الأطفال على حضور المدرسة بانتظام في الدوام الثاني من أجل تحسين فرصهم المستقبلية"
@@ -682,8 +682,8 @@ msgstr "هذا الرقم موجود في النشرة المقدمة لك "
 msgid "Declaration and Consent"
 msgstr "الإعلان و الموافقة"
 
-msgid "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 6 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school."
-msgstr "كل شهر سوف يحصل ممثل الأسرة على مبلغ نقدي يهدف إلى مساعدة الأطفال الذين سجلو في البرنامج للذهاب إلى المدرسة. اذا كان عمر الطفل بين الستة و التسعة سنوات سوف يحصل على 20 دولاراً امريكياً ام اذا كان عمر الطفل بين العاشرة و الرابعة عشر سوف يتلقى 65 دولاراً امريكياً. إذا توقف طفلك عن الذهاب إلى المدرسة سوف تتلقى رسالة نصية قصيرة لتذكيرك بالهدف من النقد بعد 10 ايام. بعد 20 يوما ستحصل على زيارة الأسرة من ضباط من قبل البرنامج من الى التجريبي للمساعدة في توجيه لك المزيد من الدعم للحفاظ على أطفالك في المدرسة"
+msgid "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 5 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school."
+msgstr "كل شهر سوف يحصل ممثل الأسرة على مبلغ نقدي يهدف إلى مساعدة الأطفال الذين سجلو في البرنامج للذهاب إلى المدرسة. اذا كان عمر الطفل بين الخمسة و التسعة سنوات سوف يحصل على 20 دولاراً امريكياً ام اذا كان عمر الطفل بين العاشرة و الرابعة عشر سوف يتلقى 65 دولاراً امريكياً. إذا توقف طفلك عن الذهاب إلى المدرسة سوف تتلقى رسالة نصية قصيرة لتذكيرك بالهدف من النقد بعد 10 ايام. بعد 20 يوما ستحصل على زيارة الأسرة من ضباط من قبل البرنامج من الى التجريبي للمساعدة في توجيه لك المزيد من الدعم للحفاظ على أطفالك في المدرسة"
 
 msgid "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments."
 msgstr "إذا لم يتمكن ضباط البرنامج من تحديد موقع لك عن طريق زيارة الأسرة بعد ثلاث محاولات في غضون فترة زمنية (شهرين)، وسوف يتم إيقاف تلقي المدفوعات"
