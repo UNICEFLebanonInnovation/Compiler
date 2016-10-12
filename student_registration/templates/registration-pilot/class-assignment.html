@@ -72,7 +72,7 @@
                                     <tr>
                                         <th>{% trans "Student fullname" %}</th>
                                         <th>{% trans "Age" %}</th>
-                                        <th>{% trans "Class room" %}</th>
+                                        <th>{% trans "Class" %}</th>
                                         <th>{% trans "Section" %}</th>
                                         <th>{% trans "Enrolled in this school" %}</th>
                                     </tr>
@@ -99,11 +99,7 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                {% if registry.enrolled_in_this_school %}
-                                                    <input checked="checked" class="enrolled" data-regid="{{ registry.id }}" type="checkbox"/>
-                                                {% else %}
-                                                    <input class="enrolled"  data-regid="{{ registry.id }}" type="checkbox"/>
-                                                {% endif %}
+                                                <input {% if registry.enrolled_in_this_school %}checked="checked"{% endif %} class="enrolled" data-regid="{{ registry.id }}" type="checkbox" />
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -142,8 +138,8 @@
         $(document).ready(function(){
 
             $('.enrolled').bootstrapSwitch({
-                'onText' : 'Yes',
-                'offText': 'No',
+                'onText' : '{% trans 'Yes' %}',
+                'offText': '{% trans 'No' %}',
                 'onColor':'success',
                 'offColor':'danger',
                 'size': 'small'
