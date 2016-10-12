@@ -68,8 +68,12 @@ def set_app_attendances():
                 "student_id": str(reg.student.id),
                 "student_name": reg.student.full_name,
                 "gender": reg.student.sex,
+                "status": reg.student.status
             }
-            attstudent[str(reg.student.id)] = False
+            attstudent[str(reg.student.id)] = {
+                "status": False,
+                "reason": "none"
+            }
             students.append(student)
 
         attendqueryset = Attendance.objects.filter(classroom_id=item.id, school_id=item.school.id)
@@ -80,7 +84,10 @@ def set_app_attendances():
                     "students": attstudent
                 }
             }
-            attendances[att.attendance_date.strftime('%d-%m-%Y')]["students"][str(att.student.id)] = att.status
+            attendances[att.attendance_date.strftime('%d-%m-%Y')]["students"][str(att.student.id)] = {
+                "status": att.status,
+                "reason": att.absence_reason
+            }
 
         doc = {
             "class_id": str(item.id),
@@ -138,6 +145,7 @@ def set_app_users():
 
     docs = []
     from student_registration.users.models import User
+    from student_registration.alp.templatetags.util_tags import get_user_token
     users = User.objects.filter(is_active=True, is_staff=False, is_superuser=False)
     for user in users:
         if not user.school:
@@ -145,8 +153,11 @@ def set_app_users():
         doc = {
             "_id": user.school_id,
             "school_id": user.school_id,
+            "location_id": user.location_id,
             "username": user.username,
-            "password": user.app_password
+            "password": user.password,
+            "token": get_user_token(user),
+            "role": user_main_role(user)
         }
         docs.append(doc)
 
