@@ -87,7 +87,7 @@
                     <a class="nav-link" href="{% url 'registrations:registering_pilot' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
                   </li>
 {#                <li class="nav-item">#}
-{#                    <a class="nav-link" href="?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignment" %}</a>#}
+{#                    <a class="nav-link" href="{% url 'registrations:class_assignment' %}?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignments" %}</a>#}
 {#                </li>#}
                 {% endif %}
             {% endif %}
