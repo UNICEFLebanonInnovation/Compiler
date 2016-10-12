@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, division
 from django.db import models
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
+from django.utils.translation import ugettext as _
 from django.conf import settings
 from student_registration.students.models import (
     Student,
@@ -14,6 +15,14 @@ from student_registration.schools.models import (
 
 
 class Attendance(TimeStampedModel):
+
+    REASON = Choices(
+        ('sick', _('Sick')),
+        ('no_reason', _('No reason')),
+        ('no_transport', _('No transport')),
+        ('other', _('Other')),
+    )
+
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
@@ -42,6 +51,12 @@ class Attendance(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='+',
+    )
+    absence_reason = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=REASON
     )
 
     @property

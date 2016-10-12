@@ -173,6 +173,8 @@ class Person(TimeStampedModel):
 
 class Student(Person):
 
+    status = models.BooleanField(default=True)
+
     @property
     def attendance_list(self):
         attendances = {}

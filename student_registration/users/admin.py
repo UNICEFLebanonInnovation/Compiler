@@ -29,7 +29,6 @@ class UserResource(resources.ModelResource):
             'school',
             'location',
             'password',
-            'app_password'
         )
         export_order = ('first_name', 'last_name')
 

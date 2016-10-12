@@ -63,3 +63,17 @@ def has_group(user, group_name):
         return True if group in user.groups.all() else False
     except Group.DoesNotExist:
         return False
+
+
+@register.filter(name='user_main_role')
+def user_main_role(user):
+    groups = user.groups.all()
+    if 'PMU' in groups:
+        return 'pmu'
+    if 'COORDINATOR' in groups:
+        return 'coordinator'
+    if 'DIRECTOR' in groups:
+        return 'director'
+    if 'SCHOOL' in groups:
+        return 'school'
+    return 'mehe'
