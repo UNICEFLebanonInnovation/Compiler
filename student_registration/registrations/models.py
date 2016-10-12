@@ -220,11 +220,11 @@ class WaitingList(TimeStampedModel):
     first_name = models.CharField(max_length=64L, blank=True, null=True)
     last_name = models.CharField(max_length=64L, blank=True, null=True)
     father_name = models.CharField(max_length=64L, blank=True, null=True)
-    unhcr_id = models.CharField(max_length=15L, unique=False)
-    number_of_children = models.IntegerField()
-    phone_number = models.CharField(max_length=15L, unique=False)
-    alternate_phone_number = models.CharField(max_length=15L, unique=False)
-    village = models.CharField(max_length=50L, unique=False)
+    unhcr_id = models.CharField(max_length=15L, blank=True, null=True)
+    number_of_children = models.IntegerField(blank=True, null=True)
+    phone_number = models.CharField(max_length=15L, blank=True, null=True)
+    alternate_phone_number = models.CharField(max_length=15L, blank=True, null=True)
+    village = models.CharField(max_length=50L, blank=True, null=True)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
