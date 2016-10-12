@@ -8,7 +8,7 @@ from student_registration.registrations.models import (
     WaitingList,
 )
 from student_registration.schools.models import School
-
+from student_registration.locations.models import Location
 
 class RegisteringAdultForm(forms.ModelForm):
     """
