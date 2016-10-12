@@ -30,6 +30,7 @@ from student_registration.students.serializers import StudentSerializer
 from student_registration.registrations.forms import (
     RegisteringAdultForm,
     RegisteringChildForm,
+    WaitingListForm,
 )
 from student_registration.students.forms import StudentForm
 from student_registration.eav.models import (
@@ -38,12 +39,13 @@ from student_registration.eav.models import (
 )
 from student_registration.locations.models import Location
 
-from .models import Registration, RegisteringAdult
+from .models import Registration, RegisteringAdult, WaitingList
 from .serializers import (
     RegistrationSerializer,
     RegisteringAdultSerializer,
     RegistrationChildSerializer,
-    ClassAssignmentSerializer
+    ClassAssignmentSerializer,
+    WaitingListSerializer,
 )
 from .utils import get_unhcr_principal_applicant
 
@@ -110,13 +112,14 @@ class WaitingListView(LoginRequiredMixin, ListView):
     """
     Provides the registration page with lookup types in the context
     """
-    model = Registration
+    model = WaitingList
     template_name = 'registration-pilot/waitinglist.html'
 
     def get_context_data(self, **kwargs):
 
         return {
-            'locations': Location.objects.filter(type_id=2)
+            'form': WaitingListForm({'location': self.request.user.location_id,
+                                     'locations': self.request.user.locations.all()}),
         }
 
 
@@ -258,6 +261,26 @@ class ClassAssignmentViewSet(mixins.UpdateModelMixin,
     queryset = Registration.objects.all()
     serializer_class = ClassAssignmentSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+
+class WaitingListViewSet(mixins.RetrieveModelMixin,
+                         mixins.ListModelMixin,
+                         mixins.CreateModelMixin,
+                         mixins.UpdateModelMixin,
+                         viewsets.GenericViewSet):
+    """
+    Provides API operations around a registration record
+    """
+    model = WaitingList
+    queryset = WaitingList.objects.all()
+    serializer_class = WaitingListSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return []
+
+        return self.queryset
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):

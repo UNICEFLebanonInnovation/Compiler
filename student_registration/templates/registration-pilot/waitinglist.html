@@ -11,71 +11,92 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 
 {% endblock %}
-
-
 {% block content %}
 
-<form method="post" action="" class="inlineForm" id="mainForm" style="display: block;">
-  <h3 class="panel-title">{% trans "Waiting List" %}</h3>
-  <p>
-      {% trans "Info" %}
-  </p>
+<div class="alert alert-success" role="alert" id="alert-synchro-success" style="display: none;;">
+    {% trans 'Application submission success' %}.
+    {% trans 'Please click' %}
+    <a class="nav-link" href="{% url 'registrations:registering_pilot' %}?ln={{ LANGUAGE_CODE }}">{% trans "here" %}</a>
+    {% trans 'to start a new application' %}.
+</div>
+<div class="alert alert-success" role="alert" id="alert-cancel-success" style="display: none;;">
+    {% trans 'Application registration cancelled' %}.
+    {% trans 'Please click' %}
+    <a class="nav-link" href="{% url 'registrations:registering_pilot' %}?ln={{ LANGUAGE_CODE }}">{% trans "here" %}</a>
+    {% trans 'to start a new application' %}.
+</div>
 
-  <div class="line">
-      <label class="text">{% trans "Household Representative Name" %}<span class="asterisque">*</span></label>
-      <span><input id="full_name" maxlength="100" name="full_name" type="text" /></span>
-      <span class="error" id="full_name_error">{% trans "This field is required" %}</span>
-  </div>
+{#<button type="button" id="registration-synchro">synch</button>#}
 
-  <div class="line">
-      <label class="text">{% trans "UNHCR ID" %}</label>
-      <span><input id="unhcr_id" maxlength="100" name="unhcr_id" type="text" /></span>
-      <!--<span class="error" id="unhcr_id_error">{% trans "This field is required" %}</span>-->
-  </div>
-  <div class="line">
-      <label class="text">{% trans "Number of Children" %}<span class="asterisque">*</span></label>
-      <span><input id="number_of_children" maxlength="100" name="number_of_children" type="text" /></span>
-      <span class="error" id="number_of_children_error">{% trans "This field is required" %}</span>
-  </div>
-  <div class="line">
-      <label class="text">{% trans "Phone Number" %}<span class="asterisque">*</span></label>
-      <span><input id="phone_number" maxlength="100" name="phone_number" type="text" /></span>
-      <span class="error" id="phone_number_error">{% trans "This field is required" %}</span>
-  </div>
-  <div class="line">
-      <label class="text">{% trans "Alternate Phone Number" %}</label>
-      <span><input id="alternate_phone_number" maxlength="100" name="alternate_phone_number" type="text" /></span>
-  </div>
-  <div class="line">
-      <label class="text">{% trans "Village" %}<span class="asterisque">*</span></label>
-      <span><input id="village" maxlength="100" name="village" type="text" /></span>
-      <span class="error" id="village_error">{% trans "This field is required" %}</span>
-  </div>
-  <div class="line">
-      <label class="text">{% trans "Distict" %}<span class="asterisque">*</span></label>
-      <span>
-        <select name="location">
-          {% for location in locations %}
-            <option value="{{ location.id }}">
-                {{ location.name }}
-            </option>
-          {% endfor %}
-        </select>
-      </span>
-      <span class="error" id="address_error">{% trans "This field is required" %}</span>
-  </div>
-  <div class="line">
-      <label class="text">&nbsp;</label>
-      <button class="btn btn-success" type="button" id="waiting_list_save">{% trans "Save" %}</button>
-  </div>
+<form method="post" action="" class="inlineForm" id="mainForm" style="display: block;" onsubmit="return false;">
+    <input type="hidden" name="id_watinglist" id="main_id" />
+    <div class="panel-body">
+      <h3 class="panel-title">{% trans "Waiting List" %}</h3>
+      <div class="line">
+        <p>{% trans "As this school is full we are unable to register you in the Min Ila Pilot. We will collect your basic information and contact you if 2nd shift is opened in another school nearby. UNICEF will send you an SMS to inform you of the school name and location if this happens. You should then go to that school to enroll and to register in the Min Ila Pilot. We regret that we cannot register you in the pilot until that time." %}</p>
+      </div>
+      <div class="line">
+        <label class="text">{% trans "School" %}<span class="asterisque">*</span></label>
+        {{ form.school }}
+        <span class="error" id="school_error">{% trans "This field is required" %}</span>
+      </div>
+      <div class="line">
+          <label class="text">{% trans "First Name" %}<span class="asterisque">*</span></label>
+          {{ form.first_name }}
+          <span class="error" id="first_name_error">{% trans "This field is required" %}</span>
+      </div>
+      <div class="line">
+          <label class="text">{% trans "Father's Name" %}<span class="asterisque">*</span></label>
+          {{ form.father_name }}
+          <span class="error" id="father_name_error">{% trans "This field is required" %}</span>
+      </div>
+      <div class="line">
+          <label class="text">{% trans "Last Name" %}<span class="asterisque">*</span></label>
+          {{ form.last_name }}
+          <span class="error" id="last_name_error">{% trans "This field is required" %}</span>
+      </div>
+      <div class="line">
+        <label class="text">{% trans "UNHCR Household Registration Number" %}</label>
+        {{ form.unhcr_id }}
+        <span class="error" id="id_number_UNHCR_Other_format_error">{% trans "The UNHCR ID is not valid" %}</span>
+      </div>
+     <div class="line">
+        <label class="text">{% trans "Number of children to be enrolled in this school" %}<span class="asterisque">*</span></label>
+       {{ form.number_of_children }}
+        <span class="error" id="number_of_children_error">{% trans "This field is required" %}</span>
+      </div>
+      <div class="line">
+        <label class="text">{% trans "Primary Phone Number" %}<span class="asterisque">*</span></label>
+        {{ form.phone_number }}
+        <span class="error" id="phone_number_error">{% trans "This field is required" %}</span>
+      </div>
+      <div class="line">
+        <label class="text">{% trans "Secondary Phone Number" %}</label>
+        {{ form.alternate_phone_number }}
+      </div>
+      <div class="line">
+        <label class="text">{% trans "Village of Residence" %}<span class="asterisque">*</span></label>
+        {{ form.village }}
+        <span class="error" id="village_error">{% trans "This field is required" %}</span>
+      </div>
+      <div class="line">
+        <label class="text">{% trans "District/Caza of Residence" %}<span class="asterisque">*</span></label>
+        {{ form.location }}
+        <span class="error" id="location_error">{% trans "This field is required" %}</span>
+      </div>
+      <div class="line">
+          <label class="text">&nbsp;</label>
+          <button class="btn btn-success" type="button" id="waiting_list_save">{% trans "Submit" %}</button>
+      </div>
+    </div>
 </form>
-
 
 {% endblock %}
 
 {% block extra_js %}
   <script type="text/javascript" src="{% static 'js/indexedDB.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
   <script type="text/javascript">
       var db = null;
       var language  = '{{ LANGUAGE_CODE }}';
@@ -84,33 +105,97 @@
       {% if request.is_secure %}
           protocol = 'https://';
       {% endif %}
+      var synchro_path = host+'/api/waiting-list/';
 
-      var validation_mapping = function() { return validate_waiting_list() };
- $(document).ready(function() {
-    $('#waiting_list_save').click(function(e){
-              var sectionCheck = validateSection13();
-              if(sectionCheck)
-              {
+      var arabic_fields = "#id_first_name, #id_last_name, #id_father_name";
+  $(document).ready(function() {
 
-                  bootbox.confirm("{% trans 'Are you sure you want to submit this application?' %}", function(result) {
-                  if(result == true) {
-                      var store = getStoreByName('registrations');
-                      var request = store.get(parseInt($('#main_id').val()));
-                      request.onsuccess = function(){
-                          var result = request.result;
+        createDataStore('db_pilot_waiting', 1, 'waitinglist', true);
+        setInterval(function(){
+            if(navigator.onLine) {
+                synchronize_data(false);
+            }
+        }, 3600000);
 
-                          console.log(result);
-                          if(result){
-                              push_adult_data(result, synchro_path, 'registrations');
-                          }
-                      };
-                      update_item_store(parseInt($('#main_id').val()), 'completed', true, 'registrations');
-                      displayFeedback();
-                  }
-                  });
+  $(document).on('blur', '#mainForm input, #mainForm select, #mainForm textarea', function(){
+      update_item_store(parseInt($('#main_id').val()), $(this).attr('name'), $(this).val(), 'waitinglist');
+  });
+
+  $(document).on('blur', arabic_fields, function(){
+      checkArabicOnly($(this));
+  });
+
+   $('#waiting_list_save').click(function(e){
+        var sectionCheck = validate_waiting_list();
+        if(sectionCheck)
+        {
+            bootbox.confirm("{% trans 'Are you sure you want to add those children to the waiting list?' %}", function(result) {
+            if(result == true) {
+                var store = getStoreByName('waitinglist');
+                var request = store.get(parseInt($('#main_id').val()));
+                request.onsuccess = function(){
+                    var result = request.result;
+
+                    console.log(result);
+                    if(result){
+                        push_waitinglist_data(result, synchro_path, 'waitinglist');
+                    }
+                };
+                update_item_store(parseInt($('#main_id').val()), 'completed', true, 'waitinglist');
+                displayFeedback();
+            }
+            });
 
               }
           });
   });
+
+  function displayFeedback()
+    {
+        $('#mainForm').remove();
+        $('#alert-synchro-success').show();
+    }
+
+  function synchronize_data(store_name, url, callback)
+    {
+        var store = getStoreByName(store_name);
+        var request = store.getAll();
+        request.onsuccess = function() {
+            var result = request.result;
+            $(result).each(function(i, item){
+                if(item.synchronized == false && item.completed == true) {
+                    push_waitinglist_data(item, url, store_name);
+                }
+{#                if(item.synchronized == true || (item.synchronized == false && item.completed == false)){#}
+{#                    delete_from_store(parseInt(item.id), store_name, true);#}
+{#                }#}
+            });
+            if(callback){
+                callback();
+            }
+        };
+    }
+
+    function push_waitinglist_data(item, url, store_name)
+    {
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: item,
+            cache: false,
+            async: false,
+            headers: getHeader(),
+            dataType: 'json',
+            success: function (response) {
+                if(response.id){
+                    update_item_store(parseInt(item.id), 'synchronized', true, store_name);
+                }
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
 </script>
 {% endblock %}

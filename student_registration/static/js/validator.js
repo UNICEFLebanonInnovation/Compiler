@@ -38,7 +38,7 @@ function validateSection5()
 
     if(selectedOption == 1) {
          valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
-         valid = validateUNCHRFormat(valid);
+         valid = validateUNCHRFormat(valid,'id_id_number');
     }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5) {
         valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
     }else if (selectedOption == 6) {
@@ -61,9 +61,9 @@ function validateSection13()
     return valid;
 }
 
-function validateUNCHRFormat( isValid)
+function validateUNCHRFormat( isValid, id)
 {
-    return validateCondition('id_number_UNHCR_Other_format_error', isValid, validateUNHCRNumber());
+    return validateCondition('id_number_UNHCR_Other_format_error', isValid, validateUNHCRNumber(id));
 }
 
 function validateChildUNCHRFormat(form,id, errorID, isValid)
@@ -83,9 +83,16 @@ function validateChildUNCHRFormat(form,id, errorID, isValid)
 function validate_waiting_list()
 {
     var valid = true ;
-        valid = validateTextBoxRequired('id_address','address_error',valid);
-        valid = validateTextBoxRequired('id_primary_phone','primary_phone_error',valid);
-        valid = validateTextBoxRequired('id_primary_phone_answered','primary_phone_answered_error',valid);
+    valid = validateTextBoxRequired('id_first_name','first_name_error',valid);
+    valid = validateTextBoxRequired('id_last_name','last_name_error',valid);
+    valid = validateTextBoxRequired('id_father_name','father_name_error',valid);
+    valid = validateTextBoxRequired('id_school','school_error',valid);
+    valid = validateTextBoxRequired('id_number_of_children','number_of_children_error',valid);
+    valid = validateTextBoxRequired('id_phone_number','phone_number_error',valid);
+    valid = validateTextBoxRequired('id_village','village_error',valid);
+    valid = validateTextBoxRequired('id_location','location_error',valid);
+    if ($('#id_unhcr_id').val()!='')
+    { valid = validateUNCHRFormat(valid, 'id_unhcr_id');}
     return valid;
 }
 
@@ -101,10 +108,10 @@ function validateCondition(errorID, isValid, validationResult)
     }
     return valid;
 }
-function validateUNHCRNumber()
+function validateUNHCRNumber(id)
 {
-    var validrecorded =  /^LEB-1[5-7][C]\d{5}$/i.test($('#id_id_number').val());
-    var validregistered = /^[0-9]{3}-1[1-6][C]\d{5}$/i.test($('#id_id_number').val());
+    var validrecorded =  /^LEB-1[5-7][C]\d{5}$/i.test($('#'+id).val());
+    var validregistered = /^[0-9]{3}-1[1-6][C]\d{5}$/i.test($('#'+id).val());
 
     // for recorded: LEB-1[5-7][C]\d{5}
     // for registered: \d{3}-1[1-5][C]\d{5}
