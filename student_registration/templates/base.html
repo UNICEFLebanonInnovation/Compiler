@@ -104,11 +104,6 @@
 {#                <li class="nav-item">#}
 {#                  <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>#}
 {#                </li>#}
-{#                  {% if request.user.is_superuser %}#}
-{#                <li class="nav-item">#}
-{#                  <a class="nav-link" href="{% url 'users:generate-password' %}">{% trans "Generate PWD" %}</a>#}
-{#                </li>#}
-{#                  {% endif %}#}
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
                 </li>
