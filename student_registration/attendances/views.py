@@ -85,12 +85,12 @@ class AttendanceReportViewSet(mixins.ListModelMixin,
             data.append(content)
 
         file_format = base_formats.XLS()
-        response = HttpResponse(
-            file_format.export_data(data),
-            content_type='application/vnd.ms-excel',
-        )
-        response['Content-Disposition'] = 'attachment; filename=registration_list.xls'
-        return response
+        # response = HttpResponse(
+        #     file_format.export_data(data),
+        #     content_type='application/vnd.ms-excel',
+        # )
+        # response['Content-Disposition'] = 'attachment; filename=registration_list.xls'
+        return JsonResponse({'status': status.HTTP_200_OK})
 
 
 class AttendanceView(LoginRequiredMixin, ListView):
