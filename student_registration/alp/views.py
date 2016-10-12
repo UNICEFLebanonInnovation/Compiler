@@ -82,9 +82,9 @@ class OutreachView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
 
-        data = self.model.objects.all()
+        data = []
         if not self.request.user.is_staff:
-            data = data.filter(owner=self.request.user)
+            data = self.model.filter(owner=self.request.user)
             self.template_name = 'alp/index.html'
 
         return {
