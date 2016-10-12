@@ -21,5 +21,10 @@ urlpatterns = [
         view=views.ClassAssignmentView.as_view(),
         name='class_assignment'
     ),
+    url(
+        regex=r'^waiting-list/$',
+        view=views.WaitingListView.as_view(),
+        name='waiting_list'
+    ),
     url(regex=r'^registration/export/$', view=views.ExportViewSet.as_view(), name='registration_export'),
 ]
