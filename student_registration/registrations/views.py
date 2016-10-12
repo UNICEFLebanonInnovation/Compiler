@@ -12,6 +12,7 @@ from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from django.core.urlresolvers import reverse
+from datetime import datetime
 
 from student_registration.students.models import (
     Person,
@@ -29,6 +30,7 @@ from student_registration.students.serializers import StudentSerializer
 from student_registration.registrations.forms import (
     RegisteringAdultForm,
     RegisteringChildForm,
+    WaitingListForm,
 )
 from student_registration.students.forms import StudentForm
 from student_registration.eav.models import (
@@ -37,12 +39,13 @@ from student_registration.eav.models import (
 )
 from student_registration.locations.models import Location
 
-from .models import Registration, RegisteringAdult
+from .models import Registration, RegisteringAdult, WaitingList
 from .serializers import (
     RegistrationSerializer,
     RegisteringAdultSerializer,
     RegistrationChildSerializer,
-    ClassAssignmentSerializer
+    ClassAssignmentSerializer,
+    WaitingListSerializer,
 )
 from .utils import get_unhcr_principal_applicant
 
@@ -110,6 +113,21 @@ class ClassAssignmentView(LoginRequiredMixin, ListView):
         }
 
 
+class WaitingListView(LoginRequiredMixin, ListView):
+    """
+    Provides the registration page with lookup types in the context
+    """
+    model = WaitingList
+    template_name = 'registration-pilot/waitinglist.html'
+
+    def get_context_data(self, **kwargs):
+
+        return {
+            'form': WaitingListForm({'location': self.request.user.location_id,
+                                     'locations': self.request.user.locations.all()}),
+        }
+
+
 ####################### API VIEWS #############################
 
 
@@ -168,9 +186,13 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
         adult = []
         try:
             # first try and look up in our database
-            adult = super(RegisteringAdultViewSet, self).get_object()
-            return adult
-            #raise Http404()
+            adults = RegisteringAdult.objects.filter(id_number=self.kwargs.get('id_number')).order_by('id')
+            if adults:
+                return adults[0]
+
+            raise Http404()
+            # adult = super(RegisteringAdultViewSet, self).get_object()
+            # return adult
 
         except Http404 as exp:
             # or look up in UNHCR
@@ -182,20 +204,24 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
                     applicant = principal_applicant[len(principal_applicant)-1]
                     adult.id_number = applicant["CaseNo"]
                     adult.phone = applicant["CoAPhone"]
-                    adult.first_name =applicant["GivenName"]
+                    adult.first_name = applicant["GivenName"]
                     adult.last_name = applicant["FamilyName"]
                     adult.father_name = applicant["FatherName"]
-                    from datetime import datetime
                     dob = datetime.strptime(applicant["DOB"], '%Y-%m-%dT%H:%M:%S')
                     adult.birthday_day = dob.day
                     adult.birthday_month = dob.month
                     adult.birthday_year = dob.year
                     adult.sex = applicant["Sex"]
-                    # adult.save()
+                    adult.address = ''
+                    adult.primary_phone = ''
+                    adult.primary_phone_answered = ''
+                    adult.secondary_phone = ''
+                    adult.secondary_phone_answered = ''
+                    adult.wfp_case_number = ''
+                    adult.csc_case_number = ''
+                    adult.save()
                     return adult
             raise exp
-        else:
-            return adult
 
 
 class RegisteringChildViewSet(mixins.RetrieveModelMixin,
@@ -240,6 +266,26 @@ class ClassAssignmentViewSet(mixins.UpdateModelMixin,
     queryset = Registration.objects.all()
     serializer_class = ClassAssignmentSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+
+class WaitingListViewSet(mixins.RetrieveModelMixin,
+                         mixins.ListModelMixin,
+                         mixins.CreateModelMixin,
+                         mixins.UpdateModelMixin,
+                         viewsets.GenericViewSet):
+    """
+    Provides API operations around a registration record
+    """
+    model = WaitingList
+    queryset = WaitingList.objects.all()
+    serializer_class = WaitingListSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return []
+
+        return self.queryset
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):
