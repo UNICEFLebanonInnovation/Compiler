@@ -537,16 +537,13 @@
         });
         $(document).on('change', '.bootbox-body #id_age', function(){
             var age = $(this).val();
-            if(age  <5 || age >17 ) {
+            if(age < 5 || age > 16 ) {
                 bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
             }
         });
 
-        $(document).on('change', '.bootbox-body #id_age', function(){
-            var age = $(this).val();
-            if(age  <6 || age >17 ) {
-                bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
-            }
+        $(document).on('change', '.bootbox-body #id_birthday_day, .bootbox-body #id_birthday_month, .bootbox-body #id_birthday_year', function () {
+            calculate_child_dob();
         });
 
         $('#registration_save').click(function(e){
@@ -1271,7 +1268,7 @@
     function calculatehousehold_DateOfBirth()
     {
         var birthday_day = $('#id_birthday_day').val();
-        var birthday_month = $('#id_birthday_month').val()-1;
+        var birthday_month = $('#id_birthday_month').val();
         var birthday_year = $('#id_birthday_year').val();
         var age = getCalculatedAge(birthday_day, birthday_month, birthday_year);
 
@@ -1286,7 +1283,7 @@
     function calculate_child_dob()
     {
         var birthday_day = $('.bootbox-body').find("#id_birthday_day").val();
-        var birthday_month = $('.bootbox-body').find("#id_birthday_month").val()-1;
+        var birthday_month = $('.bootbox-body').find("#id_birthday_month").val();
         var birthday_year = $('.bootbox-body').find("#id_birthday_year").val();
         var age = getCalculatedAge(birthday_day, birthday_month, birthday_year);
 
@@ -1295,7 +1292,7 @@
             $('.bootbox-body').find("#id_age").val(age);
             $('.bootbox-body').find("#id_age").trigger('blur');
 
-            if(age  <6 || age >17 ) {
+            if(age < 5 || age > 16) {
                bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
             }
         } else {
