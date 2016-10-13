@@ -512,7 +512,7 @@ msgid "School year"
 msgstr "السنة الدراسية"
 
 msgid "synchronize"
-msgstr "ارسل البيانات"
+msgstr "احفظ"
 
 msgid "Grade"
 msgstr "الدرجة"
@@ -939,6 +939,33 @@ msgstr "ملتحق في هذة المدرسة"
 
 msgid "Class Assignments"
 msgstr "تعيينات الصف"
+
+msgid "The child is not within the eligible age for the Pilot."
+msgstr "ان الطفل ليس في السن المؤهل للاستفادة من البرنامج التجريبي"
+
+msgid "Edit File"
+msgstr "تعديل الملف"
+
+msgid "Waiting List"
+msgstr "قائمة الانتظار"
+
+msgid "District/Caza of Residence"
+msgstr "حي/قضاء الإقامة"
+
+msgid "Number of children to be enrolled in this school"
+msgstr "عدد الأطفال الذين سوف يتم تسجيلهن في هذه المدرسة"
+
+msgid "Village of Residence"
+msgstr "قرية الإقامة"
+
+msgid "Submit"
+msgstr "حفظ"
+
+msgid "As this school is full we are unable to register you in the Min Ila Pilot. We will collect your basic information and contact you if 2nd shift is opened in another school nearby. UNICEF will send you an SMS to inform you of the school name and location if this happens. You should then go to that school to enroll and to register in the Min Ila Pilot. We regret that we cannot register you in the pilot until that time."
+msgstr "بما انه لا يوجد أماكن شاغره في هذه المدرسة، لا يمكننا تسجيلك في برنامج من إلى التجريبي سوف نأخذ معلوماتك الأساسية ونتصل بك في حال أضفنا دوام بعد الظهر إلى مدرسة أخرى في منطقتك. اليونيسيف سوف ترسل لك رسالة نصية قصيرة لاعلامك باسم المدرسة ومكانها إذا حصل ّذلك. عنها يجدر بك الذهاب الى المدرسة للتسجيل في برنامج من إلى التجريبي. ناسف لعدم تمكننا من تسجيلك في برنامج من إلى التجريبي حتى ذلك الحين"
+
+msgid "Are you sure you want to add those children to the waiting list?"
+msgstr "هل أنت متأكد أنك تريد إضافة هؤلاء الأطفال إلى قائمة الانتظار"
 
 msgid "duplicate defined number of lines with selected option"
 msgstr "كرر آخر سطر مع الخيارات المحددة لعدد محدد من الأسطر"

@@ -66,7 +66,7 @@
                     <p>
                         <strong>{% trans "Welcome to the Registration Desk of the Min Ila Pilot" %}</strong>
                     </p>
-                    <p>{% trans "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 6 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month." %}</p>
+                    <p>{% trans "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 5 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month." %}</p>
                     <p>{% trans "This cash is intended to help children regularly attend 2nd shift school in order that their future opportunities are improved." %}</p>
                 </li>
 
@@ -118,9 +118,7 @@
                             <a class="btn btn-primary btn-sm notActive" data-toggle="id_PrincipalHouseHold" data-title="0">{% trans "No" %}</a>
                         </div>
                         </div>
-                        <button class="btn btn-primary" type="button" id="getUNHCRDatatButton">
-                            {% trans "UNHCR Data" %}
-                        </button>
+
                     </div>
 
                     <div class="line" id="HouseholdID_block">
@@ -129,6 +127,10 @@
                         <label class="text" id="HouseholdOtherID" style="display: none;">{% trans "Household ID Number" %}<span class="asterisque">*</span></label>
                         <span id="HouseholdUNHCR_OtherID" style="display: none;">{{ form.id_number }}</span>
                         <span class="error" id="id_number_UNHCR_Other_error">{% trans "This field is required" %}</span>
+                        <span class="error" id="id_number_UNHCR_Other_format_error">{% trans "The UNHCR ID is not valid" %}</span>
+{#                        <button class="btn btn-primary" type="button" id="getUNHCRDatatButton" style="display: none">#}
+{#                            {% trans "UNHCR Data" %}#}
+{#                        </button>#}
                     </div>
 
                     <div class="line" id="HouseholdOtherID_Note" style="display: none;">
@@ -205,6 +207,7 @@
                     </div>
                 </li>
 
+
                 {# 9 Registre Child #}
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Register Children in Pilot" %}</h3>
@@ -244,6 +247,9 @@
                     <div class="line" id="id_number_block" style="display: none;">
                         <label class="text">{% trans "ID Number" %}<span class="asterisque">*</span></label>
                         {{ form.previously_registered_number }}
+{#                        <button class="btn btn-primary" type="button" id="get_household_children_data_button">#}
+{#                            {% trans "Edit File" %}#}
+{#                        </button>#}
                     </div>
                     <span class="error" id="confirm_child_belong" style="display: none;">
                         {% trans "You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them" %}
@@ -260,9 +266,9 @@
                                 <th>ID</th>
                                 <th>{% trans "Full Name" %}</th>
                                 <th>{% trans "Mother's Full name" %}</th>
-                                <th>{% trans "Date of birth" %}</th>
+{#                                <th>{% trans "Date of birth" %}</th>#}
                                 <th>{% trans "Age" %}</th>
-                                <th>{% trans "Relationship to Household reprentative" %}</th>
+                                <th>{% trans "Relationship to Household representative" %}</th>
                                 <th>{% trans "Was this child enrolled in any school last year" %}</th>
                                 <th></th>
                                 <th></th>
@@ -285,7 +291,7 @@
                             <thead>
                                 <th>{% trans "School" %}</th>
                                 <th>{% trans "Child's UNHCR Individual Number" %}</th>
-                                <th>{% trans "Relationship to Household reprentative" %}</th>
+                                <th>{% trans "Relationship to Household representative" %}</th>
                                 <th>{% trans "Was this child enrolled in any school last year" %}</th>
                                 <th></th>
                                 <th></th>
@@ -319,7 +325,7 @@
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Declaration and Consent" %}</h3>
                     <p>
-                        {% trans "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 6 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school." %}
+                        {% trans "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 5 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school." %}
                     </p>
                     <p>
                         {% trans "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments." %}
@@ -482,11 +488,10 @@
         {% endif %}
         var host = protocol+'{{ request.get_host }}';
         var checking_id_number_url = host+'/api/registrations-adult/';
-{#        alert(checking_id_number_url);#}
         var synchro_path = host+'/api/registrations-adult/';
         var synchro_path_2 = host+'/api/registrations-child/';
         var arabic_fields = "#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname";
-{#        var numeric_fields = "#id_age";#}
+        var numeric_fields = "#id_age, #id_primary_phone";
         var validation_mapping = new Array();
         validation_mapping['0'] = function() { return validateSection0() };
         validation_mapping['5'] = function() { return validateSection5() };
@@ -516,16 +521,32 @@
         });
 
         $(document).on('blur', arabic_fields, function(){
-            checkArabicOnly($(this));
+            var selectedOption = $("#id_id_type").val();
+            if(selectedOption != 1)  {
+                checkArabicOnly($(this));
+            }
         });
 
-{#        $(document).on('blur', numeric_fields, function(){#}
-{#            checkIsNumber($(this));#}
-{#        });#}
+        $(document).on('blur', numeric_fields, function(){
+            checkIsNumber($(this));
+        });
 
         $(document).on('change', '.bootbox-body #id_enrolled_last_year_location', function(){
             console.log($(this).val());
             filterSchoolsByLocation(parseInt($(this).val()));
+        });
+        $(document).on('change', '.bootbox-body #id_age', function(){
+            var age = $(this).val();
+            if(age  <5 || age >17 ) {
+                bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
+            }
+        });
+
+        $(document).on('change', '.bootbox-body #id_age', function(){
+            var age = $(this).val();
+            if(age  <6 || age >17 ) {
+                bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
+            }
         });
 
         $('#registration_save').click(function(e){
@@ -539,6 +560,8 @@
                     var request = store.get(parseInt($('#main_id').val()));
                     request.onsuccess = function(){
                         var result = request.result;
+
+                        console.log(result);
                         if(result){
                             push_adult_data(result, synchro_path, 'registrations');
                         }
@@ -552,59 +575,105 @@
         });
 
          $('#getUNHCRDatatButton').click(function(e){
-             $.ajax({
-                 type: "GET",
-                 url: checking_id_number_url+$('#id_id_number').val(),
-                 data: [],
-                 cache: false,
-                 async: false,
-                 headers: getHeader(),
-                 dataType: 'json',
-                 success: function (response) {
-                     $("#HouseholdOtherNoID").show();
-                     var household = response;
+             $("#id_number_UNHCR_Other_error").hide();
+             var isValid = true ;
+             isValid = validateUNCHRFormat(isValid);
+             if(isValid)
+             {
+                 $("#no_id_table").find("tr:gt(0)").remove();
+                 $.ajax({
+                     type: "GET",
+                     url: checking_id_number_url+$('#id_id_number').val(),
+                     data: [],
+                     cache: false,
+                     async: false,
+                     headers: getHeader(),
+                     dataType: 'json',
+                     success: function (response) {
+                         var household = response;
+                         update_item_store(parseInt($('#main_id').val()), "original_id", household.id, 'registrations');
+                         $('#id_first_name').val(household.first_name);
+                         $('#id_last_name').val(household.last_name);
+                         $('#id_father_name').val(household.father_name);
+                         $('#id_mother_fullname').val(household.mother_fullname);
+                         $('#id_birthday_day').val(household.birthday_day);
+                         $('#id_birthday_month').val(household.birthday_month);
+                         $('#id_birthday_year').val(household.birthday_year);
+                         calculatehousehold_DateOfBirth();
+                         $('#id_sex').val(household.sex);
+                         $('#id_address').val(household.address);
+                         $('#id_primary_phone').val(household.primary_phone);
+                         $('#id_primary_phone_answered').val(household.primary_phone_answered);
+                         $('#id_secondary_phone').val(household.secondary_phone);
+                         $('#id_secondary_phone_answered').val(household.secondary_phone_answered);
+                         $('#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname, #id_birthday_day, #id_birthday_month, #id_birthday_year, #id_sex').trigger('blur');
+                         $('#id_address, #id_primary_phone, #id_primary_phone_answered, #id_secondary_phone, #id_secondary_phone_answered').trigger('blur');
 
-                     $('#id_first_name').val(household.first_name);
-                     $('#id_first_name').trigger('blur');
+                         for(childIndex in household.children)
+                         {
+                             addChild(household.children[childIndex]);
+                             console.log(household.children[childIndex]);
+                         }
 
-                     $('#id_last_name').val(household.last_name);
-                     $('#id_last_name').trigger('blur');
-
-                     $('#id_father_name').val(household.father_name);
-                     $('#id_father_name').trigger('blur');
-
-                     $('#id_mother_fullname').val(household.mother_fullname);
-                     $('#id_mother_fullname').trigger('blur');
-
-                     $('#id_birthday_day').val(household.birthday_day);
-                     $('#id_birthday_day').trigger('blur');
-
-                     $('#id_birthday_month').val(household.birthday_month);
-                     $('#id_birthday_month').trigger('blur');
-
-                     $('#id_birthday_year').val(household.birthday_year);
-                     $('#id_birthday_year').trigger('blur');
-
-                     calculateDateOfBirth();
-                     $('#id_sex').val(household.sex);
-                     $('#id_sex').trigger('blur');
-
-                     for(childIndex in household.children)
-                     {
-                         addChild(household.children[childIndex]);
-                         console.log(household.children[childIndex]);
+                     },
+                     error: function (response) {
+                        var required_fields = JSON.parse(response.responseText);
+                        console.log(response);
                      }
+                 });
+             }
+             else
+             {
+             }
 
-                 },
-                 error: function (response) {
-                    var required_fields = JSON.parse(response.responseText);
-                    console.log(response);
-                 }
-             });
+
         });
 
+         $('#get_household_children_data_button').click(function(e){
+             $("#no_id_table").find("tr:gt(0)").remove();
+                $.ajax({
+                     type: "GET",
+                     url: checking_id_number_url+$('#id_previously_registered_number').val(),
+                     data: [],
+                     cache: false,
+                     async: false,
+                     headers: getHeader(),
+                     dataType: 'json',
+                     success: function (response) {
+                         var household = response;
+                         update_item_store(parseInt($('#main_id').val()), "original_id", household.id, 'registrations');
 
+                         $('#id_id_number').val($('#id_previously_registered_number').val());
+                         $('#id_first_name').val(household.first_name);
+                         $('#id_last_name').val(household.last_name);
+                         $('#id_father_name').val(household.father_name);
+                         $('#id_mother_fullname').val(household.mother_fullname);
+                         $('#id_birthday_day').val(household.birthday_day);
+                         $('#id_birthday_month').val(household.birthday_month);
+                         $('#id_birthday_year').val(household.birthday_year);
+                         calculatehousehold_DateOfBirth();
+                         $('#id_sex').val(household.sex);
+                         $('#id_address').val(household.address);
+                         $('#id_primary_phone').val(household.primary_phone);
+                         $('#id_primary_phone_answered').val(household.primary_phone_answered);
+                         $('#id_secondary_phone').val(household.secondary_phone);
+                         $('#id_secondary_phone_answered').val(household.secondary_phone_answered);
+                         $('#id_first_name, #id_last_name, #id_father_name, #id_mother_fullname, #id_birthday_day, #id_birthday_month, #id_birthday_year, #id_sex').trigger('blur');
+                         $('#id_address, #id_primary_phone, #id_primary_phone_answered, #id_secondary_phone, #id_secondary_phone_answered').trigger('blur');
 
+                         for(childIndex in household.children)
+                         {
+                             addChild(household.children[childIndex]);
+                             console.log(household.children[childIndex]);
+                         }
+
+                     },
+                     error: function (response) {
+                        var required_fields = JSON.parse(response.responseText);
+                        console.log(response);
+                     }
+                 });
+        });
 
         $(document).on('click', '#registration-synchro', function(){
             synchronize_data('registrations', synchro_path);
@@ -620,7 +689,8 @@
                $("#HouseholdUNHCR_OtherID").show();
                $("#HouseholdUNHCRNote").show();
                $("#HouseholdRegistrationNumber").show();
-
+{#               $("#getUNHCRDatatButton").show();#}
+{#               $("#HouseholdOtherNoID").show();#}
            }else if (selectedOption == 2 )  {
                $("#HouseholdOtherID").show();
                $("#HouseholdOtherID_Note").show();
@@ -671,14 +741,8 @@
                 $('#previously_registered_block').hide();
                 $('#previously_registered_error').hide();
                 $('#id_number_block').hide();
-                if($('#id_id_type').val() == 1){
-                    $('#with_id_block').show();
-                    $('#confirm_child_belong').show();
-                }else{
-                    $('#no_id_block').show();
-                    $('#confirm_child_belong').show();
-
-                }
+                $('#no_id_block').show();
+                $('#confirm_child_belong').show();
             }
         });
 
@@ -692,13 +756,8 @@
                 $('#previously_registered_block').hide();
                 $('#previously_registered_error').hide();
                 $('#id_number_block').hide();
-                if($('#id_id_type').val() == 1){
-                    $('#with_id_block').show();
-                    $('#confirm_child_belong').show();
-                }else{
-                    $('#no_id_block').show();
-                    $('#confirm_child_belong').show();
-                }
+                $('#no_id_block').show();
+                $('#confirm_child_belong').show();
             }
         });
 
@@ -706,9 +765,11 @@
             if($(this).val() == 1){
                 $('#previously_registered_error').hide();
                 $('#id_number_block').show();
+                $('#no_id_block').show();
             }else{
                 $('#previously_registered_error').show();
                 $('#id_number_block').hide();
+                $('#no_id_block').hide();
             }
         });
 
@@ -734,9 +795,8 @@
             var templateChildForm = $("#add_child_noid_block").find('#add_child_noid_form');
 
             var isSaved = false;
-
             bootbox.dialog({
-                            title: "{% trans "Add Child" %}"+" - "+"{% trans "Other or no ID" %}",
+                            title: "{% trans "Add Child" %}",
                             message: $('#add_child_noid_block').html(),
                             buttons: {
                                 success: {
@@ -750,10 +810,11 @@
                                             var tr = $('<tr>');
                                             var form = $('.bootbox-body').find('#add_child_noid_form');
                                             tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
-                                            tr.append($('<td>').html('&nbsp;'));
+{#                                            tr.append($('<td>').html('&nbsp;'));#}
+                                            tr.append($('<td>').html(form.find('#id_id_number').val()));
                                             tr.append($('<td>').html(form.find('#id_first_name').val()+' '+ form.find('#id_father_name').val()+' '+form.find('#id_last_name').val()));
                                             tr.append($('<td>').html(form.find('#id_mother_fullname').val()));
-                                            tr.append($('<td>').html(form.find('#id_birthday_day').find(':selected').text()+'/'+form.find('#id_birthday_month').find(':selected').text()+'/'+form.find('#id_birthday_year').find(':selected').text()));
+{#                                            tr.append($('<td>').html(form.find('#id_birthday_day').find(':selected').text()+'/'+form.find('#id_birthday_month').find(':selected').text()+'/'+form.find('#id_birthday_year').find(':selected').text()));#}
                                             tr.append($('<td>').html(form.find('#id_age').val()));
                                             tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
                                             tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
@@ -772,7 +833,7 @@
 
                                             var updateCallback = function(updateItem)
                                             {
-                                                collect_form_values(form, updateItem)
+                                                collect_form_values(form, updateItem);
                                                 update_subitem_store(parseInt($('#main_id').val()), 'children', editedIndex, 'registrations', updateItem);
                                             };
 
@@ -805,7 +866,7 @@
 
         });
 
-          $(document).on('click', '.edit-UNHCR-registration-child-row', function(){
+        $(document).on('click', '.edit-UNHCR-registration-child-row', function(){
             var block = $(this).parent().parent().find(".delete-registration-child-row");
 
             var templateChildForm = $("#add_child_withid_block").find('#add_child_withid_form');
@@ -844,7 +905,7 @@
 
                                             var updateCallback = function(updateItem)
                                             {
-                                                collect_form_values(form, updateItem)
+                                                collect_form_values(form, updateItem);
                                                 update_subitem_store(parseInt($('#main_id').val()), 'children', editedIndex, 'registrations', updateItem);
                                             };
 
@@ -877,7 +938,6 @@
 
         });
 
-
         $('#add_child_noid').click(function(){
 
             var templateChildForm = $("#add_child_noid_block").find('#add_child_noid_form');
@@ -885,7 +945,7 @@
             var isSaved = false;
 
             bootbox.dialog({
-                            title: "{% trans "Add Child" %}"+" - "+"{% trans "Other or no ID" %}",
+                            title: "{% trans "Add Child" %}",
                             message: $('#add_child_noid_block').html(),
                             buttons: {
                                 success: {
@@ -898,10 +958,11 @@
                                             var tr = $('<tr>').addClass('child-row');
                                             var form = $('.bootbox-body').find('#add_child_noid_form');
                                             tr.append($('<td>').html(form.find('#id_school').find(':selected').text()));
-                                            tr.append($('<td>').html('&nbsp;'));
+{#                                            tr.append($('<td>').html('&nbsp;'));#}
+                                            tr.append($('<td>').html(form.find('#id_id_number').val()));
                                             tr.append($('<td>').html(form.find('#id_first_name').val()+' '+ form.find('#id_father_name').val()+' '+form.find('#id_last_name').val()));
                                             tr.append($('<td>').html(form.find('#id_mother_fullname').val()));
-                                            tr.append($('<td>').html(form.find('#id_birthday_day').find(':selected').text()+'/'+form.find('#id_birthday_month').find(':selected').text()+'/'+form.find('#id_birthday_year').find(':selected').text()));
+{#                                            tr.append($('<td>').html(form.find('#id_birthday_day').find(':selected').text()+'/'+form.find('#id_birthday_month').find(':selected').text()+'/'+form.find('#id_birthday_year').find(':selected').text()));#}
                                             tr.append($('<td>').html(form.find('#id_age').val()));
                                             tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));
                                             tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));
@@ -966,7 +1027,7 @@
             $(".bootbox-body").find('#id_school').val($('#mainForm').find("#id_school").val());
         });
 
-       $('#add_child_withid').click(function(){
+        $('#add_child_withid').click(function(){
 
             bootbox.dialog({
                             title: "{% trans "Add Child" %}",
@@ -1038,15 +1099,14 @@
                 $('.bootbox-body').find("#enrolled_in_school_location").show();
             }
         });
-
         $("#id_birthday_day, #id_birthday_month, #id_birthday_year").change(function () {
-            calculateDateOfBirth();
+            calculatehousehold_DateOfBirth();
         });
 
         $("#id_age").blur(function () {
 
             if($('#id_age').val() < 18) {
-               bootbox.alert("{% trans 'Currently ATM Cards can only be issued for those over the age of 18. We are working on a solution for this. You can continue the Registration Process so we have your information in case a solution is found. However, until then you will not receive payments.' %}", function() {});
+                bootbox.alert("{% trans 'Currently ATM Cards can only be issued for those over the age of 18. We are working on a solution for this. You can continue the Registration Process so we have your information in case a solution is found. However, until then you will not receive payments.' %}", function() {});
             }
         });
 
@@ -1122,14 +1182,16 @@
         var tr = $('<tr>').addClass('child-row');
         tr.append($('<td>').html(child.school_name));
         tr.append($('<td>').html(child.id_number));
-{#        tr.append($('<td>').html(getDropDownValueText($("#id_school"),child.school)));#}
-{#        tr.append($('<td>').html(form.find('#id_relation_to_adult').find(':selected').text()));#}
-{#        tr.append($('<td>').html(form.find('#id_enrolled_last_year').find(':selected').text()));#}
+        tr.append($('<td>').html(child.first_name+' '+ child.father_name+' '+child.last_name));
+        tr.append($('<td>').html(child.mother_fullname));
+        tr.append($('<td>').html(child.age));
+        tr.append($('<td>').html(child.relation_to_adult));
+        tr.append($('<td>').html(child.enrolled_last_year));
         var button = $('<button class="btn btn-danger delete-registration-child-row" type="button" itemid="" style = "display:none"><i class="icon-trash icon-white"></i></button>')
         tr.append($('<td>').html(button));
         var editButton = $('<button class="btn edit-UNHCR-registration-child-row" type="button" style = "display:none"><i class="icon-edit icon-white"></i></button>');
         tr.append($('<td>').html(editButton));
-        $('#with_id_table').find('tbody').append(tr);
+        $('#no_id_table').find('tbody').append(tr);
         var item  = {};
         item.id_school = child.school
         if(!item.id_number){
@@ -1150,7 +1212,7 @@
             button.attr('itemid', index);
             tr.attr('id', 'child-'+index);
         };
-        append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations', callback);
+{#        append_item_store(parseInt($('#main_id').val()), 'children', item, 'registrations', callback);#}
     }
 
     function updateDropDownValue(dropDownElement, value)
@@ -1202,33 +1264,52 @@
         $("#HouseholdRegistrationNumber").hide();
         $("#IndividualRegistrationNumber").hide();
         $("#household_visit_note").hide();
+        $("#getUNHCRDatatButton").hide();
 
     }
 
-    function calculateDateOfBirth()
+    function calculatehousehold_DateOfBirth()
     {
-        var age = getCalculatedAge();
+        var birthday_day = $('#id_birthday_day').val();
+        var birthday_month = $('#id_birthday_month').val()-1;
+        var birthday_year = $('#id_birthday_year').val();
+        var age = getCalculatedAge(birthday_day, birthday_month, birthday_year);
 
         if(age!=null) {
-
             $('#id_age').val(age);
             $('#id_age').trigger('blur');
-
-            if(age < 18) {
-               bootbox.alert("{% trans 'Currently ATM Cards can only be issued for those over the age of 18. We are working on a solution for this. You can continue the Registration Process so we have your information in case a solution is found. However, until then you will not receive payments.' %}", function() {});
-            }
         } else {
             $('#id_age').val("");
         }
     }
 
-    function getCalculatedAge()
+    function calculate_child_dob()
+    {
+        var birthday_day = $('.bootbox-body').find("#id_birthday_day").val();
+        var birthday_month = $('.bootbox-body').find("#id_birthday_month").val()-1;
+        var birthday_year = $('.bootbox-body').find("#id_birthday_year").val();
+        var age = getCalculatedAge(birthday_day, birthday_month, birthday_year);
+
+        if(age!=null) {
+
+            $('.bootbox-body').find("#id_age").val(age);
+            $('.bootbox-body').find("#id_age").trigger('blur');
+
+            if(age  <6 || age >17 ) {
+               bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
+            }
+        } else {
+            $('.bootbox-body').find("#id_age").val("");
+        }
+    }
+
+    function getCalculatedAge(birthday_day ,birthday_month, birthday_year)
     {
         var age = null;
 
-        var birthday_day = $('#id_birthday_day').val();
-        var birthday_month = $('#id_birthday_month').val()-1;
-        var birthday_year = $('#id_birthday_year').val();
+{#        var birthday_day = $('#id_birthday_day').val();#}
+{#        var birthday_month = $('#id_birthday_month').val()-1;#}
+{#        var birthday_year = $('#id_birthday_year').val();#}
 
         var birthDate = new Date(birthday_year, birthday_month, birthday_day);
 
@@ -1281,9 +1362,13 @@
 
     function push_adult_data(item, url, store_name)
     {
+        //var formID = item.id;
+        //item.id=item.update_id;
+        //item.id_registration=item.update_id;
+        {#            url: url + (item.update_id != null ? item.update_id+"/" : ""),      #}
         $.ajax({
-            type: "POST",
-            url: url,
+            type: item.original_id != null ? "PUT":"POST",
+            url: url + (item.original_id != null ? item.id_number+"/" : ""),
             data: item,
             cache: false,
             async: false,
@@ -1325,6 +1410,7 @@
             }
         });
     }
+
 
     </script>
 
