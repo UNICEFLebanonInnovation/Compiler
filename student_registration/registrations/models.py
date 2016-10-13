@@ -9,9 +9,11 @@ from django.conf import settings
 from student_registration.students.models import (
     Person,
     Student,
-    Person)
+    Person,
+)
 from student_registration.schools.models import (
     School,
+    EducationLevel,
     ClassRoom,
     Section,
     Grade,
@@ -198,6 +200,21 @@ class Registration(TimeStampedModel):
     out_of_school_two_years = models.BooleanField(blank=True, default=False)
     related_to_family = models.BooleanField(blank=True, default=False)
     enrolled_in_this_school = models.BooleanField(blank=True, default=True)
+    last_education_level = models.ForeignKey(
+        EducationLevel,
+        blank=True, null=True,
+    )
+    last_class_level = models.ForeignKey(
+        ClassRoom,
+        blank=True, null=True,
+        related_name='+',
+    )
+    last_education_year = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+    )
     last_year_result = models.CharField(
         max_length=50,
         blank=True,
