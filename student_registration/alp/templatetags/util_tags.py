@@ -76,4 +76,4 @@ def user_main_role(user):
         return 'director'
     if 'SCHOOL' in groups:
         return 'school'
-    return 'mehe'
+    return 'school'
