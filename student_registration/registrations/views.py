@@ -60,18 +60,18 @@ class RegistrationView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         data = []
-        school = self.request.GET.get("school", "0")
+        school = self.request.GET.get("school", 0)
         if school:
             data = self.model.objects.filter(school=school).order_by('id')
 
         if not self.request.user.is_staff:
-            data = self.model.filter(owner=self.request.user)
+            data = self.model.objects.filter(owner=self.request.user)
             self.template_name = 'registrations/index.html'
 
         return {
             'registrations': data,
-            'education_levels': ClassRoom.objects.all(),
-            'levels': EducationLevel.objects.all(),
+            'education_levels': EducationLevel.objects.all(),
+            'class_levels': ClassRoom.objects.all(),
             'classrooms': ClassRoom.objects.all(),
             'schools': School.objects.all(),
             'grades': Grade.objects.all(),
@@ -303,46 +303,46 @@ class ExportViewSet(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
 
-        queryset = self.queryset
+        queryset = self.get_queryset()
         data = tablib.Dataset()
         data.headers = [
-            _('Student number'), _('Student fullname'), _('Mother fullname'), _('Nationality'),
-            _('Birthday'),
-            # _('Day of birth'), _('Month of birth'), _('Year of birth'),
-            _('Sex'),
-            _('ID Type'),
-            _('ID Number tooltip'), _('Phone number'), _('Student living address'),
-            _('Section'),
-            # , _('Grade'),
-            _('Class room'),
+            _('Student number'), _('Student fullname'), _('Student nationality'),
+            _('Mother fullname'), _('Mother nationality'),
+            _('Student birthday'), _('Student age'), _('Sex'),
+            _('Student ID Type'),_('Student ID Number'),
+            _('Phone number'), _('Student living address'),
+            _('Section'), _('Class'),
             _('School'), _('School number'),
+            _('Last training level'), _('Last education year'),
+            _('Last education level'), _('Last year result'),
             _('District'), _('Governorate')
         ]
 
         content = []
         for line in queryset:
-            if not line.student or not line.section or not line.school:
-            # if not line.student or not line.classroom or not line.school:
+            if not line.student or not line.school:
                 continue
             content = [
                 line.student.number,
                 line.student.__unicode__(),
+                line.student.nationality_name(),
                 line.student.mother_fullname,
-                line.student.nationality.name,
+                line.student.mother_nationality,
                 line.student.birthday,
-                # int(line.student.birthday_day),
-                # int(line.student.birthday_month),
-                # int(line.student.birthday_year),
+                line.student.get_age(),
                 _(line.student.sex),
-                line.student.id_type.name,
+                line.student.id_type,
                 line.student.id_number,
                 line.student.phone,
                 line.student.address,
-                line.classroom.name,
-                line.section.name,
-                # line.grade.name,
+                line.classroom,
+                line.section,
                 line.school.name,
                 line.school.number,
+                line.last_class_level,
+                line.last_education_year,
+                line.last_education_level,
+                line.last_year_result,
                 line.school.location.name,
                 line.school.location.parent.name,
             ]

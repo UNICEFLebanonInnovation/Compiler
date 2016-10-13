@@ -6,6 +6,7 @@ var protocol = 'http://';
 var host = protocol;
 var synchro_path_extra = host+'/api/eav/attributes/';
 var synchro_path_extra2 = host+'/api/eav/values/';
+var incremental_id = 0;
 
 function push_column_values_to_server(item)
 {
@@ -161,8 +162,11 @@ function add_column_to_store(column)
 
 function add_table_newline(itemid, prototype, table)
 {
+    incremental_id = incremental_id + 1;
     var line_html =  prototype.find('tbody').html().replace(/\$\$itemscope_id\$\$/g, itemid);
     table.find('tbody').append(line_html);
+
+    $('#line-'+itemid).find('.incremental_number').text(incremental_id);
 
     var extra_columns = table.find('.extra-column');
     $(extra_columns).each(function(i, col){
