@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Registration, RegisteringAdult
+from .models import Registration, RegisteringAdult, WaitingList
 from student_registration.students.serializers import StudentSerializer
 
 
@@ -102,7 +102,7 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
     birthday_day = serializers.CharField(source='student.birthday_day')
     id_number = serializers.CharField(source='student.id_number')
     age = serializers.CharField(source='student.age')
-    school_name = serializers.CharField(source='school.name')
+    school_name = serializers.CharField(source='school.name', read_only=True)
 
     def create(self, validated_data):
 
@@ -213,5 +213,24 @@ class ClassAssignmentSerializer(serializers.ModelSerializer):
             'classroom',
             'section',
             'enrolled_in_this_school',
+        )
+
+
+class WaitingListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = WaitingList
+        fields = (
+            'location',
+            'school',
+            'first_name',
+            'last_name',
+            'father_name',
+            'unhcr_id',
+            'number_of_children',
+            'phone_number',
+            'alternate_phone_number',
+            'village',
+            'owner',
         )
 
