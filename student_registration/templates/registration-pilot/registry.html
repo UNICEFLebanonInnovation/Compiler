@@ -537,14 +537,7 @@
         });
         $(document).on('change', '.bootbox-body #id_age', function(){
             var age = $(this).val();
-            if(age  <5 || age >17 ) {
-                bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
-            }
-        });
-
-        $(document).on('change', '.bootbox-body #id_age', function(){
-            var age = $(this).val();
-            if(age  <6 || age >17 ) {
+            if(age < 5 || age > 16 ) {
                 bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
             }
         });
@@ -1099,6 +1092,11 @@
                 $('.bootbox-body').find("#enrolled_in_school_location").show();
             }
         });
+
+        $(document).on('change', '.bootbox-body #id_birthday_day, .bootbox-body #id_birthday_month, .bootbox-body #id_birthday_year', function () {
+            calculate_child_dob();
+        });
+
         $("#id_birthday_day, #id_birthday_month, #id_birthday_year").change(function () {
             calculatehousehold_DateOfBirth();
         });
@@ -1295,7 +1293,7 @@
             $('.bootbox-body').find("#id_age").val(age);
             $('.bootbox-body').find("#id_age").trigger('blur');
 
-            if(age  <6 || age >17 ) {
+            if(age < 5 || age > 16) {
                bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
             }
         } else {
