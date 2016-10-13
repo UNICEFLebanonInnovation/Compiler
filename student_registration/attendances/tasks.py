@@ -62,6 +62,8 @@ def set_app_attendances():
         students = []
         attstudent = {}
         attendances = {}
+        if not item.school:
+            continue
         registrations = Registration.objects.filter(classroom_id=item.id, school_id=item.school.id)
         for reg in registrations:
             student = {
@@ -108,6 +110,7 @@ def set_app_attendances():
         docs.append(doc)
 
     response = set_docs(docs)
+    print response
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
 
@@ -115,27 +118,32 @@ def set_app_attendances():
 @app.task
 def set_app_schools():
 
-    docs = []
+    docs = {}
     from student_registration.schools.models import School
     schools = School.objects.all()
     for school in schools:
         if not school.location:
             continue
-        doc[school.location.name] = {
+        if school.location.name not in docs:
+            docs[school.location.name] = []
+
+        docs[school.location.name].append({
             "caza": school.location.name,
             "mouhafaza": school.location.parent.name if school.location.parent else '',
             "cerd_id": str(school.number),
             "school_name": school.name
-        }
-        docs.append(doc)
+        })
 
-    docs = {
+    docs2 = {
         "_id": "schools",
         "type": "schools",
         "schools": docs
     }
 
-    response = set_docs(docs)
+    # print json.dumps(docs2)
+
+    response = set_docs([docs2])
+    print response
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
 
@@ -145,14 +153,14 @@ def set_app_users():
 
     docs = []
     from student_registration.users.models import User
-    from student_registration.alp.templatetags.util_tags import get_user_token
+    from student_registration.alp.templatetags.util_tags import get_user_token, user_main_role
     users = User.objects.filter(is_active=True, is_staff=False, is_superuser=False)
     for user in users:
         if not user.school:
             continue
         doc = {
-            "_id": user.school_id,
-            "school_id": user.school_id,
+            "_id": user.school.number,
+            "cerd_id": user.school.number,
             "location_id": user.location_id,
             "username": user.username,
             "password": user.password,
@@ -162,6 +170,7 @@ def set_app_users():
         docs.append(doc)
 
     response = set_docs(docs)
+    print response
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
 

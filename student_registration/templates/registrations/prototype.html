@@ -14,6 +14,9 @@
             </button>
         </td>
         <td>
+            <span class="incremental_number" itemscope="$$itemscope_id$$" style="font-weight: bold;"></span>
+        </td>
+        <td>
             <select name="location" id="location" class="registration-location registration-field" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
                 {% for item in locations %}
@@ -26,9 +29,17 @@
                    itemscope="$$itemscope_id$$" id="governorate_name" value=""/>
         </td>
         <td>
+            <select name="last_education_level" id="last_education_level" class="outreach-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in education_levels %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
             <select name="last_class_level" id="last_class_level" class="outreach-field" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
-                {% for item in levels %}
+                {% for item in class_levels %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
@@ -38,14 +49,6 @@
                 <option value="">-------</option>
                 {% for item in education_years %}
                     <option value="{{ item }}">{{ item }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td>
-            <select name="last_education_level" id="last_education_level" class="outreach-field" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
-                {% for item in education_levels %}
-                    <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
         </td>
