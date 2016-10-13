@@ -542,6 +542,10 @@
             }
         });
 
+        $(document).on('change', '.bootbox-body #id_birthday_day, .bootbox-body #id_birthday_month, .bootbox-body #id_birthday_year', function () {
+            calculate_child_dob();
+        });
+
         $('#registration_save').click(function(e){
             var sectionCheck = validateSection13();
             if(sectionCheck)
@@ -1092,11 +1096,6 @@
                 $('.bootbox-body').find("#enrolled_in_school_location").show();
             }
         });
-
-        $(document).on('change', '.bootbox-body #id_birthday_day, .bootbox-body #id_birthday_month, .bootbox-body #id_birthday_year', function () {
-            calculate_child_dob();
-        });
-
         $("#id_birthday_day, #id_birthday_month, #id_birthday_year").change(function () {
             calculatehousehold_DateOfBirth();
         });
@@ -1269,7 +1268,7 @@
     function calculatehousehold_DateOfBirth()
     {
         var birthday_day = $('#id_birthday_day').val();
-        var birthday_month = $('#id_birthday_month').val()-1;
+        var birthday_month = $('#id_birthday_month').val();
         var birthday_year = $('#id_birthday_year').val();
         var age = getCalculatedAge(birthday_day, birthday_month, birthday_year);
 
@@ -1284,7 +1283,7 @@
     function calculate_child_dob()
     {
         var birthday_day = $('.bootbox-body').find("#id_birthday_day").val();
-        var birthday_month = $('.bootbox-body').find("#id_birthday_month").val()-1;
+        var birthday_month = $('.bootbox-body').find("#id_birthday_month").val();
         var birthday_year = $('.bootbox-body').find("#id_birthday_year").val();
         var age = getCalculatedAge(birthday_day, birthday_month, birthday_year);
 
