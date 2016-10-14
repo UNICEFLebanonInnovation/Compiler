@@ -44,6 +44,21 @@
                                 <i class="icon-export-sign icon-white"></i>&nbsp;
                                     {% trans "Export" %}
                               </a>
+                            <select name="filter_section" id="filter_section">
+                                <option value="">{% trans "Select a Section" %}</option>
+                                {% for item in sections %}
+                                    <option value="{{ item.id }}">{{ item.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <select name="filter_class" id="filter_class">
+                                <option value="">{% trans "Select a class" %}</option>
+                                {% for item in classrooms %}
+                                    <option value="{{ item.id }}">{{ item.name }}</option>
+                                {% endfor %}
+                            </select>
+                              <button class="btn btn-warning" id="filter_cancel">
+                                    {% trans "Rest filter" %}
+                              </button>
                             </h3>
                             <div class="actions pull-right">
                                 <i class="fa fa-chevron-down"></i>
@@ -262,6 +277,15 @@
                         }
                     }
                 });
+            });
+
+            $(document).on('change', '#filter_section', function(){
+                if($(this).val()){
+                    var result = $('.registration-line').find('select#classroom');
+                    var result1 = $('.registration-line').find('select#classroom').find('option[value='+$(this).val()+']');
+                    console.log(result);
+                    console.log(result1);
+                }
             });
 
             $(document).on('click', '#add_datatable_line', function(){

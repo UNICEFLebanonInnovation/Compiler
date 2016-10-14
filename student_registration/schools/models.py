@@ -24,11 +24,11 @@ class School(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return self.name
-        # return u'{} - {}'.format(
-        #     self.name,
-        #     self.number
-        # )
+        # return self.name
+        return u'{} - {}'.format(
+            self.name,
+            self.number
+        )
 
 
 class Course(models.Model):
