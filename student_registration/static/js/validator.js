@@ -39,17 +39,22 @@ function validateSection5()
     if(selectedOption == 1) {
          valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
          valid = validateUNCHRFormat(valid,'id_id_number');
+         alert($("#id_principal_applicant_living_in_house").val());
+         if($("#id_principal_applicant_living_in_house").val() != 1) {
+         valid = validateTextBoxRequired('individual_id_number','individual_id_number_error',valid);
+         valid = validateRepIndividualUNCHRFormat(valid,'individual_id_number_format_error');
+         }
     }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5) {
         valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
     }else if (selectedOption == 6) {
     }
-    //valid = validateTextBoxRequired('id_first_name','first_name_error',valid);
-    //valid = validateTextBoxRequired('id_father_name','father_name_error',valid);
-    //valid = validateTextBoxRequired('id_last_name','last_name_error',valid);
-    //valid = validateTextBoxRequired('id_mother_fullname','mother_fullname_error',valid);
-    //valid = validateTextBoxRequired('id_age','age_error',valid);
-    //valid = validateTextBoxRequired('id_sex','gender_error',valid);
-    //valid = validateTextBoxRequired('id_relation_to_householdhead','relationship_householdhead_error',valid);
+    valid = validateTextBoxRequired('id_first_name','first_name_error',valid);
+    valid = validateTextBoxRequired('id_father_name','father_name_error',valid);
+    valid = validateTextBoxRequired('id_last_name','last_name_error',valid);
+    valid = validateTextBoxRequired('id_mother_fullname','mother_fullname_error',valid);
+    valid = validateTextBoxRequired('id_age','age_error',valid);
+    valid = validateTextBoxRequired('id_sex','gender_error',valid);
+    valid = validateTextBoxRequired('id_relation_to_householdhead','relationship_householdhead_error',valid);
     return valid;
 }
 function validateSection13()
@@ -65,12 +70,15 @@ function validateUNCHRFormat(isValid, id)
 {
     return validateCondition('id_number_UNHCR_Other_format_error', isValid, validateUNHCRNumber(id));
 }
-
-function validateChildUNCHRFormat(form,id, errorID, isValid)
+function validateRepIndividualUNCHRFormat(isValid, id)
 {
-    // return validateCondition( form.find('#'+errorID), isValid, validate_child_UNHCRNumber(form.find('#'+id)));
+    return validateCondition('id_number_UNHCR_Other_format_error', isValid, validate_individual_UNHCRNumber(id));
+}
+
+function validateChildIndividualUNCHRFormat(form,id, errorID, isValid)
+{
     var valid = isValid;
-    if(!validate_child_UNHCRNumber(form.find('#'+id))){
+    if(!validate_individual_UNHCRNumber(form.find('#'+id))){
             form.find('#'+errorID).show();
             valid = false ;
         }else{
@@ -116,7 +124,7 @@ function validateUNHCRNumber()
     // return /^[0-9]{3}-1[1-5][C]\d{5}$/i.test($('#id_id_number').val());
     return validrecorded || validregistered;
 }
-function validate_child_UNHCRNumber(id)
+function validate_individual_UNHCRNumber(id)
 {
     return /^[0-9]{3}-[0-9]{8}$/i.test(id.val());
 }
@@ -133,7 +141,7 @@ function validate_add_child_noid()
     var form = $('.bootbox-body').find('#add_child_noid_form');
     if(selectedOption == 1) {
         valid = validateTextBox(form,'id_id_number','id_number_error',valid);
-        //valid = validateChildUNCHRFormat(form,'id_id_number','number_UNHCR_format_error', valid);
+        //valid = validateChildIndividualUNCHRFormat(form,'id_id_number','number_UNHCR_format_error', valid);
     }
     valid = validateTextBox(form,'id_first_name','first_name_error',valid);
     valid = validateTextBox(form,'id_father_name','father_name_error',valid);
@@ -144,16 +152,6 @@ function validate_add_child_noid()
     valid = validateTextBox(form,'id_relation_to_adult','relation_to_adult_error',valid);
     return valid;
  }
-
-function validate_add_child_withid()
-{
-    var valid = true ;
-    var form = $('.bootbox-body').find('#add_child_withid_form');
-
-    valid = validateTextBox(form,'id_id_number','id_number_error',valid);
-    valid = validateTextBox(form,'id_relation_to_adult','relation_to_household_reprentative_error',valid);
-    return valid;
-}
 
 function validateTextBox(form,id, errorID, isValid)
 {
