@@ -20,7 +20,7 @@ class RegisteringAdultForm(forms.ModelForm):
                      queryset=School.objects.all(), widget=forms.Select,
                      required=False, to_field_name='id'
                 )
-    PrincipalHouseHold = forms.TypedChoiceField(
+    principal_applicant_living_in_house = forms.TypedChoiceField(
         choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
     )
     previously_registered = forms.TypedChoiceField(
