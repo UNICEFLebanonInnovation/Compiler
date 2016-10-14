@@ -51,7 +51,7 @@ class RegisteringAdult(Person):
     )
 
     individual_id_number = models.CharField(max_length=45L, blank=True, null=True)
-    principal_applicant_living_in_house = models.BooleanField(blank=True)
+    principal_applicant_living_in_house = models.BooleanField(blank=True, default=True)
     status = models.BooleanField(blank=True, default=True)
     previously_registered = models.BooleanField(default=False)
     previously_registered_status = models.BooleanField(default=False)
