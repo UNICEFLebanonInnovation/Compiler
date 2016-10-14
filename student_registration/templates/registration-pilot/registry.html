@@ -66,7 +66,7 @@
                     <p>
                         <strong>{% trans "Welcome to the Registration Desk of the Min Ila Pilot" %}</strong>
                     </p>
-                    <p>{% trans "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 5 to 9 will receive USD 20 per month. Each child aged 10 to 14 will receive USD 65 per month." %}</p>
+                    <p>{% trans "The Min Ila Pilot will provide children enrolled in 2nd shift with a cash transfer. Each child aged 5 to 9 will receive USD 20 per month. Each child aged 10 and above will receive USD 65 per month." %}</p>
                     <p>{% trans "This cash is intended to help children regularly attend 2nd shift school in order that their future opportunities are improved." %}</p>
                 </li>
 
@@ -110,22 +110,22 @@
                     <div id="HouseholdUNHCR" style="display:none">
                         <div class="line">
                             <label class="text">{% trans "Is the principal applicant still with your household?" %}<span class="asterisque"></span></label>
-                            {% for choice in form.PrincipalHouseHold %}
+                            {% for choice in form.principal_applicant_living_in_house %}
                             <span class="hidden-field">{{ choice }}</span>
                         {% endfor %}
                         <div id="radioBtn" class="btn-group PrincipalHouseHold_block">
-                            <a class="btn btn-primary btn-sm active" data-toggle="id_PrincipalHouseHold" data-title="1">{% trans "Yes" %}</a>
-                            <a class="btn btn-primary btn-sm notActive" data-toggle="id_PrincipalHouseHold" data-title="0">{% trans "No" %}</a>
+                            <a class="btn btn-primary btn-sm active" data-toggle="id_principal_applicant_living_in_house" data-title="1">{% trans "Yes" %}</a>
+                            <a class="btn btn-primary btn-sm notActive" data-toggle="id_principal_applicant_living_in_house" data-title="0">{% trans "No" %}</a>
                         </div>
+
                         </div>
 
                     </div>
 
-                    <div class="line" id="HouseholdID_block">
+                    <div class="line" id="Household_block"style="display:none">
                         <label class="text" id="HouseholdRegistrationNumber" style = "display:none">{% trans "UNHCR Household Registration Number" %}<span class="asterisque">*</span></label>
-                        <label class="text" id="IndividualRegistrationNumber" style = "display:none">{% trans "UNHCR Individual Registration Number of the Household Representative" %}<span class="asterisque">*</span></label>
                         <label class="text" id="HouseholdOtherID" style="display: none;">{% trans "Household ID Number" %}<span class="asterisque">*</span></label>
-                        <span id="HouseholdUNHCR_OtherID" style="display: none;">{{ form.id_number }}</span>
+                        <span>{{ form.id_number }}</span>
                         <span class="error" id="id_number_UNHCR_Other_error">{% trans "This field is required" %}</span>
                         <span class="error" id="id_number_UNHCR_Other_format_error">{% trans "The UNHCR ID is not valid" %}</span>
 {#                        <button class="btn btn-primary" type="button" id="getUNHCRDatatButton" style="display: none">#}
@@ -133,15 +133,21 @@
 {#                        </button>#}
                     </div>
 
+                    <div class="line" id="Individual_block"style="display:none">
+                        <label class="text" >{% trans "UNHCR Individual Registration Number of the Household Representative" %}<span class="asterisque">*</span></label>
+                        <span>{{ form.individual_id_number }}</span>
+                        <span class="error" id="individual_id_number_error">{% trans "This field is required" %}</span>
+                        <span class="error" id="individual_id_number_format_error">{% trans "The ID is not valid" %}</span>
+                        <span class="error" >{% trans "NOTE: If the Household Representative is not listed on the UNHCR Certificate, it cannot be used to regiter for the Pilot. Another form of ID must be used." %}</span>
+                    </div>
+
                     <div class="line" id="HouseholdOtherID_Note" style="display: none;">
                          <span class="error">{% trans "NOTE: in order to register with other ID, the ID Holder must be present AND must be 18 years of age or older." %}</span>
                     </div>
 
-                    <div class="line" id="HouseholdUNHCRNote" style="display:none">
-                        <span id="IndividualRegistrationNote" class="error" style="display:none">{% trans "NOTE: If the Household Representative is not listed on the UNHCR Certificate, it cannot be used to regiter for the Pilot. Another form of ID must be used." %}</span>
-                    </div>
 
-                    <div id="HouseholdOtherNoID" style="display:none">
+
+                    <div id="HouseholdInformation" style="display:none">
                         <div class="line">
                             <label class="text">{% trans "First Name" %}<span class="asterisque">*</span></label>
                             {{ form.first_name }}
@@ -325,7 +331,7 @@
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Declaration and Consent" %}</h3>
                     <p>
-                        {% trans "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 5 to 9 years old will get USD 20 and each child 10 to 14 will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school." %}
+                        {% trans "Every month your household will receive a cash amount intended to help the children you have registered in the pilot to attend school. Each child 5 to 9 years old will get USD 20 and each child aged 10 and above will receive USD 65. If your child stops attending school you will receive an SMS to remind you of the purpose of the cash after 10 days. After 20 days you will receive a household visit from Min Ila Pilot officers to help guide you to additional support to keep your children in school." %}
                     </p>
                     <p>
                         {% trans "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments." %}
@@ -521,10 +527,7 @@
         });
 
         $(document).on('blur', arabic_fields, function(){
-            var selectedOption = $("#id_id_type").val();
-            if(selectedOption != 1)  {
                 checkArabicOnly($(this));
-            }
         });
 
         $(document).on('blur', numeric_fields, function(){
@@ -678,52 +681,42 @@
 
         $("#id_id_type").change(function () {
             hideAll();
-            $("#HouseholdID_block").show();
             var selectedOption = $(this).val();
-
            if(selectedOption == 1) {
                $("#HouseholdUNHCR").show();
-               $("#HouseholdUNHCR_OtherID").show();
                $("#HouseholdUNHCRNote").show();
+               $("#Household_block").show();
                $("#HouseholdRegistrationNumber").show();
 {#               $("#getUNHCRDatatButton").show();#}
-{#               $("#HouseholdOtherNoID").show();#}
            }else if (selectedOption == 2 )  {
+               $("#Household_block").show();
                $("#HouseholdOtherID").show();
                $("#HouseholdOtherID_Note").show();
-               $("#HouseholdUNHCR_OtherID").show();
-               $("#HouseholdOtherNoID").show();
+               $("#HouseholdInformation").show();
                $("#HouseholdRegistrationNumber").hide();
                $("#IndividualRegistrationNumber").hide();
            }else if ( selectedOption == 3 || selectedOption == 4|| selectedOption == 5)  {
+               $("#Household_block").show();
                $("#HouseholdOtherID").show();
                $("#HouseholdOtherID_Note").show();
-               $("#HouseholdUNHCR_OtherID").show();
-               $("#HouseholdOtherNoID").show();
+               $("#HouseholdInformation").show();
                $("#household_visit_note").show();
                $("#HouseholdRegistrationNumber").hide();
                $("#IndividualRegistrationNumber").hide();
 
            }else if (selectedOption == 6) {
-               $("#HouseholdOtherNoID").show();
-               $("#HouseholdID_block").hide();
+               $("#HouseholdInformation").show();
+               $("#Household_block").hide();
                bootbox.alert("{% trans 'Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them.' %}", function() {});
            }
         });
 
-
-        $('input[name=PrincipalHouseHold]').click(function(){
+        $('input[name=principal_applicant_living_in_house]').click(function(){
             var PrincipalHouseHoldCBChecked = $(this).val();
             if(PrincipalHouseHoldCBChecked==1) {
-               $("#HouseholdRegistrationNumber").show();
-               $("#IndividualRegistrationNumber").hide();
-               $("#IndividualRegistrationNote").hide();
-               $("#HouseholdUNHCR_OtherID").show();
+            $("#Individual_block").hide();
             } else {
-               $("#HouseholdRegistrationNumber").hide();
-               $("#IndividualRegistrationNumber").show();
-               $("#IndividualRegistrationNote").show();
-               $("#HouseholdUNHCR_OtherID").show();
+            $("#Individual_block").show();
             }
         });
 
@@ -1253,17 +1246,16 @@
     function hideAll()
     {
         $("#HouseholdUNHCR").hide();
-        $("#HouseholdUNHCR_OtherID").hide();
         $("#HouseholdUNHCRNote").hide();
         $("#HouseholdOtherID").hide();
         $("#HouseholdOtherID_Note").hide();
-        $("#HouseholdOtherNoID").hide();
+        $("#HouseholdInformation").hide();
         $("#HouseholdRegistrationNumber").hide();
         $("#IndividualRegistrationNumber").hide();
         $("#household_visit_note").hide();
         $("#getUNHCRDatatButton").hide();
-
-    }
+        $("#Individual_block").hide();
+        }
 
     function calculatehousehold_DateOfBirth()
     {
