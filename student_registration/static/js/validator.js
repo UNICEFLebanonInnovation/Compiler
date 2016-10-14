@@ -37,24 +37,32 @@ function validateSection5()
     valid = validateTextBoxRequired('id_id_type','id_type_error',valid);
 
     if(selectedOption == 1) {
-         valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
-         valid = validateUNCHRFormat(valid,'id_id_number');
-         alert($("#id_principal_applicant_living_in_house").val());
-         if($("#id_principal_applicant_living_in_house").val() != 1) {
-         valid = validateTextBoxRequired('individual_id_number','individual_id_number_error',valid);
-         valid = validateRepIndividualUNCHRFormat(valid,'individual_id_number_format_error');
-         }
+        valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
+        valid = validateUNCHRFormat(valid,'id_id_number');
+        var principalHouseHoldAvailable = $("#id_individual_id_number").is(":visible");
+        if(principalHouseHoldAvailable== true) {
+        valid = validateTextBoxRequired('id_individual_id_number','individual_id_number_error',valid);
+        valid = validateRepIndividualUNCHRFormat(valid,'id_individual_id_number');
+        }
     }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5) {
         valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
+        valid = validateTextBoxRequired('id_first_name','first_name_error',valid);
+        valid = validateTextBoxRequired('id_father_name','father_name_error',valid);
+        valid = validateTextBoxRequired('id_last_name','last_name_error',valid);
+        valid = validateTextBoxRequired('id_mother_fullname','mother_fullname_error',valid);
+        valid = validateTextBoxRequired('id_age','age_error',valid);
+        valid = validateTextBoxRequired('id_sex','gender_error',valid);
+        valid = validateTextBoxRequired('id_relation_to_householdhead','relationship_householdhead_error',valid);
     }else if (selectedOption == 6) {
+        valid = validateTextBoxRequired('id_first_name','first_name_error',valid);
+        valid = validateTextBoxRequired('id_father_name','father_name_error',valid);
+        valid = validateTextBoxRequired('id_last_name','last_name_error',valid);
+        valid = validateTextBoxRequired('id_mother_fullname','mother_fullname_error',valid);
+        valid = validateTextBoxRequired('id_age','age_error',valid);
+        valid = validateTextBoxRequired('id_sex','gender_error',valid);
+        valid = validateTextBoxRequired('id_relation_to_householdhead','relationship_householdhead_error',valid);
     }
-    valid = validateTextBoxRequired('id_first_name','first_name_error',valid);
-    valid = validateTextBoxRequired('id_father_name','father_name_error',valid);
-    valid = validateTextBoxRequired('id_last_name','last_name_error',valid);
-    valid = validateTextBoxRequired('id_mother_fullname','mother_fullname_error',valid);
-    valid = validateTextBoxRequired('id_age','age_error',valid);
-    valid = validateTextBoxRequired('id_sex','gender_error',valid);
-    valid = validateTextBoxRequired('id_relation_to_householdhead','relationship_householdhead_error',valid);
+
     return valid;
 }
 function validateSection13()
@@ -72,7 +80,7 @@ function validateUNCHRFormat(isValid, id)
 }
 function validateRepIndividualUNCHRFormat(isValid, id)
 {
-    return validateCondition('id_number_UNHCR_Other_format_error', isValid, validate_individual_UNHCRNumber(id));
+    return validateCondition('individual_id_number_format_error', isValid, validate_individual_UNHCRNumber(id));
 }
 
 function validateChildIndividualUNCHRFormat(form,id, errorID, isValid)
@@ -115,10 +123,10 @@ function validateCondition(errorID, isValid, validationResult)
     }
     return valid;
 }
-function validateUNHCRNumber()
+function validateUNHCRNumber(id)
 {
-    var validrecorded =  /^LEB-1[5-7][C]\d{5}$/i.test($('#id_id_number').val());
-    var validregistered = /^[0-9]{3}-1[1-6][C]\d{5}$/i.test($('#id_id_number').val());
+    var validrecorded =  /^LEB-1[5-7][C]\d{5}$/i.test($('#'+id).val());
+    var validregistered = /^[0-9]{3}-1[1-6][C]\d{5}$/i.test($('#'+id).val());
     // for recorded: LEB-1[5-7][C]\d{5}
     // for registered: \d{3}-1[1-5][C]\d{5}
     // return /^[0-9]{3}-1[1-5][C]\d{5}$/i.test($('#id_id_number').val());
@@ -126,7 +134,7 @@ function validateUNHCRNumber()
 }
 function validate_individual_UNHCRNumber(id)
 {
-    return /^[0-9]{3}-[0-9]{8}$/i.test(id.val());
+    return /^[0-9]{3}-[0-9]{8}$/i.test($('#'+id).val());
 }
 
 function validateTextBoxRequired(id, errorID, isValid)
