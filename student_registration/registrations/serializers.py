@@ -197,6 +197,8 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'secondary_phone_answered',
             'children',
             'number',
+            'principal_applicant_living_in_house',
+            'individual_id_number',
         )
 
 
