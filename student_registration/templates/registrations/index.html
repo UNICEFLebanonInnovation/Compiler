@@ -34,7 +34,7 @@
                             <h3 class="panel-title">{% trans "Registration" %}
                               <button class="btn btn-info" id="registration-synchro">
                                 <i class="icon-synch-sign icon-white"></i>&nbsp;
-                                    {% trans "Save" %}
+                                    {% trans "synchronize" %}
                               </button>
 {#                              <button class="btn btn-info" id="registration-add-column">#}
 {#                                <i class="icon-plus-sign icon-white"></i>&nbsp;#}
@@ -44,22 +44,36 @@
                                 <i class="icon-export-sign icon-white"></i>&nbsp;
                                     {% trans "Export" %}
                               </a>
-                            <select name="filter_section" id="filter_section">
-                                <option value="">{% trans "Select a Section" %}</option>
-                                {% for item in sections %}
-                                    <option value="{{ item.id }}">{{ item.name }}</option>
-                                {% endfor %}
-                            </select>
-                            <select name="filter_class" id="filter_class">
-                                <option value="">{% trans "Select a class" %}</option>
-                                {% for item in classrooms %}
-                                    <option value="{{ item.id }}">{{ item.name }}</option>
-                                {% endfor %}
-                            </select>
-                              <button class="btn btn-warning" id="filter_cancel">
-                                    {% trans "Rest filter" %}
-                              </button>
                             </h3>
+                            <div class="panel-title">
+                                <select name="section" id="filter_section">
+                                    <option value="">{% trans "Filter by Section" %}</option>
+                                    {% for item in sections %}
+                                        <option value="{{ item.id }}">{{ item.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <select name="classroom" id="filter_class">
+                                    <option value="">{% trans "Filter by Class" %}</option>
+                                    {% for item in classrooms %}
+                                        <option value="{{ item.id }}">{{ item.name }}</option>  
+                                    {% endfor %}
+                                </select>
+                                <select name="student_id_type" id="filter_id_type">
+                                    <option value="">{% trans "Filter by ID Type" %}</option>
+                                    {% for item in idtypes %}
+                                        <option value="{{ item.id }}">{{ item.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <select name="student_nationality" id="filter_nationality">
+                                    <option value="">{% trans "Filter by Nationality" %}</option>
+                                    {% for item in nationalities %}
+                                        <option value="{{ item.id }}">{{ item.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button class="btn btn-warning btn-sm" id="filter_cancel">
+                                    {% trans "Rest filter" %}
+                                </button>
+                            </div>
                             <div class="actions pull-right">
                                 <i class="fa fa-chevron-down"></i>
                                 <i class="fa fa-times"></i>
@@ -273,19 +287,36 @@
                     } else {
                         var number = parseInt(result);
                         for (var i = 0; i < number; i++) {
-                            $('#add_datatable_line').trigger('click');
+                            var item = create_item_store_default_keys();
+                            add_to_store(item);
                         }
+                        scrollToBottom();
                     }
                 });
             });
 
-            $(document).on('change', '#filter_section', function(){
+            $(document).on('change', '#filter_section, #filter_class, #filter_id_type, #filter_nationality', function(){
                 if($(this).val()){
-                    var result = $('.registration-line').find('select#classroom');
-                    var result1 = $('.registration-line').find('select#classroom').find('option[value='+$(this).val()+']');
-                    console.log(result);
-                    console.log(result1);
+                    var value = $(this).val();
+                    var name = $(this).attr('name');
+                    $('.registration-line').hide();
+                    $('.registration-line').each(function(i, item){
+                        var select = $(this).find('#'+name);
+                        if($(select).val() == value){
+                            $(this).show();
+                        }
+                    });
+                }else{
+                    $('.registration-line').show();
                 }
+            });
+
+            $(document).on('click', '#filter_cancel', function(){
+                $('.registration-line').show();
+                $('#filter_section').val('');
+                $('#filter_class').val('');
+                $('#filter_id_type').val('');
+                $('#filter_nationality').val('');
             });
 
             $(document).on('click', '#add_datatable_line', function(){
@@ -312,10 +343,10 @@
                             last_class_level: $('#duplicate_last_class_level').is(':checked'),
                             last_education_level: $('#duplicate_last_education_level').is(':checked'),
                             last_education_year: $('#duplicate_last_education_year').is(':checked'),
-                            last_year_result: $('#duplicate_last_year_result').is(':checked'),
-{#                            grade: $('#duplicate_grade').is(':checked'),#}
+                            last_year_result: $('#duplicate_last_year_result').is(':checked')
                         };
                         duplicate_item_values(request.result, params);
+                        scrollToBottom();
                     };
                 }
             });
@@ -328,9 +359,26 @@
                         if (result === null) {
                         } else {
                             var number = parseInt(result);
-                            for (var i = 0; i < number; i++) {
-                                $('#duplicate_last_line_select').trigger('click');
-                            }
+                            var lastid = $('.registration-field-id:last').val();
+                            var request = getRecord(parseInt(lastid), 'registrations');
+                            request.onsuccess = function() {
+                                for (var i = 0; i < number; i++) {
+                                    var params = {
+                                        location: $('#duplicate_location').is(':checked'),
+                                        governorate_name: $('#duplicate_location').is(':checked'),
+                                        school: $('#duplicate_school').is(':checked'),
+                                        school_number: $('#duplicate_school').is(':checked'),
+                                        classroom: $('#duplicate_classroom').is(':checked'),
+                                        section: $('#duplicate_section').is(':checked'),
+                                        last_class_level: $('#duplicate_last_class_level').is(':checked'),
+                                        last_education_level: $('#duplicate_last_education_level').is(':checked'),
+                                        last_education_year: $('#duplicate_last_education_year').is(':checked'),
+                                        last_year_result: $('#duplicate_last_year_result').is(':checked'),
+                                    };
+                                    duplicate_item_values(request.result, params);
+                                }
+                                scrollToBottom();
+                            };
                         }
                     });
                 }
