@@ -1005,3 +1005,6 @@ msgstr "تصفية القائمة حسب نوع البطاقة"
 
 msgid "Filter by Nationality"
 msgstr "تصفية القائمة حسب الجنسية"
+
+msgid "Rest filter"
+msgstr "الغاء التصفية"
