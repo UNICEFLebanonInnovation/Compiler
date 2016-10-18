@@ -80,13 +80,15 @@ function validateUNCHRFormat(isValid, id)
 }
 function validateRepIndividualUNCHRFormat(isValid, id)
 {
-    return validateCondition('individual_id_number_format_error', isValid, validate_individual_UNHCRNumber(id));
+    var val = $('#'+id).val();
+    return validateCondition('individual_id_number_format_error', isValid, validate_individual_UNHCRNumber(val));
 }
 
 function validateChildIndividualUNCHRFormat(form,id, errorID, isValid)
 {
     var valid = isValid;
-    if(!validate_individual_UNHCRNumber(form.find('#'+id))){
+    var val = form.find('#'+id).val();
+    if(!validate_individual_UNHCRNumber(val)){
             form.find('#'+errorID).show();
             valid = false ;
         }else{
@@ -95,6 +97,8 @@ function validateChildIndividualUNCHRFormat(form,id, errorID, isValid)
     return valid;
 
 }
+
+
 
 function validate_waiting_list()
 {
@@ -132,9 +136,9 @@ function validateUNHCRNumber(id)
     // return /^[0-9]{3}-1[1-5][C]\d{5}$/i.test($('#id_id_number').val());
     return validrecorded || validregistered;
 }
-function validate_individual_UNHCRNumber(id)
+function validate_individual_UNHCRNumber(val)
 {
-    return /^[0-9]{3}-[0-9]{8}$/i.test($('#'+id).val());
+    return /^[0-9]{3}-[0-9]{8}$/i.test(val);
 }
 
 function validateTextBoxRequired(id, errorID, isValid)
@@ -149,7 +153,7 @@ function validate_add_child_noid()
     var form = $('.bootbox-body').find('#add_child_noid_form');
     if(selectedOption == 1) {
         valid = validateTextBox(form,'id_id_number','id_number_error',valid);
-        //valid = validateChildIndividualUNCHRFormat(form,'id_id_number','number_UNHCR_format_error', valid);
+        valid = validateChildIndividualUNCHRFormat(form,'id_id_number','id_number_UNHCR_format_error', valid);
     }
     valid = validateTextBox(form,'id_first_name','first_name_error',valid);
     valid = validateTextBox(form,'id_father_name','father_name_error',valid);
