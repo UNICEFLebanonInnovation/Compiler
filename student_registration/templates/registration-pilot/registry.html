@@ -251,12 +251,12 @@
                         {% trans "To ensure that your household receives complete payment you must provide the ID Number under which your other registration took place. You can either come back tomorrow, or you can call the hotline to do this. It is important that you do this in order to not delay your payment" %}
                     </span>
                     <div class="line" id="id_number_block" style="display: none;">
-                        <label class="text">{% trans "ID Number" %}<span class="asterisque">*</span></label>
-                        {{ form.previously_registered_number }}
-{#                        <button class="btn btn-primary" type="button" id="get_household_children_data_button">#}
-{#                            {% trans "Edit File" %}#}
-{#                        </button>#}
-                    </div>
+                      <label class="text">{% trans "ID Number" %}<span class="asterisque">*</span></label>
+                      {{ form.previously_registered_number }}
+                      <button class="btn btn-primary" type="button" id="get_household_children_data_button">
+                        {% trans "Edit File" %}
+                      </button>
+                     </div>
                     <span class="error" id="confirm_child_belong" style="display: none;">
                         {% trans "You must confirm that the child belongs to this household by checking the UNHCR Certificate or Family Book. If the household has neither, inform them that a Pilot Officer will visit their household to confirm the child lives with them" %}
                     </span>
@@ -966,8 +966,7 @@
 
                                             var item  = {};
                                             item = collect_form_values(form, item);
-                                            item.id_number = "000000";
-                                            item.owner = user_id;
+                                            item.owner= user_id;
                                             var year = new Date().getFullYear();
                                             if(!item.birthday_day) {
                                                 item.birthday_day = 1;
