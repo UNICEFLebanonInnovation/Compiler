@@ -28,19 +28,14 @@
                                 <ol class="breadcrumb">
                                     <li><a>{% trans "Registration" %}</a></li>
                                     <li>
-                                        <div style="display: inline-block;">
-                                            <label for="id_school">{% trans 'School' %}</label>
-                                        </div>
-                                        <div style="display: inline-block;">
-                                             <select class="form-control" id="id_school">
-                                                 <option value="">----</option>
-                                                  {% for school in schools %}
-                                                    <option value="{{ school.id }}" {% if selectedSchool == school.id %}selected="selected"{% endif %}>
-                                                        {{ school.name }} - {% if school.location %}{{ school.location.name }}{% endif %}
-                                                    </option>
-                                                  {% endfor %}
-                                             </select>
-                                        </div>
+                                         <select id="id_school">
+                                             <option value="">---{% trans "Display by School" %}---</option>
+                                              {% for school in schools %}
+                                                <option value="{{ school.id }}" {% if selectedSchool == school.id %}selected="selected"{% endif %}>
+                                                    {{ school.name }} - {% if school.location %}{{ school.location.name }}{% endif %}
+                                                </option>
+                                              {% endfor %}
+                                         </select>
                                     </li>
                                     <li>
                                         <a class="btn btn-info" id="registration-export" href="{% url "registrations:registration_export" %}" target="_blank">
