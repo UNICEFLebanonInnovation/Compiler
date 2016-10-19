@@ -48,6 +48,22 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         return instance
 
+    def update(self, instance, validated_data):
+
+        student_data = validated_data.pop('student', None)
+        student_serializer = StudentSerializer(data=student_data)
+        student_serializer.is_valid(raise_exception=True)
+        student_serializer.instance = student_serializer.save()
+
+        try:
+            instance.student = student_serializer.instance
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'Registration instance': ex.message})
+
+        return instance
+
     class Meta:
         model = Registration
         fields = (
