@@ -153,8 +153,8 @@ function push_data_to_server_item(item, url, store_name)
         async: false,
         headers: getHeader(),
         dataType: 'json',
-        success: function (response) {
-            if(response.status == '201' || response.status == 201){
+        success: function (response, result, jqXHR) {
+            if(jqXHR.status == 201 || jqXHR.status == 201){
                 update_item_store(parseInt(item.id), 'synchronized', true, store_name);
             }
         },
@@ -198,8 +198,8 @@ function delete_data_from_server(url, original_id, itemid, store_name)
         cache: false,
         headers: getHeader(),
         dataType: 'json',
-        success: function (response) {
-            if(response.status = '200') {
+        success: function (response, result, jqXHR) {
+            if(jqXHR.status = 200) {
                 var store = getStoreByName(store_name);
                 store.delete(parseInt(itemid));
             }
@@ -219,8 +219,8 @@ function update_data_server(url, item, itemid, callback_success, callback_error)
         cache: false,
         headers: getHeader(),
         dataType: 'json',
-        success: function (response) {
-            if(response.status == '200'){
+        success: function (response, result, jqXHR) {
+            if(jqXHR.status == 200){
                 if(callback_success){
                     callback_success();
                 }
@@ -244,8 +244,8 @@ function submitForm(url, form, callback)
         cache: false,
         headers: getHeader(),
         dataType: 'json',
-        success: function (response) {
-            if(response.status == '200'){
+        success: function (response, result, jqXHR) {
+            if(jqXHR.status == 200){
                 if(callback){
                     callback();
                 }

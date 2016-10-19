@@ -25,7 +25,6 @@ from student_registration.schools.models import (
     ClassRoom,
     Grade,
     Section,
-    EducationLevel,
 )
 from student_registration.students.serializers import StudentSerializer
 from student_registration.registrations.forms import (
@@ -70,8 +69,7 @@ class RegistrationView(LoginRequiredMixin, ListView):
 
         return {
             'registrations': data,
-            'education_levels': EducationLevel.objects.all(),
-            'class_levels': ClassRoom.objects.all(),
+            'education_levels': ClassRoom.objects.all(),
             'classrooms': ClassRoom.objects.all(),
             'schools': School.objects.all(),
             'grades': Grade.objects.all(),
