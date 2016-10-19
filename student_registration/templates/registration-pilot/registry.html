@@ -977,6 +977,9 @@
                                             if(!item.birthday_year){
                                                 item.birthday_year = year - parseInt(item.age);
                                             }
+                                            if(!item.id_number){
+                                                item.id_number = '00000';
+                                            }
                                             var callback = function(index){
                                                 button.attr('itemid', index);
                                                 editButton.attr('itemid', index);
