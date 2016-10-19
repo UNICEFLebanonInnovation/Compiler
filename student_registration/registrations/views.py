@@ -73,7 +73,9 @@ class RegistrationView(LoginRequiredMixin, ListView):
         if school:
             data = self.model.objects.filter(school=school).order_by('id')
 
-        if not self.request.user.is_staff:
+        if not self.request.user.is_staff \
+            and not has_group(self.request.user, 'COORDINATOR') \
+            and not has_group(self.request.user, 'PMU'):
             data = self.model.objects.filter(owner=self.request.user)
             self.template_name = 'registrations/index.html'
 
