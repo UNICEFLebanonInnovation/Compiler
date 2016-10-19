@@ -110,15 +110,15 @@ class ClassRoomResource(resources.ModelResource):
         fields = (
             'id',
             'name',
-            'school',
-            'grade',
-            'section'
         )
-        export_order = ('name',)
+        export_order = ('id',)
 
 
 class ClassRoomAdmin(ImportExportModelAdmin):
     resource_class = ClassRoomResource
+    fields = (
+        'name',
+    )
 
 
 class PartnerOrganizationResource(resources.ModelResource):
@@ -138,9 +138,9 @@ class PartnerOrganizationAdmin(ImportExportModelAdmin):
 
 admin.site.register(School, SchoolAdmin)
 # admin.site.register(Course)
-admin.site.register(EducationLevel, EducationLevelAdmin)
-admin.site.register(ClassLevel, ClassLevelAdmin)
-admin.site.register(Grade, GradeAdmin)
+# admin.site.register(EducationLevel, EducationLevelAdmin)
+# admin.site.register(ClassLevel, ClassLevelAdmin)
+# admin.site.register(Grade, GradeAdmin)
 admin.site.register(Section, SectionAdmin)
 admin.site.register(ClassRoom, ClassRoomAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
