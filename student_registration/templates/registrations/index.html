@@ -91,43 +91,17 @@
                                     <tr id="thead-line-1">
                                         <th rowspan="2">&nbsp;</th>
                                         <th rowspan="2">#</th>
-                                        <th rowspan="2">
-                                            {% trans "District" %}
-                                            <input type="checkbox" name="duplicate_section" id="duplicate_location" />
+                                        <th rowspan="2">{% trans "District" %}</th>
+                                        <th rowspan="2">{% trans "Governorate" %}</th>
+                                        <th rowspan="2">{% trans "School number" %}
                                         </th>
+                                        <th rowspan="2">{% trans "School" %}</th>
                                         <th rowspan="2">
-                                            {% trans "Governorate" %}
-                                        </th>
-                                        <th rowspan="2">
-                                            {% trans "Last training level" %}
-                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "Last training level tooltip" %}"></i>
-                                            <input type="checkbox" name="duplicate_last_class_level" id="duplicate_last_class_level" />
-                                        </th>
-                                        <th rowspan="2">
-                                            {% trans "Last education year" %}
-                                            <input type="checkbox" name="duplicate_last_education_year" id="duplicate_last_education_year" />
-                                        </th>
-                                        <th rowspan="2">
-                                            {% trans "Last education level" %}
-                                            <input type="checkbox" name="duplicate_last_education_level" id="duplicate_last_education_level" />
-                                        </th>
-                                        <th rowspan="2">
-                                            {% trans "Last year result" %}
-                                            <input type="checkbox" name="duplicate_last_year_result" id="duplicate_last_year_result" />
-                                        </th>
-                                        <th rowspan="2">
-                                            {% trans "School number" %}
-                                        </th>
-                                        <th rowspan="2">
-                                            {% trans "School" %}
-                                            <input type="checkbox" name="duplicate_school" id="duplicate_school" />
-                                        </th>
-                                        <th rowspan="2">
-                                            {% trans "Class room" %}
+                                            {% trans "Current Class" %}
                                             <input type="checkbox" name="duplicate_classroom" id="duplicate_classroom" />
                                         </th>
                                         <th rowspan="2">
-                                            {% trans "Section" %}
+                                            {% trans "Current Section" %}
                                             <input type="checkbox" name="duplicate_section" id="duplicate_section" />
                                         </th>
                                         <th rowspan="2">
@@ -154,11 +128,24 @@
                                         <th rowspan="2">{% trans "Student father name" %}</th>
                                         <th rowspan="2">{% trans "Student last name" %}</th>
                                         <th rowspan="2">{% trans "Student number" %}</th>
+                                        <th colspan="3">{% trans "Old student situation" %}</th>
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th>{% trans "year" %}</th>
                                         <th>{% trans "month" %}</th>
                                         <th>{% trans "day" %}</th>
+                                        <th>
+                                            {% trans "Last education level" %}
+{#                                            <input type="checkbox" name="duplicate_last_education_level" id="duplicate_last_education_level" />#}
+                                        </th>
+                                        <th>
+                                            {% trans "Last education year" %}
+{#                                            <input type="checkbox" name="duplicate_last_education_year" id="duplicate_last_education_year" />#}
+                                        </th>
+                                        <th>
+                                            {% trans "Last year result" %}
+{#                                            <input type="checkbox" name="duplicate_last_year_result" id="duplicate_last_year_result" />#}
+                                        </th>
                                     </tr>
                                 </thead>
 
@@ -334,16 +321,11 @@
                     request.onsuccess = function(){
 
                         var params = {
-                            location: $('#duplicate_location').is(':checked'),
-                            governorate_name: $('#duplicate_location').is(':checked'),
-                            school: $('#duplicate_school').is(':checked'),
-                            school_number: $('#duplicate_school').is(':checked'),
                             classroom: $('#duplicate_classroom').is(':checked'),
                             section: $('#duplicate_section').is(':checked'),
-                            last_class_level: $('#duplicate_last_class_level').is(':checked'),
-                            last_education_level: $('#duplicate_last_education_level').is(':checked'),
-                            last_education_year: $('#duplicate_last_education_year').is(':checked'),
-                            last_year_result: $('#duplicate_last_year_result').is(':checked')
+{#                            last_education_level: $('#duplicate_last_education_level').is(':checked'),#}
+{#                            last_education_year: $('#duplicate_last_education_year').is(':checked'),#}
+{#                            last_year_result: $('#duplicate_last_year_result').is(':checked')#}
                         };
                         duplicate_item_values(request.result, params);
                         scrollToBottom();
@@ -364,16 +346,11 @@
                             request.onsuccess = function() {
                                 for (var i = 0; i < number; i++) {
                                     var params = {
-                                        location: $('#duplicate_location').is(':checked'),
-                                        governorate_name: $('#duplicate_location').is(':checked'),
-                                        school: $('#duplicate_school').is(':checked'),
-                                        school_number: $('#duplicate_school').is(':checked'),
                                         classroom: $('#duplicate_classroom').is(':checked'),
                                         section: $('#duplicate_section').is(':checked'),
-                                        last_class_level: $('#duplicate_last_class_level').is(':checked'),
-                                        last_education_level: $('#duplicate_last_education_level').is(':checked'),
-                                        last_education_year: $('#duplicate_last_education_year').is(':checked'),
-                                        last_year_result: $('#duplicate_last_year_result').is(':checked'),
+{#                                        last_education_level: $('#duplicate_last_education_level').is(':checked'),#}
+{#                                        last_education_year: $('#duplicate_last_education_year').is(':checked'),#}
+{#                                        last_year_result: $('#duplicate_last_year_result').is(':checked'),#}
                                     };
                                     duplicate_item_values(request.result, params);
                                 }
@@ -675,16 +652,16 @@
                 async: false,
                 headers: getHeader(),
                 dataType: 'json',
-                success: function (response) {
-                    if(response.status == '201'){
-                        $('#line-'+item.id).find('#student_number').val(response.data.number);
+                success: function (response, result, jqXHR) {
+                    if(jqXHR.status == 201){
+                        $('#line-'+item.id).find('#student_number').val(response.number);
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
                         item.synchronized = true;
-                        item.original_id = response.data.id;
+                        item.original_id = response.id;
 
                         update_item_store(parseInt(item.id), 'synchronized', true, 'registrations');
-                        update_item_store(parseInt(item.id), 'original_id', response.data.id, 'registrations');
-                        update_items_by_index('entity', parseInt(item.id), 'entity_id', response.data.id, 'eav-columns-values');
+                        update_item_store(parseInt(item.id), 'original_id', response.id, 'registrations');
+                        update_items_by_index('entity', parseInt(item.id), 'entity_id', response.id, 'eav-columns-values');
                         synchro_result = true;
                     }
                 },
@@ -711,8 +688,9 @@
                 cache: false,
                 headers: getHeader(),
                 dataType: 'json',
-                success: function (response) {
-                    if(response.status == '200'){
+                success: function (response, result, jqXHR) {
+                    if(jqXHR.status == 200){
+                        $('#line-'+item.id).find('#student_number').val(response.number);
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
                         update_item_store(parseInt(item.id), 'synchronized', true, 'registrations');
                         update_items_by_index('entity', parseInt(item.id), 'entity_id', item.original_id, 'eav-columns-values');
