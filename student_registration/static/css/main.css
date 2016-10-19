@@ -28,6 +28,11 @@ input[readonly=readonly] {
     border: 1px solid !important;
 }
 
+[disabled] {
+    background-color: white;
+    color: #0c0c0c;
+}
+
 .loader{
   background: url("../images/loader.gif");
   position: fixed;
