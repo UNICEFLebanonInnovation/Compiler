@@ -17,7 +17,7 @@ class Nationality(models.Model):
     code = models.CharField(max_length=5L, unique=True, null=True)
 
     class Meta:
-        ordering = ['name']
+        ordering = ['id']
 
     def __unicode__(self):
         return self.name

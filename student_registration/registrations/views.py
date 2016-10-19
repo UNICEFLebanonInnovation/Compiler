@@ -70,11 +70,13 @@ class RegistrationView(LoginRequiredMixin, ListView):
         return {
             'registrations': data,
             'education_levels': ClassRoom.objects.all(),
+            'last_year_result': Registration.RESULT,
             'classrooms': ClassRoom.objects.all(),
             'schools': School.objects.all(),
             'grades': Grade.objects.all(),
             'sections': Section.objects.all(),
-            'nationalities': Nationality.objects.all(),
+            'nationalities': Nationality.objects.exclude(id=5),
+            'nationalities2': Nationality.objects.all(),
             'genders': (u'Male', u'Female'),
             'months': Person.MONTHS,
             'idtypes': IDType.objects.all(),
@@ -153,6 +155,24 @@ class RegistrationViewSet(mixins.RetrieveModelMixin,
                 return []
 
         return self.queryset
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        student = instance.student
+        instance.delete()
+        if student:
+            student.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        instance.save()
+
+    # def update(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #     return JsonResponse({'status': status.HTTP_200_OK, 'student_number': serializer.data['student_number']})
 
 
 class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
@@ -304,16 +324,27 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         queryset = self.get_queryset()
         data = tablib.Dataset()
         data.headers = [
-            _('Student number'), _('Student fullname'), _('Student nationality'),
-            _('Mother fullname'), _('Mother nationality'),
-            _('Student birthday'), _('Student age'), _('Sex'),
-            _('Student ID Type'),_('Student ID Number'),
-            _('Phone number'), _('Student living address'),
-            _('Section'), _('Class'),
-            _('School'), _('School number'),
-            _('Last training level'), _('Last education year'),
-            _('Last education level'), _('Last year result'),
-            _('District'), _('Governorate')
+            _('Last education year'),
+            _('Last education level'),
+            _('Last year result'),
+            _('Current Section'),
+            _('Current Class'),
+            _('Phone number'),
+            _('Student living address'),
+            _('Student ID Number'),
+            _('Student ID Type'),
+            _('Mother nationality'),
+            _('Mother fullname'),
+            _('Student nationality'),
+            _('Student age'),
+            _('Student birthday'),
+            _('Sex'),
+            _('Student fullname'),
+            _('Student number'),
+            _('School'),
+            _('School number'),
+            _('District'),
+            _('Governorate')
         ]
 
         content = []
@@ -321,26 +352,25 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             if not line.student or not line.school:
                 continue
             content = [
-                line.student.number,
-                line.student.__unicode__(),
-                line.student.nationality_name(),
-                line.student.mother_fullname,
-                line.student.mother_nationality,
-                line.student.birthday,
-                line.student.get_age(),
-                _(line.student.sex),
-                line.student.id_type,
-                line.student.id_number,
-                line.student.phone,
-                line.student.address,
-                line.classroom,
-                line.section,
-                line.school.name,
-                line.school.number,
-                line.last_class_level,
                 line.last_education_year,
                 line.last_education_level,
                 line.last_year_result,
+                line.section,
+                line.classroom,
+                line.student.phone,
+                line.student.address,
+                line.student.id_number,
+                line.student.id_type,
+                line.student.mother_nationality,
+                line.student.mother_fullname,
+                line.student.nationality_name(),
+                line.student.birthday,
+                line.student.get_age(),
+                _(line.student.sex),
+                line.student.__unicode__(),
+                line.student.number,
+                line.school.name,
+                line.school.number,
                 line.school.location.name,
                 line.school.location.parent.name,
             ]
