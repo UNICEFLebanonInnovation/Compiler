@@ -13,6 +13,7 @@ from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from django.core.urlresolvers import reverse
 from datetime import datetime
+from student_registration.alp.templatetags.util_tags import has_group
 
 from student_registration.students.models import (
     Person,
@@ -59,6 +60,15 @@ class RegistrationView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         data = []
+        schools = []
+
+        if has_group(self.request.user, 'MEHE'):
+            schools = School.objects.all()
+        elif has_group(self.request.user, 'COORDINATOR'):
+            schools = School.objects.filter(location_id__in=self.request.user.locations.all())
+        elif has_group(self.request.user, 'PMU'):
+            schools = School.objects.filter(location_id=self.request.user.location_id)
+
         school = self.request.GET.get("school", 0)
         if school:
             data = self.model.objects.filter(school=school).order_by('id')
@@ -72,8 +82,8 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'education_levels': ClassRoom.objects.all(),
             'last_year_result': Registration.RESULT,
             'classrooms': ClassRoom.objects.all(),
-            'schools': School.objects.all(),
-            'grades': Grade.objects.all(),
+            'schools': schools,
+            # 'grades': Grade.objects.all(),
             'sections': Section.objects.all(),
             'nationalities': Nationality.objects.exclude(id=5),
             'nationalities2': Nationality.objects.all(),
@@ -82,7 +92,7 @@ class RegistrationView(LoginRequiredMixin, ListView):
             'idtypes': IDType.objects.all(),
             'columns': Attribute.objects.filter(type=Registration.EAV_TYPE),
             'eav_type': Registration.EAV_TYPE,
-            'locations': Location.objects.filter(type_id=2),
+            # 'locations': Location.objects.filter(type_id=2),
             'selectedSchool': int(school),
         }
 

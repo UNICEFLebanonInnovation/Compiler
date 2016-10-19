@@ -32,7 +32,7 @@
                                              <option value="">---{% trans "Display by School" %}---</option>
                                               {% for school in schools %}
                                                 <option value="{{ school.id }}" {% if selectedSchool == school.id %}selected="selected"{% endif %}>
-                                                    {{ school.name }} - {% if school.location %}{{ school.location.name }}{% endif %}
+                                                    {{ school }} - {% if school.location %}{{ school.location.name }}{% endif %}
                                                 </option>
                                               {% endfor %}
                                          </select>
