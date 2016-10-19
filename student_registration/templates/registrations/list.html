@@ -64,36 +64,30 @@
                                     <tr>
                                         <th>{% trans "Governorate" %}</th>
                                         <th>{% trans "District" %}</th>
-                                        <th>
-                                            {% trans "Last training level" %}
-                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "Last training level tooltip" %}"></i>
-                                        </th>
-                                        <th>{% trans "Last education year" %}</th>
-                                        <th>{% trans "Last education level" %}</th>
-                                        <th>{% trans "Last year result" %}</th>
                                         <th>{% trans "School number" %}</th>
                                         <th>{% trans "School" %}</th>
-                                        <th>{% trans "Class" %}</th>
-                                        <th>{% trans "Section" %}</th>
-                                        <th>{% trans "Student living address" %}</th>
-                                        <th>{% trans "Phone number" %}</th>
-                                        <th>
-                                            {% trans "Student ID Type" %}
-                                        </th>
-                                        <th>
-                                            {% trans "Student ID Number" %}
-                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"></i>
-                                        </th>
+                                        <th>{% trans "Student number" %}</th>
+                                        <th>{% trans "Student first name" %}</th>
+                                        <th>{% trans "Student father name" %}</th>
+                                        <th>{% trans "Student last name" %}</th>
                                         <th>{% trans "Sex" %}</th>
                                         <th>{% trans "Student birthday" %}</th>
                                         <th>{% trans "Student age" %}</th>
                                         <th>{% trans "Student nationality" %}</th>
                                         <th>{% trans "Mother fullname" %}</th>
                                         <th>{% trans "Mother nationality" %}</th>
-                                        <th>{% trans "Student first name" %}</th>
-                                        <th>{% trans "Student father name" %}</th>
-                                        <th>{% trans "Student last name" %}</th>
-                                        <th>{% trans "Student number" %}</th>
+                                        <th>{% trans "Student ID Type" %}</th>
+                                        <th>
+                                            {% trans "Student ID Number" %}
+                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"></i>
+                                        </th>
+                                        <th>{% trans "Student living address" %}</th>
+                                        <th>{% trans "Phone number" %}</th>
+                                        <th>{% trans "Current Class" %}</th>
+                                        <th>{% trans "Current Section" %}</th>
+                                        <th>{% trans "Last education year" %}</th>
+                                        <th>{% trans "Last education level" %}</th>
+                                        <th>{% trans "Last year result" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -101,28 +95,27 @@
                                         <tr>
                                             <td>{% if registry.school and registry.school.location and registry.school.location.parent %}{{ registry.school.location.parent.name }}{% endif %}</td>
                                             <td>{% if registry.school and registry.school.location %}{{ registry.school.location.name }}{% endif %}</td>
-                                            <td>{% if registry.last_education_year %}{{ registry.last_education_year }}{% endif %}</td>
-                                            <td>{% if registry.last_class_level %}{{ registry.last_class_level.name }}{% endif %}</td>
-                                            <td>{% if registry.last_education_level %}{{ registry.last_education_level }}{% endif %}</td>
-                                            <td>{% if registry.last_year_result %}{{ registry.last_year_result }}{% endif %}</td>
                                             <td>{% if registry.school %}{{ registry.school.number }}{% endif %}</td>
                                             <td>{% if registry.school %}{{ registry.school.name }}{% endif %}</td>
-                                            <td>{% if registry.classroom %}{{ registry.classroom.name }}{% endif %}</td>
-                                            <td>{% if registry.section %}{{ registry.section.name }}{% endif %}</td>
-                                            <td>{% if registry.student %}{{ registry.student.address }}{% endif %}</td>
-                                            <td>{% if registry.student %}{{ registry.student.phone }}{% endif %}</td>
-                                            <td>{% if registry.student and registry.student.id_type %}{{ registry.student.id_type.name }}{% endif %}</td>
-                                            <td>{% if registry.student %}{{ registry.student.id_number }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.number }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.first_name }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.father_name }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.last_name }}{% endif %}</td>
                                             <td>{% if registry.student %}{%  trans registry.student.sex %}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.birthday }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.age }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.nationality_name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.mother_fullname }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.mother_nationality }}{% endif %}</td>
-                                            <td>{% if registry.student %}{{ registry.student.first_name }}{% endif %}</td>
-                                            <td>{% if registry.student %}{{ registry.student.father_name }}{% endif %}</td>
-                                            <td>{% if registry.student %}{{ registry.student.last_name }}{% endif %}</td>
-                                            <td>{% if registry.student %}{{ registry.student.number }}{% endif %}</td>
+                                            <td>{% if registry.student and registry.student.id_type %}{{ registry.student.id_type.name }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.id_number }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.address }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.phone }}{% endif %}</td>
+                                            <td>{% if registry.classroom %}{{ registry.classroom.name }}{% endif %}</td>
+                                            <td>{% if registry.section %}{{ registry.section.name }}{% endif %}</td>
+                                            <td>{% if registry.last_education_year %}{{ registry.last_education_year }}{% endif %}</td>
+                                            <td>{% if registry.last_education_level %}{{ registry.last_education_level }}{% endif %}</td>
+                                            <td>{% if registry.last_year_result %}{{ registry.last_year_result }}{% endif %}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -158,7 +151,7 @@
                 info:     true,
                 autoWidth: false,
                 scrollY: '50vh',
-                scrollX: true,
+                scrollX: false,
                 scrollCollapse: true,
                 "language": {
                     "url": "/static/locale/"+language+".json"
