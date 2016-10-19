@@ -65,6 +65,9 @@ class Grade(models.Model):
 class Section(models.Model):
     name = models.CharField(max_length=45L, unique=True)
 
+    class Meta:
+        ordering = ['id']
+
     def __unicode__(self):
         return self.name
 
@@ -86,6 +89,9 @@ class ClassRoom(models.Model):
         blank=True, null=True,
         related_name='+',
     )
+
+    class Meta:
+        ordering = ['id']
 
     def __unicode__(self):
         return self.name

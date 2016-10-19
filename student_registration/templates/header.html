@@ -5,7 +5,7 @@
     <div class="m-b">
       <nav class="navbar navbar-dark navbar-static-top bg-inverse">
         <div class="container">
-          <a class="navbar-brand" href="/?ln={{ LANGUAGE_CODE }}">{% if request.user.is_authenticated and request.user|has_group:"PILOT" %}{% trans "Pilot" %}{% else %}{% trans "Compiler" %}{% endif %}</a>
+          <a class="navbar-brand" href="/?ln={{ LANGUAGE_CODE }}">{% if request.user.is_authenticated and request.user|has_group:"ALP" %}{% trans "Compiler" %}{% else %}{% trans "Pilot" %}{% endif %}</a>
           <button type="button" class="navbar-toggler hidden-sm-up pull-xs-right" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
             &#9776;
           </button>
