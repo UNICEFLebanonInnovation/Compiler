@@ -2,7 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.http import Http404
-from django.views.generic import ListView, FormView
+from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
@@ -49,6 +49,37 @@ from .serializers import (
     WaitingListSerializer,
 )
 from .utils import get_unhcr_principal_applicant
+
+
+class RegistrationSatffView(LoginRequiredMixin, TemplateView):
+    """
+    Provides the registration page with lookup types in the context
+    """
+    model = Registration
+    template_name = 'registrations/list.html'
+
+    def get_context_data(self, **kwargs):
+        data = []
+        schools = []
+
+        if has_group(self.request.user, 'MEHE'):
+            schools = School.objects.all()
+        elif has_group(self.request.user, 'COORDINATOR'):
+            schools = School.objects.filter(location_id__in=self.request.user.locations.all())
+        elif has_group(self.request.user, 'PMU'):
+            schools = School.objects.filter(location_id=self.request.user.location_id)
+
+        school = self.request.GET.get("school", 0)
+        if school:
+            data = self.model.objects.filter(school=school).order_by('id')
+
+        return {
+            'registrations': data,
+            'schools': schools,
+            'columns': Attribute.objects.filter(type=Registration.EAV_TYPE),
+            'eav_type': Registration.EAV_TYPE,
+            'selectedSchool': int(school),
+        }
 
 
 class RegistrationView(LoginRequiredMixin, ListView):
