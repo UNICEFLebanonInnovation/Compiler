@@ -12,6 +12,11 @@ urlpatterns = [
         name='registration'
     ),
     url(
+        regex=r'^registration-view/$',
+        view=views.RegistrationSatffView.as_view(),
+        name='registration_view'
+    ),
+    url(
         regex=r'^registering-pilot/$',
         view=views.RegisteringPilotView.as_view(),
         name='registering_pilot'
