@@ -269,9 +269,14 @@ class RegistrationAdmin(ImportExportModelAdmin):
 
 class WaitingListResource(resources.ModelResource):
     school = fields.Field(
-        column_name='chool',
+        column_name='school',
         attribute='school',
         widget=ForeignKeyWidget(School, 'name')
+    )
+    location = fields.Field(
+        column_name='Location',
+        attribute='location',
+        widget=ForeignKeyWidget(Location, 'name')
     )
     registering_adult_fname = fields.Field(
         column_name='Registering Adult First Name',
@@ -304,14 +309,6 @@ class WaitingListResource(resources.ModelResource):
     village = fields.Field(
         column_name='Village',
         attribute='village'
-    )
-    location = fields.Field(
-        column_name='Number of children',
-        attribute='number_of_children'
-    )
-    number_of_children = fields.Field(
-        column_name='Number of children',
-        attribute='number_of_children'
     )
     number_of_children = fields.Field(
         column_name='Number of children',
