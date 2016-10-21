@@ -149,19 +149,29 @@ class RegisteringAdultAdmin(ImportExportModelAdmin):
 
 class RegistrationResource(resources.ModelResource):
     registering_adult_fname = fields.Field(
-        column_name='Registering Adult First Name',
+        column_name='Adult First Name',
         attribute='registering_adult',
         widget=ForeignKeyWidget(RegisteringAdult, 'first_name')
     )
     registering_adult_faname = fields.Field(
-        column_name='Registering Adult Father Name',
+        column_name='Adult Father Name',
         attribute='registering_adult',
         widget=ForeignKeyWidget(RegisteringAdult, 'father_name')
     )
     registering_adult_lname = fields.Field(
-        column_name='Registering Adult last Name',
+        column_name='Adult last Name',
         attribute='registering_adult',
         widget=ForeignKeyWidget(RegisteringAdult, 'last_name')
+    )
+    primary_phone = fields.Field(
+        column_name='Primary Phone',
+        attribute='registering_adult',
+        widget=ForeignKeyWidget(RegisteringAdult, 'primary_phone')
+    )
+    secondary_phone = fields.Field(
+        column_name='Secondary Phone',
+        attribute='registering_adult',
+        widget=ForeignKeyWidget(RegisteringAdult, 'secondary_phone')
     )
     enrolled_last_year_location = fields.Field(
         column_name='Location',
@@ -246,12 +256,12 @@ class RegistrationResource(resources.ModelResource):
         model = Registration
         fields = ('relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school', 'enrolled_last_year_location',
                   'section', 'grade', 'classroom', 'year', 'owner', 'status', 'out_of_school_two_years',
-                  'related_to_family')
+                  'related_to_family', 'primary_phone', 'secondary_phone')
         export_order = (
             'id_number','studentFname', 'studentFaName', 'studentLname', 'registering_adult_fname', 'registering_adult_faname',
             'registering_adult_lname', 'mother', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
             'enrolled_last_year_location', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
-            'out_of_school_two_years', 'related_to_family')
+            'out_of_school_two_years', 'related_to_family', 'primary_phone', 'secondary_phone')
 
 
 class RegistrationAdmin(ImportExportModelAdmin):
