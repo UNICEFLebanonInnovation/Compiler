@@ -60,6 +60,11 @@ class Person(TimeStampedModel):
         (12, _('December')),
     )
 
+    GENDER = Choices(
+        ('Male', _('Male')),
+        ('Female', _('Female')),
+    )
+
     first_name = models.CharField(max_length=64L, blank=True, null=True)
     last_name = models.CharField(max_length=64L, blank=True, null=True)
     father_name = models.CharField(max_length=64L, blank=True, null=True)
@@ -99,6 +104,7 @@ class Person(TimeStampedModel):
     )
     age = models.CharField(max_length=4L, blank=True, null=True)
     phone = models.CharField(max_length=64L, blank=True, null=True)
+    phone_prefix = models.CharField(max_length=10L, blank=True, null=True)
     id_number = models.CharField(max_length=45L, blank=True, null=True)
     id_type = models.ForeignKey(
         IDType,

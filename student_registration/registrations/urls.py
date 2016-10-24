@@ -13,7 +13,7 @@ urlpatterns = [
     ),
     url(
         regex=r'^registration-view/$',
-        view=views.RegistrationSatffView.as_view(),
+        view=views.RegistrationStaffView.as_view(),
         name='registration_view'
     ),
     url(
