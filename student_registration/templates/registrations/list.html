@@ -76,18 +76,24 @@
                                         <th>{% trans "Student nationality" %}</th>
                                         <th>{% trans "Mother fullname" %}</th>
                                         <th>{% trans "Mother nationality" %}</th>
+                                        <th>{% trans "Registered in UNHCR" %}</th>
                                         <th>{% trans "Student ID Type" %}</th>
-                                        <th>
-                                            {% trans "Student ID Number" %}
+                                        <th>{% trans "Student ID Number" %}
                                             <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"></i>
                                         </th>
                                         <th>{% trans "Student living address" %}</th>
                                         <th>{% trans "Phone number" %}</th>
+                                        <th>{% trans "Phone prefix" %}</th>
                                         <th>{% trans "Current Class" %}</th>
                                         <th>{% trans "Current Section" %}</th>
-                                        <th>{% trans "Last education year" %}</th>
                                         <th>{% trans "Last education level" %}</th>
+                                        <th>{% trans "Last education year" %}</th>
                                         <th>{% trans "Last year result" %}</th>
+                                        <th>{% trans "Is the child participated in an ALP program" %}</th>
+                                        <th>{% trans "Last informal education level" %}</th>
+                                        <th>{% trans "Last informal education year" %}</th>
+                                        <th>{% trans "Last informal education result" %}</th>
+                                        <th>{% trans "Last informal education final result" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -101,21 +107,28 @@
                                             <td>{% if registry.student %}{{ registry.student.first_name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.father_name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.last_name }}{% endif %}</td>
-                                            <td>{% if registry.student %}{%  trans registry.student.sex %}{% endif %}</td>
+                                            <td>{% if registry.student %}{% trans registry.student.sex %}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.birthday }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.age }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.nationality_name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.mother_fullname }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.mother_nationality }}{% endif %}</td>
+                                            <td>{% if registry.registered_in_unhcr %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
                                             <td>{% if registry.student and registry.student.id_type %}{{ registry.student.id_type.name }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.id_number }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.address }}{% endif %}</td>
                                             <td>{% if registry.student %}{{ registry.student.phone }}{% endif %}</td>
+                                            <td>{% if registry.student %}{{ registry.student.phone_prefix }}{% endif %}</td>
                                             <td>{% if registry.classroom %}{{ registry.classroom.name }}{% endif %}</td>
                                             <td>{% if registry.section %}{{ registry.section.name }}{% endif %}</td>
-                                            <td>{% if registry.last_education_year %}{{ registry.last_education_year }}{% endif %}</td>
-                                            <td>{% if registry.last_education_level %}{{ registry.last_education_level }}{% endif %}</td>
-                                            <td>{% if registry.last_year_result %}{{ registry.last_year_result }}{% endif %}</td>
+                                            <td>{% if registry.last_education_level %}{{ registry.last_education_level.name }}{% endif %}</td>
+                                            <td>{{ registry.last_education_year }}</td>
+                                            <td>{{ registry.last_year_result }}</td>
+                                            <td>{% if registry.participated_in_alp %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+                                            <td>{% if registry.last_informal_edu_level %}{{ registry.last_informal_edu_level.name }}{% endif %}</td>
+                                            <td>{{ registry.last_informal_edu_year }}</td>
+                                            <td>{{ registry.last_informal_edu_result }}</td>
+                                            <td>{% if registry.last_informal_edu_final_result %}{{ registry.last_informal_edu_final_result.name }}{% endif %}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -145,13 +158,14 @@
         $(document).ready(function(){
 
             oTable = $('#registrations-table').DataTable({
-                fixedHeader: true,
+                fixedHeader: false,
                 paging:   true,
                 ordering: true,
                 info:     true,
-                autoWidth: false,
+                autoWidth: true,
                 scrollY: '50vh',
-                scrollX: false,
+                scrollY: '50vh',
+{#                scrollX: false,#}
                 scrollCollapse: true,
                 "language": {
                     "url": "/static/locale/"+language+".json"
@@ -165,11 +179,12 @@
             $("#id_school").change(function(){
                 var selected_school = $(this).val();
                // reload the page with the school id passed in post
-                if(selected_school)
-                    window.location.href = '/registrations/registration/?school='+selected_school;
-                else
-                    window.location.href = '/registrations/registration/';
-
+                if(selected_school){
+                    window.location.href = '{% url "registrations:registration_view" %}'+'?school='+selected_school;
+                }
+                else {
+                    window.location.href = '{% url "registrations:registration_view" %}';
+                }
             });
 
         });

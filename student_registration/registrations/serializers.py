@@ -18,6 +18,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     student_birthday_day = serializers.CharField(source='student.birthday_day')
     student_age = serializers.CharField(source='student.age')
     student_phone = serializers.CharField(source='student.phone')
+    student_phone_prefix = serializers.CharField(source='student.phone_prefix')
     student_id_number = serializers.CharField(source='student.id_number')
     student_id_type = serializers.CharField(source='student.id_type')
     student_id_type_name = serializers.CharField(source='student.id_type.name', read_only=True)
@@ -80,12 +81,19 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'student_birthday_day',
             'student_age',
             'student_phone',
+            'student_phone_prefix',
             'student_id_number',
             'student_id_type',
             'student_id_type_name',
             'student_number',
             'student_nationality',
             'student_mother_nationality',
+            'registered_in_unhcr',
+            'participated_in_alp',
+            'last_informal_edu_level',
+            'last_informal_edu_year',
+            'last_informal_edu_result',
+            'last_informal_edu_final_result',
             'student_address',
             'school',
             'school_name',
