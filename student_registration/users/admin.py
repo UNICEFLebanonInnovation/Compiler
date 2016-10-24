@@ -14,7 +14,6 @@ from .models import (
     User,
 )
 
-
 class UserResource(resources.ModelResource):
     class Meta:
         model = User
@@ -36,6 +35,13 @@ class UserResource(resources.ModelResource):
 class UserAdmin(ImportExportModelAdmin):
     resource_class = UserResource
     filter_horizontal = ('groups', 'user_permissions', 'locations',)
+    list_display = ('username', 'first_name', 'last_name', 'email', 'school', 'location', 'phone_number',)
+    search_fields = ('location', 'first_name', 'last_name',)
+    list_filter = (
+        'groups',
+        'school',
+        'location',
+    )
 
 
 admin.site.register(User, UserAdmin)
