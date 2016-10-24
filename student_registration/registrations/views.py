@@ -26,6 +26,8 @@ from student_registration.schools.models import (
     ClassRoom,
     Grade,
     Section,
+    EducationLevel,
+    ClassLevel,
 )
 from student_registration.students.serializers import StudentSerializer
 from student_registration.registrations.forms import (
@@ -51,7 +53,7 @@ from .serializers import (
 from .utils import get_unhcr_principal_applicant
 
 
-class RegistrationSatffView(LoginRequiredMixin, TemplateView):
+class RegistrationStaffView(LoginRequiredMixin, TemplateView):
     """
     Provides the registration page with lookup types in the context
     """
@@ -82,51 +84,29 @@ class RegistrationSatffView(LoginRequiredMixin, TemplateView):
         }
 
 
-class RegistrationView(LoginRequiredMixin, ListView):
+class RegistrationView(LoginRequiredMixin, TemplateView):
     """
     Provides the registration page with lookup types in the context
     """
     model = Registration
-    template_name = 'registrations/list.html'
+    template_name = 'registrations/index.html'
 
     def get_context_data(self, **kwargs):
-        data = []
-        schools = []
-
-        if has_group(self.request.user, 'MEHE'):
-            schools = School.objects.all()
-        elif has_group(self.request.user, 'COORDINATOR'):
-            schools = School.objects.filter(location_id__in=self.request.user.locations.all())
-        elif has_group(self.request.user, 'PMU'):
-            schools = School.objects.filter(location_id=self.request.user.location_id)
-
-        school = self.request.GET.get("school", 0)
-        if school:
-            data = self.model.objects.filter(school=school).order_by('id')
-
-        if not self.request.user.is_staff \
-            and not has_group(self.request.user, 'COORDINATOR') \
-            and not has_group(self.request.user, 'PMU'):
-            data = self.model.objects.filter(owner=self.request.user)
-            self.template_name = 'registrations/index.html'
 
         return {
-            'registrations': data,
             'education_levels': ClassRoom.objects.all(),
-            'last_year_result': Registration.RESULT,
+            'education_results': Registration.RESULT,
+            'informal_educations': EducationLevel.objects.all(),
+            'education_final_results': ClassLevel.objects.all(),
             'classrooms': ClassRoom.objects.all(),
-            'schools': schools,
-            # 'grades': Grade.objects.all(),
             'sections': Section.objects.all(),
             'nationalities': Nationality.objects.exclude(id=5),
             'nationalities2': Nationality.objects.all(),
-            'genders': (u'Male', u'Female'),
+            'genders': Person.GENDER,
             'months': Person.MONTHS,
             'idtypes': IDType.objects.all(),
             'columns': Attribute.objects.filter(type=Registration.EAV_TYPE),
             'eav_type': Registration.EAV_TYPE,
-            # 'locations': Location.objects.filter(type_id=2),
-            'selectedSchool': int(school),
         }
 
 
@@ -376,6 +356,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             _('Student living address'),
             _('Student ID Number'),
             _('Student ID Type'),
+            _('Registered in UNHCR'),
             _('Mother nationality'),
             _('Mother fullname'),
             _('Student nationality'),
@@ -403,8 +384,9 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 line.student.phone,
                 line.student.address,
                 line.student.id_number,
-                line.student.id_type,
-                line.student.mother_nationality,
+                line.student.id_type.name if line.student.id_type else '',
+                line.registered_in_unhcr,
+                line.student.mother_nationality.name if line.student.mother_nationality else '',
                 line.student.mother_fullname,
                 line.student.nationality_name(),
                 line.student.birthday,
