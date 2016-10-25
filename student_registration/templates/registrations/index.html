@@ -224,16 +224,6 @@
             });
             bootbox.setLocale(language);
 
-{#            setInterval(function(){#}
-{#                synchro_result = true;#}
-{#                $('.alert').hide();#}
-{#                if(navigator.onLine) {#}
-{#                    synchronize_data(false);#}
-{#                }else{#}
-{#                    $('#alert-connection').show();#}
-{#                }#}
-{#            }, 3600000);#}
-
             $(document).on("click", ".delete-column", function(e) {
                 var itemid = $(this).parent().attr('itemscope');
                 var iremref = $(this).parent().attr('itemref');
@@ -270,20 +260,6 @@
                 }
             });
 
-            $(document).on('click', '#add_defined_lines', function(){
-                bootbox.prompt("{% trans 'Please enter the number of lines' %}", function(result) {
-                    if (result === null) {
-                    } else {
-                        var number = parseInt(result);
-                        for (var i = 0; i < number; i++) {
-                            var item = create_item_store_default_keys();
-                            add_to_store(item);
-                        }
-                        scrollToBottom();
-                    }
-                });
-            });
-
             $(document).on('change', '#filter_section, #filter_class, #filter_id_type, #filter_nationality', function(){
                 if($(this).val()){
                     var value = $(this).val();
@@ -312,6 +288,20 @@
                 var item = create_item_store_default_keys();
                 add_to_store(item);
                 scrollToBottom();
+            });
+
+            $(document).on('click', '#add_defined_lines', function(){
+                bootbox.prompt("{% trans 'Please enter the number of lines' %}", function(result) {
+                    if (result === null) {
+                    } else {
+                        var number = parseInt(result);
+                        for (var i = 0; i < number; i++) {
+                            var item = create_item_store_default_keys();
+                            add_to_store(item);
+                        }
+                        scrollToBottom();
+                    }
+                });
             });
 
             $(document).on('click', '#duplicate_last_line_select', function(){
@@ -686,8 +676,8 @@
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+item.id).find('#'+field_name).addClass('required');
                     });
-                    console.log(response);
                     synchro_result = false;
+                    console.log(response);
                 }
             });
         }
