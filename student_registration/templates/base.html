@@ -70,12 +70,16 @@
                 {% endif %}
             {% if request.user.is_authenticated %}
                     {% if request.user|has_group:"ALP_OUTREACH" %}
+                        {% if request.user|has_group:"PARTNER" %}
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data system" %}</a>
+                    <a class="nav-link" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data collecting" %}</a>
                   </li>
+                        {% endif %}
+                        {% if request.user|has_group:"PMU" %}
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'alp:alp_data_view' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data view" %}</a>
+                    <a class="nav-link" href="{% url 'alp:alp_data_view' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data collecting" %}</a>
                   </li>
+                        {% endif %}
                     {% endif %}
                 {% if request.user|has_group:"SCHOOL" or request.user|has_group:"DIRECTOR" %}
                   <li class="nav-item">
