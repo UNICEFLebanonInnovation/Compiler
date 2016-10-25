@@ -386,7 +386,11 @@
                 if($(this).hasClass('extra-field')){
                     update_one_by_index('name', $(this).attr('name'), 'value_text', $(this).val(), 'eav-columns-values')
                 }else{
-                    update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches');
+                    if($(this).hasAttribute('data-value')){
+                        update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).attr('data-value'), 'outreaches');
+                    }else{
+                        update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches');
+                    }
                 }
             });
 
