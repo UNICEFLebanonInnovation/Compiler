@@ -1065,3 +1065,6 @@ msgstr "السنة الدراسية"
 
 msgid "Result"
 msgstr "النتيجة"
+
+msgid "ALP data collecting"
+msgstr "جمع البيانات ALP"
