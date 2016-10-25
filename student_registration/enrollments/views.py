@@ -179,7 +179,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             if not line.student or not line.school:
                 continue
             content = [
-                line.last_education_year.name if line.last_education_year else '',
+                line.last_education_year if line.last_education_year else '',
                 line.last_education_level.name if line.last_education_level else '',
                 line.last_year_result,
                 line.section.name if line.section else '',
