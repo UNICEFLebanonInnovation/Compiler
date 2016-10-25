@@ -56,6 +56,7 @@ LOCAL_APPS = (
     'student_registration.alp',  # custom alp app
     'student_registration.attendances',  # custom attendances app
     'student_registration.registrations',  # custom registrations app
+    'student_registration.enrollments',  # custom enrollments app
     'student_registration.schools',  # custom schools app
     'student_registration.locations',  # custom locations app
     'student_registration.eav',  # custom EAV app

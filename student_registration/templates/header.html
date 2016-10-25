@@ -21,17 +21,20 @@
                 {% if request.user.is_authenticated %}
                     {% if request.user|has_group:"ALP_OUTREACH" %}
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'alp:outreach' %}?ln={{ LANGUAGE_CODE }}">{% trans "Outreach" %}</a>
+                    <a class="nav-link" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data system" %}</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'alp:alp_data_view' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data view" %}</a>
                   </li>
                     {% endif %}
                 {% if request.user|has_group:"SCHOOL" or request.user|has_group:"DIRECTOR" %}
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'registrations:registration' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
+                    <a class="nav-link" href="{% url 'enrollments:enrollment' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
                   </li>
                 {% endif %}
                 {% if request.user|has_group:"PMU" %}
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'registrations:registration_view' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
+                    <a class="nav-link" href="{% url 'enrollments:enrollment_view' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
                   </li>
                 {% endif %}
                     {% if request.user|has_group:"ATTENDANCE" %}

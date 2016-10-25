@@ -1053,3 +1053,15 @@ msgstr "النتيجة"
 
 msgid "Last informal education final result"
 msgstr "حصيلة الدراسة"
+
+msgid "Last student ALP education"
+msgstr "أعلى مستوى تعليم مكثف في حال كان الطفل مسجلا في البرنامج سابقا"
+
+msgid "Level"
+msgstr "المستوى"
+
+msgid "Education year"
+msgstr "السنة الدراسية"
+
+msgid "Result"
+msgstr "النتيجة"
