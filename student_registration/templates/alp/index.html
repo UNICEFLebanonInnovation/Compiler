@@ -92,7 +92,7 @@
                                         <th rowspan="2">{% trans "Phone number (6 digits)" %}</th>
                                         <th rowspan="2">{% trans "Phone prefix (2 digits)" %}</th>
                                         <th colspan="2">{% trans "Last student education" %}</th>
-                                        <th colspan="3">{% trans "Last student informal education" %}</th>
+                                        <th colspan="4">{% trans "Last student informal education" %}</th>
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th>{% trans "year" %}</th>
@@ -101,8 +101,9 @@
                                         <th>{% trans "Last education level" %}</th>
                                         <th>{% trans "Last education year" %}</th>
                                         <th>{% trans "Is the child participated in an ALP program" %}</th>
-                                        <th>{% trans "Last informal education level" %}</th>
-                                        <th>{% trans "Last informal education final result" %}</th>
+                                        <th>{% trans "ALP round" %}</th>
+                                        <th>{% trans "ALP level" %}</th>
+                                        <th>{% trans "ALP result" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -736,7 +737,7 @@
             var form = $('#line-'+itemid);
 
             var birthday_day = form.find('#student_birthday_day').val();
-            var birthday_month = form.find('#student_birthday_month').val()-1;
+            var birthday_month = form.find('#student_birthday_month').val();
             var birthday_year = form.find('#student_birthday_year').val();
 
             var birthDate = new Date(birthday_year, birthday_month, birthday_day);

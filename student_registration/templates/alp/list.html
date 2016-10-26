@@ -86,8 +86,9 @@
                                         <th>{% trans "Last education level" %}</th>
                                         <th>{% trans "Last education year" %}</th>
                                         <th>{% trans "Is the child participated in an ALP program" %}</th>
-                                        <th>{% trans "Last informal education level" %}</th>
-                                        <th>{% trans "Last informal education final result" %}</th>
+                                        <th>{% trans "ALP round" %}</th>
+                                        <th>{% trans "ALP level" %}</th>
+                                        <th>{% trans "ALP result" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -116,6 +117,7 @@
                                             <td>{% if registry.last_education_level %}{{ registry.last_education_level.name }}{% endif %}</td>
                                             <td>{{ registry.last_education_year }}</td>
                                             <td>{% if registry.participated_in_alp %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+                                            <td>{% if registry.last_informal_edu_round %}{{ registry.last_informal_edu_round.name }}{% endif %}</td>
                                             <td>{% if registry.last_informal_edu_level %}{{ registry.last_informal_edu_level.name }}{% endif %}</td>
                                             <td>{% if registry.last_informal_edu_final_result %}{{ registry.last_informal_edu_final_result.name }}{% endif %}</td>
                                         </tr>
