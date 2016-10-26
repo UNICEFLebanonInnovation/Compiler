@@ -24,9 +24,29 @@ from student_registration.locations.models import Location
 from student_registration.eav.registry import Registry as eav
 
 
+class ALPRound(models.Model):
+    name = models.CharField(max_length=45L, unique=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.name
+
+
 class Outreach(TimeStampedModel):
 
     EAV_TYPE = 'outreach'
+
+    RESULT = Choices(
+        ('graduated', _('Graduated')),
+        ('failed', _('Failed'))
+    )
+
+    YES_NO = Choices(
+        ('yes', _('Yes')),
+        ('no', _('No'))
+    )
 
     student = models.ForeignKey(
         Student,
@@ -35,7 +55,7 @@ class Outreach(TimeStampedModel):
     )
     partner = models.ForeignKey(
         PartnerOrganization,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     owner = models.ForeignKey(
@@ -45,12 +65,12 @@ class Outreach(TimeStampedModel):
     )
     school = models.ForeignKey(
         School,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     location = models.ForeignKey(
         Location,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     preferred_language = models.ForeignKey(
@@ -58,20 +78,10 @@ class Outreach(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
-    last_education_level = models.ForeignKey(
-        EducationLevel,
-        blank=False, null=True,
-    )
     last_class_level = models.ForeignKey(
         ClassLevel,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
-    )
-    last_education_year = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
     )
     average_distance = models.CharField(
         max_length=10,
@@ -101,9 +111,83 @@ class Outreach(TimeStampedModel):
         null=True,
         choices=((str(x), x) for x in range(1, 33))
     )
-    extra_fields = JSONField(
+    section = models.ForeignKey(
+        Section,
+        blank=True, null=True,
+        related_name='+',
+    )
+    grade = models.ForeignKey(
+        Grade,
+        blank=True, null=True,
+        related_name='+',
+    )
+    classroom = models.ForeignKey(
+        ClassRoom,
+        blank=True, null=True,
+        related_name='+'
+    )
+    alp_year = models.CharField(
+        max_length=20,
         blank=True,
         null=True,
+    )
+    status = models.BooleanField(blank=True, default=True)
+    enrolled_in_this_school = models.BooleanField(blank=True, default=True)
+    registered_in_unhcr = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO
+    )
+    last_education_level = models.ForeignKey(
+        ClassRoom,
+        blank=True, null=True,
+        related_name='+'
+    )
+    last_education_year = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+    )
+    last_year_result = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=RESULT
+    )
+    participated_in_alp = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO
+    )
+    last_informal_edu_level = models.ForeignKey(
+        EducationLevel,
+        blank=True, null=True,
+        related_name='+',
+    )
+    last_informal_edu_year = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+    )
+    last_informal_edu_result = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=RESULT
+    )
+    last_informal_edu_round = models.ForeignKey(
+        ALPRound,
+        blank=True, null=True,
+        related_name='+',
+    )
+    last_informal_edu_final_result = models.ForeignKey(
+        ClassLevel,
+        blank=True, null=True,
+        related_name='+',
     )
 
     class Meta:

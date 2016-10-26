@@ -28,7 +28,6 @@ class UserResource(resources.ModelResource):
             'school',
             'location',
             'password',
-            'app_password'
         )
         export_order = ('first_name', 'last_name')
 
@@ -37,7 +36,13 @@ class UserAdmin(ImportExportModelAdmin):
     resource_class = UserResource
     filter_horizontal = ('groups', 'user_permissions', 'locations',)
     list_display = ('username', 'first_name', 'last_name', 'email', 'school', 'location', 'phone_number',)
-    search_fields = ('location', 'first_name', 'last_name',)
+    search_fields = (
+        u'username',
+        u'school__name',
+        u'location__name',
+        u'first_name',
+        u'last_name',
+    )
     list_filter = (
         'groups',
         'school',
