@@ -13,7 +13,7 @@ from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 
-from .models import Outreach
+from .models import Outreach, ALPRound
 from .serializers import OutreachSerializer
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
@@ -85,7 +85,8 @@ class OutreachView(LoginRequiredMixin, TemplateView):
             'education_levels': ClassRoom.objects.all(),
             'education_results': Outreach.RESULT,
             'informal_educations': EducationLevel.objects.all(),
-            'education_final_results': EducationLevel.objects.all(),
+            'alp_round': ALPRound.objects.all(),
+            'education_final_results': ClassLevel.objects.all(),
             'classrooms': ClassRoom.objects.all(),
             'sections': Section.objects.all(),
             'nationalities': Nationality.objects.exclude(id=5),

@@ -179,7 +179,7 @@ class Enrollment(TimeStampedModel):
         choices=RESULT
     )
     last_informal_edu_final_result = models.ForeignKey(
-        EducationLevel,
+        ClassLevel,
         blank=True, null=True,
         related_name='+',
     )
