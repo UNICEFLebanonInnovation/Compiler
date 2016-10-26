@@ -97,7 +97,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for registry in registrations %}
+                                    {% for registry in enrollments %}
                                         <tr>
                                             <td>{% if registry.school and registry.school.location and registry.school.location.parent %}{{ registry.school.location.parent.name }}{% endif %}</td>
                                             <td>{% if registry.school and registry.school.location %}{{ registry.school.location.name }}{% endif %}</td>
@@ -179,12 +179,11 @@
             $("#id_school").change(function(){
                 var selected_school = $(this).val();
                // reload the page with the school id passed in post
+                var url = '{% url "enrollments:enrollment_view" %}';
                 if(selected_school){
-                    window.location.href = '{% url "registrations:registration_view" %}'+'?school='+selected_school;
+                    url = url+'?school='+selected_school;
                 }
-                else {
-                    window.location.href = '{% url "registrations:registration_view" %}';
-                }
+                window.location.href = url;
             });
 
         });

@@ -33,9 +33,11 @@ class StudentSerializer(serializers.ModelSerializer):
             'birthday_month',
             'birthday_day',
             'phone',
+            'phone_prefix',
             'id_number',
             'id_type',
             'nationality',
+            'mother_nationality',
             'address',
             'number',
         )

@@ -32,7 +32,7 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                           <div class="panel-heading">
-                            <h3 class="panel-title">{% trans "Outreach" %}
+                            <h3 class="panel-title">{% trans "ALP data collecting" %}
                               <button class="btn btn-info" id="outreach-synchro">
                                 <i class="icon-synch-sign icon-white"></i>&nbsp;
                                     {% trans "synchronize" %}
@@ -42,6 +42,17 @@
 {#                                    {% trans "Export" %}#}
 {#                              </a>#}
                             </h3>
+                            <div class="panel-title">
+                                <select name="school" id="filter_school">
+                                    <option value="">{% trans "Filter by School" %}</option>
+                                    {% for item in schools %}
+                                        <option value="{{ item.id }}">{{ item.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button class="btn btn-warning btn-sm" id="filter_cancel">
+                                    {% trans "Rest filter" %}
+                                </button>
+                            </div>
                             <div class="actions pull-right">
                                 <i class="fa fa-chevron-down"></i>
                                 <i class="fa fa-times"></i>
@@ -59,8 +70,8 @@
                                     <tr id="thead-line-1">
                                         <th rowspan="2">&nbsp;</th>
                                         <th rowspan="2">#</th>
-                                        <th rowspan="2">{% trans "Governorate" %}</th>
                                         <th rowspan="2">{% trans "District" %}</th>
+                                        <th rowspan="2">{% trans "Governorate" %}</th>
                                         <th rowspan="2">{% trans "School number" %}</th>
                                         <th rowspan="2">{% trans "School" %}</th>
                                         <th rowspan="2">{% trans "Student first name" %}</th>
@@ -106,14 +117,14 @@
                             <i class="icon-plus-sign icon-white"></i>&nbsp;
                                 {% trans "Add defined number of lines" %}
                           </button>
-                          <button class="btn btn-success" id="duplicate_last_line_select">
-                            <i class="icon-plus-sign icon-white"></i>&nbsp;
-                                {% trans "duplicate last line with selected option" %}
-                          </button>
-                          <button class="btn btn-success" id="duplicate_defined_lines_select">
-                            <i class="icon-plus-sign icon-white"></i>&nbsp;
-                                {% trans "duplicate defined number of lines with selected option" %}
-                          </button>
+{#                          <button class="btn btn-success" id="duplicate_last_line_select">#}
+{#                            <i class="icon-plus-sign icon-white"></i>&nbsp;#}
+{#                                {% trans "duplicate last line with selected option" %}#}
+{#                          </button>#}
+{#                          <button class="btn btn-success" id="duplicate_defined_lines_select">#}
+{#                            <i class="icon-plus-sign icon-white"></i>&nbsp;#}
+{#                                {% trans "duplicate defined number of lines with selected option" %}#}
+{#                          </button>#}
                      </div>
                 </div>
             </div>
@@ -209,7 +220,7 @@
                 }
             });
 
-            $(document).on('change', '#filter_section, #filter_class, #filter_id_type, #filter_nationality', function(){
+            $(document).on('change', '#filter_school', function(){
                 if($(this).val()){
                     var value = $(this).val();
                     var name = $(this).attr('name');
@@ -386,7 +397,7 @@
                 if($(this).hasClass('extra-field')){
                     update_one_by_index('name', $(this).attr('name'), 'value_text', $(this).val(), 'eav-columns-values')
                 }else{
-                    if($(this).hasAttribute('data-value')){
+                    if($(this).attr('data-value')){
                         update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).attr('data-value'), 'outreaches');
                     }else{
                         update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches');
