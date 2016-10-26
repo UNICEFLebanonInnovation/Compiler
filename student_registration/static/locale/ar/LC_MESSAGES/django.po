@@ -1071,3 +1071,12 @@ msgstr "النتيجة"
 
 msgid "ALP data collecting"
 msgstr "جمع البيانات ALP"
+
+msgid "ALP round"
+msgstr "دورة"
+
+msgid "ALP level"
+msgstr "المستوى المسجل فيه"
+
+msgid "ALP result"
+msgstr "النتيجة"
