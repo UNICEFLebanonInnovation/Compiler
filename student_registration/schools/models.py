@@ -24,11 +24,11 @@ class School(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return self.name
-        # return u'{} - {}'.format(
-        #     self.name,
-        #     self.number
-        # )
+        # return self.name
+        return u'{} - {}'.format(
+            self.name,
+            self.number
+        )
 
 
 class Course(models.Model):
@@ -44,12 +44,18 @@ class Course(models.Model):
 class EducationLevel(models.Model):
     name = models.CharField(max_length=45L, unique=True)
 
+    class Meta:
+        ordering = ['id']
+
     def __unicode__(self):
         return self.name
 
 
 class ClassLevel(models.Model):
     name = models.CharField(max_length=45L, unique=True)
+
+    class Meta:
+        ordering = ['id']
 
     def __unicode__(self):
         return self.name
@@ -64,6 +70,9 @@ class Grade(models.Model):
 
 class Section(models.Model):
     name = models.CharField(max_length=45L, unique=True)
+
+    class Meta:
+        ordering = ['id']
 
     def __unicode__(self):
         return self.name
@@ -86,6 +95,9 @@ class ClassRoom(models.Model):
         blank=True, null=True,
         related_name='+',
     )
+
+    class Meta:
+        ordering = ['id']
 
     def __unicode__(self):
         return self.name
