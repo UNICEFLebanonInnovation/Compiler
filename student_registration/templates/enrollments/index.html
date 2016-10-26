@@ -260,6 +260,19 @@
                 }
             });
 
+
+            $(document).on('click', '#participated_in_alp_1, #participated_in_alp_0', function(){
+                var itemscope = $(this).attr('itemscope');
+                var alp_details = $('#line-'+itemscope).find('.alp_details');
+                if($(this).attr('data-value') == 'yes'){
+                    $(alp_details).removeAttr('disabled');
+                }else{
+                    $(alp_details).val('');
+                    $(alp_details).trigger('blur');
+                    $(alp_details).attr('disabled', 'disabled');
+                }
+            });
+
             $(document).on('change', '#filter_section, #filter_class, #filter_id_type, #filter_nationality', function(){
                 if($(this).val()){
                     var value = $(this).val();
@@ -581,12 +594,12 @@
             $(fields).each(function(i, field){
                 var value = item[$(field).attr('name')];
                 if(value == "yes" || value == "no"){
-                    var id_type = $('#line-'+item.id).find('#student_id_type');
-                    if(value == 'yes'){
-                        $(id_type).attr('disabled', 'disabled');
-                    }
                     if($(field).attr('data-value') == value){
                         $(field).attr('checked', 'checked');
+                        if($(field).attr('itemref')){
+                            var f_related = $('#line-'+item.id).find('.'+$(field).attr('itemref'));
+                            $(f_related).attr('disabled', 'disabled');
+                        }
                     }
                 }else{
                     $(field).val(value);

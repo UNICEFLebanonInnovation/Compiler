@@ -108,11 +108,11 @@
             </select>
         </td>
         <td>
-            <label><input type="radio" name="registered_in_unhcr" value="1" data-value="yes" id="registered_in_unhcr_1" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" />{% trans "Yes" %}</label>
-            <label><input type="radio" name="registered_in_unhcr" value="0" data-value="no" id="registered_in_unhcr_0" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" />{% trans "No" %}</label>
+            <label><input type="radio" name="registered_in_unhcr" value="1" data-value="yes" id="registered_in_unhcr_1" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="student_id_type" />{% trans "Yes" %}</label>
+            <label><input type="radio" name="registered_in_unhcr" value="0" data-value="no" id="registered_in_unhcr_0" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="" />{% trans "No" %}</label>
         </td>
         <td>
-            <select name="student_id_type" id="student_id_type" class="outreach-field" itemscope="$$itemscope_id$$">
+            <select name="student_id_type" id="student_id_type" class="outreach-field student_id_type" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
                 {% for item in idtypes %}
                     <option value="{{ item.id }}">{% trans item.name %}</option>
@@ -148,19 +148,19 @@
             </select>
         </td>
         <td>
-            <label><input type="radio" name="participated_in_alp" value="1" data-value="yes" id="participated_in_alp_1" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" />{% trans "Yes" %}</label>
-            <label><input type="radio" name="participated_in_alp" value="0" data-value="no" id="participated_in_alp_0" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" />{% trans "No" %}</label>
+            <label><input type="radio" name="participated_in_alp" value="1" data-value="yes" id="participated_in_alp_1" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="" />{% trans "Yes" %}</label>
+            <label><input type="radio" name="participated_in_alp" value="0" data-value="no" id="participated_in_alp_0" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="alp_details" />{% trans "No" %}</label>
         </td>
         <td>
-            <select name="last_informal_edu_round" id="last_informal_edu_round" class="outreach-field" itemscope="$$itemscope_id$$">
+            <select name="last_informal_edu_round" id="last_informal_edu_round" class="outreach-field alp_details" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
-                {% for item in last_informal_edu_round %}
+                {% for item in alp_rounds %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
         </td>
         <td>
-            <select name="last_informal_edu_level" id="last_informal_edu_level" class="outreach-field" itemscope="$$itemscope_id$$">
+            <select name="last_informal_edu_level" id="last_informal_edu_level" class="outreach-field alp_details" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
                 {% for item in informal_educations %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
@@ -168,7 +168,7 @@
             </select>
         </td>
         <td>
-            <select name="last_informal_edu_final_result" id="last_informal_edu_final_result" class="outreach-field" itemscope="$$itemscope_id$$">
+            <select name="last_informal_edu_final_result" id="last_informal_edu_final_result" class="outreach-field alp_details" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
                 {% for item in education_final_results %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
