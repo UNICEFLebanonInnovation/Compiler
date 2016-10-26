@@ -37,6 +37,7 @@ from student_registration.eav.models import (
     Attribute,
     Value,
 )
+from student_registration.alp.templatetags.util_tags import has_group
 
 
 class OutreachViewSet(mixins.RetrieveModelMixin,
@@ -100,10 +101,25 @@ class OutreachStaffView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         data = []
+        schools = []
+
+        if has_group(self.request.user, 'MEHE'):
+            schools = School.objects.all()
+        elif has_group(self.request.user, 'COORDINATOR'):
+            schools = School.objects.filter(location_id__in=self.request.user.locations.all())
+        elif has_group(self.request.user, 'PMU'):
+            schools = School.objects.filter(location_id=self.request.user.location_id)
+
+        school = self.request.GET.get("school", 0)
+        if school:
+            data = self.model.objects.filter(school=school).order_by('id')
+
         return {
             'outreaches': data,
+            'schools': schools,
             'columns': Attribute.objects.filter(type=Outreach.EAV_TYPE),
-            'eav_type': Outreach.EAV_TYPE
+            'eav_type': Outreach.EAV_TYPE,
+            'selectedSchool': int(school),
         }
 
 
