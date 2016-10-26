@@ -47,7 +47,7 @@
     <div class="m-b">
       <nav class="navbar navbar-dark navbar-static-top bg-inverse">
         <div class="container">
-          <a class="navbar-brand" href="/?ln={{ LANGUAGE_CODE }}">{% trans "Compiler" %}</a>
+          <a class="navbar-brand" href="?ln={{ LANGUAGE_CODE }}">{% trans "Compiler" %}</a>
           <button type="button" class="navbar-toggler hidden-sm-up pull-xs-right" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
             &#9776;
           </button>
@@ -55,61 +55,12 @@
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-toggleable-xs" id="bs-navbar-collapse-1">
             <ul class="nav navbar-nav">
-               {% if request.user.is_staff %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
-              </li>
-                {% endif %}
-{#            {% if request.user.is_authenticated %}#}
-{#                  <li class="nav-item">#}
-{#                    <a class="nav-link" href="{% url 'alp:outreach' %}?ln={{ LANGUAGE_CODE }}">{% trans "Outreach" %}</a>#}
-{#                  </li>#}
-{#                  <li class="nav-item">#}
-{#                    <a class="nav-link" href="{% url 'registrations:registration' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>#}
-{#                  </li>#}
-{#                {% if request.user.is_staff %}#}
-{#                  <li class="nav-item">#}
-{#                    <a class="nav-link" href="{% url 'attendances:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>#}
-{#                  </li>#}
-{#                {% endif %}#}
-{#            {% endif %}#}
-{#            {% if request.user.is_authenticated %}#}
-{#                <li class="nav-item">#}
-{#                    <a class="nav-link" href="{% url 'registrations:registering_pilot' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>#}
-{#                  </li>#}
-{#                  <li class="nav-item">#}
-{#                    <a class="nav-link" href="?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignment" %}</a>#}
-{#                  </li>#}
-{#            {% endif %}#}
             </ul>
 
             <ul class="nav navbar-nav pull-xs-right">
-              {% if request.user.is_authenticated %}
-{#                <li class="nav-item">#}
-{#                  <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>#}
-{#                </li>#}
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
-                </li>
-                  <li class="nav-item">
-                    <a href="{% url 'users:set_language' 'en-us' %}" class="nav-link{% if LANGUAGE_CODE == 'en-us' %} active{% endif %}">
-                        {% trans 'English' %}
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{% url 'users:set_language' 'ar-ar' %}" class="nav-link{% if LANGUAGE_CODE == 'ar-ar' %} active{% endif %}">
-                        {% trans 'Arabic' %}
-                    </a>
-                  </li>
-
-              {% else %}
-{#                <li class="nav-item">#}
-{#                  <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>#}
-{#                </li>#}
                 <li class="nav-item">
                   <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Log In" %}</a>
                 </li>
-              {% endif %}
                 {% block header %}{% endblock %}
             </ul>
           </div>
@@ -129,10 +80,6 @@
       {% endblock content %}
 
     </div> <!-- /container -->
-    <div class="container-full-page" style="position: relative;width: 100%;padding: 15px;">
-      {% block content-full-page %}
-      {% endblock content-full-page %}
-    </div>
 
     {% block modal %}{% endblock modal %}
 

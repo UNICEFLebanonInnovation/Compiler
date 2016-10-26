@@ -54,53 +54,63 @@ def set_app_attendances():
     Creates or edits a attendance document in Couchbase
     """
     docs = []
-    from student_registration.schools.models import ClassRoom
+    from student_registration.schools.models import School
     from student_registration.registrations.models import Registration
     from student_registration.attendances.models import Attendance
-    classes = ClassRoom.objects.all()
-    for item in classes:
+    schools = School.objects.all()
+    for school in schools:
         students = []
         attstudent = {}
         attendances = {}
-        registrations = Registration.objects.filter(classroom_id=item.id, school_id=item.school.id)
+        registrations = Registration.objects.filter(school_id=school.id)
         for reg in registrations:
+            if not reg.classroom_id or not reg.section_id:
+                continue
             student = {
                 "student_id": str(reg.student.id),
-                "student_name": reg.student.full_name,
+                "student_name": reg.student.full_name if reg.student.full_name else 'Student',
                 "gender": reg.student.sex,
+                "status": reg.student.status
             }
-            attstudent[str(reg.student.id)] = False
+            attstudent[str(reg.student.id)] = {
+                "status": False,
+                "reason": "none"
+            }
             students.append(student)
 
-        attendqueryset = Attendance.objects.filter(classroom_id=item.id, school_id=item.school.id)
-        for att in attendqueryset:
-            attendances = {
-                att.attendance_date.strftime('%d-%m-%Y'): {
-                    "validation_date": att.validation_date.strftime('%d-%m-%Y'),
-                    "students": attstudent
+            attendqueryset = Attendance.objects.filter(classroom_id=reg.classroom.id, school_id=school.id)
+            for att in attendqueryset:
+                attendances = {
+                    att.attendance_date.strftime('%d-%m-%Y'): {
+                        "validation_date": att.validation_date.strftime('%d-%m-%Y'),
+                        "students": attstudent
+                    }
                 }
-            }
-            attendances[att.attendance_date.strftime('%d-%m-%Y')]["students"][str(att.student.id)] = att.status
+                attendances[att.attendance_date.strftime('%d-%m-%Y')]["students"][str(att.student.id)] = {
+                    "status": att.status,
+                    "reason": att.absence_reason
+                }
 
-        doc = {
-            "class_id": str(item.id),
-            "class_name": item.name,
-            "grade_id": str(item.grade.id),
-            "grade_name": item.grade.name,
-            "location_id": str(item.school.location.id),
-            "location_name": item.school.location.name,
-            "location_pcode": item.school.location.p_code,
-            "school": str(item.school.id),
-            "school_id": item.school.number,
-            "school_name": item.school.name,
-            "section_id": str(item.section.id),
-            "section_name": item.section.name,
-            "students": students,
-            "attendance": attendances
-        }
-        docs.append(doc)
+            doc = {
+                "class_id": str(reg.classroom.id),
+                "class_name": reg.classroom.name,
+                "location_id": str(school.location.id),
+                "location_name": school.location.name,
+                "location_pcode": school.location.p_code,
+                "school": str(school.id),
+                "school_id": school.number,
+                "school_name": school.name,
+                "section_id": str(reg.section.id),
+                "section_name": reg.section.name,
+                "students": students,
+                "attendance": attendances
+            }
+            docs.append(doc)
+
+    # print json.dumps(docs)
 
     response = set_docs(docs)
+    print response
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
 
@@ -108,27 +118,30 @@ def set_app_attendances():
 @app.task
 def set_app_schools():
 
-    docs = []
+    docs = {}
     from student_registration.schools.models import School
     schools = School.objects.all()
     for school in schools:
         if not school.location:
             continue
-        doc[school.location.name] = {
+        if school.location.name not in docs:
+            docs[school.location.name] = []
+
+        docs[school.location.name].append({
             "caza": school.location.name,
             "mouhafaza": school.location.parent.name if school.location.parent else '',
             "cerd_id": str(school.number),
             "school_name": school.name
-        }
-        docs.append(doc)
+        })
 
-    docs = {
+    docs2 = {
         "_id": "schools",
         "type": "schools",
         "schools": docs
     }
 
-    response = set_docs(docs)
+    response = set_docs([docs2])
+    print response
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
 
@@ -138,19 +151,24 @@ def set_app_users():
 
     docs = []
     from student_registration.users.models import User
+    from student_registration.alp.templatetags.util_tags import get_user_token, user_main_role
     users = User.objects.filter(is_active=True, is_staff=False, is_superuser=False)
     for user in users:
         if not user.school:
             continue
         doc = {
-            "_id": user.school_id,
-            "school_id": user.school_id,
+            "_id": user.username,
+            "cerd_id": user.school.number,
+            "location_id": user.location_id,
             "username": user.username,
-            "password": user.app_password
+            "password": user.password,
+            "token": get_user_token(user.id),
+            "role": user_main_role(user)
         }
         docs.append(doc)
 
     response = set_docs(docs)
+    print response
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
 
