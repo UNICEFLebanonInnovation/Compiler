@@ -9,9 +9,12 @@ from django.conf import settings
 from student_registration.students.models import (
     Person,
     Student,
-    Person)
+    Person,
+)
 from student_registration.schools.models import (
     School,
+    EducationLevel,
+    ClassLevel,
     ClassRoom,
     Section,
     Grade,
@@ -126,6 +129,20 @@ class Registration(TimeStampedModel):
         ('other', _('Yes - in another type of school')),
     )
 
+    RESULT = Choices(
+        ('graduated', _('Graduated')),
+        ('failed', _('Failed'))
+    )
+
+    YES_NO = Choices(
+        ('yes', _('Yes')),
+        ('no', _('No'))
+    )
+
+    YEARS = ((str(x), x) for x in range(2016, 2051))
+
+    EDUCATION_YEARS = ((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
@@ -168,24 +185,24 @@ class Registration(TimeStampedModel):
     )
     section = models.ForeignKey(
         Section,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     grade = models.ForeignKey(
         Grade,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     classroom = models.ForeignKey(
         ClassRoom,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+'
     )
     year = models.CharField(
         max_length=4,
         blank=True,
         null=True,
-        choices=((str(x), x) for x in range(2016, 2051))
+        choices=YEARS
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -196,6 +213,62 @@ class Registration(TimeStampedModel):
     out_of_school_two_years = models.BooleanField(blank=True, default=False)
     related_to_family = models.BooleanField(blank=True, default=False)
     enrolled_in_this_school = models.BooleanField(blank=True, default=True)
+    registered_in_unhcr = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO
+    )
+    last_education_level = models.ForeignKey(
+        ClassRoom,
+        blank=True, null=True,
+        related_name='last_educations'
+    )
+    last_education_year = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+    )
+    last_year_result = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=RESULT
+    )
+    result = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=RESULT
+    )
+    participated_in_alp = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO
+    )
+    last_informal_edu_level = models.ForeignKey(
+        EducationLevel,
+        blank=True, null=True,
+        related_name='last_informal_educations',
+    )
+    last_informal_edu_year = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+    )
+    last_informal_edu_result = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=RESULT
+    )
+    last_informal_edu_final_result = models.ForeignKey(
+        ClassLevel,
+        blank=True, null=True,
+    )
 
     @property
     def student_fullname(self):

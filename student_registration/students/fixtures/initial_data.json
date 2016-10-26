@@ -1,9 +1,10 @@
 [
-  {"model": "students.nationality", "pk": 1, "fields": {"name": "السورية"}},
-  {"model": "students.nationality", "pk": 2, "fields": {"name": "فلسطيني من سوريا"}},
-  {"model": "students.nationality", "pk": 3, "fields": {"name": "فلسطيني من لبنان"}},
-  {"model": "students.nationality", "pk": 3, "fields": {"name": "عراقي" }},
-  {"model": "students.nationality", "pk": 3, "fields": {"name": "اخرى" }},
+  {"model": "students.nationality", "pk": 1, "fields": {"name": "سورية", "code": "SYR"}},
+  {"model": "students.nationality", "pk": 2, "fields": {"name":"عراقية"  , "code": "IRQ"}},
+  {"model": "students.nationality", "pk": 3, "fields": {"name":"فلسطنية (من سوريا)" , "code": "PLA"}},
+  {"model": "students.nationality", "pk": 4, "fields": {"name":"فلسطنية (من لبنان)" , "code": "PLA"}},
+  {"model": "students.nationality", "pk": 5, "fields": {"name":"لبنانية" , "code": "LEB"}},
+  {"model": "students.nationality", "pk": 6, "fields": {"name":"اخرى" , "code": "NONE"}},
 
   {"model": "students.language", "pk": 1, "fields": {"name": "الفرنسية"}},
   {"model": "students.language", "pk": 2, "fields": {"name": "الانجليزية"}},
@@ -13,6 +14,6 @@
   {"model": "students.idtype", "pk": 3, "fields": {"name": "بطاقة الهوية الوطنية"}},
   {"model": "students.idtype", "pk": 4, "fields": {"name": "جواز السفر"}},
   {"model": "students.idtype", "pk": 5, "fields": {"name": "بطاقات اخرى"}},
-  {"model": "students.idtype", "pk": 6, "fields": {"name": "لا يوجد بطاقة"}}
-
+  {"model": "students.idtype", "pk": 6, "fields": {"name": "إفادة سكن من المختار"}},
+  {"model": "students.idtype", "pk": 7, "fields": {"name": "مكتوم القيد"}}
 ]

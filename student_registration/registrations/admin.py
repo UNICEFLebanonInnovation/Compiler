@@ -128,12 +128,13 @@ class RegisteringAdultAdmin(ImportExportModelAdmin):
         'school',
     )
     search_fields = (
-        'number',
-        'id_number',
-        'first_name',
-        'father_name',
-        'last_name',
-        'primary_phone')
+        u'number',
+        u'id_number',
+        u'first_name',
+        u'father_name',
+        u'last_name',
+        u'primary_phone'
+    )
     inlines = (RegisteredChildInline,)
 
     def assign_distribution_site(self, request, queryset):
@@ -271,9 +272,9 @@ class RegistrationAdmin(ImportExportModelAdmin):
         'enrolled_last_year_location', 'school', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
         'out_of_school_two_years', 'related_to_family')
     search_fields = (
-        'student', 'registering_adult', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
-        'enrolled_last_year_location', 'school', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
-        'out_of_school_two_years', 'related_to_family')
+        'student__first_name', 'registering_adult__first_name', 'relation_to_adult', 'enrolled_last_year',
+        'enrolled_last_year_school__name', 'enrolled_last_year_location__name', 'school__name', 'section__name',
+        'classroom__name', 'year', 'owner__username', 'status', 'out_of_school_two_years', 'related_to_family')
     list_filter = ('enrolled_last_year', 'status', 'school')
 
 
@@ -344,8 +345,8 @@ class WaitingListAdmin(ImportExportModelAdmin):
         'school', 'first_name', 'last_name', 'father_name', 'unhcr_id', 'number_of_children',
         'phone_number', 'alternate_phone_number', 'village', 'location', 'owner')
     search_fields = (
-        'school', 'first_name', 'last_name', 'father_name', 'unhcr_id', 'number_of_children',
-        'phone_number', 'alternate_phone_number', 'village', 'location', 'owner')
+        'school__name', 'first_name', 'last_name', 'father_name', 'unhcr_id', 'number_of_children',
+        'phone_number', 'alternate_phone_number', 'village', 'location__name', 'owner__username')
 
 admin.site.register(WaitingList, WaitingListAdmin)
 admin.site.register(Registration, RegistrationAdmin)

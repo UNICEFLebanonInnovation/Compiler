@@ -5,7 +5,9 @@ from django.contrib import admin
 
 from .models import (
     Outreach,
+    ALPRound,
 )
 
 
 admin.site.register(Outreach)
+admin.site.register(ALPRound)

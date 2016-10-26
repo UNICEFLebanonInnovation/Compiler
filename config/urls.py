@@ -12,7 +12,6 @@ from student_registration.alp.views import (
     OutreachViewSet,
 )
 from student_registration.registrations.views import (
-    RegistrationViewSet,
     RegisteringAdultViewSet,
     RegisteringChildViewSet,
     ClassAssignmentViewSet,
@@ -35,11 +34,12 @@ from student_registration.eav.views import (
     AttributeViewSet,
     ValueViewSet,
 )
+from student_registration.enrollments.views import EnrollmentViewSet
 from .views import acme_view
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
-api.register(r'registrations', RegistrationViewSet, base_name='registrations')
+api.register(r'enrollments', EnrollmentViewSet, base_name='enrollments')
 api.register(r'registrations-adult', RegisteringAdultViewSet, base_name='registrations_adult')
 api.register(r'registrations-child', RegisteringChildViewSet, base_name='registrations_child')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
@@ -70,6 +70,7 @@ urlpatterns = [
     url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
     url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
     url(r'^registrations/', include('student_registration.registrations.urls', namespace='registrations')),
+    url(r'^enrollments/', include('student_registration.enrollments.urls', namespace='enrollments')),
     url(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
     url(r'^locations/', include('student_registration.locations.urls', namespace='locations')),
 
