@@ -17,6 +17,7 @@ from student_registration.schools.models import (
     Grade,
 )
 from student_registration.locations.models import Location
+from student_registration.alp.models import ALPRound
 from student_registration.eav.registry import Registry as eav
 
 
@@ -177,6 +178,11 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         choices=RESULT
+    )
+    last_informal_edu_round = models.ForeignKey(
+        ALPRound,
+        blank=True, null=True,
+        related_name='+',
     )
     last_informal_edu_final_result = models.ForeignKey(
         ClassLevel,
