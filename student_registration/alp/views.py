@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView
+from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
@@ -13,7 +13,7 @@ from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 
-from .models import Outreach
+from .models import Outreach, ALPRound
 from .serializers import OutreachSerializer
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
@@ -37,6 +37,7 @@ from student_registration.eav.models import (
     Attribute,
     Value,
 )
+from student_registration.alp.templatetags.util_tags import has_group
 
 
 class OutreachViewSet(mixins.RetrieveModelMixin,
@@ -53,16 +54,6 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
     def get_queryset(self):
         return self.queryset.filter(owner=self.request.user)
 
-    def create(self, request, *args, **kwargs):
-        """
-        :return: JSON
-        """
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.instance = serializer.save()
-
-        return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
-
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
         student = instance.student
@@ -71,37 +62,65 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
             student.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
-    def update(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
-        return JsonResponse({'status': status.HTTP_200_OK})
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        instance.save()
 
 
-class OutreachView(LoginRequiredMixin, ListView):
+class OutreachView(LoginRequiredMixin, TemplateView):
+    model = Outreach
+    template_name = 'alp/index.html'
+
+    def get_context_data(self, **kwargs):
+
+        return {
+            'schools': School.objects.all(),
+            'languages': Language.objects.all(),
+            'locations': Location.objects.filter(type_id=2),
+            'partners': PartnerOrganization.objects.all(),
+            'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km',),
+            'months': Person.MONTHS,
+            'genders': Person.GENDER,
+            'idtypes': IDType.objects.all(),
+            'education_levels': ClassRoom.objects.all(),
+            'education_results': Outreach.RESULT,
+            'informal_educations': EducationLevel.objects.all(),
+            'alp_rounds': ALPRound.objects.all(),
+            'education_final_results': ClassLevel.objects.all(),
+            'classrooms': ClassRoom.objects.all(),
+            'sections': Section.objects.all(),
+            'nationalities': Nationality.objects.exclude(id=5),
+            'nationalities2': Nationality.objects.all(),
+            'columns': Attribute.objects.filter(type=Outreach.EAV_TYPE),
+            'eav_type': Outreach.EAV_TYPE
+        }
+
+
+class OutreachStaffView(LoginRequiredMixin, TemplateView):
     model = Outreach
     template_name = 'alp/list.html'
 
     def get_context_data(self, **kwargs):
-
         data = []
-        if not self.request.user.is_staff:
-            data = self.model.filter(owner=self.request.user)
-            self.template_name = 'alp/index.html'
+        schools = []
+
+        if has_group(self.request.user, 'MEHE'):
+            schools = School.objects.all()
+        elif has_group(self.request.user, 'COORDINATOR'):
+            schools = School.objects.filter(location_id__in=self.request.user.locations.all())
+        elif has_group(self.request.user, 'PMU'):
+            schools = School.objects.filter(location_id=self.request.user.location_id)
+
+        school = self.request.GET.get("school", 0)
+        if school:
+            data = self.model.objects.filter(school=school).order_by('id')
 
         return {
             'outreaches': data,
-            'schools': School.objects.all(),
-            'languages': Language.objects.all(),
-            'education_levels': EducationLevel.objects.all(),
-            'levels': ClassLevel.objects.all(),
-            'locations': Location.objects.all(),
-            'nationalities': Nationality.objects.all(),
-            'partners': PartnerOrganization.objects.all(),
-            'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km'),
-            'months': Person.MONTHS,
-            'genders': (u'Male', u'Female'),
-            'idtypes': IDType.objects.all(),
+            'schools': schools,
             'columns': Attribute.objects.filter(type=Outreach.EAV_TYPE),
-            'eav_type': Outreach.EAV_TYPE
+            'eav_type': Outreach.EAV_TYPE,
+            'selectedSchool': int(school),
         }
 
 

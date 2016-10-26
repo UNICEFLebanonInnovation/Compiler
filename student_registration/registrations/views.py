@@ -2,7 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.http import Http404
-from django.views.generic import ListView, FormView
+from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
@@ -13,6 +13,7 @@ from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from django.core.urlresolvers import reverse
 from datetime import datetime
+from student_registration.alp.templatetags.util_tags import has_group
 
 from student_registration.students.models import (
     Person,
@@ -25,6 +26,8 @@ from student_registration.schools.models import (
     ClassRoom,
     Grade,
     Section,
+    EducationLevel,
+    ClassLevel,
 )
 from student_registration.students.serializers import StudentSerializer
 from student_registration.registrations.forms import (
@@ -48,40 +51,6 @@ from .serializers import (
     WaitingListSerializer,
 )
 from .utils import get_unhcr_principal_applicant
-
-
-class RegistrationView(LoginRequiredMixin, ListView):
-    """
-    Provides the registration page with lookup types in the context
-    """
-    model = Registration
-    template_name = 'registrations/list.html'
-
-    def get_context_data(self, **kwargs):
-        data = []
-        school = self.request.GET.get("school", "0")
-        if school:
-            data = self.model.objects.filter(school=school).order_by('id')
-
-        if not self.request.user.is_staff:
-            data = self.model.filter(owner=self.request.user)
-            self.template_name = 'registrations/index.html'
-
-        return {
-            'registrations': data,
-            'classrooms': ClassRoom.objects.all(),
-            'schools': School.objects.all(),
-            'grades': Grade.objects.all(),
-            'sections': Section.objects.all(),
-            'nationalities': Nationality.objects.all(),
-            'genders': (u'Male', u'Female'),
-            'months': Person.MONTHS,
-            'idtypes': IDType.objects.all(),
-            'columns': Attribute.objects.filter(type=Registration.EAV_TYPE),
-            'eav_type': Registration.EAV_TYPE,
-            'locations': Location.objects.filter(type_id=2),
-            'selectedSchool': int(school),
-        }
 
 
 class ClassAssignmentView(LoginRequiredMixin, ListView):
@@ -129,29 +98,6 @@ class WaitingListView(LoginRequiredMixin, ListView):
 
 
 ####################### API VIEWS #############################
-
-
-class RegistrationViewSet(mixins.RetrieveModelMixin,
-                          mixins.ListModelMixin,
-                          mixins.CreateModelMixin,
-                          mixins.UpdateModelMixin,
-                          viewsets.GenericViewSet):
-    """
-    Provides API operations around a registration record
-    """
-    model = Registration
-    queryset = Registration.objects.all()
-    serializer_class = RegistrationSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get_queryset(self):
-        if not self.request.user.is_staff:
-            if self.request.user.school:
-                return self.queryset.filter(school=self.request.user.school.id)
-            else:
-                return []
-
-        return self.queryset
 
 
 class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
@@ -286,69 +232,3 @@ class WaitingListViewSet(mixins.RetrieveModelMixin,
             return []
 
         return self.queryset
-
-
-class ExportViewSet(LoginRequiredMixin, ListView):
-
-    model = Registration
-    queryset = Registration.objects.all()
-
-    def get_queryset(self):
-        if not self.request.user.is_staff:
-            return self.queryset.filter(owner=self.request.user)
-        return self.queryset
-
-    def get(self, request, *args, **kwargs):
-
-        queryset = self.queryset
-        data = tablib.Dataset()
-        data.headers = [
-            _('Student number'), _('Student fullname'), _('Mother fullname'), _('Nationality'),
-            _('Birthday'),
-            # _('Day of birth'), _('Month of birth'), _('Year of birth'),
-            _('Sex'),
-            _('ID Type'),
-            _('ID Number tooltip'), _('Phone number'), _('Student living address'),
-            _('Section'),
-            # , _('Grade'),
-            _('Class room'),
-            _('School'), _('School number'),
-            _('District'), _('Governorate')
-        ]
-
-        content = []
-        for line in queryset:
-            if not line.student or not line.section or not line.school:
-            # if not line.student or not line.classroom or not line.school:
-                continue
-            content = [
-                line.student.number,
-                line.student.__unicode__(),
-                line.student.mother_fullname,
-                line.student.nationality.name,
-                line.student.birthday,
-                # int(line.student.birthday_day),
-                # int(line.student.birthday_month),
-                # int(line.student.birthday_year),
-                _(line.student.sex),
-                line.student.id_type.name,
-                line.student.id_number,
-                line.student.phone,
-                line.student.address,
-                line.classroom.name,
-                line.section.name,
-                # line.grade.name,
-                line.school.name,
-                line.school.number,
-                line.school.location.name,
-                line.school.location.parent.name,
-            ]
-            data.append(content)
-
-        file_format = base_formats.XLS()
-        response = HttpResponse(
-            file_format.export_data(data),
-            content_type='application/vnd.ms-excel',
-        )
-        response['Content-Disposition'] = 'attachment; filename=registration_list.xls'
-        return response
