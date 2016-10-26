@@ -18,6 +18,8 @@ class StudentForm(forms.ModelForm):
     #                  queryset=School.objects.all(), widget=forms.Select,
     #                  required=False, to_field_name='id'
     #             )
+    birthday_year = forms.ChoiceField(choices=((str(x), x) for x in range(1998, 2051)),
+                                      widget=forms.Select, required=False)
     relation_to_adult = forms.ChoiceField(
                      choices=Registration.RELATION_TYPE, widget=forms.Select, required=False
                 )
