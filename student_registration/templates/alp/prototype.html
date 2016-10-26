@@ -1,9 +1,9 @@
 {% load staticfiles i18n %}
 {% load util_tags %}
 
-{% get_range 1990 2051 as years %}
+{% get_range 1990 2020 as years %}
 {% get_range 1 32 as days %}
-{% get_range_str 2001 2051 as last_education_years %}
+{% get_range_str 2001 2020 as last_education_years %}
 
 <table style="display:none;" id="outreach_prototype">
     <tr id="line-$$itemscope_id$$" class="outreach-line" itemscope="$$itemscope_id$$">
@@ -150,6 +150,14 @@
         <td>
             <label><input type="radio" name="participated_in_alp" value="1" data-value="yes" id="participated_in_alp_1" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" />{% trans "Yes" %}</label>
             <label><input type="radio" name="participated_in_alp" value="0" data-value="no" id="participated_in_alp_0" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" />{% trans "No" %}</label>
+        </td>
+        <td>
+            <select name="last_informal_edu_round" id="last_informal_edu_round" class="outreach-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in last_informal_edu_round %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
         </td>
         <td>
             <select name="last_informal_edu_level" id="last_informal_edu_level" class="outreach-field" itemscope="$$itemscope_id$$">

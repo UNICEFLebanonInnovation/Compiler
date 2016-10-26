@@ -24,6 +24,16 @@ from student_registration.locations.models import Location
 from student_registration.eav.registry import Registry as eav
 
 
+class ALPRound(models.Model):
+    name = models.CharField(max_length=45L, unique=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.name
+
+
 class Outreach(TimeStampedModel):
 
     EAV_TYPE = 'outreach'
@@ -169,9 +179,15 @@ class Outreach(TimeStampedModel):
         null=True,
         choices=RESULT
     )
+    last_informal_edu_round = models.ForeignKey(
+        ALPRound,
+        blank=True, null=True,
+        related_name='+',
+    )
     last_informal_edu_final_result = models.ForeignKey(
         ClassLevel,
         blank=True, null=True,
+        related_name='+',
     )
 
     class Meta:
