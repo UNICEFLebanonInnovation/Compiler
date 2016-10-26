@@ -29,6 +29,7 @@ class schoolResource(resources.ModelResource):
             'id',
             'name',
             'number',
+            'location_id',
             'locationGov',
             'locationKazaa'
         )

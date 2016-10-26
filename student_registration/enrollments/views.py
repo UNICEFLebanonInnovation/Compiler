@@ -85,6 +85,7 @@ class EnrollmentView(LoginRequiredMixin, TemplateView):
             'education_results': Enrollment.RESULT,
             'informal_educations': EducationLevel.objects.all(),
             'education_final_results': ClassLevel.objects.all(),
+            'alp_rounds': ALPRound.objects.all(),
             'classrooms': ClassRoom.objects.all(),
             'sections': Section.objects.all(),
             'nationalities': Nationality.objects.exclude(id=5),

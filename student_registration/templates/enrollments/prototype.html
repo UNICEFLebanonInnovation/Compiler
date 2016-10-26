@@ -167,11 +167,11 @@
             </select>
         </td>
         <td>
-            <label><input type="radio" name="participated_in_alp" value="1" data-value="yes" id="participated_in_alp_1" class="registration-field registration-field-check" itemscope="$$itemscope_id$$" />{% trans "Yes" %}</label>
-            <label><input type="radio" name="participated_in_alp" value="0" data-value="no" id="participated_in_alp_0" class="registration-field registration-field-check" itemscope="$$itemscope_id$$" />{% trans "No" %}</label>
+            <label><input type="radio" name="participated_in_alp" value="1" data-value="yes" id="participated_in_alp_1" class="registration-field registration-field-check" itemscope="$$itemscope_id$$" itemref="" />{% trans "Yes" %}</label>
+            <label><input type="radio" name="participated_in_alp" value="0" data-value="no" id="participated_in_alp_0" class="registration-field registration-field-check" itemscope="$$itemscope_id$$" itemref="alp_details" />{% trans "No" %}</label>
         </td>
         <td>
-            <select name="last_informal_edu_level" id="last_informal_edu_level" class="registration-field" itemscope="$$itemscope_id$$">
+            <select name="last_informal_edu_level" id="last_informal_edu_level" class="registration-field alp_details" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
                 {% for item in informal_educations %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
@@ -179,23 +179,15 @@
             </select>
         </td>
         <td>
-            <select name="last_informal_edu_year" id="last_informal_edu_year" class="registration-field" itemscope="$$itemscope_id$$">
+            <select name="last_informal_edu_round" id="last_informal_edu_round" class="registration-field alp_details" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
-                {% for item in last_informal_years %}
-                    <option value="{{ item }}">{{ item }}</option>
+                {% for item in alp_rounds %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
         </td>
         <td>
-            <select name="last_informal_edu_result" id="last_informal_edu_result" class="registration-field" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
-                {% for key, item in education_results %}
-                    <option value="{{ key }}">{{ item }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td>
-            <select name="last_informal_edu_final_result" id="last_informal_edu_final_result" class="registration-field" itemscope="$$itemscope_id$$">
+            <select name="last_informal_edu_final_result" id="last_informal_edu_final_result" class="registration-field alp_details" itemscope="$$itemscope_id$$">
                 <option value="">-------</option>
                 {% for item in education_final_results %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
