@@ -3,8 +3,8 @@
 
 {% get_range 1990 2051 as years %}
 {% get_range 1 32 as days %}
-{% get_range_str 2001 2051 as last_education_years %}
-{% get_range_str 2001 2051 as last_informal_years %}
+{% get_range_str 2001 2020 as last_education_years %}
+{% get_range_str 2001 2020 as last_informal_years %}
 
 <table style="display:none;" id="registration_prototype">
     <tr id="line-$$itemscope_id$$" class="registration-line" itemscope="$$itemscope_id$$">
@@ -147,6 +147,14 @@
                 <option value="">-------</option>
                 {% for item in education_levels %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="last_school_type" id="last_school_type" class="registration-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for key, item in school_types %}
+                    <option value="{{ key }}">{{ item }}</option>
                 {% endfor %}
             </select>
         </td>
