@@ -36,10 +36,14 @@ class schoolResource(resources.ModelResource):
         export_order = ('id', 'name', 'number', 'locationGov', 'locationKazaa')
 
     def dehydrate_locationKazaa(self, school):
-        return school.location.name
+        if school.location:
+            return school.location.name
+        return ''
 
     def dehydrate_locationGov(self, school):
-        return school.location.parent.name
+        if school.location and school.location.parent:
+            return school.location.parent.name
+        return ''
 
 
 class SchoolAdmin(ImportExportModelAdmin):
