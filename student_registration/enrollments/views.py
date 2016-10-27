@@ -81,6 +81,7 @@ class EnrollmentView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
 
         return {
+            'school_types': Enrollment.SCHOOL_TYPE,
             'education_levels': ClassRoom.objects.all(),
             'education_results': Enrollment.RESULT,
             'informal_educations': EducationLevel.objects.all(),

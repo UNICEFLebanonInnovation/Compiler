@@ -120,7 +120,7 @@
                                         <th rowspan="2">{% trans "Current Section" %}
 {#                                            <input type="checkbox" name="duplicate_section" id="duplicate_section" />#}
                                         </th>
-                                        <th colspan="3" style="text-align: center; background-color: #67b168;">{% trans "Last student education" %}</th>
+                                        <th colspan="4" style="text-align: center; background-color: #67b168;">{% trans "Last student education" %}</th>
                                         <th colspan="5" style="text-align: center; background-color: #ec971f;">{% trans "Last student informal education" %}</th>
                                     </tr>
                                     <tr id="thead-line-2">
@@ -128,6 +128,7 @@
                                         <th>{% trans "month" %}</th>
                                         <th>{% trans "day" %}</th>
                                         <th style="background-color: #67b168;">{% trans "Last education level" %}</th>
+                                        <th style="background-color: #67b168;">{% trans "School" %}</th>
                                         <th style="background-color: #67b168;">{% trans "Education year" %}</th>
                                         <th style="background-color: #67b168;">{% trans "Result" %}</th>
                                         <th style="background-color: #ec971f;">{% trans "Is the child participated in an ALP/2016-2 program" %}</th>
@@ -140,14 +141,16 @@
                                 </tbody>
                             </table>
                         </div>
-                          <button class="btn btn-success" id="add_datatable_line">
-                            <i class="icon-plus-sign icon-white"></i>&nbsp;
-                                {% trans "Add empty line" %}
-                          </button>
-                          <button class="btn btn-success" id="add_defined_lines">
-                            <i class="icon-plus-sign icon-white"></i>&nbsp;
-                                {% trans "Add defined number of lines" %}
-                          </button>
+                        <div style="position: fixed; bottom: 20px; right: 35px">
+                              <button class="btn btn-success" id="add_datatable_line">
+                                <i class="icon-plus-sign icon-white"></i>&nbsp;
+                                    {% trans "Add empty line" %}
+                              </button>
+                              <button class="btn btn-success" id="add_defined_lines">
+                                <i class="icon-plus-sign icon-white"></i>&nbsp;
+                                    {% trans "Add defined number of lines" %}
+                              </button>
+                        </div>
 {#                          <button class="btn btn-success" id="duplicate_last_line_select">#}
 {#                            <i class="icon-plus-sign icon-white"></i>&nbsp;#}
 {#                                {% trans "duplicate last line with selected option" %}#}
