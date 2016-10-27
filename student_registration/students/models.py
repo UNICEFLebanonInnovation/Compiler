@@ -37,7 +37,7 @@ class IDType(models.Model):
     name = models.CharField(max_length=45L, unique=True)
 
     class Meta:
-        ordering = ['name']
+        ordering = ['id']
 
     def __unicode__(self):
         return self.name
