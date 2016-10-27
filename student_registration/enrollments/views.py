@@ -35,7 +35,7 @@ from student_registration.eav.models import (
     Value,
 )
 from student_registration.locations.models import Location
-
+from student_registration.alp.models import ALPRound
 from .models import Enrollment
 from .serializers import EnrollmentSerializer
 
