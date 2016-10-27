@@ -1083,3 +1083,12 @@ msgstr "المستوى المسجل فيه ضمن البرنامج"
 
 msgid "ALP result"
 msgstr "النتيجة"
+
+msgid "School out of the country"
+msgstr "مدرسة خارج لبنان"
+
+msgid "Public school in the country"
+msgstr "مدرسة رسمية في لبنان"
+
+msgid "Private school in the country"
+msgstr "مدرسة خاصة في لبنان"
