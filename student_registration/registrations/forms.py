@@ -9,6 +9,8 @@ from student_registration.registrations.models import (
 )
 from student_registration.schools.models import School
 from student_registration.locations.models import Location
+from student_registration.students.models import Nationality
+
 
 class RegisteringAdultForm(forms.ModelForm):
     """
@@ -18,6 +20,10 @@ class RegisteringAdultForm(forms.ModelForm):
 
     school = forms.ModelChoiceField(
                      queryset=School.objects.all(), widget=forms.Select,
+                     required=False, to_field_name='id'
+                )
+    nationality = forms.ModelChoiceField(
+                     queryset=Nationality.objects.exclude(id=5), widget=forms.Select,
                      required=False, to_field_name='id'
                 )
     principal_applicant_living_in_house = forms.TypedChoiceField(
