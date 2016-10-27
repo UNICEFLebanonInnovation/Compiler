@@ -19,7 +19,7 @@ from .models import (
 )
 
 
-class schoolResource(resources.ModelResource):
+class SchoolResource(resources.ModelResource):
     locationKazaa = fields.Field(column_name='District')
     locationGov = fields.Field(column_name='Governorate')
 
@@ -29,11 +29,11 @@ class schoolResource(resources.ModelResource):
             'id',
             'name',
             'number',
-            'location_id',
+            'location',
             'locationGov',
             'locationKazaa'
         )
-        export_order = ('id', 'name', 'number', 'locationGov', 'locationKazaa')
+        export_order = ('id', 'name', 'number', 'location', 'locationGov', 'locationKazaa')
 
     def dehydrate_locationKazaa(self, school):
         if school.location:
@@ -47,7 +47,7 @@ class schoolResource(resources.ModelResource):
 
 
 class SchoolAdmin(ImportExportModelAdmin):
-    resource_class = schoolResource
+    resource_class = SchoolResource
     list_display = ('name', 'number', 'location', )
     search_fields = ('name', 'number', )
     list_filter = ('location', )
