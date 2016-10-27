@@ -390,6 +390,7 @@
                         <label class="text">{% trans "Primary Phone Number" %}<span class="asterisque">*</span></label>
                         {{ form.primary_phone }}
                         <span class="error" id="primary_phone_error">{% trans "This field is required" %}</span>
+                        <span class="error" id="primary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
                     </div>
                     <div class="line">
                         <label class="text">{% trans "Phone Number are normally answered by" %}<span class="asterisque">*</span></label>
@@ -399,6 +400,7 @@
                     <div class="line">
                         <label class="text">{% trans "Secondary Phone Number" %}</label>
                         {{ form.secondary_phone }}
+                        <span class="error" id="secondary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
                     </div>
                     <div class="line">
                         <label class="text">{% trans "Phone Number are normally answered by" %}</label>
@@ -1117,7 +1119,8 @@
             }
         });
 
-        $("#nextButton").click(function() {
+        $("#nextButton").click(function()
+        {
             if(!$("#nextButton").hasClass("disabled"))
             {
                 var sectionCheck = validateSection(onePerFrameSly, onePerFrameSly.rel.activeItem);
@@ -1126,17 +1129,21 @@
                 {
                     if(onePerFrameSly.rel.activeItem == 8)
                     {
-                    var check1 = $('.child_enrolled_in_other_schools_block').find('a.active').attr('data-title');
-                    var check2 = $('.previously_registered_status_block').find('a.active').attr('data-title');
+                       var rowCount = $("#no_id_table td").closest("tr").length;
+                        if(rowCount >0)
+                        {
+                          //var check1 = $('.child_enrolled_in_other_schools_block').find('a.active').attr('data-title');
+                          //var check2 = $('.previously_registered_status_block').find('a.active').attr('data-title');
 
-                        if(check1 == 0 || (check1 == 1 && check2 == 0)) {
-                            bootbox.confirm("{% trans 'Are all the children enrolled in the 2nd shift schools have been registered?' %}", function(result) {
-                                if(result == true) {
-                                   onePerFrameSly.next();
-                                }
-                            });
-                        }else {
-                            onePerFrameSly.next();
+                              //if(check1 == 0 || (check1 == 1 && check2 == 0)) {
+                                  bootbox.confirm("{% trans 'Are all the children enrolled in the 2nd shift schools have been registered?' %}", function(result) {
+                                      if(result == true) {
+                                         onePerFrameSly.next();
+                                      }
+                                  });
+                              //}else {
+                              //    onePerFrameSly.next();
+                              //}
                         }
                     }else {
                         onePerFrameSly.next();
