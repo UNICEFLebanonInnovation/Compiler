@@ -28,7 +28,7 @@ function validateSection0()
     return valid;
 }
 
-function validateSection5()
+ function validateSection5()
 {
     var valid = true ;
     var selectedOption = $("#id_id_type").val();
@@ -71,6 +71,20 @@ function validateSection13()
         valid = validateTextBoxRequired('id_address','address_error',valid);
         valid = validateTextBoxRequired('id_primary_phone','primary_phone_error',valid);
         valid = validateTextBoxRequired('id_primary_phone_answered','primary_phone_answered_error',valid);
+        if($('#id_primary_phone').val().length!=8){
+
+            $('#primary_phone_length_error').show();
+            valid = false ;
+        }else{
+            $('#primary_phone_length_error').hide();
+        }
+        var secondary_phone_length = $('#id_secondary_phone').val().length;
+        if(secondary_phone_length==8 || secondary_phone_length ==0 ){
+            $('#secondary_phone_length_error').hide();
+        }else{
+        $   ('#secondary_phone_length_error').show();
+            valid = false ;
+        }
     return valid;
 }
 
