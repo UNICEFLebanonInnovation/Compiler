@@ -37,10 +37,10 @@
                                 <i class="icon-synch-sign icon-white"></i>&nbsp;
                                     {% trans "synchronize" %}
                               </button>
-{#                              <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}" target="_blank">#}
-{#                                <i class="icon-export-sign icon-white"></i>&nbsp;#}
-{#                                    {% trans "Export" %}#}
-{#                              </a>#}
+                              <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}" target="_blank">
+                                <i class="icon-export-sign icon-white"></i>&nbsp;
+                                    {% trans "Export" %}
+                              </a>
                             </h3>
                             <div class="panel-title">
                                 <select name="school" id="filter_school">
@@ -91,26 +91,26 @@
                                         <th rowspan="2">{% trans "Student living address" %}</th>
                                         <th rowspan="2">{% trans "Phone number (6 digits)" %}</th>
                                         <th rowspan="2">{% trans "Phone prefix (2 digits)" %}</th>
-                                        <th colspan="2">{% trans "Last student education" %}</th>
-                                        <th colspan="4">{% trans "Last student informal education" %}</th>
+                                        <th colspan="2" style="text-align: center; background-color: #67b168;">{% trans "Last student education" %}</th>
+                                        <th colspan="4" style="text-align: center; background-color: #ec971f;">{% trans "Last student informal education" %}</th>
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th>{% trans "year" %}</th>
                                         <th>{% trans "month" %}</th>
                                         <th>{% trans "day" %}</th>
-                                        <th>{% trans "Last education level" %}</th>
-                                        <th>{% trans "Last education year" %}</th>
-                                        <th>{% trans "Is the child participated in an ALP program" %}</th>
-                                        <th>{% trans "ALP round" %}</th>
-                                        <th>{% trans "ALP level" %}</th>
-                                        <th>{% trans "ALP result" %}</th>
+                                        <th style="background-color: #67b168;">{% trans "Last education level" %}</th>
+                                        <th style="background-color: #67b168;">{% trans "Education year" %}</th>
+                                        <th style="background-color: #ec971f;">{% trans "Is the child participated in an ALP program" %}</th>
+                                        <th style="background-color: #ec971f;">{% trans "ALP round" %}</th>
+                                        <th style="background-color: #ec971f;">{% trans "ALP level" %}</th>
+                                        <th style="background-color: #ec971f;">{% trans "ALP result" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
                             </table>
                         </div>
-                        <div style="position: fixed; bottom: 20px; right: 35px">
+                            <div style="position: fixed; bottom: 10px; {% if LANGUAGE_CODE == 'ar-ar' %}right: 35px;{% else %}left: 35px;{% endif %}">
                               <button class="btn btn-success" id="add_datatable_line">
                                 <i class="icon-plus-sign icon-white"></i>&nbsp;
                                     {% trans "Add empty line" %}

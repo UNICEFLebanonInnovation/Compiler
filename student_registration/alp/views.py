@@ -128,64 +128,79 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
     model = Outreach
 
     def get(self, request, *args, **kwargs):
-        queryset = Outreach.objects.all()
-        columns = Attribute.objects.filter(type=Outreach.EAV_TYPE)
+        queryset = self.model.objects.all()
+        school = request.GET.get('school', 0)
 
         if not self.request.user.is_staff:
             queryset = queryset.filter(owner=self.request.user)
-            columns = columns.filter(owner=self.request.user)
+        if school:
+            queryset = queryset.filter(school_id=school)
+        else:
+            queryset = []
 
         data = tablib.Dataset()
 
-        headers = [
-                    _('Partner'), _('Student number'), _('Student fullname'), _('Mother fullname'), _('Nationality'),
-                    _('Day of birth'), _('Month of birth'), _('Year of birth'), _('Sex'), _('ID Type'),
-                    _('ID Number tooltip'), _('Phone number'), _('Governorate'), _('Student living address'),
-                    _('Last education level'), _('Last education year'), _('Last training level'), _('Preferred language'),
-                    _('Average distance'), _('Outreach exam - day'), _('Outreach exam - month'), _('Outreach exam - year'),
-                    _('School name'), _('School name number')
+        data.headers = [
+            _('ALP result'),
+            _('ALP round'),
+            _('ALP level'),
+            _('Is the child participated in an ALP program'),
+            _('Education year'),
+            _('Last education level'),
+            _('Phone prefix'),
+            _('Phone number'),
+            _('Student living address'),
+            _('Student ID Number'),
+            _('Student ID Type'),
+            _('Registered in UNHCR'),
+            _('Mother nationality'),
+            _('Mother fullname'),
+            _('Student nationality'),
+            _('Student age'),
+            _('Student birthday'),
+            _('Sex'),
+            _('Student fullname'),
+            _('Student number'),
+            _('School'),
+            _('School number'),
+            _('District'),
+            _('Governorate')
         ]
-
-        for idx, col in enumerate(columns):
-            headers = [col.name] + headers
-
-        data.headers = headers
 
         content = []
         for line in queryset:
-            if not line.student:
+            if not line.student or not line.school:
                 continue
             content = [
-                line.partner.name,
-                line.student.number,
-                line.student.full_name,
-                line.student.mother_fullname,
-                line.student.nationality.name,
-                int(line.student.birthday_day),
-                int(line.student.birthday_month),
-                int(line.student.birthday_year),
-                _(line.student.sex),
-                line.student.id_type.name,
-                line.student.id_number,
+                line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
+                line.last_informal_edu_round,
+                line.last_informal_edu_level.name if last_informal_edu_level else '',
+                _(line.participated_in_alp),
+                _(line.last_year_result),
+                line.last_education_year if line.last_education_year else '',
+                _(line.last_school_type),
+                line.last_education_level.name if line.last_education_level else '',
+                line.section.name if line.section else '',
+                line.classroom.name if line.classroom else '',
+                line.student.phone_prefix,
                 line.student.phone,
-                line.location.name if line.location else '',
                 line.student.address,
-                line.last_education_level.name,
-                line.last_education_year,
-                line.last_class_level.name,
-                line.preferred_language.name,
-                line.average_distance,
-                int(line.exam_day),
-                int(line.exam_month),
-                int(line.exam_year),
+                line.student.id_number,
+                line.student.id_type.name if line.student.id_type else '',
+                line.registered_in_unhcr,
+                line.student.mother_nationality.name if line.student.mother_nationality else '',
+                line.student.mother_fullname,
+                line.student.nationality_name(),
+                line.student.birthday,
+                line.student.get_age(),
+                _(line.student.sex),
+                line.student.__unicode__(),
+                line.student.number,
                 line.school.name,
-                line.school.number
+                line.school.number,
+                line.school.location.name,
+                line.school.location.parent.name,
             ]
-
-            extra_fields = Value.objects.filter(entity_id=line.id, entity_ct=17)
-            for field in extra_fields:
-                content = [field.value_text] + content
-
             data.append(content)
 
         file_format = base_formats.XLS()
