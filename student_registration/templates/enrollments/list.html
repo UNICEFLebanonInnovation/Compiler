@@ -38,10 +38,12 @@
                                          </select>
                                     </li>
                                     <li>
-                                        <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">
+                                        {% if selectedSchool %}
+                                        <a class="btn btn-info"  id="registration-export" href="{% url "enrollments:enrollment_export" %}?school={{ selectedSchool }}" target="_blank">
                                             <i class="icon-export-sign icon-white"></i>&nbsp;
                                                 {% trans "Export" %}
                                           </a>
+                                        {% endif %}
                                     </li>
                                  </ol>
 
@@ -87,7 +89,7 @@
                                         <th>{% trans "Current Class" %}</th>
                                         <th>{% trans "Current Section" %}</th>
                                         <th>{% trans "Last education level" %}</th>
-                                        <th style="background-color: #67b168;">{% trans "School" %}</th>
+                                        <th>{% trans "School" %}</th>
                                         <th>{% trans "Education year" %}</th>
                                         <th>{% trans "Result" %}</th>
                                         <th>{% trans "Is the child participated in an ALP/2016-2 program" %}</th>

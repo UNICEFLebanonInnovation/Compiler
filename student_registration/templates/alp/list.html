@@ -38,10 +38,12 @@
                                          </select>
                                     </li>
                                     <li>
-                                        <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}" target="_blank">
+                                        {% if selectedSchool %}
+                                        <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}?school={{ selectedSchool }}" target="_blank">
                                             <i class="icon-export-sign icon-white"></i>&nbsp;
                                                 {% trans "Export" %}
                                           </a>
+                                        {% endif %}
                                     </li>
                                  </ol>
 
@@ -83,8 +85,8 @@
                                         <th>{% trans "Student living address" %}</th>
                                         <th>{% trans "Phone number" %}</th>
                                         <th>{% trans "Phone prefix" %}</th>
-                                        <th>{% trans "Last education level" %}</th>
-                                        <th>{% trans "Last education year" %}</th>
+                                        <th>{% trans "Last eduction level" %}</th>
+                                        <th>{% trans "Education year" %}</th>
                                         <th>{% trans "Is the child participated in an ALP program" %}</th>
                                         <th>{% trans "ALP round" %}</th>
                                         <th>{% trans "ALP level" %}</th>
