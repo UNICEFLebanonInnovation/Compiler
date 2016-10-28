@@ -121,7 +121,7 @@
 {#                                            <input type="checkbox" name="duplicate_section" id="duplicate_section" />#}
                                         </th>
                                         <th colspan="4" style="text-align: center; background-color: #67b168;">{% trans "Last student education" %}</th>
-                                        <th colspan="5" style="text-align: center; background-color: #ec971f;">{% trans "Last student informal education" %}</th>
+                                        <th colspan="4" style="text-align: center; background-color: #ec971f;">{% trans "Last student informal education" %}</th>
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th>{% trans "year" %}</th>
@@ -141,7 +141,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div style="position: fixed; bottom: 20px; right: 35px">
+                        <div style="position: fixed; bottom: 10px; {% if LANGUAGE_CODE == 'ar-ar' %}right: 35px;{% else %}left: 35px;{% endif %}">
                               <button class="btn btn-success" id="add_datatable_line">
                                 <i class="icon-plus-sign icon-white"></i>&nbsp;
                                     {% trans "Add empty line" %}
