@@ -99,7 +99,7 @@
                                         <th rowspan="2">{% trans "Student father name" %}</th>
                                         <th rowspan="2">{% trans "Student last name" %}</th>
                                         <th rowspan="2">{% trans "Sex" %}</th>
-                                        <th colspan="3">{% trans "Student birthday" %}</th>
+                                        <th colspan="3" style="text-align: center;">{% trans "Student birthday" %}</th>
                                         <th rowspan="2">{% trans "Student age" %}</th>
                                         <th rowspan="2">{% trans "Student nationality" %}</th>
                                         <th rowspan="2">{% trans "Mother fullname" %}</th>
@@ -115,48 +115,50 @@
                                         <th rowspan="2">{% trans "Phone number (6 digits)" %}</th>
                                         <th rowspan="2">{% trans "Phone prefix (2 digits)" %}</th>
                                         <th rowspan="2">{% trans "Current Class" %}
-                                            <input type="checkbox" name="duplicate_classroom" id="duplicate_classroom" />
+{#                                            <input type="checkbox" name="duplicate_classroom" id="duplicate_classroom" />#}
                                         </th>
                                         <th rowspan="2">{% trans "Current Section" %}
-                                            <input type="checkbox" name="duplicate_section" id="duplicate_section" />
+{#                                            <input type="checkbox" name="duplicate_section" id="duplicate_section" />#}
                                         </th>
-                                        <th colspan="3">{% trans "Last student education" %}</th>
-                                        <th colspan="5">{% trans "Last student informal education" %}</th>
+                                        <th colspan="4" style="text-align: center; background-color: #67b168;">{% trans "Last student education" %}</th>
+                                        <th colspan="5" style="text-align: center; background-color: #ec971f;">{% trans "Last student informal education" %}</th>
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th>{% trans "year" %}</th>
                                         <th>{% trans "month" %}</th>
                                         <th>{% trans "day" %}</th>
-                                        <th>{% trans "Last education level" %}</th>
-                                        <th>{% trans "Last education year" %}</th>
-                                        <th>{% trans "Last year result" %}</th>
-                                        <th>{% trans "Is the child participated in an ALP program" %}</th>
-                                        <th>{% trans "Last informal education level" %}</th>
-                                        <th>{% trans "Last informal education year" %}</th>
-                                        <th>{% trans "Last informal education result" %}</th>
-                                        <th>{% trans "Last informal education final result" %}</th>
+                                        <th style="background-color: #67b168;">{% trans "Last education level" %}</th>
+                                        <th style="background-color: #67b168;">{% trans "School" %}</th>
+                                        <th style="background-color: #67b168;">{% trans "Education year" %}</th>
+                                        <th style="background-color: #67b168;">{% trans "Result" %}</th>
+                                        <th style="background-color: #ec971f;">{% trans "Is the child participated in an ALP/2016-2 program" %}</th>
+                                        <th style="background-color: #ec971f;">{% trans "ALP level" %}</th>
+                                        <th style="background-color: #ec971f;">{% trans "ALP round" %}</th>
+                                        <th style="background-color: #ec971f;">{% trans "ALP result" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
                             </table>
                         </div>
-                          <button class="btn btn-success" id="add_datatable_line">
-                            <i class="icon-plus-sign icon-white"></i>&nbsp;
-                                {% trans "Add empty line" %}
-                          </button>
-                          <button class="btn btn-success" id="add_defined_lines">
-                            <i class="icon-plus-sign icon-white"></i>&nbsp;
-                                {% trans "Add defined number of lines" %}
-                          </button>
-                          <button class="btn btn-success" id="duplicate_last_line_select">
-                            <i class="icon-plus-sign icon-white"></i>&nbsp;
-                                {% trans "duplicate last line with selected option" %}
-                          </button>
-                          <button class="btn btn-success" id="duplicate_defined_lines_select">
-                            <i class="icon-plus-sign icon-white"></i>&nbsp;
-                                {% trans "duplicate defined number of lines with selected option" %}
-                          </button>
+                        <div style="position: fixed; bottom: 20px; right: 35px">
+                              <button class="btn btn-success" id="add_datatable_line">
+                                <i class="icon-plus-sign icon-white"></i>&nbsp;
+                                    {% trans "Add empty line" %}
+                              </button>
+                              <button class="btn btn-success" id="add_defined_lines">
+                                <i class="icon-plus-sign icon-white"></i>&nbsp;
+                                    {% trans "Add defined number of lines" %}
+                              </button>
+                        </div>
+{#                          <button class="btn btn-success" id="duplicate_last_line_select">#}
+{#                            <i class="icon-plus-sign icon-white"></i>&nbsp;#}
+{#                                {% trans "duplicate last line with selected option" %}#}
+{#                          </button>#}
+{#                          <button class="btn btn-success" id="duplicate_defined_lines_select">#}
+{#                            <i class="icon-plus-sign icon-white"></i>&nbsp;#}
+{#                                {% trans "duplicate defined number of lines with selected option" %}#}
+{#                          </button>#}
                      </div>
                 </div>
             </div>

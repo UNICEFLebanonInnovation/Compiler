@@ -989,10 +989,10 @@ msgid "Last year result"
 msgstr "نتيجة السنة السابقة"
 
 msgid "Graduated"
-msgstr "ناجح"
+msgstr "ناجح/ة"
 
 msgid "Failed"
-msgstr "معيد"
+msgstr "معيد/ة"
 
 msgid "Filter by Section"
 msgstr "تصفية القائمة حسب الشعبة"
@@ -1042,8 +1042,11 @@ msgstr "معلومات سابقة للتعليم النظامي للتلميذ"
 msgid "Last student informal education"
 msgstr "معلومات سابقة للتعليم غير نظامي للتلميذ"
 
+msgid "Is the child participated in an ALP/2016-2 program"
+msgstr "هل انتسب التلميذ الى التعليم المكثف دورة ALP/2016-2"
+
 msgid "Is the child participated in an ALP program"
-msgstr "هل انتسب الى التعليم المكثف/ALP"
+msgstr "هل انتسب التلميذ الى برنامج التعليم المكثف ALP"
 
 msgid "Last informal education level"
 msgstr "آخر مستوى وصل اليه التلميذ"
@@ -1076,7 +1079,16 @@ msgid "ALP round"
 msgstr "دورة"
 
 msgid "ALP level"
-msgstr "المستوى المسجل فيه"
+msgstr "المستوى المسجل فيه ضمن البرنامج"
 
 msgid "ALP result"
 msgstr "النتيجة"
+
+msgid "School out of the country"
+msgstr "مدرسة خارج لبنان"
+
+msgid "Public school in the country"
+msgstr "مدرسة رسمية في لبنان"
+
+msgid "Private school in the country"
+msgstr "مدرسة خاصة في لبنان"
