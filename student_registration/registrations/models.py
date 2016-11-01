@@ -62,8 +62,6 @@ class RegisteringAdult(Person):
     wfp_case_number = models.CharField(max_length=50, blank=True, null=True)
     csc_case_number = models.CharField(max_length=50, blank=True, null=True)
     card_issue_requested = models.BooleanField(default=False)
-    batch_number =  models.PositiveIntegerField(blank=True, null=True)
-    batch_date_sent = models.DateTimeField(blank=True, null=True)
     child_enrolled_in_this_school = models.PositiveIntegerField(blank=True, null=True)
     child_enrolled_in_other_schools = models.BooleanField(default=False)
     primary_phone = models.CharField(max_length=50, blank=True, null=True)
