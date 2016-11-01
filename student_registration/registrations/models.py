@@ -52,14 +52,6 @@ class RegisteringAdult(Person):
         ('relay', _('Someone who always relays the message to me')),
         ('notrelay', _('Someone who may not relay the message to me')),
     )
-
-    CARD_STATUS = Choices(
-        ('notsent', _('Not sent yet')),
-        ('pending', _('Pending distribution')),
-        ('noshow', _('No show')),
-        ('distributed', _('Distributed')),
-    )
-
     individual_id_number = models.CharField(max_length=45L, blank=True, null=True)
     principal_applicant_living_in_house = models.BooleanField(blank=True, default=True)
     status = models.BooleanField(blank=True, default=True)
@@ -70,7 +62,8 @@ class RegisteringAdult(Person):
     wfp_case_number = models.CharField(max_length=50, blank=True, null=True)
     csc_case_number = models.CharField(max_length=50, blank=True, null=True)
     card_issue_requested = models.BooleanField(default=False)
-    card_status_distribution = models.CharField(max_length=50, blank=True, null=True, choices=CARD_STATUS)
+    batch_number =  models.PositiveIntegerField(blank=True, null=True)
+    batch_date_sent = models.DateTimeField(blank=True, null=True)
     child_enrolled_in_this_school = models.PositiveIntegerField(blank=True, null=True)
     child_enrolled_in_other_schools = models.BooleanField(default=False)
     primary_phone = models.CharField(max_length=50, blank=True, null=True)
@@ -93,6 +86,40 @@ class RegisteringAdult(Person):
 
     def get_absolute_url(self):
         return reverse('registrations:registering_child', kwargs={'pk': self.pk})
+
+
+class StatusLog(TimeStampedModel):
+    adult = models.ForeignKey(
+        RegisteringAdult,
+        blank=False, null=True,
+        related_name='+',
+    )
+    message = models.CharField(max_length=255L, blank=True, null=True)
+    type = models.ForeignKey(
+        MessageType,
+        blank=False, null=True,
+        related_name='+',
+    )
+    wfp_date = models.DateTimeField()
+
+    class Meta:
+        ordering = ['wfp_date']
+
+    def __unicode__(self):
+        return u'{} - {}'.format(
+            self.message,
+            self.type.name
+        )
+
+
+class MessageType(models.Model):
+    name = models.CharField(max_length=255L, unique=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
 
 
 class Phone(models.Model):
