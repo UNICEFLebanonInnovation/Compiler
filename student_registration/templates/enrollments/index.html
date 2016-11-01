@@ -5,9 +5,11 @@
 
 {% block extra_head %}
 
-	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
+{#	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">#}
+{#	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">#}
+{#	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">#}
+	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
 
 {% endblock %}
 
@@ -31,49 +33,32 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                           <div class="panel-heading">
-                            <h3 class="panel-title">{% trans "Registration" %}
-                              <button class="btn btn-info" id="registration-synchro">
-                                <i class="icon-synch-sign icon-white"></i>&nbsp;
-                                    {% trans "synchronize" %}
-                              </button>
-{#                              <button class="btn btn-info" id="registration-add-column">#}
-{#                                <i class="icon-plus-sign icon-white"></i>&nbsp;#}
-{#                                    {% trans "add column" %}#}
-{#                              </button>#}
-                              <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">
-                                <i class="icon-export-sign icon-white"></i>&nbsp;
-                                    {% trans "Export" %}
-                              </a>
+                            <h3 class="panel-title">
+                                <ol class="breadcrumb">
+                                    <li><a>{% trans "Registration" %}</a></li>
+                                    <li>
+                                      <button class="btn btn-info" id="registration-synchro">
+                                        <i class="icon-synch-sign icon-white"></i>&nbsp;
+                                            {% trans "synchronize" %}
+                                      </button>
+                                    </li>
+                                    <li>
+                                        <select name="classroom" id="filter_class" class="col-300">
+                                            <option value="">{% trans "Filter by Class" %}</option>
+                                            {% for item in classrooms %}
+                                                <option value="{{ item.id }}">{{ item.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">
+                                            <i class="icon-export-sign icon-white"></i>&nbsp;
+                                                {% trans "Export" %}
+                                        </a>
+                                        <button class="btn btn-warning" id="filter_cancel">
+                                            {% trans "Rest filter" %}
+                                        </button>
+                                    </li>
+                                </ol>
                             </h3>
-                            <div class="panel-title">
-                                <select name="section" id="filter_section">
-                                    <option value="">{% trans "Filter by Section" %}</option>
-                                    {% for item in sections %}
-                                        <option value="{{ item.id }}">{{ item.name }}</option>
-                                    {% endfor %}
-                                </select>
-                                <select name="classroom" id="filter_class">
-                                    <option value="">{% trans "Filter by Class" %}</option>
-                                    {% for item in classrooms %}
-                                        <option value="{{ item.id }}">{{ item.name }}</option>
-                                    {% endfor %}
-                                </select>
-                                <select name="student_id_type" id="filter_id_type">
-                                    <option value="">{% trans "Filter by ID Type" %}</option>
-                                    {% for item in idtypes %}
-                                        <option value="{{ item.id }}">{{ item.name }}</option>
-                                    {% endfor %}
-                                </select>
-                                <select name="student_nationality" id="filter_nationality">
-                                    <option value="">{% trans "Filter by Nationality" %}</option>
-                                    {% for item in nationalities %}
-                                        <option value="{{ item.id }}">{{ item.name }}</option>
-                                    {% endfor %}
-                                </select>
-                                <button class="btn btn-warning btn-sm" id="filter_cancel">
-                                    {% trans "Rest filter" %}
-                                </button>
-                            </div>
                             <div class="actions pull-right">
                                 <i class="fa fa-chevron-down"></i>
                                 <i class="fa fa-times"></i>
@@ -91,57 +76,57 @@
                                     <tr id="thead-line-1">
                                         <th rowspan="2">&nbsp;</th>
                                         <th rowspan="2">#</th>
-                                        <th rowspan="2">{% trans "Governorate" %}</th>
-                                        <th rowspan="2">{% trans "District" %}</th>
-                                        <th rowspan="2">{% trans "School number" %}</th>
-                                        <th rowspan="2">{% trans "School" %}</th>
-                                        <th rowspan="2">{% trans "Student first name" %}</th>
-                                        <th rowspan="2">{% trans "Student father name" %}</th>
-                                        <th rowspan="2">{% trans "Student last name" %}</th>
-                                        <th rowspan="2">{% trans "Sex" %}</th>
-                                        <th colspan="3" style="text-align: center;">{% trans "Student birthday" %}</th>
-                                        <th rowspan="2">{% trans "Student age" %}</th>
-                                        <th rowspan="2">{% trans "Student nationality" %}</th>
-                                        <th rowspan="2">{% trans "Mother fullname" %}</th>
-                                        <th rowspan="2">{% trans "Mother nationality" %}</th>
-                                        <th rowspan="2">{% trans "Registered in UNHCR" %}</th>
-                                        <th rowspan="2">{% trans "Student ID Type" %}
+                                        <th rowspan="2"><label>{% trans "Governorate" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "District" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "School number" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "School" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Student first name" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Sex" %}</label></th>
+                                        <th colspan="3" style="text-align: center;"><label>{% trans "Student birthday" %}</label></th>
+                                        <th rowspan="2"><label class="col-60">{% trans "Student age" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Student nationality" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Mother fullname" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Mother nationality" %}</label></th>
+                                        <th rowspan="2"><label class="col-100">{% trans "Registered in UNHCR" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Student ID Type" %}</label>
 {#                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number type tooltip" %}"></i>#}
                                         </th>
-                                        <th rowspan="2">{% trans "Student ID Number" %}
+                                        <th rowspan="2"><label>{% trans "Student ID Number" %}</label>
                                             <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"></i>
                                         </th>
-                                        <th rowspan="2">{% trans "Student living address" %}</th>
-                                        <th rowspan="2">{% trans "Phone number (6 digits)" %}</th>
-                                        <th rowspan="2">{% trans "Phone prefix (2 digits)" %}</th>
-                                        <th rowspan="2">{% trans "Current Class" %}
+                                        <th rowspan="2"><label>{% trans "Student living address" %}</label></th>
+                                        <th rowspan="2"><label class="col-100">{% trans "Phone number (6 digits)" %}</label></th>
+                                        <th rowspan="2"><label class="col-100">{% trans "Phone prefix (2 digits)" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Current Class" %}</label>
 {#                                            <input type="checkbox" name="duplicate_classroom" id="duplicate_classroom" />#}
                                         </th>
-                                        <th rowspan="2">{% trans "Current Section" %}
+                                        <th rowspan="2"><label>{% trans "Current Section" %}</label>
 {#                                            <input type="checkbox" name="duplicate_section" id="duplicate_section" />#}
                                         </th>
-                                        <th colspan="4" style="text-align: center; background-color: #67b168;">{% trans "Last student education" %}</th>
-                                        <th colspan="5" style="text-align: center; background-color: #ec971f;">{% trans "Last student informal education" %}</th>
+                                        <th colspan="4" style="text-align: center; background-color: #67b168;"><label>{% trans "Last student education" %}</label></th>
+                                        <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
-                                        <th>{% trans "year" %}</th>
-                                        <th>{% trans "month" %}</th>
-                                        <th>{% trans "day" %}</th>
-                                        <th style="background-color: #67b168;">{% trans "Last education level" %}</th>
-                                        <th style="background-color: #67b168;">{% trans "School" %}</th>
-                                        <th style="background-color: #67b168;">{% trans "Education year" %}</th>
-                                        <th style="background-color: #67b168;">{% trans "Result" %}</th>
-                                        <th style="background-color: #ec971f;">{% trans "Is the child participated in an ALP/2016-2 program" %}</th>
-                                        <th style="background-color: #ec971f;">{% trans "ALP level" %}</th>
-                                        <th style="background-color: #ec971f;">{% trans "ALP round" %}</th>
-                                        <th style="background-color: #ec971f;">{% trans "ALP result" %}</th>
+                                        <th><label>{% trans "year" %}</label></th>
+                                        <th><label>{% trans "month" %}</label></th>
+                                        <th><label>{% trans "day" %}</label></th>
+                                        <th style="background-color: #67b168;"><label class="col-100">{% trans "Last education level" %}</label></th>
+                                        <th style="background-color: #67b168;"><label>{% trans "School" %}</label></th>
+                                        <th style="background-color: #67b168;"><label>{% trans "Education year" %}</label></th>
+                                        <th style="background-color: #67b168;"><label>{% trans "Result" %}</label></th>
+                                        <th style="background-color: #ec971f;"><label class="col-150">{% trans "Is the child participated in an ALP/2016-2 program" %}</label></th>
+                                        <th style="background-color: #ec971f;"><label>{% trans "ALP level" %}</label></th>
+                                        <th style="background-color: #ec971f;"><label>{% trans "ALP round" %}</label></th>
+                                        <th style="background-color: #ec971f;"><label>{% trans "ALP result" %}</label></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
                             </table>
                         </div>
-                        <div style="position: fixed; bottom: 20px; right: 35px">
+                        <div style="position: fixed; bottom: 10px; {% if LANGUAGE_CODE == 'ar-ar' %}right: 35px;{% else %}left: 35px;{% endif %}">
                               <button class="btn btn-success" id="add_datatable_line">
                                 <i class="icon-plus-sign icon-white"></i>&nbsp;
                                     {% trans "Add empty line" %}
@@ -374,7 +359,7 @@
                     if(result == true){
                         delete_from_store(item.attr('itemscope'), 'registrations');
                         item.parents('tr').remove();
-                    }
+                    }x``
                 });
             });
 
