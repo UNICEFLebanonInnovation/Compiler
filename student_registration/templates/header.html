@@ -7,7 +7,7 @@
         <div class="container">
           <a class="navbar-brand" href="/?ln={{ LANGUAGE_CODE }}">
               {% if request.user.is_authenticated %}
-                {% if request.user|has_group:"ALP" %}{% trans "Compiler" %} 1.1{% else %}{% trans "Pilot" %} 1.6{% endif %}
+                {% if request.user|has_group:"ALP" %}{% trans "Compiler" %} 1.1{% else %}{% trans "Pilot" %} 1.7{% endif %}
               {% else %}
                   {% trans "Compiler" %} 1.1
               {% endif %}
