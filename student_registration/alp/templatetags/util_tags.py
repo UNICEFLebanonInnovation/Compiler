@@ -14,6 +14,11 @@ def get_range(start, end):
 
 
 @register.assignment_tag
+def get_range_int(start, end):
+    return (x for x in range(start, end))
+
+
+@register.assignment_tag
 def get_range_str(start, end):
     return (str(x-1)+'/'+str(x) for x in range(start, end))
 
