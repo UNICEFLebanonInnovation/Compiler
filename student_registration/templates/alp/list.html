@@ -28,7 +28,7 @@
                                 <ol class="breadcrumb">
                                     <li><a>{% trans "ALP data collecting" %}</a></li>
                                     <li>
-                                         <select id="id_school">
+                                         <select id="id_school" class="col-400">
                                              <option value="">---{% trans "Display by School" %}---</option>
                                               {% for school in schools %}
                                                 <option value="{{ school.id }}" {% if selectedSchool == school.id %}selected="selected"{% endif %}>
@@ -46,8 +46,6 @@
                                         {% endif %}
                                     </li>
                                  </ol>
-
-
                             </h3>
                             <div class="actions pull-right">
                                 <i class="fa fa-chevron-down"></i>
@@ -62,35 +60,50 @@
                                        cellspacing="0"
                                        width="100%">
                                 <thead>
-                                    <tr>
-                                        <th>{% trans "Governorate" %}</th>
-                                        <th>{% trans "District" %}</th>
-                                        <th>{% trans "School number" %}</th>
-                                        <th>{% trans "School" %}</th>
-                                        <th>{% trans "Student number" %}</th>
-                                        <th>{% trans "Student first name" %}</th>
-                                        <th>{% trans "Student father name" %}</th>
-                                        <th>{% trans "Student last name" %}</th>
-                                        <th>{% trans "Sex" %}</th>
-                                        <th>{% trans "Student birthday" %}</th>
-                                        <th>{% trans "Student age" %}</th>
-                                        <th>{% trans "Student nationality" %}</th>
-                                        <th>{% trans "Mother fullname" %}</th>
-                                        <th>{% trans "Mother nationality" %}</th>
-                                        <th>{% trans "Registered in UNHCR" %}</th>
-                                        <th>{% trans "Student ID Type" %}</th>
-                                        <th>{% trans "Student ID Number" %}
+                                    <tr id="thead-line-1">
+                                        <th rowspan="2"><label>{% trans "Governorate" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "District" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "School number" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "School" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Student first name" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Sex" %}</label></th>
+                                        <th colspan="3" style="text-align: center;"><label>{% trans "Student birthday" %}</label></th>
+                                        <th rowspan="2"><label class="col-60">{% trans "Student age" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Student nationality" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Mother fullname" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Mother nationality" %}</label></th>
+                                        <th rowspan="2"><label class="col-100">{% trans "Registered in UNHCR" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Student ID Type" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Student ID Number" %}</label>
                                             <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"></i>
                                         </th>
-                                        <th>{% trans "Student living address" %}</th>
-                                        <th>{% trans "Phone number" %}</th>
-                                        <th>{% trans "Phone prefix" %}</th>
-                                        <th>{% trans "Last eduction level" %}</th>
-                                        <th>{% trans "Education year" %}</th>
-                                        <th>{% trans "Is the child participated in an ALP program" %}</th>
-                                        <th>{% trans "ALP round" %}</th>
-                                        <th>{% trans "ALP level" %}</th>
-                                        <th>{% trans "ALP result" %}</th>
+                                        <th rowspan="2"><label>{% trans "Student living address" %}</label></th>
+                                        <th rowspan="2"><label class="col-100">{% trans "Phone number (6 digits)" %}</label></th>
+                                        <th rowspan="2"><label class="col-100">{% trans "Phone prefix (2 digits)" %}</label></th>
+                                        <th colspan="2" style="text-align: center; background-color: #67b168;"><label>{% trans "Last student education" %}</label></th>
+                                        <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
+                                        <th colspan="5" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Registered in school" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Registered in level" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Registered in section" %}</label></th>
+                                    </tr>
+                                    <tr id="thead-line-2">
+                                        <th><label>{% trans "year" %}</label></th>
+                                        <th><label>{% trans "month" %}</label></th>
+                                        <th><label>{% trans "day" %}</label></th>
+                                        <th style="background-color: #67b168;"><label class="col-100">{% trans "Last education level" %}</label></th>
+                                        <th style="background-color: #67b168;"><label>{% trans "Education year" %}</label></th>
+                                        <th style="background-color: #ec971f;"><label class="col-150">{% trans "Is the child participated in an ALP program" %}</label></th>
+                                        <th style="background-color: #ec971f;"><label>{% trans "ALP round" %}</label></th>
+                                        <th style="background-color: #ec971f;"><label>{% trans "ALP level" %}</label></th>
+                                        <th style="background-color: #ec971f;"><label>{% trans "ALP result" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label>{% trans "Arabic language" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label>{% trans "Foreign language" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label>{% trans "Math" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label>{% trans "Science" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label>{% trans "Total" %}</label></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -122,6 +135,14 @@
                                             <td>{% if registry.last_informal_edu_round %}{{ registry.last_informal_edu_round.name }}{% endif %}</td>
                                             <td>{% if registry.last_informal_edu_level %}{{ registry.last_informal_edu_level.name }}{% endif %}</td>
                                             <td>{% if registry.last_informal_edu_final_result %}{{ registry.last_informal_edu_final_result.name }}{% endif %}</td>
+                                            <td>{{ registry.exam_result_arabic }}</td>
+                                            <td>{{ registry.exam_result_language }}</td>
+                                            <td>{{ registry.exam_result_math }}</td>
+                                            <td>{{ registry.exam_result_science }}</td>
+                                            <td>{{ registry.exam_total }}</td>
+                                            <td>{% if registry.exam_school %}{{ registry.exam_school.name }} - {{ registry.exam_school.number }}{% endif %}</td>
+                                            <td>{% if registry.level %}{{ registry.level.name }}{% endif %}</td>
+                                            <td>{% if registry.section %}{{ registry.section.name }}{% endif %}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

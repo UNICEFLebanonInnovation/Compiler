@@ -21,11 +21,11 @@ urlpatterns = [
     ),
 
     # URL pattern for the UserDetailView
-    url(
-        regex=r'^(?P<username>[\w.@+-]+)/$',
-        view=views.UserDetailView.as_view(),
-        name='detail'
-    ),
+    # url(
+    #     regex=r'^(?P<username>[\w.@+-]+)/$',
+    #     view=views.UserDetailView.as_view(),
+    #     name='detail'
+    # ),
 
     # URL pattern for the UserUpdateView
     url(
@@ -34,5 +34,15 @@ urlpatterns = [
         name='update'
     ),
 
-    url(r'^set-language/(?P<language>[\w.@+-]+)/$', view=views.UserChangeLanguageRedirectView.as_view(), name='set_language'),
+    url(
+        r'^login-redirect/$',
+        view=views.LoginRedirectView.as_view(),
+        name='login_redirect'
+    ),
+
+    url(
+        r'^set-language/(?P<language>[\w.@+-]+)/$',
+        view=views.UserChangeLanguageRedirectView.as_view(),
+        name='set_language'
+    ),
 ]

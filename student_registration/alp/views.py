@@ -52,14 +52,16 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+        if has_group(self.request.user, 'CERD'):
+            return self.queryset
         return self.queryset.filter(owner=self.request.user)
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
-        student = instance.student
+        # student = instance.student
         instance.delete()
-        if student:
-            student.delete()
+        # if student:
+        #     student.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
     def perform_update(self, serializer):
@@ -72,8 +74,12 @@ class OutreachView(LoginRequiredMixin, TemplateView):
     template_name = 'alp/index.html'
 
     def get_context_data(self, **kwargs):
+        data = []
+        if has_group(self.request.user, 'CERD'):
+            data = Outreach.objects.exclude(owner__partner_id=None)
 
         return {
+            'data': data,
             'schools': School.objects.all(),
             'languages': Language.objects.all(),
             'locations': Location.objects.filter(type_id=2),

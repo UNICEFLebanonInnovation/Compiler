@@ -126,10 +126,10 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
-        student = instance.student
+        # student = instance.student
         instance.delete()
-        if student:
-            student.delete()
+        # if student:
+        #     student.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
     def perform_update(self, serializer):

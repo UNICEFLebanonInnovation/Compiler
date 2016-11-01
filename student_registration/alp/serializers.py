@@ -7,6 +7,12 @@ from student_registration.students.serializers import StudentSerializer
 class OutreachSerializer(serializers.ModelSerializer):
     original_id = serializers.IntegerField(source='id', read_only=True)
     student_id = serializers.IntegerField(source='student.id', read_only=True)
+    student_id_type_id = serializers.CharField(source='student.id_type_id', read_only=True)
+    student_nationality_id = serializers.CharField(source='student.nationality_id', read_only=True)
+    student_mother_nationality_id = serializers.CharField(source='student.mother_nationality_id', read_only=True)
+    location = serializers.IntegerField(source='school.location_id', read_only=True)
+    governorate_name = serializers.CharField(source='school.location.parent.name', read_only=True)
+    school_number = serializers.CharField(source='school.number', read_only=True)
     student_first_name = serializers.CharField(source='student.first_name')
     student_father_name = serializers.CharField(source='student.father_name')
     student_last_name = serializers.CharField(source='student.last_name')
@@ -44,12 +50,13 @@ class OutreachSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
 
         student_data = validated_data.pop('student', None)
-        student_serializer = StudentSerializer(data=student_data)
-        student_serializer.is_valid(raise_exception=True)
-        student_serializer.instance = student_serializer.save()
+        if student_data:
+            student_serializer = StudentSerializer(data=student_data)
+            student_serializer.is_valid(raise_exception=True)
+            student_serializer.instance = student_serializer.save()
+            instance.student = student_serializer.instance
 
         try:
-            instance.student = student_serializer.instance
             instance.save()
 
         except Exception as ex:
@@ -78,6 +85,9 @@ class OutreachSerializer(serializers.ModelSerializer):
             'student_id_type',
             'student_nationality',
             'student_mother_nationality',
+            'student_id_type_id',
+            'student_nationality_id',
+            'student_mother_nationality_id',
             'student_address',
             'registered_in_unhcr',
             'participated_in_alp',
@@ -98,4 +108,8 @@ class OutreachSerializer(serializers.ModelSerializer):
             'registered_in_school',
             'level',
             'exam_school',
+            'alp_round',
+            'location',
+            'governorate_name',
+            'school_number',
         )
