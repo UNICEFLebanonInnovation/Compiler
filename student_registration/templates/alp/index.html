@@ -1,4 +1,4 @@
-{% extends "base.offline.html" %}
+{% extends "base.html" %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
@@ -6,9 +6,6 @@
 {% block extra_head %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
-{#	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">#}
-{#	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">#}
-{#	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">#}
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
 
 {% endblock %}
@@ -429,6 +426,26 @@
                     var itemblock = '.student_age_'+$(this).attr('itemscope');
                     $(itemblock).val(age);
                 }
+            });
+
+            $(document).on('change', '.outreach-line-p .exam-note', function(){
+                var itemid = $(this).attr('itemscope');
+                var item = $('#line-'+itemid);
+                var note1 = parseInt(item.find('#exam_result_arabic').val());
+                var note2 = parseInt(item.find('#exam_result_language').val());
+                var note3 = parseInt(item.find('#exam_result_math').val());
+                var note4 = parseInt(item.find('#exam_result_science').val());
+                item.find('#exam_result').val(note1+note2+note3+note4);
+            });
+
+            $(document).on('change', '.outreach-line .exam-note', function(){
+                var itemid = $(this).attr('itemscope');
+                var item = $('#line-'+itemid);
+                var note1 = parseInt(item.find('#exam_result_arabic').val());
+                var note2 = parseInt(item.find('#exam_result_language').val());
+                var note3 = parseInt(item.find('#exam_result_math').val());
+                var note4 = parseInt(item.find('#exam_result_science').val());
+                item.find('#exam_result').val(note1+note2+note3+note4);
             });
 
             $(document).on('blur', '.outreach-field', function(){

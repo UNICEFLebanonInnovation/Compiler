@@ -159,7 +159,7 @@ class Person(TimeStampedModel):
         return int(current_year)-int(self.birthday_year)
 
     @property
-    def age(self):
+    def calc_age(self):
         current_year = datetime.datetime.now().year
         return int(current_year)-int(self.birthday_year)
 
