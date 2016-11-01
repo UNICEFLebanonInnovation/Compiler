@@ -51,11 +51,10 @@ class OutreachSerializer(serializers.ModelSerializer):
 
         try:
             student_data = validated_data.pop('student', None)
-            if student_data:
-                student_serializer = StudentSerializer(data=student_data)
-                student_serializer.is_valid(raise_exception=True)
-                student_serializer.instance = student_serializer.save()
-                instance.student = student_serializer.instance
+            student_serializer = StudentSerializer(data=student_data)
+            student_serializer.is_valid(raise_exception=True)
+            student_serializer.instance = student_serializer.save()
+            instance.student = student_serializer.instance
 
             instance.save()
 
