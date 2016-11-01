@@ -4,6 +4,10 @@
 {% get_range 1990 2020 as years %}
 {% get_range 1 32 as days %}
 {% get_range_str 2001 2020 as last_education_years %}
+{% get_range 0 21 as notes1 %}
+{% get_range 0 21 as notes2 %}
+{% get_range 0 21 as notes3 %}
+{% get_range 0 21 as notes4 %}
 
 <table style="display:none;" id="outreach_prototype">
     <tr id="line-$$itemscope_id$$" class="outreach-line" itemscope="$$itemscope_id$$">
@@ -12,9 +16,6 @@
                 <i class="icon-trash icon-white"></i>
                 {% trans "Delete" %}
             </button>
-        </td>
-        <td>
-            <span class="incremental_number" itemscope="$$itemscope_id$$" style="font-weight: bold;"></span>
         </td>
         <td>
             <select name="location" id="location" class="outreach-location outreach-field" itemscope="$$itemscope_id$$">
@@ -96,6 +97,48 @@
                 {% endfor %}
             </select>
         </td>
+    {% if request.user|has_group:"CERD" %}
+        <td>
+            <select name="exam_result_arabic" id="exam_result_arabic" class="outreach-field exam-note" itemscope="$$itemscope_id$$" style="width: 45px;">
+                {% for note in notes1 %}
+                    <option value="{{ note }}">{{ note }}</option>
+                {% endfor %}
+            </select> / 20
+        </td>
+        <td>
+            <select name="exam_result_language" id="exam_result_language" class="outreach-field exam-note" itemscope="$$itemscope_id$$" style="width: 45px;">
+                {% for note in notes2 %}
+                    <option value="{{ note }}">{{ note }}</option>
+                {% endfor %}
+            </select> / 20
+        </td>
+        <td>
+            <select name="exam_result_math" id="exam_result_math" class="outreach-field exam-note" itemscope="$$itemscope_id$$" style="width: 45px;">
+                {% for note in notes3 %}
+                    <option value="{{ note }}">{{ note }}</option>
+                {% endfor %}
+            </select> / 20
+        </td>
+        <td>
+            <select name="exam_result_science" id="exam_result_science" class="outreach-field exam-note" itemscope="$$itemscope_id$$" style="width: 45px;">
+                {% for note in notes4 %}
+                    <option value="{{ note }}">{{ note }}</option>
+                {% endfor %}
+            </select> / 20
+        </td>
+        <td>
+            <input type="text" name="exam_result" class="outreach-field exam_result_$$itemscope_id$$" readonly="readonly"
+                   itemscope="$$itemscope_id$$" id="exam_result" value="" disabled="disabled" size="3"/> / 80
+        </td>
+        <td>
+            <select name="level" id="level" class="outreach-field" itemscope="$$itemscope_id$$">
+                <option value="">-------</option>
+                {% for item in informal_educations %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    {% endif %}
         <td>
             <input type="text" name="student_mother_fullname" id="student_mother_fullname" class="outreach-field" itemscope="$$itemscope_id$$" />
         </td>
@@ -108,8 +151,8 @@
             </select>
         </td>
         <td>
-            <label><input type="radio" name="registered_in_unhcr" value="1" data-value="yes" id="registered_in_unhcr_1" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="student_id_type" />{% trans "Yes" %}</label>
-            <label><input type="radio" name="registered_in_unhcr" value="0" data-value="no" id="registered_in_unhcr_0" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="" />{% trans "No" %}</label>
+            <label><input type="radio" name="registered_in_unhcr_$$itemscope_id$$" data-name="registered_in_unhcr" value="1" data-value="yes" id="registered_in_unhcr_1" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="student_id_type" />{% trans "Yes" %}</label>
+            <label><input type="radio" name="registered_in_unhcr_$$itemscope_id$$" data-name="registered_in_unhcr" value="0" data-value="no" id="registered_in_unhcr_0" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="" />{% trans "No" %}</label>
         </td>
         <td>
             <select name="student_id_type" id="student_id_type" class="outreach-field student_id_type" itemscope="$$itemscope_id$$">
@@ -148,8 +191,8 @@
             </select>
         </td>
         <td>
-            <label><input type="radio" name="participated_in_alp" value="1" data-value="yes" id="participated_in_alp_1" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="" />{% trans "Yes" %}</label>
-            <label><input type="radio" name="participated_in_alp" value="0" data-value="no" id="participated_in_alp_0" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="alp_details" />{% trans "No" %}</label>
+            <label><input type="radio" name="participated_in_alp_$$itemscope_id$$" data-name="participated_in_alp" value="1" data-value="yes" id="participated_in_alp_1" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="" />{% trans "Yes" %}</label>
+            <label><input type="radio" name="participated_in_alp_$$itemscope_id$$" data-name="participated_in_alp" value="0" data-value="no" id="participated_in_alp_0" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="alp_details" />{% trans "No" %}</label>
         </td>
         <td>
             <select name="last_informal_edu_round" id="last_informal_edu_round" class="outreach-field alp_details" itemscope="$$itemscope_id$$">
