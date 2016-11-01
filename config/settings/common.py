@@ -19,7 +19,7 @@ env = environ.Env()
 
 #Version
 COMPILER_VERSION = '1.1'
-PILOT_VERSION = '1.6'
+PILOT_VERSION = '1.7'
 
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
