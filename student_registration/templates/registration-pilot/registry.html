@@ -542,8 +542,11 @@
         });
         $(document).on('change', '.bootbox-body #id_age', function(){
             var age = $(this).val();
-            if(age < 5 || age > 16 ) {
-                bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
+            if(age < 5 || age > 17 ) {
+                <!--bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});-->
+                $('.bootbox-body').find("#age_range_error").show();
+            }else {
+            $('.bootbox-body').find("#age_range_error").hide();
             }
         });
 
@@ -1293,11 +1296,13 @@
             $('.bootbox-body').find("#id_age").val(age);
             $('.bootbox-body').find("#id_age").trigger('blur');
 
-            if(age < 5 || age > 16) {
-               bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
+            if(age < 5 || age > 17) {
+               <!--bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});-->
+               $('.bootbox-body').find("#age_range_error").show();
             }
         } else {
             $('.bootbox-body').find("#id_age").val("");
+            $('.bootbox-body').find("#age_range_error").hide();
         }
     }
 
