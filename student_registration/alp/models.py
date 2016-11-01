@@ -111,6 +111,11 @@ class Outreach(TimeStampedModel):
         null=True,
         choices=((str(x), x) for x in range(1, 33))
     )
+    alp_round = models.ForeignKey(
+        ALPRound,
+        blank=True, null=True,
+        related_name='+',
+    )
     section = models.ForeignKey(
         Section,
         blank=True, null=True,
