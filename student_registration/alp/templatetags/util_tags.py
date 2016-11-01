@@ -3,6 +3,7 @@ from django import template
 from django.utils.safestring import mark_safe
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import Group
+from django.core.urlresolvers import resolve
 
 register = template.Library()
 
@@ -77,3 +78,12 @@ def user_main_role(user):
     if 'SCHOOL' in groups:
         return 'school'
     return 'mehe'
+
+
+@register.filter(name='is_current_page')
+def is_current_page(request, url_name):
+    path_info = request.META.get('PATH_INFO', '')
+    current_url = resolve(path_info).url_name
+    if url_name == current_url:
+        return True
+    return False
