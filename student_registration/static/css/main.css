@@ -52,3 +52,22 @@ input[readonly=readonly] {
   display:none;
   z-index: 1;
 }
+
+.col-60 {
+  width: 60px;
+}
+.col-80 {
+  width: 80px;
+}
+.col-100 {
+  width: 100px;
+}
+.col-150 {
+  width: 150px;
+}
+.col-300 {
+  width: 300px;
+}
+.col-400 {
+  width: 400px;
+}

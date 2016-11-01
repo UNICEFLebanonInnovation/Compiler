@@ -1,5 +1,6 @@
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
 <!DOCTYPE html>
 <html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>
   <head>
@@ -44,29 +45,30 @@
 
   <body>
 
-    <div class="m-b">
-      <nav class="navbar navbar-dark navbar-static-top bg-inverse">
-        <div class="container">
-          <a class="navbar-brand" href="?ln={{ LANGUAGE_CODE }}">{% trans "Compiler" %}</a>
-          <button type="button" class="navbar-toggler hidden-sm-up pull-xs-right" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
-            &#9776;
-          </button>
-
-          <!-- Collect the nav links, forms, and other content for toggling -->
-          <div class="collapse navbar-toggleable-xs" id="bs-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-            </ul>
-
-            <ul class="nav navbar-nav pull-xs-right">
-                <li class="nav-item">
-                  <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Log In" %}</a>
-                </li>
-                {% block header %}{% endblock %}
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </div>
+    {% include 'header.html' %}
+{#    <div class="m-b">#}
+{#      <nav class="navbar navbar-dark navbar-static-top bg-inverse">#}
+{#        <div class="container">#}
+{#          <a class="navbar-brand" href="?ln={{ LANGUAGE_CODE }}">{% trans "Compiler" %}</a>#}
+{#          <button type="button" class="navbar-toggler hidden-sm-up pull-xs-right" data-toggle="collapse" data-target="#bs-navbar-collapse-1">#}
+{#            &#9776;#}
+{#          </button>#}
+{##}
+{#          <!-- Collect the nav links, forms, and other content for toggling -->#}
+{#          <div class="collapse navbar-toggleable-xs" id="bs-navbar-collapse-1">#}
+{#            <ul class="nav navbar-nav">#}
+{#            </ul>#}
+{##}
+{#            <ul class="nav navbar-nav pull-xs-right">#}
+{#                <li class="nav-item">#}
+{#                  <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Log In" %}</a>#}
+{#                </li>#}
+{#                {% block header %}{% endblock %}#}
+{#            </ul>#}
+{#          </div>#}
+{#        </div>#}
+{#      </nav>#}
+{#    </div>#}
 
     <div class="container">
 

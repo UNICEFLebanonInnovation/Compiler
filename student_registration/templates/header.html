@@ -5,7 +5,13 @@
     <div class="m-b">
       <nav class="navbar navbar-dark navbar-static-top bg-inverse">
         <div class="container">
-          <a class="navbar-brand" href="/?ln={{ LANGUAGE_CODE }}">{% if request.user.is_authenticated and request.user|has_group:"ALP" %}{% trans "Compiler" %}{% else %}{% trans "Pilot" %}{% endif %}</a>
+          <a class="navbar-brand" href="/?ln={{ LANGUAGE_CODE }}">
+              {% if request.user.is_authenticated %}
+                {% if request.user|has_group:"ALP" %}{% trans "Compiler" %} 1.1{% else %}{% trans "Pilot" %} 1.6{% endif %}
+              {% else %}
+                  {% trans "Compiler" %} 1.1
+              {% endif %}
+          </a>
           <button type="button" class="navbar-toggler hidden-sm-up pull-xs-right" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
             &#9776;
           </button>
@@ -20,41 +26,41 @@
                 {% endif %}
                 {% if request.user.is_authenticated %}
                     {% if request.user|has_group:"ALP_OUTREACH" %}
-                        {% if request.user|has_group:"PARTNER" %}
+                        {% if request.user|has_group:"PARTNER" or request.user|has_group:"CERD" %}
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data collecting" %}</a>
+                    <a class="nav-link {% if request|is_current_page:"alp_data_collecting" %}active{% endif %}" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data collecting" %}</a>
                   </li>
                         {% endif %}
                         {% if request.user|has_group:"PMU" %}
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'alp:alp_data_view' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data collecting" %}</a>
+                    <a class="nav-link {% if request|is_current_page:"alp_data_view" %}active{% endif %}" href="{% url 'alp:alp_data_view' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data collecting" %}</a>
                   </li>
                         {% endif %}
                     {% endif %}
                 {% if request.user|has_group:"SCHOOL" or request.user|has_group:"DIRECTOR" %}
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'enrollments:enrollment' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
+                    <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
                   </li>
                 {% endif %}
                 {% if request.user|has_group:"PMU" %}
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'enrollments:enrollment_view' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
+                    <a class="nav-link {% if request|is_current_page:"enrollment_view" %}active{% endif %}" href="{% url 'enrollments:enrollment_view' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
                   </li>
                 {% endif %}
                     {% if request.user|has_group:"ATTENDANCE" %}
                       <li class="nav-item">
-                        <a class="nav-link" href="{% url 'attendances:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>
+                        <a class="nav-link {% if request|is_current_page:"attendance" %}active{% endif %}" href="{% url 'attendances:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>
                       </li>
                     {% endif %}
                 {% if request.user|has_group:"PILOT" %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'registrations:registering_pilot' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
+                    <a class="nav-link {% if request|is_current_page:"registering_pilot" %}active{% endif %}" href="{% url 'registrations:registering_pilot' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
                   </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'registrations:waiting_list' %}?ln={{ LANGUAGE_CODE }}">{% trans "Waiting List" %}</a>
+                    <a class="nav-link {% if request|is_current_page:"waiting_list" %}active{% endif %}" href="{% url 'registrations:waiting_list' %}?ln={{ LANGUAGE_CODE }}">{% trans "Waiting List" %}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'registrations:class_assignment' %}?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignments" %}</a>
+                    <a class="nav-link {% if request|is_current_page:"class_assignment" %}active{% endif %}" href="{% url 'registrations:class_assignment' %}?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignments" %}</a>
                 </li>
                 {% endif %}
             {% endif %}
