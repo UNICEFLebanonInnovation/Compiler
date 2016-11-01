@@ -189,6 +189,42 @@ class Outreach(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
+    exam_result_arabic = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 21))
+    )
+    exam_result_language = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 21))
+    )
+    exam_result_math = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 21))
+    )
+    exam_result_science = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 21))
+    )
+    registered_in_school = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO
+    )
+    level = models.ForeignKey(
+        EducationLevel,
+        blank=True, null=True,
+        related_name='+',
+    )
+    exam_school = models.ForeignKey(
+        School,
+        blank=True, null=True,
+        related_name='+',
+    )
 
     class Meta:
         ordering = ['id']
@@ -204,6 +240,10 @@ class Outreach(TimeStampedModel):
         if self.student:
             return self.student.mother_fullname
         return ''
+
+    @property
+    def exam_total(self):
+        return self.exam_result_arabic+self.exam_result_language+self.exam_result_math+self.exam_result_science
 
     def __unicode__(self):
         return self.student.__unicode__()
