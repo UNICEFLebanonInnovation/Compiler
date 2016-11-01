@@ -50,7 +50,13 @@ class Enrollment(TimeStampedModel):
 
     YES_NO = Choices(
         ('yes', _('Yes')),
-        ('no', _('No'))
+        ('no', _('No')),
+    )
+
+    SCHOOL_TYPE = Choices(
+        ('out_the_country', _('School out of the country')),
+        ('public_in_country', _('Public school in the country')),
+        ('private_in_country', _('Private school in the country')),
     )
 
     YEARS = ((str(x), x) for x in range(2016, 2051))
@@ -188,6 +194,12 @@ class Enrollment(TimeStampedModel):
         ClassLevel,
         blank=True, null=True,
         related_name='+',
+    )
+    last_school_type = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=SCHOOL_TYPE
     )
 
     @property
