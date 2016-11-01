@@ -13,12 +13,12 @@ class OutreachSerializer(serializers.ModelSerializer):
     location = serializers.IntegerField(source='school.location_id', read_only=True)
     governorate_name = serializers.CharField(source='school.location.parent.name', read_only=True)
     school_number = serializers.CharField(source='school.number', read_only=True)
+    student_age = serializers.CharField(source='student.calc_age')
     student_first_name = serializers.CharField(source='student.first_name')
     student_father_name = serializers.CharField(source='student.father_name')
     student_last_name = serializers.CharField(source='student.last_name')
     student_mother_fullname = serializers.CharField(source='student.mother_fullname')
     student_sex = serializers.CharField(source='student.sex')
-    student_age = serializers.CharField(source='student.age')
     student_birthday_year = serializers.CharField(source='student.birthday_year')
     student_birthday_month = serializers.CharField(source='student.birthday_month')
     student_birthday_day = serializers.CharField(source='student.birthday_day')
@@ -49,15 +49,14 @@ class OutreachSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
 
-        student_data = validated_data.pop('student', None)
-        if student_data:
-            student_serializer = StudentSerializer(data=student_data)
-            student_serializer.is_valid(raise_exception=True)
-            student_serializer.instance = student_serializer.save()
-            instance.student = student_serializer.instance
-
         try:
-            instance.save()
+            student_data = validated_data.pop('student', None)
+            if student_data:
+                student_serializer = StudentSerializer(data=student_data)
+                student_serializer.is_valid(raise_exception=True)
+                student_serializer.instance = student_serializer.save()
+                instance.student = student_serializer.instance
+                instance.save()
 
         except Exception as ex:
             raise serializers.ValidationError({'Outreach instance': ex.message})
