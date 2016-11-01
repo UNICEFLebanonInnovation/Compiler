@@ -171,10 +171,8 @@ function update_or_create_item(itemid, name, value, store_name)
     request.onsuccess = function(){
         var item = request.result;
         if(item){
-            console.log('ok');
             item[name] = value;
         }else{
-            console.log('ok');
             var item = {id: itemid};
             item[name] = value;
         }
