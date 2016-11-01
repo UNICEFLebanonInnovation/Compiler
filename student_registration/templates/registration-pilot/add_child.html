@@ -36,6 +36,7 @@
             <label class="text">{% trans "Age" %}<span class="asterisque">*</span></label>
             {{ student_form.age }}
             <span class="error" id="age_error">{% trans "This field is required" %}</span>
+          <span class="error" id="age_range_error">{% trans "The child is not within the eligible age for the Pilot." %}</span>
         </div>
         <div class="line field-select-small-size">
             <label class="text">{% trans "Date of birth" %}</label>
