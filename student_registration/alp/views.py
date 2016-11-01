@@ -14,7 +14,7 @@ from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 
 from .models import Outreach, ALPRound
-from .serializers import OutreachSerializer
+from .serializers import OutreachSerializer, OutreachExamSerializer
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
     Person,
@@ -67,6 +67,10 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
     def perform_update(self, serializer):
         instance = serializer.save()
         instance.save()
+
+    def partial_update(self, request, *args, **kwargs):
+        self.serializer_class = OutreachExamSerializer
+        return super(OutreachViewSet, self).partial_update(request)
 
 
 class OutreachView(LoginRequiredMixin, TemplateView):
