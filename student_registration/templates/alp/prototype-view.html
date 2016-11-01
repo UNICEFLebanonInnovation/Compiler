@@ -1,10 +1,10 @@
 {% load staticfiles i18n %}
 {% load util_tags %}
 
-{% get_range 0 21 as notes1 %}
-{% get_range 0 21 as notes2 %}
-{% get_range 0 21 as notes3 %}
-{% get_range 0 21 as notes4 %}
+{% get_range_int 0 21 as notes1 %}
+{% get_range_int 0 21 as notes2 %}
+{% get_range_int 0 21 as notes3 %}
+{% get_range_int 0 21 as notes4 %}
 
     <tr id="line-{{ line.id }}" class="outreach-line-p" itemscope="{{ line.id }}">
         <td>&nbsp;<input type="hidden" name="id" value="{{ line.id }}" class="outreach-field-id" /></td>
@@ -29,10 +29,9 @@
             </select> / 20
         </td>
         <td>
-        {{ line.exam_result_language }}
             <select name="exam_result_language" id="exam_result_language" class="outreach-field-p exam-note" itemscope="{{ line.id }}" style="width: 45px;">
-                {% for note2 in notes2 %}
-                    <option value="{{ note2 }}" {% if line.exam_result_language == note2 %}selected="selected"{% endif %}>{{ note2 }}</option>
+                {% for note in notes2 %}
+                    <option value="{{ note }}" {% if line.exam_result_language == note %}selected="selected"{% endif %}>{{ note }}</option>
                 {% endfor %}
             </select> / 20
         </td>
@@ -51,14 +50,14 @@
             </select> / 20
         </td>
         <td>
-            <input type="text" name="exam_result" class="outreach-field exam_result_{{ line.id }}" readonly="readonly"
-                   itemscope="{{ line.id }}" id="exam_result" value="{{ line.exam_result }}" disabled="disabled" size="3" /> / 80
+            <input type="text" name="" class="exam_total_{{ line.id }}" readonly="readonly"
+                   itemscope="{{ line.id }}" id="exam_total" value="{{ line.exam_total }}" disabled="disabled" size="3" /> / 80
         </td>
         <td>
             <select name="level" id="level" class="outreach-field-p" itemscope="{{ line.id }}">
                 <option value="">-------</option>
                 {% for item in informal_educations %}
-                    <option value="{{ item.id }}">{{ item.name }}</option>
+                    <option value="{{ item.id }}" {% if registry.level_id == item.id %}selected{% endif %}>{{ item.name }}</option>
                 {% endfor %}
             </select>
         </td>

@@ -4,10 +4,10 @@
 {% get_range 1990 2020 as years %}
 {% get_range 1 32 as days %}
 {% get_range_str 2001 2020 as last_education_years %}
-{% get_range 0 21 as notes1 %}
-{% get_range 0 21 as notes2 %}
-{% get_range 0 21 as notes3 %}
-{% get_range 0 21 as notes4 %}
+{% get_range_int 0 21 as notes1 %}
+{% get_range_int 0 21 as notes2 %}
+{% get_range_int 0 21 as notes3 %}
+{% get_range_int 0 21 as notes4 %}
 
 <table style="display:none;" id="outreach_prototype">
     <tr id="line-$$itemscope_id$$" class="outreach-line" itemscope="$$itemscope_id$$">
@@ -127,8 +127,8 @@
             </select> / 20
         </td>
         <td>
-            <input type="text" name="exam_result" class="outreach-field exam_result_$$itemscope_id$$" readonly="readonly"
-                   itemscope="$$itemscope_id$$" id="exam_result" value="" disabled="disabled" size="3"/> / 80
+            <input type="text" name="exam_total" class="outreach-field exam_total_$$itemscope_id$$" readonly="readonly"
+                   itemscope="$$itemscope_id$$" id="exam_total" value="" disabled="disabled" size="3"/> / 80
         </td>
         <td>
             <select name="level" id="level" class="outreach-field" itemscope="$$itemscope_id$$">

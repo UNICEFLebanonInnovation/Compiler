@@ -56,7 +56,8 @@ class OutreachSerializer(serializers.ModelSerializer):
                 student_serializer.is_valid(raise_exception=True)
                 student_serializer.instance = student_serializer.save()
                 instance.student = student_serializer.instance
-                instance.save()
+
+            instance.save()
 
         except Exception as ex:
             raise serializers.ValidationError({'Outreach instance': ex.message})
@@ -111,4 +112,17 @@ class OutreachSerializer(serializers.ModelSerializer):
             'location',
             'governorate_name',
             'school_number',
+        )
+
+
+class OutreachExamSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Outreach
+        fields = (
+            'exam_result_arabic',
+            'exam_result_language',
+            'exam_result_math',
+            'exam_result_science',
+            'level',
         )
