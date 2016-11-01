@@ -274,7 +274,9 @@ class RegistrationAdmin(ImportExportModelAdmin):
     search_fields = (
         'student__first_name', 'registering_adult__first_name', 'relation_to_adult', 'enrolled_last_year',
         'enrolled_last_year_school__name', 'enrolled_last_year_location__name', 'school__name', 'section__name',
-        'classroom__name', 'year', 'owner__username', 'status', 'out_of_school_two_years', 'related_to_family')
+        'classroom__name', 'year', 'owner__username', 'status', 'out_of_school_two_years', 'related_to_family',
+        'student__id_number',
+    )
     list_filter = ('enrolled_last_year', 'status', 'school')
 
 
