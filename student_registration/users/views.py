@@ -7,6 +7,7 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import translation
+from student_registration.alp.templatetags.util_tags import has_group
 
 from .models import User
 
@@ -61,3 +62,14 @@ class UserChangeLanguageRedirectView(LoginRequiredMixin, RedirectView):
         translation.activate(user_language)
         self.request.session[translation.LANGUAGE_SESSION_KEY] = user_language
         return reverse('home') + '?' + user_language
+
+
+class LoginRedirectView(LoginRequiredMixin, RedirectView):
+    permanent = True
+
+    def get_redirect_url(self):
+        if has_group(self.request.user, 'SCHOOL'):
+            return reverse('enrollments:enrollment', kwargs={})
+        if has_group(self.request.user, 'PARTNER'):
+            return reverse('alp:alp_data_collecting', kwargs={})
+        return reverse('home')
