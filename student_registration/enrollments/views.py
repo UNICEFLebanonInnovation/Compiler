@@ -126,10 +126,10 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
-        student = instance.student
+        # student = instance.student
         instance.delete()
-        if student:
-            student.delete()
+        # if student:
+        #     student.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
     def perform_update(self, serializer):
@@ -148,15 +148,29 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         return self.queryset
 
     def get(self, request, *args, **kwargs):
+        queryset = self.model.objects.all()
+        school = request.GET.get('school', 0)
 
-        queryset = self.get_queryset()
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(owner=self.request.user)
+        if school:
+            queryset = queryset.filter(school_id=school)
+        else:
+            queryset = []
+
         data = tablib.Dataset()
         data.headers = [
-            _('Last education year'),
+            _('ALP result'),
+            _('ALP round'),
+            _('ALP level'),
+            _('Is the child participated in an ALP/2016-2 program'),
+            _('Result'),
+            _('Education year'),
+            _('School'),
             _('Last education level'),
-            _('Last year result'),
             _('Current Section'),
             _('Current Class'),
+            _('Phone prefix'),
             _('Phone number'),
             _('Student living address'),
             _('Student ID Number'),
@@ -181,11 +195,17 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             if not line.student or not line.school:
                 continue
             content = [
+                line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
+                line.last_informal_edu_round,
+                line.last_informal_edu_level.name if last_informal_edu_level else '',
+                _(line.participated_in_alp),
+                _(line.last_year_result),
                 line.last_education_year if line.last_education_year else '',
+                _(line.last_school_type),
                 line.last_education_level.name if line.last_education_level else '',
-                line.last_year_result,
                 line.section.name if line.section else '',
                 line.classroom.name if line.classroom else '',
+                line.student.phone_prefix,
                 line.student.phone,
                 line.student.address,
                 line.student.id_number,

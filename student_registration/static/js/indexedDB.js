@@ -164,6 +164,22 @@ function update_item_store(itemid, name, value, store_name)
     };
 }
 
+function update_or_create_item(itemid, name, value, store_name)
+{
+    var store = getStoreByName(store_name);
+    var request = store.get(itemid);
+    request.onsuccess = function(){
+        var item = request.result;
+        if(item){
+            item[name] = value;
+        }else{
+            var item = {id: itemid};
+            item[name] = value;
+        }
+        store.put(item);
+    };
+}
+
 function update_one_by_index(index_name, index_value, name, value, store_name)
 {
     var store = getStoreByName(store_name);

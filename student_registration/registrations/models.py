@@ -52,7 +52,6 @@ class RegisteringAdult(Person):
         ('relay', _('Someone who always relays the message to me')),
         ('notrelay', _('Someone who may not relay the message to me')),
     )
-
     individual_id_number = models.CharField(max_length=45L, blank=True, null=True)
     principal_applicant_living_in_house = models.BooleanField(blank=True, default=True)
     status = models.BooleanField(blank=True, default=True)
@@ -85,6 +84,40 @@ class RegisteringAdult(Person):
 
     def get_absolute_url(self):
         return reverse('registrations:registering_child', kwargs={'pk': self.pk})
+
+
+class MessageType(models.Model):
+    name = models.CharField(max_length=255L, unique=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+
+class StatusLog(TimeStampedModel):
+    adult = models.ForeignKey(
+        RegisteringAdult,
+        blank=False, null=True,
+        related_name='+',
+    )
+    message = models.CharField(max_length=255L, blank=True, null=True)
+    type = models.ForeignKey(
+        MessageType,
+        blank=False, null=True,
+        related_name='+',
+    )
+    wfp_date = models.DateTimeField()
+
+    class Meta:
+        ordering = ['wfp_date']
+
+    def __unicode__(self):
+        return u'{} - {}'.format(
+            self.message,
+            self.type.name
+        )
 
 
 class Phone(models.Model):

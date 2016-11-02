@@ -548,7 +548,7 @@ msgid "Select a School"
 msgstr "أختر مدرسة"
 
 msgid "Total"
-msgstr "مجموع التلاميذ"
+msgstr "المجموع"
 
 msgid "Other classes"
 msgstr "باقي الصفوف"
@@ -994,6 +994,12 @@ msgstr "ناجح/ة"
 msgid "Failed"
 msgstr "معيد/ة"
 
+msgid "Filter by Location"
+msgstr "تصفية حسب القضاء"
+
+msgid "Filter by School"
+msgstr "تصفية حسب المدرسة"
+
 msgid "Filter by Section"
 msgstr "تصفية القائمة حسب الشعبة"
 
@@ -1092,3 +1098,27 @@ msgstr "مدرسة رسمية في لبنان"
 
 msgid "Private school in the country"
 msgstr "مدرسة خاصة في لبنان"
+
+msgid "Student notes"
+msgstr "علامات التلميذ"
+
+msgid "Arabic language"
+msgstr "لغة عربية"
+
+msgid "Foreign language"
+msgstr "لغة اجنبية"
+
+msgid "Math"
+msgstr "رياضيات"
+
+msgid "Science"
+msgstr "علوم"
+
+msgid "Registered in school"
+msgstr "المدرسة المسجل بها التلميذ"
+
+msgid "Registered in level"
+msgstr "المستوى المسجل بها التلميذ"
+
+msgid "Registered in section"
+msgstr "الشعبة المسجل بها التلميذ"
