@@ -40,18 +40,19 @@
                                       </button>
                                     </li>
                                     <li>
-                                        <select name="location" id="filter_location" class="col-230">
+                                        <select name="location" id="filter_location" style="width: 210px;">
                                             <option value="">{% trans "Filter by Location" %}</option>
                                             {% for item in locations %}
                                                 <option value="{{ item.id }}">{{ item.name }}</option>
                                             {% endfor %}
                                         </select>
-                                        <select name="school" id="filter_school" class="col-230">
+                                        <select name="school" id="filter_school" style="width: 210px;">
                                             <option value="">{% trans "Filter by School" %}</option>
                                             {% for item in schools %}
                                                 <option value="{{ item.id }}">{{ item.name }}</option>
                                             {% endfor %}
                                         </select>
+                                        <input type="text" id="search" size="200" style="width: 150px;" />
                                           <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}" target="_blank">
                                             <i class="icon-export-sign icon-white"></i>&nbsp;
                                                 {% trans "Export" %}
@@ -167,6 +168,7 @@
     <script type="text/javascript" src="{% static 'js/indexedDB.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/eav.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.quicksearch.js' %}"></script>
     <script type="text/javascript">
         var oTable = null;
         var db = null;
@@ -202,6 +204,10 @@
                 CONFIRM : '{% trans "Confirm" %}'
             });
             bootbox.setLocale(language);
+
+            $('input#search').quicksearch('table tbody tr', {
+                selector: 'td'
+            });
 
             $(document).on("click", ".delete-column", function(e) {
                 var itemid = $(this).parent().attr('itemscope');
