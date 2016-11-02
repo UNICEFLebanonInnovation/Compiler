@@ -158,6 +158,7 @@ function validateUNHCRNumber(id)
 {
     var validrecorded =  /^LEB-1[5-7][C]\d{5}$/i.test($('#'+id).val());
     var validregistered = /^[0-9]{3}-1[1-6][C]\d{5}$/i.test($('#'+id).val());
+    var validOther =  /^[0-9]{3}-00[C]\d{5}$/i.test($('#'+id).val());
     // for recorded: LEB-1[5-7][C]\d{5}
     // for registered: \d{3}-1[1-5][C]\d{5}
     // return /^[0-9]{3}-1[1-5][C]\d{5}$/i.test($('#id_id_number').val());
