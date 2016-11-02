@@ -8,10 +8,18 @@
 
     <tr id="line-{{ line.id }}" class="outreach-line-p" itemscope="{{ line.id }}">
         <td>&nbsp;<input type="hidden" name="id" value="{{ line.id }}" class="outreach-field-id" /></td>
+        <td>{% if line.school and line.school.location %}
+                {{ line.school.location.name }}
+                <input type="hidden" name="location" value="{{ line.school.location.id }}" id="location" class="" />
+            {% endif %}
+        </td>
         <td>{% if line.school and line.school.location and line.school.location.parent %}{{ line.school.location.parent.name }}{% endif %}</td>
-        <td>{% if line.school and line.school.location %}{{ line.school.location.name }}{% endif %}</td>
         <td>{% if line.school %}{{ line.school.number }}{% endif %}</td>
-        <td>{% if line.school %}{{ line.school.name }}{% endif %}</td>
+        <td>{% if line.school %}
+            {{ line.school.name }}
+            <input type="hidden" name="school" value="{{ line.school.id }}" id="school" class="" />
+        {% endif %}
+        </td>
         <td>{% if line.student %}{{ line.student.first_name }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.father_name }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.last_name }}{% endif %}</td>

@@ -197,21 +197,25 @@ class Outreach(TimeStampedModel):
     exam_result_arabic = models.IntegerField(
         blank=True,
         null=True,
+        default=0,
         choices=((x, x) for x in range(0, 21))
     )
     exam_result_language = models.IntegerField(
         blank=True,
         null=True,
+        default=0,
         choices=((x, x) for x in range(0, 21))
     )
     exam_result_math = models.IntegerField(
         blank=True,
         null=True,
+        default=0,
         choices=((x, x) for x in range(0, 21))
     )
     exam_result_science = models.IntegerField(
         blank=True,
         null=True,
+        default=0,
         choices=((x, x) for x in range(0, 21))
     )
     registered_in_school = models.CharField(
@@ -248,7 +252,16 @@ class Outreach(TimeStampedModel):
 
     @property
     def exam_total(self):
-        return self.exam_result_arabic+self.exam_result_language+self.exam_result_math+self.exam_result_science
+        total = 0
+        if self.exam_result_arabic:
+            total += self.exam_result_arabic
+        if self.exam_result_language:
+            total += self.exam_result_language
+        if self.exam_result_math:
+            total += self.exam_result_math
+        if self.exam_result_science:
+            total += self.exam_result_science
+        return total
 
     def __unicode__(self):
         return self.student.__unicode__()
