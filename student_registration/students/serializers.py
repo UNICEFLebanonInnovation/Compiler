@@ -29,6 +29,7 @@ class StudentSerializer(serializers.ModelSerializer):
             'last_name',
             'mother_fullname',
             'sex',
+            'age',
             'birthday_year',
             'birthday_month',
             'birthday_day',
