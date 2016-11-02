@@ -178,6 +178,7 @@
                             {{ form.birthday_day }}
                             {{ form.birthday_month }}
                             {{ form.birthday_year }}
+                            <span class="error" id="dob_error">{% trans "This field is required" %}</span>
                         </div>
                         <div class="line">
                             <label class="text">{% trans "Gender" %}<span class="asterisque">*</span></label>
@@ -542,8 +543,11 @@
         });
         $(document).on('change', '.bootbox-body #id_age', function(){
             var age = $(this).val();
-            if(age < 5 || age > 16 ) {
-                bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
+            if(age < 5 || age > 17 ) {
+                <!--bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});-->
+                $('.bootbox-body').find("#age_range_error").show();
+            }else {
+            $('.bootbox-body').find("#age_range_error").hide();
             }
         });
 
@@ -1098,8 +1102,7 @@
         });
 
         $("#id_age").blur(function () {
-
-            if($('#id_age').val() < 18) {
+            if($('#id_age').val() < 18 && $('#id_age').val() >0) {
                 bootbox.alert("{% trans 'Currently ATM Cards can only be issued for those over the age of 18. We are working on a solution for this. You can continue the Registration Process so we have your information in case a solution is found. However, until then you will not receive payments.' %}", function() {});
             }
         });
@@ -1293,11 +1296,16 @@
             $('.bootbox-body').find("#id_age").val(age);
             $('.bootbox-body').find("#id_age").trigger('blur');
 
-            if(age < 5 || age > 16) {
-               bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});
+            if(age < 5 || age > 17) {
+               <!--bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});-->
+               $('.bootbox-body').find("#age_range_error").show();
+            }
+            else{
+            $('.bootbox-body').find("#age_range_error").hide();
             }
         } else {
             $('.bootbox-body').find("#id_age").val("");
+            $('.bootbox-body').find("#age_range_error").hide();
         }
     }
 

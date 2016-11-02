@@ -14,7 +14,7 @@ from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 
 from .models import Outreach, ALPRound
-from .serializers import OutreachSerializer
+from .serializers import OutreachSerializer, OutreachExamSerializer
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
     Person,
@@ -52,19 +52,25 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+        if has_group(self.request.user, 'CERD'):
+            return self.queryset
         return self.queryset.filter(owner=self.request.user)
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
-        student = instance.student
+        # student = instance.student
         instance.delete()
-        if student:
-            student.delete()
+        # if student:
+        #     student.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
     def perform_update(self, serializer):
         instance = serializer.save()
         instance.save()
+
+    def partial_update(self, request, *args, **kwargs):
+        self.serializer_class = OutreachExamSerializer
+        return super(OutreachViewSet, self).partial_update(request)
 
 
 class OutreachView(LoginRequiredMixin, TemplateView):
@@ -72,8 +78,12 @@ class OutreachView(LoginRequiredMixin, TemplateView):
     template_name = 'alp/index.html'
 
     def get_context_data(self, **kwargs):
+        data = []
+        if has_group(self.request.user, 'CERD'):
+            data = Outreach.objects.exclude(owner__partner_id=None)
 
         return {
+            'data': data,
             'schools': School.objects.all(),
             'languages': Language.objects.all(),
             'locations': Location.objects.filter(type_id=2),
@@ -102,14 +112,7 @@ class OutreachStaffView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         data = []
-        schools = []
-
-        if has_group(self.request.user, 'MEHE'):
-            schools = School.objects.all()
-        elif has_group(self.request.user, 'COORDINATOR'):
-            schools = School.objects.filter(location_id__in=self.request.user.locations.all())
-        elif has_group(self.request.user, 'PMU'):
-            schools = School.objects.filter(location_id=self.request.user.location_id)
+        schools = School.objects.all()
 
         school = self.request.GET.get("school", 0)
         if school:
@@ -128,64 +131,97 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
     model = Outreach
 
     def get(self, request, *args, **kwargs):
-        queryset = Outreach.objects.all()
-        columns = Attribute.objects.filter(type=Outreach.EAV_TYPE)
+        queryset = self.model.objects.all()
+        school = request.GET.get('school', 0)
 
-        if not self.request.user.is_staff:
+        if has_group(self.request.user, 'PARTNER'):
             queryset = queryset.filter(owner=self.request.user)
-            columns = columns.filter(owner=self.request.user)
+        if school:
+            queryset = queryset.filter(school_id=school)
 
         data = tablib.Dataset()
 
-        headers = [
-                    _('Partner'), _('Student number'), _('Student fullname'), _('Mother fullname'), _('Nationality'),
-                    _('Day of birth'), _('Month of birth'), _('Year of birth'), _('Sex'), _('ID Type'),
-                    _('ID Number tooltip'), _('Phone number'), _('Governorate'), _('Student living address'),
-                    _('Last education level'), _('Last education year'), _('Last training level'), _('Preferred language'),
-                    _('Average distance'), _('Outreach exam - day'), _('Outreach exam - month'), _('Outreach exam - year'),
-                    _('School name'), _('School name number')
+        data.headers = [
+            _('ALP result'),
+            _('ALP round'),
+            _('ALP level'),
+            _('Is the child participated in an ALP program'),
+
+            _('Education year'),
+            _('Last education level'),
+
+            _('Phone prefix'),
+            _('Phone number'),
+            _('Student living address'),
+
+            _('Student ID Number'),
+            _('Student ID Type'),
+            _('Registered in UNHCR'),
+
+            _('Mother nationality'),
+            _('Mother fullname'),
+
+            _('Registered in level'),
+            _('Total'),
+            _('Science'),
+            _('Math'),
+            _('Foreign language'),
+            _('Arabic language'),
+
+            _('Student nationality'),
+            _('Student age'),
+            _('Student birthday'),
+            _('Sex'),
+            _('Student fullname'),
+
+            _('School'),
+            _('School number'),
+            _('District'),
+            _('Governorate')
         ]
-
-        for idx, col in enumerate(columns):
-            headers = [col.name] + headers
-
-        data.headers = headers
 
         content = []
         for line in queryset:
-            if not line.student:
+            if not line.student or not line.school:
                 continue
             content = [
-                line.partner.name,
-                line.student.number,
-                line.student.full_name,
-                line.student.mother_fullname,
-                line.student.nationality.name,
-                int(line.student.birthday_day),
-                int(line.student.birthday_month),
-                int(line.student.birthday_year),
-                _(line.student.sex),
-                line.student.id_type.name,
-                line.student.id_number,
-                line.student.phone,
-                line.location.name if line.location else '',
-                line.student.address,
-                line.last_education_level.name,
+                line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
+                line.last_informal_edu_round.name if line.last_informal_edu_round else '',
+                line.last_informal_edu_level.name if line.last_informal_edu_level else '',
+                _(line.participated_in_alp) if line.participated_in_alp else '',
+
                 line.last_education_year,
-                line.last_class_level.name,
-                line.preferred_language.name,
-                line.average_distance,
-                int(line.exam_day),
-                int(line.exam_month),
-                int(line.exam_year),
+                line.last_education_level.name if line.last_education_level else '',
+
+                line.student.phone_prefix,
+                line.student.phone,
+                line.student.address,
+
+                line.student.id_number,
+                line.student.id_type.name if line.student.id_type else '',
+                _(line.registered_in_unhcr) if line.registered_in_unhcr else '',
+
+                line.student.mother_nationality.name if line.student.mother_nationality else '',
+                line.student.mother_fullname,
+
+                line.level.name if line.level else '',
+                line.exam_total,
+                line.exam_result_science,
+                line.exam_result_math,
+                line.exam_result_language,
+                line.exam_result_arabic,
+
+                line.student.nationality_name(),
+                line.student.birthday,
+                line.student.calc_age,
+                _(line.student.sex),
+                line.student.__unicode__(),
+
                 line.school.name,
-                line.school.number
+                line.school.number,
+                line.school.location.name,
+                line.school.location.parent.name,
             ]
-
-            extra_fields = Value.objects.filter(entity_id=line.id, entity_ct=17)
-            for field in extra_fields:
-                content = [field.value_text] + content
-
             data.append(content)
 
         file_format = base_formats.XLS()
