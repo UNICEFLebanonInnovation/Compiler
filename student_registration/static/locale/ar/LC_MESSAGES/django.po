@@ -994,8 +994,11 @@ msgstr "ناجح/ة"
 msgid "Failed"
 msgstr "معيد/ة"
 
+msgid "Filter by Location"
+msgstr "تصفية حسب القضاء"
+
 msgid "Filter by School"
-msgstr "تصفية القائمة حسب المدرسة"
+msgstr "تصفية حسب المدرسة"
 
 msgid "Filter by Section"
 msgstr "تصفية القائمة حسب الشعبة"
