@@ -18,7 +18,8 @@ APPS_DIR = ROOT_DIR.path('student_registration')
 env = environ.Env()
 
 #Version
-COMPILER_VERSION = '1.3'
+COMPILER_VERSION = '1.1'
+PILOT_VERSION = '1.7'
 
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -256,7 +257,8 @@ SOCIALACCOUNT_ADAPTER = 'student_registration.users.adapters.SocialAccountAdapte
 # Custom user app defaults
 # Select the correct user model
 AUTH_USER_MODEL = 'users.User'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/users/login-redirect/'
+# LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = 'account_login'
 
 # SLUGLIFIER
