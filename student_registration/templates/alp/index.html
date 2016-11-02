@@ -40,7 +40,13 @@
                                       </button>
                                     </li>
                                     <li>
-                                        <select name="school" id="filter_school" class="col-300">
+                                        <select name="location" id="filter_location" class="col-230">
+                                            <option value="">{% trans "Filter by Location" %}</option>
+                                            {% for item in locations %}
+                                                <option value="{{ item.id }}">{{ item.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <select name="school" id="filter_school" class="col-230">
                                             <option value="">{% trans "Filter by School" %}</option>
                                             {% for item in schools %}
                                                 <option value="{{ item.id }}">{{ item.name }}</option>
@@ -247,7 +253,7 @@
                 }
             });
 
-            $(document).on('change', '#filter_school', function(){
+            $(document).on('change', '#filter_school, #filter_location', function(){
                 if($(this).val()){
                     var value = $(this).val();
                     var name = $(this).attr('name');
@@ -258,17 +264,25 @@
                             $(this).show();
                         }
                     });
+
+                    $('.outreach-line-p').hide();
+                    $('.outreach-line-p').each(function(i, item){
+                        var select = $(this).find('#'+name);
+                        if($(select).val() == value){
+                            $(this).show();
+                        }
+                    });
                 }else{
                     $('.outreach-line').show();
+                    $('.outreach-line-p').show();
                 }
             });
 
             $(document).on('click', '#filter_cancel', function(){
                 $('.outreach-line').show();
-                $('#filter_section').val('');
-                $('#filter_class').val('');
-                $('#filter_id_type').val('');
-                $('#filter_nationality').val('');
+                $('.outreach-line-p').show();
+                $('#filter_school').val('');
+                $('#filter_location').val('');
             });
 
             $(document).on('click', '#add_datatable_line', function(){

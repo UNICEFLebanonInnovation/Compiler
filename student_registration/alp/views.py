@@ -112,14 +112,7 @@ class OutreachStaffView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         data = []
-        schools = []
-
-        if has_group(self.request.user, 'MEHE'):
-            schools = School.objects.all()
-        elif has_group(self.request.user, 'COORDINATOR'):
-            schools = School.objects.filter(location_id__in=self.request.user.locations.all())
-        elif has_group(self.request.user, 'PMU'):
-            schools = School.objects.filter(location_id=self.request.user.location_id)
+        schools = School.objects.all()
 
         school = self.request.GET.get("school", 0)
         if school:
@@ -141,12 +134,10 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
         queryset = self.model.objects.all()
         school = request.GET.get('school', 0)
 
-        if not self.request.user.is_staff:
+        if has_group(self.request.user, 'PARTNER'):
             queryset = queryset.filter(owner=self.request.user)
         if school:
             queryset = queryset.filter(school_id=school)
-        else:
-            queryset = []
 
         data = tablib.Dataset()
 
@@ -155,22 +146,34 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
             _('ALP round'),
             _('ALP level'),
             _('Is the child participated in an ALP program'),
+
             _('Education year'),
             _('Last education level'),
+
             _('Phone prefix'),
             _('Phone number'),
             _('Student living address'),
+
             _('Student ID Number'),
             _('Student ID Type'),
             _('Registered in UNHCR'),
+
             _('Mother nationality'),
             _('Mother fullname'),
+
+            _('Registered in level'),
+            _('Total'),
+            _('Science'),
+            _('Math'),
+            _('Foreign language'),
+            _('Arabic language'),
+
             _('Student nationality'),
             _('Student age'),
             _('Student birthday'),
             _('Sex'),
             _('Student fullname'),
-            _('Student number'),
+
             _('School'),
             _('School number'),
             _('District'),
@@ -183,29 +186,37 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
                 continue
             content = [
                 line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
-                line.last_informal_edu_round,
-                line.last_informal_edu_level.name if last_informal_edu_level else '',
-                _(line.participated_in_alp),
-                _(line.last_year_result),
-                line.last_education_year if line.last_education_year else '',
-                _(line.last_school_type),
+                line.last_informal_edu_round.name if line.last_informal_edu_round else '',
+                line.last_informal_edu_level.name if line.last_informal_edu_level else '',
+                _(line.participated_in_alp) if line.participated_in_alp else '',
+
+                line.last_education_year,
                 line.last_education_level.name if line.last_education_level else '',
-                line.section.name if line.section else '',
-                line.classroom.name if line.classroom else '',
+
                 line.student.phone_prefix,
                 line.student.phone,
                 line.student.address,
+
                 line.student.id_number,
                 line.student.id_type.name if line.student.id_type else '',
-                line.registered_in_unhcr,
+                _(line.registered_in_unhcr) if line.registered_in_unhcr else '',
+
                 line.student.mother_nationality.name if line.student.mother_nationality else '',
                 line.student.mother_fullname,
+
+                line.level.name if line.level else '',
+                line.exam_total,
+                line.exam_result_science,
+                line.exam_result_math,
+                line.exam_result_language,
+                line.exam_result_arabic,
+
                 line.student.nationality_name(),
                 line.student.birthday,
-                line.student.get_age(),
+                line.student.calc_age,
                 _(line.student.sex),
                 line.student.__unicode__(),
-                line.student.number,
+
                 line.school.name,
                 line.school.number,
                 line.school.location.name,
