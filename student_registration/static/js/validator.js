@@ -162,7 +162,7 @@ function validateUNHCRNumber(id)
     // for recorded: LEB-1[5-7][C]\d{5}
     // for registered: \d{3}-1[1-5][C]\d{5}
     // return /^[0-9]{3}-1[1-5][C]\d{5}$/i.test($('#id_id_number').val());
-    return validrecorded || validregistered;
+    return validrecorded || validregistered || validOther;
 }
 function validate_individual_UNHCRNumber(val)
 {
