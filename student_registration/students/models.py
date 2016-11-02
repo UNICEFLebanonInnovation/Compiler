@@ -158,6 +158,11 @@ class Person(TimeStampedModel):
         current_year = datetime.datetime.now().year
         return int(current_year)-int(self.birthday_year)
 
+    @property
+    def calc_age(self):
+        current_year = datetime.datetime.now().year
+        return int(current_year)-int(self.birthday_year)
+
     class Meta:
         abstract = True
 
