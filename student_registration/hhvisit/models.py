@@ -13,6 +13,7 @@ from student_registration.registrations.models import (
     RegisteringAdult,
 )
 
+
 class ServiceType(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
@@ -52,13 +53,14 @@ class HouseholdVisit(TimeStampedModel):
     registering_adult = models.ForeignKey(
         RegisteringAdult,
         blank=True, null=True,
-        related_name='children',
+        related_name='+',
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
     )
+
     class Meta:
         ordering = ['id']
 
@@ -81,7 +83,6 @@ class HouseholdVisitStatus(models.Model):
 
     def __unicode__(self):
         return self.comment
-    
 
 
 class ChildVisit(TimeStampedModel):
@@ -112,6 +113,7 @@ class ChildVisit(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
+    
     class Meta:
         ordering = ['id']
 
