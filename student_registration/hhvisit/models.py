@@ -13,6 +13,39 @@ from student_registration.registrations.models import (
     RegisteringAdult,
 )
 
+class ServiceType(models.Model):
+    name = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = 'Service Type'
+
+    def __unicode__(self):
+        return self.name
+
+
+class MainReason(models.Model):
+    name = models.CharField(max_length=64L, unique=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Main Reason'
+
+    def __unicode__(self):
+        return self.name
+
+
+class SpecificReason(models.Model):
+    name = models.CharField(max_length=254L)
+    main_reason = models.ForeignKey(MainReason, verbose_name='Main Reason')
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Specific Reason'
+
+    def __unicode__(self):
+        return self.name
+
 
 class HouseholdVisit(TimeStampedModel):
 
@@ -31,6 +64,24 @@ class HouseholdVisit(TimeStampedModel):
 
     def __unicode__(self):
         return self.RegisteringAdult.full_name
+
+
+class HouseholdVisitStatus(models.Model):
+    household_visit = models.ForeignKey(
+        HouseholdVisit,
+        blank=False, null=True,
+        related_name='+',
+    )
+    household_found = models.BooleanField(blank=True, default=True)
+    comment = models.CharField(max_length=255, blank=True, null=True)
+    date = models.DateTimeField()
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.comment
+    
 
 
 class ChildVisit(TimeStampedModel):
@@ -81,43 +132,8 @@ class ChildService(models.Model):
         related_name='+',
     )
 
-class HouseholdVisitStatus(models.Model):
-
-    household_visit = models.ForeignKey(
-        HouseholdVisit,
-        blank=False, null=True,
-        related_name='+',
-    )
-    household_found = models.BooleanField(blank=True, default=True)
-    comment = models.CharField(max_length=255, blank=True, null=True)
-    date = models.DateTimeField()
-
-
-class ServiceType(models.Model):
-
-    name= models.CharField(max_length=255, blank=True, null=True)
-
-
-class MainReason(models.Model):
-    name = models.CharField(max_length=64L, unique=True)
-
     class Meta:
-        ordering = ['name']
-        verbose_name = 'Main Reason'
+        ordering = ['id']
 
     def __unicode__(self):
-        return self.name
-
-
-class SpecificReason(models.Model):
-
-    name = models.CharField(max_length=254L)
-    main_Reason = models.ForeignKey(MainReason, verbose_name='Main Reason')
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = 'Specific Reason'
-
-    def __unicode__(self):
-        return self.name
-
+        return self.ServiceType.name
