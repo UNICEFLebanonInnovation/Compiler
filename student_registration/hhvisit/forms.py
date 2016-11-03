@@ -9,10 +9,6 @@ from student_registration.hhvisit.models import (
 from student_registration.schools.models import School
 from student_registration.locations.models import Location
 
-
-
-
-
 class HouseholdVisitForm(forms.ModelForm):
     """
     Override model form to use custom Yes/No choices
@@ -62,14 +58,17 @@ class HouseholdVisitForm(forms.ModelForm):
     # previously_registered_number = forms.CharField(widget=forms.TextInput,
     #                                                required=False)
     #
+    # def __init__(self, *args, **kwargs):
+    #     location = args[0]['location']
+    #     locations = args[0]['locations']
+    #     super(HouseholdVisitForm, self).__init__(*args, **kwargs)
+    #     if len(locations):
+    #          self.fields['school'].queryset = School.objects.filter(location_id__in=locations)
+    #     else:
+    #          self.fields['school'].queryset = School.objects.filter(location_id=location)
+
     def __init__(self, *args, **kwargs):
-        location = args[0]['location']
-        locations = args[0]['locations']
         super(HouseholdVisitForm, self).__init__(*args, **kwargs)
-        if len(locations):
-             self.fields['school'].queryset = School.objects.filter(location_id__in=locations)
-        else:
-             self.fields['school'].queryset = School.objects.filter(location_id=location)
 
     class Meta:
         model = HouseholdVisit

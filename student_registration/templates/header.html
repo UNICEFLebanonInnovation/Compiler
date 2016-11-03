@@ -64,6 +64,11 @@
                 </li>
                 {% endif %}
             {% endif %}
+              {% if request.user.is_staff %}
+              <li class="nav-item">
+                <a class="nav-link {% if request|is_current_page:"household_visit" %}active{% endif %}" href="{% url 'hhvisit:household_visit' %}?ln={{ LANGUAGE_CODE }}">{% trans "Household Visit" %}</a>
+              </li>
+              {% endif %}
             </ul>
 
             <ul class="nav navbar-nav pull-xs-right">
