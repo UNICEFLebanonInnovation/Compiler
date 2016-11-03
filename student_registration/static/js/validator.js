@@ -51,6 +51,7 @@ function validateSection0()
         valid = validateTextBoxRequired('id_last_name','last_name_error',valid);
         valid = validateTextBoxRequired('id_mother_fullname','mother_fullname_error',valid);
         valid = validateTextBoxRequired('id_age','age_error',valid);
+        valid = validate_Household_age( 'dob_error',valid);
         valid = validateTextBoxRequired('id_sex','gender_error',valid);
         valid = validateTextBoxRequired('id_relation_to_householdhead','relationship_householdhead_error',valid);
     }else if (selectedOption == 6) {
@@ -59,12 +60,26 @@ function validateSection0()
         valid = validateTextBoxRequired('id_last_name','last_name_error',valid);
         valid = validateTextBoxRequired('id_mother_fullname','mother_fullname_error',valid);
         valid = validateTextBoxRequired('id_age','age_error',valid);
+        valid = validate_Household_age( 'dob_error',valid);
         valid = validateTextBoxRequired('id_sex','gender_error',valid);
         valid = validateTextBoxRequired('id_relation_to_householdhead','relationship_householdhead_error',valid);
     }
 
     return valid;
 }
+
+function validate_Household_age(errorID, isValid)
+{
+    var valid = isValid;
+    if($('#id_birthday_day').val() == ""|| $('#id_birthday_month').val() == ""||$('#id_birthday_year').val() == ""){
+            $('#'+errorID).show();
+            valid = false ;
+        }else{
+            $('#'+errorID).hide();
+    }
+    return valid;
+}
+
 function validateSection13()
 {
     var valid = true ;
@@ -112,8 +127,6 @@ function validateChildIndividualUNCHRFormat(form,id, errorID, isValid)
 
 }
 
-
-
 function validate_waiting_list()
 {
     var valid = true ;
@@ -145,10 +158,11 @@ function validateUNHCRNumber(id)
 {
     var validrecorded =  /^LEB-1[5-7][C]\d{5}$/i.test($('#'+id).val());
     var validregistered = /^[0-9]{3}-1[1-6][C]\d{5}$/i.test($('#'+id).val());
+    var validOther =  /^[0-9]{3}-00[C]\d{5}$/i.test($('#'+id).val());
     // for recorded: LEB-1[5-7][C]\d{5}
     // for registered: \d{3}-1[1-5][C]\d{5}
     // return /^[0-9]{3}-1[1-5][C]\d{5}$/i.test($('#id_id_number').val());
-    return validrecorded || validregistered;
+    return validrecorded || validregistered || validOther;
 }
 function validate_individual_UNHCRNumber(val)
 {
@@ -174,6 +188,7 @@ function validate_add_child_noid()
     valid = validateTextBox(form,'id_last_name','last_name_error',valid);
     valid = validateTextBox(form,'id_mother_fullname','mother_fullname_error',valid);
     valid = validateTextBox(form,'id_age','age_error',valid);
+    valid = validate_child_age(form,'dob_error',valid);
     valid = validateTextBox(form,'id_sex','gender_error',valid);
     valid = validateTextBox(form,'id_relation_to_adult','relation_to_adult_error',valid);
     return valid;
@@ -191,6 +206,17 @@ function validateTextBox(form,id, errorID, isValid)
     return valid;
 }
 
+function validate_child_age(form,errorID, isValid)
+{
+    var valid = isValid;
+    if(form.find('#id_birthday_day').val() == ""|| form.find('#id_birthday_month').val() == ""||form.find('#id_birthday_year').val() == ""){
+            form.find('#'+errorID).show();
+            valid = false ;
+        }else{
+            form.find('#'+errorID).hide();
+    }
+    return valid;
+}
 
 function checkArabicOnly(field)
 {
@@ -204,7 +230,6 @@ function checkArabicOnly(field)
         }
     );
 }
-
 
 function checkFieldCharacters(field,characterCheck)
 {
@@ -229,6 +254,7 @@ function checkFieldCharacters(field,characterCheck)
         field.val(sNewVal);
     }
 }
+
 function checkIsNumber(field)
 {
     checkFieldCharacters
