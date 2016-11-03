@@ -20,12 +20,12 @@ from .models import HouseholdVisit
 from .models import ChildVisit
 
 
-class HouseholdVisitView(LoginRequiredMixin, ListView):
+class HouseholdVisitView(LoginRequiredMixin, TemplateView):
     """
     Provides the registration page with lookup types in the context
     """
     model = HouseholdVisit
-    template_name = 'registration-pilot/household-visit.html'
+    template_name = 'hhvisite-pilot/household-visit.html'
 
     def get_context_data(self, **kwargs):
 
