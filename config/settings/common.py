@@ -61,6 +61,7 @@ LOCAL_APPS = (
     'student_registration.schools',  # custom schools app
     'student_registration.locations',  # custom locations app
     'student_registration.eav',  # custom EAV app
+    'student_registration.hhvisist', # custom HH Visit app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
