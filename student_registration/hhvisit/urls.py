@@ -7,8 +7,8 @@ from student_registration.hhvisit import views
 urlpatterns = [
 
     url(
-        regex=r'^household_visit/$',
+        regex=r'^household-visit/$',
         view=views.HouseholdVisitView.as_view(),
-        name='household-visit'
+        name='household_visit'
     ),
 ]
