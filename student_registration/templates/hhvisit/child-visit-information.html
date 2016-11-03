@@ -1,0 +1,26 @@
+{% load staticfiles i18n %}
+
+<div id="add_child_information" style="display: none;">
+    <form class="inlineForm form-medium-size" id="add_child_information_form" onsubmit="return false;">
+        <div class="line">
+            <label class="text">{% trans "Main Reason" %}</label>
+            {{ ChildVisitForm.main_reason }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "Specific Reason" %}</label>
+            {{ ChildVisitForm.specific_reason }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "Service Provider" %}</label>
+            {{ ChildVisitForm.service_provider }}
+        </div>
+        <div class="line">
+            <label class="text">{% trans "Service Type" %}</label>
+
+        </div>
+
+    </form>
+</div>
+
+
+

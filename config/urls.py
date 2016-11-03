@@ -70,6 +70,7 @@ urlpatterns = [
     url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
     url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
     url(r'^registrations/', include('student_registration.registrations.urls', namespace='registrations')),
+    url(r'^hhvisit/',include('student_registration.hhvisit.urls', namespace='hhvisit')),
     url(r'^enrollments/', include('student_registration.enrollments.urls', namespace='enrollments')),
     url(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
     url(r'^locations/', include('student_registration.locations.urls', namespace='locations')),
