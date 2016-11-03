@@ -9,6 +9,6 @@ urlpatterns = [
     url(
         regex=r'^household_visit/$',
         view=views.HouseholdVisitView.as_view(),
-        name='household_visit'
+        name='household-visit'
     ),
 ]
