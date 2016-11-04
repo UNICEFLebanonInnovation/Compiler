@@ -113,7 +113,7 @@ class ChildVisit(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
-    
+
     class Meta:
         ordering = ['id']
 
@@ -139,3 +139,11 @@ class ChildService(models.Model):
 
     def __unicode__(self):
         return self.ServiceType.name
+
+class HouseholdVisitView(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    full_name = models.CharField(max_length=255, blank=True, null=True)
+
+class Meta:
+    managed = False
+    db_table = 'vw_HouseholdVisit'
