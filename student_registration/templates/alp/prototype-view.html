@@ -7,7 +7,9 @@
 {% get_range_int 0 21 as notes4 %}
 
     <tr id="line-{{ line.id }}" class="outreach-line-p" itemscope="{{ line.id }}">
-        <td>&nbsp;<input type="hidden" name="id" value="{{ line.id }}" class="outreach-field-id" /></td>
+        <td>&nbsp;<input type="hidden" name="id" value="{{ line.id }}" class="outreach-field-id" />
+            <span class="student_fullname" style="display: none;">{{ line.student_fullname }}</span>
+        </td>
         <td>{% if line.school and line.school.location %}
                 {{ line.school.location.name }}
                 <input type="hidden" name="location" value="{{ line.school.location.id }}" id="location" class="" />
@@ -29,6 +31,14 @@
         <td>{% if line.student %}{{ line.student.birthday_day }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.calc_age }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.nationality_name }}{% endif %}</td>
+        <td>
+            <select name="level" id="level" class="outreach-field-p" itemscope="{{ line.id }}">
+                <option value="">-------</option>
+                {% for item in informal_educations %}
+                    <option value="{{ item.id }}" {% if registry.level_id == item.id %}selected{% endif %}>{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
         <td>
             <select name="exam_result_arabic" id="exam_result_arabic" class="outreach-field-p exam-note" itemscope="{{ line.id }}" style="width: 45px;">
                 {% for note in notes1 %}
@@ -60,14 +70,6 @@
         <td>
             <input type="text" name="" class="exam_total_{{ line.id }}" readonly="readonly"
                    itemscope="{{ line.id }}" id="exam_total" value="{{ line.exam_total }}" disabled="disabled" size="3" /> / 80
-        </td>
-        <td>
-            <select name="level" id="level" class="outreach-field-p" itemscope="{{ line.id }}">
-                <option value="">-------</option>
-                {% for item in informal_educations %}
-                    <option value="{{ item.id }}" {% if registry.level_id == item.id %}selected{% endif %}>{{ item.name }}</option>
-                {% endfor %}
-            </select>
         </td>
         <td>{% if line.student %}{{ line.student.mother_fullname }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.mother_nationality.name }}{% endif %}</td>

@@ -39,6 +39,7 @@ class User(AbstractUser):
         related_name='+',
     )
     locations = models.ManyToManyField(Location, blank=True)
+    schools = models.ManyToManyField(School, blank=True)
     app_password = models.CharField(
         max_length=20,
         null=True,
