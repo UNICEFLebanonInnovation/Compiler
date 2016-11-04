@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 import json
 from django.utils.translation import ugettext as _
 
+from student_registration.eav.models import Attribute
 from student_registration.hhvisit.models import (
     HouseholdVisit,
 )
@@ -33,4 +34,23 @@ class HouseholdVisitView(LoginRequiredMixin, TemplateView):
             'form': HouseholdVisitForm({'location': self.request.user.location_id,
                                      'locations': self.request.user.locations.all()}),
         }
+
+class HouseholdVisitListView(LoginRequiredMixin, TemplateView):
+        """
+        Provides the Enrollment page with lookup types in the context
+        """
+        model = HouseholdVisitView
+        template_name = 'hhvisit/list.html'
+
+        def get_context_data(self, **kwargs):
+            data = []
+
+            data = self.model.objects.order_by('id')
+
+            return {
+                'visits': data,
+                'columns': Attribute.objects.filter(type=HouseholdVisitView.EAV_TYPE),
+                'eav_type': HouseholdVisit.EAV_TYPE
+            }
+
 
