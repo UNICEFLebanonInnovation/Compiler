@@ -91,8 +91,8 @@
                                         <th rowspan="2"><label class="col-60">{% trans "Student age" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student nationality" %}</label></th>
                                         {% if request.user|has_group:"CERD" %}
-                                        <th colspan="5" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Registered in level" %}</label></th>
+                                        <th colspan="5" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
                                         {% endif %}
                                         <th rowspan="2"><label>{% trans "Mother fullname" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Mother nationality" %}</label></th>
@@ -206,7 +206,7 @@
             bootbox.setLocale(language);
 
             $('input#search').quicksearch('table tbody tr', {
-                selector: 'td'
+                selector: 'span'
             });
 
             $(document).on("click", ".delete-column", function(e) {

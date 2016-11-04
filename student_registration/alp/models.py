@@ -198,25 +198,49 @@ class Outreach(TimeStampedModel):
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21))
+        choices=((x, x) for x in range(0, 101))
     )
     exam_result_language = models.IntegerField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21))
+        choices=((x, x) for x in range(0, 101))
     )
     exam_result_math = models.IntegerField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21))
+        choices=((x, x) for x in range(0, 101))
     )
     exam_result_science = models.IntegerField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21))
+        choices=((x, x) for x in range(0, 101))
+    )
+    exam_corrector_arabic = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        choices=((x, x) for x in range(0, 101))
+    )
+    exam_corrector_language = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        choices=((x, x) for x in range(0, 101))
+    )
+    exam_corrector_math = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        choices=((x, x) for x in range(0, 101))
+    )
+    exam_corrector_science = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        choices=((x, x) for x in range(0, 101))
     )
     registered_in_school = models.CharField(
         max_length=50,
@@ -229,6 +253,17 @@ class Outreach(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
+    registered_in_level = models.ForeignKey(
+        EducationLevel,
+        blank=True, null=True,
+        related_name='+',
+    )
+    assigned_to_level = models.ForeignKey(
+        EducationLevel,
+        blank=True, null=True,
+        related_name='+',
+    )
+
     exam_school = models.ForeignKey(
         School,
         blank=True, null=True,
