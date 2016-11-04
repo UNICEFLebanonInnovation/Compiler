@@ -50,11 +50,19 @@ class SpecificReason(models.Model):
 
 class HouseholdVisit(TimeStampedModel):
 
+    STATUS = Choices(
+        ('pending', _('Pending')),
+        ('completed', _('Completed')),
+    )
+
     registering_adult = models.ForeignKey(
         RegisteringAdult,
         blank=True, null=True,
         related_name='+',
     )
+
+    visit_status = models.CharField(max_length=50, blank=True, null=True, choices=STATUS)
+
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
@@ -67,12 +75,32 @@ class HouseholdVisit(TimeStampedModel):
     def __unicode__(self):
         return self.RegisteringAdult.full_name
 
+    @property
+    def child_visit_count(self):
+        return len(self.children_visits)
 
-class HouseholdVisitStatus(models.Model):
+    @property
+    def visit_attempt_count(self):
+        return len(self.visit_attempt)
+
+    # @property
+    # def all_visit_attempt_count(self):
+    #     return HouseholdVisit.objects.filter(registering_adult_id=self.registering_adult_id).count()
+
+    @property
+    def all_visit_attempt_count(self):
+        total = 0
+        queryset = HouseholdVisit.objects.filter(registering_adult_id=self.registering_adult_id)
+        for hhv in queryset:
+            total += HouseholdVisitAttempt.objects.filter(household_visit_id=hhv.id)
+        return total
+
+
+class HouseholdVisitAttempt(models.Model):
     household_visit = models.ForeignKey(
         HouseholdVisit,
         blank=False, null=True,
-        related_name='+',
+        related_name='visit_attempt',
     )
     household_found = models.BooleanField(blank=True, default=True)
     comment = models.CharField(max_length=255, blank=True, null=True)
@@ -90,7 +118,7 @@ class ChildVisit(TimeStampedModel):
     household_visit = models.ForeignKey(
         HouseholdVisit,
         blank=False, null=True,
-        related_name='+',
+        related_name='children_visits',
     )
     student = models.ForeignKey(
         Student,
@@ -118,7 +146,7 @@ class ChildVisit(TimeStampedModel):
         ordering = ['id']
 
     def __unicode__(self):
-        return self.Student.full_name
+        return self.student.student_fullname
 
 
 class ChildService(models.Model):
@@ -140,9 +168,14 @@ class ChildService(models.Model):
     def __unicode__(self):
         return self.ServiceType.name
 
-class HouseholdVisitView(models.Model):
+class HouseholdVisitListView(models.Model):
     id = models.BigIntegerField(primary_key=True)
+    location_id = models.BigIntegerField()
+    location_name = models.CharField(max_length=255, blank=True, null=True)
+    address = models.CharField(max_length=255, blank=True, null=True)
     full_name = models.CharField(max_length=255, blank=True, null=True)
+    primary_phone = models.CharField(max_length=255, blank=True, null=True)
+    secondary_phone = models.CharField(max_length=255, blank=True, null=True)
 
 class Meta:
     managed = False
