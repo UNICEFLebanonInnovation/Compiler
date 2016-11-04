@@ -18,7 +18,6 @@ from datetime import datetime
 from student_registration.eav.models import Attribute
 from student_registration.hhvisit.models import (
     HouseholdVisit,
-    HouseholdVisitListView,
 
 )
 from .serializers import HouseholdVisitSerializer
@@ -45,6 +44,7 @@ class HouseholdVisitView(LoginRequiredMixin, TemplateView):
             'form': HouseholdVisitForm({'location': self.request.user.location_id,
                                      'locations': self.request.user.locations.all()}),
         }
+
 
 class HouseholdVisitListView(LoginRequiredMixin, TemplateView):
         """

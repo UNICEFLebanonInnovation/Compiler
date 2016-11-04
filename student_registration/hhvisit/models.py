@@ -167,16 +167,3 @@ class ChildService(models.Model):
 
     def __unicode__(self):
         return self.ServiceType.name
-
-class HouseholdVisitListView(models.Model):
-    id = models.BigIntegerField(primary_key=True)
-    location_id = models.BigIntegerField()
-    location_name = models.CharField(max_length=255, blank=True, null=True)
-    address = models.CharField(max_length=255, blank=True, null=True)
-    full_name = models.CharField(max_length=255, blank=True, null=True)
-    primary_phone = models.CharField(max_length=255, blank=True, null=True)
-    secondary_phone = models.CharField(max_length=255, blank=True, null=True)
-
-class Meta:
-    managed = False
-    db_table = 'vw_HouseholdVisit'
