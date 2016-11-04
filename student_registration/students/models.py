@@ -125,8 +125,8 @@ class Person(TimeStampedModel):
         null=True
     )
     number = models.CharField(max_length=45L, blank=True, null=True)
-    old_id_number = models.CharField(max_length=45L, blank=True, null=True)
-    old_id_type = models.IntegerField(blank=True, null=True)
+    # old_id_number = models.CharField(max_length=45L, blank=True, null=True)
+    # old_id_type = models.IntegerField(blank=True, null=True)
 
     def __unicode__(self):
         if not self.first_name:

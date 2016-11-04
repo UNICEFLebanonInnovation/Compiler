@@ -1,6 +1,7 @@
-{% extends "base.html" %}
+{% extends "base.offline.html" %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
 
 {% block extra_head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
@@ -26,28 +27,18 @@
                           <div class="panel-heading">
                             <h3 class="panel-title">
                                 <ol class="breadcrumb">
-                                    <li><a>{% trans "Registration" %}</a></li>
+                                    <li><a>{% trans "Household Visit" %}</a></li>
                                     <li>
-                                         <!--<select id="id_school">-->
-                                             <!--<option value="">-&#45;&#45;{% trans "Display by School" %}-&#45;&#45;</option>-->
-                                              <!--{% for school in schools %}-->
-                                                <!--<option value="{{ school.id }}" {% if selectedSchool == school.id %}selected="selected"{% endif %}>-->
-                                                    <!--{{ school }} - {% if school.location %}{{ school.location.name }}{% endif %}-->
-                                                <!--</option>-->
-                                              <!--{% endfor %}-->
-                                         <!--</select>-->
-                                    </li>
-                                    <li>
-                                        <!--{% if selectedSchool %}-->
-                                        <!--<a class="btn btn-info"  id="registration-export" href="{% url "enrollments:enrollment_export" %}?school={{ selectedSchool }}" target="_blank">-->
-                                            <!--<i class="icon-export-sign icon-white"></i>&nbsp;-->
-                                                <!--{% trans "Export" %}-->
-                                          <!--</a>-->
-                                        <!--{% endif %}-->
+                                         <select id="id_location">
+                                             <option value="">---{% trans "Display by Location" %}---</option>
+                                              {% for location in locations %}
+                                                <option value="{{ location.id }}" {% if selectedLocation == location.id %}selected="selected"{% endif %}>
+                                                    {{ location }}
+                                                </option>
+                                              {% endfor %}
+                                         </select>
                                     </li>
                                  </ol>
-
-
                             </h3>
                             <div class="actions pull-right">
                                 <i class="fa fa-chevron-down"></i>
@@ -64,18 +55,27 @@
                                        width="100%">
                                 <thead>
                                     <tr id="thead-line-1">
-                                        <th rowspan="2"><label>Name</label></th>
-\
-                                    </tr>
-                                    <tr id="thead-line-2">
-                                        <th><label></label></th>
-
+                                        <th>{% trans "HH District" %}</th>
+                                        <th>{% trans "HH Address" %}</th>
+                                        <th>{% trans "HH Representative Name" %}</th>
+                                        <th>{% trans "# of Children Absent" %}</th>
+                                        <th>{% trans "Primary Phone Number" %}</th>
+                                        <th>{% trans "Secondary Phone Number" %}</th>
+                                        <th>{% trans "Status- Completed, Pending" %}</th>
+                                        <th>{% trans "Attempt Number" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for visit in visits %}
                                         <tr>
-                                            <td>{{ visit.full_name }}</td>
+                                          <td>{{ visit.registering_adult.school.location.name }}</td>
+                                          <td>{{ visit.registering_adult.address }}</td>
+                                          <td>{{ visit.registering_adult }}</td>
+                                          <td>{{ visit.child_visit_count }}</td>
+                                          <td>{{ visit.registering_adult.primary_phone }}</td>
+                                          <td>{{ visit.registering_adult.secondary_phone }}</td>
+                                          <td>{{ visit.visit_status }}</td>
+                                          <td>{{ visit.visit_attempt_count }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -111,7 +111,6 @@
                 info:     true,
                 autoWidth: false,
                 scrollY: '50vh',
-{#                scrollY: '50vh',#}
                 scrollX: true,
                 scrollCollapse: true,
                 "language": {
@@ -122,13 +121,13 @@
                 }
             });
 
-            // get the list of school and fill the table with it
-            $("#id_school").change(function(){
-                var selected_school = $(this).val();
-               // reload the page with the school id passed in post
-                var url = '{% url "enrollments:enrollment_view" %}';
-                if(selected_school){
-                    url = url+'?school='+selected_school;
+            // get the list of visits and fill the table with it
+            $("#id_location").change(function(){
+               var selected_location = $(this).val();
+               // reload the page with the location id passed in post
+                var url = '{% url "hhvisit:household_visit_list" %}';
+                if(selected_location){
+                    url = url+'?location='+selected_location;
                 }
                 window.location.href = url;
             });
