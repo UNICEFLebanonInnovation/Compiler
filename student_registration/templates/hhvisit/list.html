@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">
+
+{% endblock %}
+
+
+{% block content-full-page %}
+
+         <section class="main-content-wrapper">
+            <section id="main-content">
+                 <div class="row">
+                    <div class="col-md-12">
+                        </br>
+                    </div>
+                </div>
+            <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <ol class="breadcrumb">
+                                    <li><a>{% trans "Registration" %}</a></li>
+                                    <li>
+                                         <!--<select id="id_school">-->
+                                             <!--<option value="">-&#45;&#45;{% trans "Display by School" %}-&#45;&#45;</option>-->
+                                              <!--{% for school in schools %}-->
+                                                <!--<option value="{{ school.id }}" {% if selectedSchool == school.id %}selected="selected"{% endif %}>-->
+                                                    <!--{{ school }} - {% if school.location %}{{ school.location.name }}{% endif %}-->
+                                                <!--</option>-->
+                                              <!--{% endfor %}-->
+                                         <!--</select>-->
+                                    </li>
+                                    <li>
+                                        <!--{% if selectedSchool %}-->
+                                        <!--<a class="btn btn-info"  id="registration-export" href="{% url "enrollments:enrollment_export" %}?school={{ selectedSchool }}" target="_blank">-->
+                                            <!--<i class="icon-export-sign icon-white"></i>&nbsp;-->
+                                                <!--{% trans "Export" %}-->
+                                          <!--</a>-->
+                                        <!--{% endif %}-->
+                                    </li>
+                                 </ol>
+
+
+                            </h3>
+                            <div class="actions pull-right">
+                                <i class="fa fa-chevron-down"></i>
+                                <i class="fa fa-times"></i>
+                            </div>
+                          </div>
+                          <div class="panel-body">
+                            <div class="loader"></div>
+                                <table id="registrations-table" class="table table-striped table-bordered cell-border"
+                                       data-height="500"
+                                       data-pagination="true"
+                                       data-search="true"
+                                       cellspacing="0"
+                                       width="100%">
+                                <thead>
+                                    <tr id="thead-line-1">
+                                        <th rowspan="2"><label>Name</label></th>
+\
+                                    </tr>
+                                    <tr id="thead-line-2">
+                                        <th><label></label></th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for visit in visits %}
+                                        <tr>
+                                            <td>{{ visit.full_name }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+            </section>
+         </section>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript">
+        var oTable = null;
+        var language  = '{{ LANGUAGE_CODE }}';
+
+        $(document).ready(function(){
+
+            oTable = $('#registrations-table').DataTable({
+                fixedHeader: false,
+                paging:   true,
+                ordering: true,
+                info:     true,
+                autoWidth: false,
+                scrollY: '50vh',
+{#                scrollY: '50vh',#}
+                scrollX: true,
+                scrollCollapse: true,
+                "language": {
+                    "url": "/static/locale/"+language+".json"
+                },
+                "fnInitComplete": function(oSettings, json) {
+                    $('[data-toggle="tooltip"]').tooltip();
+                }
+            });
+
+            // get the list of school and fill the table with it
+            $("#id_school").change(function(){
+                var selected_school = $(this).val();
+               // reload the page with the school id passed in post
+                var url = '{% url "enrollments:enrollment_view" %}';
+                if(selected_school){
+                    url = url+'?school='+selected_school;
+                }
+                window.location.href = url;
+            });
+
+        });
+    </script>
+
+{% endblock %}
