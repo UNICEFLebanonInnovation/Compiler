@@ -72,3 +72,4 @@ mailhog
 
 deis
 staticfiles
+dev.env
