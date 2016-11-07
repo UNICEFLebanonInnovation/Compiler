@@ -40,6 +40,7 @@
                                       </button>
                                     </li>
                                     <li>
+                                    {% if not request.user|has_group:"ALP_DIRECTOR" %}
                                         <select name="location" id="filter_location" style="width: 210px;">
                                             <option value="">{% trans "Filter by Location" %}</option>
                                             {% for item in locations %}
@@ -53,13 +54,14 @@
                                             {% endfor %}
                                         </select>
                                         <input type="text" id="search" size="200" style="width: 150px;" />
-                                          <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}" target="_blank">
-                                            <i class="icon-export-sign icon-white"></i>&nbsp;
-                                                {% trans "Export" %}
-                                          </a>
                                         <button class="btn btn-warning" id="filter_cancel">
                                             {% trans "Rest filter" %}
                                         </button>
+                                        {% endif %}
+                                        <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}" target="_blank">
+                                            <i class="icon-export-sign icon-white"></i>&nbsp;
+                                                {% trans "Export" %}
+                                        </a>
                                     </li>
                                 </ol>
                             </h3>
@@ -78,7 +80,14 @@
                                        width="100%">
                                 <thead>
                                     <tr id="thead-line-1">
-                                        <th rowspan="2">&nbsp;</th>
+                                        <th rowspan="2">&nbsp;
+                                            {% if request.user|has_group:"ALP_DIRECTOR" %}
+                                                <label class="col-100">{% trans "Not enrolled in this school" %}</label>
+                                            {% endif %}
+                                            {% if request.user|has_group:"CERD" %}
+                                                <label class="col-100">{% trans "Exam not received from this school" %}</label>
+                                            {% endif %}
+                                        </th>
                                         <th rowspan="2"><label>{% trans "District" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Governorate" %}</label></th>
                                         <th rowspan="2"><label class="col-60">{% trans "School number" %}</label></th>
@@ -92,7 +101,11 @@
                                         <th rowspan="2"><label>{% trans "Student nationality" %}</label></th>
                                         {% if request.user|has_group:"CERD" %}
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Registered in level" %}</label></th>
-                                        <th colspan="5" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
+                                        <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
+                                        <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Assigned to level" %}</label></th>
+                                        {% endif %}
+                                        {% if request.user|has_group:"ALP_DIRECTOR" %}
+                                            <th colspan="2" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student acctual status" %}</label></th>
                                         {% endif %}
                                         <th rowspan="2"><label>{% trans "Mother fullname" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Mother nationality" %}</label></th>
@@ -112,11 +125,19 @@
                                         <th><label>{% trans "month" %}</label></th>
                                         <th><label>{% trans "day" %}</label></th>
                                         {% if request.user|has_group:"CERD" %}
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Arabic language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Foreign language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Total" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Arabic language corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Foreign language corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Math" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Total" %}</label></th>
+                                        {% endif %}
+                                        {% if request.user|has_group:"ALP_DIRECTOR" %}
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current level" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current section" %}</label></th>
                                         {% endif %}
                                         <th style="background-color: #67b168;"><label class="col-100">{% trans "Last education level" %}</label></th>
                                         <th style="background-color: #67b168;"><label>{% trans "Education year" %}</label></th>
@@ -127,11 +148,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {% if request.user|has_group:"CERD" %}
+{#                                {% if request.user|has_group:"CERD" %}#}
                                     {% for line in data %}
                                         {% include 'alp/prototype-view.html' %}
                                     {% endfor %}
-                                {% endif %}
+{#                                {% endif %}#}
                                 </tbody>
                             </table>
                         </div>
@@ -289,6 +310,7 @@
                 $('.outreach-line-p').show();
                 $('#filter_school').val('');
                 $('#filter_location').val('');
+                $('#search').val('');
             });
 
             $(document).on('click', '#add_datatable_line', function(){
@@ -448,25 +470,27 @@
                 }
             });
 
-            $(document).on('change', '.outreach-line-p .exam-note', function(){
-                var itemid = $(this).attr('itemscope');
-                var item = $('#line-'+itemid);
-                var note1 = parseInt(item.find('#exam_result_arabic').val());
-                var note2 = parseInt(item.find('#exam_result_language').val());
-                var note3 = parseInt(item.find('#exam_result_math').val());
-                var note4 = parseInt(item.find('#exam_result_science').val());
-                item.find('#exam_total').val(note1+note2+note3+note4);
-            });
-
-            $(document).on('change', '.outreach-line .exam-note', function(){
-                var itemid = $(this).attr('itemscope');
-                var item = $('#line-'+itemid);
-                var note1 = parseInt(item.find('#exam_result_arabic').val());
-                var note2 = parseInt(item.find('#exam_result_language').val());
-                var note3 = parseInt(item.find('#exam_result_math').val());
-                var note4 = parseInt(item.find('#exam_result_science').val());
+            $(document).on('change', '.exam-note', function(){
+                var item = $(this).parent().parent();
+                var note1 = parseFloat(item.find('#exam_result_arabic').val());
+                var note2 = parseFloat(item.find('#exam_result_language').val());
+                var note3 = parseFloat(item.find('#exam_result_math').val());
+                var note4 = parseFloat(item.find('#exam_result_science').val());
                 item.find('#exam_total').val(note1+note2+note3+note4);
                 item.find('#exam_total').trigger('blur');
+            });
+
+            $(document).on('change', '.note-indicator', function(){
+                var item = $(this).parent().parent();
+                var note = parseInt($(this).find('option:selected').attr('data-value'));
+                var total = note*4;
+                item.find('.note-indicator-value').text('/'+note);
+                item.find('.note-indicator-value').attr('value', '/'+note);
+                item.find('.note-indicator-value').trigger('blur');
+
+                item.find('.note-indicator-total').text('/'+total);
+                item.find('.note-indicator-total').attr('value', '/'+total);
+                item.find('.note-indicator-total').trigger('blur');
             });
 
             $(document).on('blur', '.outreach-field', function(){
@@ -476,13 +500,20 @@
                     if($(this).attr('data-value')){
                         update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'outreaches');
                     }else{
-                        update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches');
+                        var value = $(this).attr('value');
+                        if(!value){
+                            value = $(this).val();
+                        }
+                        update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), value, 'outreaches');
                     }
                 }
             });
 
             $(document).on('blur', '.outreach-field-p', function(){
-                update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), parseInt($(this).val()), 'outreaches-p');
+                update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
+            });
+            $(document).on('change', '.outreach-field-p', function(){
+                update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
             });
 
             $(document).on('change', '.outreach-field-check', function(){
@@ -555,7 +586,11 @@
             var item = {id: rows, synchronized: false, deleted: false, owner: user_id, original_id: 0};
             var fields = $('#outreach_prototype').find('.outreach-field');
             $(fields).each(function(i, field){
-                item[$(field).attr('name')] = '';
+                if($(field).attr('data-name')) {
+                    item[$(field).attr('data-name')] = '';
+                }else{
+                    item[$(field).attr('name')] = '';
+                }
             });
 
             var store1 = getStoreByName('eav-shared-columns');
@@ -634,6 +669,10 @@
                     }
                 }else{
                     $(field).val(value);
+                }
+                if($(field).hasClass('note-indicator-value') || $(field).hasClass('note-indicator-total')){
+                    $(field).attr('value', value);
+                    $(field).text(value);
                 }
             });
         }
@@ -799,7 +838,7 @@
 
         function load_base_data()
         {
-{#            pull_data(synchro_path, 'outreaches');#}
+{#            pull_data(synchro_path, 'outreaches-p');#}
         }
 
         function pull_data(url, store_name)
