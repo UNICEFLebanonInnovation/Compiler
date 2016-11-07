@@ -1,13 +1,20 @@
 {% load staticfiles i18n %}
 {% load util_tags %}
 
-{% get_range_int 0 21 as notes1 %}
-{% get_range_int 0 21 as notes2 %}
-{% get_range_int 0 21 as notes3 %}
-{% get_range_int 0 21 as notes4 %}
+{% get_range_int 1 80 as notes1 %}
+{% get_range_int 1 80 as notes2 %}
+{% get_range_int 1 80 as notes3 %}
+{% get_range_int 1 80 as notes4 %}
 
     <tr id="line-{{ line.id }}" class="outreach-line-p" itemscope="{{ line.id }}">
-        <td>&nbsp;<input type="hidden" name="id" value="{{ line.id }}" class="outreach-field-id" />
+        <td>
+            {% if request.user|has_group:"ALP_DIRECTOR" %}
+                <input type="checkbox" name="not_enrolled_in_this_school" id="not_enrolled_in_this_school" {% if line.exam_not_exist_in_school %}checked="checked"{% endif %} value="1" class="outreach-field-p" itemscope="{{ line.id }}" />
+            {% endif %}
+            {% if request.user|has_group:"CERD" %}
+                <input type="checkbox" name="exam_not_exist_in_school" id="exam_not_exist_in_school" {% if line.exam_not_exist_in_school %}checked="checked"{% endif %} value="1" class="outreach-field-p" itemscope="{{ line.id }}" />
+            {% endif %}
+            &nbsp;<input type="hidden" name="id" value="{{ line.id }}" class="outreach-field-id" />
             <span class="student_fullname" style="display: none;">{{ line.student_fullname }}</span>
         </td>
         <td>{% if line.school and line.school.location %}
@@ -31,46 +38,91 @@
         <td>{% if line.student %}{{ line.student.birthday_day }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.calc_age }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.nationality_name }}{% endif %}</td>
+        {% if request.user|has_group:"CERD" %}
         <td>
-            <select name="level" id="level" class="outreach-field-p" itemscope="{{ line.id }}">
+            <select name="level" id="level" class="outreach-field-p note-indicator" itemscope="{{ line.id }}">
                 <option value="">-------</option>
                 {% for item in informal_educations %}
-                    <option value="{{ item.id }}" {% if registry.level_id == item.id %}selected{% endif %}>{{ item.name }}</option>
+                    <option value="{{ item.id }}" {% if line.level_id == item.id %}selected{% endif %} data-value="{{ item.note }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
         </td>
         <td>
-            <select name="exam_result_arabic" id="exam_result_arabic" class="outreach-field-p exam-note" itemscope="{{ line.id }}" style="width: 45px;">
+            <input type="text" name="exam_result_arabic" id="exam_result_arabic" value="{{ line.exam_result_arabic }}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="6" />
+            <span class="note-indicator-value">{% if line.level %}/{{ line.level.note }}{% endif %}</span>
+        </td>
+        <td>
+            <select name="exam_corrector_arabic" id="exam_corrector_arabic" class="outreach-field-p" itemscope="{{ line.id }}" style="width: 45px;">
                 {% for note in notes1 %}
-                    <option value="{{ note }}" {% if line.exam_result_arabic == note %}selected="selected"{% endif %}>{{ note }}</option>
+                    <option value="{{ note }}" {% if line.exam_corrector_arabic == note %}selected="selected"{% endif %}>{{ note }}</option>
                 {% endfor %}
-            </select> / 20
+            </select>
         </td>
         <td>
-            <select name="exam_result_language" id="exam_result_language" class="outreach-field-p exam-note" itemscope="{{ line.id }}" style="width: 45px;">
+            <input type="text" name="exam_result_language" id="exam_result_language" value="{{ line.exam_result_language }}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="6" />
+            <span class="note-indicator-value">{% if line.level %}/{{ line.level.note }}{% endif %}</span>
+        </td>
+        <td>
+            <select name="exam_corrector_language" id="exam_corrector_language" class="outreach-field-p" itemscope="{{ line.id }}" style="width: 45px;">
                 {% for note in notes2 %}
-                    <option value="{{ note }}" {% if line.exam_result_language == note %}selected="selected"{% endif %}>{{ note }}</option>
+                    <option value="{{ note }}" {% if line.exam_corrector_language == note %}selected="selected"{% endif %}>{{ note }}</option>
                 {% endfor %}
-            </select> / 20
+            </select>
         </td>
         <td>
-            <select name="exam_result_math" id="exam_result_math" class="outreach-field-p exam-note" itemscope="{{ line.id }}" style="width: 45px;">
+            <input type="text" name="exam_result_math" id="exam_result_math" value="{{ line.exam_result_math }}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="6" />
+            <span class="note-indicator-value">{% if line.level %}/{{ line.level.note }}{% endif %}</span>
+        </td>
+        <td>
+            <select name="exam_corrector_math" id="exam_corrector_math" class="outreach-field-p" itemscope="{{ line.id }}" style="width: 45px;">
                 {% for note in notes3 %}
-                    <option value="{{ note }}" {% if line.exam_result_math == note %}selected="selected"{% endif %}>{{ note }}</option>
+                    <option value="{{ note }}" {% if line.exam_corrector_math == note %}selected="selected"{% endif %}>{{ note }}</option>
                 {% endfor %}
-            </select> / 20
+            </select>
         </td>
         <td>
-            <select name="exam_result_science" id="exam_result_science" class="outreach-field-p exam-note" itemscope="{{ line.id }}" style="width: 45px;">
+            <input type="text" name="exam_result_science" id="exam_result_science" value="{{ line.exam_result_science }}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="6" />
+            <span class="note-indicator-value">{% if line.level %}/{{ line.level.note }}{% endif %}</span>
+        </td>
+        <td>
+            <select name="exam_corrector_science" id="exam_corrector_science" class="outreach-field-p" itemscope="{{ line.id }}" style="width: 45px;">
                 {% for note in notes4 %}
-                    <option value="{{ note }}" {% if line.exam_result_science == note %}selected="selected"{% endif %}>{{ note }}</option>
+                    <option value="{{ note }}" {% if line.exam_corrector_science == note %}selected="selected"{% endif %}>{{ note }}</option>
                 {% endfor %}
-            </select> / 20
+            </select>
         </td>
         <td>
             <input type="text" name="" class="exam_total_{{ line.id }}" readonly="readonly"
-                   itemscope="{{ line.id }}" id="exam_total" value="{{ line.exam_total }}" disabled="disabled" size="3" /> / 80
+                   itemscope="{{ line.id }}" id="exam_total" value="{{ line.exam_total }}" disabled="disabled" size="3" />
+            <span class="note-indicator-total">{% if line.level %}/{{ line.level.note|multiply:4 }}{% endif %}</span>
         </td>
+        <td>
+            <select name="assigned_to_level" id="assigned_to_level" class="outreach-field-p" itemscope="{{ line.id }}">
+                <option value="">-------</option>
+                {% for item in informal_educations %}
+                    <option value="{{ item.id }}" {% if line.assigned_to_level_id == item.id %}selected{% endif %}>{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        {% endif %}
+        {% if request.user|has_group:"ALP_DIRECTOR" %}
+        <td>
+            <select name="registered_in_level" id="registered_in_level" class="outreach-field-p" itemscope="{{ line.id }}">
+                <option value="">-------</option>
+                {% for item in informal_educations %}
+                    <option value="{{ item.id }}" {% if line.registered_in_level_id == item.id %}selected{% endif %}>{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="section" id="section" class="outreach-field-p" itemscope="{{ line.id }}">
+                <option value="">-------</option>
+                {% for item in sections %}
+                    <option value="{{ item.id }}" {% if line.section_id == item.id %}selected{% endif %}>{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        {% endif %}
         <td>{% if line.student %}{{ line.student.mother_fullname }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.mother_nationality.name }}{% endif %}</td>
         <td>{% if line.registered_in_unhcr %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>

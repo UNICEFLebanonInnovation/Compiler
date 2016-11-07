@@ -117,6 +117,8 @@ class OutreachSerializer(serializers.ModelSerializer):
             'exam_corrector_science',
             'registered_in_level',
             'assigned_to_level',
+            'not_enrolled_in_this_school',
+            'exam_not_exist_in_school',
         )
 
 
@@ -130,4 +132,13 @@ class OutreachExamSerializer(serializers.ModelSerializer):
             'exam_result_math',
             'exam_result_science',
             'level',
+            'exam_corrector_arabic',
+            'exam_corrector_language',
+            'exam_corrector_math',
+            'exam_corrector_science',
+            'registered_in_level',
+            'section',
+            'assigned_to_level',
+            'not_enrolled_in_this_school',
+            'exam_not_exist_in_school',
         )
