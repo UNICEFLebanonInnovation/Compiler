@@ -92,3 +92,8 @@ def is_current_page(request, url_name):
     # if url_name == current_url:
     #     return True
     return False
+
+
+@register.filter(name='multiply')
+def multiply(value, arg):
+    return value*arg

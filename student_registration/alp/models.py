@@ -138,6 +138,8 @@ class Outreach(TimeStampedModel):
     )
     status = models.BooleanField(blank=True, default=True)
     enrolled_in_this_school = models.BooleanField(blank=True, default=True)
+    not_enrolled_in_this_school = models.BooleanField(blank=True, default=False)
+    exam_not_exist_in_school = models.BooleanField(blank=True, default=False)
     registered_in_unhcr = models.CharField(
         max_length=50,
         blank=True,
@@ -194,29 +196,25 @@ class Outreach(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
-    exam_result_arabic = models.IntegerField(
+    exam_result_arabic = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 101))
     )
-    exam_result_language = models.IntegerField(
+    exam_result_language = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 101))
     )
-    exam_result_math = models.IntegerField(
+    exam_result_math = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 101))
     )
-    exam_result_science = models.IntegerField(
+    exam_result_science = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 101))
     )
     exam_corrector_arabic = models.IntegerField(
         blank=True,
@@ -263,7 +261,6 @@ class Outreach(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
-
     exam_school = models.ForeignKey(
         School,
         blank=True, null=True,
@@ -298,8 +295,16 @@ class Outreach(TimeStampedModel):
             total += self.exam_result_science
         return total
 
+    @property
+    def student_age(self):
+        if self.student:
+            return self.student.calc_age
+        return 0
+
     def __unicode__(self):
-        return self.student.__unicode__()
+        if self.student:
+            return self.student.__unicode__()
+        return str(self.id)
 
 
 class ExtraColumn(TimeStampedModel):
