@@ -83,6 +83,9 @@ class OutreachView(LoginRequiredMixin, TemplateView):
         if has_group(self.request.user, 'CERD'):
             data = Outreach.objects.exclude(owner__partner_id=None)
             data = data.filter(school_id__in=schools)
+        if has_group(self.request.user, 'ALP_DIRECTOR'):
+            # data = Outreach.objects.filter(school_id=self.request.user.school_id)
+            data = Outreach.objects.all()
 
         return {
             'data': data,
