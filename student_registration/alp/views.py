@@ -79,12 +79,16 @@ class OutreachView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         data = []
+        schools = self.request.user.schools.all()
         if has_group(self.request.user, 'CERD'):
             data = Outreach.objects.exclude(owner__partner_id=None)
+            data = data.filter(school_id__in=schools)
+        if has_group(self.request.user, 'ALP_DIRECTOR'):
+            data = Outreach.objects.filter(school_id=self.request.user.school_id)
 
         return {
             'data': data,
-            'schools': School.objects.all(),
+            'schools': schools,
             'languages': Language.objects.all(),
             'locations': Location.objects.filter(type_id=2),
             'partners': PartnerOrganization.objects.all(),
@@ -115,15 +119,18 @@ class OutreachStaffView(LoginRequiredMixin, TemplateView):
         schools = School.objects.all()
 
         school = self.request.GET.get("school", 0)
+        location = self.request.GET.get("location", 0)
         if school:
             data = self.model.objects.filter(school=school).order_by('id')
+        if location:
+            data = self.model.objects.filter(school__location_id=location).order_by('id')
 
         return {
             'outreaches': data,
+            'locations': Location.objects.filter(type_id=2),
             'schools': schools,
-            'columns': Attribute.objects.filter(type=Outreach.EAV_TYPE),
-            'eav_type': Outreach.EAV_TYPE,
             'selectedSchool': int(school),
+            'selectedLocation': int(location),
         }
 
 
@@ -132,12 +139,15 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         queryset = self.model.objects.all()
-        school = request.GET.get('school', 0)
+        school = int(request.GET.get('school', 0))
+        location = int(request.GET.get('location', 0))
 
         if has_group(self.request.user, 'PARTNER'):
             queryset = queryset.filter(owner=self.request.user)
         if school:
-            queryset = queryset.filter(school_id=school)
+            queryset = queryset.filter(school_id=school).order_by('id')
+        if location:
+            queryset = queryset.filter(school__location_id=location).order_by('id')
 
         data = tablib.Dataset()
 

@@ -27,7 +27,31 @@ def generate_id(
         mother_name_char_count = len(mother_full_name)
 
         full_name_hash = int(hashlib.sha1(full_name.encode('UTF-8')).hexdigest(), 16) % 10000
+        # if len(str(full_name_hash)) < 4:
+        #     full_name_hash = int(hashlib.sha1(full_name.encode('UTF-8')).hexdigest(), 16) % 10001
+        # if len(str(full_name_hash)) < 4:
+        #     full_name_hash = int(hashlib.sha1(full_name.encode('UTF-8')).hexdigest(), 16) % 10002
+        # if len(str(full_name_hash)) < 4:
+        #     full_name_hash = int(hashlib.sha1(full_name.encode('UTF-8')).hexdigest(), 16) % 10005
+        # if len(str(full_name_hash)) < 4:
+        #     full_name_hash = int(hashlib.sha1(full_name.encode('UTF-8')).hexdigest(), 16) % 10007
+
         mother_name_hash = int(hashlib.sha1(mother_full_name.encode('UTF-8')).hexdigest(), 16) % 10000
+        # if len(str(mother_name_hash)) < 4:
+        #     mother_name_hash = int(hashlib.sha1(mother_full_name.encode('UTF-8')).hexdigest(), 16) % 10001
+        # if len(str(mother_name_hash)) < 4:
+        #     mother_name_hash = int(hashlib.sha1(mother_full_name.encode('UTF-8')).hexdigest(), 16) % 10002
+        # if len(str(mother_name_hash)) < 4:
+        #     mother_name_hash = int(hashlib.sha1(mother_full_name.encode('UTF-8')).hexdigest(), 16) % 10005
+        # if len(str(mother_name_hash)) < 4:
+        #     mother_name_hash = int(hashlib.sha1(mother_full_name.encode('UTF-8')).hexdigest(), 16) % 10007
+        #
+        # if mother_name_char_count < 10 and not len(str(mother_name_hash)) > 4:
+        #     mother_name_char_count = "0"+str(mother_name_char_count)
+        #
+        # if full_name_char_count < 10 and not len(str(full_name_hash)) > 4:
+        #     full_name_char_count = "0"+str(full_name_char_count)
+
         gender_first_char = gender[:1]
 
         return '{}{}{}{}{}'.format(
