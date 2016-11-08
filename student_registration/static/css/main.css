@@ -65,6 +65,9 @@ input[readonly=readonly] {
 .col-150 {
   width: 150px;
 }
+.col-200 {
+  width: 200px;
+}
 .col-230 {
   width: 230px;
 }

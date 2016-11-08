@@ -29,18 +29,26 @@
                                 <ol class="breadcrumb">
                                     <li><a>{% trans "ALP data collecting" %}</a></li>
                                     <li>
-                                         <select id="id_school" class="col-400">
-                                             <option value="">---{% trans "Display by School" %}---</option>
-                                              {% for school in schools %}
-                                                <option value="{{ school.id }}" {% if selectedSchool == school.id %}selected="selected"{% endif %}>
-                                                    {{ school }} - {% if school.location %}{{ school.location.name }}{% endif %}
+                                         <select id="id_location" class="col-400">
+                                             <option value="">---{% trans "Display by Location" %}---</option>
+                                              {% for location in locations %}
+                                                <option value="{{ location.id }}" {% if selectedLocation == location.id %}selected="selected"{% endif %}>
+                                                    {{ location.name }}
                                                 </option>
                                               {% endfor %}
                                          </select>
+{#                                         <select id="id_school" class="col-400">#}
+{#                                             <option value="">---{% trans "Display by School" %}---</option>#}
+{#                                              {% for school in schools %}#}
+{#                                                <option value="{{ school.id }}" {% if selectedSchool == school.id %}selected="selected"{% endif %}>#}
+{#                                                    {{ school }} - {% if school.location %}{{ school.location.name }}{% endif %}#}
+{#                                                </option>#}
+{#                                              {% endfor %}#}
+{#                                         </select>#}
                                     </li>
                                     <li>
-                                        {% if selectedSchool %}
-                                        <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}?school={{ selectedSchool }}" target="_blank">
+                                        {% if selectedSchool or selectedLocation %}
+                                        <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}?school={{ selectedSchool }}&location={{ selectedLocation }}" target="_blank">
                                             <i class="icon-export-sign icon-white"></i>&nbsp;
                                                 {% trans "Export" %}
                                           </a>
@@ -66,7 +74,7 @@
                                         <th rowspan="2"><label class="col-100">{% trans "District" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "School number" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "School" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Student ID number" %}</label></th>
+                                        <th rowspan="2"><label class="col-100">{% trans "Student number" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Student first name" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Student last name" %}</label></th>
@@ -77,15 +85,15 @@
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label class="col-100">{% trans "Registered in level" %}</label></th>
                                         <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label class="col-100">{% trans "Student notes" %}</label></th>
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label class="col-100">{% trans "Assigned to level" %}</label></th>
-                                        <th colspan="2" style="text-align: center; background-color: #b0e1ef;"><label class="col-100">{% trans "Student actual status" %}</label></th>
+                                        <th colspan="2" style="text-align: center; background-color: #b0e1ef;"><label class="col-200">{% trans "Student actual status" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Mother fullname" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Mother nationality" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Registered in UNHCR" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Student ID Type" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Student ID Number" %}</label>
+                                        <th rowspan="2"><label class="col-200">{% trans "Student ID Number" %}</label>
                                             <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"></i>
                                         </th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Student living address" %}</label></th>
+                                        <th rowspan="2"><label class="col-150">{% trans "Student living address" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Phone number (6 digits)" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Phone prefix (2 digits)" %}</label></th>
                                         <th colspan="2" style="text-align: center; background-color: #67b168;"><label class="col-100">{% trans "Last student education" %}</label></th>
@@ -101,11 +109,11 @@
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science corrector" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Total" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Current level" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Current section" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Level" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Section" %}</label></th>
                                         <th style="background-color: #67b168;"><label class="col-100">{% trans "Last education level" %}</label></th>
                                         <th style="background-color: #67b168;"><label class="col-100">{% trans "Education year" %}</label></th>
-                                        <th style="background-color: #ec971f;"><label class="col-100">{% trans "Is the child participated in an ALP program" %}</label></th>
+                                        <th style="background-color: #ec971f;"><label class="col-200">{% trans "Is the child participated in an ALP program" %}</label></th>
                                         <th style="background-color: #ec971f;"><label class="col-100">{% trans "ALP round" %}</label></th>
                                         <th style="background-color: #ec971f;"><label class="col-100">{% trans "ALP level" %}</label></th>
                                         <th style="background-color: #ec971f;"><label class="col-100">{% trans "ALP result" %}</label></th>
@@ -196,6 +204,15 @@
                 "fnInitComplete": function(oSettings, json) {
                     $('[data-toggle="tooltip"]').tooltip();
                 }
+            });
+
+            $("#id_location").change(function(){
+                var selected_location = $(this).val();
+                var url = '{% url "alp:alp_data_view" %}';
+                if(selected_location){
+                    url = url+'?location='+selected_location;
+                }
+                window.location.href = url;
             });
 
             // get the list of school and fill the table with it
