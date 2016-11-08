@@ -119,13 +119,18 @@ class OutreachStaffView(LoginRequiredMixin, TemplateView):
         schools = School.objects.all()
 
         school = self.request.GET.get("school", 0)
+        location = self.request.GET.get("location", 0)
         if school:
             data = self.model.objects.filter(school=school).order_by('id')
+        if location:
+            data = self.model.objects.filter(school__location_id=location).order_by('id')
 
         return {
             'outreaches': data,
+            'locations': Location.objects.filter(type_id=2),
             'schools': schools,
             'selectedSchool': int(school),
+            'selectedLocation': int(location),
         }
 
 
@@ -134,12 +139,15 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         queryset = self.model.objects.all()
-        school = request.GET.get('school', 0)
+        school = int(request.GET.get('school', 0))
+        location = int(request.GET.get('location', 0))
 
         if has_group(self.request.user, 'PARTNER'):
             queryset = queryset.filter(owner=self.request.user)
         if school:
-            queryset = queryset.filter(school_id=school)
+            queryset = queryset.filter(school_id=school).order_by('id')
+        if location:
+            queryset = queryset.filter(school__location_id=location).order_by('id')
 
         data = tablib.Dataset()
 
