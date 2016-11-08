@@ -111,14 +111,6 @@ class OutreachSerializer(serializers.ModelSerializer):
             'location',
             'governorate_name',
             'school_number',
-            'exam_corrector_arabic',
-            'exam_corrector_language',
-            'exam_corrector_math',
-            'exam_corrector_science',
-            'registered_in_level',
-            'assigned_to_level',
-            'not_enrolled_in_this_school',
-            'exam_not_exist_in_school',
         )
 
 
