@@ -58,7 +58,8 @@ class EducationLevelResource(resources.ModelResource):
         model = EducationLevel
         fields = (
             'id',
-            'name'
+            'name',
+            'note',
         )
         export_order = ('name',)
 
