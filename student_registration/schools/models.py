@@ -43,6 +43,7 @@ class Course(models.Model):
 
 class EducationLevel(models.Model):
     name = models.CharField(max_length=45L, unique=True)
+    note = models.IntegerField(blank=True, null=True)
 
     class Meta:
         ordering = ['id']
@@ -105,6 +106,9 @@ class ClassRoom(models.Model):
 
 class PartnerOrganization(models.Model):
     name = models.CharField(max_length=100L, unique=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name
