@@ -126,8 +126,6 @@ class OutreachStaffView(LoginRequiredMixin, TemplateView):
         return {
             'outreaches': data,
             'schools': schools,
-            'columns': Attribute.objects.filter(type=Outreach.EAV_TYPE),
-            'eav_type': Outreach.EAV_TYPE,
             'selectedSchool': int(school),
         }
 
