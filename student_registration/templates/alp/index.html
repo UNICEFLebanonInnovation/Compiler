@@ -148,11 +148,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-{#                                {% if request.user|has_group:"CERD" %}#}
+                                {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_DIRECTOR" %}
                                     {% for line in data %}
                                         {% include 'alp/prototype-view.html' %}
                                     {% endfor %}
-{#                                {% endif %}#}
+                                {% endif %}
                                 </tbody>
                             </table>
                         </div>
