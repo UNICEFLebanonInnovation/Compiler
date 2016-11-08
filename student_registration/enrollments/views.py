@@ -65,8 +65,6 @@ class EnrollmentStaffView(LoginRequiredMixin, TemplateView):
         return {
             'enrollments': data,
             'schools': schools,
-            'columns': Attribute.objects.filter(type=Enrollment.EAV_TYPE),
-            'eav_type': Enrollment.EAV_TYPE,
             'selectedSchool': int(school),
         }
 
