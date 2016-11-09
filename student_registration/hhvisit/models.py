@@ -164,7 +164,6 @@ class ChildVisit(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
-    service_provider = models.CharField(max_length=255, blank=True, null=True)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
@@ -190,6 +189,7 @@ class ChildService(models.Model):
         blank=False, null=True,
         related_name='+',
     )
+    service_provider = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         ordering = ['id']
