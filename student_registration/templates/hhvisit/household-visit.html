@@ -1,4 +1,3 @@
-{% extends "base.offline.html" %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
@@ -11,8 +10,8 @@
 
 {% endblock %}
 
-
-{% block content %}
+<div id="add_child_noid_block" style="display: block;">
+    <form class="inlineForm form-medium-size" id="add_child_noid_form" onsubmit="return false;">
 
 <div class="alert alert-success" role="alert" id="alert-synchro-success" style="display: none;;">
     {% trans 'Household visit success' %}.
@@ -29,7 +28,7 @@
 
 {#<button type="button" id="registration-synchro">synch</button>#}
 
-<form method="post" action="" class="inlineForm" id="mainForm" style="display: block;">
+<form method="post" action="" class="inlineForm" id="household_visit_form" style="display: block;" onsubmit="return false;">
     <input type="hidden" name="id_hhvisit" id="main_id" />
 {#    {% csrf_token %}#}
     {% if form.errors %}
@@ -135,323 +134,22 @@
 
     {% include 'hhvisit/child-visit-information.html' %}
 
-{% endblock %}
+      <table id="household-visit-attempt-table" class="table table-striped table-bordered cell-border"
+                                       data-height="500"
+                                       data-pagination="true"
+                                       data-search="true"
+                                       cellspacing="0"
+                                       width="100%">
+          <thead>
+              <tr>
+                  <th>Date</th>
+                  <th>Household Found</th>
+                  <th>Note</th>
+              </tr>
+          </thead>
+          <tbody>
 
-{% block extra_js %}
+          </tbody>
+      </table>
 
-    {% get_user_token request.user.id as user_token %}
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/signature_pad.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/appcache.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/indexedDB.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
-    <script type="text/javascript">
-        var db = null;
-        var language  = '{{ LANGUAGE_CODE }}';
-        var user_id = {{ request.user.id }};
-        var user_username = '{{ request.user.username }}';
-        var user_email = '{{ request.user.email }}';
-        var user_token = '{{ user_token }}';
-        var $frame;
-        var onePerFrameSly;
-        var language  = '{{ LANGUAGE_CODE }}';
-        var protocol = 'http://';
-        {% if request.is_secure %}
-            protocol = 'https://';
-        {% endif %}
-        var host = protocol+'{{ request.get_host }}';
-        var checking_id_number_url = host+'/api/registrations-adult/';
-        var synchro_path = host+'/api/registrations-adult/';
-        var synchro_path_2 = host+'/api/registrations-child/';
-        var validation_mapping = new Array();
-        validation_mapping['0'] = function() { return validateSection0() };
-        validation_mapping['5'] = function() { return validateSection5() };
-        validation_mapping['13'] = function() { return validateSection13() };
-
-
-    $(document).ready(function() {
-        onePerFrameSly = initializeSly($('#oneperframe'));
-        initializeSignature();
-        var callback = function(){ load_base_data(); };
-        createDataStore('db_pilot_1', 1, 'hhvisit', true, callback);
-        bootbox.addLocale(language, {
-            OK : '{% trans "Ok" %}',
-            CANCEL : '{% trans "Cancel" %}',
-            CONFIRM : '{% trans "Confirm" %}'
-        });
-        bootbox.setLocale(language);
-
-        setInterval(function(){
-            if(navigator.onLine) {
-                synchronize_data(false);
-            }
-        }, 3600000);
-
-        $(document).on('blur', '#mainForm input, #mainForm select, #mainForm textarea', function(){
-            update_item_store(parseInt($('#main_id').val()), $(this).attr('name'), $(this).val(), 'hhvisit');
-        });
-
-        $(document).on('change', '.bootbox-body #id_main_reason', function(){
-            console.log($(this).val());
-            filterSpecificReasonByMainReason(parseInt($(this).val()));
-        });
-
-        $('#registration_save').click(function(e){
-            var sectionCheck = validateSection13();
-            if(sectionCheck)
-            {
-
-                bootbox.confirm("{% trans 'Are you sure you want to submit this visit?' %}", function(result) {
-                if(result == true) {
-                    var store = getStoreByName('hhvisit');
-                    var request = store.get(parseInt($('#main_id').val()));
-                    request.onsuccess = function(){
-                        var result = request.result;
-
-                        console.log(result);
-                        if(result){
-                            push_adult_data(result, synchro_path, 'hhvisit');
-                        }
-                    };
-                    update_item_store(parseInt($('#main_id').val()), 'completed', true, 'hhvisit');
-                    displayFeedback();
-                }
-                });
-
-            }
-        });
-
-
-        $(document).on('click', '#registration-synchro', function(){
-            synchronize_data('hhvisit', synchro_path);
-        });
-
-        $(document).on('click', '.edit-child-row', function(){
-            var block = $(this).parent().parent().find(".edit-child-row");
-
-            var templateChildForm = $("#add_child_information_block").find('#add_child_information_form');
-
-            var isSaved = false;
-            bootbox.dialog({
-                            title: "{% trans 'Add Child' %}",
-                            message: $('#add_child_information_block').html(),
-                            buttons: {
-                                success: {
-                                    label: "{% trans 'Save' %}",
-                                    className: "btn-success",
-                                    callback: function () {
-                                        var reslt = validate_add_child_information();
-                                        if (reslt)
-                                        {
-
-                                            var tr = $('<tr>');
-                                            var form = $('.bootbox-body').find('#add_child_information_form');
-                                            tr.append('Full Name');
-                                            tr.append('School');
-                                            tr.append('Grade');
-                                            tr.append($('<td>').html(form.find('#id_main_reason').find(':selected').text()));
-                                            tr.append($('<td>').html(form.find('#id_specific_reason').val()));
-                                            tr.append($('<td>').html(form.find('#id_service_provider').val()));
-                                            var editedIndex = block.attr('itemid');
-
-                                            var editButton = $('<button class="btn edit-child-row" type="button" ><i class="icon-edit icon-white"></i></button>');
-                                            tr.append($('<td>').html(editButton));
-
-                                            tr.attr('id', 'child-'+editedIndex);
-
-                                            $('#no_id_table').find('tbody').find('#child-'+editedIndex).replaceWith(tr);
-
-                                            var updateCallback = function(updateItem)
-                                            {
-                                                collect_form_values(form, updateItem);
-                                                update_subitem_store(parseInt($('#main_id').val()), 'children', editedIndex, 'hhvisit', updateItem);
-                                            };
-
-                                            get_subitem_store(parseInt($('#main_id').val()), 'children', block.attr('itemid'), 'hhvisit', updateCallback);
-
-                                        } else {
-                                            return false;
-                                        }
-                                    }
-                                },
-                                cancel: {
-                                    label: "{% trans 'Cancel' %}",
-                                    className: "btn-default",
-                                    callback: function () {
-                                        bootbox.hideAll();
-                                    }
-                                }
-                            }
-            });
-
-            var updateCallback = function(updateItem)
-            {
-                var editForm = $('.bootbox-body').find('#add_child_information_form');
-                update_form_values(editForm, updateItem);
-            };
-
-            get_subitem_store(parseInt($('#main_id').val()), 'children', block.attr('itemid'), 'hhvisit', updateCallback);
-
-        });
-
-        $("#cancelButton").click(function() {
-            bootbox.confirm("{% trans 'Are you sure you want to cancel this registration?' %}", function(result) {
-                if(result == true) {
-                    $('#mainForm').remove();
-                    $('#alert-cancel-success').show();
-                }
-            });
-        });
-
-        $("#previousButton").click(function() {
-            if(!$("#previousButton").hasClass("disabled")) {
-               onePerFrameSly.prev();
-            }
-        });
-
-        $("#nextButton").click(function()
-        {
-            if(!$("#nextButton").hasClass("disabled"))
-            {
-                var sectionCheck = validateSection(onePerFrameSly, onePerFrameSly.rel.activeItem);
-                if(sectionCheck)
-                {
-                  onePerFrameSly.next();
-                }
-            }
-        });
-
-        onePerFrameSly.on('active', function(eventName, itemIndex) {
-            if(onePerFrameSly.rel.activeItem == 0) {
-                $("#previousButton").addClass("disabled");
-            } else {
-                $("#previousButton").removeClass("disabled");
-            }
-            if(onePerFrameSly.rel.activeItem == onePerFrameSly.items.length-1) {
-                $("#nextButton").addClass("disabled");
-            } else {
-                $("#nextButton").removeClass("disabled");
-            }
-        });
-
-        $("#slySlider").find("li").click(function() {
-            return false;
-        });
-    });
-    function updateDropDownValue(dropDownElement, value)
-    {
-        dropDownElement.find('option:selected').removeAttr('selected');
-        dropDownElement.find('option[value="'+value+'"]').attr("selected",true);
-    }
-
-    function getDropDownValueText(dropDownElement, value)
-    {
-        return dropDownElement.find('option[value="'+value+'"]').text();
-    }
-
-
-    function displayFeedback()
-    {
-        $('#mainForm').remove();
-        $('#alert-synchro-success').show();
-    }
-
-    function load_base_data()
-    {
-        pull_data_from_server(host+'/api/specific-reason/', 'specific-reason');
-    }
-
-    function filterSpecificReasonByMainReason(mainreason)
-    {
-        var store = getStoreByName('specific-reason');
-        var request = store.index('main-reason').getAll(main-reason);
-        request.onsuccess = function() {
-            var result = request.result;
-            if(result){
-                $(result).each(function(i, item){
-                    $('.bootbox-body').find('#id_enrolled_last_year_school').find('option[value='+item.id+']').show();
-                });
-            }
-        }
-    }
-
-    function synchronize_data(store_name, url, callback)
-    {
-        var store = getStoreByName(store_name);
-        var request = store.getAll();
-        request.onsuccess = function() {
-            var result = request.result;
-            $(result).each(function(i, item){
-                if(item.synchronized == false && item.completed == true) {
-                    push_adult_data(item, url, store_name);
-                }
-{#                if(item.synchronized == true || (item.synchronized == false && item.completed == false)){#}
-{#                    delete_from_store(parseInt(item.id), store_name, true);#}
-{#                }#}
-            });
-            if(callback){
-                callback();
-            }
-        };
-    }
-
-    function push_adult_data(item, url, store_name)
-    {
-        //var formID = item.id;
-        //item.id=item.update_id;
-        //item.id_hhvisit=item.update_id;
-        {#            url: url + (item.update_id != null ? item.update_id+"/" : ""),      #}
-        $.ajax({
-            type: item.original_id != null ? "PUT":"POST",
-            url: url + (item.original_id != null ? item.id_number+"/" : ""),
-            data: item,
-            cache: false,
-            async: false,
-            headers: getHeader(),
-            dataType: 'json',
-            success: function (response) {
-{#                if(response.status == '201' || response.status == 201){#}
-                if(response.id){
-                    update_item_store(parseInt(item.id), 'synchronized', true, store_name);
-                    $(item.children).each(function(i, child){
-                        child.registering_adult = response.id;
-                        push_child_data(child);
-                    });
-                }
-            },
-            error: function (response) {
-                console.log(response);
-            }
-        });
-    }
-
-    function push_child_data(item)
-    {
-        $.ajax({
-            type: "POST",
-            url: synchro_path_2,
-            data: item,
-            cache: false,
-            async: false,
-            headers: getHeader(),
-            dataType: 'json',
-            success: function (response) {
-                if(response.status == '201' || response.status == 201){
-
-                }
-            },
-            error: function (response) {
-                console.log(response);
-            }
-        });
-    }
-
-
-    </script>
-
-{% endblock %}
+      <button id = "hhCloseButton" >Close</button>
