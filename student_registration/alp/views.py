@@ -123,8 +123,8 @@ class OutreachStaffView(LoginRequiredMixin, TemplateView):
         location = self.request.GET.get("location", 0)
         if school:
             data = self.model.objects.filter(school=school).order_by('id')
-        if location:
-            data = self.model.objects.filter(school__location_id=location).order_by('id')
+        # if location:
+        #     data = self.model.objects.filter(school__location_id=location).order_by('id')
 
         return {
             'outreaches': data,
