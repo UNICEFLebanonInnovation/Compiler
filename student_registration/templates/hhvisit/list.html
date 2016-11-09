@@ -1,4 +1,4 @@
-{% extends "base.offline.html" %}
+{% extends "base.html" %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
@@ -22,7 +22,7 @@
 {% endblock %}
 
 
-{% block content-full-page %}
+{% block content %}
 
          <section class="main-content-wrapper" id = "hhList">
             <section id="main-content">
@@ -32,6 +32,14 @@
                     </div>
                 </div>
             <div class="row">
+
+                <div class="alert alert-success" role="alert" style="display: none;">
+                    <strong>{% trans 'Success' %}</strong> {% trans 'Your change is successfully Saved' %}
+                </div>
+                <div class="alert alert-warning" role="alert" style="display: none;">
+                    <strong>{% trans 'Oops' %}</strong> {% trans 'Error saving changes, please contact system administrators' %}
+                </div>
+
                     <div class="col-md-12">
                         <div class="panel panel-default">
                           <div class="panel-heading">
