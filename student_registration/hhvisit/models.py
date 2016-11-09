@@ -79,11 +79,11 @@ class HouseholdVisit(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
-    household_visit_team = models.ForeignKey(
-        HouseholdVisitTeam,
-        blank=True, null=True,
-        related_name='+',
-    )
+    # household_visit_team = models.ForeignKey(
+    #     HouseholdVisitTeam,
+    #     blank=True, null=True,
+    #     related_name='+',
+    # )
     visit_status = models.CharField(max_length=50, blank=True, null=True, choices=STATUS)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
