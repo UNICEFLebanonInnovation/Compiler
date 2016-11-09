@@ -152,7 +152,7 @@ class ChildVisit(TimeStampedModel):
         ordering = ['id']
 
     def __unicode__(self):
-        return self.student.student_fullname
+        return self.student.first_name
 
 
 class ChildService(models.Model):

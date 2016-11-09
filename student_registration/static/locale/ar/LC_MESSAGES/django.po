@@ -1015,6 +1015,9 @@ msgstr "تصفية القائمة حسب الجنسية"
 msgid "Display by School"
 msgstr "عرض قائمة المعلومات حسب المدرسة"
 
+msgid "Display by Location"
+msgstr "عرض قائمة البيانات حسب القضاء"
+
 msgid "Rest filter"
 msgstr "الغاء التصفية"
 
@@ -1122,6 +1125,27 @@ msgstr "المستوى المسجل بها التلميذ"
 
 msgid "Registered in section"
 msgstr "الشعبة المسجل بها التلميذ"
+
+msgid "Arabic language corrector"
+msgstr "مصحح اللغة العربية"
+
+msgid "Foreign language corrector"
+msgstr "مصحح اللغة الاجنبية"
+
+msgid "Math corrector"
+msgstr "مصحح الرياضيات"
+
+msgid "Science corrector"
+msgstr "مصحح العلوم"
+
+msgid "Assigned to level"
+msgstr "مرفع الى المستوى"
+
+msgid "Student actual status"
+msgstr "تم تسجيل التلميذ في"
+
+msgid "Exam not received from this school"
+msgstr "لا يوجد مسابقة لهذا التلميذ"
 
 msgid "Household visit success"
 msgstr ""
