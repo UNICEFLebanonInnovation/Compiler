@@ -36,6 +36,7 @@ DJANGO_APPS = (
     # 'django.contrib.humanize',
 
     # Admin
+    'suit',
     'django.contrib.admin',
 )
 THIRD_PARTY_APPS = (
@@ -304,4 +305,21 @@ REST_FRAMEWORK = {
 SWAGGER_SETTINGS = {
     'is_authenticated': True,
     'is_superuser': True,
+}
+
+# Django Suit configuration
+SUIT_CONFIG = {
+    'ADMIN_NAME': 'Compiler',
+    'CONFIRM_UNSAVED_CHANGES': False,
+
+    'MENU': (
+        {'app': 'auth', 'label': 'Groups', 'icon': 'icon-user'},
+        {'app': 'users', 'label': 'Users', 'icon': 'icon-user'},
+        {'app': 'alp', 'label': 'ALP', 'icon': 'icon-th-list'},
+        {'app': 'enrollments', 'label': '2nd Shift', 'icon': 'icon-th-list'},
+        {'app': 'registrations', 'label': 'Pilot', 'icon': 'icon-th-list'},
+        {'app': 'students', 'label': 'Students', 'icon': 'icon-th-list'},
+        {'app': 'schools', 'label': 'Schools', 'icon': 'icon-th-list'},
+        {'app': 'locations', 'label': 'Locations', 'icon': 'icon-globe'},
+    )
 }
