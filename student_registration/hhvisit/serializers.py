@@ -62,6 +62,7 @@ class ChildServiceSerializer(serializers.ModelSerializer):
         model = ChildService
         fields = (
             'service_type',
+            'service_provider',
         )
 
 
@@ -154,7 +155,7 @@ class ChildVisitSerializer(serializers.ModelSerializer):
     main_reason =  serializers.CharField(source='main_reason.name')
     specific_reason = serializers.CharField(source='specific_reason.name')
     child_visit_service = ChildServiceSerializer(many=True, read_only=True)
-    # house_hold_visit_team = HouseholdVisitTeamSerializer(many=True, read_only=True)
+    house_hold_visit_team = HouseholdVisitTeamSerializer(many=True, read_only=True)
 
 
     def create(self, validated_data):
@@ -193,11 +194,10 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             'father_name',
             'last_name',
             'mother_fullname',
-            'service_provider',
             'main_reason',
             'specific_reason',
             'child_visit_service',
-            # 'house_hold_visit_team'
+            'house_hold_visit_team'
         )
 
 
