@@ -12,7 +12,7 @@ from student_registration.students.models import (
 from student_registration.registrations.models import (
     RegisteringAdult,
 )
-
+from student_registration.users.models import User
 
 class ServiceType(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
@@ -48,21 +48,44 @@ class SpecificReason(models.Model):
         return self.name
 
 
+class HouseholdVisitTeam(models.Model):
+
+    name = models.CharField(max_length=254L)
+    first_enumerator = models.ForeignKey(
+        User,
+        blank=False, null=True,
+        related_name='+',
+    )
+    second_enumerator = models.ForeignKey(
+        User,
+        blank=False, null=True,
+        related_name='+',
+    )
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Specific Reason'
+
+    def __unicode__(self):
+        return self.name
+
 class HouseholdVisit(TimeStampedModel):
 
     STATUS = Choices(
         ('pending', _('Pending')),
         ('completed', _('Completed')),
     )
-
     registering_adult = models.ForeignKey(
         RegisteringAdult,
         blank=True, null=True,
         related_name='+',
     )
-
+    household_visit_team = models.ForeignKey(
+        HouseholdVisitTeam,
+        blank=True, null=True,
+        related_name='+',
+    )
     visit_status = models.CharField(max_length=50, blank=True, null=True, choices=STATUS)
-
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,

@@ -1,8 +1,22 @@
 
 from rest_framework import serializers
-from .models import  HouseholdVisit , SpecificReason , HouseholdVisitAttempt , ChildVisit , MainReason , ChildService , ServiceType
-from student_registration.registrations.serializers import RegisteringAdultSerializer ,StudentSerializer
+from .models import  (
+    HouseholdVisit ,
+    SpecificReason ,
+    HouseholdVisitAttempt ,
+    ChildVisit ,
+    MainReason ,
+    ChildService ,
+    ServiceType ,
+    HouseholdVisitComment,
+    HouseholdVisitTeam,
+)
+from student_registration.registrations.serializers import (
+    RegisteringAdultSerializer ,
+    StudentSerializer,
+)
 
+from student_registration.users.models import User
 
 
 class MainReasonSerializer(serializers.ModelSerializer):
@@ -14,10 +28,14 @@ class SpecificReasonSerializer(serializers.ModelSerializer):
     class Meta:
         model = SpecificReason
 
+
 class ServiceTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceType
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
 
 
 class ChildServiceSerializer(serializers.ModelSerializer):
@@ -69,6 +87,64 @@ class VisitAttemptSerializer(serializers.ModelSerializer):
             'date',
         )
 
+        UserSerializer
+
+class HouseholdVisitTeamSerializer(serializers.ModelSerializer):
+
+    first_enumerator = serializers.CharField(source='first_enumerator.username')
+    second_enumerator = serializers.CharField(source='second_enumerator.username')
+    def create(self, validated_data):
+
+        first_enumerator_data = validated_data.pop('first_enumerator', None)
+        first_enumerator_serializer = UserSerializer(data=first_enumerator_data)
+        first_enumerator_serializer.is_valid(raise_exception=True)
+        first_enumerator_serializer.instance = first_enumerator_serializer.save()
+
+        second_enumerator_data = validated_data.pop('second_enumerator', None)
+        second_enumerator_serializer = UserSerializer(data=second_enumerator_data)
+        second_enumerator_serializer.is_valid(raise_exception=True)
+        second_enumerator_serializer.instance = second_enumerator_serializer.save()
+
+        try:
+            instance = HouseholdVisitTeam.objects.create(**validated_data)
+            instance.first_enumerator = first_enumerator_serializer.instance
+            instance.second_enumerator = second_enumerator_serializer.instance
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'HouseholdVisitTeam instance': ex.message})
+
+        return instance
+
+    class Meta:
+        model = HouseholdVisitTeam
+        fields = (
+            'name',
+            'first_enumerator',
+            'second_enumerator',
+        )
+
+
+class HouseholdVisitCommentSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+
+        try:
+            instance = HouseholdVisitComment.objects.create(**validated_data)
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'HouseholdVisitComment instance': ex.message})
+
+        return instance
+
+    class Meta:
+        model = HouseholdVisitComment
+        fields = (
+            'comment',
+            'date',
+        )
+
 class ChildVisitSerializer(serializers.ModelSerializer):
 
     first_name = serializers.CharField(source='student.first_name')
@@ -78,6 +154,8 @@ class ChildVisitSerializer(serializers.ModelSerializer):
     main_reason =  serializers.CharField(source='main_reason.name')
     specific_reason = serializers.CharField(source='specific_reason.name')
     child_visit_service = ChildServiceSerializer(many=True, read_only=True)
+    house_hold_visit_team = HouseholdVisitTeamSerializer(many=True, read_only=True)
+
 
     def create(self, validated_data):
 
@@ -118,7 +196,8 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             'service_provider',
             'main_reason',
             'specific_reason',
-            'child_visit_service'
+            'child_visit_service',
+            'house_hold_visit_team'
         )
 
 
@@ -134,6 +213,8 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
     secondary_phone = serializers.CharField(source='registering_adult.secondary_phone', read_only=True)
     visit_attempt = VisitAttemptSerializer(many=True, read_only=True)
     children_visits = ChildVisitSerializer(many=True, read_only=True)
+    visit_comment = HouseholdVisitCommentSerializer(many=True, read_only=True)
+    household_visit_team = HouseholdVisitCommentSerializer(many=True, read_only=True)
 
     def create(self, validated_data):
 
@@ -165,5 +246,6 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
             'primary_phone',
             'secondary_phone',
             'visit_attempt',
-            'children_visits'
+            'children_visits',
+            'visit_comment',
         )
