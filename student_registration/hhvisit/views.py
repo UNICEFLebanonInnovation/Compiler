@@ -106,7 +106,7 @@ class HouseholdVisitListView(LoginRequiredMixin, TemplateView):
             return {
                 'visits': data,
                 'locations': locations,
-                'selectedSchool': int(location),
+                'selectedLocation': int(location),
                 'visit_form': HouseholdVisitForm
             }
 
