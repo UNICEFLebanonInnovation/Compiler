@@ -79,10 +79,10 @@ class OutreachView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         data = []
+        school = self.request.GET.get("school", 0)
         if has_group(self.request.user, 'CERD'):
-            user_schools = self.request.user.schools.all()
             data = Outreach.objects.exclude(owner__partner_id=None)
-            data = data.filter(school_id__in=user_schools)
+            data = data.filter(school_id=school)
         if has_group(self.request.user, 'ALP_DIRECTOR'):
             data = Outreach.objects.filter(school_id=self.request.user.school_id)
 
@@ -106,7 +106,8 @@ class OutreachView(LoginRequiredMixin, TemplateView):
             'nationalities': Nationality.objects.exclude(id=5),
             'nationalities2': Nationality.objects.all(),
             'columns': Attribute.objects.filter(type=Outreach.EAV_TYPE),
-            'eav_type': Outreach.EAV_TYPE
+            'eav_type': Outreach.EAV_TYPE,
+            'selectedSchool': school,
         }
 
 
