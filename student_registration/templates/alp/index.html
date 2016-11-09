@@ -741,9 +741,15 @@
                 });
                 if(showFeedback && synchro_result == true){
                     $('#alert-synchro-success').show();
+                    setTimeout(function(){
+                        $('#alert-synchro-success').hide();
+                    }, 5000);
                 }
                 if(showFeedback && synchro_result == false){
                     $('#alert-synchro-warning').show();
+                    setTimeout(function(){
+                        $('#alert-synchro-warning').hide();
+                    }, 5000);
                 }
             };
 
