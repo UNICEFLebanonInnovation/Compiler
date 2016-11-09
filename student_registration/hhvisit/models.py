@@ -160,7 +160,7 @@ class ChildService(models.Model):
     child_visit = models.ForeignKey(
         ChildVisit,
         blank=False, null=True,
-        related_name='+',
+        related_name='child_visit_service',
     )
     service_type = models.ForeignKey(
         ServiceType,
