@@ -26,12 +26,12 @@
                 {% endif %}
                 {% if request.user.is_authenticated %}
                     {% if request.user|has_group:"ALP_OUTREACH" %}
-                        {% if request.user|has_group:"PARTNER" or request.user|has_group:"CERD" %}
+                        {% if request.user|has_group:"PARTNER" or request.user|has_group:"CERD" or request.user|has_group:"ALP_DIRECTOR" %}
                   <li class="nav-item">
                     <a class="nav-link {% if request|is_current_page:"alp_data_collecting" %}active{% endif %}" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data collecting" %}</a>
                   </li>
                         {% endif %}
-                        {% if request.user|has_group:"PMU" %}
+                        {% if request.user|has_group:"ALP_MEHE" %}
                   <li class="nav-item">
                     <a class="nav-link {% if request|is_current_page:"alp_data_view" %}active{% endif %}" href="{% url 'alp:alp_data_view' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data collecting" %}</a>
                   </li>

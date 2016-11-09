@@ -4,6 +4,9 @@ from __future__ import absolute_import, unicode_literals
 from django.http import Http404
 from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.detail import DetailView
+from django.utils import timezone
+
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
 import tablib
@@ -14,20 +17,19 @@ from import_export.formats import base_formats
 from django.core.urlresolvers import reverse
 from datetime import datetime
 
-
 from student_registration.eav.models import Attribute
 from student_registration.hhvisit.models import (
     HouseholdVisit,
 
 )
-from .serializers import HouseholdVisitSerializer
+from .serializers import SpecificReasonSerializer , HouseholdVisitSerializer
 from student_registration.hhvisit.forms import (
     HouseholdVisitForm
 )
 
 from student_registration.locations.models import Location
 
-from .models import HouseholdVisit
+from .models import HouseholdVisit , SpecificReason
 from .models import ChildVisit
 
 
@@ -46,6 +48,47 @@ class HouseholdVisitView(LoginRequiredMixin, TemplateView):
         }
 
 
+
+class HouseholdVisitLoadViewSet(mixins.RetrieveModelMixin,
+                              mixins.ListModelMixin,
+                              mixins.CreateModelMixin,
+                              mixins.UpdateModelMixin,
+                              viewsets.GenericViewSet):
+    model = HouseholdVisit
+    lookup_field = 'id'
+    queryset = HouseholdVisit.objects.all()
+    serializer_class = HouseholdVisitSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_context_data(self, **kwargs):
+
+        return {
+            'form': HouseholdVisitForm({'location': self.request.user.location_id,
+                                     'locations': self.request.user.locations.all()}),
+        }
+
+    def get_object(self):
+        householdvisit = []
+        try:
+            householdvisit = HouseholdVisit.objects.filter(id=self.kwargs.get  ('id')).order_by('id')
+            if householdvisit:
+
+                householdvisit[0].attempts = []
+
+                householdvisit[0].attempts.append({})
+                householdvisit[0].attempts[0]["household_found"] = True
+                householdvisit[0].attempts[0]["comment"] = 'C C C C'
+                householdvisit[0].attempts[0]["date"] = datetime.strptime('2016-11-8T00:00:00', '%Y-%m-%dT%H:%M:%S')
+
+
+                return householdvisit[0]
+            raise Http404()
+        except Http404 as exp:
+            raise exp
+
+
+
+
 class HouseholdVisitListView(LoginRequiredMixin, TemplateView):
         """
         Provides the Household visit  page with lookup types in the context
@@ -55,7 +98,7 @@ class HouseholdVisitListView(LoginRequiredMixin, TemplateView):
 
         def get_context_data(self, **kwargs):
             data = []
-            locations = Location.objects.all()
+            locations = Location.objects.all().filter(type_id=2).order_by('name')
             location = self.request.GET.get("location", 0)
             if location:
                 data = self.model.objects.filter(registering_adult__school__location_id=location).order_by('id')
@@ -64,5 +107,16 @@ class HouseholdVisitListView(LoginRequiredMixin, TemplateView):
                 'visits': data,
                 'locations': locations,
                 'selectedSchool': int(location),
+                'visit_form': HouseholdVisitForm
             }
 
+class SpecificReasonViewSet(mixins.ListModelMixin,
+                    viewsets.GenericViewSet):
+    model = SpecificReason
+    queryset = SpecificReason.objects.all()
+    serializer_class = SpecificReasonSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+def get_success_url(self):
+    return reverse('registrations:registering_pilot')

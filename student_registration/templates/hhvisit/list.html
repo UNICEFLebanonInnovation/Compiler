@@ -9,12 +9,22 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">
 
+    <style>
+        .row-class {
+            cursor: pointer;
+        }
+        .row-class:hover {
+           background-color: gainsboro !IMPORTANT;
+        }
+
+    </style>
+
 {% endblock %}
 
 
 {% block content-full-page %}
 
-         <section class="main-content-wrapper">
+         <section class="main-content-wrapper" id = "hhList">
             <section id="main-content">
                  <div class="row">
                     <div class="col-md-12">
@@ -67,7 +77,7 @@
                                 </thead>
                                 <tbody>
                                     {% for visit in visits %}
-                                        <tr>
+                                        <tr class="row-class" visitID="{{ visit.id }}">
                                           <td>{{ visit.registering_adult.school.location.name }}</td>
                                           <td>{{ visit.registering_adult.address }}</td>
                                           <td>{{ visit.registering_adult }}</td>
@@ -88,6 +98,12 @@
             </section>
          </section>
 
+     <div id = "hhForm" style ="display:none">
+
+       {% include 'hhvisit/household-visit.html' %}
+
+     </div>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -98,6 +114,8 @@
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
     <script type="text/javascript">
         var oTable = null;
         var language  = '{{ LANGUAGE_CODE }}';
@@ -132,7 +150,74 @@
                 window.location.href = url;
             });
 
+
+            $(document).on
+            (
+               'click',
+               '.row-class',
+               function()
+               {
+                  block = $(this);
+
+                  var visitID = block.attr('visitID')
+
+                  $("#hhList").hide();
+
+                  LoadVisit(visitID);
+
+                  $("#hhForm").show();
+               }
+             );
+
+
+            $(document).on
+            (
+               'click',
+               '#hhCloseButton',
+               function()
+               {
+                  $("#hhForm").hide();
+
+                  $("#hhList").show();
+               }
+             );
         });
+
+        var protocol = 'http://';
+        {% if request.is_secure %}
+            protocol = 'https://';
+        {% endif %}
+        var host = protocol+'{{ request.get_host }}';
+        var hhVisitURL = host+'/api/household-visit/';
+
+        function LoadVisit(visitID)
+        {
+alert(hhVisitURL+visitID);
+           $.ajax({
+                     type: "GET",
+                     url: hhVisitURL+visitID,
+                     data: [],
+                     cache: false,
+                     async: false,
+                     headers: getHeader(),
+                     dataType: 'json',
+                     success: function (response) {
+                        InitialiseVisitForm(response);
+                     },
+                     error: function (response) {
+                        var required_fields = JSON.parse(response.responseText);
+                        console.log(response);
+                     }
+                 });
+
+        }
+
+        function InitialiseVisitForm(visitDate)
+        {
+
+        }
+
+
     </script>
 
 {% endblock %}

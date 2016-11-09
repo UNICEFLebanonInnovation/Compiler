@@ -42,8 +42,8 @@ def generate_adult_unique_number():
     for adult in adults:
         try:
             adult.number = generate_id(adult.first_name, adult.father_name, adult.last_name,
-                                         adult.mother_fullname, adult.sex)
-            print adult.number
+                                       adult.mother_fullname, adult.sex)
+            print adult.number, adult.id
             adult.save()
         except Exception as ex:
             print ex.message
@@ -59,7 +59,7 @@ def generate_child_unique_number():
         try:
             student.number = generate_id(student.first_name, student.father_name, student.last_name,
                                          student.mother_fullname, student.sex)
-            print student.number
+            print student.number, student.id
             student.save()
         except Exception as ex:
             print ex.message
