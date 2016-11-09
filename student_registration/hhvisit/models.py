@@ -64,7 +64,6 @@ class HouseholdVisitTeam(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Specific Reason'
 
     def __unicode__(self):
         return self.name
