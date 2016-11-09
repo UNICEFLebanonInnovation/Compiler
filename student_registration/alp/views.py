@@ -79,7 +79,7 @@ class OutreachView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         data = []
-        school = self.request.GET.get("school", 0)
+        school = int(self.request.GET.get("school", 0))
         if has_group(self.request.user, 'CERD'):
             data = Outreach.objects.exclude(owner__partner_id=None)
             data = data.filter(school_id=school)

@@ -128,14 +128,14 @@
                                         <th><label>{% trans "day" %}</label></th>
                                         {% if request.user|has_group:"CERD" %}
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Arabic language corrector" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Foreign language corrector" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Math" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Total" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Arabic language corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Foreign language corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>
                                         {% endif %}
                                         {% if request.user|has_group:"ALP_DIRECTOR" %}
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current level" %}</label></th>
