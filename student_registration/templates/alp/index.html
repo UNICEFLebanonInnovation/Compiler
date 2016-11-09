@@ -7,7 +7,17 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
-
+    <style>
+        tr.highlighted {
+            background-color: darkseagreen !important;
+        }
+        .outreach-field-p:focus {
+            background-color: yellow;
+        }
+        .outreach-field:focus {
+            background-color: yellow;
+        }
+    </style>
 {% endblock %}
 
 {% block content-full-page %}
@@ -29,7 +39,7 @@
             <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                          <div class="panel-heading">
+                          <div class="panel-heading" style="position: absolute; top:0px;" id="header">
                                 <ol class="breadcrumb">
                                     <li><a>
                                         <h3 class="panel-title">{% trans "ALP data collecting" %}</h3></a></li>
@@ -70,7 +80,7 @@
                                        data-pagination="true"
                                        data-search="true"
                                        cellspacing="0"
-                                       width="100%" style="margin-bottom: 100px;">
+                                       width="100%" style="margin-bottom: 100px; margin-top: 75px;">
                                 <thead>
                                     <tr id="thead-line-1">
                                         <th rowspan="2">&nbsp;
@@ -314,6 +324,21 @@
 {#                $('#filter_school').val('');#}
 {#                $('#filter_location').val('');#}
                 $('#search').val('');
+                $('tbody').find('tr').removeClass('highlighted');
+            });
+
+            $(document).on('click', 'tbody tr', function(){
+                $('tbody').find('tr').removeClass('highlighted');
+                $(this).addClass('highlighted');
+            });
+
+            $(window).scroll(function () {
+                var l = $(this).scrollLeft();
+                if(parseInt(l) <= 0){
+                    $('#header').css({'left': l});
+                }else{
+                    $('#header').css({'right': -l});
+                }
             });
 
             $(document).on('click', '#add_datatable_line', function(){
@@ -476,7 +501,16 @@
             });
 
             $(document).on('change', '.exam-note', function(){
+
+                $(this).removeClass('required');
                 var item = $(this).parent().parent();
+                var max = parseInt(item.find('#level').find('option:selected').attr('data-value'));
+                if(parseFloat($(this).val()) > max){
+                    $(this).val(0);
+                    $(this).addClass('required');
+                    return false;
+                }
+
                 var note1 = parseFloat(item.find('#exam_result_arabic').val());
                 var note2 = parseFloat(item.find('#exam_result_language').val());
                 var note3 = parseFloat(item.find('#exam_result_math').val());
