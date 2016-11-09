@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import  HouseholdVisit , SpecificReason , HouseholdVisitAttempt , ChildVisit , MainReason
+from .models import  HouseholdVisit , SpecificReason , HouseholdVisitAttempt , ChildVisit , MainReason , ChildService , ServiceType
 from student_registration.registrations.serializers import RegisteringAdultSerializer ,StudentSerializer
 
 
@@ -13,6 +13,38 @@ class MainReasonSerializer(serializers.ModelSerializer):
 class SpecificReasonSerializer(serializers.ModelSerializer):
     class Meta:
         model = SpecificReason
+
+class ServiceTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceType
+
+
+
+class ChildServiceSerializer(serializers.ModelSerializer):
+
+    service_type = serializers.CharField(source='service_type.name')
+    def create(self, validated_data):
+
+        service_type_data = validated_data.pop('service_type', None)
+        service_type_serializer = ServiceTypeSerializer(data=service_type_data)
+        service_type_serializer.is_valid(raise_exception=True)
+        service_type_serializer.instance = service_type_serializer.save()
+
+        try:
+            instance = ChildService.objects.create(**validated_data)
+            instance.student = service_type_serializer.instance
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'ChildService instance': ex.message})
+
+        return instance
+
+    class Meta:
+        model = ChildService
+        fields = (
+            'service_type',
+        )
 
 
 
@@ -45,6 +77,7 @@ class ChildVisitSerializer(serializers.ModelSerializer):
     mother_fullname = serializers.CharField(source='student.mother_fullname')
     main_reason =  serializers.CharField(source='main_reason.name')
     specific_reason = serializers.CharField(source='specific_reason.name')
+    child_visit_service = ChildServiceSerializer(many=True, read_only=True)
 
     def create(self, validated_data):
 
@@ -84,7 +117,8 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             'mother_fullname',
             'service_provider',
             'main_reason',
-            'specific_reason'
+            'specific_reason',
+            'child_visit_service'
         )
 
 
