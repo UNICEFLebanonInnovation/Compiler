@@ -37,14 +37,16 @@
                                                 </option>
                                               {% endfor %}
                                          </select>
-{#                                         <select id="id_school" class="col-400">#}
-{#                                             <option value="">---{% trans "Display by School" %}---</option>#}
-{#                                              {% for school in schools %}#}
-{#                                                <option value="{{ school.id }}" {% if selectedSchool == school.id %}selected="selected"{% endif %}>#}
-{#                                                    {{ school }} - {% if school.location %}{{ school.location.name }}{% endif %}#}
-{#                                                </option>#}
-{#                                              {% endfor %}#}
-{#                                         </select>#}
+                                         <select id="id_school" class="col-400">
+                                             <option value="">---{% trans "Display by School" %}---</option>
+                                              {% for school in schools %}
+                                                <option data-parent="{% if school.location %}{{ school.location.id }}{% endif %}"
+                                                        {% if school.location and not school.location_id == selectedLocation %}style="display: none;" {% endif %}
+                                                        value="{{ school.id }}" {% if selectedSchool == school.id %}selected="selected"{% endif %}>
+                                                    {{ school }}
+                                                </option>
+                                              {% endfor %}
+                                         </select>
                                     </li>
                                     <li>
                                         {% if selectedSchool or selectedLocation %}
@@ -206,13 +208,22 @@
                 }
             });
 
-            $("#id_location").change(function(){
-                var selected_location = $(this).val();
-                var url = '{% url "alp:alp_data_view" %}';
-                if(selected_location){
-                    url = url+'?location='+selected_location;
+{#            $("#id_location").change(function(){#}
+{#                var selected_location = $(this).val();#}
+{#                var url = '{% url "alp:alp_data_view" %}';#}
+{#                if(selected_location){#}
+{#                    url = url+'?location='+selected_location;#}
+{#                }#}
+{#                window.location.href = url;#}
+{#            });#}
+
+            $(document).on('change', '#id_location', function(){
+                if($(this).val()){
+                    $("#id_school").val("");
+                    $("#id_school").find('option').hide();
+                    $("#id_school").find('option[value=""]').show();
+                    $("#id_school").find('option[data-parent='+$(this).val()+']').show();
                 }
-                window.location.href = url;
             });
 
             // get the list of school and fill the table with it
@@ -221,7 +232,7 @@
                // reload the page with the school id passed in post
                 var url = '{% url "alp:alp_data_view" %}';
                 if(selected_school){
-                    url = url+'?school='+selected_school;
+                    url = url+'?school='+selected_school+"&location="+$('#id_location').val();
                 }
                 window.location.href = url;
             });
