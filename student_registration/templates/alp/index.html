@@ -30,9 +30,9 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                           <div class="panel-heading">
-                            <h3 class="panel-title">
                                 <ol class="breadcrumb">
-                                    <li><a>{% trans "ALP data collecting" %}</a></li>
+                                    <li><a>
+                                        <h3 class="panel-title">{% trans "ALP data collecting" %}</h3></a></li>
                                     <li>
                                       <button class="btn btn-info" id="outreach-synchro">
                                         <i class="icon-synch-sign icon-white"></i>&nbsp;
@@ -40,13 +40,6 @@
                                       </button>
                                     </li>
                                     <li>
-                                    {% if not request.user|has_group:"ALP_DIRECTOR" %}
-{#                                        <select name="location" id="filter_location" style="width: 210px;">#}
-{#                                            <option value="">{% trans "Filter by Location" %}</option>#}
-{#                                            {% for item in locations %}#}
-{#                                                <option value="{{ item.id }}">{{ item.name }}</option>#}
-{#                                            {% endfor %}#}
-{#                                        </select>#}
                                         {% if request.user|has_group:"CERD" %}
                                         <select name="school" id="filter_school" style="width: 210px;">
                                             <option value="">{% trans "Filter by School" %}</option>
@@ -54,19 +47,17 @@
                                                 <option value="{{ item.id }}" {% if selectedSchool == item.id %}selected="selected"{% endif %}>{{ item.name }} {% if item.location %}{{ item.location.name }}{% endif %}</option>
                                             {% endfor %}
                                         </select>
-                                        {% endif %}
                                         <input type="text" id="search" size="300" style="width: 200px;" />
                                         <button class="btn btn-warning" id="filter_cancel">
                                             {% trans "Rest filter" %}
                                         </button>
-                                    {% endif %}
+                                        {% endif %}
                                         <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}" target="_blank">
                                             <i class="icon-export-sign icon-white"></i>&nbsp;
                                                 {% trans "Export" %}
                                         </a>
                                     </li>
                                 </ol>
-                            </h3>
                             <div class="actions pull-right">
                                 <i class="fa fa-chevron-down"></i>
                                 <i class="fa fa-times"></i>
