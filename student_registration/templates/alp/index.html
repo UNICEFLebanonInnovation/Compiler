@@ -79,7 +79,7 @@
                                        data-pagination="true"
                                        data-search="true"
                                        cellspacing="0"
-                                       width="100%">
+                                       width="100%" style="margin-bottom: 100px;">
                                 <thead>
                                     <tr id="thead-line-1">
                                         <th rowspan="2">&nbsp;
@@ -98,14 +98,14 @@
                                         <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Sex" %}</label></th>
-                                        <th colspan="3" style="text-align: center;"><label>{% trans "Student birthday" %}</label></th>
-                                        <th rowspan="2"><label class="col-60">{% trans "Student age" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Student nationality" %}</label></th>
                                         {% if request.user|has_group:"CERD" %}
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Registered in level" %}</label></th>
                                         <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Assigned to level" %}</label></th>
                                         {% endif %}
+                                        <th colspan="3" style="text-align: center;"><label>{% trans "Student birthday" %}</label></th>
+                                        <th rowspan="2"><label class="col-60">{% trans "Student age" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Student nationality" %}</label></th>
                                         {% if request.user|has_group:"ALP_DIRECTOR" %}
                                             <th colspan="2" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student actual status" %}</label></th>
                                         {% endif %}
@@ -123,9 +123,6 @@
                                         <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
-                                        <th><label>{% trans "year" %}</label></th>
-                                        <th><label>{% trans "month" %}</label></th>
-                                        <th><label>{% trans "day" %}</label></th>
                                         {% if request.user|has_group:"CERD" %}
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
@@ -137,6 +134,9 @@
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>
                                         {% endif %}
+                                        <th><label>{% trans "year" %}</label></th>
+                                        <th><label>{% trans "month" %}</label></th>
+                                        <th><label>{% trans "day" %}</label></th>
                                         {% if request.user|has_group:"ALP_DIRECTOR" %}
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current level" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current section" %}</label></th>
@@ -329,6 +329,7 @@
                 var item = create_item_store_default_keys();
                 add_to_store(item);
                 scrollToBottom();
+                $('#filter_cancel').trigger('click');
             });
 
             $(document).on('click', '#add_defined_lines', function(){
@@ -341,6 +342,7 @@
                             add_to_store(item);
                         }
                         scrollToBottom();
+                        $('#filter_cancel').trigger('click');
                     }
                 });
             });
