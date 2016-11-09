@@ -252,6 +252,11 @@ class RegistrationResource(resources.ModelResource):
         attribute='student',
         widget=ForeignKeyWidget(Student, 'id_number')
     )
+    id_type = fields.Field(
+        column_name='ID Type',
+        attribute='registering_adult',
+        widget=ForeignKeyWidget(Student, 'id_type')
+    )
 
     class Meta:
         model = Registration
@@ -259,8 +264,9 @@ class RegistrationResource(resources.ModelResource):
                   'section', 'grade', 'classroom', 'year', 'owner', 'status', 'out_of_school_two_years',
                   'related_to_family', 'primary_phone', 'secondary_phone')
         export_order = (
-            'id_number','studentFname', 'studentFaName', 'studentLname', 'registering_adult_fname', 'registering_adult_faname',
-            'registering_adult_lname', 'mother', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
+            'id_number','studentFname', 'studentFaName', 'studentLname', 'registering_adult_fname',
+            'registering_adult_faname', 'registering_adult_lname',
+            'mother', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
             'enrolled_last_year_location', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
             'out_of_school_two_years', 'related_to_family', 'primary_phone', 'secondary_phone')
 
@@ -268,16 +274,18 @@ class RegistrationResource(resources.ModelResource):
 class RegistrationAdmin(ImportExportModelAdmin):
     resource_class = RegistrationResource
     list_display = (
-        'student', 'registering_adult', 'relation_to_adult', 'enrolled_last_year', 'enrolled_last_year_school',
-        'enrolled_last_year_location', 'school', 'section', 'grade', 'classroom', 'year', 'owner', 'status',
+        'student', 'registering_adult', 'relation_to_adult',
+        'enrolled_last_year', 'enrolled_last_year_school', 'enrolled_last_year_location',
+        'school', 'section', 'classroom', 'owner',
         'out_of_school_two_years', 'related_to_family')
     search_fields = (
-        'student__first_name', 'registering_adult__first_name', 'relation_to_adult', 'enrolled_last_year',
+        'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
+        'registering_adult__first_name', 'relation_to_adult', 'enrolled_last_year',
         'enrolled_last_year_school__name', 'enrolled_last_year_location__name', 'school__name', 'section__name',
-        'classroom__name', 'year', 'owner__username', 'status', 'out_of_school_two_years', 'related_to_family',
+        'classroom__name', 'owner__username', 'status', 'out_of_school_two_years', 'related_to_family',
         'student__id_number',
     )
-    list_filter = ('enrolled_last_year', 'status', 'school')
+    list_filter = ('enrolled_last_year', 'out_of_school_two_years', 'school')
 
 
 class WaitingListResource(resources.ModelResource):
