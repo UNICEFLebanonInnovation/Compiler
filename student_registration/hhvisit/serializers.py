@@ -248,4 +248,5 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
             'visit_attempt',
             'children_visits',
             'visit_comment',
+            'household_visit_team'
         )
