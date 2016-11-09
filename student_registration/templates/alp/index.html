@@ -41,23 +41,25 @@
                                     </li>
                                     <li>
                                     {% if not request.user|has_group:"ALP_DIRECTOR" %}
-                                        <select name="location" id="filter_location" style="width: 210px;">
-                                            <option value="">{% trans "Filter by Location" %}</option>
-                                            {% for item in locations %}
-                                                <option value="{{ item.id }}">{{ item.name }}</option>
-                                            {% endfor %}
-                                        </select>
+{#                                        <select name="location" id="filter_location" style="width: 210px;">#}
+{#                                            <option value="">{% trans "Filter by Location" %}</option>#}
+{#                                            {% for item in locations %}#}
+{#                                                <option value="{{ item.id }}">{{ item.name }}</option>#}
+{#                                            {% endfor %}#}
+{#                                        </select>#}
+                                        {% if request.user|has_group:"CERD" %}
                                         <select name="school" id="filter_school" style="width: 210px;">
                                             <option value="">{% trans "Filter by School" %}</option>
                                             {% for item in schools %}
-                                                <option value="{{ item.id }}">{{ item.name }}</option>
+                                                <option value="{{ item.id }}" {% if selectedSchool == item.id %}selected="selected"{% endif %}>{{ item.name }} {% if item.location %}{{ item.location.name }}{% endif %}</option>
                                             {% endfor %}
                                         </select>
-                                        <input type="text" id="search" size="200" style="width: 150px;" />
+                                        {% endif %}
+                                        <input type="text" id="search" size="300" style="width: 200px;" />
                                         <button class="btn btn-warning" id="filter_cancel">
                                             {% trans "Rest filter" %}
                                         </button>
-                                        {% endif %}
+                                    {% endif %}
                                         <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}" target="_blank">
                                             <i class="icon-export-sign icon-white"></i>&nbsp;
                                                 {% trans "Export" %}
@@ -126,14 +128,14 @@
                                         <th><label>{% trans "day" %}</label></th>
                                         {% if request.user|has_group:"CERD" %}
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Arabic language corrector" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Foreign language corrector" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Math" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Total" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Arabic language corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Foreign language corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>
                                         {% endif %}
                                         {% if request.user|has_group:"ALP_DIRECTOR" %}
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current level" %}</label></th>
@@ -280,36 +282,46 @@
                 }
             });
 
-            $(document).on('change', '#filter_school, #filter_location', function(){
-                if($(this).val()){
-                    var value = $(this).val();
-                    var name = $(this).attr('name');
-                    $('.outreach-line').hide();
-                    $('.outreach-line').each(function(i, item){
-                        var select = $(this).find('#'+name);
-                        if($(select).val() == value){
-                            $(this).show();
-                        }
-                    });
-
-                    $('.outreach-line-p').hide();
-                    $('.outreach-line-p').each(function(i, item){
-                        var select = $(this).find('#'+name);
-                        if($(select).val() == value){
-                            $(this).show();
-                        }
-                    });
-                }else{
-                    $('.outreach-line').show();
-                    $('.outreach-line-p').show();
+            $("#filter_school").change(function(){
+                var selected_school = $(this).val();
+               // reload the page with the school id passed in post
+                var url = '{% url "alp:alp_data_collecting" %}';
+                if(selected_school){
+                    url = url+'?school='+selected_school;
                 }
+                window.location.href = url;
             });
+
+{#            $(document).on('change', '#filter_school, #filter_location', function(){#}
+{#                if($(this).val()){#}
+{#                    var value = $(this).val();#}
+{#                    var name = $(this).attr('name');#}
+{#                    $('.outreach-line').hide();#}
+{#                    $('.outreach-line').each(function(i, item){#}
+{#                        var select = $(this).find('#'+name);#}
+{#                        if($(select).val() == value){#}
+{#                            $(this).show();#}
+{#                        }#}
+{#                    });#}
+{##}
+{#                    $('.outreach-line-p').hide();#}
+{#                    $('.outreach-line-p').each(function(i, item){#}
+{#                        var select = $(this).find('#'+name);#}
+{#                        if($(select).val() == value){#}
+{#                            $(this).show();#}
+{#                        }#}
+{#                    });#}
+{#                }else{#}
+{#                    $('.outreach-line').show();#}
+{#                    $('.outreach-line-p').show();#}
+{#                }#}
+{#            });#}
 
             $(document).on('click', '#filter_cancel', function(){
                 $('.outreach-line').show();
                 $('.outreach-line-p').show();
-                $('#filter_school').val('');
-                $('#filter_location').val('');
+{#                $('#filter_school').val('');#}
+{#                $('#filter_location').val('');#}
                 $('#search').val('');
             });
 

@@ -111,28 +111,15 @@
             <span class="note-indicator-value outreach-field" name="note-indicator-value" id="note-indicator-value" itemscope="$$itemscope_id$$"></span>
         </td>
         <td>
-            <input type="text" name="exam_result_language" id="exam_result_language" class="outreach-field exam-note" itemscope="$$itemscope_id$$" maxlength="5" size="6" />
-            <span class="note-indicator-value outreach-field" name="note-indicator-value" id="note-indicator-value" itemscope="$$itemscope_id$$"></span>
-        </td>
-        <td>
-            <input type="text" name="exam_result_math" id="exam_result_math" class="outreach-field exam-note" itemscope="$$itemscope_id$$" maxlength="5" size="6" />
-            <span class="note-indicator-value outreach-field" name="note-indicator-value" id="note-indicator-value" itemscope="$$itemscope_id$$"></span>
-        </td>
-        <td>
-            <input type="text" name="exam_result_science" id="exam_result_science" class="outreach-field exam-note" itemscope="$$itemscope_id$$" maxlength="5" size="6" />
-            <span class="note-indicator-value outreach-field" name="note-indicator-value" id="note-indicator-value" itemscope="$$itemscope_id$$"></span>
-        </td>
-        <td>
-            <input type="text" name="" class="exam_total_$$itemscope_id$$" readonly="readonly"
-                   itemscope="$$itemscope_id$$" id="exam_total" disabled="disabled" size="3" />
-            <span class="note-indicator-total outreach-field" name="note-indicator-total" id="note-indicator-total" itemscope="$$itemscope_id$$"></span>
-        </td>
-        <td>
             <select name="exam_corrector_arabic" id="exam_corrector_arabic" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 45px;">
                 {% for note in notes1 %}
                     <option value="{{ note }}">{{ note }}</option>
                 {% endfor %}
             </select>
+        </td>
+        <td>
+            <input type="text" name="exam_result_language" id="exam_result_language" class="outreach-field exam-note" itemscope="$$itemscope_id$$" maxlength="5" size="6" />
+            <span class="note-indicator-value outreach-field" name="note-indicator-value" id="note-indicator-value" itemscope="$$itemscope_id$$"></span>
         </td>
         <td>
             <select name="exam_corrector_language" id="exam_corrector_language" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 45px;">
@@ -142,6 +129,10 @@
             </select>
         </td>
         <td>
+            <input type="text" name="exam_result_math" id="exam_result_math" class="outreach-field exam-note" itemscope="$$itemscope_id$$" maxlength="5" size="6" />
+            <span class="note-indicator-value outreach-field" name="note-indicator-value" id="note-indicator-value" itemscope="$$itemscope_id$$"></span>
+        </td>
+        <td>
             <select name="exam_corrector_math" id="exam_corrector_math" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 45px;">
                 {% for note in notes3 %}
                     <option value="{{ note }}">{{ note }}</option>
@@ -149,11 +140,20 @@
             </select>
         </td>
         <td>
+            <input type="text" name="exam_result_science" id="exam_result_science" class="outreach-field exam-note" itemscope="$$itemscope_id$$" maxlength="5" size="6" />
+            <span class="note-indicator-value outreach-field" name="note-indicator-value" id="note-indicator-value" itemscope="$$itemscope_id$$"></span>
+        </td>
+        <td>
             <select name="exam_corrector_science" id="exam_corrector_science" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 45px;">
                 {% for note in notes4 %}
                     <option value="{{ note }}">{{ note }}</option>
                 {% endfor %}
             </select>
+        </td>
+        <td>
+            <input type="text" name="" class="exam_total_$$itemscope_id$$" readonly="readonly"
+                   itemscope="$$itemscope_id$$" id="exam_total" disabled="disabled" size="3" />
+            <span class="note-indicator-total outreach-field" name="note-indicator-total" id="note-indicator-total" itemscope="$$itemscope_id$$"></span>
         </td>
         <td>
             <select name="assigned_to_level" id="assigned_to_level" class="outreach-field" itemscope="$$itemscope_id$$">
