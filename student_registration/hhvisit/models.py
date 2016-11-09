@@ -131,6 +131,7 @@ class ChildVisit(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
+    child_enrolled_in_another_school = models.BooleanField(blank=True, default=True)
     main_reason = models.ForeignKey(
         MainReason,
         blank=False, null=True,
@@ -173,3 +174,19 @@ class ChildService(models.Model):
 
     def __unicode__(self):
         return self.ServiceType.name
+
+
+class HouseholdVisitComment(models.Model):
+    household_visit = models.ForeignKey(
+        HouseholdVisit,
+        blank=False, null=True,
+        related_name='visit_comment',
+    )
+    comment = models.CharField(max_length=255, blank=True, null=True)
+    date = models.DateTimeField()
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.comment
