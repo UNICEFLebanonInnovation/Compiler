@@ -33,11 +33,6 @@
         <td>{% if line.student %}{{ line.student.father_name }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.last_name }}{% endif %}</td>
         <td>{% if line.student %}{% trans line.student.sex %}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.birthday_year }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.birthday_month }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.birthday_day }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.calc_age }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.nationality_name }}{% endif %}</td>
         {% if request.user|has_group:"CERD" %}
         <td>
             <select name="level" id="level" class="outreach-field-p note-indicator" itemscope="{{ line.id }}">
@@ -105,6 +100,11 @@
             </select>
         </td>
         {% endif %}
+        <td>{% if line.student %}{{ line.student.birthday_year }}{% endif %}</td>
+        <td>{% if line.student %}{{ line.student.birthday_month }}{% endif %}</td>
+        <td>{% if line.student %}{{ line.student.birthday_day }}{% endif %}</td>
+        <td>{% if line.student %}{{ line.student.calc_age }}{% endif %}</td>
+        <td>{% if line.student %}{{ line.student.nationality_name }}{% endif %}</td>
         {% if request.user|has_group:"ALP_DIRECTOR" %}
         <td>
             <select name="registered_in_level" id="registered_in_level" class="outreach-field-p" itemscope="{{ line.id }}">
