@@ -9,7 +9,6 @@ from .models import  (
     ChildService ,
     ServiceType ,
     HouseholdVisitComment,
-    HouseholdVisitTeam,
 )
 from student_registration.registrations.serializers import (
     RegisteringAdultSerializer ,
@@ -90,42 +89,6 @@ class VisitAttemptSerializer(serializers.ModelSerializer):
 
         UserSerializer
 
-class HouseholdVisitTeamSerializer(serializers.ModelSerializer):
-
-    first_enumerator = serializers.CharField(source='first_enumerator.username')
-    second_enumerator = serializers.CharField(source='second_enumerator.username')
-    def create(self, validated_data):
-
-        first_enumerator_data = validated_data.pop('first_enumerator', None)
-        first_enumerator_serializer = UserSerializer(data=first_enumerator_data)
-        first_enumerator_serializer.is_valid(raise_exception=True)
-        first_enumerator_serializer.instance = first_enumerator_serializer.save()
-
-        second_enumerator_data = validated_data.pop('second_enumerator', None)
-        second_enumerator_serializer = UserSerializer(data=second_enumerator_data)
-        second_enumerator_serializer.is_valid(raise_exception=True)
-        second_enumerator_serializer.instance = second_enumerator_serializer.save()
-
-        try:
-            instance = HouseholdVisitTeam.objects.create(**validated_data)
-            instance.first_enumerator = first_enumerator_serializer.instance
-            instance.second_enumerator = second_enumerator_serializer.instance
-            instance.save()
-
-        except Exception as ex:
-            raise serializers.ValidationError({'HouseholdVisitTeam instance': ex.message})
-
-        return instance
-
-    class Meta:
-        model = HouseholdVisitTeam
-        fields = (
-            'name',
-            'first_enumerator',
-            'second_enumerator',
-        )
-
-
 class HouseholdVisitCommentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
@@ -155,7 +118,6 @@ class ChildVisitSerializer(serializers.ModelSerializer):
     main_reason =  serializers.CharField(source='main_reason.name')
     specific_reason = serializers.CharField(source='specific_reason.name')
     child_visit_service = ChildServiceSerializer(many=True, read_only=True)
-    house_hold_visit_team = HouseholdVisitTeamSerializer(many=True, read_only=True)
 
 
     def create(self, validated_data):
@@ -175,11 +137,15 @@ class ChildVisitSerializer(serializers.ModelSerializer):
         specificreason_serializer.is_valid(raise_exception=True)
         specificreason_serializer.instance = SpecificReasonSerializer.save()
 
+
+
+
         try:
             instance = ChildVisit.objects.create(**validated_data)
             instance.student = student_serializer.instance
             instance.main_reason = mainreason_serializer.instance
             instance.specific_reason = specificreason_serializer.instance
+            # instance.household_visit_team = household_visit_team_serializer.instance
             instance.save()
 
         except Exception as ex:
@@ -197,7 +163,6 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             'main_reason',
             'specific_reason',
             'child_visit_service',
-            'house_hold_visit_team'
         )
 
 
