@@ -134,3 +134,85 @@ class OutreachExamSerializer(serializers.ModelSerializer):
             'not_enrolled_in_this_school',
             'exam_not_exist_in_school',
         )
+
+
+class OutreachSmallSerializer(serializers.ModelSerializer):
+    original_id = serializers.IntegerField(source='id', read_only=True)
+    student_id = serializers.IntegerField(source='student.id', read_only=True)
+    student_id_type_id = serializers.CharField(source='student.id_type_id', read_only=True)
+    student_nationality_id = serializers.CharField(source='student.nationality_id', read_only=True)
+    student_mother_nationality_id = serializers.CharField(source='student.mother_nationality_id', read_only=True)
+    location = serializers.IntegerField(source='school.location_id', read_only=True)
+    governorate_name = serializers.CharField(source='school.location.parent.name', read_only=True)
+    school_number = serializers.CharField(source='school.number', read_only=True)
+
+    student_first_name = serializers.CharField(source='student.first_name')
+    student_father_name = serializers.CharField(source='student.father_name')
+    student_last_name = serializers.CharField(source='student.last_name')
+    student_sex = serializers.CharField(source='student.sex')
+
+    def create(self, validated_data):
+
+        student_data = validated_data.pop('student', None)
+        student_serializer = StudentSerializer(data=student_data)
+        student_serializer.is_valid(raise_exception=True)
+        student_serializer.instance = student_serializer.save()
+
+        try:
+            instance = Outreach.objects.create(**validated_data)
+            instance.student = student_serializer.instance
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'Outreach instance': ex.message})
+
+        return instance
+
+    def update(self, instance, validated_data):
+
+        try:
+            student_data = validated_data.pop('student', None)
+            student_serializer = StudentSerializer(data=student_data)
+            student_serializer.is_valid(raise_exception=True)
+            student_serializer.instance = student_serializer.save()
+            instance.student = student_serializer.instance
+
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'Outreach instance': ex.message})
+
+        return instance
+
+    class Meta:
+        model = Outreach
+        fields = (
+            'id',
+            'original_id',
+            'student_id',
+            'student_first_name',
+            'student_father_name',
+            'student_last_name',
+            'student_sex',
+            'student_id_type_id',
+            'student_nationality_id',
+            'student_mother_nationality_id',
+            'school',
+            'owner',
+            'location',
+            'governorate_name',
+            'school_number',
+            'exam_result_arabic',
+            'exam_result_language',
+            'exam_result_math',
+            'exam_result_science',
+            'level',
+            'exam_corrector_arabic',
+            'exam_corrector_language',
+            'exam_corrector_math',
+            'exam_corrector_science',
+            'registered_in_level',
+            'assigned_to_level',
+            'not_enrolled_in_this_school',
+            'exam_not_exist_in_school',
+        )
