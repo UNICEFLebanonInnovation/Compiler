@@ -9,11 +9,19 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">
 
+
     <style>
         .row-class {
             cursor: pointer;
         }
         .row-class:hover {
+           background-color: gainsboro !IMPORTANT;
+        }
+
+        .child-row-class {
+            cursor: pointer;
+        }
+        .child-row-class:hover {
            background-color: gainsboro !IMPORTANT;
         }
 
@@ -189,6 +197,63 @@
                   $("#hhList").show();
                }
              );
+
+            $(document).on
+            (
+               'click',
+               '#hhSaveButton',
+               function()
+               {
+                  SaveVisit();
+               }
+             );
+
+
+            $(document).on
+            (
+               'click',
+               '#hhAddAttemptButton',
+               function()
+               {
+                  AddAttemptEmptyRow();
+               }
+             );
+
+
+            $(document).on
+            (
+               'click',
+               '.child-row-class',
+               function()
+               {
+                  block = $(this);
+
+                  ShowChildForm(block);
+               }
+            );
+
+
+            $(document).on
+            (
+               'click',
+               '#nextButton',
+               function()
+               {
+                  NextPage();
+               }
+             );
+
+
+            $(document).on
+            (
+               'click',
+               '#previousButton',
+               function()
+               {
+                  PreviousPage();
+               }
+             );
+
         });
 
         var protocol = 'http://';
@@ -220,12 +285,292 @@
 
         }
 
-        function InitialiseVisitForm(visitDate)
+        var visitDataRecord;
+
+        function InitialiseVisitForm(visitData)
         {
+           visitDataRecord = visitData;
+
+           //alert(JSON.stringify(visitData));
+
+           $("#hhVisitName").text(visitData.first_name+' '+visitData.father_name+' '+visitData.last_name);
+           $("#hhAllvisitAttemptCount").text(visitData.all_visit_attempt_count);
+
+
+           visitData.visit_attempt.forEach
+           (
+              function(entry)
+              {
+                 AddAttemptRow(entry);
+              }
+           );
+
+
+           visitData.children_visits.forEach
+           (
+              function(entry)
+              {
+                 AddChildRow(entry);
+              }
+           );
+
+           /*
+           visitData.child_visit_service.forEach
+           (
+              function(entry)
+              {
+                 AddServiceRow(entry);
+              }
+           );
+           */
+
+
+           visitData.visit_comment.forEach
+           (
+              function(entry)
+              {
+                 AddCommentRow(entry);
+              }
+           );
+
 
         }
 
+        function FormatDate(dateString)
+        {
+           var date = new Date(dateString);
+
+           return ((date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear());
+        }
+
+
+        function AddAttemptEmptyRow()
+        {
+           AddAttemptRow({id:'',date:(new Date()).toString(),household_found:false,comment:''});
+        }
+
+        function AddAttemptRow(entry)
+        {
+           var attemptIDCell = "<td style = \"display:none\">"+(entry.id)+"</td>";
+
+           var dateCell = "<td>"+FormatDate(entry.date)+"</td>";
+
+           var checkBoxCell = "<td><input type=\"checkbox\" name=\"found\" value=\"found\" "+(entry.household_found?"checked":"")+" /></td>";
+
+           var noteCell = "<td><textarea name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
+
+           $("#household-visit-attempt-table tbody").append
+           (
+              "<tr>"+attemptIDCell+dateCell+checkBoxCell+noteCell+"</tr>"
+           );
+        }
+
+
+        function AddChildRow(entry)
+        {
+           var childIDCell = "<td style = \"display:none\">"+(entry.id)+"</td>";
+
+           var childNameCell = "<td>"+(entry.first_name)+"</td>";
+
+           var schoolCell = "<td>"+(entry.school)+"</td>";
+
+           var gradeCell = "<td>"+(entry.grade)+"</td>";
+
+           var ageCell = "<td>"+(entry.age)+"</td>";
+
+           $("#household-visit-child-table tbody").append
+           (
+              "<tr class = \"child-row-class\" >"+childIDCell+childNameCell+schoolCell+gradeCell+ageCell+"</tr>"
+           );
+        }
+
+        function AddServiceRow(editForm, entry)
+        {
+           var serviceIDCell = "<td style = \"display:none\">"+(entry.id)+"</td>";
+
+           var serviceTypeCell = "<td>"+editForm.find("[name=childServiceType]").html()+"</td>";
+
+           var serviceProvideCell = "<td><input type=\"text\" value=\""+entry.service_provider+"\" style = \"width:100%;\" /></td>";
+
+           editForm.find("[name=childServices] tbody").append
+           (
+              "<tr>"+serviceIDCell+serviceTypeCell+serviceProvideCell+"</tr>"
+           );
+
+           updateDropDownValue(editForm.find("tr:last-child td:nth-child(2) select"), entry.service_type_id );
+        }
+
+
+        function AddCommentRow(entry)
+        {
+           var attemptIDCell = "<td style = \"display:none\">"+(entry.id)+"</td>";
+
+           var dateCell = "<td>"+FormatDate(entry.date)+"</td>";
+
+           var noteCell = "<td><textarea name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
+
+           $("#household-visit-comment-table tbody").append
+           (
+              "<tr>"+attemptIDCell+dateCell+noteCell+"</tr>"
+           );
+        }
+
+        function ShowChildForm(row)
+        {
+           bootbox.dialog
+           (
+              {
+                 title: "Child",
+                 message: $('[name=childFormParent]').html(),
+                 buttons:
+                 {
+                    success:
+                    {
+                       label: "{% trans "Save" %}",
+                       className: "btn-success",
+                       callback: function ()
+                       {
+
+                       },
+                       cancel:
+                       {
+                          label: "{% trans "Cancel" %}",
+                          className: "btn-default",
+                          callback: function ()
+                          {
+                             bootbox.hideAll();
+                          }
+                       }
+                    }
+                 }
+              }
+           );
+
+           var editForm = $('.bootbox-body').find('[name=childForm]');
+
+           var childID = row.find("td:first-child").text();
+
+           var childVisits = visitDataRecord.children_visits.filter
+           (
+              function(childVisit)
+              {
+                 return childVisit.id == childID;
+              }
+           );
+
+           if(childVisits.length > 0)
+           {
+              var childVisit = childVisits[0];
+
+              editForm.find("[name=childName]").html( childVisit.first_name );
+
+              updateDropDownValue(editForm.find("[name=childMainReason]"),childVisit.main_reason_id );
+
+              updateDropDownValue(editForm.find("[name=childSpecificReason]"),childVisit.specific_reason_id );
+
+
+              childVisit.child_visit_service.forEach
+              (
+                 function(entry)
+                 {
+                    AddServiceRow(editForm, entry);
+                 }
+              );
+           }
+
+        }
+
+        function updateDropDownValue(dropDownElement, value)
+        {
+            dropDownElement.find('option:selected').removeAttr('selected');
+            dropDownElement.find('option[value="'+value+'"]').attr("selected",true);
+        }
+
+
+        function SaveVisit()
+        {
+           var data =
+           {
+              visit_status : "pending",
+              visit_attempt :
+              [
+                 {
+                    id: 1,
+                    comment: 'NVA',
+                    date: "2016-11-07T00:00:00Z",
+                    household_found : true
+                 }
+              ]
+              <!--children_visits :-->
+              <!--[-->
+              <!---->
+              <!--]-->
+           };
+
+           $.ajax
+           (
+              {
+                   type: "PUT",
+                   url: hhVisitURL+visitDataRecord.id+'/',
+                   data: data,
+                   cache: false,
+                   headers: getHeader(),
+                   dataType: 'json',
+                   success: function (response, result, jqXHR)
+                   {
+                      if(jqXHR.status == 200)
+                      {
+                         alert("Success");
+                      }
+
+                      alert(response);
+                   },
+                   error:
+                   function (response)
+                   {
+                         alert("Failure");
+                   }
+              }
+            );
+        }
 
     </script>
 
+
 {% endblock %}
+
+
+
+        <!--function PreviousPage()-->
+        <!--{-->
+            <!--if(!$("#previousButton").hasClass("disabled")) {-->
+               <!--onePerFrameSly.prev();-->
+            <!--}-->
+        <!--}-->
+
+
+        <!--function NextPage()-->
+        <!--{-->
+            <!--if(!$("#previousButton").hasClass("disabled")) {-->
+               <!--onePerFrameSly.prev();-->
+            <!--}-->
+        <!--}-->
+
+        <!--onePerFrameSly.on('active', function(eventName, itemIndex) {-->
+            <!--if(onePerFrameSly.rel.activeItem == 0) {-->
+                <!--$("#previousButton").addClass("disabled");-->
+            <!--} else {-->
+                <!--$("#previousButton").removeClass("disabled");-->
+            <!--}-->
+
+            <!--if(onePerFrameSly.rel.activeItem == onePerFrameSly.items.length-1) {-->
+                <!--$("#nextButton").addClass("disabled");-->
+            <!--} else {-->
+                <!--$("#nextButton").removeClass("disabled");-->
+            <!--}-->
+        <!--})-->
+
+
+      <!--!&#45;&#45;$("#slySlider").find("li").click(function() {&ndash;&gt;-->
+            <  <!--return false;-->
+        <!--})-->

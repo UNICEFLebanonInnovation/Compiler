@@ -119,7 +119,7 @@ class HouseholdVisit(TimeStampedModel):
         queryset = HouseholdVisit.objects.filter(registering_adult_id=self.registering_adult_id)
         print len(queryset), ' hhvisit'
         for hhv in queryset:
-            total += HouseholdVisitAttempt.objects.filter(household_visit_id=hhv.id)
+            total += int(HouseholdVisitAttempt.objects.filter(household_visit_id=hhv.id).count())
         print total
         return total
 
