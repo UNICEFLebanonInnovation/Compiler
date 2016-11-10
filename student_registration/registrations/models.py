@@ -29,6 +29,13 @@ class WFPDistributionSite(models.Model):
     name = models.CharField(max_length=30, blank=True, null=True)
     location = models.ManyToManyField(Location)
 
+    class Meta:
+        ordering = ['name']
+        verbose_name = "WFP Distribution Site"
+
+    def __unicode__(self):
+        return self.name
+
 
 class RegisteringAdult(Person):
     """

@@ -47,6 +47,7 @@ class EducationLevel(models.Model):
 
     class Meta:
         ordering = ['id']
+        verbose_name = "ALP Level"
 
     def __unicode__(self):
         return self.name
@@ -57,6 +58,7 @@ class ClassLevel(models.Model):
 
     class Meta:
         ordering = ['id']
+        verbose_name = "ALP Result"
 
     def __unicode__(self):
         return self.name
@@ -99,6 +101,7 @@ class ClassRoom(models.Model):
 
     class Meta:
         ordering = ['id']
+        verbose_name = "Formal Education Level"
 
     def __unicode__(self):
         return self.name
