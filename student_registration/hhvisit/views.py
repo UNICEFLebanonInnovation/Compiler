@@ -20,7 +20,9 @@ from datetime import datetime
 from student_registration.eav.models import Attribute
 from student_registration.hhvisit.models import (
     HouseholdVisit,
-
+    MainReason,
+    SpecificReason,
+    ServiceType,
 )
 from .serializers import SpecificReasonSerializer , HouseholdVisitSerializer
 from student_registration.hhvisit.forms import (
@@ -60,31 +62,31 @@ class HouseholdVisitLoadViewSet(mixins.RetrieveModelMixin,
     serializer_class = HouseholdVisitSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get_context_data(self, **kwargs):
+    # def get_context_data(self, **kwargs):
+    #
+    #     return {
+    #         'form': HouseholdVisitForm({'location': self.request.user.location_id,
+    #                                  'locations': self.request.user.locations.all()}),
+    #     }
 
-        return {
-            'form': HouseholdVisitForm({'location': self.request.user.location_id,
-                                     'locations': self.request.user.locations.all()}),
-        }
-
-    def get_object(self):
-        householdvisit = []
-        try:
-            householdvisit = HouseholdVisit.objects.filter(id=self.kwargs.get  ('id')).order_by('id')
-            if householdvisit:
-
-                householdvisit[0].attempts = []
-
-                householdvisit[0].attempts.append({})
-                householdvisit[0].attempts[0]["household_found"] = True
-                householdvisit[0].attempts[0]["comment"] = 'C C C C'
-                householdvisit[0].attempts[0]["date"] = datetime.strptime('2016-11-8T00:00:00', '%Y-%m-%dT%H:%M:%S')
-
-
-                return householdvisit[0]
-            raise Http404()
-        except Http404 as exp:
-            raise exp
+    # def get_object(self):
+    #     householdvisit = []
+    #     try:
+    #         householdvisit = HouseholdVisit.objects.filter(id=self.kwargs.get  ('id')).order_by('id')
+    #         if householdvisit:
+    #
+    #             householdvisit[0].attempts = []
+    #
+    #             householdvisit[0].attempts.append({})
+    #             householdvisit[0].attempts[0]["household_found"] = True
+    #             householdvisit[0].attempts[0]["comment"] = 'C C C C'
+    #             householdvisit[0].attempts[0]["date"] = datetime.strptime('2016-11-8T00:00:00', '%Y-%m-%dT%H:%M:%S')
+    #
+    #
+    #             return householdvisit[0]
+    #         raise Http404()
+    #     except Http404 as exp:
+    #         raise exp
 
 
 
@@ -99,6 +101,9 @@ class HouseholdVisitListView(LoginRequiredMixin, TemplateView):
         def get_context_data(self, **kwargs):
             data = []
             locations = Location.objects.all().filter(type_id=2).order_by('name')
+            mainreasons = MainReason.objects.order_by('name')
+            specificreasons = SpecificReason.objects.order_by('name')
+            servicetypes = ServiceType.objects.order_by('name')
             location = self.request.GET.get("location", 0)
             if location:
                 data = self.model.objects.filter(registering_adult__school__location_id=location).order_by('id')
@@ -106,6 +111,9 @@ class HouseholdVisitListView(LoginRequiredMixin, TemplateView):
             return {
                 'visits': data,
                 'locations': locations,
+                'mainreasons': mainreasons,
+                'specificreasons': specificreasons,
+                'servicetypes' : servicetypes,
                 'selectedLocation': int(location),
                 'visit_form': HouseholdVisitForm
             }

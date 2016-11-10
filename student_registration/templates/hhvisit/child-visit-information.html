@@ -1,26 +1,67 @@
 {% load staticfiles i18n %}
 
-<div id="add_child_information" style="display: none;">
-    <form class="inlineForm form-medium-size" id="add_child_information_form" onsubmit="return false;">
-        <div class="line">
-            <label class="text">{% trans "Main Reason" %}</label>
-            {{ ChildVisitForm.main_reason }}
-        </div>
-        <div class="line">
-            <label class="text">{% trans "Specific Reason" %}</label>
-            {{ ChildVisitForm.specific_reason }}
-        </div>
-        <div class="line">
-            <label class="text">{% trans "Service Provider" %}</label>
-            {{ ChildVisitForm.service_provider }}
-        </div>
-        <div class="line">
-            <label class="text">{% trans "Service Type" %}</label>
 
-        </div>
+<div name = "childFormParent" style = "display:none" >
 
-    </form>
+   <div name = "childForm" >
+      <div name = "childName"></div>
+
+
+      <select name="childMainReason">
+         <option value="">---{% trans "Main Reason" %}---</option>
+         {% for mainreason in mainreasons %}
+          <option value="{{ mainreason.id }}" >
+              {{ mainreason }}
+          </option>
+        {% endfor %}
+       </select>
+
+      <select name="childSpecificReason">
+         <option value="">---{% trans "Specific Reason" %}---</option>
+         {% for specificreason in specificreasons %}
+          <option value="{{ specificreason.id }}" >
+              {{ specificreason }}
+          </option>
+        {% endfor %}
+       </select>
+
+
+      <table name="childServices" class="table table-striped table-bordered cell-border"
+                                       data-height="500"
+                                       data-pagination="true"
+                                       data-search="true"
+                                       cellspacing="0"
+                                       width="100%">
+          <thead>
+              <tr>
+                  <th style = "display:none">ID</th>
+                  <th>Service Type</th>
+                  <th>Service Provider</th>
+              </tr>
+          </thead>
+          <tbody>
+
+          </tbody>
+      </table>
+
+
+      <div name = "childServiceType" style = "display:none">
+
+        <select >
+         <option value="">---{% trans "Service Type" %}---</option>
+         {% for servicetype in servicetypes %}
+          <option value="{{ servicetype.id }}" >
+              {{ servicetype }}
+          </option>
+        {% endfor %}
+        </select>
+
+      </div>
+
+
+
+   </div>
+
 </div>
-
 
 
