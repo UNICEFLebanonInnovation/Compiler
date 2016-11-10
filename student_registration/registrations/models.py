@@ -82,9 +82,6 @@ class RegisteringAdult(Person):
             return self.id_number
         return self.number
 
-    def get_absolute_url(self):
-        return reverse('registrations:registering_child', kwargs={'pk': self.pk})
-
 
 class MessageType(models.Model):
     name = models.CharField(max_length=255L, unique=True)
