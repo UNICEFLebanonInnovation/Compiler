@@ -221,6 +221,7 @@
 
         $(document).ready(function(){
 
+            $('#search').val('');
             createStores();
             bootbox.addLocale(language, {
                 OK : '{% trans "Ok" %}',
@@ -457,6 +458,10 @@
                         item.parents('tr').remove();
                     }
                 });
+            });
+
+            $(document).on("click", "input[type='text']", function(){
+                $(this).select();
             });
 
             $(document).on('change', '.outreach-location', function(){
