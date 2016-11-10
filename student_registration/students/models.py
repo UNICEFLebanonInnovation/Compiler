@@ -18,6 +18,7 @@ class Nationality(models.Model):
 
     class Meta:
         ordering = ['id']
+        verbose_name_plural = "Nationalities"
 
     def __unicode__(self):
         return self.name
@@ -38,6 +39,7 @@ class IDType(models.Model):
 
     class Meta:
         ordering = ['id']
+        verbose_name = "ID Type"
 
     def __unicode__(self):
         return self.name
