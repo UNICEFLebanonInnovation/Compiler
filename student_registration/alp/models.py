@@ -29,6 +29,7 @@ class ALPRound(models.Model):
 
     class Meta:
         ordering = ['id']
+        verbose_name = "ALP Round"
 
     def __unicode__(self):
         return self.name
@@ -269,6 +270,7 @@ class Outreach(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
+        verbose_name = "Post Test"
 
     @property
     def student_fullname(self):
