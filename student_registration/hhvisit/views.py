@@ -26,7 +26,8 @@ from student_registration.hhvisit.models import (
     HouseholdVisitAttempt,
     ChildService,
     ChildVisit,
-    HouseholdVisitComment
+    HouseholdVisitComment,
+    HouseholdVisitTeam
 )
 from .serializers import SpecificReasonSerializer , HouseholdVisitSerializer, VisitAttemptSerializer, ChildVisitSerializer, ChildServiceSerializer, HouseholdVisitCommentSerializer
 from student_registration.hhvisit.forms import (
@@ -212,6 +213,31 @@ def get_success_url(self):
     return reverse('registrations:registering_pilot')
 
 
+class HouseholdVisitListSupervisorView(LoginRequiredMixin, TemplateView):
+    """
+    Provides the Household visit  page with lookup types in the context
+    """
+    model = HouseholdVisit
+    template_name = 'hhvisit/list_supervisor.html'
+
+    def get_context_data(self, **kwargs):
+        data = []
+        locations = Location.objects.all().filter(type_id=2).order_by('name')
+        location = self.request.GET.get("location", 0)
+        if location:
+            data = self.model.objects.filter(registering_adult__school__location_id=location).order_by('id')
+
+        # get all teams
+        teams = HouseholdVisitTeam.objects.all()
+
+        return {
+            'visits': data,
+            'teams': teams,
+            'locations': locations,
+            'selectedLocation': int(location),
+            'visit_form': HouseholdVisitForm
+        }
+
 # class HouseholdVisitSaveView(LoginRequiredMixin,APIView):
 #     renderer_classes = (JSONRenderer, )
 #
@@ -219,3 +245,4 @@ def get_success_url(self):
 #
 #         content = {'user_count': 0}
 #         return Response(content)
+

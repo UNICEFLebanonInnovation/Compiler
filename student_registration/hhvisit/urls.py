@@ -17,5 +17,10 @@ urlpatterns = [
         view=views.HouseholdVisitListView.as_view(),
         name='household_visit_list'
     ),
+    url(
+        regex=r'^household-visit-list-supervisor/$',
+        view=views.HouseholdVisitListSupervisorView.as_view(),
+        name='household_visit_list_supervisor'
+    ),
 ]
 
