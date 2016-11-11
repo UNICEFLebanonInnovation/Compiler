@@ -8,32 +8,32 @@
 
     <tr id="line-{{ line.id }}" class="outreach-line-p" itemscope="{{ line.id }}">
         <td>
-            {% if request.user|has_group:"ALP_DIRECTOR" %}
+            {% if role == "ALP_DIRECTOR" %}
                 <input type="checkbox" name="not_enrolled_in_this_school" id="not_enrolled_in_this_school" {% if line.exam_not_exist_in_school %}checked="checked"{% endif %} value="1" class="outreach-field-p" itemscope="{{ line.id }}" />
             {% endif %}
-            {% if request.user|has_group:"CERD" %}
+            {% if role == "CERD" %}
                 <input type="checkbox" name="exam_not_exist_in_school" id="exam_not_exist_in_school" {% if line.exam_not_exist_in_school %}checked="checked"{% endif %} value="1" class="outreach-field-p" itemscope="{{ line.id }}" />
             {% endif %}
             &nbsp;<input type="hidden" name="id" value="{{ line.id }}" class="outreach-field-id" />
             <span class="student_fullname" style="display: none;">{{ line.student_fullname }}</span>
         </td>
-        <td>{% if line.school and line.school.location %}
-                {{ line.school.location.name }}
-                <input type="hidden" name="location" value="{{ line.school.location.id }}" id="location" class="" />
+        <td>{% if location %}
+                {{ location.name }}
+                <input type="hidden" name="location" value="{{ location.id }}" id="location" class="" />
             {% endif %}
         </td>
-        <td>{% if line.school and line.school.location and line.school.location.parent %}{{ line.school.location.parent.name }}{% endif %}</td>
-        <td>{% if line.school %}{{ line.school.number }}{% endif %}</td>
-        <td>{% if line.school %}
-            {{ line.school.name }}
-            <input type="hidden" name="school" value="{{ line.school.id }}" id="school" class="" />
+        <td>{% if location_parent %}{{ location_parent.name }}{% endif %}</td>
+        <td>{% if school %}{{ school.number }}{% endif %}</td>
+        <td>{% if school %}
+            {{ school.name }}
+            <input type="hidden" name="school" value="{{ school.id }}" id="school" class="" />
         {% endif %}
         </td>
         <td>{% if line.student %}{{ line.student.first_name }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.father_name }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.last_name }}{% endif %}</td>
         <td>{% if line.student %}{% trans line.student.sex %}{% endif %}</td>
-        {% if request.user|has_group:"CERD" %}
+        {% if role == "CERD" %}
         <td>
             <select name="level" id="level" class="outreach-field-p note-indicator" itemscope="{{ line.id }}">
                 <option value="">{% trans "Registered in level" %}</option>
@@ -109,7 +109,7 @@
         <td>{% if line.student %}{{ line.student.birthday_day }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.calc_age }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.nationality_name }}{% endif %}</td>
-        {% if request.user|has_group:"ALP_DIRECTOR" %}
+        {% if role == "ALP_DIRECTOR" %}
         <td>
             <select name="registered_in_level" id="registered_in_level" class="outreach-field-p" itemscope="{{ line.id }}">
                 <option value="">-------</option>
