@@ -65,7 +65,7 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
     def perform_update(self, serializer):
-        if has_group(self.request.user, 'CERD'):
+        if has_group(self.request.user, 'CERD') and self.request.method != "PATCH":
             self.serializer_class = OutreachSmallSerializer
         instance = serializer.save()
         instance.save()
@@ -76,7 +76,7 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         return super(OutreachViewSet, self).create(request)
 
     def update(self, request, *args, **kwargs):
-        if has_group(self.request.user, 'CERD'):
+        if has_group(self.request.user, 'CERD') and request.method != "PATCH":
             self.serializer_class = OutreachSmallSerializer
         return super(OutreachViewSet, self).update(request)
 

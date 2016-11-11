@@ -92,28 +92,32 @@
             <span class="note-indicator-total outreach-field" name="note-indicator-total" id="note-indicator-total" itemscope="$$itemscope_id$$"></span>
         </td>
         <td>
-            <select name="exam_corrector_arabic" id="exam_corrector_arabic" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 45px;">
+            <select name="exam_corrector_arabic" id="exam_corrector_arabic" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 70px;">
+                <option value="">{% trans "Arabic language" %}</option>
                 {% for note in notes1 %}
                     <option value="{{ note }}">{{ note }}</option>
                 {% endfor %}
             </select>
         </td>
         <td>
-            <select name="exam_corrector_language" id="exam_corrector_language" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 45px;">
+            <select name="exam_corrector_language" id="exam_corrector_language" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 70px;">
+                <option value="">{% trans "Foreign language" %}</option>
                 {% for note in notes2 %}
                     <option value="{{ note }}">{{ note }}</option>
                 {% endfor %}
             </select>
         </td>
         <td>
-            <select name="exam_corrector_math" id="exam_corrector_math" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 45px;">
+            <select name="exam_corrector_math" id="exam_corrector_math" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 70px;">
+                <option value="">{% trans "Math" %}</option>
                 {% for note in notes3 %}
                     <option value="{{ note }}">{{ note }}</option>
                 {% endfor %}
             </select>
         </td>
         <td>
-            <select name="exam_corrector_science" id="exam_corrector_science" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 45px;">
+            <select name="exam_corrector_science" id="exam_corrector_science" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 70px;">
+                <option value="">{% trans "Science" %}</option>
                 {% for note in notes4 %}
                     <option value="{{ note }}">{{ note }}</option>
                 {% endfor %}
