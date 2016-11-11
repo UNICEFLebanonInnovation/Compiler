@@ -871,18 +871,10 @@
             var data = item;
             delete data.id;
 
-            if(parseFloat(data.exam_result_arabic) == 0){
-                data.exam_result_arabic = 0;
-            }
-            if(parseFloat(data.exam_result_language) == 0){
-                data.exam_result_language = 0;
-            }
-            if(parseFloat(data.exam_result_math) == 0){
-                data.exam_result_math = 0;
-            }
-            if(parseFloat(data.exam_result_science) == 0){
-                data.exam_result_science = 0;
-            }
+            data.exam_result_arabic = data.exam_result_arabic.replace(",",".");
+            data.exam_result_language = data.exam_result_language.replace(",",".");
+            data.exam_result_math = data.exam_result_math.replace(",",".");
+            data.exam_result_science = data.exam_result_science.replace(",",".");
 
             $.ajax({
                 type: "PATCH",
