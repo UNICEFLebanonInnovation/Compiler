@@ -35,12 +35,6 @@ urlpatterns = [
     ),
 
     url(
-        r'^login-redirect/$',
-        view=views.LoginRedirectView.as_view(),
-        name='login_redirect'
-    ),
-
-    url(
         r'^set-language/(?P<language>[\w.@+-]+)/$',
         view=views.UserChangeLanguageRedirectView.as_view(),
         name='set_language'
