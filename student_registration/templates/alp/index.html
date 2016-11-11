@@ -151,9 +151,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_DIRECTOR" %}
+                                {% if request.user|has_group:"CERD" %}
                                     {% for line in data %}
-                                        {% include 'alp/prototype-view.html' %}
+                                        {% include 'alp/prototype-view.html' with role="CERD" %}
+                                    {% endfor %}
+                                {% endif %}
+                                {% if request.user|has_group:"ALP_DIRECTOR" %}
+                                    {% for line in data %}
+                                        {% include 'alp/prototype-view.html' with role="ALP_DIRECTOR" %}
                                     {% endfor %}
                                 {% endif %}
                                 </tbody>
