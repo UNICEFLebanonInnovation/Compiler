@@ -318,4 +318,4 @@ class ExtraColumn(TimeStampedModel):
         related_name='+',
     )
 
-eav.register(Outreach)
+# eav.register(Outreach)
