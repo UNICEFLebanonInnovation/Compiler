@@ -46,7 +46,7 @@
         {% endfor %}
     {% endif %}
     <div class="panel-body">
-        <div id="oneperframe" class="frame oneperframe" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
+        <div id="oneperframex" class="frame oneperframe" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
             <ul class="slidee" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
                 {# 1 Slide household information #}
                 <li class="active framebox">
@@ -94,7 +94,7 @@
                 <li class="framebox">
                     <h3 class="panel-title" >{% trans "Comments" %}</h3>
                 </li>
-        <ul class="pages" id="slySlider">
+        <ul class="pages" id="slySliderx">
             <li class="active">1</li>
             <li>2</li>
             <li>3</li>
@@ -189,10 +189,10 @@
               {% trans "Cancel household visit" %}
           </button>
 
-          <button class="btn btn-primary disabled" type="button" id="previousButton">
+          <button class="btn btn-primary .prev" type="button" id="previousButton">
               <i class="icon-next-sign icon-white"></i> {% trans "previous" %}
           </button>
-          <button class="btn btn-primary" type="button" id="nextButton">
+          <button class="btn btn-primary .next" type="button" id="nextButton">
               {% trans "next" %} <i class="icon-prev-sign icon-white"></i>
           </button>
       {% else %}
@@ -201,10 +201,10 @@
               {% trans "Cancel household visit" %}
           </button>
 
-          <button class="btn btn-primary disabled" type="button" id="previousButton">
+          <button class="btn btn-primary .prev" type="button" id="previousButton">
               <i class="icon-prev-sign icon-white"></i> {% trans "previous" %}
           </button>
-          <button class="btn btn-primary" type="button" id="nextButton">
+          <button class="btn btn-primary .next" type="button" id="nextButton">
               {% trans "next" %} <i class="icon-next-sign icon-white"></i>
           </button>
       {% endif %}
@@ -220,3 +220,27 @@
       <br/>
 
       <button id = "hhCloseButton" >Close</button>
+
+
+        <div class="panel-body">
+        <div id="oneperframe" class="frame oneperframe" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
+            <ul class="slidee" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
+
+
+                <li class="active framebox">
+                   x
+                </li>
+
+                <li class="active framebox">
+                   y
+                </li>
+
+            </ul>
+        </div>
+
+
+        <ul class="pages" id="slySlider">
+            <li class="active">1</li>
+            <li>2</li>
+        </ul>
+
