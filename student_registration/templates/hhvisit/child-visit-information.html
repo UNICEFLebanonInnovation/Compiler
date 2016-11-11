@@ -4,9 +4,12 @@
 <div name = "childFormParent" style = "display:none" >
 
    <div name = "childForm" >
-      <div name = "childName"></div>
-
-
+      <label class="text">{% trans "Child Name" %}</label> <div name = "childName"></div>
+      <br/>
+      <label class="text">{% trans "Did the child enroll school?" %}</label>
+      <br/>
+      <br/>
+     <label class="text">{% trans "Reason" %}</label>
       <select name="childMainReason">
          <option value="">---{% trans "Main Reason" %}---</option>
          {% for mainreason in mainreasons %}
@@ -25,7 +28,8 @@
         {% endfor %}
        </select>
 
-
+      <br/>
+      <br/>
       <table name="childServices" class="table table-striped table-bordered cell-border"
                                        data-height="500"
                                        data-pagination="true"
@@ -44,6 +48,7 @@
           </tbody>
       </table>
 
+     <button id = "AddServicetButton" >Add</button>
 
       <div name = "childServiceType" style = "display:none">
 
