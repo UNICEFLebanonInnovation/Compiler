@@ -14,7 +14,7 @@ from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 
 from .models import Outreach, ALPRound
-from .serializers import OutreachSerializer, OutreachExamSerializer
+from .serializers import OutreachSerializer, OutreachExamSerializer, OutreachSmallSerializer
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
     Person,
@@ -65,8 +65,20 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
     def perform_update(self, serializer):
+        if has_group(self.request.user, 'CERD') and self.request.method != "PATCH":
+            self.serializer_class = OutreachSmallSerializer
         instance = serializer.save()
         instance.save()
+
+    def create(self, request, *args, **kwargs):
+        if has_group(self.request.user, 'CERD'):
+            self.serializer_class = OutreachSmallSerializer
+        return super(OutreachViewSet, self).create(request)
+
+    def update(self, request, *args, **kwargs):
+        if has_group(self.request.user, 'CERD') and request.method != "PATCH":
+            self.serializer_class = OutreachSmallSerializer
+        return super(OutreachViewSet, self).update(request)
 
     def partial_update(self, request, *args, **kwargs):
         self.serializer_class = OutreachExamSerializer
@@ -119,19 +131,23 @@ class OutreachStaffView(LoginRequiredMixin, TemplateView):
         data = []
         schools = School.objects.all()
 
-        school = self.request.GET.get("school", 0)
-        location = self.request.GET.get("location", 0)
+        try:
+            school = int(self.request.GET.get("school", 0))
+        except Exception as ex:
+            school = 0
+        try:
+            location = int(self.request.GET.get("location", 0))
+        except Exception as ex:
+            location = 0
         if school:
             data = self.model.objects.filter(school=school).order_by('id')
-        # if location:
-        #     data = self.model.objects.filter(school__location_id=location).order_by('id')
 
         return {
             'outreaches': data,
             'locations': Location.objects.filter(type_id=2),
             'schools': schools,
-            'selectedSchool': int(school),
-            'selectedLocation': int(location),
+            'selectedSchool': school,
+            'selectedLocation': location,
         }
 
 
