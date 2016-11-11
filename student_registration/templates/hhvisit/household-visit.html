@@ -52,10 +52,10 @@
                 <li class="active framebox">
                     <h3 class="panel-title">{% trans "Household Specific Information" %}</h3>
                     <div class="line">
-                        <label class="text">{% trans "Name of Household Rep" %} <span id ="hhVisitName"></span></label>
+                        <label class="text">{% trans "Name of Household Rep" %}</label> <span id ="hhVisitName"></span>
                     </div>
                     <div class="line">
-                        <label class="text">{% trans "Times visited" %}<span id ="hhAllvisitAttemptCount"></span></label>
+                        <label class="text">{% trans "Times visited" %}</label><span id ="hhAllvisitAttemptCount"></span>
                     </div>
                     <div class="line">
                         <label class="text">{% trans "Dates of previous visits" %}</label>
@@ -104,7 +104,11 @@
 </form>
 
 
-
+<br/>
+<br/>
+<h3 class="panel-title" >{% trans "Household Found" %}</h3>
+<br/>
+<br/>
       <table id="household-visit-attempt-table" class="table table-striped table-bordered cell-border"
                                        data-height="500"
                                        data-pagination="true"
@@ -129,7 +133,11 @@
       <br/>
       <br/>
 
-
+<br/>
+<br/>
+<h3 class="panel-title">{% trans "Reasons for Absence and Referral" %}</h3>
+<br/>
+<br/>
       <table id="household-visit-child-table" class="table table-striped table-bordered cell-border"
                                        data-height="500"
                                        data-pagination="true"
@@ -151,10 +159,11 @@
       </table>
 
 
-      <br/>
-      <br/>
-
-
+<br/>
+<br/>
+<h3 class="panel-title" >{% trans "Comments" %}</h3>
+<br/>
+<br/>
       <table id="household-visit-comment-table" class="table table-striped table-bordered cell-border"
                                        data-height="500"
                                        data-pagination="true"
