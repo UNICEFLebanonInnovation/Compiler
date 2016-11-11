@@ -131,6 +131,7 @@
     <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
     <script type="text/javascript">
         var oTable = null;
@@ -233,26 +234,19 @@
             );
 
 
-            $(document).on
-            (
-               'click',
-               '#nextButton',
-               function()
-               {
-                  NextPage();
-               }
-             );
 
+             onePerFrameSly = initializeSly($('#oneperframe'));
 
-            $(document).on
-            (
-               'click',
-               '#previousButton',
-               function()
-               {
-                  PreviousPage();
-               }
-             );
+             $("#previousButton").click(function() {
+
+               onePerFrameSly.prev();
+        });
+
+        $("#nextButton").click(function()
+        {
+           alert("test");
+           onePerFrameSly.next();
+        });
 
         });
 
@@ -262,6 +256,12 @@
         {% endif %}
         var host = protocol+'{{ request.get_host }}';
         var hhVisitURL = host+'/api/household-visit/';
+        var hhVisitAttemptURL = host+'/api/household-visit-attempt/';
+
+        var hhVisitChildVisitURL = host+'/api/household-visit-child/';
+        var hhVisitServiceURL = host+'/api/household-visit-service/';
+        var hhVisitCommentURL = host+'/api/household-visit-comment/';
+
 
         function LoadVisit(visitID)
         {
@@ -314,17 +314,6 @@
               }
            );
 
-           /*
-           visitData.child_visit_service.forEach
-           (
-              function(entry)
-              {
-                 AddServiceRow(entry);
-              }
-           );
-           */
-
-
            visitData.visit_comment.forEach
            (
               function(entry)
@@ -341,6 +330,11 @@
            var date = new Date(dateString);
 
            return ((date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear());
+        }
+
+        function FormatJSONDate(date)
+        {
+           return date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate()+"T00:00:00Z"
         }
 
 
@@ -489,16 +483,20 @@
 
         function SaveVisit()
         {
+           SaveVisitAttempts();
+
+           /*
            var data =
            {
               visit_status : "pending",
-              visit_attempt :
+              "visit_attempt" :
               [
                  {
-                    id: 1,
-                    comment: 'NVA',
-                    date: "2016-11-07T00:00:00Z",
-                    household_found : true
+                    "id": "",
+                    "comment": "NVA3",
+                    "date": "2016-11-07T00:00:00Z",
+                    "household_found" : "true",
+                    "household_visit_id": "1"
                  }
               ]
               <!--children_visits :-->
@@ -507,11 +505,129 @@
               <!--]-->
            };
 
+           //SaveVisitRecord(visitDataRecord.id,data);
+
+           data.visit_attempt.forEach
+           (
+              function(entry)
+              {
+                 SaveVisitAttemptRecord(null,entry);
+              }
+           );
+           */
+
+        }
+
+        function SaveVisitAttempts()
+        {
+           var visitAttemptsData = CreateVisitAttemptsData();
+
+           alert(JSON.stringify(visitAttemptsData));
+
+           visitAttemptsData.forEach
+           (
+              function(entry)
+              {
+                 SaveVisitAttemptRecord(entry.id,entry);
+              }
+           );
+        }
+
+        function CreateVisitAttemptsData()
+        {
+           visitAttemptsData = [];
+
+           $("#household-visit-attempt-table tbody tr")
+           .each
+           (
+              function(i, obj)
+              {
+                 trElement = $(obj);
+
+                 visitAttemptRecord = new Object();
+
+                 visitAttemptRecord.id = trElement.find('td:nth-child(1)').html();
+
+                 visitAttemptRecord.date = FormatJSONDate( new Date(trElement.find('td:nth-child(2)').html()) );
+
+                 visitAttemptRecord.household_found = trElement.find('td:nth-child(3) input').is(':checked');
+
+                 visitAttemptRecord.comment = trElement.find('td:nth-child(4) textarea').html();
+
+                 visitAttemptRecord.household_visit_id = visitDataRecord.id;
+
+                 //alert(JSON.stringify(visitAttemptRecord));
+
+                 visitAttemptsData.push(visitAttemptRecord);
+              }
+           );
+
+           return visitAttemptsData;
+        }
+
+        function SaveVisitRecord(id, data)
+        {
+            SaveRelatedRecord(id,data,hhVisitURL);
+        }
+
+        function SaveVisitAttemptRecord(id, data)
+        {
+            SaveRelatedRecord(id,data,hhVisitAttemptURL);
+        }
+
+        function SaveChildVisitRecord(id, data)
+        {
+            SaveRelatedRecordCallback
+            (
+                id,
+                data,
+                hhVisitChildVisitURL,
+                function(result)
+                {
+                    data.child_visit_service.forEach
+                    (
+                      function(entry)
+                      {
+                          entry.child_visit_id = result.id;
+                          SaveChildVisitServiceRecord(entry.id,entry);
+                      }
+                    );
+                }
+            );
+        }
+
+        function SaveChildVisitServiceRecord(id, data)
+        {
+            SaveRelatedRecord
+            (
+                id,
+                data,
+                hhVisitServiceURL
+            );
+        }
+
+        function SaveChildVisitCommentRecord(id, data)
+        {
+            SaveRelatedRecord
+            (
+                id,
+                data,
+                hhVisitCommentURL
+            );
+        }
+
+        function SaveRelatedRecord(id, data, url)
+        {
+            SaveRelatedRecordCallback(id,data,url, function(x){});
+        }
+
+        function SaveRelatedRecordCallback(id, data, url, callback)
+        {
            $.ajax
            (
               {
-                   type: "PUT",
-                   url: hhVisitURL+visitDataRecord.id+'/',
+                   type: id != null ? "PUT":"POST",
+                   url: url+ (id != null ? id+"/" : ""),
                    data: data,
                    cache: false,
                    headers: getHeader(),
