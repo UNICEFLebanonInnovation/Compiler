@@ -23,8 +23,12 @@ from student_registration.hhvisit.models import (
     MainReason,
     SpecificReason,
     ServiceType,
+    HouseholdVisitAttempt,
+    ChildService,
+    ChildVisit,
+    HouseholdVisitComment
 )
-from .serializers import SpecificReasonSerializer , HouseholdVisitSerializer
+from .serializers import SpecificReasonSerializer , HouseholdVisitSerializer, VisitAttemptSerializer, ChildVisitSerializer, ChildServiceSerializer, HouseholdVisitCommentSerializer
 from student_registration.hhvisit.forms import (
     HouseholdVisitForm
 )
@@ -34,6 +38,9 @@ from student_registration.locations.models import Location
 from .models import HouseholdVisit , SpecificReason
 from .models import ChildVisit
 
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 class HouseholdVisitView(LoginRequiredMixin, TemplateView):
     """
@@ -62,6 +69,23 @@ class HouseholdVisitLoadViewSet(mixins.RetrieveModelMixin,
     serializer_class = HouseholdVisitSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
+    # def update(self, request, *args, **kwargs):
+    #
+    #     data = request.data
+    #
+    #     serializer = HouseholdVisitSerializer(data=data)
+    #
+    #
+    #     result = data
+    #
+    #     # if serializer.is_valid():
+    #     #     result=1
+    #     #     serializer.save()
+    #     #     serializer.save()
+    #
+    #
+    #     return Response(result)
+
     # def get_context_data(self, **kwargs):
     #
     #     return {
@@ -89,7 +113,54 @@ class HouseholdVisitLoadViewSet(mixins.RetrieveModelMixin,
     #         raise exp
 
 
+class HouseholdVisitAttemptViewSet(mixins.RetrieveModelMixin,
+                              mixins.ListModelMixin,
+                              mixins.CreateModelMixin,
+                              mixins.UpdateModelMixin,
+                              viewsets.GenericViewSet):
+    model = HouseholdVisitAttempt
+    lookup_field = 'id'
+    queryset = HouseholdVisitAttempt.objects.all()
+    serializer_class = VisitAttemptSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
+
+
+class HouseholdVisitChildViewSet(mixins.RetrieveModelMixin,
+                              mixins.ListModelMixin,
+                              mixins.CreateModelMixin,
+                              mixins.UpdateModelMixin,
+                              viewsets.GenericViewSet):
+    model = ChildVisit
+    lookup_field = 'id'
+    queryset = ChildVisit.objects.all()
+    serializer_class = ChildVisitSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+class HouseholdVisitServiceViewSet(mixins.RetrieveModelMixin,
+                              mixins.ListModelMixin,
+                              mixins.CreateModelMixin,
+                              mixins.UpdateModelMixin,
+                              viewsets.GenericViewSet):
+    model = ChildService
+    lookup_field = 'id'
+    queryset = ChildService.objects.all()
+    serializer_class = ChildServiceSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+
+class HouseholdVisitCommentViewSet(mixins.RetrieveModelMixin,
+                              mixins.ListModelMixin,
+                              mixins.CreateModelMixin,
+                              mixins.UpdateModelMixin,
+                              viewsets.GenericViewSet):
+    model = HouseholdVisitComment
+    lookup_field = 'id'
+    queryset = HouseholdVisitComment.objects.all()
+    serializer_class = HouseholdVisitCommentSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 class HouseholdVisitListView(LoginRequiredMixin, TemplateView):
         """
@@ -128,3 +199,12 @@ class SpecificReasonViewSet(mixins.ListModelMixin,
 
 def get_success_url(self):
     return reverse('registrations:registering_pilot')
+
+
+# class HouseholdVisitSaveView(LoginRequiredMixin,APIView):
+#     renderer_classes = (JSONRenderer, )
+#
+#     def put(self, request, format='json'):
+#
+#         content = {'user_count': 0}
+#         return Response(content)

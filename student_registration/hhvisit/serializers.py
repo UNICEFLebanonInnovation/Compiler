@@ -41,6 +41,9 @@ class ChildServiceSerializer(serializers.ModelSerializer):
 
     service_type_id = serializers.CharField(source='service_type.id')
     service_type = serializers.CharField(source='service_type.name')
+
+    child_visit_id = serializers.IntegerField()
+
     def create(self, validated_data):
 
         service_type_data = validated_data.pop('service_type', None)
@@ -65,49 +68,39 @@ class ChildServiceSerializer(serializers.ModelSerializer):
             'service_type_id',
             'service_type',
             'service_provider',
+            'child_visit_id'
         )
 
 
 
-class VisitAttemptSerializer(serializers.Serializer):
+class VisitAttemptSerializer(serializers.ModelSerializer):
 
-    id = serializers.IntegerField()
+    household_visit_id = serializers.IntegerField()
 
-    def create(self, validated_data):
+    # id = serializers.IntegerField()
+    #
+    # household_found = serializers.BooleanField()
+    #
+    # comment = serializers.CharField()
+    #
+    # date = serializers.DateTimeField()
 
-        try:
-            instance = HouseholdVisitAttempt.objects.create()
 
-
-
-            instance.save()
-
-        except Exception as ex:
-            raise serializers.ValidationError({'HouseholdVisitAttempt instance': ex.message})
-
-        return instance
-
-    def update(self, instance, validated_data):
-        # Update the book instance
-        # instance.visit_status = validated_data['visit_status']
-        #
-        # # Delete any pages not included in the request
-        # # page_ids = [item['page_id'] for item in validated_data['pages']]
-        # # for page in instance.books:
-        # #     if page.id not in page_ids:
-        # #         page.delete()
-        #
-        # # # Create or update page instances that are in the request
-        # for item in validated_data['visit_attempt']:
-        #     instance.visit_status = ''.join('{}{}'.format(key, val) for key, val in item.items())
-        #
-        #     # hhva = HouseholdVisitAttempt(id=item['id'], household_found=item['household_found'], comment=item['comment'], date=item['date'], visit_attempt=instance)
-        #     # hhva.save()
-        #
-        # instance.save()
-
-        return instance
-
+    # def create(self, validated_data):
+    #
+    #     try:
+    #
+    #         instance = HouseholdVisitAttempt.objects.create(**validated_data)
+    #
+    #
+    #     except Exception as ex:
+    #         raise serializers.ValidationError({'HouseholdVisitAttempt instance': ex.message})
+    #
+    #     return instance
+    #
+    # def update(self, instance, validated_data):
+    #
+    #     return instance
 
     class Meta:
         model = HouseholdVisitAttempt
@@ -116,10 +109,13 @@ class VisitAttemptSerializer(serializers.Serializer):
             'household_found',
             'comment',
             'date',
+            'household_visit_id'
         )
 
 
 class HouseholdVisitCommentSerializer(serializers.ModelSerializer):
+
+    household_visit_id = serializers.IntegerField()
 
     def create(self, validated_data):
 
@@ -138,6 +134,7 @@ class HouseholdVisitCommentSerializer(serializers.ModelSerializer):
             'id',
             'comment',
             'date',
+            'household_visit_id'
         )
 
 class ChildVisitSerializer(serializers.ModelSerializer):
@@ -153,6 +150,7 @@ class ChildVisitSerializer(serializers.ModelSerializer):
     specific_reason = serializers.CharField(source='specific_reason.name')
     child_visit_service = ChildServiceSerializer(many=True, read_only=True)
 
+    household_visit_id = serializers.IntegerField()
 
     def create(self, validated_data):
 
@@ -170,9 +168,6 @@ class ChildVisitSerializer(serializers.ModelSerializer):
         specificreason_serializer = SpecificReasonSerializer(data=specificreason_data)
         specificreason_serializer.is_valid(raise_exception=True)
         specificreason_serializer.instance = SpecificReasonSerializer.save()
-
-
-
 
         try:
             instance = ChildVisit.objects.create(**validated_data)
@@ -201,10 +196,11 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             'specific_reason_id',
             'specific_reason',
             'child_visit_service',
+            'household_visit_id'
         )
 
 
-class HouseholdVisitSerializer(serializers.Serializer):
+class HouseholdVisitSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
     registeringadult_id = serializers.IntegerField(source='registering_adult.id', read_only=True)
@@ -214,57 +210,12 @@ class HouseholdVisitSerializer(serializers.Serializer):
     address = serializers.CharField(source='registering_adult.address', read_only=True)
     primary_phone = serializers.CharField(source='registering_adult.primary_phone', read_only=True)
     secondary_phone = serializers.CharField(source='registering_adult.secondary_phone', read_only=True)
-    visit_attempt = VisitAttemptSerializer(many=True)
+    visit_attempt = VisitAttemptSerializer(many=True, read_only=True)
     children_visits = ChildVisitSerializer(many=True, read_only=True)
     visit_comment = HouseholdVisitCommentSerializer(many=True, read_only=True)
     household_visit_team = HouseholdVisitCommentSerializer(many=True, read_only=True)
-    all_visit_attempt_count = serializers.CharField()
+    all_visit_attempt_count = serializers.CharField(read_only=True)
     visit_status = serializers.CharField()
-
-    def create(self, validated_data):
-
-        # registeringadult_data = validated_data.pop('registering_adult', None)
-        # registeringadult_serializer = RegisteringAdultSerializer(data=registeringadult_data)
-        # registeringadult_serializer.is_valid(raise_exception=True)
-        # registeringadult_serializer.instance = RegisteringAdultSerializer.save()
-        #
-        # try:
-        #     instance = HouseholdVisit.objects.create(**validated_data)
-        #     instance.registering_adult = RegisteringAdultSerializer.instance
-        #     instance.save()
-        #
-        # except Exception as ex:
-        #     raise serializers.ValidationError({'HouseholdVisit instance': ex.message})
-
-        # instance = HouseholdVisit.objects.create()
-        #
-        # instance.visit_status = validated_data['visit_status']
-        # instance.save()
-        instance = HouseholdVisit.objects.create()
-        return instance
-
-    def update(self, instance, validated_data):
-        # Update the book instance
-        instance.visit_status = validated_data['visit_status']
-
-        # Delete any pages not included in the request
-        # page_ids = [item['page_id'] for item in validated_data['pages']]
-        # for page in instance.books:
-        #     if page.id not in page_ids:
-        #         page.delete()
-
-        # # Create or update page instances that are in the request
-        for item in validated_data['visit_attempt']:
-
-            instance.visit_status = ''.join('{}{}'.format(key, val) for key, val in item.items())
-
-            #hhva = HouseholdVisitAttempt(id=item['id'], household_found=item['household_found'], comment=item['comment'], date=item['date'], visit_attempt=instance)
-            #hhva.save()
-
-        instance.save()
-
-        return instance
-
 
     class Meta:
         model = HouseholdVisit
@@ -282,5 +233,5 @@ class HouseholdVisitSerializer(serializers.Serializer):
             'children_visits',
             'visit_comment',
             'household_visit_team',
-            'all_visit_attempt_count',
+            'all_visit_attempt_count'
         )
