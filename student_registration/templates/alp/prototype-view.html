@@ -33,11 +33,6 @@
         <td>{% if line.student %}{{ line.student.father_name }}{% endif %}</td>
         <td>{% if line.student %}{{ line.student.last_name }}{% endif %}</td>
         <td>{% if line.student %}{% trans line.student.sex %}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.birthday_year }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.birthday_month }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.birthday_day }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.calc_age }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.nationality_name }}{% endif %}</td>
         {% if request.user|has_group:"CERD" %}
         <td>
             <select name="level" id="level" class="outreach-field-p note-indicator" itemscope="{{ line.id }}">
@@ -48,19 +43,19 @@
             </select>
         </td>
         <td>
-            <input type="text" name="exam_result_arabic" id="exam_result_arabic" value="{{ line.exam_result_arabic }}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="6" />
+            <input type="text" name="exam_result_arabic" id="exam_result_arabic" value="{{ line.exam_result_arabic }}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="4" />
             <span class="note-indicator-value">{% if line.level %}/{{ line.level.note }}{% endif %}</span>
         </td>
         <td>
-            <input type="text" name="exam_result_language" id="exam_result_language" value="{{ line.exam_result_language }}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="6" />
+            <input type="text" name="exam_result_language" id="exam_result_language" value="{{ line.exam_result_language }}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="4" />
             <span class="note-indicator-value">{% if line.level %}/{{ line.level.note }}{% endif %}</span>
         </td>
         <td>
-            <input type="text" name="exam_result_math" id="exam_result_math" value="{{ line.exam_result_math }}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="6" />
+            <input type="text" name="exam_result_math" id="exam_result_math" value="{{ line.exam_result_math }}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="4" />
             <span class="note-indicator-value">{% if line.level %}/{{ line.level.note }}{% endif %}</span>
         </td>
         <td>
-            <input type="text" name="exam_result_science" id="exam_result_science" value="{{ line.exam_result_science }}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="6" />
+            <input type="text" name="exam_result_science" id="exam_result_science" value="{{ line.exam_result_science }}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="4" />
             <span class="note-indicator-value">{% if line.level %}/{{ line.level.note }}{% endif %}</span>
         </td>
         <td>
@@ -105,6 +100,11 @@
             </select>
         </td>
         {% endif %}
+        <td>{% if line.student %}{{ line.student.birthday_year }}{% endif %}</td>
+        <td>{% if line.student %}{{ line.student.birthday_month }}{% endif %}</td>
+        <td>{% if line.student %}{{ line.student.birthday_day }}{% endif %}</td>
+        <td>{% if line.student %}{{ line.student.calc_age }}{% endif %}</td>
+        <td>{% if line.student %}{{ line.student.nationality_name }}{% endif %}</td>
         {% if request.user|has_group:"ALP_DIRECTOR" %}
         <td>
             <select name="registered_in_level" id="registered_in_level" class="outreach-field-p" itemscope="{{ line.id }}">
