@@ -17,6 +17,11 @@ from student_registration.registrations.serializers import (
 
 from student_registration.users.models import User
 
+from collections import OrderedDict
+
+from rest_framework.fields import (  # NOQA # isort:skip
+    CreateOnlyDefault, CurrentUserDefault, SkipField, empty
+)
 
 class MainReasonSerializer(serializers.ModelSerializer):
     class Meta:
@@ -77,7 +82,7 @@ class VisitAttemptSerializer(serializers.ModelSerializer):
 
     household_visit_id = serializers.IntegerField()
 
-    # id = serializers.IntegerField()
+    #id = serializers.IntegerField()
     #
     # household_found = serializers.BooleanField()
     #
@@ -217,6 +222,42 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
     all_visit_attempt_count = serializers.CharField(read_only=True)
     visit_status = serializers.CharField()
 
+    def create(self, validated_data):
+
+        instance = HouseholdVisit.objects.create(**validated_data)
+
+        return instance
+
+    def update(self, instance, validated_data):
+
+        allInitialDataResult = self.get_all_initial()
+
+        attempts_data = allInitialDataResult['visit_attempt']
+
+        for attempt in attempts_data:
+
+            attempt['id'] = (attempt['id'] if attempt['id'] else None)
+            attemptRecord = HouseholdVisitAttempt.objects.filter(id=(attempt['id'])).first()
+            attemptSerializer = VisitAttemptSerializer(attemptRecord, data=attempt)
+            attemptSerializer.is_valid(raise_exception=True)
+            attemptSerializer.save()
+
+
+        return instance
+
+    def get_all_initial(self):
+        if hasattr(self, 'initial_data'):
+            return OrderedDict([
+                                   (field_name, field.get_value(self.initial_data))
+                                   for field_name, field in self.fields.items()
+                                   if (field.get_value(self.initial_data) is not empty)
+                                   ])
+
+        return OrderedDict([
+                               (field.field_name, field.get_initial())
+                               for field in self.fields.values()
+                               ])
+
     class Meta:
         model = HouseholdVisit
         fields = (
@@ -235,3 +276,5 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
             'household_visit_team',
             'all_visit_attempt_count'
         )
+
+
