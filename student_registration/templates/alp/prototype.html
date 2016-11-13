@@ -21,24 +21,30 @@
             <select name="location" id="location" class="outreach-location outreach-field" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "District" %}</option>
                 {% for item in locations %}
-                    <option value="{{ item.id }}" data-parent="{% if item.parent %}{{ item.parent.name }}{% endif %}">{{ item.name }}</option>
+                    <option value="{{ item.id }}"
+                            {% if location and location.id == item.id %}selected="selected"{% endif %}
+                            data-parent="{% if item.parent %}{{ item.parent.name }}{% endif %}">
+                        {{ item.name }}
+                    </option>
                 {% endfor %}
             </select>
         </td>
         <td>
             <input type="text" name="governorate_name" class="outreach-field governorate_name_$$itemscope_id$$" readonly="readonly"
-                   itemscope="$$itemscope_id$$" id="governorate_name" value="" style="width: 50px;"/>
+                   itemscope="$$itemscope_id$$" id="governorate_name" value="{% if location_parent %}{{ location_parent.name }}{% endif %}" style="width: 50px;"/>
         </td>
         <td>
             <input type="hidden" name="id" value="$$itemscope_id$$" class="outreach-field-id" />
             <input type="text" name="school_number" class="outreach-field school_number_$$itemscope_id$$" readonly="readonly"
-                   itemscope="$$itemscope_id$$" id="school_number" value="" style="width: 50px;"/>
+                   itemscope="$$itemscope_id$$" id="school_number" value="{% if school %}{{ school.number }}{% endif %}" style="width: 50px;"/>
         </td>
         <td>
             <select name="school" id="school" class="outreach-school outreach-field" itemscope="$$itemscope_id$$" style="width: 110px;">
                 <option value="">{% trans "School" %}</option>
                 {% for schl in schools %}
-                    <option value="{{ schl.id }}" itemcontent="{{ schl.number }}" data-parent="{% if schl.location %}{{ schl.location.id }}{% endif %}">
+                    <option value="{{ schl.id }}" itemcontent="{{ schl.number }}"
+                            {% if school and school.id == schl.id %}selected="selected"{% endif %}
+                            data-parent="{% if schl.location %}{{ schl.location.id }}{% endif %}">
                         {{ schl.name }}
                     </option>
                 {% endfor %}
