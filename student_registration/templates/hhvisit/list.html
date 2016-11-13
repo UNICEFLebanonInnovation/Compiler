@@ -185,6 +185,8 @@
                   LoadVisit(visitID);
 
                   $("#hhForm").show();
+
+                  CheckInitialiseSly();
                }
              );
 
@@ -192,7 +194,7 @@
             $(document).on
             (
                'click',
-               '#cancelButton',
+               '#hhCloseButton',
                function()
                {
                   $("#hhForm").hide();
@@ -237,21 +239,38 @@
 
 
 
-        onePerFrameSly = initializeSly($('#oneperframe'));
-
-        $("#previousButton").click(function()
-        {
-          alert("prev");
-          onePerFrameSly.prev();
-        });
-
-        $("#nextButton").click(function()
-        {
-           alert("test");
-           onePerFrameSly.next();
-        });
 
         });
+
+ var slyInitialised = false;
+ var onePerFrameSly;
+function CheckInitialiseSly()
+{
+   if(!slyInitialised)
+   {
+      slyInitialised= true;
+
+      onePerFrameSly = initializeSly($('#oneperframe'));
+
+      //alert("Sly initialised");
+      //alert(JSON.stringify(onePerFrameSly));
+
+      $("#previousButton").click(function()
+      {
+        //alert("prev");
+        onePerFrameSly.prev();
+      });
+
+      $("#nextButton").click(function()
+      {
+         //alert("test");
+         onePerFrameSly.next();
+      });
+   }
+
+   onePerFrameSly;
+
+}
 
         var protocol = 'http://';
         {% if request.is_secure %}
@@ -485,30 +504,35 @@
 
         function SaveVisit()
         {
-           SaveVisitAttempts();
+           //SaveVisitAttempts();
 
-           /*
+
            var data =
            {
               visit_status : "pending",
+
               "visit_attempt" :
               [
+
                  {
-                    "id": "",
-                    "comment": "NVA3",
-                    "date": "2016-11-07T00:00:00Z",
-                    "household_found" : "true",
-                    "household_visit_id": "1"
+                    id: "48",
+                    comment: "NVA5482",
+                    date: "2016-11-07T00:00:00Z",
+                    household_found : "true",
+                    household_visit_id: "1"
                  }
+
               ]
+
               <!--children_visits :-->
               <!--[-->
               <!---->
               <!--]-->
            };
 
-           //SaveVisitRecord(visitDataRecord.id,data);
+           SaveVisitRecord(1,data);
 
+           /*
            data.visit_attempt.forEach
            (
               function(entry)
@@ -630,7 +654,8 @@
               {
                    type: id != null ? "PUT":"POST",
                    url: url+ (id != null ? id+"/" : ""),
-                   data: data,
+                   contentType: 'application/json; charset=utf-8',
+                   data: JSON.stringify(data),
                    cache: false,
                    headers: getHeader(),
                    dataType: 'json',
@@ -653,6 +678,10 @@
         }
 
     </script>
+
+
+
+
 
 
 {% endblock %}
