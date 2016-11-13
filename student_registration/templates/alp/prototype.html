@@ -145,9 +145,27 @@
             </select>
         </td>
     {% endif %}
+    {% if request.user|has_group:"ALP_DIRECTOR" %}
+        <td>
+            <select name="registered_in_level" id="registered_in_level" class="outreach-field" itemscope="$$itemscope_id$$">
+                <option value="">{% trans "Level" %}</option>
+                {% for item in informal_educations %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="section" id="section" class="outreach-field" itemscope="$$itemscope_id$$">
+                <option value="">{% trans "Section" %}</option>
+                {% for item in sections %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    {% endif %}
         <td>
             <select name="student_birthday_year" id="student_birthday_year" class="outreach-field student_birthday" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
+                <option value="">{% trans "Year" %}</option>
                 {% for item in years %}
                     <option value="{{ item }}">{{ item }}</option>
                 {% endfor %}
@@ -155,7 +173,7 @@
         </td>
         <td>
             <select name="student_birthday_month" id="student_birthday_month" class="outreach-field student_birthday" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
+                <option value="">{% trans "Month" %}</option>
                 {% for key, name in months %}
                     <option value="{{ key }}">{{ name }}</option>
                 {% endfor %}
@@ -163,7 +181,7 @@
         </td>
         <td>
             <select name="student_birthday_day" id="student_birthday_day" class="outreach-field student_birthday" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
+                <option value="">{% trans "Day" %}</option>
                 {% for item in days %}
                     <option value="{{ item }}">{{ item }}</option>
                 {% endfor %}
@@ -175,36 +193,19 @@
         </td>
         <td>
             <select name="student_nationality" id="student_nationality" class="outreach-field" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
+                <option value="">{% trans "Student nationality" %}</option>
                 {% for item in nationalities %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
         </td>
-    {% if request.user|has_group:"ALP_DIRECTOR" %}
         <td>
-            <select name="registered_in_level" id="registered_in_level" class="outreach-field" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
-                {% for item in informal_educations %}
-                    <option value="{{ item.id }}">{{ item.name }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td>
-            <select name="section" id="section" class="outreach-field" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
-                {% for item in sections %}
-                    <option value="{{ item.id }}">{{ item.name }}</option>
-                {% endfor %}
-            </select>
-        </td>
-    {% endif %}
-        <td>
-            <input type="text" name="student_mother_fullname" id="student_mother_fullname" class="outreach-field" itemscope="$$itemscope_id$$" />
+            <input type="text" name="student_mother_fullname" id="student_mother_fullname" class="outreach-field"
+                  placeholder="{% trans "Mother fullname" %}" itemscope="$$itemscope_id$$" />
         </td>
         <td>
             <select name="student_mother_nationality" id="student_mother_nationality" class="outreach-field" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
+                <option value="">{% trans "Mother nationality" %}</option>
                 {% for item in nationalities2 %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
@@ -216,27 +217,31 @@
         </td>
         <td>
             <select name="student_id_type" id="student_id_type" class="outreach-field student_id_type" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
+                <option value="">{% trans "Student ID Type" %}</option>
                 {% for item in idtypes %}
                     <option value="{{ item.id }}">{% trans item.name %}</option>
                 {% endfor %}
             </select>
         </td>
         <td>
-            <input type="text" name="student_id_number" value="0" id="student_id_number" class="outreach-field" itemscope="$$itemscope_id$$" />
+            <input type="text" name="student_id_number" value="0" id="student_id_number" class="outreach-field"
+                   placeholder="{% trans "Student ID Number" %}" itemscope="$$itemscope_id$$" />
         </td>
         <td>
-            <input type="text" name="student_address" id="student_address" class="outreach-field" itemscope="$$itemscope_id$$" />
+            <input type="text" name="student_address" id="student_address" class="outreach-field"
+                   placeholder="{% trans "Student address" %}" itemscope="$$itemscope_id$$" />
         </td>
         <td>
-            <input type="text" name="student_phone" id="student_phone" class="outreach-field" itemscope="$$itemscope_id$$" maxlength="6" size="8" />
+            <input type="text" name="student_phone" id="student_phone" class="outreach-field"
+                   placeholder="{% trans "Phone number (6 digits)" %}" itemscope="$$itemscope_id$$" maxlength="6" size="8" />
         </td>
         <td>
-            <input type="text" name="student_phone_prefix" id="student_phone_prefix" class="outreach-field" itemscope="$$itemscope_id$$" maxlength="2" size="3" />
+            <input type="text" name="student_phone_prefix" id="student_phone_prefix" class="outreach-field"
+                   placeholder="{% trans "Phone prefix (2 digits)" %}" itemscope="$$itemscope_id$$" maxlength="2" size="3" />
         </td>
         <td>
             <select name="last_education_level" id="last_education_level" class="outreach-field" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
+                <option value="">{% trans "Last education level" %}</option>
                 {% for item in education_levels %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
@@ -244,7 +249,7 @@
         </td>
         <td>
             <select name="last_education_year" id="last_education_year" class="outreach-field" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
+                <option value="">{% trans "Education year" %}</option>
                 {% for item in last_education_years %}
                     <option value="{{ item }}">{{ item }}</option>
                 {% endfor %}
@@ -256,7 +261,7 @@
         </td>
         <td>
             <select name="last_informal_edu_round" id="last_informal_edu_round" class="outreach-field alp_details" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
+                <option value="">{% trans "ALP round" %}</option>
                 {% for item in alp_rounds %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
@@ -264,7 +269,7 @@
         </td>
         <td>
             <select name="last_informal_edu_level" id="last_informal_edu_level" class="outreach-field alp_details" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
+                <option value="">{% trans "ALP level" %}</option>
                 {% for item in informal_educations %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
@@ -272,7 +277,7 @@
         </td>
         <td>
             <select name="last_informal_edu_final_result" id="last_informal_edu_final_result" class="outreach-field alp_details" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
+                <option value="">{% trans "ALP result" %}</option>
                 {% for item in education_final_results %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
