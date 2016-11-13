@@ -1,0 +1,703 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+{% block extra_head %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/sly.css' %}"
+          xmlns:font-weight="http://www.w3.org/1999/xhtml" xmlns:font-weight="http://www.w3.org/1999/xhtml">
+
+
+    <style>
+        .row-class {
+            cursor: pointer;
+        }
+        .row-class:hover {
+           background-color: gainsboro !IMPORTANT;
+        }
+
+        .child-row-class {
+            cursor: pointer;
+        }
+        .child-row-class:hover {
+           background-color: gainsboro !IMPORTANT;
+        }
+
+    </style>
+
+{% endblock %}
+
+
+{% block content %}
+
+         <section class="main-content-wrapper" id = "hhList">
+            <section id="main-content">
+                 <div class="row">
+                    <div class="col-md-12">
+                        </br>
+                    </div>
+                </div>
+            <div class="row">
+
+                <div class="alert alert-success" role="alert" style="display: none;">
+                    <strong>{% trans 'Success' %}</strong> {% trans 'Your change is successfully Saved' %}
+                </div>
+                <div class="alert alert-warning" role="alert" style="display: none;">
+                    <strong>{% trans 'Oops' %}</strong> {% trans 'Error saving changes, please contact system administrators' %}
+                </div>
+
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <ol class="breadcrumb">
+                                    <li><a>{% trans "Household Visit" %}</a></li>
+                                    <li>
+                                         <select id="id_location">
+                                             <option value="">---{% trans "Display by Location" %}---</option>
+                                              {% for location in locations %}
+                                                <option value="{{ location.id }}" {% if selectedLocation == location.id %}selected="selected"{% endif %}>
+                                                    {{ location }}
+                                                </option>
+                                              {% endfor %}
+                                         </select>
+                                    </li>
+                                 </ol>
+                            </h3>
+                            <div class="actions pull-right">
+                                <i class="fa fa-chevron-down"></i>
+                                <i class="fa fa-times"></i>
+                            </div>
+                          </div>
+                          <div class="panel-body">
+                            <div class="loader"></div>
+                                <table id="registrations-table" class="table table-striped table-bordered cell-border"
+                                       data-height="500"
+                                       data-pagination="true"
+                                       data-search="true"
+                                       cellspacing="0"
+                                       width="100%">
+                                <thead>
+                                    <tr id="thead-line-1">
+                                        <th>{% trans "HH District" %}</th>
+                                        <th>{% trans "HH Address" %}</th>
+                                        <th>{% trans "HH Representative Name" %}</th>
+                                        <th>{% trans "# of Children Absent" %}</th>
+                                        <th>{% trans "Primary Phone Number" %}</th>
+                                        <th>{% trans "Secondary Phone Number" %}</th>
+                                        <th>{% trans "Status- Completed, Pending" %}</th>
+                                        <th>{% trans "Attempt Number" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for visit in visits %}
+                                        <tr class="row-class" visitID="{{ visit.id }}">
+                                          <td>{{ visit.registering_adult.school.location.name }}</td>
+                                          <td>{{ visit.registering_adult.address }}</td>
+                                          <td>{{ visit.registering_adult }}</td>
+                                          <td>{{ visit.child_visit_count }}</td>
+                                          <td>{{ visit.registering_adult.primary_phone }}</td>
+                                          <td>{{ visit.registering_adult.secondary_phone }}</td>
+                                          <td>{{ visit.visit_status }}</td>
+                                          <td>{{ visit.all_visit_attempt_count }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+            </section>
+         </section>
+
+     <div id = "hhForm" style ="display:none">
+
+       {% include 'hhvisit/household-visit.html' %}
+
+     </div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
+    <script type="text/javascript">
+        var oTable = null;
+        var language  = '{{ LANGUAGE_CODE }}';
+
+        $(document).ready(function(){
+
+            oTable = $('#registrations-table').DataTable({
+                fixedHeader: false,
+                paging:   true,
+                ordering: true,
+                info:     true,
+                autoWidth: false,
+                scrollY: '50vh',
+                scrollX: true,
+                scrollCollapse: true,
+                "language": {
+                    "url": "/static/locale/"+language+".json"
+                },
+                "fnInitComplete": function(oSettings, json) {
+                    $('[data-toggle="tooltip"]').tooltip();
+                }
+            });
+
+            // get the list of visits and fill the table with it
+            $("#id_location").change(function(){
+               var selected_location = $(this).val();
+               // reload the page with the location id passed in post
+                var url = '{% url "hhvisit:household_visit_list" %}';
+                if(selected_location){
+                    url = url+'?location='+selected_location;
+                }
+                window.location.href = url;
+            });
+
+
+            $(document).on
+            (
+               'click',
+               '.row-class',
+               function()
+               {
+                  block = $(this);
+
+                  var visitID = block.attr('visitID')
+
+                  $("#hhList").hide();
+
+                  LoadVisit(visitID);
+
+                  $("#hhForm").show();
+
+                  CheckInitialiseSly();
+               }
+             );
+
+
+            $(document).on
+            (
+               'click',
+               '#hhCloseButton',
+               function()
+               {
+                  $("#hhForm").hide();
+
+                  $("#hhList").show();
+               }
+             );
+
+            $(document).on
+            (
+               'click',
+               '#hhSaveButton',
+               function()
+               {
+                  SaveVisit();
+               }
+             );
+
+
+            $(document).on
+            (
+               'click',
+               '#hhAddAttemptButton',
+               function()
+               {
+                  AddAttemptEmptyRow();
+               }
+             );
+
+
+            $(document).on
+            (
+               'click',
+               '.child-row-class',
+               function()
+               {
+                  block = $(this);
+
+                  ShowChildForm(block);
+               }
+            );
+
+
+
+
+        });
+
+ var slyInitialised = false;
+ var onePerFrameSly;
+function CheckInitialiseSly()
+{
+   if(!slyInitialised)
+   {
+      slyInitialised= true;
+
+      onePerFrameSly = initializeSly($('#oneperframe'));
+
+      //alert("Sly initialised");
+      //alert(JSON.stringify(onePerFrameSly));
+
+      $("#previousButton").click(function()
+      {
+        //alert("prev");
+        onePerFrameSly.prev();
+      });
+
+      $("#nextButton").click(function()
+      {
+         //alert("test");
+         onePerFrameSly.next();
+      });
+   }
+
+   onePerFrameSly.toStart(true);
+
+}
+
+        var protocol = 'http://';
+        {% if request.is_secure %}
+            protocol = 'https://';
+        {% endif %}
+        var host = protocol+'{{ request.get_host }}';
+        var hhVisitURL = host+'/api/household-visit/';
+        var hhVisitAttemptURL = host+'/api/household-visit-attempt/';
+
+        var hhVisitChildVisitURL = host+'/api/household-visit-child/';
+        var hhVisitServiceURL = host+'/api/household-visit-service/';
+        var hhVisitCommentURL = host+'/api/household-visit-comment/';
+
+        function LoadVisit(visitID)
+        {
+        <!--alert(hhVisitURL+visitID);-->
+           $.ajax({
+                     type: "GET",
+                     url: hhVisitURL+visitID,
+                     data: [],
+                     cache: false,
+                     async: false,
+                     headers: getHeader(),
+                     dataType: 'json',
+                     success: function (response) {
+                        InitialiseVisitForm(response);
+                     },
+                     error: function (response) {
+                        var required_fields = JSON.parse(response.responseText);
+                        console.log(response);
+                     }
+                 });
+
+        }
+
+        var visitDataRecord;
+
+        function InitialiseVisitForm(visitData)
+        {
+           visitDataRecord = visitData;
+
+           //alert(JSON.stringify(visitData));
+
+           $("#hhVisitName").text(visitData.first_name+' '+visitData.father_name+' '+visitData.last_name);
+           $("#hhAllvisitAttemptCount").text(visitData.all_visit_attempt_count);
+
+
+           visitData.visit_attempt.forEach
+           (
+              function(entry)
+              {
+                 AddAttemptRow(entry);
+                 AddAttemptDateRow(entry);
+              }
+           );
+
+
+           visitData.children_visits.forEach
+           (
+              function(entry)
+              {
+                 AddChildRow(entry);
+              }
+           );
+
+           visitData.visit_comment.forEach
+           (
+              function(entry)
+              {
+                 AddCommentRow(entry);
+              }
+           );
+
+
+        }
+
+        function FormatDate(dateString)
+        {
+           var date = new Date(dateString);
+
+           return ((date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear());
+        }
+
+        function FormatJSONDate(date)
+        {
+           return date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate()+"T00:00:00Z"
+        }
+
+
+        function AddAttemptEmptyRow()
+        {
+           AddAttemptRow({id:'',date:(new Date()).toString(),household_found:false,comment:''});
+        }
+
+        function AddAttemptRow(entry)
+        {
+           var attemptIDCell = "<td style = \"display:none\">"+(entry.id)+"</td>";
+
+           var dateCell = "<td>"+FormatDate(entry.date)+"</td>";
+
+           var checkBoxCell = "<td><input type=\"checkbox\" name=\"found\" value=\"found\" "+(entry.household_found?"checked":"")+" /></td>";
+
+           var noteCell = "<td><textarea name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
+
+           $("#household-visit-attempt-table tbody").append
+           (
+              "<tr>"+attemptIDCell+dateCell+checkBoxCell+noteCell+"</tr>"
+           );
+        }
+         function AddAttemptDateRow(entry)
+        {
+           var attemptIDCell = "<td style = \"display:none\">"+(entry.id)+"</td>";
+
+           var dateCell = "<td>"+FormatDate(entry.date)+"</td>";
+
+           $("#household-visit-attempt-date-table tbody").append
+           (
+              "<tr>"+attemptIDCell+dateCell+"</tr>"
+           );
+        }
+
+
+        function AddChildRow(entry)
+        {
+           var childIDCell = "<td style = \"display:none\">"+(entry.id)+"</td>";
+
+           var childNameCell = "<td>"+(entry.first_name +' '+entry.father_name+' '+entry.last_name)+"</td>";
+
+           var schoolCell = "<td>"+(entry.school)+"</td>";
+
+           var gradeCell = "<td>"+(entry.grade)+"</td>";
+
+           var ageCell = "<td>"+(entry.age)+"</td>";
+
+           $("#household-visit-child-table tbody").append
+           (
+              "<tr class = \"child-row-class\" >"+childIDCell+childNameCell+schoolCell+gradeCell+ageCell+"</tr>"
+           );
+        }
+
+        function AddServiceRow(editForm, entry)
+        {
+           var serviceIDCell = "<td style = \"display:none\">"+(entry.id)+"</td>";
+
+           var serviceTypeCell = "<td>"+editForm.find("[name=childServiceType]").html()+"</td>";
+
+           var serviceProvideCell = "<td><input type=\"text\" value=\""+entry.service_provider+"\" style = \"width:100%;\" /></td>";
+
+           editForm.find("[name=childServices] tbody").append
+           (
+              "<tr>"+serviceIDCell+serviceTypeCell+serviceProvideCell+"</tr>"
+           );
+
+           updateDropDownValue(editForm.find("tr:last-child td:nth-child(2) select"), entry.service_type_id );
+        }
+
+
+        function AddCommentRow(entry)
+        {
+           var attemptIDCell = "<td style = \"display:none\">"+(entry.id)+"</td>";
+
+           var dateCell = "<td>"+FormatDate(entry.date)+"</td>";
+
+           var noteCell = "<td><textarea name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
+
+           $("#household-visit-comment-table tbody").append
+           (
+              "<tr>"+attemptIDCell+dateCell+noteCell+"</tr>"
+           );
+        }
+
+        function ShowChildForm(row)
+        {
+           bootbox.dialog
+           (
+              {
+                 title: "Child",
+                 message: $('[name=childFormParent]').html(),
+                 buttons:
+                 {
+                    success:
+                    {
+                       label: "{% trans "Save" %}",
+                       className: "btn-success",
+                       callback: function ()
+                       {
+
+                       },
+                       cancel:
+                       {
+                          label: "{% trans "Cancel" %}",
+                          className: "btn-default",
+                          callback: function ()
+                          {
+                             bootbox.hideAll();
+                          }
+                       }
+                    }
+                 }
+              }
+           );
+
+           var editForm = $('.bootbox-body').find('[name=childForm]');
+
+           var childID = row.find("td:first-child").text();
+
+           var childVisits = visitDataRecord.children_visits.filter
+           (
+              function(childVisit)
+              {
+                 return childVisit.id == childID;
+              }
+           );
+
+           if(childVisits.length > 0)
+           {
+              var childVisit = childVisits[0];
+
+              editForm.find("[name=childName]").html( childVisit.first_name +' '+childVisit.father_name+' '+childVisit.last_name );
+
+              updateDropDownValue(editForm.find("[name=childMainReason]"),childVisit.main_reason_id );
+
+              updateDropDownValue(editForm.find("[name=childSpecificReason]"),childVisit.specific_reason_id );
+
+
+              childVisit.child_visit_service.forEach
+              (
+                 function(entry)
+                 {
+                    AddServiceRow(editForm, entry);
+                 }
+              );
+           }
+
+        }
+
+        function updateDropDownValue(dropDownElement, value)
+        {
+            dropDownElement.find('option:selected').removeAttr('selected');
+            dropDownElement.find('option[value="'+value+'"]').attr("selected",true);
+        }
+
+
+        function SaveVisit()
+        {
+           //SaveVisitAttempts();
+
+
+           var data =
+           {
+              visit_status : "pending",
+
+              "visit_attempt" :
+              [
+
+                 {
+                    id: "48",
+                    comment: "NVA5482",
+                    date: "2016-11-07T00:00:00Z",
+                    household_found : "true",
+                    household_visit_id: "1"
+                 }
+
+              ]
+
+              <!--children_visits :-->
+              <!--[-->
+              <!---->
+              <!--]-->
+           };
+
+           SaveVisitRecord(1,data);
+
+           /*
+           data.visit_attempt.forEach
+           (
+              function(entry)
+              {
+                 SaveVisitAttemptRecord(null,entry);
+              }
+           );
+           */
+
+        }
+
+        function SaveVisitAttempts()
+        {
+           var visitAttemptsData = CreateVisitAttemptsData();
+
+           alert(JSON.stringify(visitAttemptsData));
+
+           visitAttemptsData.forEach
+           (
+              function(entry)
+              {
+                 SaveVisitAttemptRecord(entry.id,entry);
+              }
+           );
+        }
+
+        function CreateVisitAttemptsData()
+        {
+           visitAttemptsData = [];
+
+           $("#household-visit-attempt-table tbody tr")
+           .each
+           (
+              function(i, obj)
+              {
+                 trElement = $(obj);
+
+                 visitAttemptRecord = new Object();
+
+                 visitAttemptRecord.id = trElement.find('td:nth-child(1)').html();
+
+                 visitAttemptRecord.date = FormatJSONDate( new Date(trElement.find('td:nth-child(2)').html()) );
+
+                 visitAttemptRecord.household_found = trElement.find('td:nth-child(3) input').is(':checked');
+
+                 visitAttemptRecord.comment = trElement.find('td:nth-child(4) textarea').html();
+
+                 visitAttemptRecord.household_visit_id = visitDataRecord.id;
+
+                 //alert(JSON.stringify(visitAttemptRecord));
+
+                 visitAttemptsData.push(visitAttemptRecord);
+              }
+           );
+
+           return visitAttemptsData;
+        }
+
+        function SaveVisitRecord(id, data)
+        {
+            SaveRelatedRecord(id,data,hhVisitURL);
+        }
+
+        function SaveVisitAttemptRecord(id, data)
+        {
+            SaveRelatedRecord(id,data,hhVisitAttemptURL);
+        }
+
+        function SaveChildVisitRecord(id, data)
+        {
+            SaveRelatedRecordCallback
+            (
+                id,
+                data,
+                hhVisitChildVisitURL,
+                function(result)
+                {
+                    data.child_visit_service.forEach
+                    (
+                      function(entry)
+                      {
+                          entry.child_visit_id = result.id;
+                          SaveChildVisitServiceRecord(entry.id,entry);
+                      }
+                    );
+                }
+            );
+        }
+
+        function SaveChildVisitServiceRecord(id, data)
+        {
+            SaveRelatedRecord
+            (
+                id,
+                data,
+                hhVisitServiceURL
+            );
+        }
+
+        function SaveChildVisitCommentRecord(id, data)
+        {
+            SaveRelatedRecord
+            (
+                id,
+                data,
+                hhVisitCommentURL
+            );
+        }
+
+        function SaveRelatedRecord(id, data, url)
+        {
+            SaveRelatedRecordCallback(id,data,url, function(x){});
+        }
+
+        function SaveRelatedRecordCallback(id, data, url, callback)
+        {
+           $.ajax
+           (
+              {
+                   type: id != null ? "PUT":"POST",
+                   url: url+ (id != null ? id+"/" : ""),
+                   contentType: 'application/json; charset=utf-8',
+                   data: JSON.stringify(data),
+                   cache: false,
+                   headers: getHeader(),
+                   dataType: 'json',
+                   success: function (response, result, jqXHR)
+                   {
+                      if(jqXHR.status == 200)
+                      {
+                         alert("Success");
+                      }
+
+                      alert(response);
+                   },
+                   error:
+                   function (response)
+                   {
+                         alert("Failure");
+                   }
+              }
+            );
+        }
+
+    </script>
+
+
+
+
+
+
+{% endblock %}
+
+
+
+

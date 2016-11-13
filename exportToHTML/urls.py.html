@@ -1,0 +1,133 @@
+<html>
+<head>
+<title>urls.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #999999; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); font-style: italic; }
+.s1 { color: rgb(0,0,0); }
+.s2 { color: rgb(0,0,128); font-weight: bold; }
+.s3 { color: rgb(0,128,128); font-weight: bold; }
+.s4 { color: rgb(0,0,255); }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+urls.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0"># -*- coding: utf-8 -*-</span><span class="s1"> 
+</span><span class="s2">from </span><span class="s1">__future__ </span><span class="s2">import </span><span class="s1">unicode_literals 
+ 
+</span><span class="s2">from </span><span class="s1">django.conf </span><span class="s2">import </span><span class="s1">settings 
+</span><span class="s2">from </span><span class="s1">django.conf.urls </span><span class="s2">import </span><span class="s1">include, url 
+</span><span class="s2">from </span><span class="s1">django.conf.urls.static </span><span class="s2">import </span><span class="s1">static 
+</span><span class="s2">from </span><span class="s1">django.contrib </span><span class="s2">import </span><span class="s1">admin 
+</span><span class="s2">from </span><span class="s1">django.views.generic </span><span class="s2">import </span><span class="s1">TemplateView 
+</span><span class="s2">from </span><span class="s1">django.views </span><span class="s2">import </span><span class="s1">defaults </span><span class="s2">as </span><span class="s1">default_views 
+</span><span class="s2">from </span><span class="s1">rest_framework_nested </span><span class="s2">import </span><span class="s1">routers 
+</span><span class="s2">from </span><span class="s1">student_registration.alp.views </span><span class="s2">import </span><span class="s1">( 
+    OutreachViewSet, 
+) 
+</span><span class="s2">from </span><span class="s1">student_registration.registrations.views </span><span class="s2">import </span><span class="s1">( 
+    RegisteringAdultViewSet, 
+    RegisteringChildViewSet, 
+    ClassAssignmentViewSet, 
+    WaitingListViewSet, 
+) 
+</span><span class="s2">from </span><span class="s1">student_registration.hhvisit.views </span><span class="s2">import </span><span class="s1">( 
+    HouseholdVisitListView, 
+    HouseholdVisitLoadViewSet, 
+    HouseholdVisitAttemptViewSet, 
+    HouseholdVisitChildViewSet, 
+    HouseholdVisitServiceViewSet, 
+    HouseholdVisitCommentViewSet 
+) 
+</span><span class="s2">from </span><span class="s1">student_registration.attendances.views </span><span class="s2">import </span><span class="s1">( 
+    AttendanceViewSet, 
+    AttendanceReportViewSet, 
+) 
+</span><span class="s2">from </span><span class="s1">student_registration.students.views </span><span class="s2">import </span><span class="s1">( 
+    StudentViewSet, 
+) 
+</span><span class="s2">from </span><span class="s1">student_registration.schools.views </span><span class="s2">import </span><span class="s1">( 
+    SchoolViewSet, 
+    ClassRoomViewSet, 
+    SectionViewSet, 
+    GradeViewSet, 
+) 
+</span><span class="s2">from </span><span class="s1">student_registration.eav.views </span><span class="s2">import </span><span class="s1">( 
+    AttributeViewSet, 
+    ValueViewSet, 
+) 
+</span><span class="s2">from </span><span class="s1">student_registration.enrollments.views </span><span class="s2">import </span><span class="s1">EnrollmentViewSet 
+</span><span class="s2">from </span><span class="s1">.views </span><span class="s2">import </span><span class="s1">acme_view 
+ 
+api = routers.SimpleRouter() 
+api.register(</span><span class="s3">r'outreach'</span><span class="s1">, OutreachViewSet, base_name=</span><span class="s3">'outreach'</span><span class="s1">) 
+api.register(</span><span class="s3">r'enrollments'</span><span class="s1">, EnrollmentViewSet, base_name=</span><span class="s3">'enrollments'</span><span class="s1">) 
+api.register(</span><span class="s3">r'registrations-adult'</span><span class="s1">, RegisteringAdultViewSet, base_name=</span><span class="s3">'registrations_adult'</span><span class="s1">) 
+api.register(</span><span class="s3">r'registrations-child'</span><span class="s1">, RegisteringChildViewSet, base_name=</span><span class="s3">'registrations_child'</span><span class="s1">) 
+api.register(</span><span class="s3">r'attendances'</span><span class="s1">, AttendanceViewSet, base_name=</span><span class="s3">'attendances'</span><span class="s1">) 
+api.register(</span><span class="s3">r'attendances-report'</span><span class="s1">, AttendanceReportViewSet, base_name=</span><span class="s3">'attendances_report'</span><span class="s1">) 
+api.register(</span><span class="s3">r'class-assignment'</span><span class="s1">, ClassAssignmentViewSet, base_name=</span><span class="s3">'class_assignment'</span><span class="s1">) 
+api.register(</span><span class="s3">r'waiting-list'</span><span class="s1">, WaitingListViewSet, base_name=</span><span class="s3">'waiting_list'</span><span class="s1">) 
+api.register(</span><span class="s3">r'household-list'</span><span class="s1">, HouseholdVisitListView, base_name=</span><span class="s3">'household_list'</span><span class="s1">) 
+</span><span class="s0"># api.register(r'household-visit', HouseholdVisitLoadViewSet, base_name='8585858555555555555555555')</span><span class="s1"> 
+api.register(</span><span class="s3">r'household-visit-attempt'</span><span class="s1">, HouseholdVisitAttemptViewSet, base_name=</span><span class="s3">'household_visit_/ m../attempt'</span><span class="s1">),khuio;liu=</span><span class="s4">89j</span><span class="s1">j l=];</span><span class="s4">7</span><span class="s1">/yu=v  mkj,ocf 
+ 
+api.register(</span><span class="s3">r'household-visit-child'</span><span class="s1">, HouseholdVisitChildViewSet, base_name=</span><span class="s3">'household_visit_child'</span><span class="s1">) 
+api.register(</span><span class="s3">r'household-visit-service'</span><span class="s1">, HouseholdVisitServiceViewSet, base_name=</span><span class="s3">'household_visit_service'</span><span class="s1">) 
+api.register(</span><span class="s3">r'household-visit-comment'</span><span class="s1">, HouseholdVisitCommentViewSet, base_name=</span><span class="s3">'household_visit_comment'</span><span class="s1">) 
+ 
+api.register(</span><span class="s3">r'students'</span><span class="s1">, StudentViewSet, base_name=</span><span class="s3">'students'</span><span class="s1">) 
+api.register(</span><span class="s3">r'schools'</span><span class="s1">, SchoolViewSet, base_name=</span><span class="s3">'schools'</span><span class="s1">) 
+api.register(</span><span class="s3">r'classrooms'</span><span class="s1">, ClassRoomViewSet, base_name=</span><span class="s3">'classrooms'</span><span class="s1">) 
+api.register(</span><span class="s3">r'sections'</span><span class="s1">, SectionViewSet, base_name=</span><span class="s3">'sections'</span><span class="s1">) 
+api.register(</span><span class="s3">r'grades'</span><span class="s1">, GradeViewSet, base_name=</span><span class="s3">'grades'</span><span class="s1">) 
+api.register(</span><span class="s3">r'eav/attributes'</span><span class="s1">, AttributeViewSet, base_name=</span><span class="s3">'eav-attributes'</span><span class="s1">) 
+api.register(</span><span class="s3">r'eav/values'</span><span class="s1">, ValueViewSet, base_name=</span><span class="s3">'eav-values'</span><span class="s1">) 
+ 
+urlpatterns = [ 
+    url(</span><span class="s3">r'^$'</span><span class="s1">, TemplateView.as_view(template_name=</span><span class="s3">'pages/home.html'</span><span class="s1">), name=</span><span class="s3">'home'</span><span class="s1">), 
+    url(</span><span class="s3">r'^about/$'</span><span class="s1">, TemplateView.as_view(template_name=</span><span class="s3">'pages/about.html'</span><span class="s1">), name=</span><span class="s3">'about'</span><span class="s1">), 
+ 
+    </span><span class="s0"># Django Admin, use {% url 'admin:index' %}</span><span class="s1"> 
+    url(settings.ADMIN_URL, include(admin.site.urls)), 
+ 
+    </span><span class="s0"># User management</span><span class="s1"> 
+    url(</span><span class="s3">r'^users/'</span><span class="s1">, include(</span><span class="s3">'student_registration.users.urls'</span><span class="s1">, namespace=</span><span class="s3">'users'</span><span class="s1">)), 
+    url(</span><span class="s3">r'^accounts/'</span><span class="s1">, include(</span><span class="s3">'allauth.urls'</span><span class="s1">)), 
+ 
+    url(</span><span class="s3">r'^students/'</span><span class="s1">, include(</span><span class="s3">'student_registration.students.urls'</span><span class="s1">, namespace=</span><span class="s3">'students'</span><span class="s1">)), 
+    url(</span><span class="s3">r'^alp/'</span><span class="s1">, include(</span><span class="s3">'student_registration.alp.urls'</span><span class="s1">, namespace=</span><span class="s3">'alp'</span><span class="s1">)), 
+    url(</span><span class="s3">r'^attendances/'</span><span class="s1">, include(</span><span class="s3">'student_registration.attendances.urls'</span><span class="s1">, namespace=</span><span class="s3">'attendances'</span><span class="s1">)), 
+    url(</span><span class="s3">r'^registrations/'</span><span class="s1">, include(</span><span class="s3">'student_registration.registrations.urls'</span><span class="s1">, namespace=</span><span class="s3">'registrations'</span><span class="s1">)), 
+    url(</span><span class="s3">r'^hhvisit/'</span><span class="s1">,include(</span><span class="s3">'student_registration.hhvisit.urls'</span><span class="s1">, namespace=</span><span class="s3">'hhvisit'</span><span class="s1">)), 
+    url(</span><span class="s3">r'^enrollments/'</span><span class="s1">, include(</span><span class="s3">'student_registration.enrollments.urls'</span><span class="s1">, namespace=</span><span class="s3">'enrollments'</span><span class="s1">)), 
+    url(</span><span class="s3">r'^schools/'</span><span class="s1">, include(</span><span class="s3">'student_registration.schools.urls'</span><span class="s1">, namespace=</span><span class="s3">'schools'</span><span class="s1">)), 
+    url(</span><span class="s3">r'^locations/'</span><span class="s1">, include(</span><span class="s3">'student_registration.locations.urls'</span><span class="s1">, namespace=</span><span class="s3">'locations'</span><span class="s1">)), 
+ 
+    url(</span><span class="s3">r'^api-auth/'</span><span class="s1">, include(</span><span class="s3">'rest_framework.urls'</span><span class="s1">, namespace=</span><span class="s3">'rest_framework'</span><span class="s1">)), 
+    url(</span><span class="s3">r'^api/docs/'</span><span class="s1">, include(</span><span class="s3">'rest_framework_swagger.urls'</span><span class="s1">)), 
+ 
+    url(</span><span class="s3">r'^api/'</span><span class="s1">, include(api.urls)), 
+ 
+    url(</span><span class="s3">r'^.well-known/acme-challenge/(?P&lt;slug&gt;.*)/'</span><span class="s1">, acme_view), 
+ 
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
+ 
+</span><span class="s2">if </span><span class="s1">settings.DEBUG: 
+    </span><span class="s0"># This allows the error pages to be debugged during development, just visit</span><span class="s1"> 
+    </span><span class="s0"># these url in browser to see how these error pages look like.</span><span class="s1"> 
+    urlpatterns += [ 
+        url(</span><span class="s3">r'^400/$'</span><span class="s1">, default_views.bad_request, kwargs={</span><span class="s3">'exception'</span><span class="s1">: Exception(</span><span class="s3">'Bad Request!'</span><span class="s1">)}), 
+        url(</span><span class="s3">r'^403/$'</span><span class="s1">, default_views.permission_denied, kwargs={</span><span class="s3">'exception'</span><span class="s1">: Exception(</span><span class="s3">'Permission Denied'</span><span class="s1">)}), 
+        url(</span><span class="s3">r'^404/$'</span><span class="s1">, default_views.page_not_found, kwargs={</span><span class="s3">'exception'</span><span class="s1">: Exception(</span><span class="s3">'Page not Found'</span><span class="s1">)}), 
+        url(</span><span class="s3">r'^500/$'</span><span class="s1">, default_views.server_error), 
+    ] 
+</span></pre>
+</body>
+</html>

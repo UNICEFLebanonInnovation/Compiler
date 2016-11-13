@@ -1,0 +1,72 @@
+{% load staticfiles i18n %}
+
+
+<div name = "childFormParent" style = "display:none" >
+
+   <div name = "childForm" >
+      <label class="text">{% trans "Child Name" %}</label> <div name = "childName"></div>
+      <br/>
+      <label class="text">{% trans "Did the child enroll school?" %}</label>
+      <br/>
+      <br/>
+     <label class="text">{% trans "Reason" %}</label>
+      <select name="childMainReason">
+         <option value="">---{% trans "Main Reason" %}---</option>
+         {% for mainreason in mainreasons %}
+          <option value="{{ mainreason.id }}" >
+              {{ mainreason }}
+          </option>
+        {% endfor %}
+       </select>
+
+      <select name="childSpecificReason">
+         <option value="">---{% trans "Specific Reason" %}---</option>
+         {% for specificreason in specificreasons %}
+          <option value="{{ specificreason.id }}" >
+              {{ specificreason }}
+          </option>
+        {% endfor %}
+       </select>
+
+      <br/>
+      <br/>
+      <table name="childServices" class="table table-striped table-bordered cell-border"
+                                       data-height="500"
+                                       data-pagination="true"
+                                       data-search="true"
+                                       cellspacing="0"
+                                       width="100%">
+          <thead>
+              <tr>
+                  <th style = "display:none">ID</th>
+                  <th>Service Type</th>
+                  <th>Service Provider</th>
+              </tr>
+          </thead>
+          <tbody>
+
+          </tbody>
+      </table>
+
+     <button id = "AddServicetButton" >Add</button>
+
+      <div name = "childServiceType" style = "display:none">
+
+        <select >
+         <option value="">---{% trans "Service Type" %}---</option>
+         {% for servicetype in servicetypes %}
+          <option value="{{ servicetype.id }}" >
+              {{ servicetype }}
+          </option>
+        {% endfor %}
+        </select>
+
+      </div>
+
+
+
+   </div>
+
+</div>
+
+
