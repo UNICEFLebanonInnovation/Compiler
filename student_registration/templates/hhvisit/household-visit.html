@@ -12,8 +12,6 @@
 
 <div id="add_child_noid_block" style="display: block;">
 
-    <form class="inlineForm form-medium-size" id="add_child_noid_form" onsubmit="return false;">
-
       <div class="alert alert-success" role="alert" id="alert-synchro-success" style="display: none;;">
           {% trans 'Household visit success' %}.
           {% trans 'Please click' %}
@@ -52,16 +50,32 @@
               <ul class="slidee" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
                {# 1 Slide household information #}
                       <li class="active framebox">
-                          <h3 class="panel-title">{% trans "Household Specific Information" %}</h3>
+                          <h3 class="panel-title">{% trans "Household Specific Information" %}&nbsp;&nbsp;</h3>
                           <div class="line">
-                              <label class="text">{% trans "Name of Household Rep" %}</label> <span id ="hhVisitName"></span>
+                              <label >{% trans "Name of Household Rep" %}&nbsp;&nbsp;</label> <span id ="hhVisitName"></span>
                           </div>
                           <div class="line">
-                              <label class="text">{% trans "Times visited" %}</label><span id ="hhAllvisitAttemptCount"></span>
+                              <label >{% trans "Times visited" %}&nbsp;&nbsp;</label><span id ="hhAllvisitAttemptCount"></span>
                           </div>
                           <div class="line">
-                              <label class="text">{% trans "Dates of previous visits" %}</label>
+                              <label >{% trans "Dates of previous visits" %}</label>
                           </div>
+                         <table id="household-visit-attempt-date-table" class="table table-striped table-bordered cell-border"
+                                       data-height="500"
+                                       data-pagination="true"
+                                       data-search="true"
+                                       cellspacing="0"
+                                       width="100%">
+          <thead>
+              <tr>
+                  <th style = "display:none">ID</th>
+                  <th>Date</th>
+              </tr>
+          </thead>
+          <tbody>
+
+          </tbody>
+      </table>
                       </li>
 
                   {# 2 Slide household found #}
@@ -179,3 +193,4 @@
       {% endif %}
       </div>
     </form>
+      </div>

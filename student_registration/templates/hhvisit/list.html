@@ -268,7 +268,7 @@ function CheckInitialiseSly()
       });
    }
 
-   onePerFrameSly;
+   onePerFrameSly.toStart(true);
 
 }
 
@@ -323,6 +323,7 @@ function CheckInitialiseSly()
               function(entry)
               {
                  AddAttemptRow(entry);
+                 AddAttemptDateRow(entry);
               }
            );
 
@@ -377,6 +378,17 @@ function CheckInitialiseSly()
            $("#household-visit-attempt-table tbody").append
            (
               "<tr>"+attemptIDCell+dateCell+checkBoxCell+noteCell+"</tr>"
+           );
+        }
+         function AddAttemptDateRow(entry)
+        {
+           var attemptIDCell = "<td style = \"display:none\">"+(entry.id)+"</td>";
+
+           var dateCell = "<td>"+FormatDate(entry.date)+"</td>";
+
+           $("#household-visit-attempt-date-table tbody").append
+           (
+              "<tr>"+attemptIDCell+dateCell+"</tr>"
            );
         }
 
