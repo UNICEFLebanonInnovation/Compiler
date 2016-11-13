@@ -42,6 +42,7 @@ from student_registration.eav.views import (
     AttributeViewSet,
     ValueViewSet,
 )
+from student_registration.users.views import LoginRedirectView
 from student_registration.enrollments.views import EnrollmentViewSet
 from .views import acme_view
 
@@ -73,6 +74,7 @@ api.register(r'eav/values', ValueViewSet, base_name='eav-values')
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
     url(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
+    url(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
 
     # Django Admin, use {% url 'admin:index' %}
     url(settings.ADMIN_URL, include(admin.site.urls)),
