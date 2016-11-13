@@ -73,7 +73,18 @@ class HouseholdVisitLoadViewSet(mixins.RetrieveModelMixin,
     #
     #     data = request.data
     #
-    #     serializer = HouseholdVisitSerializer(data=data)
+    #
+    #     import pprint
+    #     import json
+    #     #b = json.loads(data)
+    #
+    #
+    #
+    #     #myDict = dict(data.iterlists())
+    #
+    #     #data = (myDict.keys())
+    #
+    #     #serializer = HouseholdVisitSerializer(data=data)
     #
     #
     #     result = data
