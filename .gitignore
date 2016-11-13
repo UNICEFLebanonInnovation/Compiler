@@ -72,5 +72,3 @@ mailhog
 
 deis
 staticfiles
-dev.env
-student_registration/hhvisit/urls.py
