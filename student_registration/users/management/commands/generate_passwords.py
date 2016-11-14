@@ -13,5 +13,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for group in options['group']:
-            print group
-        # generate_passwords()
+            generate_passwords(group)
