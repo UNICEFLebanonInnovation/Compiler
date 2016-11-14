@@ -4,14 +4,17 @@ from student_registration.taskapp.celery import app
 
 
 @app.task
-def generate_passwords():
+def generate_passwords(group):
     from student_registration.users.models import User
 
-    users = User.objects.filter(is_staff=False, is_superuser=False)
+    users = User.objects.filter(is_staff=False, is_superuser=False, groups__name=group)
     for user in users:
         try:
-            user.update_password(user.username)
+            password = user.username
+            if user.phone_number:
+                password = password+user.phone_number[:2]
+            user.update_password(password)
             user.save()
         except Exception as ex:
-            print ex.messages
+            print ex
             pass
