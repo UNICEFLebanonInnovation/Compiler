@@ -100,6 +100,7 @@ class OutreachView(LoginRequiredMixin, TemplateView):
             data = data.filter(school_id=school_id)
         if has_group(self.request.user, 'ALP_DIRECTOR'):
             data = Outreach.objects.filter(school_id=self.request.user.school_id)
+            data = data.exclude(owner_id=self.request.user.id)
             school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
