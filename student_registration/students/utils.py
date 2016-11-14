@@ -35,7 +35,7 @@ def generate_id(
         full_name_hash = '{0:0>4}'.format(int(hashlib.sha1(full_name.encode('UTF-8')).hexdigest(), 16) % 10000)
 
         # take the hash of mother name and convert to integer, zero padding to 4 digits
-        mother_name_hash = '{0:0>4}'.format(int(hashlib.sha1(mother_full_name.encode('UTF-8')).hexdigest(), 16) % 10000)
+        mother_name_hash = '{0:0>3}'.format(int(hashlib.sha1(mother_full_name.encode('UTF-8')).hexdigest(), 16) % 1000)
 
         # take the first character of the gender to denote sex
         gender_first_char = gender[:1]
@@ -48,6 +48,7 @@ def generate_id(
             mothername_hash=mother_name_hash,
             gender_char=gender_first_char,
         )
+        print len(result)
         return result
 
     except Exception as exp:
