@@ -134,6 +134,10 @@ class OutreachView(LoginRequiredMixin, TemplateView):
             'school': school,
             'location': location,
             'location_parent': location_parent,
+            'notes1': (x for x in range(11, 60)),
+            'notes2': (x for x in range(11, 60)),
+            'notes3': (x for x in range(11, 60)),
+            'notes4': (x for x in range(11, 60)),
         }
 
 
