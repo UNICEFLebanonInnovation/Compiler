@@ -156,7 +156,6 @@
                                 {% if request.user|has_group:"CERD" %}
                                     {% for line in data %}
 {#                                        {% include 'alp/prototype-view.html' with role="CERD" student=line.student level=line.level %}#}
-
                                         {% with student=line.student level=line.level role="CERD" %}
                                             <tr id="line-{{ line.id }}" class="outreach-line-p" itemscope="{{ line.id }}">
         <td>
@@ -1012,10 +1011,31 @@
             var data = item;
             delete data.id;
 
-            data.exam_result_arabic = data.exam_result_arabic.replace(",",".");
-            data.exam_result_language = data.exam_result_language.replace(",",".");
-            data.exam_result_math = data.exam_result_math.replace(",",".");
-            data.exam_result_science = data.exam_result_science.replace(",",".");
+            if(data.exam_result_arabic) {
+                data.exam_result_arabic = data.exam_result_arabic.replace(",",".");
+            }else{
+                data.exam_result_arabic = 0;
+            }
+            if(data.exam_result_language) {
+                data.exam_result_language = data.exam_result_language.replace(",",".");
+            }else{
+                data.exam_result_language = 0;
+            }
+            if(data.exam_result_math) {
+                data.exam_result_math = data.exam_result_math.replace(",",".");
+            }else{
+                data.exam_result_math = 0;
+            }
+            if(data.exam_result_science) {
+                data.exam_result_science = data.exam_result_science.replace(",",".");
+            }else{
+                data.exam_result_science = 0;
+            }
+
+{#            data.exam_result_arabic = data.exam_result_arabic.replace(",",".");#}
+{#            data.exam_result_language = data.exam_result_language.replace(",",".");#}
+{#            data.exam_result_math = data.exam_result_math.replace(",",".");#}
+{#            data.exam_result_science = data.exam_result_science.replace(",",".");#}
 
             $.ajax({
                 type: "PATCH",
