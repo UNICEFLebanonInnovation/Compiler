@@ -149,6 +149,7 @@ class ChildVisitSerializer(serializers.ModelSerializer):
     father_name = serializers.CharField(source='student.father_name')
     last_name = serializers.CharField(source='student.last_name')
     mother_fullname = serializers.CharField(source='student.mother_fullname')
+    # school = serializers.CharField(source='student.school')
     main_reason_id = serializers.CharField(source='main_reason.id')
     main_reason =  serializers.CharField(source='main_reason.name')
     specific_reason_id = serializers.CharField(source='specific_reason.id')
@@ -201,7 +202,8 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             'specific_reason_id',
             'specific_reason',
             'child_visit_service',
-            'household_visit_id'
+            'household_visit_id',
+            # 'school'
         )
 
 
