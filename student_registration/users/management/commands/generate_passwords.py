@@ -8,5 +8,10 @@ from student_registration.users.tasks import *
 class Command(BaseCommand):
     help = 'Generate Users password'
 
+    def add_arguments(self, parser):
+        parser.add_argument('group', nargs='+', type=str)
+
     def handle(self, *args, **options):
-        generate_passwords()
+        for group in options['group']:
+            print group
+        # generate_passwords()
