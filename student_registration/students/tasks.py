@@ -64,3 +64,19 @@ def generate_child_unique_number():
         except Exception as ex:
             print ex.message
             continue
+
+
+@app.task
+def generate_hashing_unique_number():
+    from student_registration.students.models import Hashing
+
+    items = Hashing.objects.all()
+    for item in items:
+        try:
+            item.number = generate_id(item.first_name, item.father_name, item.last_name,
+                                         item.mother_fullname, item.sex)
+            print item.number, item.id
+            item.save()
+        except Exception as ex:
+            print ex.message
+            continue

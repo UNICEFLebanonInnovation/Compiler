@@ -9,5 +9,6 @@ class Command(BaseCommand):
     help = 'Generate unique number'
 
     def handle(self, *args, **options):
-        generate_adult_unique_number()
-        generate_child_unique_number()
+        # generate_adult_unique_number()
+        # generate_child_unique_number()
+        generate_hashing_unique_number()

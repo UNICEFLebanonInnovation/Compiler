@@ -199,3 +199,29 @@ class Student(Person):
             attendances[item.attendance_date] = item.status
         return attendances
 
+
+class Hashing(models.Model):
+
+    first_name = models.CharField(max_length=64L, blank=True, null=True)
+    last_name = models.CharField(max_length=64L, blank=True, null=True)
+    father_name = models.CharField(max_length=64L, blank=True, null=True)
+    mother_fullname = models.CharField(max_length=64L, blank=True, null=True)
+    birthday = models.CharField(max_length=64L, blank=True, null=True)
+    id_number = models.CharField(max_length=100L, blank=True, null=True)
+    number = models.CharField(max_length=45L, blank=True, null=True)
+    sex = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('Male', _('Male')),
+            ('Female', _('Female')),
+        )
+    )
+
+    def __unicode__(self):
+        return u'{} {} {}'.format(
+            self.first_name,
+            self.father_name,
+            self.last_name,
+        )
