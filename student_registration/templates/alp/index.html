@@ -155,12 +155,12 @@
                                 <tbody>
                                 {% if request.user|has_group:"CERD" %}
                                     {% for line in data %}
-                                        {% include 'alp/prototype-view.html' with role="CERD" %}
+                                        {% include 'alp/prototype-view.html' with role="CERD" student=line.student level=line.level %}
                                     {% endfor %}
                                 {% endif %}
                                 {% if request.user|has_group:"ALP_DIRECTOR" %}
                                     {% for line in data %}
-                                        {% include 'alp/prototype-view.html' with role="ALP_DIRECTOR" %}
+                                        {% include 'alp/prototype-view.html' with role="ALP_DIRECTOR" student=line.student level=line.level %}
                                     {% endfor %}
                                 {% endif %}
                                 </tbody>
