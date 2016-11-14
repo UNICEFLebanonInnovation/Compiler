@@ -220,7 +220,7 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
     visit_attempt = VisitAttemptSerializer(many=True, read_only=True)
     children_visits = ChildVisitSerializer(many=True, read_only=True)
     visit_comment = HouseholdVisitCommentSerializer(many=True, read_only=True)
-    household_visit_team = HouseholdVisitCommentSerializer(many=True, read_only=True)
+    # household_visit_team = HouseholdVisitCommentSerializer(many=True, read_only=True)
     all_visit_attempt_count = serializers.CharField(read_only=True)
     visit_status = serializers.CharField()
 
@@ -275,7 +275,7 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
             'visit_attempt',
             'children_visits',
             'visit_comment',
-            'household_visit_team',
+            # 'household_visit_team',
             'all_visit_attempt_count'
         )
 
