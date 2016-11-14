@@ -188,8 +188,9 @@ class HouseholdVisitListView(LoginRequiredMixin, TemplateView):
             specificreasons = SpecificReason.objects.order_by('name')
             servicetypes = ServiceType.objects.order_by('name')
             location = self.request.GET.get("location", 0)
-            if location:
-                data = self.model.objects.filter(registering_adult__school__location_id=location).order_by('id')
+            # if location:
+            # data = self.model.objects.filter(registering_adult__school__location_id=location).order_by('id')
+            data = self.model.objects.filter(registering_adult__school__location_id='9').order_by('id')
 
             return {
                 'visits': data,

@@ -56,16 +56,16 @@
                             <h3 class="panel-title">
                                 <ol class="breadcrumb">
                                     <li><a>{% trans "Household Visit" %}</a></li>
-                                    <li>
-                                         <select id="id_location">
-                                             <option value="">---{% trans "Display by Location" %}---</option>
-                                              {% for location in locations %}
-                                                <option value="{{ location.id }}" {% if selectedLocation == location.id %}selected="selected"{% endif %}>
-                                                    {{ location }}
-                                                </option>
-                                              {% endfor %}
-                                         </select>
-                                    </li>
+                                    <!--<li>-->
+                                         <!--<select id="id_location">-->
+                                             <!--<option value="">-&#45;&#45;{% trans "Display by Location" %}-&#45;&#45;</option>-->
+                                              <!--{% for location in locations %}-->
+                                                <!--<option value="{{ location.id }}" {% if selectedLocation == location.id %}selected="selected"{% endif %}>-->
+                                                    <!--{{ location }}-->
+                                                <!--</option>-->
+                                              <!--{% endfor %}-->
+                                         <!--</select>-->
+                                    <!--</li>-->
                                  </ol>
                             </h3>
                             <div class="actions pull-right">
@@ -399,11 +399,16 @@ function CheckInitialiseSly()
 
            var childNameCell = "<td>"+(entry.first_name +' '+entry.father_name+' '+entry.last_name)+"</td>";
 
-           var schoolCell = "<td>"+(entry.school)+"</td>";
+          // var schoolCell = "<td>"+(entry.school)+"</td>";
 
-           var gradeCell = "<td>"+(entry.grade)+"</td>";
+           //var gradeCell = "<td>"+(entry.grade)+"</td>";
 
-           var ageCell = "<td>"+(entry.age)+"</td>";
+           //var ageCell = "<td>"+(entry.age)+"</td>";
+
+           var schoolCell = "<td>Al Borj School</td>";
+           var gradeCell = "<td>Grade 1</td>";
+           var ageCell = "<td>7</td>";
+
 
            $("#household-visit-child-table tbody").append
            (
