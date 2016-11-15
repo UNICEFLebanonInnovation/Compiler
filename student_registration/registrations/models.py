@@ -183,7 +183,7 @@ class Registration(TimeStampedModel):
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
-        related_name='+',
+        related_name='student_registration',
     )
 
     registering_adult = models.ForeignKey(
