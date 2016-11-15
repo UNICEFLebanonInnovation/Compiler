@@ -14,6 +14,7 @@ from student_registration.registrations.models import (
 )
 from student_registration.users.models import User
 
+
 class ServiceType(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
 
@@ -100,28 +101,18 @@ class HouseholdVisit(TimeStampedModel):
 
     @property
     def child_visit_count(self):
-        print len(self.children_visits), " ch visit"
-        print ChildVisit.objects.filter(household_visit_id=self.id)
-        return len(self.children_visits)
+        return int(self.children_visits.all().count())
 
     @property
     def visit_attempt_count(self):
-        return len(self.visit_attempt)
-
-    # @property
-    # def all_visit_attempt_count(self):
-    #     return HouseholdVisit.objects.filter(registering_adult_id=self.registering_adult_id).count()
+        return int(self.visit_attempt.all().count())
 
     @property
     def all_visit_attempt_count(self):
-        print ChildVisit.objects.filter(household_visit_id=self.id), " chhhhh"
         total = 0
-        print self.registering_adult_id, " reg id"
         queryset = HouseholdVisit.objects.filter(registering_adult_id=self.registering_adult_id)
-        print len(queryset), ' hhvisit'
         for hhv in queryset:
             total += int(HouseholdVisitAttempt.objects.filter(household_visit_id=hhv.id).count())
-        print total
         return total
 
 
