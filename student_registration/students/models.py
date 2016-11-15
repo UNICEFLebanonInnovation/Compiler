@@ -244,7 +244,7 @@ class Hashing(models.Model):
         choices=((str(x), x) for x in range(1, 33))
     )
     id_number = models.CharField(max_length=100L, blank=True, null=True)
-    number = models.CharField(max_length=45L, blank=True, null=True, unique=True)
+    number = models.CharField(max_length=45L, blank=True, null=True)
     sex = models.CharField(
         max_length=50,
         blank=True,
