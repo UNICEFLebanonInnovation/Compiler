@@ -222,6 +222,8 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
     visit_comment = HouseholdVisitCommentSerializer(many=True, read_only=True)
     # household_visit_team = HouseholdVisitCommentSerializer(many=True, read_only=True)
     all_visit_attempt_count = serializers.CharField(read_only=True)
+    visit_attempt_count = serializers.CharField(read_only=True)
+    child_visit_count = serializers.CharField(read_only=True)
     visit_status = serializers.CharField()
 
     def create(self, validated_data):
@@ -244,6 +246,33 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
             attemptSerializer.is_valid(raise_exception=True)
             attemptSerializer.save()
 
+        # attempts_data = allInitialDataResult['visit_attempt']
+        #
+        # for attempt in attempts_data:
+        #     attempt['id'] = (attempt['id'] if attempt['id'] else None)
+        #     attemptRecord = HouseholdVisitAttempt.objects.filter(id=(attempt['id'])).first()
+        #     attemptSerializer = VisitAttemptSerializer(attemptRecord, data=attempt)
+        #     attemptSerializer.is_valid(raise_exception=True)
+        #     attemptSerializer.save()
+        #
+        #     attempts_data = attempt['visit_attempt']
+        #
+        #     for attempt in attempts_data:
+        #         attempt['id'] = (attempt['id'] if attempt['id'] else None)
+        #         attemptRecord = HouseholdVisitAttempt.objects.filter(id=(attempt['id'])).first()
+        #         attemptSerializer = VisitAttemptSerializer(attemptRecord, data=attempt)
+        #         attemptSerializer.is_valid(raise_exception=True)
+        #         attemptSerializer.save()
+        #
+        # attempts_data = allInitialDataResult['visit_attempt']
+        #
+        # for attempt in attempts_data:
+        #     attempt['id'] = (attempt['id'] if attempt['id'] else None)
+        #     attemptRecord = HouseholdVisitAttempt.objects.filter(id=(attempt['id'])).first()
+        #     attemptSerializer = VisitAttemptSerializer(attemptRecord, data=attempt)
+        #     attemptSerializer.is_valid(raise_exception=True)
+        #     attemptSerializer.save()
+        #
 
         return instance
 
@@ -276,7 +305,9 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
             'children_visits',
             'visit_comment',
             # 'household_visit_team',
-            'all_visit_attempt_count'
+            'all_visit_attempt_count',
+            'visit_attempt_count',
+            'child_visit_count'
         )
 
 
