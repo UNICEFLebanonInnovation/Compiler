@@ -18,6 +18,7 @@ from django.core.urlresolvers import reverse
 from datetime import datetime
 
 from student_registration.eav.models import Attribute
+from django.db.models import Q
 from student_registration.hhvisit.models import (
     HouseholdVisit,
     MainReason,
@@ -183,22 +184,19 @@ class HouseholdVisitListView(LoginRequiredMixin, TemplateView):
 
         def get_context_data(self, **kwargs):
             data = []
-            locations = Location.objects.all().filter(type_id=2).order_by('name')
+            # locations = Location.objects.all().filter(type_id=2).order_by('name')
             mainreasons = MainReason.objects.order_by('name')
             specificreasons = SpecificReason.objects.order_by('name')
             servicetypes = ServiceType.objects.order_by('name')
-            location = self.request.GET.get("location", 0)
-            # if location:
-            # data = self.model.objects.filter(registering_adult__school__location_id=location).order_by('id')
-            data = self.model.objects.filter(registering_adult__school__location_id='9').order_by('id')
-
+            # location = self.request.GET.get("location", 0)
+            data = self.model.objects.filter(Q(household_visit_team__first_enumerator = self.request.user.id) | Q(household_visit_team__second_enumerator = self.request.user.id)).order_by('id')
             return {
                 'visits': data,
-                'locations': locations,
+                # 'locations': locations,
                 'mainreasons': mainreasons,
                 'specificreasons': specificreasons,
                 'servicetypes' : servicetypes,
-                'selectedLocation': int(location),
+                # 'selectedLocation': int(location),
                 'visit_form': HouseholdVisitForm
             }
 
