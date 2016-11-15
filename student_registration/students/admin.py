@@ -8,10 +8,32 @@ from import_export.admin import ImportExportModelAdmin
 
 from .models import (
     Student,
+    Hashing,
     Nationality,
     Language,
     IDType,
 )
+
+
+class HashingResource(resources.ModelResource):
+    class Meta:
+        model = Hashing
+        fields = (
+            'id',
+            'id_number',
+            'first_name',
+            'father_name',
+            'last_name',
+            'mother_fullname',
+            'sex',
+            'birthday',
+            'number',
+        )
+        export_order = ('id', )
+
+
+class HashingAdmin(ImportExportModelAdmin):
+    resource_class = HashingResource
 
 
 class NationalityResource(resources.ModelResource):
@@ -43,6 +65,7 @@ class IDTypeAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(Student)
-admin.site.register(Nationality,NationalityAdmin)
+admin.site.register(Hashing, HashingAdmin)
+admin.site.register(Nationality, NationalityAdmin)
 admin.site.register(Language)
-admin.site.register(IDType,IDTypeAdmin)
+admin.site.register(IDType, IDTypeAdmin)
