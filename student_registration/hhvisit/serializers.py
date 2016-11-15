@@ -13,6 +13,7 @@ from .models import  (
 from student_registration.registrations.serializers import (
     RegisteringAdultSerializer ,
     StudentSerializer,
+    RegistrationChildSerializer
 )
 
 from student_registration.users.models import User
@@ -149,13 +150,12 @@ class ChildVisitSerializer(serializers.ModelSerializer):
     father_name = serializers.CharField(source='student.father_name')
     last_name = serializers.CharField(source='student.last_name')
     mother_fullname = serializers.CharField(source='student.mother_fullname')
-    # school = serializers.CharField(source='student.school')
+    # school = serializers.CharField(source='')
     main_reason_id = serializers.CharField(source='main_reason.id')
     main_reason =  serializers.CharField(source='main_reason.name')
     specific_reason_id = serializers.CharField(source='specific_reason.id')
     specific_reason = serializers.CharField(source='specific_reason.name')
     child_visit_service = ChildServiceSerializer(many=True, read_only=True)
-
     household_visit_id = serializers.IntegerField()
 
     def create(self, validated_data):
@@ -180,7 +180,6 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             instance.student = student_serializer.instance
             instance.main_reason = mainreason_serializer.instance
             instance.specific_reason = specificreason_serializer.instance
-            # instance.household_visit_team = household_visit_team_serializer.instance
             instance.save()
 
         except Exception as ex:
@@ -203,7 +202,6 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             'specific_reason',
             'child_visit_service',
             'household_visit_id',
-            # 'school'
         )
 
 
@@ -220,7 +218,6 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
     visit_attempt = VisitAttemptSerializer(many=True, read_only=True)
     children_visits = ChildVisitSerializer(many=True, read_only=True)
     visit_comment = HouseholdVisitCommentSerializer(many=True, read_only=True)
-    # household_visit_team = HouseholdVisitCommentSerializer(many=True, read_only=True)
     all_visit_attempt_count = serializers.CharField(read_only=True)
     visit_attempt_count = serializers.CharField(read_only=True)
     child_visit_count = serializers.CharField(read_only=True)
@@ -303,8 +300,7 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
             'secondary_phone',
             'visit_attempt',
             'children_visits',
-            'visit_comment',
-            # 'household_visit_team',
+            'visit_comment', 
             'all_visit_attempt_count',
             'visit_attempt_count',
             'child_visit_count'
