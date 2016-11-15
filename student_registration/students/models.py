@@ -202,11 +202,47 @@ class Student(Person):
 
 class Hashing(models.Model):
 
+    MONTHS = Choices(
+        ('1', _('January')),
+        ('2', _('February')),
+        ('3', _('March')),
+        ('4', _('April')),
+        ('5', _('May')),
+        ('6', _('June')),
+        ('7', _('July')),
+        ('8', _('August')),
+        ('9', _('September')),
+        ('10', _('October')),
+        ('11', _('November')),
+        ('12', _('December')),
+    )
+
     first_name = models.CharField(max_length=64L, blank=True, null=True)
     last_name = models.CharField(max_length=64L, blank=True, null=True)
     father_name = models.CharField(max_length=64L, blank=True, null=True)
     mother_fullname = models.CharField(max_length=64L, blank=True, null=True)
     birthday = models.CharField(max_length=64L, blank=True, null=True)
+    birthday_year = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=0,
+        choices=((str(x), x) for x in range(1930, 2051))
+    )
+    birthday_month = models.CharField(
+        max_length=2,
+        blank=True,
+        null=True,
+        default=0,
+        choices=MONTHS
+    )
+    birthday_day = models.CharField(
+        max_length=2,
+        blank=True,
+        null=True,
+        default=0,
+        choices=((str(x), x) for x in range(1, 33))
+    )
     id_number = models.CharField(max_length=100L, blank=True, null=True)
     number = models.CharField(max_length=45L, blank=True, null=True)
     sex = models.CharField(

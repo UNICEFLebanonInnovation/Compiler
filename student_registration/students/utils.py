@@ -5,7 +5,10 @@ def generate_id(
         father_name,
         last_name,
         mother_full_name,
-        gender
+        gender,
+        birthday_day,
+        birthday_month,
+        birthday_year
     ):
     """
     Unique Number Proposal:
@@ -35,20 +38,22 @@ def generate_id(
         full_name_hash = '{0:0>4}'.format(int(hashlib.sha1(full_name.encode('UTF-8')).hexdigest(), 16) % 10000)
 
         # take the hash of mother name and convert to integer, zero padding to 4 digits
-        mother_name_hash = '{0:0>3}'.format(int(hashlib.sha1(mother_full_name.encode('UTF-8')).hexdigest(), 16) % 1000)
+        mother_name_hash = '{0:0>4}'.format(int(hashlib.sha1(mother_full_name.encode('UTF-8')).hexdigest(), 16) % 10000)
 
         # take the first character of the gender to denote sex
         gender_first_char = gender[:1]
 
         # arrange in order
-        result = '{fullname_char}{mothername_char}{fullname_hash}{mothername_hash}{gender_char}'.format(
+        result = '{fullname_char}{mothername_char}{fullname_hash}{mothername_hash}{gender_char}{day}{month}{year}'.format(
             fullname_char=full_name_char_count,
             mothername_char=mother_name_char_count,
             fullname_hash=full_name_hash,
             mothername_hash=mother_name_hash,
             gender_char=gender_first_char,
+            day=birthday_day,
+            month=birthday_month,
+            year=birthday_year
         )
-        print len(result)
         return result
 
     except Exception as exp:

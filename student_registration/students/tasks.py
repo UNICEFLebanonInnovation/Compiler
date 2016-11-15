@@ -73,8 +73,10 @@ def generate_hashing_unique_number():
     items = Hashing.objects.all()
     for item in items:
         try:
+            birthday = item.birthday.replace("-","")
             item.number = generate_id(item.first_name, item.father_name, item.last_name,
-                                         item.mother_fullname, item.sex)
+                                      item.mother_fullname, item.sex,
+                                      birthday, "", "")
             print item.number, item.id
             item.save()
         except Exception as ex:
