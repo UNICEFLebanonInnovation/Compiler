@@ -45,27 +45,27 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ChildServiceSerializer(serializers.ModelSerializer):
 
-    service_type_id = serializers.CharField(source='service_type.id')
-    service_type = serializers.CharField(source='service_type.name')
+    service_type_id = serializers.IntegerField()
+    service_type = serializers.CharField(source='service_type.name', read_only=True)
 
     child_visit_id = serializers.IntegerField()
 
-    def create(self, validated_data):
-
-        service_type_data = validated_data.pop('service_type', None)
-        service_type_serializer = ServiceTypeSerializer(data=service_type_data)
-        service_type_serializer.is_valid(raise_exception=True)
-        service_type_serializer.instance = service_type_serializer.save()
-
-        try:
-            instance = ChildService.objects.create(**validated_data)
-            instance.student = service_type_serializer.instance
-            instance.save()
-
-        except Exception as ex:
-            raise serializers.ValidationError({'ChildService instance': ex.message})
-
-        return instance
+    # def create(self, validated_data):
+    #
+    #     service_type_data = validated_data.pop('service_type', None)
+    #     service_type_serializer = ServiceTypeSerializer(data=service_type_data)
+    #     service_type_serializer.is_valid(raise_exception=True)
+    #     service_type_serializer.instance = service_type_serializer.save()
+    #
+    #     try:
+    #         instance = ChildService.objects.create(**validated_data)
+    #         instance.student = service_type_serializer.instance
+    #         instance.save()
+    #
+    #     except Exception as ex:
+    #         raise serializers.ValidationError({'ChildService instance': ex.message})
+    #
+    #     return instance
 
     class Meta:
         model = ChildService
@@ -123,16 +123,16 @@ class HouseholdVisitCommentSerializer(serializers.ModelSerializer):
 
     household_visit_id = serializers.IntegerField()
 
-    def create(self, validated_data):
-
-        try:
-            instance = HouseholdVisitComment.objects.create(**validated_data)
-            instance.save()
-
-        except Exception as ex:
-            raise serializers.ValidationError({'HouseholdVisitComment instance': ex.message})
-
-        return instance
+    # def create(self, validated_data):
+    #
+    #     try:
+    #         instance = HouseholdVisitComment.objects.create(**validated_data)
+    #         instance.save()
+    #
+    #     except Exception as ex:
+    #         raise serializers.ValidationError({'HouseholdVisitComment instance': ex.message})
+    #
+    #     return instance
 
     class Meta:
         model = HouseholdVisitComment
@@ -145,16 +145,16 @@ class HouseholdVisitCommentSerializer(serializers.ModelSerializer):
 
 class ChildVisitSerializer(serializers.ModelSerializer):
 
-    student_id = serializers.CharField(source='student.id')
-    first_name = serializers.CharField(source='student.first_name')
-    father_name = serializers.CharField(source='student.father_name')
-    last_name = serializers.CharField(source='student.last_name')
-    mother_fullname = serializers.CharField(source='student.mother_fullname')
-    # school = serializers.CharField(source='')
-    main_reason_id = serializers.CharField(source='main_reason.id')
-    main_reason =  serializers.CharField(source='main_reason.name')
-    specific_reason_id = serializers.CharField(source='specific_reason.id')
-    specific_reason = serializers.CharField(source='specific_reason.name')
+    student_id = serializers.CharField(source='student.id', read_only=True)
+    first_name = serializers.CharField(source='student.first_name', read_only=True)
+    father_name = serializers.CharField(source='student.father_name', read_only=True)
+    last_name = serializers.CharField(source='student.last_name', read_only=True)
+    mother_fullname = serializers.CharField(source='student.mother_fullname', read_only=True)
+    child_school = serializers.CharField(read_only=True)
+    main_reason_id = serializers.IntegerField()
+    main_reason =  serializers.CharField(source='main_reason.name', read_only=True)
+    specific_reason_id = serializers.IntegerField()
+    specific_reason = serializers.CharField(source='specific_reason.name', read_only=True)
     child_visit_service = ChildServiceSerializer(many=True, read_only=True)
     household_visit_id = serializers.IntegerField()
 
@@ -202,6 +202,8 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             'specific_reason',
             'child_visit_service',
             'household_visit_id',
+            'child_enrolled_in_another_school',
+            'child_school'
         )
 
 
@@ -239,37 +241,56 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
 
             attempt['id'] = (attempt['id'] if attempt['id'] else None)
             attemptRecord = HouseholdVisitAttempt.objects.filter(id=(attempt['id'])).first()
+
+            if not attempt['id']:
+                attempt.pop('id')
+
             attemptSerializer = VisitAttemptSerializer(attemptRecord, data=attempt)
             attemptSerializer.is_valid(raise_exception=True)
             attemptSerializer.save()
 
-        # attempts_data = allInitialDataResult['visit_attempt']
-        #
-        # for attempt in attempts_data:
-        #     attempt['id'] = (attempt['id'] if attempt['id'] else None)
-        #     attemptRecord = HouseholdVisitAttempt.objects.filter(id=(attempt['id'])).first()
-        #     attemptSerializer = VisitAttemptSerializer(attemptRecord, data=attempt)
-        #     attemptSerializer.is_valid(raise_exception=True)
-        #     attemptSerializer.save()
-        #
-        #     attempts_data = attempt['visit_attempt']
-        #
-        #     for attempt in attempts_data:
-        #         attempt['id'] = (attempt['id'] if attempt['id'] else None)
-        #         attemptRecord = HouseholdVisitAttempt.objects.filter(id=(attempt['id'])).first()
-        #         attemptSerializer = VisitAttemptSerializer(attemptRecord, data=attempt)
-        #         attemptSerializer.is_valid(raise_exception=True)
-        #         attemptSerializer.save()
-        #
-        # attempts_data = allInitialDataResult['visit_attempt']
-        #
-        # for attempt in attempts_data:
-        #     attempt['id'] = (attempt['id'] if attempt['id'] else None)
-        #     attemptRecord = HouseholdVisitAttempt.objects.filter(id=(attempt['id'])).first()
-        #     attemptSerializer = VisitAttemptSerializer(attemptRecord, data=attempt)
-        #     attemptSerializer.is_valid(raise_exception=True)
-        #     attemptSerializer.save()
-        #
+        children_data = allInitialDataResult['children_visits']
+
+        for child_data in children_data:
+            child_data['id'] = (child_data['id'] if child_data['id'] else None)
+            childRecord = ChildVisit.objects.filter(id=(child_data['id'])).first()
+
+            if not child_data['id']:
+                child_data.pop('id')
+
+            childSerializer = ChildVisitSerializer(childRecord, data=child_data )
+            childSerializer.is_valid(raise_exception=True)
+            childSerializer.save()
+
+            services_data = child_data['child_visit_service']
+
+            for service_data in services_data:
+                service_data['id'] = (service_data['id'] if service_data['id'] else None)
+
+                serviceRecord = ChildService.objects.filter(id=(service_data['id'])).first()
+
+                if not service_data['id']:
+                    service_data.pop('id')
+
+                serviceSerializer = ChildServiceSerializer(serviceRecord, data=service_data)
+
+                serviceSerializer.is_valid(raise_exception=True)
+                serviceSerializer.save()
+
+
+        comments_data = allInitialDataResult['visit_comment']
+
+        for comment_data in comments_data:
+            comment_data['id'] = (comment_data['id'] if comment_data['id'] else None)
+            commentRecord = HouseholdVisitComment.objects.filter(id=(comment_data['id'])).first()
+
+            if not comment_data['id']:
+                comment_data.pop('id')
+
+            commentSerializer = HouseholdVisitCommentSerializer(commentRecord, data=comment_data)
+            commentSerializer.is_valid(raise_exception=True)
+            commentSerializer.save()
+
 
         return instance
 
@@ -300,7 +321,7 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
             'secondary_phone',
             'visit_attempt',
             'children_visits',
-            'visit_comment', 
+            'visit_comment',
             'all_visit_attempt_count',
             'visit_attempt_count',
             'child_visit_count'
