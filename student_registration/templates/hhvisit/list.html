@@ -189,17 +189,10 @@
                function()
                {
                   SaveVisit();
-               }
-             );
 
+                  $("#hhForm").hide();
 
-            $(document).on
-            (
-               'click',
-               '#hhAddAttemptButton',
-               function()
-               {
-                  AddAttemptEmptyRow();
+                  $("#hhList").show();
                }
              );
 
@@ -215,10 +208,6 @@
                   ShowChildForm(block);
                }
             );
-
-
-
-
         });
 
  var slyInitialised = false;
@@ -302,10 +291,11 @@ function CheckInitialiseSly()
            (
               function(entry)
               {
-                 AddAttemptRow(entry);
+                 AddAttemptRow(entry, true);
                  AddAttemptDateRow(entry);
               }
            );
+           AddAttemptEmptyRow();
 
 
            $("#household-visit-child-table tbody").empty();
@@ -323,9 +313,10 @@ function CheckInitialiseSly()
            (
               function(entry)
               {
-                 AddCommentRow(entry);
+                 AddCommentRow(entry, true);
               }
            );
+           AddCommentEmptyRow();
 
 
         }
@@ -339,28 +330,40 @@ function CheckInitialiseSly()
 
         function FormatJSONDate(date)
         {
-           var month = ("0" + (date.getMonth() + 1)).slice(-2);
+           //var month = ("0" + (date.getMonth() + 1)).slice(-2);
 
-           var day = ("0" + date.getDate()).slice(-2);
+           //var day = ("0" + date.getDate()).slice(-2);
 
-           return date.getFullYear()+"-"+month+"-"+day+"T00:00:00Z"
+           //return date.getFullYear()+"-"+month+"-"+day+"T00:00:00Z"
+           return date;
         }
 
 
         function AddAttemptEmptyRow()
         {
-           AddAttemptRow({id:'',date:(new Date()).toString(),household_found:false,comment:''});
+           AddAttemptRow({id:'',date:(new Date()).toString(),household_found:false,comment:''}, false);
         }
 
-        function AddAttemptRow(entry)
+        function AddAttemptRow(entry, disabled)
         {
            var attemptIDCell = "<td style = \"display:none\">"+(entry.id)+"</td>";
 
            var dateCell = "<td>"+FormatDate(entry.date)+"</td>";
 
-           var checkBoxCell = "<td><input type=\"checkbox\" name=\"found\" value=\"found\" "+(entry.household_found?"checked":"")+" /></td>";
+           var checkBoxCell;
 
-           var noteCell = "<td><textarea name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
+           var noteCell;
+
+           if(disabled)
+           {
+             checkBoxCell = "<td><input disabled type=\"checkbox\" name=\"found\" value=\"found\" "+(entry.household_found?"checked":"")+" /></td>";
+             noteCell = "<td><textarea disabled name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
+           }
+           else
+           {
+             checkBoxCell = "<td><input type=\"checkbox\" name=\"found\" value=\"found\" "+(entry.household_found?"checked":"")+" /></td>";
+             noteCell = "<td><textarea name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
+           }
 
            $("#household-visit-attempt-table tbody").append
            (
@@ -386,13 +389,13 @@ function CheckInitialiseSly()
 
            var childNameCell = "<td>"+(entry.first_name +' '+entry.father_name+' '+entry.last_name)+"</td>";
 
-          // var schoolCell = "<td>"+(entry.school)+"</td>";
+           var schoolCell = "<td>"+(entry.child_school)+"</td>";
 
            //var gradeCell = "<td>"+(entry.grade)+"</td>";
 
            //var ageCell = "<td>"+(entry.age)+"</td>";
 
-           var schoolCell = "<td>Al Borj School</td>";
+           //var schoolCell = "<td>Al Borj School</td>";
            var gradeCell = "<td>Grade 1</td>";
            var ageCell = "<td>7</td>";
 
@@ -403,6 +406,12 @@ function CheckInitialiseSly()
            (
               "<tr class = \"child-row-class\" >"+childIDCell+childNameCell+schoolCell+gradeCell+ageCell+mainReasonCell+subReasonCell+"</tr>"
            );
+        }
+
+
+        function AddServiceEmptyRow(editForm)
+        {
+           AddServiceRow(editForm,{id:'',service_type_id:null,service_provider:''});
         }
 
         function AddServiceRow(editForm, entry)
@@ -421,15 +430,24 @@ function CheckInitialiseSly()
            updateDropDownValue(editForm.find("tr:last-child td:nth-child(2) select"), entry.service_type_id );
         }
 
+        function AddCommentEmptyRow(entry)
+        {
+           AddCommentRow({id:'',date:(new Date()).toString(),comment:''}, false);
+        }
 
-        function AddCommentRow(entry)
+        function AddCommentRow(entry, disabled)
         {
            var attemptIDCell = "<td style = \"display:none\">"+(entry.id)+"</td>";
-
            var dateCell = "<td>"+FormatDate(entry.date)+"</td>";
-
-           var noteCell = "<td><textarea name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
-
+           var noteCell ;
+           if(disabled)
+           {
+           noteCell = "<td><textarea disabled name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
+           }
+           else
+           {
+           noteCell = "<td><textarea name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
+           }
            $("#household-visit-comment-table tbody").append
            (
               "<tr>"+attemptIDCell+dateCell+noteCell+"</tr>"
@@ -462,7 +480,7 @@ function CheckInitialiseSly()
                           row.find("td:nth-child(7)").html(specificReasonID);
 
                           var childID = row.find("td:first-child").text();
-                          var childServiceData = CreateChildServiceData(editForm);
+                          var childServiceData = CreateChildServiceData(childID, editForm);
 
                           UpdateChildVisitServiceData( childID, childServiceData);
                        },
@@ -511,6 +529,19 @@ function CheckInitialiseSly()
                  }
               );
            }
+
+
+            editForm.on
+            (
+               'click',
+               '[name=addServiceButton]',
+               function()
+               {
+                  alert("xxx");
+                  AddServiceEmptyRow(editForm);
+                  alert("yyy");
+               }
+             );
 
         }
 
@@ -646,6 +677,8 @@ function CheckInitialiseSly()
 
                  visitCommentRecord.comment = trElement.find('td:nth-child(3) textarea').val();
 
+                 visitCommentRecord.household_visit_id = visitDataRecord.id;
+
                  visitCommentData.push(visitCommentRecord);
               }
            );
@@ -670,7 +703,9 @@ function CheckInitialiseSly()
 
                  childRecord.main_reason_id = trElement.find('td:nth-child(6)').html();
 
-                 childRecord.specific_reason_id = trElement.find('td:nth-child(7)').html();
+                 childRecord.specific_reason_id = trElement.find('td:nth-child(7)').html()
+
+                 childRecord.household_visit_id = visitDataRecord.id;
 
                  childRecord.child_visit_service = GetChildVisitServiceData(childRecord.id);
 
@@ -684,7 +719,7 @@ function CheckInitialiseSly()
         }
 
 
-        function CreateChildServiceData(editForm)
+        function CreateChildServiceData(childVisitID,editForm)
         {
            childServiceData = [];
 
@@ -705,6 +740,8 @@ function CheckInitialiseSly()
                  childServiceRecord.service_type = dropDownElement.find('option[value="'+childServiceRecord.service_type_id+'"]').text().trim();
 
                  childServiceRecord.service_provider = trElement.find('td:nth-child(3) input').val();
+
+                 childServiceRecord.child_visit_id = childVisitID;
 
                  childServiceData.push(childServiceRecord);
               }

@@ -101,7 +101,6 @@
 
           </tbody>
       </table>
-                        <button id = "hhAddAttemptButton" >Add</button>
                       </li>
                   {# 3 Slide children data #}
                       <li class="framebox">
@@ -141,18 +140,22 @@
                                        data-search="true"
                                        cellspacing="0"
                                        width="100%">
-          <thead>
-              <tr>
-                  <th style = "display:none">ID</th>
-                  <th>Date</th>
-                  <th>Comment</th>
-              </tr>
-          </thead>
-          <tbody>
+                          <thead>
+                              <tr>
+                                  <th style = "display:none">ID</th>
+                                  <th>Date</th>
+                                  <th>Comment</th>
+                              </tr>
+                          </thead>
+                          <tbody>
 
-          </tbody>
-      </table>
-                        <button id = "hhAddCommentButton" >Add</button>
+                          </tbody>
+                        </table>
+                        <br/>
+                        <br/>
+                      <button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left;">
+                      {% trans "Save household visit" %}
+                      </button>
                       </li>
               </ul>
           </div>
@@ -170,9 +173,9 @@
         <button class="btn btn-warning" type="button" id="hhCloseButton" style="float:left;">
           {% trans "Cancel household visit" %}
         </button>
-        <button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left;">
-          {% trans "Save household visit" %}
-        </button>
+        <!--<button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left;">-->
+          <!--{% trans "Save household visit" %}-->
+        <!--</button>-->
         <button class="btn btn-primary .prev" type="button" id="previousButton">
             <i class="icon-next-sign icon-white"></i> {% trans "previous" %}
         </button>
@@ -184,9 +187,9 @@
         <button class="btn btn-warning" type="button" id="hhCloseButton" style="float:right;">
             {% trans "Cancel household visit" %}
         </button>
-        <button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left;">
-          {% trans "Save household visit" %}
-        </button>
+        <!--<button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left;">-->
+          <!--{% trans "Save household visit" %}-->
+        <!--</button>-->
         <button class="btn btn-primary .prev" type="button" id="previousButton">
             <i class="icon-prev-sign icon-white"></i> {% trans "previous" %}
         </button>
