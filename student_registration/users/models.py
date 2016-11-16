@@ -40,17 +40,11 @@ class User(AbstractUser):
     )
     locations = models.ManyToManyField(Location, blank=True)
     schools = models.ManyToManyField(School, blank=True)
-    app_password = models.CharField(
-        max_length=20,
-        null=True,
-        blank=True
-    )
 
     def __str__(self):
         return self.username
 
     def update_password(self, password):
-        self.app_password = password
         self.set_password(password)
 
     def get_absolute_url(self):
