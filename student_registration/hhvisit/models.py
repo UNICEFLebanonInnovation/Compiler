@@ -11,8 +11,10 @@ from student_registration.students.models import (
 )
 from student_registration.registrations.models import (
     RegisteringAdult,
+    Registration
 )
 from student_registration.users.models import User
+from student_registration.schools.models import  School
 
 
 class ServiceType(models.Model):
@@ -145,7 +147,7 @@ class ChildVisit(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
-    child_enrolled_in_another_school = models.BooleanField(blank=True, default=True)
+    child_enrolled_in_another_school = models.BooleanField(default=False)
     main_reason = models.ForeignKey(
         MainReason,
         blank=False, null=True,
@@ -167,6 +169,18 @@ class ChildVisit(TimeStampedModel):
 
     def __unicode__(self):
         return self.student.first_name
+
+    # @property
+    # def visit_attempt_count(self):
+    #     return int(self.visit_attempt.all().count())
+
+    @property
+    def child_school(self):
+        schoolid = Registration.objects.filter(student_id=self.student_id).values('school_id')[0]['school_id'];
+        # print(schoolid);
+        # return  Registration.objects.filter(student_id=self.student_id).values_list('school_id', flat=True).order_by('id');
+        # Registration.objects.filter(student_id=self.student_id).values('school_id')[0]['school_id'];
+        return School.objects.filter(id = schoolid).values('name')[0]['name'];
 
 
 class ChildService(models.Model):
