@@ -1,24 +1,23 @@
 
 
 def generate_id(
-        first_name,
-        father_name,
-        last_name,
-        mother_full_name,
-        gender,
-        birthday_day,
-        birthday_month,
-        birthday_year
-    ):
+            first_name,
+            father_name,
+            last_name,
+            mother_full_name,
+            gender,
+            birthday_day,
+            birthday_month,
+            birthday_year
+        ):
     """
     Unique Number Proposal:
     full name total char number
     mother full name total char number
     Concatenate hash number for: first name, father name and last name
     Concatenate hash number for: mother first name and mother last name
-    Sum of char code for: first name, father name and last name
+    Concatenate hash number for birthday: day, month, year
     Gender type first letter
-    Birthday
 
     :return:
     """
@@ -50,13 +49,13 @@ def generate_id(
         birthday_hash = '{0:0>3}'.format(int(hashlib.sha1(birthday.encode()).hexdigest(), 16) % 1000)
 
         # arrange in order
-        result = '{fullname_char}{mothername_char}{fullname_hash}{mothername_hash}{gender_char}{birthday}'.format(
+        result = '{fullname_char}{mothername_char}{fullname_hash}{mothername_hash}{birthday}{gender_char}'.format(
             fullname_char=full_name_char_count,
             mothername_char=mother_name_char_count,
             fullname_hash=full_name_hash,
             mothername_hash=mother_name_hash,
-            gender_char=gender_first_char,
-            birthday=birthday_hash
+            birthday=birthday_hash,
+            gender_char=gender_first_char
         )
         return result
 
