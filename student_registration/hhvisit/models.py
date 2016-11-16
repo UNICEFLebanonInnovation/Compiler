@@ -14,7 +14,10 @@ from student_registration.registrations.models import (
     Registration
 )
 from student_registration.users.models import User
-from student_registration.schools.models import  School
+from student_registration.schools.models import (
+    School,
+    Grade
+)
 
 
 class ServiceType(models.Model):
@@ -170,17 +173,20 @@ class ChildVisit(TimeStampedModel):
     def __unicode__(self):
         return self.student.first_name
 
-    # @property
-    # def visit_attempt_count(self):
-    #     return int(self.visit_attempt.all().count())
 
     @property
     def child_school(self):
         schoolid = Registration.objects.filter(student_id=self.student_id).values('school_id')[0]['school_id'];
-        # print(schoolid);
         # return  Registration.objects.filter(student_id=self.student_id).values_list('school_id', flat=True).order_by('id');
-        # Registration.objects.filter(student_id=self.student_id).values('school_id')[0]['school_id'];
-        return School.objects.filter(id = schoolid).values('name')[0]['name'];
+        if not (schoolid is None): return School.objects.filter(id = schoolid).values('name')[0]['name'];
+        else: return ''
+        return
+
+    @property
+    def child_grade(self):
+        gradeid = Registration.objects.filter(student_id=self.student_id).values('grade_id')[0]['grade_id'];
+        if not (gradeid is None): return Grade.objects.filter(id = gradeid).values('name')[0]['name'];
+        else: return ''
 
 
 class ChildService(models.Model):

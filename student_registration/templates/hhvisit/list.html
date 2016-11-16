@@ -225,14 +225,18 @@ function CheckInitialiseSly()
 
       $("#previousButton").click(function()
       {
-        //alert("prev");
         onePerFrameSly.prev();
       });
 
       $("#nextButton").click(function()
       {
-         //alert("test");
+         if(onePerFrameSly.rel.activeItem == 1)
+         {
          onePerFrameSly.next();
+         }
+         else {
+         onePerFrameSly.next();
+         }
       });
    }
 
@@ -391,12 +395,9 @@ function CheckInitialiseSly()
 
            var schoolCell = "<td>"+(entry.child_school)+"</td>";
 
-           //var gradeCell = "<td>"+(entry.grade)+"</td>";
+           var gradeCell = "<td>"+(entry.child_grade)+"</td>";
 
            //var ageCell = "<td>"+(entry.age)+"</td>";
-
-           //var schoolCell = "<td>Al Borj School</td>";
-           var gradeCell = "<td>Grade 1</td>";
            var ageCell = "<td>7</td>";
 
            var mainReasonCell = "<td style = \"display:none;\">"+(entry.main_reason_id)+"</td>";
@@ -537,9 +538,7 @@ function CheckInitialiseSly()
                '[name=addServiceButton]',
                function()
                {
-                  alert("xxx");
                   AddServiceEmptyRow(editForm);
-                  alert("yyy");
                }
              );
 
