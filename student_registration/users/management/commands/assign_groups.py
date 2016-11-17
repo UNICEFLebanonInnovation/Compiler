@@ -8,9 +8,6 @@ from student_registration.users.tasks import *
 class Command(BaseCommand):
     help = 'Assign groups to users'
 
-    def add_arguments(self, parser):
-        parser.add_argument('groups', nargs='+', type=str)
-
     def handle(self, *args, **options):
-        for group in options['groups']:
-            assign_group(group)
+        assign_groups_to_2nd_shift_schools()
+        assign_groups_to_2nd_shift_directors()

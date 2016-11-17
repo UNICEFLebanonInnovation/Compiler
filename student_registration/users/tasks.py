@@ -23,16 +23,30 @@ def generate_passwords(group):
 
 
 @app.task
-def assign_group(group):
+def assign_groups_to_2nd_shift_schools():
     from student_registration.users.models import User
 
-    users = User.objects.filter(first_name__in=['school', 'director'])
-    # users = User.objects.filter(first_name__in=['school']).exclude(groups__id=group)
-    print len(users)
+    users = User.objects.filter(first_name='school')
     for user in users:
         try:
-            user.groups.add(group)
-            user.save()
+            for group in (1, 4, 8):
+                user.groups.add(group)
+                user.save()
+        except Exception as ex:
+            print ex
+            pass
+
+
+@app.task
+def assign_groups_to_2nd_shift_directors():
+    from student_registration.users.models import User
+
+    users = User.objects.filter(first_name='director')
+    for user in users:
+        try:
+            for group in (1, 4, 9):
+                user.groups.add(group)
+                user.save()
         except Exception as ex:
             print ex
             pass
