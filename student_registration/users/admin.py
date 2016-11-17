@@ -50,6 +50,16 @@ class UserAdmin(ImportExportModelAdmin):
         'school',
         'location',
     )
+    # fieldsets = (
+    #     ('School', {
+    #         'classes': ('collapse',),
+    #         'fields': ('school', 'schools'),
+    #     }),
+    #     ('Location', {
+    #         'classes': ('collapse',),
+    #         'fields': ('location', 'locations'),
+    #     }),
+    # )
 
 
 admin.site.register(User, UserAdmin)
