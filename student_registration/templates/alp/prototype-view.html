@@ -29,10 +29,10 @@
             <input type="hidden" name="school" value="{{ school.id }}" id="school" class="" />
         {% endif %}
         </td>
-        <td>{% if line.student %}{{ line.student.first_name }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.father_name }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.last_name }}{% endif %}</td>
-        <td>{% if line.student %}{% trans line.student.sex %}{% endif %}</td>
+        <td>{% if student %}{{ student.first_name }}{% endif %}</td>
+        <td>{% if student %}{{ student.father_name }}{% endif %}</td>
+        <td>{% if student %}{{ student.last_name }}{% endif %}</td>
+        <td>{% if student %}{% trans student.sex %}{% endif %}</td>
         {% if role == "CERD" %}
         <td>
             <select name="level" id="level" class="outreach-field-p note-indicator" itemscope="{{ line.id }}">
@@ -44,24 +44,24 @@
         </td>
         <td>
             <input type="text" name="exam_result_arabic" id="exam_result_arabic" value="{% if line.exam_result_arabic %}{{ line.exam_result_arabic }}{% else %}0{% endif %}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="6" />
-            <span class="note-indicator-value">{% if line.level %}/{{ line.level.note }}{% endif %}</span>
+            <span class="note-indicator-value">{% if level %}/{{ level.note }}{% endif %}</span>
         </td>
         <td>
             <input type="text" name="exam_result_language" id="exam_result_language" value="{% if line.exam_result_language %}{{ line.exam_result_language }}{% else %}0{% endif %}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="6" />
-            <span class="note-indicator-value">{% if line.level %}/{{ line.level.note }}{% endif %}</span>
+            <span class="note-indicator-value">{% if level %}/{{ level.note }}{% endif %}</span>
         </td>
         <td>
             <input type="text" name="exam_result_math" id="exam_result_math" value="{% if line.exam_result_math %}{{ line.exam_result_math }}{% else %}0{% endif %}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="6" />
-            <span class="note-indicator-value">{% if line.level %}/{{ line.level.note }}{% endif %}</span>
+            <span class="note-indicator-value">{% if level %}/{{ level.note }}{% endif %}</span>
         </td>
         <td>
             <input type="text" name="exam_result_science" id="exam_result_science" value="{% if line.exam_result_science %}{{ line.exam_result_science }}{% else %}0{% endif %}" class="outreach-field-p exam-note" itemscope="{{ line.id }}" maxlength="5" size="6" />
-            <span class="note-indicator-value">{% if line.level %}/{{ line.level.note }}{% endif %}</span>
+            <span class="note-indicator-value">{% if level %}/{{ level.note }}{% endif %}</span>
         </td>
         <td>
             <input type="text" name="" class="exam_total_{{ line.id }}" readonly="readonly"
                    itemscope="{{ line.id }}" id="exam_total" value="{{ line.exam_total }}" disabled="disabled" size="3" />
-            <span class="note-indicator-total">{% if line.level %}/{{ line.level.note|multiply:4 }}{% endif %}</span>
+            <span class="note-indicator-total">{% if level %}/{{ level.note|multiply:4 }}{% endif %}</span>
         </td>
         <td>
             <select name="exam_corrector_arabic" id="exam_corrector_arabic" class="outreach-field-p" itemscope="{{ line.id }}" style="width: 70px;">
@@ -104,15 +104,10 @@
             </select>
         </td>
         {% endif %}
-        <td>{% if line.student %}{{ line.student.birthday_year }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.birthday_month }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.birthday_day }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.calc_age }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.nationality_name }}{% endif %}</td>
         {% if role == "ALP_DIRECTOR" %}
         <td>
             <select name="registered_in_level" id="registered_in_level" class="outreach-field-p" itemscope="{{ line.id }}">
-                <option value="">-------</option>
+                <option value="">{% trans "Level" %}</option>
                 {% for item in informal_educations %}
                     <option value="{{ item.id }}" {% if line.registered_in_level_id == item.id %}selected{% endif %}>{{ item.name }}</option>
                 {% endfor %}
@@ -120,25 +115,30 @@
         </td>
         <td>
             <select name="section" id="section" class="outreach-field-p" itemscope="{{ line.id }}">
-                <option value="">-------</option>
+                <option value="">{% trans "Section" %}</option>
                 {% for item in sections %}
                     <option value="{{ item.id }}" {% if line.section_id == item.id %}selected{% endif %}>{{ item.name }}</option>
                 {% endfor %}
             </select>
         </td>
         {% endif %}
-        <td>{% if line.student %}{{ line.student.mother_fullname }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.mother_nationality.name }}{% endif %}</td>
+        <td>{% if student %}{{ student.birthday_year }}{% endif %}</td>
+        <td>{% if student %}{{ student.birthday_month }}{% endif %}</td>
+        <td>{% if student %}{{ student.birthday_day }}{% endif %}</td>
+        <td>{% if student %}{{ student.calc_age }}{% endif %}</td>
+        <td>{% if not role == "CERD" %}{% if student %}{{ student.nationality_name }}{% endif %}{% endif %}</td>
+        <td>{% if student %}{{ student.mother_fullname }}{% endif %}</td>
+        <td>{% if not role == "CERD" %}{% if student %}{{ student.mother_nationality }}{% endif %}{% endif %}</td>
         <td>{% if line.registered_in_unhcr %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
-        <td>{% if line.student and line.student.id_type %}{{ line.student.id_type.name }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.id_number }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.address }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.phone }}{% endif %}</td>
-        <td>{% if line.student %}{{ line.student.phone_prefix }}{% endif %}</td>
-        <td>{% if line.last_education_level %}{{ line.last_education_level.name }}{% endif %}</td>
+        <td>{% if not role == "CERD" %}{% if student and student.id_type %}{{ student.id_type.name }}{% endif %}{% endif %}</td>
+        <td>{% if student %}{{ student.id_number }}{% endif %}</td>
+        <td>{% if student %}{{ student.address }}{% endif %}</td>
+        <td>{% if student %}{{ student.phone }}{% endif %}</td>
+        <td>{% if student %}{{ student.phone_prefix }}{% endif %}</td>
+        <td>{% if not role == "CERD" %}{% if line.last_education_level %}{{ line.last_education_level.name }}{% endif %}{% endif %}</td>
         <td>{{ line.last_education_year }}</td>
         <td>{% if line.participated_in_alp %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
-        <td>{% if line.last_informal_edu_round %}{{ line.last_informal_edu_round.name }}{% endif %}</td>
-        <td>{% if line.last_informal_edu_level %}{{ line.last_informal_edu_level.name }}{% endif %}</td>
-        <td>{% if line.last_informal_edu_final_result %}{{ line.last_informal_edu_final_result.name }}{% endif %}</td>
+        <td>{% if not role == "CERD" %}{% if line.last_informal_edu_round %}{{ line.last_informal_edu_round.name }}{% endif %}{% endif %}</td>
+        <td>{% if not role == "CERD" %}{% if line.last_informal_edu_level %}{{ line.last_informal_edu_level.name }}{% endif %}{% endif %}</td>
+        <td>{% if not role == "CERD" %}{% if line.last_informal_edu_final_result %}{{ line.last_informal_edu_final_result.name }}{% endif %}{% endif %}</td>
     </tr>
