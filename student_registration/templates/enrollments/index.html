@@ -405,7 +405,7 @@
             $(document).on('click', '#registration-synchro', function(){
                 synchro_result = true;
                 $('.alert').hide();
-                if(navigator.onLine == false) {
+                if(navigator.onLine) {
                     $(".loader").show();
                     synchronize_data(true);
                 }else{
