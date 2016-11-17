@@ -29,6 +29,7 @@ class OutreachAdmin(ImportExportModelAdmin):
     search_fields = (
         'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
         'school__name', 'school__number', 'student__id_number', 'school__location__name', 'level__name',
+        'owner__username'
     )
 
     def caza(self, obj):
