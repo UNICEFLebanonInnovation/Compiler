@@ -1146,3 +1146,6 @@ msgstr "تم تسجيل التلميذ في"
 
 msgid "Exam not received from this school"
 msgstr "لا يوجد مسابقة لهذا التلميذ"
+
+msgid "Not enrolled in this school"
+msgstr "لم يتم تسجيله في هذه المدرسة"
