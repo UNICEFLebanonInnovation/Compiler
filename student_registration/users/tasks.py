@@ -11,10 +11,10 @@ def generate_passwords(group):
     for user in users:
         try:
             password = user.username
-            # if user.phone_number:
-            #     password = password+user.phone_number[:2]
-            if user.email:
-                password = password+user.email[:2]
+            if user.phone_number:
+                password = password+user.phone_number[:2]
+            # if user.email:
+            #     password = password+user.email[:2]
             user.update_password(password)
             user.save()
         except Exception as ex:
