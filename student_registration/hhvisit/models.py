@@ -76,8 +76,8 @@ class HouseholdVisitTeam(models.Model):
 
     @property
     def team_name(self):
-        teamname1 = User.objects.filter(id=self.first_enumerator_id).values('username')[0]['username'];
-        teamname2 = User.objects.filter(id=self.second_enumerator_id).values('username')[0]['username'];
+        teamname1 = User.objects.filter(id=self.first_enumerator_id).values('username').first()['username'];
+        teamname2 = User.objects.filter(id=self.second_enumerator_id).values('username').first()['username'];
         return teamname1 + ', '+ teamname2
 
 
@@ -126,6 +126,15 @@ class HouseholdVisit(TimeStampedModel):
             total += int(HouseholdVisitAttempt.objects.filter(household_visit_id=hhv.id).count())
         return total
 
+    # @property
+    # def visit_attempt_status(self):
+    #     notfound =  HouseholdVisitAttempt.objects.filter(household_visit_id=self.id).values('household_not_found').first()['household_not_found'];
+    #     return notfound
+    #     if (not(notfound is None): return  'completed'
+    #     else: return 'pending'
+    #     # if (not(notfound is None) | notfound) : return  'pending'
+    #     # else: return 'completed'
+
 
 class HouseholdVisitAttempt(models.Model):
     household_visit = models.ForeignKey(
@@ -133,7 +142,7 @@ class HouseholdVisitAttempt(models.Model):
         blank=False, null=True,
         related_name='visit_attempt',
     )
-    household_found = models.BooleanField(blank=True, default=True)
+    household_not_found = models.BooleanField(blank=True, default=True)
     comment = models.CharField(max_length=255, blank=True, null=True)
     date = models.DateTimeField()
 
@@ -183,16 +192,15 @@ class ChildVisit(TimeStampedModel):
 
     @property
     def child_school(self):
-        schoolid = Registration.objects.filter(student_id=self.student_id).values('school_id')[0]['school_id'];
-        # return  Registration.objects.filter(student_id=self.student_id).values_list('school_id', flat=True).order_by('id');
-        if not (schoolid is None): return School.objects.filter(id = schoolid).values('name')[0]['name'];
+        schoolid = Registration.objects.filter(student_id=self.student_id).values('school_id').first()['school_id'];
+        if not (schoolid is None): return School.objects.filter(id = schoolid).values('name').first()['name'];
         else: return ''
         return
 
     @property
     def child_grade(self):
-        gradeid = Registration.objects.filter(student_id=self.student_id).values('grade_id')[0]['grade_id'];
-        if not (gradeid is None): return Grade.objects.filter(id = gradeid).values('name')[0]['name'];
+        gradeid = Registration.objects.filter(student_id=self.student_id).values('grade_id').first()['grade_id'];
+        if not (gradeid is None): return Grade.objects.filter(id = gradeid).values('name').first()['name'];
         else: return ''
 
 
