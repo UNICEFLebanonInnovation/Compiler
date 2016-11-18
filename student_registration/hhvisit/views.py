@@ -71,6 +71,11 @@ class HouseholdVisitLoadViewSet(mixins.RetrieveModelMixin,
     serializer_class = HouseholdVisitSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get_queryset(self):
+        return self.queryset.order_by('-id')
+
+    # def get_queryset(self):
+    #     return self.queryset.order_by()
     # def update(self, request, *args, **kwargs):
     #
     #     data = request.data
@@ -136,6 +141,9 @@ class HouseholdVisitAttemptViewSet(mixins.RetrieveModelMixin,
     queryset = HouseholdVisitAttempt.objects.all()
     serializer_class = VisitAttemptSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return self.queryset.order_by('-id')
 
 
 

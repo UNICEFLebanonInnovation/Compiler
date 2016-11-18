@@ -201,9 +201,10 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             'main_reason',
             'specific_reason_id',
             'specific_reason',
+            'specific_reason_other_specify',
+            'child_enrolled_in_another_school',
             'child_visit_service',
             'household_visit_id',
-            'child_enrolled_in_another_school',
             'child_school' ,
             'child_grade'
         )
