@@ -102,7 +102,7 @@ class HouseholdVisitAttemptResource(resources.ModelResource):
         fields = (
             'id',
             'household_visit',
-            'household_found',
+            'household_not_found',
             'comment',
             'date',
         )
@@ -117,7 +117,6 @@ class HouseholdVisitCommentResource(resources.ModelResource):
         fields = (
             'id',
             'household_visit',
-            'household_found',
             'comment',
             'date',
         )

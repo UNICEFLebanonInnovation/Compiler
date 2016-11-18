@@ -85,7 +85,7 @@ class VisitAttemptSerializer(serializers.ModelSerializer):
 
     #id = serializers.IntegerField()
     #
-    # household_found = serializers.BooleanField()
+    # household_not_found = serializers.BooleanField()
     #
     # comment = serializers.CharField()
     #
@@ -112,7 +112,7 @@ class VisitAttemptSerializer(serializers.ModelSerializer):
         model = HouseholdVisitAttempt
         fields = (
             'id',
-            'household_found',
+            'household_not_found',
             'comment',
             'date',
             'household_visit_id'
@@ -327,7 +327,8 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
             'visit_comment',
             'all_visit_attempt_count',
             'visit_attempt_count',
-            'child_visit_count'
+            'child_visit_count',
+            # 'visit_attempt_status'
         )
 
 
