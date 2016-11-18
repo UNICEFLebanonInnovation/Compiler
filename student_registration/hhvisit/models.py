@@ -132,7 +132,7 @@ class HouseholdVisitAttempt(models.Model):
     date = models.DateTimeField()
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-id']
 
     def __unicode__(self):
         return self.comment
@@ -161,6 +161,7 @@ class ChildVisit(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
+    specific_reason_other_specify = models.CharField(max_length=255, blank=True, null=True)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
@@ -220,7 +221,7 @@ class HouseholdVisitComment(models.Model):
     date = models.DateTimeField()
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-id']
 
     def __unicode__(self):
         return self.comment
