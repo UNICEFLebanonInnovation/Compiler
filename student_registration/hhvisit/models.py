@@ -74,6 +74,12 @@ class HouseholdVisitTeam(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def team_name(self):
+        teamname1 = User.objects.filter(id=self.first_enumerator_id).values('username')[0]['username'];
+        teamname2 = User.objects.filter(id=self.second_enumerator_id).values('username')[0]['username'];
+        return teamname1 + ', '+ teamname2
+
 
 class HouseholdVisit(TimeStampedModel):
 
