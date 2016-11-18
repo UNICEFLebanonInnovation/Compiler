@@ -50,3 +50,20 @@ def assign_groups_to_2nd_shift_directors():
         except Exception as ex:
             print ex
             pass
+
+
+@app.task
+def generate_tokens(group):
+    from rest_framework.authtoken.models import Token
+    from student_registration.users.models import User
+
+    users = User.objects.filter(is_staff=False, is_superuser=False, groups__name=group)
+    for user in users:
+        try:
+            try:
+                token = Token.objects.get(user_id=user.id)
+            except Token.DoesNotExist:
+                token = Token.objects.create(user_id=user.id)
+        except Exception as ex:
+            print ex
+            pass
