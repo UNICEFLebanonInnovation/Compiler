@@ -120,7 +120,7 @@ class HouseholdVisitLoadViewSet(mixins.RetrieveModelMixin,
     #             householdvisit[0].attempts = []
     #
     #             householdvisit[0].attempts.append({})
-    #             householdvisit[0].attempts[0]["household_found"] = True
+    #             householdvisit[0].attempts[0]["household_not_found"] = True
     #             householdvisit[0].attempts[0]["comment"] = 'C C C C'
     #             householdvisit[0].attempts[0]["date"] = datetime.strptime('2016-11-8T00:00:00', '%Y-%m-%dT%H:%M:%S')
     #
