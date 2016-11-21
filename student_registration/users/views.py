@@ -1,13 +1,28 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
+import functools
+import warnings
 
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.contrib.auth import (
+    REDIRECT_FIELD_NAME, get_user_model, login as auth_login,
+    logout as auth_logout, update_session_auth_hash,
+)
 from django.shortcuts import redirect
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView
+from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
+
+from django.http import HttpResponseRedirect, HttpResponse
+from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
+from django.utils.translation import ugettext as _
+from django.utils.decorators import method_decorator
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import translation
 from student_registration.alp.templatetags.util_tags import has_group
+from django.contrib.auth.views import password_change
+from django.contrib.auth.forms import PasswordChangeForm
 
 from .models import User
 
@@ -75,3 +90,122 @@ class LoginRedirectView(LoginRequiredMixin, RedirectView):
             has_group(self.request.user, 'ALP_SCHOOL'):
             return reverse('alp:alp_data_collecting', kwargs={})
         return reverse('home')
+
+
+def deprecate_current_app(func):
+    """
+    Handle deprecation of the current_app parameter of the views.
+    """
+    @functools.wraps(func)
+    def inner(*args, **kwargs):
+        if 'current_app' in kwargs:
+            warnings.warn(
+                "Passing `current_app` as a keyword argument is deprecated. "
+                "Instead the caller of `{0}` should set "
+                "`request.current_app`.".format(func.__name__),
+                RemovedInDjango20Warning
+            )
+            current_app = kwargs.pop('current_app')
+            request = kwargs.get('request', None)
+            if request and current_app is not None:
+                request.current_app = current_app
+        return func(*args, **kwargs)
+    return inner
+
+
+class PasswordContextMixin(object):
+    extra_context = None
+
+    def get_context_data(self, **kwargs):
+        context = super(PasswordContextMixin, self).get_context_data(**kwargs)
+        context['title'] = self.title
+        if self.extra_context is not None:
+            context.update(self.extra_context)
+        return context
+
+
+@sensitive_post_parameters()
+@csrf_protect
+@login_required
+@deprecate_current_app
+def password_change(request,
+                    template_name='registration/password_change_form.html',
+                    post_change_redirect=None,
+                    password_change_form=PasswordChangeForm,
+                    extra_context=None):
+    warnings.warn("The password_change() view is superseded by the "
+                  "class-based PasswordChangeView().",
+                  RemovedInDjango21Warning, stacklevel=2)
+    if post_change_redirect is None:
+        post_change_redirect = reverse('change_password_done')
+    else:
+        post_change_redirect = resolve_url(post_change_redirect)
+    if request.method == "POST":
+        form = password_change_form(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            # Updating the password logs out all other sessions for the user
+            # except the current one.
+            update_session_auth_hash(request, form.user)
+            return HttpResponseRedirect(post_change_redirect)
+    else:
+        form = password_change_form(user=request.user)
+    context = {
+        'form': form,
+        'title': _('Password change'),
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return TemplateResponse(request, template_name, context)
+
+
+@login_required
+@deprecate_current_app
+def change_password_done(request,
+                         template_name='registration/password_change_done.html',
+                         extra_context=None):
+    warnings.warn("The password_change_done() view is superseded by the "
+                  "class-based PasswordChangeDoneView().",
+                  RemovedInDjango21Warning, stacklevel=2)
+    context = {
+        'title': _('Password change successful'),
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return TemplateResponse(request, template_name, context)
+
+
+class PasswordChangeView(PasswordContextMixin, FormView):
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy('change_password_done')
+    template_name = 'registration/password_change_form.html'
+    title = _('Password change')
+
+    @method_decorator(sensitive_post_parameters())
+    @method_decorator(csrf_protect)
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(PasswordChangeView, self).dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(PasswordChangeView, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        form.save()
+        # Updating the password logs out all other sessions for the user
+        # except the current one.
+        update_session_auth_hash(self.request, form.user)
+        return super(PasswordChangeView, self).form_valid(form)
+
+
+class PasswordChangeDoneView(PasswordContextMixin, TemplateView):
+    template_name = 'registration/password_change_done.html'
+    title = _('Password change successful')
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(PasswordChangeDoneView, self).dispatch(*args, **kwargs)
