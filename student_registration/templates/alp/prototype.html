@@ -70,7 +70,7 @@
                 {% endfor %}
             </select>
         </td>
-    {% if request.user|has_group:"CERD" %}
+    {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}
         <td>
             <select name="level" id="level" class="outreach-field note-indicator" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "Registered in level" %}</option>
@@ -145,7 +145,7 @@
             </select>
         </td>
     {% endif %}
-    {% if request.user|has_group:"ALP_DIRECTOR" %}
+    {% if request.user|has_group:"ALP_SCHOOL" %}
         <td>
             <select name="registered_in_level" id="registered_in_level" class="outreach-field" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "Level" %}</option>
