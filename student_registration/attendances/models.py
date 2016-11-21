@@ -11,6 +11,7 @@ from student_registration.students.models import (
 from student_registration.schools.models import (
     School,
     ClassRoom,
+    EducationLevel,
 )
 
 
@@ -35,7 +36,12 @@ class Attendance(TimeStampedModel):
     )
     classroom = models.ForeignKey(
         ClassRoom,
-        blank=False, null=True,
+        blank=True, null=True,
+        related_name='+'
+    )
+    classlevel = models.ForeignKey(
+        EducationLevel,
+        blank=True, null=True,
         related_name='+'
     )
     status = models.BooleanField(default=False)
