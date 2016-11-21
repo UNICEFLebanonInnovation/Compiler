@@ -127,6 +127,7 @@
     <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/date.js' %}"></script>
     <script type="text/javascript">
         var oTable = null;
         var language  = '{{ LANGUAGE_CODE }}';
@@ -385,25 +386,48 @@ function CheckInitialiseSly()
 
         function FormatDate(dateString)
         {
-           var date = new Date(dateString);
+           var date;
 
-           return ((date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear());
+           if(isDate(dateString, "yyyy-mm-ddTHH:mm:ssZ") )
+           {
+              date = new Date(getDateFromFormat(dateString, "yyyy-mm-ddTHH:mm:ssZ"));
+           }
+           else
+           {
+              date = new Date(dateString);
+           }
+
+           var result =
+           (
+              date.getDate().toString() + '/' +
+              (date.getMonth() + 1).toString() + '/' +
+              date.getFullYear().toString()
+           );
+
+           return result;
         }
 
-        function FormatJSONDate(date)
+
+        function FormatJSONDate(dateString)
         {
-           //var month = ("0" + (date.getMonth() + 1)).slice(-2);
+           var date;
 
-           //var day = ("0" + date.getDate()).slice(-2);
+           if(isDate(dateString, "dd/mm/yyyy") )
+           {
+              date = new Date(getDateFromFormat(dateString, "dd/mm/yyyy"));
+           }
+           else
+           {
+              date = new Date(dateString);
+           }
 
-           //return date.getFullYear()+"-"+month+"-"+day+"T00:00:00Z"
            return date;
         }
 
 
         function AddAttemptEmptyRow()
         {
-           AddAttemptRow({id:'',date:(new Date()).toString(),household_not_found:false,comment:''}, false);
+           AddAttemptRow({id:'', date:(new Date()).toString(),household_not_found:false,comment:''}, false);
         }
 
         function AddAttemptRow(entry, disabled)
@@ -494,7 +518,7 @@ function CheckInitialiseSly()
 
         function AddCommentEmptyRow(entry)
         {
-           AddCommentRow({id:'',date:(new Date()).toString(),comment:''}, false);
+           AddCommentRow({id:'',date:(new Date()).toString() ,comment:''}, false);
         }
 
         function AddCommentRow(entry, disabled)
@@ -554,7 +578,7 @@ function CheckInitialiseSly()
 
                           UpdateChildVisitServiceData( childID, childServiceData);
 
-                          UpdateChildVisitData(row);
+                          //UpdateChildVisitData(row);
                        },
                        cancel:
                        {
@@ -586,17 +610,23 @@ function CheckInitialiseSly()
            {
               var childVisit = childVisits[0];
 
+              var childRowRecord = CreateChildDataRecord(row);
+
               editForm.find("[name=childName]").html( childVisit.first_name +' '+childVisit.father_name+' '+childVisit.last_name );
 
-              updateDropDownValue(editForm.find("[name=childMainReason]"),childVisit.main_reason_id );
+              updateDropDownValue(editForm.find("[name=childMainReason]"),childRowRecord.main_reason_id );
 
-              updateDropDownValue(editForm.find("[name=childSpecificReason]"),childVisit.specific_reason_id );
+              FilterSpecificReasons(editForm, childRowRecord.main_reason_id);
+              InitialiseReasonDropdowns(editForm);
 
+              updateDropDownValue(editForm.find("[name=childSpecificReason]"),childRowRecord.specific_reason_id );
+
+              UpdateOthersSpecifyVisibility(editForm);
 
               ChangeBooleanSelection
               (
                  editForm.find('.child_enrolled_in_another_school_block'),
-                 childVisit.child_enrolled_in_another_school
+                 childRowRecord.child_enrolled_in_another_school
               );
 
               childVisit.child_visit_service.forEach
@@ -606,6 +636,65 @@ function CheckInitialiseSly()
                     AddServiceRow(editForm, entry);
                  }
               );
+           }
+
+           function InitialiseReasonDropdowns(editForm)
+           {
+              editForm.on
+              (
+                 'change', '[name=childMainReason]',
+                 function()
+                 {
+                    FilterSpecificReasons(editForm, parseInt($(this).val()));
+
+                    updateDropDownValue(editForm.find("[name=childSpecificReason]"),null );
+
+                    UpdateOthersSpecifyVisibility(editForm);
+                 }
+              );
+
+
+              editForm.on
+              (
+                 'change', '[name=childSpecificReason]',
+                 function()
+                 {
+                    UpdateOthersSpecifyVisibility(editForm);
+
+                    if(!editForm.find("[name='otherReason']").visible())
+                    {
+                       editForm.find("[name='specific_reason_other_specify']").text("");
+                    }
+                 }
+              );
+           }
+
+           function UpdateOthersSpecifyVisibility(editForm)
+           {
+                var specificReasonDropdown = editForm.find("[name=childSpecificReason]");
+
+                var specificReasonText = getDropDownValueText(specificReasonDropdown, specificReasonDropdown.val()).trim();
+
+                if(specificReasonText == "Other (specify)")
+                {
+                   editForm.find("[name='otherReason']").show();
+                }
+                else
+                {
+                   editForm.find("[name='otherReason']").hide();
+                }
+           }
+
+
+           function getDropDownValueText(dropDownElement, value)
+           {
+              return dropDownElement.find('option[value="'+value+'"]').text();
+           }
+
+           function FilterSpecificReasons(editForm, mainReasonID)
+           {
+              editForm.find("[name=childSpecificReason] option[main-reason-id!="+mainReasonID+"]").hide();
+              editForm.find("[name=childSpecificReason] option[main-reason-id="+mainReasonID+"],[value='']").show();
            }
 
            function UpdateChildVisitData(row)
@@ -780,7 +869,7 @@ function CheckInitialiseSly()
 
                  visitAttemptRecord.id = trElement.find('td:nth-child(1)').html();
 
-                 visitAttemptRecord.date = FormatJSONDate( new Date(trElement.find('td:nth-child(2)').html()) );
+                 visitAttemptRecord.date = FormatJSONDate((trElement.find('td:nth-child(2)').html()) );
 
                  visitAttemptRecord.household_not_found = trElement.find('td:nth-child(3) input').is(':checked');
 
@@ -813,16 +902,20 @@ function CheckInitialiseSly()
 
                  visitCommentRecord.id = trElement.find('td:nth-child(1)').html();
 
-                 visitCommentRecord.date = FormatJSONDate( new Date(trElement.find('td:nth-child(2)').html()) );
+                 visitCommentRecord.date = FormatJSONDate((trElement.find('td:nth-child(2)').html()) );
 
                  visitCommentRecord.comment = trElement.find('td:nth-child(3) textarea').val();
 
                  visitCommentRecord.household_visit_id = visitDataRecord.id;
 
-                 visitCommentData.push(visitCommentRecord);
+                 if( visitCommentRecord.comment )
+                 {
+                    visitCommentData.push(visitCommentRecord);
+                 }
               }
            );
 
+           <!--alert(JSON.stringify(visitCommentData));-->
            return visitCommentData;
         }
 
@@ -891,6 +984,7 @@ function CheckInitialiseSly()
                  childServiceRecord.child_visit_id = childVisitID;
 
                  childServiceData.push(childServiceRecord);
+
               }
            );
 
@@ -957,7 +1051,7 @@ function CheckInitialiseSly()
         {
            $(".loader").show();
 
-           alert(JSON.stringify(data));
+           <!--alert(JSON.stringify(data));-->
 
            $.ajax
            (
@@ -978,7 +1072,7 @@ function CheckInitialiseSly()
                          alert("Success");
                       }
 
-                      alert(response);
+                      <!--alert(response);-->
                    },
                    error:
                    function (response)
