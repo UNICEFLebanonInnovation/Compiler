@@ -95,17 +95,19 @@ class OutreachView(LoginRequiredMixin, TemplateView):
         location = 0
         location_parent = 0
         school_id = int(self.request.GET.get("school", 0))
+        if has_group(self.request.user, 'CERD'):
+            data = Outreach.objects.exclude(owner__partner_id=None)
+            data = data.filter(school_id=school_id)
+        if has_group(self.request.user, 'ALP_DIRECTOR'):
+            data = Outreach.objects.filter(school_id=self.request.user.school_id)
+            data = data.exclude(owner_id=self.request.user.id)
+            school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
         if school and school.location:
             location = school.location
         if location and location.parent:
             location_parent = location.parent
-        if has_group(self.request.user, 'CERD'):
-            data = Outreach.objects.exclude(owner__partner_id=None)
-            data = data.filter(school_id=school_id)
-        if has_group(self.request.user, 'ALP_DIRECTOR'):
-            data = Outreach.objects.filter(school_id=self.request.user.school_id)
 
         return {
             'data': data,
@@ -200,12 +202,13 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
             _('Mother nationality'),
             _('Mother fullname'),
 
-            _('Registered in level'),
+            _('Assigned to level'),
             _('Total'),
             _('Science'),
             _('Math'),
             _('Foreign language'),
             _('Arabic language'),
+            _('Registered in level'),
 
             _('Student nationality'),
             _('Student age'),
@@ -243,12 +246,13 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
                 line.student.mother_nationality.name if line.student.mother_nationality else '',
                 line.student.mother_fullname,
 
-                line.level.name if line.level else '',
+                line.assigned_to_level.name if line.assigned_to_level else '',
                 line.exam_total,
                 line.exam_result_science,
                 line.exam_result_math,
                 line.exam_result_language,
                 line.exam_result_arabic,
+                line.level.name if line.level else '',
 
                 line.student.nationality_name(),
                 line.student.birthday,

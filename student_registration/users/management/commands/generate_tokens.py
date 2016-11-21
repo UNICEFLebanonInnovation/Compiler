@@ -6,11 +6,11 @@ from student_registration.users.tasks import *
 
 
 class Command(BaseCommand):
-    help = 'Generate Users password'
+    help = 'Generate Users tokens'
 
     def add_arguments(self, parser):
         parser.add_argument('group', nargs='+', type=str)
 
     def handle(self, *args, **options):
         for group in options['group']:
-            generate_passwords(group)
+            generate_tokens(group)
