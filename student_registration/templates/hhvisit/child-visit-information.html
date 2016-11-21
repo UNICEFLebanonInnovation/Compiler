@@ -26,7 +26,7 @@
       <select name="childSpecificReason">
          <option value="">---{% trans "Specific Reason" %}---</option>
          {% for specificreason in specificreasons %}
-          <option value="{{ specificreason.id }}" >
+          <option value="{{ specificreason.id }}" main-reason-id="{{ specificreason.main_reason_id }}" >
               {{ specificreason }}
           </option>
         {% endfor %}
