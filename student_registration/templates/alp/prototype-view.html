@@ -8,7 +8,7 @@
 
     <tr id="line-{{ line.id }}" class="outreach-line-p" itemscope="{{ line.id }}">
         <td>
-            {% if role == "ALP_DIRECTOR" %}
+            {% if role == "ALP_SCHOOL" %}
                 <input type="checkbox" name="not_enrolled_in_this_school" id="not_enrolled_in_this_school" {% if line.exam_not_exist_in_school %}checked="checked"{% endif %} value="1" class="outreach-field-p" itemscope="{{ line.id }}" />
             {% endif %}
             {% if role == "CERD" %}
@@ -104,7 +104,13 @@
             </select>
         </td>
         {% endif %}
-        {% if role == "ALP_DIRECTOR" %}
+        {% if role == "ALP_SCHOOL" %}
+        <td>
+            {{ line.exam_total }}{% if level %}/{{ level.note|multiply:4 }}{% endif %}
+        </td>
+        <td>
+            {% if line.assigned_to_level_id %}{{ line.assigned_to_level.name }}{% endif %}
+        </td>
         <td>
             <select name="registered_in_level" id="registered_in_level" class="outreach-field-p" itemscope="{{ line.id }}">
                 <option value="">{% trans "Level" %}</option>
