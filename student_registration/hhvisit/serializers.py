@@ -150,6 +150,7 @@ class ChildVisitSerializer(serializers.ModelSerializer):
     father_name = serializers.CharField(source='student.father_name', read_only=True)
     last_name = serializers.CharField(source='student.last_name', read_only=True)
     mother_fullname = serializers.CharField(source='student.mother_fullname', read_only=True)
+    calculate_age = serializers.CharField(source='student.calculate_age', read_only=True)
     child_school = serializers.CharField(read_only=True)
     child_grade = serializers.CharField(read_only=True)
     main_reason_id = serializers.IntegerField()
@@ -197,6 +198,7 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             'father_name',
             'last_name',
             'mother_fullname',
+            'calculate_age',
             'main_reason_id',
             'main_reason',
             'specific_reason_id',
