@@ -57,29 +57,6 @@
                           <div class="line">
                               <label >{% trans "Times visited" %}&nbsp;&nbsp;</label><span id ="hhAllvisitAttemptCount"></span>
                           </div>
-                          <div class="line">
-                              <label >{% trans "Dates of previous visits" %}</label>
-                          </div>
-                         <table id="household-visit-attempt-date-table" class="table table-striped table-bordered cell-border"
-                                       data-height="500"
-                                       data-pagination="true"
-                                       data-search="true"
-                                       cellspacing="0"
-                                       width="100%">
-          <thead>
-              <tr>
-                  <th style = "display:none">ID</th>
-                  <th>Date</th>
-              </tr>
-          </thead>
-          <tbody>
-
-          </tbody>
-      </table>
-                      </li>
-
-                  {# 2 Slide household found #}
-                      <li class="framebox">
                         <h3 class="panel-title" >{% trans "Household Found" %}</h3>
                         <br/>
                         <br/>
@@ -103,7 +80,7 @@
           </tbody>
       </table>
                       </li>
-                  {# 3 Slide children data #}
+                  {# 2 Slide children data #}
                       <li class="framebox">
                         <h3 class="panel-title">{% trans "Reasons for Absence and Referral" %}</h3>
                         <br/>
@@ -131,7 +108,7 @@
           </tbody>
       </table>
                       </li>
-                      {# 4 Comments #}
+                      {# 3 Comments #}
                       <li class="framebox">
                         <h3 class="panel-title" >{% trans "Comments" %}</h3>
                         <br/>
@@ -155,9 +132,9 @@
                         </table>
                         <br/>
                         <br/>
-                      <button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left;">
-                      {% trans "Save household visit" %}
-                      </button>
+                      <!--<button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left;">-->
+                      <!--{% trans "Save household visit" %}-->
+                      <!--</button>-->
                       </li>
               </ul>
           </div>
@@ -165,7 +142,6 @@
               <li class="active">1</li>
               <li>2</li>
               <li>3</li>
-              <li>4</li>
           </ul>
         </div>
 
@@ -175,9 +151,9 @@
         <button class="btn btn-warning" type="button" id="hhCloseButton" style="float:left;">
           {% trans "Cancel household visit" %}
         </button>
-        <!--<button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left;">-->
-          <!--{% trans "Save household visit" %}-->
-        <!--</button>-->
+        <button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left; display:none" >
+          {% trans "Save household visit" %}
+        </button>
         <button class="btn btn-primary .prev" type="button" id="previousButton">
             <i class="icon-next-sign icon-white"></i> {% trans "previous" %}
         </button>
@@ -189,9 +165,9 @@
         <button class="btn btn-warning" type="button" id="hhCloseButton" style="float:right;">
             {% trans "Cancel household visit" %}
         </button>
-        <!--<button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left;">-->
-          <!--{% trans "Save household visit" %}-->
-        <!--</button>-->
+        <button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left; display:none">
+          {% trans "Save household visit" %}
+        </button>
         <button class="btn btn-primary .prev" type="button" id="previousButton">
             <i class="icon-prev-sign icon-white"></i> {% trans "previous" %}
         </button>
