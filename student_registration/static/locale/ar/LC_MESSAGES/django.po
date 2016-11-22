@@ -1149,3 +1149,9 @@ msgstr "لا يوجد مسابقة لهذا التلميذ"
 
 msgid "Not enrolled in this school"
 msgstr "لم يتم تسجيله في هذه المدرسة"
+
+msgid "Student Total grade"
+msgstr "مجموع علامات التلميذ"
+
+msgid "Search a student"
+msgstr "ابحث عن تلميذ"
