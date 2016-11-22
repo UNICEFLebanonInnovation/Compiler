@@ -53,6 +53,36 @@ def assign_groups_to_2nd_shift_directors():
 
 
 @app.task
+def assign_groups_to_alp_schools():
+    from student_registration.users.models import User
+
+    users = User.objects.filter(first_name='alpschl')
+    for user in users:
+        try:
+            for group in (1, 4, 5, 13):
+                user.groups.add(group)
+                user.save()
+        except Exception as ex:
+            print ex
+            pass
+
+
+@app.task
+def assign_groups_to_alp_directors():
+    from student_registration.users.models import User
+
+    users = User.objects.filter(first_name='alpdirect')
+    for user in users:
+        try:
+            for group in (1, 4, 5, 13, 14):
+                user.groups.add(group)
+                user.save()
+        except Exception as ex:
+            print ex
+            pass
+
+
+@app.task
 def generate_tokens(group):
     from rest_framework.authtoken.models import Token
     from student_registration.users.models import User
