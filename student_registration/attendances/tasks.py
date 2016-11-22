@@ -177,12 +177,12 @@ def set_app_attendances_alp():
             }
             docs.append(doc)
 
-    print json.dumps(docs)
+    # print json.dumps(docs)
 
-    # response = set_docs(docs)
-    # print response
-    # if response.status_code in [requests.codes.ok, requests.codes.created]:
-    #     return response.text
+    response = set_docs(docs)
+    print response
+    if response.status_code in [requests.codes.ok, requests.codes.created]:
+        return response.text
 
 
 @app.task
