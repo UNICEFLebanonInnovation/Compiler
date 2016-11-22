@@ -6,6 +6,7 @@
       <nav class="navbar navbar-dark navbar-static-top bg-inverse">
         <div class="container">
           <a class="navbar-brand" href="/?ln={{ LANGUAGE_CODE }}">
+                <img src="{% static 'images/logo.png' %}" style="float: left; width: 30px; height: 30px; margin-right: 10px;" />
               {% if request.user.is_authenticated %}
                 {% if request.user|has_group:"ALP" %}{% trans "Compiler" %} 1.1{% else %}{% trans "Pilot" %} 1.7{% endif %}
               {% else %}
@@ -26,7 +27,7 @@
                 {% endif %}
                 {% if request.user.is_authenticated %}
                     {% if request.user|has_group:"ALP_OUTREACH" %}
-                        {% if request.user|has_group:"PARTNER" or request.user|has_group:"CERD" or request.user|has_group:"ALP_DIRECTOR" %}
+                        {% if request.user|has_group:"PARTNER" or request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}
                   <li class="nav-item">
                     <a class="nav-link {% if request|is_current_page:"alp_data_collecting" %}active{% endif %}" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data collecting" %}</a>
                   </li>
@@ -71,6 +72,9 @@
 {#                <li class="nav-item">#}
 {#                  <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>#}
 {#                </li>#}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'change_password' %}">{% trans "Change password" %}</a>
+                </li>
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
                 </li>
