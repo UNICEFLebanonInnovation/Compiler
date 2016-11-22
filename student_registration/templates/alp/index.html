@@ -59,7 +59,7 @@
                                         </select>
                                         {% endif %}
                                         {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}
-                                        <input type="text" id="search" size="300" style="width: 200px;" />
+                                        <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />
                                         <button class="btn btn-warning" id="filter_cancel">
                                             {% trans "Rest filter" %}
                                         </button>
@@ -101,6 +101,7 @@
                                         <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Sex" %}</label></th>
+{#                                        {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}#}
                                         {% if request.user|has_group:"CERD" %}
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Registered in level" %}</label></th>
                                         <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
@@ -126,6 +127,7 @@
                                         <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
+{#                                        {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}#}
                                         {% if request.user|has_group:"CERD" %}
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
@@ -138,10 +140,10 @@
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>
                                         {% endif %}
                                         {% if request.user|has_group:"ALP_SCHOOL" %}
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Total" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Assigned to level" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Level" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Section" %}</label></th>
+                                            <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Registered in level" %}</label></th>
+                                            <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Student Total grade" %}</label></th>
+                                            <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Assigned to level" %}</label></th>
+                                            <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Section" %}</label></th>
                                         {% endif %}
                                         <th><label>{% trans "year" %}</label></th>
                                         <th><label>{% trans "month" %}</label></th>
@@ -219,9 +221,6 @@
         <td>
             <select name="exam_corrector_arabic" id="exam_corrector_arabic" class="outreach-field-p" itemscope="{{ line.id }}" style="width: 70px;">
                 <option value="">{% trans "Arabic language" %}</option>
-{#                {% for note in notes1 %}#}
-{#                    <option value="{{ note }}" {% if line.exam_corrector_arabic == note %}selected="selected"{% endif %}>{{ note }}</option>#}
-{#                {% endfor %}#}
 					<option value="11" {% if line.exam_corrector_arabic == 11 %}selected="selected"{% endif %}>11</option>
                     <option value="12" {% if line.exam_corrector_arabic == 12 %}selected="selected"{% endif %}>12</option>
                     <option value="13" {% if line.exam_corrector_arabic == 13 %}selected="selected"{% endif %}>13</option>
@@ -563,7 +562,7 @@
         var table = $('#outreaches-table');
         var selectedSchool = '{{ selectedSchool }}';
         var filterSchools = false;
-        {% if request.user|has_group:"CERD" %}
+        {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}
             var filterSchools = true;
         {% endif %}
         var protocol = 'http://';
