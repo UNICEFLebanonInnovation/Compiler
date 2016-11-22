@@ -54,14 +54,13 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
     def get_queryset(self):
         if has_group(self.request.user, 'CERD'):
             return self.queryset
+        if has_group(self.request.user, 'ALP_SCHOOL'):
+            return self.queryset.filter(school_id=self.request.user.school_id)
         return self.queryset.filter(owner=self.request.user)
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
-        # student = instance.student
         instance.delete()
-        # if student:
-        #     student.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
     def perform_update(self, serializer):
