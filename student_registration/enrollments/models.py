@@ -208,6 +208,12 @@ class Enrollment(TimeStampedModel):
             return self.student.full_name
         return ''
 
+    @property
+    def student_age(self):
+        if self.student:
+            return self.student.calc_age
+        return 0
+
     def __unicode__(self):
         return self.student.__unicode__()
 
