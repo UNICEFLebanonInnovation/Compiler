@@ -74,12 +74,25 @@ class EnrollmentResource(resources.ModelResource):
 class EnrollmentAdmin(ImportExportModelAdmin):
     resource_class = EnrollmentResource
     list_display = (
-        'student', 'school', 'section', 'classroom', 'year', 'owner',)
+        'student', 'student_age', 'school', 'caza', 'governorate',
+        'classroom', 'section',
+    )
+    list_filter = ('classroom', 'school', 'school__location', )
     search_fields = (
-        'student__first_name',
-        'school__name', 'section__name',
-        'classroom__name', 'year', 'owner__username')
-    list_filter = ('school',)
+        'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
+        'school__name', 'school__number', 'student__id_number', 'school__location__name', 'classromm__name',
+        'owner__username'
+    )
+
+    def caza(self, obj):
+        if obj.school and obj.school.location:
+            return obj.school.location.name
+        return ''
+
+    def governorate(self, obj):
+        if obj.school and obj.school.location and obj.school.location.parent:
+            return obj.school.location.parent.name
+        return ''
 
 
 admin.site.register(Enrollment, EnrollmentAdmin)
