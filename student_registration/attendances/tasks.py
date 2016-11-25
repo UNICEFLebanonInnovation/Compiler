@@ -132,8 +132,8 @@ def set_app_attendances_alp():
         attendances = {}
         registrations = Outreach.objects.filter(school_id=school.id)
         for reg in registrations:
-            # if not reg.level_id or not reg.section_id:
-            if not reg.assigned_to_level_id:
+            if not reg.registered_in_level_id or not reg.section_id:
+            # if not reg.assigned_to_level_id:
                 continue
             student = {
                 "student_id": str(reg.student.id),
@@ -147,7 +147,7 @@ def set_app_attendances_alp():
             }
             students.append(student)
 
-            attendqueryset = Attendance.objects.filter(classlevel_id=reg.assigned_to_level.id, school_id=school.id)
+            attendqueryset = Attendance.objects.filter(classlevel_id=reg.registered_in_level.id, school_id=school.id)
             for att in attendqueryset:
                 attendances = {
                     att.attendance_date.strftime('%d-%m-%Y'): {
@@ -161,8 +161,8 @@ def set_app_attendances_alp():
                 }
 
             doc = {
-                "class_id": str(reg.assigned_to_level.id) if reg.assigned_to_level else 0,
-                "class_name": reg.assigned_to_level.name if reg.assigned_to_level else '',
+                "class_id": str(reg.registered_in_level.id) if reg.registered_in_level else 0,
+                "class_name": reg.registered_in_level.name if reg.registered_in_level else '',
                 "location_id": str(school.location.id),
                 "location_name": school.location.name,
                 "location_pcode": school.location.p_code,
@@ -177,18 +177,30 @@ def set_app_attendances_alp():
             }
             docs.append(doc)
 
-    # print json.dumps(docs)
-
     response = set_docs(docs)
     print response
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
 
 
+def get_app(blockname):
+
+    data = requests.get(
+        os.path.join(settings.COUCHBASE_URL, blockname),
+        auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
+    ).json()
+
+    if data['_rev']:
+        return data['_rev']
+    return 0
+
+
 @app.task
 def set_app_schools():
 
     docs = {}
+    rev = get_app_schools()
+
     from student_registration.schools.models import School
     schools = School.objects.all()
     for school in schools:
@@ -203,15 +215,22 @@ def set_app_schools():
             "cerd_id": str(school.number),
             "school_name": school.name
         })
-
-    docs2 = {
-        "_id": "schools",
-        "type": "schools",
-        "schools": docs
-    }
+    if rev:
+        docs2 = {
+            "_rev": rev,
+            "_id": "schools",
+            "type": "schools",
+            "schools": docs
+        }
+    else:
+        docs2 = {
+            "_id": "schools",
+            "type": "schools",
+            "schools": docs
+        }
 
     response = set_docs([docs2])
-    print response
+
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
 
