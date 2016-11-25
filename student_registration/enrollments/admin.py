@@ -80,7 +80,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
     list_filter = ('classroom', 'school', 'school__location', )
     search_fields = (
         'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
-        'school__name', 'school__number', 'student__id_number', 'school__location__name', 'classromm__name',
+        'school__name', 'school__number', 'student__id_number', 'school__location__name', 'classroom__name',
         'owner__username'
     )
 
