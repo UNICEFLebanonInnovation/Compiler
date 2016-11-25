@@ -167,17 +167,17 @@
                 {% endfor %}
             </select>
         </td>
-{#        <td>#}
-{#            <select name="registered_in_level" id="registered_in_level" class="outreach-field" itemscope="$$itemscope_id$$">#}
-{#                <option value="">{% trans "Level" %}</option>#}
-{#                {% for item in informal_educations %}#}
-{#                    <option value="{{ item.id }}">{{ item.name }}</option>#}
-{#                {% endfor %}#}
-{#            </select>#}
-{#        </td>#}
+        <td>
+            <select name="registered_in_level" id="registered_in_level" class="outreach-field" itemscope="$$itemscope_id$$">
+                <option value="">{% trans "Current Level" %}</option>
+                {% for item in informal_educations %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
         <td>
             <select name="section" id="section" class="outreach-field" itemscope="$$itemscope_id$$">
-                <option value="">{% trans "Section" %}</option>
+                <option value="">{% trans "Current Section" %}</option>
                 {% for item in sections %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
