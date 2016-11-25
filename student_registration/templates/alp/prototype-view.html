@@ -152,17 +152,17 @@
         <td>
             {% if line.assigned_to_level_id %}{{ line.assigned_to_level.name }}{% endif %}
         </td>
-{#        <td>#}
-{#            <select name="registered_in_level" id="registered_in_level" class="outreach-field-p" itemscope="{{ line.id }}">#}
-{#                <option value="">{% trans "Level" %}</option>#}
-{#                {% for item in informal_educations %}#}
-{#                    <option value="{{ item.id }}" {% if line.registered_in_level_id == item.id %}selected{% endif %}>{{ item.name }}</option>#}
-{#                {% endfor %}#}
-{#            </select>#}
-{#        </td>#}
+        <td>
+            <select name="registered_in_level" id="registered_in_level" class="outreach-field-p" itemscope="{{ line.id }}">
+                <option value="">{% trans "Current Level" %}</option>
+                {% for item in informal_educations %}
+                    <option value="{{ item.id }}" {% if line.registered_in_level_id == item.id %}selected{% endif %}>{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
         <td>
             <select name="section" id="section" class="outreach-field-p" itemscope="{{ line.id }}">
-                <option value="">{% trans "Section" %}</option>
+                <option value="">{% trans "Current Section" %}</option>
                 {% for item in sections %}
                     <option value="{{ item.id }}" {% if line.section_id == item.id %}selected{% endif %}>{{ item.name }}</option>
                 {% endfor %}
