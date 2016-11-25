@@ -256,6 +256,12 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
 
         children_data = allInitialDataResult['children_visits']
 
+        childIdentifiers = [x['id'] for x in children_data]
+        childServiceIdentifierLists= [[y['id'] for y in x['child_visit_service']] for x in children_data]
+        childServiceIdentifiers = [val for sublist in childServiceIdentifierLists for val in sublist]
+
+        ChildService.objects.filter(child_visit_id__in=childIdentifiers).exclude(id__in=childServiceIdentifiers).delete()
+
         for child_data in children_data:
             child_data['id'] = (child_data['id'] if child_data['id'] else None)
             childRecord = ChildVisit.objects.filter(id=(child_data['id'])).first()
@@ -296,6 +302,9 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
             commentSerializer.is_valid(raise_exception=True)
             commentSerializer.save()
 
+        instance.visit_status = allInitialDataResult['visit_status']
+
+        instance.save()
 
         return instance
 
