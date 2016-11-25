@@ -108,7 +108,7 @@
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Assigned to level" %}</label></th>
                                         {% endif %}
                                         {% if request.user|has_group:"ALP_SCHOOL" %}
-                                            <th colspan="4" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student actual status" %}</label></th>
+                                            <th colspan="5" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student actual status" %}</label></th>
                                         {% endif %}
                                         <th colspan="3" style="text-align: center;"><label>{% trans "Student birthday" %}</label></th>
                                         <th rowspan="2"><label class="col-60">{% trans "Student age" %}</label></th>
@@ -143,7 +143,8 @@
                                             <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Registered in level" %}</label></th>
                                             <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Student Total grade" %}</label></th>
                                             <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Assigned to level" %}</label></th>
-                                            <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Section" %}</label></th>
+                                            <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current Level" %}</label></th>
+                                            <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current Section" %}</label></th>
                                         {% endif %}
                                         <th><label>{% trans "year" %}</label></th>
                                         <th><label>{% trans "month" %}</label></th>
