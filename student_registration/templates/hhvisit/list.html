@@ -192,10 +192,6 @@
                function()
                {
                   SaveVisit();
-
-                  $("#hhForm").hide();
-
-                  $("#hhList").show();
                }
              );
 
@@ -256,6 +252,7 @@ function CheckInitialiseSly()
    onePerFrameSly.toStart(true);
 
 }
+
         function ValidateAttempts()
         {
            var attemptsValid = true;
@@ -286,11 +283,13 @@ function CheckInitialiseSly()
 
         function ValidateAttempt(trElement)
         {
+           var id = trElement.find('td:nth-child(1)').html();
+
            var household_not_found = trElement.find('td:nth-child(3) input').is(':checked');
 
            var comment = trElement.find('td:nth-child(4) textarea').val();
 
-           return !household_not_found || comment;
+           return !household_not_found || comment || id;
         }
 
         var protocol = 'http://';
@@ -447,8 +446,7 @@ function CheckInitialiseSly()
            if(disabled)
            {
              checkBoxCell = "<td><input disabled type=\"checkbox\" name=\"found\" value=\"found\" "+(entry.household_not_found?"checked":"")+" /></td>";
-             noteCell = "<td><textarea disabled name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
-             <!--noteCell = "<td>"+(entry.comment)+"</td>";-->
+             noteCell = "<td>"+(entry.comment)+"</td>";
            }
            else
            {
@@ -501,12 +499,70 @@ function CheckInitialiseSly()
 
            var serviceProvideCell = "<td><input type=\"text\" value=\""+entry.service_provider+"\" style = \"width:100%;\" /></td>";
 
+           var deleteServiceCell = "<td><button class=\"btn btn-danger delete-service-row\" type=\"button\" ><i class=\"icon-trash icon-white\"></i></button></td>";
+
            editForm.find("[name=childServices] tbody").append
            (
-              "<tr>"+serviceIDCell+serviceTypeCell+serviceProvideCell+"</tr>"
+              "<tr>"+serviceIDCell+serviceTypeCell+serviceProvideCell+deleteServiceCell+"</tr>"
            );
 
            updateDropDownValue(editForm.find("tr:last-child td:nth-child(2) select"), entry.service_type_id );
+        }
+
+
+        function ValidateServices(editForm)
+        {
+           var servicesValid = true;
+
+           editForm.find("[name=childServices] tbody tr")
+           .each
+           (
+              function(i, obj)
+              {
+                 trElement = $(obj);
+
+                 servicesValid = servicesValid && ValidateService(trElement);
+
+              }
+           );
+
+           if(!servicesValid)
+           {
+              alert("Services invalid");
+              //$("#household_not_found_error").show();
+           }
+           else
+           {
+              alert("Services valid");
+              //$("#household_not_found_error").hide();
+           }
+
+           return servicesValid;
+        }
+
+        function ValidateService(trElement)
+        {
+           childServiceRecord = new Object();
+
+           dropDownElement = trElement.find('td:nth-child(2) select');
+
+           childServiceRecord.service_type_id = dropDownElement.val();
+
+           childServiceRecord.service_provider = trElement.find('td:nth-child(3) input').val();
+
+           return childServiceRecord.service_type_id && childServiceRecord.service_provider;
+        }
+
+
+        function InitialiseServiceDeleting(editForm)
+        {
+          editForm.on('click', '.delete-service-row', function(){
+
+              var block = $(this);
+
+              block.parent().parent().remove();
+
+          });
         }
 
         function AddCommentEmptyRow(entry)
@@ -521,12 +577,13 @@ function CheckInitialiseSly()
            var noteCell ;
            if(disabled)
            {
-           noteCell = "<td><textarea disabled name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
+              noteCell = "<td>"+(entry.comment)+"</td>";
            }
            else
            {
-           noteCell = "<td><textarea name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
+              noteCell = "<td><textarea name=\"comment\" style=\"width:100%;height:100%\" >"+(entry.comment)+"</textarea></td>";
            }
+
            $("#household-visit-comment-table tbody").append
            (
               "<tr>"+attemptIDCell+dateCell+noteCell+"</tr>"
@@ -550,28 +607,35 @@ function CheckInitialiseSly()
                        {
                           var editForm = $('.bootbox-body').find('[name=childForm]');
 
-                          var mainReasonID = editForm.find("[name=childMainReason]").val();
 
-                          row.find("td:nth-child(6)").html(mainReasonID);
+                          if(ValidateServices(editForm))
+                          {
+                            var mainReasonID = editForm.find("[name=childMainReason]").val();
 
-                          var specificReasonID = editForm.find("[name=childSpecificReason]").val();
+                            row.find("td:nth-child(6)").html(mainReasonID);
 
-                          row.find("td:nth-child(7)").html(specificReasonID);
+                            var specificReasonID = editForm.find("[name=childSpecificReason]").val();
 
-                          var isEnrolled =
-                          GetBooleanSelection
-                          (
-                             editForm.find('.child_enrolled_in_another_school_block')
-                          );
+                            row.find("td:nth-child(7)").html(specificReasonID);
 
-                          row.find("td:nth-child(8)").html(isEnrolled);
+                            var isEnrolled =
+                            GetBooleanSelection
+                            (
+                               editForm.find('.child_enrolled_in_another_school_block')
+                            );
 
-                          var childID = row.find("td:first-child").text();
-                          var childServiceData = CreateChildServiceData(childID, editForm);
+                            row.find("td:nth-child(8)").html(isEnrolled);
 
-                          UpdateChildVisitServiceData( childID, childServiceData);
+                            var childID = row.find("td:first-child").text();
+                            var childServiceData = CreateChildServiceData(childID, editForm);
 
-                          //UpdateChildVisitData(row);
+                            UpdateChildVisitServiceData( childID, childServiceData);
+                          }
+                          else
+                          {
+                             return false;
+                          }
+
                        },
                        cancel:
                        {
@@ -629,6 +693,8 @@ function CheckInitialiseSly()
                     AddServiceRow(editForm, entry);
                  }
               );
+
+              InitialiseServiceDeleting(editForm);
            }
 
            function InitialiseReasonDropdowns(editForm)
@@ -819,8 +885,6 @@ function CheckInitialiseSly()
            var data =
            {
 
-              visit_status : "pending",
-
               visit_attempt : CreateVisitAttemptsData(),
 
               children_visits : CreateChildData(),
@@ -828,6 +892,11 @@ function CheckInitialiseSly()
               visit_comment : CreateVisitCommentData()
 
            };
+
+           if(data.visit_attempt.length > 0)
+           {
+              data.visit_status = data.visit_attempt[0].household_not_found ? "pending" : "completed";
+           }
 
            SaveVisitRecord(visitDataRecord.id, data);
         }
@@ -872,7 +941,11 @@ function CheckInitialiseSly()
 
                  //alert(JSON.stringify(visitAttemptRecord));
 
-                 visitAttemptsData.push(visitAttemptRecord);
+                 if(!visitAttemptRecord.id )
+                 {
+                    visitAttemptsData.push(visitAttemptRecord);
+                 }
+
               }
            );
 
@@ -901,7 +974,7 @@ function CheckInitialiseSly()
 
                  visitCommentRecord.household_visit_id = visitDataRecord.id;
 
-                 if( visitCommentRecord.comment )
+                 if( visitCommentRecord.comment && !visitCommentRecord.id )
                  {
                     visitCommentData.push(visitCommentRecord);
                  }
@@ -1066,6 +1139,10 @@ function CheckInitialiseSly()
                       }
 
                       <!--alert(response);-->
+
+                      $("#hhForm").hide();
+
+                      $("#hhList").show();
                    },
                    error:
                    function (response)
