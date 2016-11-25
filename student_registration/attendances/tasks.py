@@ -183,10 +183,10 @@ def set_app_attendances_alp():
         return response.text
 
 
-def get_app(blockname):
+def get_app_revision(block_name):
 
     data = requests.get(
-        os.path.join(settings.COUCHBASE_URL, blockname),
+        os.path.join(settings.COUCHBASE_URL, block_name),
         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
     ).json()
 
@@ -199,7 +199,7 @@ def get_app(blockname):
 def set_app_schools():
 
     docs = {}
-    rev = get_app_schools()
+    rev = get_app_revision('schools')
 
     from student_registration.schools.models import School
     schools = School.objects.all()
