@@ -237,7 +237,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 line.student.get_age(),
                 _(line.student.sex) if line.student.sex else '',
                 line.student.__unicode__(),
-                
+
                 line.school.name,
                 line.school.number,
                 line.school.location.name,
