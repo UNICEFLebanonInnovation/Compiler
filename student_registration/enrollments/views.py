@@ -209,28 +209,35 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 continue
             content = [
                 line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
-                line.last_informal_edu_round,
+                line.last_informal_edu_round.name if line.last_informal_edu_round else '',
                 line.last_informal_edu_level.name if line.last_informal_edu_level else '',
                 _(line.participated_in_alp) if line.participated_in_alp else '',
+
                 _(line.last_year_result) if line.last_year_result else '',
                 line.last_education_year if line.last_education_year else '',
                 _(line.last_school_type) if line.last_school_type else '',
                 line.last_education_level.name if line.last_education_level else '',
+
                 line.section.name if line.section else '',
                 line.classroom.name if line.classroom else '',
+
                 line.student.phone_prefix,
                 line.student.phone,
                 line.student.address,
+
                 line.student.id_number,
                 line.student.id_type.name if line.student.id_type else '',
                 line.registered_in_unhcr,
+
                 line.student.mother_nationality.name if line.student.mother_nationality else '',
                 line.student.mother_fullname,
                 line.student.nationality_name(),
+
                 line.student.birthday,
                 line.student.get_age(),
                 _(line.student.sex) if line.student.sex else '',
                 line.student.__unicode__(),
+                
                 line.school.name,
                 line.school.number,
                 line.school.location.name,
