@@ -203,6 +203,8 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
             _('Mother nationality'),
             _('Mother fullname'),
 
+            _('Current Section'),
+            _('Current Level'),
             _('Assigned to level'),
             _('Total'),
             _('Science'),
@@ -247,6 +249,8 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
                 line.student.mother_nationality.name if line.student.mother_nationality else '',
                 line.student.mother_fullname,
 
+                line.section.name if line.section else '',
+                line.registered_in_level.name if line.registered_in_level else '',
                 line.assigned_to_level.name if line.assigned_to_level else '',
                 line.exam_total,
                 line.exam_result_science,
