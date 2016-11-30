@@ -180,6 +180,8 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
             queryset = self.model.objects.filter(school_id=school).order_by('id')
         if location:
             queryset = self.model.objects.filter(school__location_id=location).order_by('id')
+        if self.request.user.is_superuser and school == 9999:
+            queryset = self.model.objects.all()
 
         data = tablib.Dataset()
 
@@ -205,6 +207,12 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
 
             _('Current Section'),
             _('Current Level'),
+
+            _('Science corrector'),
+            _('Math corrector'),
+            _('Foreign language corrector'),
+            _('Arabic language corrector'),
+
             _('Assigned to level'),
             _('Total'),
             _('Science'),
@@ -251,6 +259,12 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
 
                 line.section.name if line.section else '',
                 line.registered_in_level.name if line.registered_in_level else '',
+
+                line.exam_corrector_science,
+                line.exam_corrector_math,
+                line.exam_corrector_language,
+                line.exam_corrector_arabic,
+
                 line.assigned_to_level.name if line.assigned_to_level else '',
                 line.exam_total,
                 line.exam_result_science,
