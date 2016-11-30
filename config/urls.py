@@ -42,7 +42,7 @@ from student_registration.eav.views import (
     AttributeViewSet,
     ValueViewSet,
 )
-from student_registration.users.views import LoginRedirectView
+from student_registration.users.views import LoginRedirectView, PasswordChangeView, PasswordChangeDoneView
 from student_registration.enrollments.views import EnrollmentViewSet
 from .views import acme_view
 
@@ -75,6 +75,8 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
     url(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
     url(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
+    url(r'^change-password/$', PasswordChangeView.as_view(), name='change_password'),
+    url(r'^change-password-done/$', PasswordChangeDoneView.as_view(), name='change_password_done'),
 
     # Django Admin, use {% url 'admin:index' %}
     url(settings.ADMIN_URL, include(admin.site.urls)),

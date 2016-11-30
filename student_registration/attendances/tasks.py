@@ -99,6 +99,7 @@ def set_app_attendances():
                 "location_pcode": school.location.p_code,
                 "school": str(school.id),
                 "school_id": school.number,
+                "school_type": "2ndshift",
                 "school_name": school.name,
                 "section_id": str(reg.section.id),
                 "section_name": reg.section.name,
@@ -116,9 +117,90 @@ def set_app_attendances():
 
 
 @app.task
+def set_app_attendances_alp():
+    """
+    Creates or edits a attendance document in Couchbase
+    """
+    docs = []
+    from student_registration.schools.models import School
+    from student_registration.alp.models import Outreach
+    from student_registration.attendances.models import Attendance
+    schools = School.objects.all()
+    for school in schools:
+        students = []
+        attstudent = {}
+        attendances = {}
+        registrations = Outreach.objects.filter(school_id=school.id)
+        for reg in registrations:
+            if not reg.registered_in_level_id or not reg.section_id:
+            # if not reg.assigned_to_level_id:
+                continue
+            student = {
+                "student_id": str(reg.student.id),
+                "student_name": reg.student.full_name if reg.student.full_name else 'Student',
+                "gender": reg.student.sex,
+                "status": reg.student.status
+            }
+            attstudent[str(reg.student.id)] = {
+                "status": False,
+                "reason": "none"
+            }
+            students.append(student)
+
+            attendqueryset = Attendance.objects.filter(classlevel_id=reg.registered_in_level.id, school_id=school.id)
+            for att in attendqueryset:
+                attendances = {
+                    att.attendance_date.strftime('%d-%m-%Y'): {
+                        "validation_date": att.validation_date.strftime('%d-%m-%Y'),
+                        "students": attstudent
+                    }
+                }
+                attendances[att.attendance_date.strftime('%d-%m-%Y')]["students"][str(att.student.id)] = {
+                    "status": att.status,
+                    "reason": att.absence_reason
+                }
+
+            doc = {
+                "class_id": str(reg.registered_in_level.id) if reg.registered_in_level else 0,
+                "class_name": reg.registered_in_level.name if reg.registered_in_level else '',
+                "location_id": str(school.location.id),
+                "location_name": school.location.name,
+                "location_pcode": school.location.p_code,
+                "school": str(school.id),
+                "school_id": school.number,
+                "school_type": "alp",
+                "school_name": school.name,
+                "section_id": str(reg.section.id) if reg.section else 0,
+                "section_name": reg.section.name if reg.section else '',
+                "students": students,
+                "attendance": attendances
+            }
+            docs.append(doc)
+
+    response = set_docs(docs)
+    print response
+    if response.status_code in [requests.codes.ok, requests.codes.created]:
+        return response.text
+
+
+def get_app_revision(block_name):
+
+    data = requests.get(
+        os.path.join(settings.COUCHBASE_URL, block_name),
+        auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
+    ).json()
+
+    if data['_rev']:
+        return data['_rev']
+    return 0
+
+
+@app.task
 def set_app_schools():
 
     docs = {}
+    rev = get_app_revision('schools')
+
     from student_registration.schools.models import School
     schools = School.objects.all()
     for school in schools:
@@ -133,15 +215,22 @@ def set_app_schools():
             "cerd_id": str(school.number),
             "school_name": school.name
         })
-
-    docs2 = {
-        "_id": "schools",
-        "type": "schools",
-        "schools": docs
-    }
+    if rev:
+        docs2 = {
+            "_rev": rev,
+            "_id": "schools",
+            "type": "schools",
+            "schools": docs
+        }
+    else:
+        docs2 = {
+            "_id": "schools",
+            "type": "schools",
+            "schools": docs
+        }
 
     response = set_docs([docs2])
-    print response
+
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
 
@@ -151,7 +240,7 @@ def set_app_users():
 
     docs = []
     from student_registration.users.models import User
-    from student_registration.alp.templatetags.util_tags import get_user_token, user_main_role
+    from student_registration.users.utils import get_user_token, user_main_role
     users = User.objects.filter(is_active=True, is_staff=False, is_superuser=False)
     for user in users:
         if not user.school:
@@ -189,6 +278,7 @@ def import_docs(**kwargs):
         if 'attendance' in row['doc']:
             classroom = row['doc']['class_id']
             school = row['doc']['school']
+            school_type = row['doc']['school_type']
             attendances = row['doc']['attendance']
             for key in attendances.keys():
                 attendance = attendances[key]
@@ -210,12 +300,20 @@ def import_docs(**kwargs):
                 try:
                     for student_id in students.keys():
                         status = students[student_id]
-                        instance = Attendance.objects.get_or_create(
-                            student_id=student_id,
-                            classroom_id=classroom,
-                            school_id=school,
-                            attendance_date=attendance_date
-                        )
+                        if school_type == 'alp':
+                            instance = Attendance.objects.get_or_create(
+                                student_id=student_id,
+                                class_level=classroom,
+                                school_id=school,
+                                attendance_date=attendance_date
+                            )
+                        else:
+                            instance = Attendance.objects.get_or_create(
+                                student_id=student_id,
+                                classroom_id=classroom,
+                                school_id=school,
+                                attendance_date=attendance_date
+                            )
                         instance.status = status
 
                         if validation_date:
