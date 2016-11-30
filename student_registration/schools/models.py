@@ -23,6 +23,18 @@ class School(models.Model):
     class Meta:
         ordering = ['name']
 
+    @property
+    def location_name(self):
+        if self.location:
+            return self.location.name
+        return ''
+
+    @property
+    def location_parent_name(self):
+        if self.location and self.location.parent:
+            return self.location.parent.name
+        return ''
+
     def __unicode__(self):
         # return self.name
         return u'{} - {}'.format(
