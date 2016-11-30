@@ -176,13 +176,12 @@
             $("select.team").change(function(){
                 var data = {};
                 var name = $(this).attr('name');
-                data[name] = $(this).val() ;
+                data['household_visit_team_id'] = $(this).val() ;
                 loadAjaxCall($(this).data('visitid'), data);
             });
 
              function loadAjaxCall(regId , data)
             {
-            return false;
                  $.ajax({
                     type: "PATCH",
                     url: synchro_path+regId+'/',

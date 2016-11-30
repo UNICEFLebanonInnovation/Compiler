@@ -343,3 +343,15 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
         )
 
 
+
+class HouseholdVisitRecordSerializer(serializers.ModelSerializer):
+
+    household_visit_team_id = serializers.IntegerField()
+
+    class Meta:
+        model = HouseholdVisit
+        fields = (
+            'id',
+            'household_visit_team_id'
+        )
+

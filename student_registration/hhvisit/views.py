@@ -30,7 +30,7 @@ from student_registration.hhvisit.models import (
     HouseholdVisitComment,
     HouseholdVisitTeam
 )
-from .serializers import SpecificReasonSerializer , HouseholdVisitSerializer, VisitAttemptSerializer, ChildVisitSerializer, ChildServiceSerializer, HouseholdVisitCommentSerializer
+from .serializers import SpecificReasonSerializer , HouseholdVisitSerializer, VisitAttemptSerializer, ChildVisitSerializer, ChildServiceSerializer, HouseholdVisitCommentSerializer, HouseholdVisitRecordSerializer
 from student_registration.hhvisit.forms import (
     HouseholdVisitForm
 )
@@ -56,7 +56,7 @@ class HouseholdVisitView(LoginRequiredMixin, TemplateView):
         return {
             'form': HouseholdVisitForm({'location': self.request.user.location_id,
                                      'locations': self.request.user.locations.all()}),
-        }
+      }
 
 
 
@@ -252,4 +252,13 @@ class HouseholdVisitListSupervisorView(LoginRequiredMixin, TemplateView):
 #
 #         content = {'user_count': 0}
 #         return Response(content)
+
+
+class HouseholdVisitSaveViewSet(mixins.UpdateModelMixin,
+                              viewsets.GenericViewSet):
+    model = HouseholdVisit
+    lookup_field = 'id'
+    queryset = HouseholdVisit.objects.all()
+    serializer_class = HouseholdVisitRecordSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 

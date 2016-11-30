@@ -22,7 +22,8 @@ from student_registration.hhvisit.views import (
     HouseholdVisitAttemptViewSet,
     HouseholdVisitChildViewSet,
     HouseholdVisitServiceViewSet,
-    HouseholdVisitCommentViewSet
+    HouseholdVisitCommentViewSet,
+    HouseholdVisitSaveViewSet
 )
 from student_registration.attendances.views import (
     AttendanceViewSet,
@@ -56,6 +57,7 @@ api.register(r'class-assignment', ClassAssignmentViewSet, base_name='class_assig
 api.register(r'waiting-list', WaitingListViewSet, base_name='waiting_list')
 api.register(r'household-visit', HouseholdVisitLoadViewSet, base_name='household_visit')
 api.register(r'household-visit-attempt', HouseholdVisitAttemptViewSet, base_name='household_visit_attempt')
+api.register(r'household-team', HouseholdVisitSaveViewSet, base_name='household_team')
 
 api.register(r'household-visit-child', HouseholdVisitChildViewSet, base_name='household_visit_child')
 api.register(r'household-visit-service', HouseholdVisitServiceViewSet, base_name='household_visit_service')
