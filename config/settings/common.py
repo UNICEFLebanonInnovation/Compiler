@@ -313,6 +313,7 @@ SUIT_CONFIG = {
     'CONFIRM_UNSAVED_CHANGES': False,
 
     'MENU': (
+        {'label': 'View site', 'icon': 'icon-home', 'url': "/"},
         {'app': 'auth', 'label': 'Groups', 'icon': 'icon-user'},
         {'app': 'users', 'label': 'Users', 'icon': 'icon-user'},
         {'app': 'alp', 'label': 'ALP', 'icon': 'icon-th-list'},

@@ -9,5 +9,7 @@ class Command(BaseCommand):
     help = 'Assign groups to users'
 
     def handle(self, *args, **options):
-        assign_groups_to_2nd_shift_schools()
-        assign_groups_to_2nd_shift_directors()
+        assign_groups_to_alp_schools()
+        assign_groups_to_alp_directors()
+        # assign_groups_to_2nd_shift_schools()
+        # assign_groups_to_2nd_shift_directors()
