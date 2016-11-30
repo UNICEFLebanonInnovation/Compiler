@@ -58,8 +58,8 @@
                                             {% endfor %}
                                         </select>
                                         {% endif %}
-                                        {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_DIRECTOR" %}
-                                        <input type="text" id="search" size="300" style="width: 200px;" />
+                                        {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}
+                                        <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />
                                         <button class="btn btn-warning" id="filter_cancel">
                                             {% trans "Rest filter" %}
                                         </button>
@@ -86,7 +86,7 @@
                                 <thead>
                                     <tr id="thead-line-1">
                                         <th rowspan="2">&nbsp;
-                                            {% if request.user|has_group:"ALP_DIRECTOR" %}
+                                            {% if request.user|has_group:"ALP_SCHOOL" %}
                                                 <label class="col-100">{% trans "Not enrolled in this school" %}</label>
                                             {% endif %}
                                             {% if request.user|has_group:"CERD" %}
@@ -101,13 +101,14 @@
                                         <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Sex" %}</label></th>
+{#                                        {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}#}
                                         {% if request.user|has_group:"CERD" %}
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Registered in level" %}</label></th>
                                         <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Assigned to level" %}</label></th>
                                         {% endif %}
-                                        {% if request.user|has_group:"ALP_DIRECTOR" %}
-                                            <th colspan="2" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student actual status" %}</label></th>
+                                        {% if request.user|has_group:"ALP_SCHOOL" %}
+                                            <th colspan="5" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student actual status" %}</label></th>
                                         {% endif %}
                                         <th colspan="3" style="text-align: center;"><label>{% trans "Student birthday" %}</label></th>
                                         <th rowspan="2"><label class="col-60">{% trans "Student age" %}</label></th>
@@ -126,6 +127,7 @@
                                         <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
+{#                                        {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}#}
                                         {% if request.user|has_group:"CERD" %}
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
@@ -137,9 +139,12 @@
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>
                                         {% endif %}
-                                        {% if request.user|has_group:"ALP_DIRECTOR" %}
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Level" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Section" %}</label></th>
+                                        {% if request.user|has_group:"ALP_SCHOOL" %}
+                                            <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Registered in level" %}</label></th>
+                                            <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Student Total grade" %}</label></th>
+                                            <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Assigned to level" %}</label></th>
+                                            <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current Level" %}</label></th>
+                                            <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current Section" %}</label></th>
                                         {% endif %}
                                         <th><label>{% trans "year" %}</label></th>
                                         <th><label>{% trans "month" %}</label></th>
@@ -159,7 +164,7 @@
                                         {% with student=line.student level=line.level role="CERD" %}
                                             <tr id="line-{{ line.id }}" class="outreach-line-p" itemscope="{{ line.id }}">
         <td>
-            {% if role == "ALP_DIRECTOR" %}
+            {% if role == "ALP_SCHOOL" %}
                 <input type="checkbox" name="not_enrolled_in_this_school" id="not_enrolled_in_this_school" {% if line.exam_not_exist_in_school %}checked="checked"{% endif %} value="1" class="outreach-field-p" itemscope="{{ line.id }}" />
             {% endif %}
             {% if role == "CERD" %}
@@ -217,9 +222,6 @@
         <td>
             <select name="exam_corrector_arabic" id="exam_corrector_arabic" class="outreach-field-p" itemscope="{{ line.id }}" style="width: 70px;">
                 <option value="">{% trans "Arabic language" %}</option>
-{#                {% for note in notes1 %}#}
-{#                    <option value="{{ note }}" {% if line.exam_corrector_arabic == note %}selected="selected"{% endif %}>{{ note }}</option>#}
-{#                {% endfor %}#}
 					<option value="11" {% if line.exam_corrector_arabic == 11 %}selected="selected"{% endif %}>11</option>
                     <option value="12" {% if line.exam_corrector_arabic == 12 %}selected="selected"{% endif %}>12</option>
                     <option value="13" {% if line.exam_corrector_arabic == 13 %}selected="selected"{% endif %}>13</option>
@@ -455,7 +457,13 @@
             </select>
         </td>
         {% endif %}
-        {% if role == "ALP_DIRECTOR" %}
+        {% if role == "ALP_SCHOOL" %}
+        <td>
+            {{ line.exam_total }}{% if level %}/{{ level.note|multiply:4 }}{% endif %}
+        </td>
+        <td>
+            {% if line.assigned_to_level_id %}{{ line.assigned_to_level.name }}{% endif %}
+        </td>
         <td>
             <select name="registered_in_level" id="registered_in_level" class="outreach-field-p" itemscope="{{ line.id }}">
                 <option value="">{% trans "Level" %}</option>
@@ -496,9 +504,9 @@
                                         {% endwith %}
                                     {% endfor %}
                                 {% endif %}
-                                {% if request.user|has_group:"ALP_DIRECTOR" %}
+                                {% if request.user|has_group:"ALP_SCHOOL" %}
                                     {% for line in data %}
-                                        {% include 'alp/prototype-view.html' with role="ALP_DIRECTOR" student=line.student level=line.level %}
+                                        {% include 'alp/prototype-view.html' with role="ALP_SCHOOL" student=line.student level=line.level %}
                                     {% endfor %}
                                 {% endif %}
                                 </tbody>
@@ -555,7 +563,7 @@
         var table = $('#outreaches-table');
         var selectedSchool = '{{ selectedSchool }}';
         var filterSchools = false;
-        {% if request.user|has_group:"CERD" %}
+        {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}
             var filterSchools = true;
         {% endif %}
         var protocol = 'http://';

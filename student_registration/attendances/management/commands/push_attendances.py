@@ -11,4 +11,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         set_app_schools()
         set_app_users()
-        set_app_attendances()
+        # set_app_attendances()
+        # set_app_attendances_alp()

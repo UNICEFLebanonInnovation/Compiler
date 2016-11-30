@@ -8,7 +8,7 @@
 
     <tr id="line-{{ line.id }}" class="outreach-line-p" itemscope="{{ line.id }}">
         <td>
-            {% if role == "ALP_DIRECTOR" %}
+            {% if role == "ALP_SCHOOL" %}
                 <input type="checkbox" name="not_enrolled_in_this_school" id="not_enrolled_in_this_school" {% if line.exam_not_exist_in_school %}checked="checked"{% endif %} value="1" class="outreach-field-p" itemscope="{{ line.id }}" />
             {% endif %}
             {% if role == "CERD" %}
@@ -104,10 +104,57 @@
             </select>
         </td>
         {% endif %}
-        {% if role == "ALP_DIRECTOR" %}
+        {% if role == "ALP_SCHOOL" %}
+        <td>
+            {% if line.level %}
+                {{ line.level.name }}
+            {% endif %}
+        </td>
+{#        <td>#}
+{#            <span class="note-indicator-value">#}
+{#                {% if line.exam_result_arabic %}{{ line.exam_result_arabic }}{% else %}0{% endif %}#}
+{#                {% if level %}/{{ level.note }}{% endif %}#}
+{#            </span>#}
+{#        </td>#}
+{#        <td>#}
+{#            <span class="note-indicator-value">#}
+{#                {% if line.exam_result_language %}{{ line.exam_result_language }}{% else %}0{% endif %}#}
+{#                {% if level %}/{{ level.note }}{% endif %}#}
+{#            </span>#}
+{#        </td>#}
+{#        <td>#}
+{#            <span class="note-indicator-value">#}
+{#                {% if line.exam_result_math %}{{ line.exam_result_math }}{% else %}0{% endif %}#}
+{#                {% if level %}/{{ level.note }}{% endif %}#}
+{#            </span>#}
+{#        </td>#}
+{#        <td>#}
+{#            <span class="note-indicator-value">#}
+{#                {% if line.exam_result_science %}{{ line.exam_result_science }}{% else %}0{% endif %}#}
+{#                {% if level %}/{{ level.note }}{% endif %}#}
+{#            </span>#}
+{#        </td>#}
+        <td>
+            {{ line.exam_total }}{% if level %}/{{ level.note|multiply:4 }}{% endif %}
+        </td>
+{#        <td>#}
+{#            {% if line.exam_corrector_arabic %}{{ line.exam_corrector_arabic }}{% endif %}#}
+{#        </td>#}
+{#        <td>#}
+{#            {% if line.exam_corrector_language %}{{ line.exam_corrector_language }}{% endif %}#}
+{#        </td>#}
+{#        <td>#}
+{#            {% if line.exam_corrector_math %}{{ line.exam_corrector_math }}{% endif %}#}
+{#        </td>#}
+{#        <td>#}
+{#            {% if line.exam_corrector_science %}{{ line.exam_corrector_science }}{% endif %}#}
+{#        </td>#}
+        <td>
+            {% if line.assigned_to_level_id %}{{ line.assigned_to_level.name }}{% endif %}
+        </td>
         <td>
             <select name="registered_in_level" id="registered_in_level" class="outreach-field-p" itemscope="{{ line.id }}">
-                <option value="">{% trans "Level" %}</option>
+                <option value="">{% trans "Current Level" %}</option>
                 {% for item in informal_educations %}
                     <option value="{{ item.id }}" {% if line.registered_in_level_id == item.id %}selected{% endif %}>{{ item.name }}</option>
                 {% endfor %}
@@ -115,7 +162,7 @@
         </td>
         <td>
             <select name="section" id="section" class="outreach-field-p" itemscope="{{ line.id }}">
-                <option value="">{% trans "Section" %}</option>
+                <option value="">{% trans "Current Section" %}</option>
                 {% for item in sections %}
                     <option value="{{ item.id }}" {% if line.section_id == item.id %}selected{% endif %}>{{ item.name }}</option>
                 {% endfor %}
