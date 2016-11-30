@@ -1024,6 +1024,9 @@ msgstr "الغاء التصفية"
 msgid "Current Class"
 msgstr "الصف الحالي"
 
+msgid "Current Level"
+msgstr "المستوى الحالي"
+
 msgid "Current Section"
 msgstr "الشعبة الحالية"
 
@@ -1147,74 +1150,11 @@ msgstr "تم تسجيل التلميذ في"
 msgid "Exam not received from this school"
 msgstr "لا يوجد مسابقة لهذا التلميذ"
 
-msgid "Household visit success"
-msgstr ""
+msgid "Not enrolled in this school"
+msgstr "لم يتم تسجيله في هذه المدرسة"
 
-msgid "Household visit cancelled"
-msgstr ""
+msgid "Student Total grade"
+msgstr "مجموع علامات التلميذ"
 
-msgid "To start a new household visit"
-msgstr ""
-
-msgid "Household Visit"
-msgstr ""
-
-msgid "Household Specific Information"
-msgstr ""
-
-msgid "Name of Household Rep"
-msgstr ""
-
-msgid "Times visited"
-msgstr ""
-
-msgid "Dates of previous visits"
-msgstr ""
-
-msgid "Household Found"
-msgstr ""
-
-msgid "Reasons for Absence and Referral"
-msgstr ""
-
-msgid "Cancel household visit"
-msgstr ""
-
-msgid "Main Reason"
-msgstr ""
-
-msgid "Specific Reason"
-msgstr ""
-
-msgid "Child Full Name"
-msgstr ""
-
-msgid "Service Provider"
-msgstr ""
-
-msgid "Are you sure you want to submit this visit?"
-msgstr "هل أنت متأكد أنك تريد أن تقدم هذا الطلب؟"
-
-msgid "Service Type"
-msgstr ""
-
-msgid "Display by Location"
-msgstr ""
-
-msgid "HH District"
-msgstr ""
-
-msgid "HH Address"
-msgstr ""
-
-msgid "HH Representative Name"
-msgstr ""
-
-msgid "# of Children Absent"
-msgstr ""
-
-msgid "Status- Completed, Pending"
-msgstr ""
-
-msgid "Attempt Number"
-msgstr ""
+msgid "Search a student"
+msgstr "ابحث عن تلميذ"
