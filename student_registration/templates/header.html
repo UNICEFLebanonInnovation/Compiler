@@ -63,6 +63,9 @@
                 <li class="nav-item">
                     <a class="nav-link {% if request|is_current_page:"class_assignment" %}active{% endif %}" href="{% url 'registrations:class_assignment' %}?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignments" %}</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request|is_current_page:"registry_search" %}active{% endif %}" href="{% url 'registrations:registry_search' %}?ln={{ LANGUAGE_CODE }}">{% trans "Household Update" %}</a>
+                </li>
                 {% endif %}
             {% endif %}
               {% if request.user.is_staff %}
