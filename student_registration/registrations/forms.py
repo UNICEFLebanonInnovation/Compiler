@@ -131,3 +131,11 @@ class WaitingListForm(forms.ModelForm):
         model = WaitingList
         fields = '__all__'
 
+class HouseholdListSearchForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(HouseholdListSearchForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = RegisteringAdult
+        fields = '__all__'

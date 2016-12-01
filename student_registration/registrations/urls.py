@@ -21,4 +21,9 @@ urlpatterns = [
         view=views.WaitingListView.as_view(),
         name='waiting_list'
     ),
+    url(
+        regex=r'^registry-search/$',
+        view=views.RegisteringAdultListSearchView.as_view(),
+        name='registry_search'
+    ),
 ]

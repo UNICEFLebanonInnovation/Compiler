@@ -34,6 +34,7 @@ from student_registration.registrations.forms import (
     RegisteringAdultForm,
     RegisteringChildForm,
     WaitingListForm,
+    HouseholdListSearchForm,
 )
 from student_registration.students.forms import StudentForm
 from student_registration.eav.models import (
@@ -232,3 +233,23 @@ class WaitingListViewSet(mixins.RetrieveModelMixin,
             return []
 
         return self.queryset
+
+class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
+        """
+        Provides the Household update  page with lookup types in the context
+        """
+        model = RegisteringAdult
+        template_name = 'registration-pilot/registry-search.html'
+
+        def get_context_data(self, **kwargs):
+            data = []
+            locations = Location.objects.all().filter(type_id=2).order_by('name')
+            location = self.request.GET.get("location", 0)
+            if location:
+                data = self.model.objects.filter(school__location_id=location).order_by('id')
+
+            return {
+                'adults': data,
+                'locations': locations,
+                'selectedLocation': int(location)
+    }
