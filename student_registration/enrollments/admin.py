@@ -11,10 +11,6 @@ from .models import Enrollment
 from student_registration.students.models import Student
 from student_registration.schools.models import (
     School,
-    ClassRoom,
-    EducationLevel,
-    ClassRoom,
-    Section,
 )
 from student_registration.locations.models import Location
 
