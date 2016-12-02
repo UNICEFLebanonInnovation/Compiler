@@ -44,6 +44,11 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from student_registration.attendances.models import (
+    Attendance
+)
+
+
 class HouseholdVisitView(LoginRequiredMixin, TemplateView):
     """
     Provides the registration page with lookup types in the context
@@ -262,3 +267,21 @@ class HouseholdVisitSaveViewSet(mixins.UpdateModelMixin,
     serializer_class = HouseholdVisitRecordSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
+
+
+from datetime import date
+
+def test(request):
+
+    result = "test"
+    # lastDate = ChildVisit.    #
+    # data = Attendance.objects.filter(attendance_date__gte=lastDate)
+    #
+    # import pprint
+    #
+    # for record in data:
+    #     result = result + pprint.pformat(record.attendance_date)
+
+    #result = "sada "
+
+    return HttpResponse(result)

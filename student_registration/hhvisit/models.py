@@ -177,6 +177,7 @@ class ChildVisit(TimeStampedModel):
         related_name='+',
     )
     specific_reason_other_specify = models.CharField(max_length=255, blank=True, null=True)
+    last_attendance_date = models.DateField(blank=True, null=True)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
