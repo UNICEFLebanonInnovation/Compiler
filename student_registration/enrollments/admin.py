@@ -66,6 +66,12 @@ class GovernorateFilter(admin.SimpleListFilter):
 
 class EnrollmentAdmin(ImportExportModelAdmin):
     resource_class = EnrollmentResource
+    fields = ('student', 'school', 'section', 'classroom', 'owner', 'status', 'year',
+              'enrolled_in_this_school', 'registered_in_unhcr',
+              'last_education_level', 'last_education_year', 'last_year_result', 'last_school_type', 'result',
+              'participated_in_alp', 'last_informal_edu_level', 'last_informal_edu_year', 'last_informal_edu_result',
+              'last_informal_edu_round', 'last_informal_edu_final_result',
+              )
     list_display = (
         'student', 'student_age', 'school', 'caza', 'governorate',
         'classroom', 'section',
