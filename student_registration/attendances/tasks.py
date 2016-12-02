@@ -55,14 +55,14 @@ def set_app_attendances():
     """
     docs = []
     from student_registration.schools.models import School
-    from student_registration.registrations.models import Registration
+    from student_registration.enrollments.models import Enrollment
     from student_registration.attendances.models import Attendance
     schools = School.objects.all()
     for school in schools:
         students = []
         attstudent = {}
         attendances = {}
-        registrations = Registration.objects.filter(school_id=school.id)
+        registrations = Enrollment.objects.filter(school_id=school.id)
         for reg in registrations:
             if not reg.classroom_id or not reg.section_id:
                 continue
@@ -239,6 +239,9 @@ def set_app_schools():
 def set_app_users():
 
     docs = []
+
+    # rev = get_app_revision('users')
+
     from student_registration.users.models import User
     from student_registration.users.utils import get_user_token, user_main_role
     users = User.objects.filter(is_active=True, is_staff=False, is_superuser=False)
