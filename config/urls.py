@@ -36,6 +36,7 @@ from student_registration.eav.views import (
 )
 from student_registration.users.views import LoginRedirectView, PasswordChangeView, PasswordChangeDoneView
 from student_registration.enrollments.views import EnrollmentViewSet
+from student_registration.students.views import StudentAutocomplete
 from .views import acme_view
 
 api = routers.SimpleRouter()
@@ -62,6 +63,7 @@ urlpatterns = [
     url(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
     url(r'^change-password/$', PasswordChangeView.as_view(), name='change_password'),
     url(r'^change-password-done/$', PasswordChangeDoneView.as_view(), name='change_password_done'),
+    url(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
 
     # Django Admin, use {% url 'admin:index' %}
     url(settings.ADMIN_URL, include(admin.site.urls)),
