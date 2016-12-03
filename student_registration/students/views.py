@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
-
+from dal import autocomplete
 from .models import (
     Student,
 )
@@ -31,3 +31,17 @@ class StudentViewSet(mixins.RetrieveModelMixin,
         if self.request.user.is_superuser:
             return self.queryset
         return []
+
+
+class StudentAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated():
+            return Student.objects.none()
+
+        qs = Student.objects.all()
+
+        if self.q:
+            qs = Student.objects.filter(first_name__istartswith=self.q)
+
+        return qs
