@@ -14,14 +14,14 @@
 <section class="main-content-wrapper">
             <section id="main-content">
                 <div class="title_left">
-                    <h3 style="color:#73879C;">{% trans 'Registrations PILOT' %}</h3>
+                    <h3 style="color:#73879C;">{% trans 'Registrations 2nd Shift' %}</h3>
                 </div>
                 <hr>
      <div class="row">
          <div class="row tile_count">
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-user"></i>{% trans 'Total Students' %}</span>
-              <div class="count">{{ students|intcomma }}</div>
+              <div class="count">{{ registrations|intcomma }}</div>
 {#              <span class="count_bottom"><i class="green">4% </i> From Yesterday</span>#}
             </div>
              <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
@@ -35,18 +35,8 @@
 {#              <span class="count_bottom"><i class="green">4% </i> From Yesterday</span>#}
             </div>
              <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-user"></i>{% trans 'Not Enrolled Last Year' %}</span>
-              <div class="count">{{ notenrolledlastyear|intcomma }}</div>
-{#              <span class="count_bottom"><i class="green">4% </i> From Yesterday</span>#}
-            </div>
-             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-user"></i>{% trans 'Total Schools' %}</span>
               <div class="count">{{ schools|intcomma }}</div>
-{#              <span class="count_bottom"><i class="green">4% </i> From Yesterday</span>#}
-            </div>
-             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-user"></i>{% trans 'Total Households' %}</span>
-              <div class="count">{{ adults|intcomma }}</div>
 {#              <span class="count_bottom"><i class="green">4% </i> From Yesterday</span>#}
             </div>
 
@@ -54,7 +44,7 @@
         <div class="col-md-4 col-sm-6 col-xs-12">
         <div class="x_panel">
           <div class="x_title">
-            <h2>{% trans '% Children By Age Range' %}</h2>
+            <h2>{% trans '% Students By Age Range' %}</h2>
             <ul class="nav navbar-right panel_toolbox">
 {#                <li><a class="close-link"><i class="fa fa-close"></i></a></li>#}
                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
@@ -71,7 +61,7 @@
         <div class="col-md-4 col-sm-6 col-xs-12">
             <div class="x_panel">
               <div class="x_title">
-                <h2>{% trans 'Children By Age Range' %}</h2>
+                <h2>{% trans 'Students By Age Range' %}</h2>
                 <ul class="nav navbar-right panel_toolbox">
 {#                  <li><a class="close-link"><i class="fa fa-close"></i></a></li>#}
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
@@ -88,7 +78,7 @@
           <div class="col-md-4 col-sm-4 col-xs-12">
             <div class="x_panel">
               <div class="x_title">
-                <h2>{% trans 'Households By ID Type' %}</h2>
+                <h2>{% trans 'Students By ID Type' %}</h2>
                 <ul class="nav navbar-right panel_toolbox">
 {#                    <li><a class="close-link"><i class="fa fa-close"></i></a></li>#}
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
@@ -106,7 +96,7 @@
            <div class="col-md-8 col-sm-6 col-xs-12">
             <div class="x_panel">
               <div class="x_title">
-                <h2>{% trans 'Children By Governate' %}</h2>
+                <h2>{% trans 'Students By Governorate' %}</h2>
                 <ul class="nav navbar-right panel_toolbox">
 {#                  <li><a class="close-link"><i class="fa fa-close"></i></a></li>#}
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
@@ -118,10 +108,11 @@
               </div>
             </div>
           </div>
-         <div class="col-md-4 col-sm-6 col-xs-12">
+
+    <div class="col-md-4 col-sm-6 col-xs-12">
         <div class="x_panel">
           <div class="x_title">
-            <h2>{% trans 'Households By Nationality' %}</h2>
+            <h2>{% trans 'Students By Nationality' %}</h2>
             <ul class="nav navbar-right panel_toolbox">
 {#                <li><a class="close-link"><i class="fa fa-close"></i></a></li>#}
                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
@@ -134,27 +125,12 @@
 
           </div>
         </div>
-      </div>
-        <div class="col-md-8 col-sm-6 col-xs-12">
-            <div class="x_panel">
-              <div class="x_title">
-                <h2>{% trans 'Households By Governate' %}</h2>
-                <ul class="nav navbar-right panel_toolbox">
-{#                  <li><a class="close-link"><i class="fa fa-close"></i></a></li>#}
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                </ul>
-                <div class="clearfix"></div>
-              </div>
-              <div class="x_content">
-                <div id="hhRegion" style="height:350px;"></div>
-              </div>
-            </div>
-          </div>
+    </div>
 
         <div class="col-md-4 col-sm-6 col-xs-12">
             <div class="x_panel">
               <div class="x_title">
-                <h2>{% trans 'Schools By Governate' %}</h2>
+                <h2>{% trans 'Schools By Governorate' %}</h2>
                 <ul class="nav navbar-right panel_toolbox">
 {#                  <li><a class="close-link"><i class="fa fa-close"></i></a></li>#}
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
@@ -163,6 +139,22 @@
               </div>
               <div class="x_content">
                 <div id="schools_by_governate" style="height:350px;"></div>
+              </div>
+            </div>
+          </div>
+
+           <div class="">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>{% trans 'Students By School' %}</h2>
+                <ul class="nav navbar-right panel_toolbox">
+{#                  <li><a class="close-link"><i class="fa fa-close"></i></a></li>#}
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <div id="ChildSchool" style="height:3000px;"></div>
               </div>
             </div>
           </div>
@@ -403,7 +395,7 @@
           x: 'center',
           y: 'bottom',
           data: [
-                  {% for nationality,numberofadults in adultsbynationality.items %}
+                  {% for nationality,numberofadults in students_by_nationality.items %}
                         '{{ nationality }}',
                     {% endfor %}
           ]
@@ -440,7 +432,7 @@
           radius: '55%',
           center: ['50%', '48%'],
           data: [
-                  {% for nationality,numberofadults in adultsbynationality.items %}
+                  {% for nationality,numberofadults in students_by_nationality.items %}
                         {
                     value: {{ numberofadults }},
                     name: '{{ nationality }}'
@@ -461,7 +453,7 @@
           x: 'center',
           y: 'bottom',
           data: [
-                  {% for range,numberofchildren in agerange.items %}
+                  {% for range,numberofchildren in age_range.items %}
                         '{{ range }}',
                     {% endfor %}
           ]
@@ -498,7 +490,7 @@
           radius: '55%',
           center: ['50%', '48%'],
           data: [
-                  {% for range,numberofchildren in agerange.items %}
+                  {% for range,numberofchildren in age_range.items %}
                         {
                     value: {{ numberofchildren }},
                     name: '{{ range }}'
@@ -529,7 +521,7 @@
         xAxis: [{
           type: 'category',
           data: [
-                  {% for range,numberofchildren in agerange.items %}
+                  {% for range,numberofchildren in age_range.items %}
                     '{{ range }}',
                   {% endfor %}
                 ],
@@ -552,7 +544,7 @@
         }],
          series: [
         {
-            name: 'Children by Age Range',
+            name: 'Students by Age Range',
             type: 'bar',
             itemStyle: {
                 normal: {
@@ -573,7 +565,7 @@
                 }
             },
             data: [
-                    {% for range,numberofchildren in agerange.items %}
+                    {% for range,numberofchildren in age_range.items %}
                         {{ numberofchildren }},
                     {% endfor %}
                 ]
@@ -602,7 +594,7 @@
             show: false,
           type: 'category',
           data: [
-                  {% for gov,numberofschools in schoolsPerGov.items %}
+                  {% for gov,numberofschools in schools_per_gov.items %}
                     '{{ gov }}',
                   {% endfor %}
                 ],
@@ -646,7 +638,7 @@
                 }
             },
             data: [
-                    {% for gov,numberofschools in schoolsPerGov.items %}
+                    {% for gov,numberofschools in schools_per_gov.items %}
                         {{ numberofschools }},
                     {% endfor %}
                 ]
@@ -676,7 +668,7 @@
           show: false,
           type: 'category',
           data: [
-                  {% for gov,numberofchildren in childrenPerGov.items %}
+                  {% for gov,numberofchildren in students_per_gov.items %}
                     '{{ gov }}',
                 {% endfor %}
             ]
@@ -686,7 +678,7 @@
         }],
          series: [
         {
-            name: 'Children by Governate',
+            name: 'Students by Governorate',
             type: 'bar',
             itemStyle: {
                 normal: {
@@ -707,7 +699,7 @@
                 }
             },
             data: [
-                    {% for gov,numberofchildren in childrenPerGov.items %}
+                    {% for gov,numberofchildren in students_per_gov.items %}
                         {{ numberofchildren }},
                     {% endfor %}
                 ]
@@ -727,7 +719,7 @@
           x: 'center',
           y: 'bottom',
           data: [
-                  {% for type,numberofadults in adultsbyidtype.items %}
+                  {% for type,numberofadults in students_by_idtype.items %}
                         '{{ type }}',
                     {% endfor %}
           ]
@@ -782,19 +774,20 @@
             }
           },
           data: [
-                  {% for type,numberofadults in adultsbyidtype.items %}
+                  {% for type,numberofadults in students_by_idtype.items %}
                       {value: {{ numberofadults }}, name : '{{ type }}'},
                     {% endfor %}
                 ]
         }]
       });
 
-    var hhRegionBar = echarts.init(document.getElementById('hhRegion'), theme);
 
-      hhRegionBar.setOption({
+      var ChildSchoolBar = echarts.init(document.getElementById('ChildSchool'), theme);
+
+      ChildSchoolBar.setOption({
 
         tooltip: {
-          trigger: 'axis'
+          trigger: 'xaxis'
         },
           toolbox: {
           show: true,
@@ -808,42 +801,55 @@
 
         calculable: false,
         xAxis: [{
-            show: false,
+            type: 'value'
+        }],
+        yAxis: [{
+          show: false,
           type: 'category',
           data: [
-                  {% for gov,numberofadults in adultsPerGov.items %}
-                    '{{ gov }}',
+                {% for school,numberofchildren in students_per_school.items %}
+                    '{{ school }} - {{ numberofchildren }}',
                 {% endfor %}
             ]
         }],
-        yAxis: [{
-            type: 'value'
-        }],
+        toolbox: {
+          show: true,
+          feature: {
+            restore: {
+              show: true,
+              title: "Restore"
+            },
+            saveAsImage: {
+              show: true,
+              title: "Save Image"
+            }
+          }
+        },
          series: [
         {
-            name: 'Households By Governate',
+            name: 'Students by School',
             type: 'bar',
             itemStyle: {
                 normal: {
-                    color: function(params) {
-                        // build a color map as your need.
-                        var colorList = [
-                          '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                           '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                           '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
-                        ];
-                        return colorList[params.dataIndex]
-                    },
+{#                    color: function(params) {#}
+{#                        // build a color map as your need.#}
+{#                        var colorList = [#}
+{#                          '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',#}
+{#                           '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',#}
+{#                           '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'#}
+{#                        ];#}
+{#                        return colorList[params.dataIndex]#}
+{#                    },#}
                     label: {
                         show: true,
-                        position: 'top',
+                        position: 'right',
                         formatter: '{b}\n{c}'
                     }
                 }
             },
             data: [
-                    {% for gov,numberofadults in adultsPerGov.items %}
-                        {{ numberofadults }},
+                    {% for school,numberofchildren in students_per_school.items %}
+                        {{ numberofchildren }},
                     {% endfor %}
                 ]
         }
