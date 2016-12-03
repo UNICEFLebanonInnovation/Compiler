@@ -302,7 +302,8 @@ def import_docs(**kwargs):
 
                 try:
                     for student_id in students.keys():
-                        status = students[student_id]
+                        status = students[student_id]['status']
+                        reason = students[student_id]['reason']
                         if school_type == 'alp':
                             instance = Attendance.objects.get_or_create(
                                 student_id=student_id,
@@ -318,6 +319,7 @@ def import_docs(**kwargs):
                                 attendance_date=attendance_date
                             )
                         instance.status = status
+                        instance.absence_reason = reason
 
                         if validation_date:
                             instance.validation_date = validation_date
