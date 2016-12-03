@@ -47,7 +47,7 @@ def generate_adult_unique_number():
             print adult.number, adult.id
             adult.save()
         except Exception as ex:
-            print ex.message
+            print ex.message, adult.number, adult.id
             continue
 
 
@@ -64,5 +64,5 @@ def generate_child_unique_number():
             print student.number, student.id
             student.save()
         except Exception as ex:
-            print ex.message
+            print ex.message, student.number, student.id
             continue
