@@ -128,6 +128,7 @@ class Registrations2ndShiftView(LoginRequiredMixin,
 
         students_per_gov = {}
         schools_per_gov = {}
+        students_per_school = {}
         for gov in governorates:
             # get schools of this governate and its districts
             govdistschools = School.objects.filter(Q(location__parent__id=gov.id) | Q(location=gov.id))
@@ -135,7 +136,10 @@ class Registrations2ndShiftView(LoginRequiredMixin,
             # get number of children of each of these schools
             numchildren = 0
             for oneschool in govdistschools:
-                numchildren = numchildren + Enrollment.objects.filter(school=oneschool.id).count()
+                nbr = Enrollment.objects.filter(school=oneschool.id).count()
+                if nbr:
+                    students_per_school[oneschool.name] = nbr
+                numchildren += nbr
 
             students_per_gov[gov.name] = numchildren
 
@@ -165,7 +169,7 @@ class Registrations2ndShiftView(LoginRequiredMixin,
                 'males': Student.objects.filter(sex='Male').count(),
                 'females': Student.objects.filter(sex='Female').count(),
                 'students_per_gov': students_per_gov,
-                'students_per_school': students_per_gov,
+                'students_per_school': students_per_school,
                 'age_range': age_range,
                 'students_by_idtype': students_by_idtype,
                 'students_by_nationality': students_by_nationality,
