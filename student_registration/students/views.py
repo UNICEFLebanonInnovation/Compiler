@@ -43,7 +43,7 @@ class StudentAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = Student.objects.filter(
-                Q(fisrt_name__istartswith=self.q) | Q(father_name__istartswith=self.q) |
+                Q(first_name__istartswith=self.q) | Q(father_name__istartswith=self.q) |
                 Q(last_name__istartswith=self.q) | Q(id_number__istartswith=self.q)
             )
 
