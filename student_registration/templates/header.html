@@ -64,6 +64,20 @@
                     <a class="nav-link {% if request|is_current_page:"class_assignment" %}active{% endif %}" href="{% url 'registrations:class_assignment' %}?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignments" %}</a>
                 </li>
                 {% endif %}
+                <li class="dropdown nav-item">
+                  <a class="nav-link dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" role="button">
+                      {% trans "Dashboard" %}
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                      <li><a href="{% url 'dashboard:registrations-pilot' %}">{% trans "Registrations PILOT" %}</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="{% url 'dashboard:registrations-2ndshift' %}">{% trans "Registrations 2nd Shift" %}</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="{% url 'dashboard:registrations-alp' %}">{% trans "Registrations ALP" %}</a></li>
+                      <li role="separator" class="divider"></li>
+{#                      <li><a href="{% url 'dashboard:attendances' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance dashboard" %}</a></li>#}
+                  </ul>
+                </li>
             {% endif %}
             </ul>
 
