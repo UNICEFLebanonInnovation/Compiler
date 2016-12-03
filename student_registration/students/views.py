@@ -7,6 +7,7 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
 from dal import autocomplete
+from django.db.models import Q
 from .models import (
     Student,
 )
@@ -41,6 +42,9 @@ class StudentAutocomplete(autocomplete.Select2QuerySetView):
         qs = Student.objects.all()
 
         if self.q:
-            qs = Student.objects.filter(full_name__istartswith=self.q)
+            qs = Student.objects.filter(
+                Q(fisrt_name__istartswith=self.q) | Q(father_name__istartswith=self.q) |
+                Q(last_name__istartswith=self.q) | Q(id_number__istartswith=self.q)
+            )
 
         return qs
