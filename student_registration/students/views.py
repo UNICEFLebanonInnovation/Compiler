@@ -35,13 +35,12 @@ class StudentViewSet(mixins.RetrieveModelMixin,
 
 class StudentAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        # Don't forget to filter out results depending on the visitor !
         if not self.request.user.is_authenticated():
             return Student.objects.none()
 
         qs = Student.objects.all()
 
         if self.q:
-            qs = Student.objects.filter(first_name__istartswith=self.q)
+            qs = Student.objects.filter(full_name__istartswith=self.q)
 
         return qs
