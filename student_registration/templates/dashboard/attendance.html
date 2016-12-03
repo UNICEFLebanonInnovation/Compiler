@@ -1,0 +1,25 @@
+{% extends "base.app.html" %}
+{% load humanize %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+<!--------------------- -->
+{% endblock %}
+
+{% block content %}
+<section class="main-content-wrapper">
+            <section id="main-content">
+                <div class="title_left">
+                    <h3 style="color:#73879C;">{% trans 'Attendance Dashboard' %}</h3>
+                </div>
+                <hr>
+    </section>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+    {% endblock %}
