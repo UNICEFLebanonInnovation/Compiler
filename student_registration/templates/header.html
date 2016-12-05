@@ -67,6 +67,22 @@
                     <a class="nav-link {% if request|is_current_page:"registry_search" %}active{% endif %}" href="{% url 'registrations:registry_search' %}?ln={{ LANGUAGE_CODE }}">{% trans "Household Update" %}</a>
                 </li>
                 {% endif %}
+                {% if request.user.is_superuser %}
+                <li class="dropdown nav-item">
+                  <a class="nav-link dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" role="button">
+                      {% trans "Dashboard" %}
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                      <li><a href="{% url 'dashboard:registrations-pilot' %}">{% trans "PILOT" %}</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="{% url 'dashboard:registrations-2ndshift' %}">{% trans "2nd Shift" %}</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="{% url 'dashboard:registrations-alp' %}">{% trans "ALP" %}</a></li>
+                      <li role="separator" class="divider"></li>
+{#                      <li><a href="{% url 'dashboard:attendances' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance dashboard" %}</a></li>#}
+                  </ul>
+                </li>
+                {% endif %}
             {% endif %}
               {% if request.user.is_staff %}
               <!--<li class="nav-item">-->
