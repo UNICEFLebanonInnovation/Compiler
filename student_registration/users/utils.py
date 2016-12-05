@@ -1,7 +1,8 @@
 
 
 def user_main_role(user):
-    groups = user.groups.all()
+    groups = [g.name for g in user.groups.all()]
+
     if 'PMU' in groups:
         return 'pmu'
     if 'COORDINATOR' in groups:
