@@ -69,6 +69,9 @@ class RegisteringAdult(Person):
     wfp_case_number = models.CharField(max_length=50, blank=True, null=True)
     csc_case_number = models.CharField(max_length=50, blank=True, null=True)
     card_issue_requested = models.BooleanField(default=False)
+    card_number = models.CharField(max_length=50, blank=True, null=True)
+    card_status = models.CharField(max_length=50, blank=True, null=True)
+    batch_number= models.IntegerField(blank=True, null=True)
     child_enrolled_in_this_school = models.PositiveIntegerField(blank=True, null=True)
     child_enrolled_in_other_schools = models.BooleanField(default=False)
     primary_phone = models.CharField(max_length=50, blank=True, null=True)
@@ -88,6 +91,28 @@ class RegisteringAdult(Person):
         if self.id_type and 'UNHCR' in self.id_type.name:
             return self.id_number
         return self.number
+
+class Payment(models.Model):
+    """
+    Monthly household payment in PILOT
+    """
+    paid_adult = models.ForeignKey(
+        RegisteringAdult,
+        blank=True, null=True,
+        related_name='+',
+    )
+    payment_list_number = models.IntegerField(blank=True, null=True)
+    payment_amount= models.IntegerField(blank=True, null=True)
+    payment_month = models.IntegerField(blank=True, null=True)
+    payment_date = models.DateField(blank=True, null=True)
+
+
+    class Meta:
+        ordering = ['id']
+
+
+    def __unicode__(self):
+        return self.id
 
 
 class MessageType(models.Model):
