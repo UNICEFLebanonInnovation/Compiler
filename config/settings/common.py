@@ -325,6 +325,8 @@ SUIT_CONFIG = {
         {'app': 'registrations', 'label': 'Pilot', 'icon': 'icon-th-list'},
         {'app': 'students', 'label': 'Students', 'icon': 'icon-th-list'},
         {'app': 'schools', 'label': 'Schools', 'icon': 'icon-th-list'},
+        {'app': 'hhvisit', 'label': 'House Hold Visit', 'icon': 'icon-th-list'},
+        {'app': 'attendances', 'label': 'Attendances', 'icon': 'icon-th-list'},
         {'app': 'locations', 'label': 'Locations', 'icon': 'icon-globe'},
     )
 }
