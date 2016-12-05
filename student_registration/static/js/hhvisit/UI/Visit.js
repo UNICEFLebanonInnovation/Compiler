@@ -1,0 +1,82 @@
+
+
+        function HideLoader()
+        {
+           setTimeout
+           (
+              function()
+              {
+                 $(".loader").hide();
+              },
+              500
+           )
+        }
+
+
+  function InitialiseVisitForm(visitData)
+        {
+           visitDataRecord = visitData;
+
+           //alert(JSON.stringify(visitData));
+
+           $("#hhVisitName").text(visitData.first_name+' '+visitData.father_name+' '+visitData.last_name);
+           $("#hhAllvisitAttemptCount").text(visitData.all_visit_attempt_count);
+
+           $("#household-visit-attempt-table tbody").empty();
+           AddAttemptEmptyRow();
+           visitData.visit_attempt.forEach
+           (
+              function(entry)
+              {
+                 AddAttemptRow(entry, true);
+              }
+           );
+
+
+           $("#household-visit-child-table tbody").empty();
+
+           visitData.children_visits.forEach
+           (
+              function(entry)
+              {
+                 AddChildRow(entry);
+              }
+           );
+
+           $("#household-visit-comment-table tbody").empty();
+           AddCommentEmptyRow();
+           visitData.visit_comment.forEach
+           (
+              function(entry)
+              {
+                 AddCommentRow(entry, true);
+              }
+           );
+
+
+        }
+
+
+
+        function FormatDate(dateString)
+        {
+           var date;
+
+           if(isDate(dateString, "yyyy-mm-ddTHH:mm:ssZ") )
+           {
+              date = new Date(getDateFromFormat(dateString, "yyyy-mm-ddTHH:mm:ssZ"));
+           }
+           else
+           {
+              date = new Date(dateString);
+           }
+
+           var result =
+           (
+              date.getDate().toString() + '/' +
+              (date.getMonth() + 1).toString() + '/' +
+              date.getFullYear().toString()
+           );
+
+           return result;
+        }

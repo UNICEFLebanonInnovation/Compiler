@@ -65,6 +65,7 @@ LOCAL_APPS = (
     'student_registration.schools',  # custom schools app
     'student_registration.locations',  # custom locations app
     'student_registration.eav',  # custom EAV app
+    'student_registration.hhvisit',  # custom HH Visit app
     'student_registration.dashboard',  # custom dashboard app
 )
 
