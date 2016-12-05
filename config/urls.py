@@ -16,6 +16,15 @@ from student_registration.registrations.views import (
     RegisteringChildViewSet,
     ClassAssignmentViewSet,
     WaitingListViewSet,
+    RegisteringAdultListSearchView,
+)
+from student_registration.hhvisit.views import (
+    HouseholdVisitLoadViewSet,
+    HouseholdVisitAttemptViewSet,
+    HouseholdVisitChildViewSet,
+    HouseholdVisitServiceViewSet,
+    HouseholdVisitCommentViewSet,
+    HouseholdVisitSaveViewSet
 )
 from student_registration.attendances.views import (
     AttendanceViewSet,
@@ -48,6 +57,14 @@ api.register(r'attendances', AttendanceViewSet, base_name='attendances')
 api.register(r'attendances-report', AttendanceReportViewSet, base_name='attendances_report')
 api.register(r'class-assignment', ClassAssignmentViewSet, base_name='class_assignment')
 api.register(r'waiting-list', WaitingListViewSet, base_name='waiting_list')
+api.register(r'registry-search', RegisteringAdultListSearchView, base_name='registry_search')
+
+api.register(r'household-visit', HouseholdVisitLoadViewSet, base_name='household_visit')
+api.register(r'household-visit-attempt', HouseholdVisitAttemptViewSet, base_name='household_visit_attempt')
+api.register(r'household-team', HouseholdVisitSaveViewSet, base_name='household_team')
+api.register(r'household-visit-child', HouseholdVisitChildViewSet, base_name='household_visit_child')
+api.register(r'household-visit-service', HouseholdVisitServiceViewSet, base_name='household_visit_service')
+api.register(r'household-visit-comment', HouseholdVisitCommentViewSet, base_name='household_visit_comment')
 
 api.register(r'students', StudentViewSet, base_name='students')
 api.register(r'schools', SchoolViewSet, base_name='schools')
@@ -76,6 +93,7 @@ urlpatterns = [
     url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
     url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
     url(r'^registrations/', include('student_registration.registrations.urls', namespace='registrations')),
+    url(r'^hhvisit/',include('student_registration.hhvisit.urls', namespace='hhvisit')),
     url(r'^enrollments/', include('student_registration.enrollments.urls', namespace='enrollments')),
     url(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
     url(r'^locations/', include('student_registration.locations.urls', namespace='locations')),
