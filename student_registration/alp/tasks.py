@@ -71,3 +71,123 @@ def assign_alp_level():
         except Exception as ex:
             print ex.message
             continue
+
+
+@app.task
+def generate_alp_report(school=0, location=0, email=None, user=None):
+    from student_registration.alp.models import Outreach
+    queryset = []
+
+    if user and has_group(user, 'PARTNER'):
+        queryset = Outreach.objects.filter(owner=user)
+    if user and has_group(user, 'ALP_SCHOOL') and user.school_id:
+        school = user.school_id
+    if school:
+        queryset = Outreach.objects.filter(school_id=school).order_by('id')
+    if location:
+        queryset = Outreach.objects.filter(school__location_id=location).order_by('id')
+
+    data = tablib.Dataset()
+
+    data.headers = [
+        _('ALP result'),
+        _('ALP round'),
+        _('ALP level'),
+        _('Is the child participated in an ALP program'),
+
+        _('Education year'),
+        _('Last education level'),
+
+        _('Phone prefix'),
+        _('Phone number'),
+        _('Student living address'),
+
+        _('Student ID Number'),
+        _('Student ID Type'),
+        _('Registered in UNHCR'),
+
+        _('Mother nationality'),
+        _('Mother fullname'),
+
+        _('Current Section'),
+        _('Current Level'),
+
+        _('Science corrector'),
+        _('Math corrector'),
+        _('Foreign language corrector'),
+        _('Arabic language corrector'),
+
+        _('Assigned to level'),
+        _('Total'),
+        _('Science'),
+        _('Math'),
+        _('Foreign language'),
+        _('Arabic language'),
+        _('Registered in level'),
+
+        _('Student nationality'),
+        _('Student age'),
+        _('Student birthday'),
+        _('Sex'),
+        _('Student fullname'),
+
+        _('School'),
+        _('School number'),
+        _('District'),
+        _('Governorate')
+    ]
+
+    content = []
+    for line in queryset:
+        if not line.student or not line.school:
+            continue
+        content = [
+            line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
+            line.last_informal_edu_round.name if line.last_informal_edu_round else '',
+            line.last_informal_edu_level.name if line.last_informal_edu_level else '',
+            _(line.participated_in_alp) if line.participated_in_alp else '',
+
+            line.last_education_year,
+            line.last_education_level.name if line.last_education_level else '',
+
+            line.student.phone_prefix,
+            line.student.phone,
+            line.student.address,
+
+            line.student.id_number,
+            line.student.id_type.name if line.student.id_type else '',
+            _(line.registered_in_unhcr) if line.registered_in_unhcr else '',
+
+            line.student.mother_nationality.name if line.student.mother_nationality else '',
+            line.student.mother_fullname,
+
+            line.section.name if line.section else '',
+            line.registered_in_level.name if line.registered_in_level else '',
+
+            line.exam_corrector_science,
+            line.exam_corrector_math,
+            line.exam_corrector_language,
+            line.exam_corrector_arabic,
+
+            line.assigned_to_level.name if line.assigned_to_level else '',
+            line.exam_total,
+            line.exam_result_science,
+            line.exam_result_math,
+            line.exam_result_language,
+            line.exam_result_arabic,
+            line.level.name if line.level else '',
+
+            line.student.nationality_name(),
+            line.student.birthday,
+            line.student.calc_age,
+            _(line.student.sex),
+            line.student.__unicode__(),
+
+            line.school.name,
+            line.school.number,
+            line.school.location.name,
+            line.school.location.parent.name,
+        ]
+        data.append(content)
+
+    return data
