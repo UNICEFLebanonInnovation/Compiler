@@ -6,9 +6,6 @@
 {% block extra_head %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
-{#	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">#}
-{#	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">#}
-{#	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">#}
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
 
 {% endblock %}
@@ -32,33 +29,31 @@
             <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                          <div class="panel-heading">
-                            <h3 class="panel-title">
-                                <ol class="breadcrumb">
-                                    <li><a>{% trans "Registration" %}</a></li>
-                                    <li>
-                                      <button class="btn btn-info" id="registration-synchro">
-                                        <i class="icon-synch-sign icon-white"></i>&nbsp;
-                                            {% trans "synchronize" %}
-                                      </button>
-                                    </li>
-                                    <li>
-                                        <select name="classroom" id="filter_class" class="col-300">
-                                            <option value="">{% trans "Filter by Class" %}</option>
-                                            {% for item in classrooms %}
-                                                <option value="{{ item.id }}">{{ item.name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">
-                                            <i class="icon-export-sign icon-white"></i>&nbsp;
-                                                {% trans "Export" %}
-                                        </a>
-                                        <button class="btn btn-warning" id="filter_cancel">
-                                            {% trans "Rest filter" %}
-                                        </button>
-                                    </li>
-                                </ol>
-                            </h3>
+                          <div class="panel-heading" style="position: absolute; top:0px;" id="header">
+                            <ol class="breadcrumb">
+                                <li><h3 class="panel-title">{% trans "Registration" %}</h3></li>
+                                <li>
+                                  <button class="btn btn-info" id="registration-synchro">
+                                    <i class="icon-synch-sign icon-white"></i>&nbsp;
+                                        {% trans "synchronize" %}
+                                  </button>
+                                </li>
+                                <li>
+                                    <select name="classroom" id="filter_class" class="col-200">
+                                        <option value="">{% trans "Filter by Class" %}</option>
+                                        {% for item in classrooms %}
+                                            <option value="{{ item.id }}">{{ item.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">
+                                        <i class="icon-export-sign icon-white"></i>&nbsp;
+                                            {% trans "Export" %}
+                                    </a>
+                                    <button class="btn btn-warning" id="filter_cancel">
+                                        {% trans "Rest filter" %}
+                                    </button>
+                                </li>
+                            </ol>
                             <div class="actions pull-right">
                                 <i class="fa fa-chevron-down"></i>
                                 <i class="fa fa-times"></i>
@@ -71,7 +66,7 @@
                                        data-pagination="true"
                                        data-search="true"
                                        cellspacing="0"
-                                       width="100%">
+                                       width="100%" style="margin-bottom: 100px; margin-top: 75px;">
                                 <thead>
                                     <tr id="thead-line-1">
                                         <th rowspan="2">&nbsp;</th>
@@ -90,21 +85,15 @@
                                         <th rowspan="2"><label>{% trans "Mother fullname" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Mother nationality" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Registered in UNHCR" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Student ID Type" %}</label>
-{#                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number type tooltip" %}"></i>#}
-                                        </th>
+                                        <th rowspan="2"><label>{% trans "Student ID Type" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student ID Number" %}</label>
                                             <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"></i>
                                         </th>
                                         <th rowspan="2"><label>{% trans "Student living address" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Phone number (6 digits)" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Phone prefix (2 digits)" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Current Class" %}</label>
-{#                                            <input type="checkbox" name="duplicate_classroom" id="duplicate_classroom" />#}
-                                        </th>
-                                        <th rowspan="2"><label>{% trans "Current Section" %}</label>
-{#                                            <input type="checkbox" name="duplicate_section" id="duplicate_section" />#}
-                                        </th>
+                                        <th rowspan="2"><label>{% trans "Current Class" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Current Section" %}</label></th>
                                         <th colspan="4" style="text-align: center; background-color: #67b168;"><label>{% trans "Last student education" %}</label></th>
                                         <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
                                     </tr>
@@ -136,14 +125,6 @@
                                     {% trans "Add defined number of lines" %}
                               </button>
                         </div>
-{#                          <button class="btn btn-success" id="duplicate_last_line_select">#}
-{#                            <i class="icon-plus-sign icon-white"></i>&nbsp;#}
-{#                                {% trans "duplicate last line with selected option" %}#}
-{#                          </button>#}
-{#                          <button class="btn btn-success" id="duplicate_defined_lines_select">#}
-{#                            <i class="icon-plus-sign icon-white"></i>&nbsp;#}
-{#                                {% trans "duplicate defined number of lines with selected option" %}#}
-{#                          </button>#}
                      </div>
                 </div>
             </div>
@@ -231,6 +212,15 @@
 
             $(document).on('blur', arabic_fields, function(){
                 checkArabicOnly($(this));
+            });
+
+            $(window).scroll(function () {
+                var l = $(this).scrollLeft();
+                if(parseInt(l) <= 0){
+                    $('#header').css({'left': l});
+                }else{
+                    $('#header').css({'right': -l});
+                }
             });
 
             $(document).on('click', '#registered_in_unhcr_1, #registered_in_unhcr_0', function(){
@@ -359,7 +349,7 @@
                     if(result == true){
                         delete_from_store(item.attr('itemscope'), 'registrations');
                         item.parents('tr').remove();
-                    }x``
+                    }
                 });
             });
 
@@ -516,7 +506,7 @@
             var item = {id: rows, synchronized: false, deleted: false, owner: user_id, original_id: 0, school: school_id};
             var fields = $('#registration_prototype').find('.registration-field');
             $(fields).each(function(i, field){
-                item[$(field).attr('name')] = '';
+                item[$(field).attr('name')] = $(field).val();
             });
 
             var store1 = getStoreByName('eav-shared-columns');
@@ -724,7 +714,7 @@
 
         function load_base_data()
         {
-            pull_data_from_server(host+'/api/eav/attributes/?type='+eav_type, 'eav-shared-columns');
+{#            pull_data_from_server(host+'/api/eav/attributes/?type='+eav_type, 'eav-shared-columns');#}
         }
 
         function createStores()
@@ -763,7 +753,7 @@
             request.onsuccess = function() {
                 db = request.result;
                 $(".loader").show();
-                load_base_data();
+{#                load_base_data();#}
                 setTimeout(function(){
                     build_datatable();
                     $(".loader").hide();

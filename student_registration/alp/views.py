@@ -54,14 +54,13 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
     def get_queryset(self):
         if has_group(self.request.user, 'CERD'):
             return self.queryset
+        if has_group(self.request.user, 'ALP_SCHOOL'):
+            return self.queryset.filter(school_id=self.request.user.school_id)
         return self.queryset.filter(owner=self.request.user)
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
-        # student = instance.student
         instance.delete()
-        # if student:
-        #     student.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
     def perform_update(self, serializer):
@@ -95,17 +94,19 @@ class OutreachView(LoginRequiredMixin, TemplateView):
         location = 0
         location_parent = 0
         school_id = int(self.request.GET.get("school", 0))
+        if has_group(self.request.user, 'CERD'):
+            data = Outreach.objects.exclude(owner__partner_id=None)
+            data = data.filter(school_id=school_id)
+        if has_group(self.request.user, 'ALP_SCHOOL'):
+            data = Outreach.objects.filter(school_id=self.request.user.school_id)
+            data = data.exclude(owner_id=self.request.user.id)
+            school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
         if school and school.location:
             location = school.location
         if location and location.parent:
             location_parent = location.parent
-        if has_group(self.request.user, 'CERD'):
-            data = Outreach.objects.exclude(owner__partner_id=None)
-            data = data.filter(school_id=school_id)
-        if has_group(self.request.user, 'ALP_DIRECTOR'):
-            data = Outreach.objects.filter(school_id=self.request.user.school_id)
 
         return {
             'data': data,
@@ -167,16 +168,20 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
     model = Outreach
 
     def get(self, request, *args, **kwargs):
-        queryset = self.model.objects.all()
+        queryset = []
         school = int(request.GET.get('school', 0))
         location = int(request.GET.get('location', 0))
 
         if has_group(self.request.user, 'PARTNER'):
-            queryset = queryset.filter(owner=self.request.user)
+            queryset = self.model.objects.filter(owner=self.request.user)
+        if has_group(self.request.user, 'ALP_SCHOOL') and self.request.user.school_id:
+            school = self.request.user.school_id
         if school:
-            queryset = queryset.filter(school_id=school).order_by('id')
+            queryset = self.model.objects.filter(school_id=school).order_by('id')
         if location:
-            queryset = queryset.filter(school__location_id=location).order_by('id')
+            queryset = self.model.objects.filter(school__location_id=location).order_by('id')
+        if self.request.user.is_superuser and school == 9999:
+            queryset = self.model.objects.all()
 
         data = tablib.Dataset()
 
@@ -200,12 +205,21 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
             _('Mother nationality'),
             _('Mother fullname'),
 
-            _('Registered in level'),
+            _('Current Section'),
+            _('Current Level'),
+
+            _('Science corrector'),
+            _('Math corrector'),
+            _('Foreign language corrector'),
+            _('Arabic language corrector'),
+
+            _('Assigned to level'),
             _('Total'),
             _('Science'),
             _('Math'),
             _('Foreign language'),
             _('Arabic language'),
+            _('Registered in level'),
 
             _('Student nationality'),
             _('Student age'),
@@ -243,12 +257,21 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
                 line.student.mother_nationality.name if line.student.mother_nationality else '',
                 line.student.mother_fullname,
 
-                line.level.name if line.level else '',
+                line.section.name if line.section else '',
+                line.registered_in_level.name if line.registered_in_level else '',
+
+                line.exam_corrector_science,
+                line.exam_corrector_math,
+                line.exam_corrector_language,
+                line.exam_corrector_arabic,
+
+                line.assigned_to_level.name if line.assigned_to_level else '',
                 line.exam_total,
                 line.exam_result_science,
                 line.exam_result_math,
                 line.exam_result_language,
                 line.exam_result_arabic,
+                line.level.name if line.level else '',
 
                 line.student.nationality_name(),
                 line.student.birthday,

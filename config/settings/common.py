@@ -35,6 +35,9 @@ DJANGO_APPS = (
     # Useful template tags:
     # 'django.contrib.humanize',
 
+    'dal',
+    'dal_select2',
+
     # Admin
     'suit',
     'django.contrib.admin',
@@ -62,6 +65,7 @@ LOCAL_APPS = (
     'student_registration.schools',  # custom schools app
     'student_registration.locations',  # custom locations app
     'student_registration.eav',  # custom EAV app
+    'student_registration.dashboard',  # custom dashboard app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -266,7 +270,7 @@ LOGIN_URL = 'account_login'
 AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 
 ########## CELERY
-INSTALLED_APPS += ('student_registration.taskapp.celery.CeleryConfig',)
+INSTALLED_APPS += ('student_registration.taskapp.celery.CeleryConfig', 'django.contrib.humanize',)
 # if you are not using the django database broker (e.g. rabbitmq, redis, memcached), you can remove the next line.
 # INSTALLED_APPS += ('kombu.transport.django',)
 BROKER_URL = env('CELERY_BROKER_URL', default='django://')
@@ -312,6 +316,7 @@ SUIT_CONFIG = {
     'CONFIRM_UNSAVED_CHANGES': False,
 
     'MENU': (
+        {'label': 'View site', 'icon': 'icon-home', 'url': "/"},
         {'app': 'auth', 'label': 'Groups', 'icon': 'icon-user'},
         {'app': 'users', 'label': 'Users', 'icon': 'icon-user'},
         {'app': 'alp', 'label': 'ALP', 'icon': 'icon-th-list'},

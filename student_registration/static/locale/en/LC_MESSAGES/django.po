@@ -284,3 +284,6 @@ msgstr ""
 #: student_registration/users/models.py:16
 msgid "Name of User"
 msgstr ""
+
+msgid "synchronize"
+msgstr "Send your data"

@@ -1024,6 +1024,9 @@ msgstr "الغاء التصفية"
 msgid "Current Class"
 msgstr "الصف الحالي"
 
+msgid "Current Level"
+msgstr "المستوى الحالي"
+
 msgid "Current Section"
 msgstr "الشعبة الحالية"
 
@@ -1146,3 +1149,12 @@ msgstr "تم تسجيل التلميذ في"
 
 msgid "Exam not received from this school"
 msgstr "لا يوجد مسابقة لهذا التلميذ"
+
+msgid "Not enrolled in this school"
+msgstr "لم يتم تسجيله في هذه المدرسة"
+
+msgid "Student Total grade"
+msgstr "مجموع علامات التلميذ"
+
+msgid "Search a student"
+msgstr "ابحث عن تلميذ"

@@ -34,8 +34,9 @@ from student_registration.eav.views import (
     AttributeViewSet,
     ValueViewSet,
 )
-from student_registration.users.views import LoginRedirectView
+from student_registration.users.views import LoginRedirectView, PasswordChangeView, PasswordChangeDoneView
 from student_registration.enrollments.views import EnrollmentViewSet
+from student_registration.students.views import StudentAutocomplete
 from .views import acme_view
 
 api = routers.SimpleRouter()
@@ -60,6 +61,9 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
     url(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
     url(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
+    url(r'^change-password/$', PasswordChangeView.as_view(), name='change_password'),
+    url(r'^change-password-done/$', PasswordChangeDoneView.as_view(), name='change_password_done'),
+    url(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
 
     # Django Admin, use {% url 'admin:index' %}
     url(settings.ADMIN_URL, include(admin.site.urls)),
@@ -75,6 +79,7 @@ urlpatterns = [
     url(r'^enrollments/', include('student_registration.enrollments.urls', namespace='enrollments')),
     url(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
     url(r'^locations/', include('student_registration.locations.urls', namespace='locations')),
+    url(r'^dashboard/', include('student_registration.dashboard.urls', namespace='dashboard')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/docs/', include('rest_framework_swagger.urls')),
