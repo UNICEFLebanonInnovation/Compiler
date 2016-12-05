@@ -8,6 +8,7 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel
 from .utils import *
+from datetime import date
 import datetime
 import math
 
@@ -166,6 +167,14 @@ class Person(TimeStampedModel):
         if self.birthday_year:
             return int(current_year)-int(self.birthday_year)
         return 0
+
+    @property
+    def calculate_age(self):
+        today = date.today()
+        years_difference = today.year - int(self.birthday_year)
+        is_before_birthday = (today.month, today.day) < (int(self.birthday_month), int(self.birthday_day))
+        elapsed_years = years_difference - int(is_before_birthday)
+        return elapsed_years
 
     class Meta:
         abstract = True
