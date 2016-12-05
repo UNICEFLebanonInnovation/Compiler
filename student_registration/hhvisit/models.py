@@ -81,6 +81,15 @@ class HouseholdVisitTeam(models.Model):
         return teamname1 + ', '+ teamname2
 
 
+class ChildAttendanceMonitoring(models.Model):
+    date = models.DateTimeField()
+
+    class Meta:
+        ordering = ['-id']
+
+    def __unicode__(self):
+        return self.comment
+
 class HouseholdVisit(TimeStampedModel):
 
     STATUS = Choices(
@@ -240,3 +249,5 @@ class HouseholdVisitComment(models.Model):
 
     def __unicode__(self):
         return self.comment
+
+
