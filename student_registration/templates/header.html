@@ -63,9 +63,11 @@
                 <li class="nav-item">
                     <a class="nav-link {% if request|is_current_page:"class_assignment" %}active{% endif %}" href="{% url 'registrations:class_assignment' %}?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignments" %}</a>
                 </li>
+{% if request.user|has_group:"HH_UPDATE" %}
                 <li class="nav-item">
                     <a class="nav-link {% if request|is_current_page:"registry_search" %}active{% endif %}" href="{% url 'registrations:registry_search' %}?ln={{ LANGUAGE_CODE }}">{% trans "Household Update" %}</a>
                 </li>
+{% endif %}
                 {% endif %}
                 {% if request.user.is_superuser %}
                 <li class="dropdown nav-item">
@@ -84,7 +86,7 @@
                 </li>
                 {% endif %}
             {% endif %}
-              {% if request.user.is_staff %}
+              {% if request.user|has_group:"HH_VISIT" %}
               <!--<li class="nav-item">-->
                 <!--<a class="nav-link {% if request|is_current_page:"household_visit" %}active{% endif %}" href="{% url 'hhvisit:household_visit' %}?ln={{ LANGUAGE_CODE }}">{% trans "Household Visit" %}</a>-->
               <!--</li>-->
