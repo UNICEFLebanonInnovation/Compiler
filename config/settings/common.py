@@ -35,6 +35,9 @@ DJANGO_APPS = (
     # Useful template tags:
     # 'django.contrib.humanize',
 
+    'dal',
+    'dal_select2',
+
     # Admin
     'suit',
     'django.contrib.admin',
@@ -62,6 +65,8 @@ LOCAL_APPS = (
     'student_registration.schools',  # custom schools app
     'student_registration.locations',  # custom locations app
     'student_registration.eav',  # custom EAV app
+    'student_registration.hhvisit',  # custom HH Visit app
+    'student_registration.dashboard',  # custom dashboard app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -266,7 +271,7 @@ LOGIN_URL = 'account_login'
 AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 
 ########## CELERY
-INSTALLED_APPS += ('student_registration.taskapp.celery.CeleryConfig',)
+INSTALLED_APPS += ('student_registration.taskapp.celery.CeleryConfig', 'django.contrib.humanize',)
 # if you are not using the django database broker (e.g. rabbitmq, redis, memcached), you can remove the next line.
 # INSTALLED_APPS += ('kombu.transport.django',)
 BROKER_URL = env('CELERY_BROKER_URL', default='django://')
@@ -320,6 +325,8 @@ SUIT_CONFIG = {
         {'app': 'registrations', 'label': 'Pilot', 'icon': 'icon-th-list'},
         {'app': 'students', 'label': 'Students', 'icon': 'icon-th-list'},
         {'app': 'schools', 'label': 'Schools', 'icon': 'icon-th-list'},
+        {'app': 'hhvisit', 'label': 'House Hold Visit', 'icon': 'icon-th-list'},
+        {'app': 'attendances', 'label': 'Attendances', 'icon': 'icon-th-list'},
         {'app': 'locations', 'label': 'Locations', 'icon': 'icon-globe'},
     )
 }

@@ -16,6 +16,15 @@ from student_registration.registrations.views import (
     RegisteringChildViewSet,
     ClassAssignmentViewSet,
     WaitingListViewSet,
+    RegisteringAdultListSearchView,
+)
+from student_registration.hhvisit.views import (
+    HouseholdVisitLoadViewSet,
+    HouseholdVisitAttemptViewSet,
+    HouseholdVisitChildViewSet,
+    HouseholdVisitServiceViewSet,
+    HouseholdVisitCommentViewSet,
+    HouseholdVisitSaveViewSet
 )
 from student_registration.attendances.views import (
     AttendanceViewSet,
@@ -36,6 +45,7 @@ from student_registration.eav.views import (
 )
 from student_registration.users.views import LoginRedirectView, PasswordChangeView, PasswordChangeDoneView
 from student_registration.enrollments.views import EnrollmentViewSet
+from student_registration.students.views import StudentAutocomplete
 from .views import acme_view
 
 api = routers.SimpleRouter()
@@ -47,6 +57,14 @@ api.register(r'attendances', AttendanceViewSet, base_name='attendances')
 api.register(r'attendances-report', AttendanceReportViewSet, base_name='attendances_report')
 api.register(r'class-assignment', ClassAssignmentViewSet, base_name='class_assignment')
 api.register(r'waiting-list', WaitingListViewSet, base_name='waiting_list')
+api.register(r'registry-search', RegisteringAdultListSearchView, base_name='registry_search')
+
+api.register(r'household-visit', HouseholdVisitLoadViewSet, base_name='household_visit')
+api.register(r'household-visit-attempt', HouseholdVisitAttemptViewSet, base_name='household_visit_attempt')
+api.register(r'household-team', HouseholdVisitSaveViewSet, base_name='household_team')
+api.register(r'household-visit-child', HouseholdVisitChildViewSet, base_name='household_visit_child')
+api.register(r'household-visit-service', HouseholdVisitServiceViewSet, base_name='household_visit_service')
+api.register(r'household-visit-comment', HouseholdVisitCommentViewSet, base_name='household_visit_comment')
 
 api.register(r'students', StudentViewSet, base_name='students')
 api.register(r'schools', SchoolViewSet, base_name='schools')
@@ -62,6 +80,7 @@ urlpatterns = [
     url(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
     url(r'^change-password/$', PasswordChangeView.as_view(), name='change_password'),
     url(r'^change-password-done/$', PasswordChangeDoneView.as_view(), name='change_password_done'),
+    url(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
 
     # Django Admin, use {% url 'admin:index' %}
     url(settings.ADMIN_URL, include(admin.site.urls)),
@@ -74,9 +93,11 @@ urlpatterns = [
     url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
     url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
     url(r'^registrations/', include('student_registration.registrations.urls', namespace='registrations')),
+    url(r'^hhvisit/',include('student_registration.hhvisit.urls', namespace='hhvisit')),
     url(r'^enrollments/', include('student_registration.enrollments.urls', namespace='enrollments')),
     url(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
     url(r'^locations/', include('student_registration.locations.urls', namespace='locations')),
+    url(r'^dashboard/', include('student_registration.dashboard.urls', namespace='dashboard')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/docs/', include('rest_framework_swagger.urls')),
