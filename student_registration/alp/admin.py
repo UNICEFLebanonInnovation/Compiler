@@ -75,7 +75,9 @@ class OutreachAdmin(ImportExportModelAdmin):
         'student', 'student_age', 'school', 'caza', 'governorate',
         'level', 'total', 'assigned_to_level', 'registered_in_level', 'section', 'registered_in_school'
     )
-    list_filter = ('registered_in_level', 'level', 'assigned_to_level', 'school', 'school__location', GovernorateFilter)
+    list_filter = ('school__number', 'school', 'school__location', GovernorateFilter,
+                   'level', 'assigned_to_level', 'registered_in_level',
+                   'section', 'student__sex',)
     search_fields = (
         'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
         'school__name', 'school__number', 'student__id_number', 'school__location__name', 'level__name',
