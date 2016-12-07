@@ -6,7 +6,7 @@ from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import *
-
+from .forms import OutreachForm
 from .models import (
     Outreach,
     ALPRound,
@@ -70,6 +70,7 @@ class GovernorateFilter(admin.SimpleListFilter):
 
 class OutreachAdmin(ImportExportModelAdmin):
     resource_class = OutreachResource
+    form = OutreachForm
     list_display = (
         'student', 'student_age', 'school', 'caza', 'governorate',
         'level', 'total', 'assigned_to_level', 'registered_in_level', 'section', 'registered_in_school'
