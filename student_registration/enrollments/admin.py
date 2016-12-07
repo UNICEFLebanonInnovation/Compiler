@@ -8,6 +8,7 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import *
 
 from .models import Enrollment
+from .forms import EnrollmentForm
 from student_registration.students.models import Student
 from student_registration.schools.models import (
     School,
@@ -29,6 +30,7 @@ class EnrollmentResource(resources.ModelResource):
 
     class Meta:
         model = Enrollment
+        form = EnrollmentForm
         fields = ('student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
                   'student__age', 'governorate', 'district', 'school__name', 'section__name', 'classroom__name')
         export_order = ('student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
@@ -66,6 +68,7 @@ class GovernorateFilter(admin.SimpleListFilter):
 
 class EnrollmentAdmin(ImportExportModelAdmin):
     resource_class = EnrollmentResource
+    form = EnrollmentForm
     fields = ('student', 'school', 'section', 'classroom', 'owner', 'status', 'year',
               'enrolled_in_this_school', 'registered_in_unhcr',
               'last_education_level', 'last_education_year', 'last_year_result', 'last_school_type', 'result',
