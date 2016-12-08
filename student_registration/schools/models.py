@@ -21,7 +21,7 @@ class School(models.Model):
     )
 
     class Meta:
-        ordering = ['name']
+        ordering = ['number']
 
     @property
     def location_name(self):

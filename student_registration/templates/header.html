@@ -75,12 +75,12 @@
                       {% trans "Dashboard" %}
                   </a>
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                      <li><a href="{% url 'dashboard:registrations-pilot' %}">{% trans "PILOT" %}</a></li>
+                      <li><a class="nav-link" href="{% url 'dashboard:registrations-pilot' %}">{% trans "PILOT" %}</a></li>
                       <li role="separator" class="divider"></li>
-                      <li><a href="{% url 'dashboard:registrations-2ndshift' %}">{% trans "2nd Shift" %}</a></li>
+                      <li><a class="nav-link" href="{% url 'dashboard:registrations-2ndshift' %}">{% trans "2nd Shift" %}</a></li>
                       <li role="separator" class="divider"></li>
-                      <li><a href="{% url 'dashboard:registrations-alp' %}">{% trans "ALP" %}</a></li>
-                      <li role="separator" class="divider"></li>
+                      <li><a class="nav-link" href="{% url 'dashboard:registrations-alp' %}">{% trans "ALP" %}</a></li>
+{#                      <li role="separator" class="divider"></li>#}
 {#                      <li><a href="{% url 'dashboard:attendances' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance dashboard" %}</a></li>#}
                   </ul>
                 </li>
