@@ -318,6 +318,11 @@ SUIT_CONFIG = {
 
     'MENU': (
         {'label': 'View site', 'icon': 'icon-home', 'url': "/"},
+        {'label': 'Dashboard', 'icon': 'icon-home', 'models': [
+            {'url': '/dashboard/registrations-pilot/', 'label': 'PILOT'},
+            {'url': '/dashboard/registrations-2ndshift/', 'label': '2nd Shift'},
+            {'url': '/dashboard/registrations-alp/', 'label': 'ALP'},
+        ]},
         {'app': 'auth', 'label': 'Groups', 'icon': 'icon-user'},
         {'app': 'users', 'label': 'Users', 'icon': 'icon-user'},
         {'app': 'alp', 'label': 'ALP', 'icon': 'icon-th-list'},
