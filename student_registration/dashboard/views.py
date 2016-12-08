@@ -183,6 +183,7 @@ class RegistrationsALPView(LoginRequiredMixin,
     Provides the registration page with lookup types in the context
     """
     model = Outreach
+    queryset = Outreach.objects.exclude(assigned_to_level__isnull=True)
     template_name = 'dashboard/registrations-alp.html'
 
     # group_required = [u"editors", u"admins"]
@@ -207,7 +208,7 @@ class RegistrationsALPView(LoginRequiredMixin,
             # get number of children of each of these schools
             numchildren = 0
             for oneschool in govdistschools:
-                nbr = self.model.objects.filter(school=oneschool.id).count()
+                nbr = self.queryset.filter(school=oneschool.id).count()
                 if nbr:
                     students_per_school[oneschool.name] = nbr
                 numchildren += nbr
@@ -217,27 +218,27 @@ class RegistrationsALPView(LoginRequiredMixin,
         # get children by age range
         now = datetime.datetime.now()
         age_range = {}
-        age_range['0-5'] = self.model.objects.filter(student__birthday_year__gte=(now.year - 5)).count()
-        age_range['6-9'] = self.model.objects.filter(student__birthday_year__lte=(now.year - 6), student__birthday_year__gte=(now.year - 9)).count()
-        age_range['10+'] = self.model.objects.filter(student__birthday_year__lte=(now.year - 10)).count()
+        age_range['0-5'] = self.queryset.filter(student__birthday_year__gte=(now.year - 5)).count()
+        age_range['6-9'] = self.queryset.filter(student__birthday_year__lte=(now.year - 6), student__birthday_year__gte=(now.year - 9)).count()
+        age_range['10+'] = self.queryset.filter(student__birthday_year__lte=(now.year - 10)).count()
 
         # get HHs by ID Type
         students_by_idtype = {}
         id_types = IDType.objects.all()
         for type in id_types:
-            students_by_idtype[type] = self.model.objects.filter(student__id_type=type).count()
+            students_by_idtype[type] = self.queryset.filter(student__id_type=type).count()
 
         # get HHs by Nationality
         students_by_nationality = {}
         nationalities = Nationality.objects.all()
         for nationality in nationalities:
-            students_by_nationality[nationality] = self.model.objects.filter(student__nationality_id=nationality.id).count()
+            students_by_nationality[nationality] = self.queryset.filter(student__nationality_id=nationality.id).count()
 
         return {
                 'schools': len(students_per_school),
-                'registrations': self.model.objects.count(),
-                'males': self.model.objects.filter(student__sex='Male').count(),
-                'females': self.model.objects.filter(student__sex='Female').count(),
+                'registrations': self.queryset.count(),
+                'males': self.queryset.filter(student__sex='Male').count(),
+                'females': self.queryset.filter(student__sex='Female').count(),
                 'students_per_gov': students_per_gov,
                 'students_per_school': students_per_school,
                 'age_range': age_range,
