@@ -1162,7 +1162,9 @@ ul.msg_list li a .message {
   border-top-right-radius: 0; }
 
 .dropdown-menu > li > a {
-  color: #5A738E; }
+  color: #5A738E !important;
+  padding-left: 15px;
+  font-size: 15px;}
 
 
 .info-number .badge {
