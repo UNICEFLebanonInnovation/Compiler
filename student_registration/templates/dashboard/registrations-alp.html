@@ -14,7 +14,7 @@
 <section class="main-content-wrapper">
             <section id="main-content">
                 <div class="title_left">
-                    <h3 style="color:#73879C;">{% trans 'Registrations 2nd Shift' %}</h3>
+                    <h3 style="color:#73879C;">{% trans 'Registrations ALP' %}</h3>
                 </div>
                 <hr>
      <div class="row">
@@ -808,7 +808,7 @@
           type: 'category',
           data: [
                 {% for school,numberofchildren in students_per_school.items %}
-                    '{{ school }} - {{ numberofchildren }}',
+                    '{{ school }}',
                 {% endfor %}
             ]
         }],
