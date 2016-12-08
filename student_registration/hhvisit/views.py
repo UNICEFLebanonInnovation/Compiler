@@ -28,7 +28,10 @@ from student_registration.hhvisit.models import (
     ChildService,
     ChildVisit,
     HouseholdVisitComment,
-    HouseholdVisitTeam
+    HouseholdVisitTeam,
+    ChildAttendanceMonitoring,
+    AttendanceMonitoringDate,
+    Student
 )
 from .serializers import SpecificReasonSerializer , HouseholdVisitSerializer, VisitAttemptSerializer, ChildVisitSerializer, ChildServiceSerializer, HouseholdVisitCommentSerializer, HouseholdVisitRecordSerializer
 from student_registration.hhvisit.forms import (
@@ -48,6 +51,9 @@ from student_registration.attendances.models import (
     Attendance
 )
 
+from student_registration.registrations.models import (
+    Registration
+)
 
 class HouseholdVisitView(LoginRequiredMixin, TemplateView):
     """
@@ -273,75 +279,78 @@ from datetime import date
 
 def test(request):
 
-    result = "test"
-
-    # lastDate = ChildVisit.    #
-    # data = Attendance.objects.filter(attendance_date__gte=lastDate)
-    #
-    # import pprint
-    #
-    # for record in data:
-    #     result = result + pprint.pformat(record.attendance_date)
-
-    #result = "sada "
-
-    import pprint
-
     lcd = GetChildrenAbsences('2016-11-21')
+    #lcd = GetChildrenAbsences("")
 
-    result = pprint.pformat(lcd)
+    SaveChildAbsences(lcd)
+
+    result = dumpobjectcontent(lcd)
 
     return HttpResponse(result)
 
 
+def SaveChildAbsences(childAbsences):
+
+    for childAbsence in childAbsences:
+        registering_adult_id = Registration.objects.filter(student_id=childAbsence.StudentID).values_list('registering_adult_id', flat=True).first()
+
+        houseHoldVisit = HouseholdVisit.objects.create( \
+            visit_status="pending", \
+            registering_adult_id = registering_adult_id \
+            )
+
+        houseHoldVisit.save()
+
+        childVisit = ChildVisit.objects.create( \
+            household_visit_id=houseHoldVisit.id, \
+            student_id=childAbsence.StudentID \
+            )
+
+        childVisit.save()
+
+
+        attendanceMonitoring = ChildAttendanceMonitoring.objects.create( \
+            student_id=childAbsence.StudentID, \
+            is_first_visit = False, \
+            date_from=childAbsence.FromDate, \
+            date_to=childAbsence.ToDate \
+            )
+        attendanceMonitoring.child_visit_id = childVisit.id
+
+        attendanceMonitoring.save()
+
+
+
 def GetChildrenAbsences(lastCheckDateString):
 
-    lastCheckDate = datetime.strptime(lastCheckDateString, "%Y-%m-%d").date()
+    lastCheckDate = None
 
-    data = Attendance.objects.filter(attendance_date__gte=lastCheckDate)
+    if lastCheckDateString:
+        lastCheckDate = datetime.strptime(lastCheckDateString, "%Y-%m-%d").date()
+        absentChildIdentifiers =  Attendance.objects.filter(attendance_date__gte=lastCheckDate,status=False)\
+                                  .values_list('student_id',flat=True).distinct()
+    else:
+        absentChildIdentifiers =  Attendance.objects.filter(status=False)\
+                                  .values_list('student_id',flat=True).distinct()
 
-    absentChildIdentifiers =  Attendance.objects.filter(attendance_date__gte=lastCheckDate)\
-                              .values_list('student_id',flat=True).distinct()
 
-
-    import pprint
-
-    result = ''
-
-    #sm = AbsenceMonitoring()
+    sm = AbsenceMonitoring()
 
     for studentID in absentChildIdentifiers:
 
-        firstAttendanceDate = Attendance.objects.filter(attendance_date__lte=lastCheckDate, student_id=studentID, status=True) \
-                              .order_by('-attendance_date').values_list('attendance_date',flat=True).first()
+        firstAttendanceDate = None
 
-        result = result + pprint.pformat(firstAttendanceDate) + '<br/>'
+        if lastCheckDate:
+           firstAttendanceDate = Attendance.objects.filter(attendance_date__lte=lastCheckDate, student_id=studentID, status=True) \
+                                 .order_by('-attendance_date').values_list('attendance_date',flat=True).first()
 
         studentAttendances = GetChildAttendances(studentID,firstAttendanceDate)
 
         for studentAttendance in studentAttendances:
 
-            result = result + pprint.pformat(studentAttendance) + '<br/>'
+            sm.MonitorAttendance(studentID, studentAttendance['attendance_date'], studentAttendance['status'])
 
-            result = result + pprint.pformat(studentAttendance['attendance_date']) + '<br/>'
-            result = result + pprint.pformat(studentAttendance['status']) + '<br/>'
-
-            #sm.MonitorAttendance(studentID, studentAttendance['attendance_date'], studentAttendance['status'])
-
-
-        result = pprint.pformat(sm.studentAbsenceMonitorings) + '<br/>'
-
-
-    # result = ''
-    #
-    # import pprint
-    #
-    # for record in data:
-    #     result = result + pprint.pformat(record.attendance_date) + '<br/>'
-    #
-    # result = absentChildIdentifiers
-
-    return result
+    return sm.GetChildAbsences()
 
 
 def GetChildAttendances(studentID,firstAttendanceDate):
@@ -360,50 +369,57 @@ def GetChildAttendances(studentID,firstAttendanceDate):
 
     return attendances
 
-#
-# class AbsenceMonitoring:
-#
-#     studentAbsenceMonitorings = {}
-#
-#     def MonitorAttendance(self, studentID, attendanceDate, isPresent):
-#
-#         test = studentID
 
-#
-# class AbsenceMonitoring:
-#
-#     studentAbsenceMonitorings = {}
-#
-#     def MonitorAttendance(self, studentID, attendanceDate, isPresent):
-#
-#         sm = self.CheckGetStudentMonitor(studentID)
-#
-#         # sm.MonitorAttendance(attendanceDate, isPresent)
-#
-#         return sm
-#
-#
-#     def CheckGetStudentMonitor(self, studentID):
-#
-#         result = None
-#
-#         if studentID in self.studentAbsenceMonitorings:
-#             result = self.studentAbsenceMonitorings[studentID]
-#         else:
-#             result = ChildAbsenceMonitoring()
-#             result.StudentID = studentID
-#             self.studentAbsenceMonitorings[studentID] = result
-#
-#         return result
-#
-#
-class ChildAbsenceMonitoring:
 
-    StudentID = None
+class AbsenceMonitoring:
 
-    #CurrentChildAbsence = ChildAbsence()
+    def __init__(self, *args, **kwargs):
 
-    ChildAbsences = []
+        self.StudentAbsenceMonitorings = {}
+
+
+    def MonitorAttendance(self, studentID, attendanceDate, isPresent):
+
+        sm = self.CheckGetStudentMonitor(studentID)
+
+        sm.MonitorAttendance(attendanceDate, isPresent)
+
+        return sm
+
+
+    def CheckGetStudentMonitor(self, studentID):
+
+        result = None
+
+        if studentID in self.StudentAbsenceMonitorings:
+            result = self.StudentAbsenceMonitorings[studentID]
+        else:
+            result = StudentAbsenceMonitoring()
+            result.StudentID = studentID
+            self.StudentAbsenceMonitorings[studentID] = result
+
+        return result
+
+    def GetChildAbsences(self):
+
+        result = None
+
+        childAbsenceLists = [[z for z in y.ChildAbsences] for (x,y) in self.StudentAbsenceMonitorings.items()]
+        result = [val for sublist in childAbsenceLists for val in sublist]
+
+        return result
+
+
+class StudentAbsenceMonitoring:
+
+    numberOfAbsenceDays = 10
+
+    def __init__(self, *args, **kwargs):
+
+        self.StudentID = None
+        self.CurrentChildAbsence = None
+        self.ChildAbsences = []
+        self.CurrentChildAbsence = ChildAbsence()
 
     def MonitorAttendance(self, attendanceDate, isPresent):
 
@@ -415,26 +431,26 @@ class ChildAbsenceMonitoring:
 
            self.CurrentChildAbsence.AddAbsenceDate(attendanceDate)
 
-           if self.CurrentChildAbsence.NumberOfDays >= 10:
+           if self.CurrentChildAbsence.NumberOfDays >= self.numberOfAbsenceDays:
               self.CreateNewChildAbsence()
 
     def CreateNewChildAbsence(self):
 
+        self.ChildAbsences.append(self.CurrentChildAbsence)
+
         self.CurrentChildAbsence = ChildAbsence()
 
-        self.ChildAbsences.append(self.CurrentChildAbsence)
 
 
 
 class ChildAbsence:
 
-    StudentID = None
+    def __init__(self, *args, **kwargs):
 
-    FromDate = None
-
-    ToDate = None
-
-    NumberOfDays = 0
+        self.StudentID = None
+        self.FromDate = None
+        self.ToDate = None
+        self.NumberOfDays = 0
 
     def Reset(self, studentID):
         self.StudentID = studentID
@@ -448,3 +464,67 @@ class ChildAbsence:
 
         self.ToDate = absenceDate
         self.NumberOfDays += 1
+
+
+def dumpobject(obj, level=0):
+
+    result = ''
+
+
+    import pprint
+    if isinstance(obj, (int, float, str, unicode, date, datetime)) | (obj is None):
+        result = pprint.pformat(obj)
+
+    for attr in dir(obj):
+        try:
+            val = getattr(obj, attr)
+
+            if attr in ('StudentID', 'FromDate', 'ToDate', 'NumberOfDays', 'CurrentChildAbsence', 'ChildAbsences','StudentAbsenceMonitorings'):
+
+                result += dumpobjectcontent(val,level,attr)
+
+        except Exception as exp:
+            test = 0
+
+
+    return result
+
+
+def dumpobjectcontent(obj, level=0,attr=''):
+
+    result = ''
+
+    spaces = ''
+
+    val=obj
+
+    for i in xrange(level):
+        spaces += '&nbsp;&nbsp;&nbsp;&nbsp;'
+
+    import pprint
+
+    if isinstance(val, (int, float, str, unicode, date, datetime)) | (val is None):
+        result += spaces + attr + " : " + pprint.pformat(val) + "<br/>"
+
+    elif isinstance(val, (dict)):
+
+        result += spaces + attr + "<br/>"
+
+        for x, y in val.items():
+            result += spaces + pprint.pformat(x) + ":" + "<br/>"
+            result += spaces + dumpobject(y, level=level + 1) + "<br/>"
+
+    elif isinstance(val, (list, set)):
+
+        result += spaces + attr + "<br/>"
+
+        for x in val:
+            result += dumpobject(x, level=level + 1) + "<br/>"
+
+    else:
+        if level < 10:
+            test = 0
+            result += spaces + attr + "<br/>"
+            result += dumpobject(val, level=level + 1) + "<br/>"
+
+    return result

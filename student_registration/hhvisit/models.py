@@ -80,15 +80,19 @@ class HouseholdVisitTeam(models.Model):
         teamname2 = User.objects.filter(id=self.second_enumerator_id).values('username').first()['username'];
         return teamname1 + ', '+ teamname2
 
+class studentAbsence(models.Model):
 
-class ChildAttendanceMonitoring(models.Model):
-    date = models.DateTimeField()
 
-    class Meta:
-        ordering = ['-id']
+        dateFrom = models.DateTimeField()
+        dateTo = models.DateTimeField()
 
-    def __unicode__(self):
-        return self.comment
+        class Meta:
+            ordering = ['-id']
+
+        def __unicode__(self):
+            return self.comment
+
+
 
 class HouseholdVisit(TimeStampedModel):
 
@@ -234,6 +238,36 @@ class ChildService(models.Model):
     def __unicode__(self):
         return self.ServiceType.name
 
+class ChildAttendanceMonitoring(models.Model):
+    child_visit = models.ForeignKey(
+        ChildVisit,
+        blank=False, null=True,
+        related_name='+',
+    )
+    student = models.ForeignKey(
+        Student,
+        blank=False, null=True,
+        related_name='+',
+    )
+    is_first_visit = models.BooleanField()
+    date_from = models.DateField()
+    date_to = models.DateField()
+
+    class Meta:
+        ordering = ['-id']
+
+    def __unicode__(self):
+        return self.comment
+
+class AttendanceMonitoringDate(models.Model):
+
+    date_monitoring = models.DateField()
+
+    class Meta:
+        ordering = ['-id']
+
+    def __unicode__(self):
+        return self.comment
 
 class HouseholdVisitComment(models.Model):
     household_visit = models.ForeignKey(
