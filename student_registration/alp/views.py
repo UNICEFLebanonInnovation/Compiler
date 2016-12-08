@@ -51,12 +51,12 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
     serializer_class = OutreachSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get_queryset(self):
-        if has_group(self.request.user, 'CERD'):
-            return self.queryset
-        if has_group(self.request.user, 'ALP_SCHOOL'):
-            return self.queryset.filter(school_id=self.request.user.school_id)
-        return self.queryset.filter(owner=self.request.user)
+    # def get_queryset(self):
+    #     if has_group(self.request.user, 'CERD'):
+    #         return self.queryset
+    #     if has_group(self.request.user, 'ALP_SCHOOL'):
+    #         return self.queryset.filter(school_id=self.request.user.school_id)
+    #     return self.queryset.filter(owner=self.request.user)
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])

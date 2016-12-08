@@ -129,14 +129,14 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
     serializer_class = EnrollmentSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get_queryset(self):
-        if not self.request.user.is_staff:
-            if self.request.user.school:
-                return self.queryset.filter(school=self.request.user.school.id)
-            else:
-                return []
-
-        return self.queryset
+    # def get_queryset(self):
+    #     if not self.request.user.is_staff:
+    #         if self.request.user.school:
+    #             return self.queryset.filter(school=self.request.user.school.id)
+    #         else:
+    #             return []
+    #
+    #     return self.queryset
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
