@@ -4,13 +4,11 @@
 
 {% block extra_head %}
 
-    <!--<link rel="stylesheet" type="text/css" href="{% static 'css/sly.css' %}"-->
-          <!--xmlns:font-weight="http://www.w3.org/1999/xhtml" xmlns:font-weight="http://www.w3.org/1999/xhtml">-->
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 
 {% endblock %}
 
-<div id="add_child_noid_block" style="display: block;">
+<div id="add_household_visit_block" style="display: block;">
 
       <div class="alert alert-success" role="alert" id="alert-synchro-success" style="display: none;;">
           {% trans 'Household visit success' %}.
@@ -24,8 +22,6 @@
           <a class="nav-link" href="{% url 'hhvisit:household_visit' %}?ln={{ LANGUAGE_CODE }}">{% trans "here" %}</a>
           {% trans 'To start a new household visit' %}.
       </div>
-
-      {#<button type="button" id="registration-synchro">synch</button>#}
 
       <form method="post" action="" class="inlineForm" id="household_visit_form" style="display: block;" onsubmit="return false;">
           <input type="hidden" name="id_hhvisit" id="main_id" />

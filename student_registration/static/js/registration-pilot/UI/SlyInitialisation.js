@@ -22,13 +22,6 @@ function CheckInitialiseSly()
       {
          if(onePerFrameSly.rel.activeItem == 0)
          {
-            if(ValidateAttempts())
-            {
-              onePerFrameSly.next();
-            }
-         }
-         else if(onePerFrameSly.rel.activeItem == 1)
-         {
               onePerFrameSly.next();
               $("#hhSaveButton").show();
          }
