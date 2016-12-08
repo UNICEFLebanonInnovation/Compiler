@@ -270,7 +270,7 @@ class Outreach(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Post Test"
+        verbose_name = "Pre Test"
 
     @property
     def student_fullname(self):

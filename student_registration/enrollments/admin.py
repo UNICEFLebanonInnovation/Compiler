@@ -79,7 +79,8 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'student', 'student_age', 'school', 'caza', 'governorate',
         'classroom', 'section',
     )
-    list_filter = ('classroom', 'school', 'school__location', GovernorateFilter)
+    list_filter = ('school__number', 'school', 'school__location', GovernorateFilter,
+                   'classroom', 'section', 'student__sex', )
     search_fields = (
         'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
         'school__name', 'school__number', 'student__id_number', 'school__location__name', 'classroom__name',
