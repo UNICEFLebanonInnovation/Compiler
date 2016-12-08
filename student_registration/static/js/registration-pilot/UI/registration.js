@@ -13,63 +13,24 @@
         }
 
 
-  function InitialiseVisitForm(visitData)
+  function InitialiseRegistrationForm(RegistrationData)
         {
-           visitDataRecord = visitData;
+           //alert(JSON.stringify(RegistrationData));
 
-           //alert(JSON.stringify(visitData));
+           $("#hhName").text(RegistrationData.first_name+' '+RegistrationData.father_name+' '+RegistrationData.last_name);
+           $("#hhIdNumber").text(RegistrationData.all_visit_attempt_count);
+           $("#hhAddess").text(RegistrationData.all_visit_attempt_count);
+           $("#hhDOB").text(RegistrationData.all_visit_attempt_count);
 
-           $("#hhVisitName").text(visitData.first_name+' '+visitData.father_name+' '+visitData.last_name);
-           $("#hhAllvisitAttemptCount").text(visitData.all_visit_attempt_count);
-
-           $("#household-visit-attempt-table tbody").empty();
-           //AddAttemptEmptyRow();
-
-           visitData.visit_attempt.forEach
-           (
-              function(entry,i)
-              {
-                 AddAttemptRow(entry, i==0);
-              }
-           );
-
-           $("#household-visit-attempt-table tbody [name=found]").change
-           (
-              function()
-              {
-                if(this.checked)
-                {
-                   $("#hhSaveButton").show();
-                }
-                else
-                {
-                   $("#hhSaveButton").hide();
-                }
-             }
-           );
-
-
-           $("#household-visit-child-table tbody").empty();
-
-           visitData.children_visits.forEach
-           (
-              function(entry)
-              {
-                 AddChildRow(entry);
-              }
-           );
-
-           $("#household-visit-comment-table tbody").empty();
-           AddCommentEmptyRow();
-           visitData.visit_comment.forEach
-           (
-              function(entry)
-              {
-                 AddCommentRow(entry, true);
-              }
-           );
-
-
+//           $("#household-visit-child-table tbody").empty();
+//
+//           RegistrationData.children_visits.forEach
+//           (
+//              function(entry)
+//              {
+//                 AddChildRow(entry);
+//              }
+//           );
         }
 
 
