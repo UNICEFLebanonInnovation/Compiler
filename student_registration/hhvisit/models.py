@@ -167,7 +167,10 @@ class HouseholdVisitAttempt(models.Model):
 
 
 class ChildVisit(TimeStampedModel):
-
+    STATUS = Choices(
+        ('pending', _('Pending')),
+        ('completed', _('Completed')),
+    )
     household_visit = models.ForeignKey(
         HouseholdVisit,
         blank=False, null=True,
@@ -191,6 +194,7 @@ class ChildVisit(TimeStampedModel):
     )
     specific_reason_other_specify = models.CharField(max_length=255, blank=True, null=True)
     last_attendance_date = models.DateField(blank=True, null=True)
+    child_status = models.CharField(max_length=50, blank=True, null=True, choices=STATUS)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
@@ -244,9 +248,14 @@ class ChildAttendanceMonitoring(models.Model):
         blank=False, null=True,
         related_name='+',
     )
+    visit_attempt = models.ForeignKey(
+        HouseholdVisitAttempt,
+        blank=False, null=True,
+        related_name='+',
+    )
     student = models.ForeignKey(
         Student,
-        blank=False, null=True,
+        blank=False, null=False,
         related_name='+',
     )
     is_first_visit = models.BooleanField()

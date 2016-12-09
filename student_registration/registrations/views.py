@@ -135,6 +135,7 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
             # first try and look up in our database
             adults = RegisteringAdult.objects.filter(id_number=self.kwargs.get('id_number')).order_by('id')
             if adults:
+                adults[0].signature= ''
                 return adults[0]
 
             raise Http404()
