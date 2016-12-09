@@ -30,6 +30,53 @@ def set_docs(docs):
     return response
 
 
+def get_app_revision(bulk_name):
+
+    data = requests.get(
+        os.path.join(settings.COUCHBASE_URL, bulk_name),
+        auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
+    ).json()
+
+    if data['_rev']:
+        return data['_rev']
+    return 0
+
+
+def get_docs(docs):
+
+    payload_json = json.dumps(
+        {
+            'docs': docs,
+        }
+    )
+    path = os.path.join(settings.COUCHBASE_URL, '_bulk_get')
+    response = requests.post(
+        path,
+        # headers={'content-type': 'multipart/mixed'},
+        auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS),
+        data=payload_json,
+    )
+    try:
+        text = response.text
+        return json.loads(text.splitlines()[3])
+    except Exception as ex:
+        print text, ex.message
+
+
+def get_doc_rev(doc_id):
+
+    path = os.path.join(settings.COUCHBASE_URL, doc_id)
+    response = requests.get(
+        path,
+        auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS),
+    )
+
+    if response.status_code in [requests.codes.ok, requests.codes.created]:
+        doc = json.loads(response.text)
+        return doc['_rev']
+    return False
+
+
 @app.task
 def set_app_user(username, password):
 
@@ -53,11 +100,32 @@ def set_app_attendances():
     """
     Creates or edits a attendance document in Couchbase
     """
-    docs = []
     from student_registration.schools.models import School
     from student_registration.enrollments.models import Enrollment
     from student_registration.attendances.models import Attendance
-    # schools = School.objects.all()
+
+    # bulk = get_doc_rev('1008-5-1')
+    # print bulk
+    # return False
+    #
+    # existing_docs = {}
+    # dist_registractions = Enrollment.objects.all()\
+    #     .values_list('school', 'classroom', 'section')\
+    #     .distinct()\
+    #     .order_by('school', 'classroom', 'section')
+    # for dist in dist_registractions:
+    #     bulk = get_docs({
+    #         "id": "{}-{}-{}".format(dist[0], dist[1], dist[2]),
+    #     })
+    #     if bulk and bulk.status in [requests.codes.ok, requests.codes.created]:
+    #         existing_docs[bulk._id] = bulk._rev
+    #
+    # print existing_docs
+    #
+    # return False
+
+    docs = []
+    # schools = School.objects.all().order_by('id')
     # schools = School.objects.filter(number=291)
     schools = School.objects.filter(number=1008)
     for school in schools:
@@ -101,8 +169,9 @@ def set_app_attendances():
                         "reason": att.absence_reason
                     }
 
+            doc_id = "{}-{}-{}".format(school.number, reg_std.classroom_id, reg_std.section_id)
             doc = {
-                "_id": "{}-{}-{}".format(school.number, reg_std.classroom_id, reg_std.section_id),
+                "_id": doc_id,
                 "class_id": str(reg_std.classroom.id),
                 "class_name": reg_std.classroom.name,
                 "location_id": str(school.location.id),
@@ -117,6 +186,9 @@ def set_app_attendances():
                 "students": students,
                 "attendance": attendances
             }
+            doc_rev = get_doc_rev(doc_id)
+            if doc_rev:
+                doc['_rev'] = doc_rev
             docs.append(doc)
 
     # print json.dumps(docs)
@@ -192,18 +264,6 @@ def set_app_attendances_alp():
     print response
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
-
-
-def get_app_revision(block_name):
-
-    data = requests.get(
-        os.path.join(settings.COUCHBASE_URL, block_name),
-        auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
-    ).json()
-
-    if data['_rev']:
-        return data['_rev']
-    return 0
 
 
 @app.task
