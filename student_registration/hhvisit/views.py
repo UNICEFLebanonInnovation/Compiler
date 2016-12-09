@@ -235,6 +235,7 @@ class HouseholdVisitListSupervisorView(LoginRequiredMixin, TemplateView):
     """
     Provides the Household visit  page with lookup types in the context
     """
+
     model = HouseholdVisit
     template_name = 'hhvisit/list_supervisor.html'
 
@@ -256,14 +257,6 @@ class HouseholdVisitListSupervisorView(LoginRequiredMixin, TemplateView):
             'visit_form': HouseholdVisitForm
         }
 
-# class HouseholdVisitSaveView(LoginRequiredMixin,APIView):
-#     renderer_classes = (JSONRenderer, )
-#
-#     def put(self, request, format='json'):
-#
-#         content = {'user_count': 0}
-#         return Response(content)
-
 
 class HouseholdVisitSaveViewSet(mixins.UpdateModelMixin,
                               viewsets.GenericViewSet):
@@ -279,54 +272,126 @@ from datetime import date
 
 def test(request):
 
-    lcd = GetChildrenAbsences('2016-11-21')
+    result = LoadAbsences()
+
+    return HttpResponse(result)
+
+def LoadAbsences() :
+    lastRunDate = AttendanceMonitoringDate.objects.filter() \
+                  .order_by('-date_monitoring').values_list('date_monitoring', flat=True).first()
+
+    #lastRunDateText = lastRunDate.strftime('%Y-%M-%d')
+
+    lcd = GetChildrenAbsences(lastRunDate)
     #lcd = GetChildrenAbsences("")
 
     SaveChildAbsences(lcd)
 
-    result = dumpobjectcontent(lcd)
+    import pprint
 
-    return HttpResponse(result)
+    result = pprint.pformat(lastRunDate)
 
+    return result
 
 def SaveChildAbsences(childAbsences):
 
     for childAbsence in childAbsences:
         registering_adult_id = Registration.objects.filter(student_id=childAbsence.StudentID).values_list('registering_adult_id', flat=True).first()
 
-        houseHoldVisit = HouseholdVisit.objects.create( \
-            visit_status="pending", \
-            registering_adult_id = registering_adult_id \
-            )
+        houseHoldVisit = HouseholdVisit.objects.filter( \
+            registering_adult_id=registering_adult_id \
+            ).first()
 
-        houseHoldVisit.save()
+        if houseHoldVisit is None:
 
-        childVisit = ChildVisit.objects.create( \
-            household_visit_id=houseHoldVisit.id, \
+            houseHoldVisit = HouseholdVisit.objects.create( \
+                visit_status="pending", \
+                registering_adult_id = registering_adult_id \
+                )
+
+            houseHoldVisit.save()
+
+        houseHoldVisit = HouseholdVisit.objects.filter(registering_adult_id=registering_adult_id).first()
+
+        isFirstAbsence = not ChildAttendanceMonitoring.objects.filter( \
             student_id=childAbsence.StudentID \
-            )
-
-        childVisit.save()
+            ).exists()
 
 
-        attendanceMonitoring = ChildAttendanceMonitoring.objects.create( \
+        childVisit = ChildVisit.objects.filter( \
+            student_id=childAbsence.StudentID
+            ).first()
+
+        if (childVisit is None) and (not isFirstAbsence):
+
+            childVisit = ChildVisit.objects.create( \
+                household_visit_id=houseHoldVisit.id, \
+                student_id=childAbsence.StudentID \
+                )
+
+            childVisit.save()
+
+
+        attendanceMonitoringExists = ChildAttendanceMonitoring.objects.filter( \
             student_id=childAbsence.StudentID, \
-            is_first_visit = False, \
             date_from=childAbsence.FromDate, \
             date_to=childAbsence.ToDate \
-            )
-        attendanceMonitoring.child_visit_id = childVisit.id
-
-        attendanceMonitoring.save()
+            ).exists()
 
 
+        if not attendanceMonitoringExists :
+
+            attemptExists = HouseholdVisitAttempt.objects.filter( \
+                household_visit_id=houseHoldVisit.id \
+                ).exists()
+            requiresNewAttempt = (houseHoldVisit.visit_status == "completed") or (not attemptExists)
+
+            if requiresNewAttempt and (not isFirstAbsence):
+
+                visitAttempt = HouseholdVisitAttempt.objects.create( \
+                    household_visit_id=houseHoldVisit.id, \
+                    date=datetime.now() \
+                    )
+
+                visitAttempt.save()
+
+                houseHoldVisit.visit_status = "pending"
+                houseHoldVisit.save()
+
+            visitAttemptID = HouseholdVisitAttempt.objects.filter(household_visit_id=houseHoldVisit.id).values_list(
+                'id', flat=True).first()
+
+            attendanceMonitoring = ChildAttendanceMonitoring.objects.create( \
+                student_id=childAbsence.StudentID, \
+                is_first_visit = isFirstAbsence, \
+                date_from=childAbsence.FromDate, \
+                date_to=childAbsence.ToDate, \
+                visit_attempt_id=visitAttemptID
+                )
+
+            if not childVisit is None:
+               attendanceMonitoring.child_visit_id = childVisit.id
+
+            attendanceMonitoring.save()
+
+            childVisit.child_status = "pending"
+            childVisit.save()
+
+
+    attendanceMonitoringDate = AttendanceMonitoringDate.objects.create( \
+        date_monitoring=datetime.now()
+    )
+
+    attendanceMonitoringDate.save()
 
 def GetChildrenAbsences(lastCheckDateString):
 
     lastCheckDate = None
 
     if lastCheckDateString:
-        lastCheckDate = datetime.strptime(lastCheckDateString, "%Y-%m-%d").date()
+        #lastCheckDate = datetime.strptime(lastCheckDateString, "%Y-%m-%d").date()
+        lastCheckDate = lastCheckDateString
+
         absentChildIdentifiers =  Attendance.objects.filter(attendance_date__gte=lastCheckDate,status=False)\
                                   .values_list('student_id',flat=True).distinct()
     else:
@@ -528,3 +593,4 @@ def dumpobjectcontent(obj, level=0,attr=''):
             result += dumpobject(val, level=level + 1) + "<br/>"
 
     return result
+
