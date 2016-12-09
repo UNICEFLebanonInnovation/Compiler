@@ -169,6 +169,8 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             school = self.request.user.school_id
         if school:
             queryset = queryset.filter(school_id=school)
+        if self.request.user.is_superuser and int(school) == 999999:
+            queryset = self.model.objects.all()
         else:
             queryset = []
 
