@@ -9,7 +9,7 @@ class Command(BaseCommand):
     help = 'Push attendance data to CouchBase'
 
     def handle(self, *args, **options):
-        set_app_schools()
-        set_app_users()
+        # set_app_schools()
+        # set_app_users()
         set_app_attendances()
-        set_app_attendances_alp()
+        # set_app_attendances_alp()
