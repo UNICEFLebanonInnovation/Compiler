@@ -151,6 +151,54 @@ class Registrations2ndShiftView(LoginRequiredMixin,
         age_range['10-12'] = self.model.objects.filter(student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
         age_range['13+'] = self.model.objects.filter(student__birthday_year__lte=(now.year - 13)).count()
 
+        age_range_1 = {}
+        age_range_1['0-6'] = self.model.objects.filter(school__location__parent_id=1, student__birthday_year__gte=(now.year - 6)).count()
+        age_range_1['7-9'] = self.model.objects.filter(school__location__parent_id=1, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
+        age_range_1['10-12'] = self.model.objects.filter(school__location__parent_id=1, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
+        age_range_1['13+'] = self.model.objects.filter(school__location__parent_id=1, student__birthday_year__lte=(now.year - 13)).count()
+
+        age_range_2 = {}
+        age_range_2['0-6'] = self.model.objects.filter(school__location__parent_id=2, student__birthday_year__gte=(now.year - 6)).count()
+        age_range_2['7-9'] = self.model.objects.filter(school__location__parent_id=2, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
+        age_range_2['10-12'] = self.model.objects.filter(school__location__parent_id=2, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
+        age_range_2['13+'] = self.model.objects.filter(school__location__parent_id=2, student__birthday_year__lte=(now.year - 13)).count()
+
+        age_range_3 = {}
+        age_range_3['0-6'] = self.model.objects.filter(school__location__parent_id=3, student__birthday_year__gte=(now.year - 6)).count()
+        age_range_3['7-9'] = self.model.objects.filter(school__location__parent_id=3, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
+        age_range_3['10-12'] = self.model.objects.filter(school__location__parent_id=3, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
+        age_range_3['13+'] = self.model.objects.filter(school__location__parent_id=3, student__birthday_year__lte=(now.year - 13)).count()
+
+        age_range_4 = {}
+        age_range_4['0-6'] = self.model.objects.filter(school__location__parent_id=4, student__birthday_year__gte=(now.year - 6)).count()
+        age_range_4['7-9'] = self.model.objects.filter(school__location__parent_id=4, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
+        age_range_4['10-12'] = self.model.objects.filter(school__location__parent_id=4, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
+        age_range_4['13+'] = self.model.objects.filter(school__location__parent_id=4, student__birthday_year__lte=(now.year - 13)).count()
+
+        age_range_5 = {}
+        age_range_5['0-6'] = self.model.objects.filter(school__location__parent_id=5, student__birthday_year__gte=(now.year - 6)).count()
+        age_range_5['7-9'] = self.model.objects.filter(school__location__parent_id=5, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
+        age_range_5['10-12'] = self.model.objects.filter(school__location__parent_id=5, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
+        age_range_5['13+'] = self.model.objects.filter(school__location__parent_id=5, student__birthday_year__lte=(now.year - 13)).count()
+
+        age_range_6 = {}
+        age_range_6['0-6'] = self.model.objects.filter(school__location__parent_id=6, student__birthday_year__gte=(now.year - 6)).count()
+        age_range_6['7-9'] = self.model.objects.filter(school__location__parent_id=6, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
+        age_range_6['10-12'] = self.model.objects.filter(school__location__parent_id=6, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
+        age_range_6['13+'] = self.model.objects.filter(school__location__parent_id=6, student__birthday_year__lte=(now.year - 13)).count()
+
+        age_range_7 = {}
+        age_range_7['0-6'] = self.model.objects.filter(school__location__parent_id=7, student__birthday_year__gte=(now.year - 6)).count()
+        age_range_7['7-9'] = self.model.objects.filter(school__location__parent_id=7, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
+        age_range_7['10-12'] = self.model.objects.filter(school__location__parent_id=7, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
+        age_range_7['13+'] = self.model.objects.filter(school__location__parent_id=7, student__birthday_year__lte=(now.year - 13)).count()
+
+        age_range_8 = {}
+        age_range_8['0-6'] = self.model.objects.filter(school__location__parent_id=8, student__birthday_year__gte=(now.year - 6)).count()
+        age_range_8['7-9'] = self.model.objects.filter(school__location__parent_id=8, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
+        age_range_8['10-12'] = self.model.objects.filter(school__location__parent_id=8, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
+        age_range_8['13+'] = self.model.objects.filter(school__location__parent_id=8, student__birthday_year__lte=(now.year - 13)).count()
+
         # get HHs by ID Type
         students_by_idtype = {}
         id_types = IDType.objects.all()
@@ -171,6 +219,14 @@ class Registrations2ndShiftView(LoginRequiredMixin,
                 'students_per_gov': students_per_gov,
                 'students_per_school': students_per_school,
                 'age_range': age_range,
+                'age_range_1': age_range_1,
+                'age_range_2': age_range_2,
+                'age_range_3': age_range_3,
+                'age_range_4': age_range_4,
+                'age_range_5': age_range_5,
+                'age_range_6': age_range_6,
+                'age_range_7': age_range_7,
+                'age_range_8': age_range_8,
                 'students_by_idtype': students_by_idtype,
                 'students_by_nationality': students_by_nationality,
                 'schools_per_gov': schools_per_gov,
