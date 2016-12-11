@@ -29,7 +29,7 @@
                     {% if request.user|has_group:"ALP_OUTREACH" %}
                         {% if request.user|has_group:"PARTNER" or request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}
                   <li class="nav-item">
-                    <a class="nav-link {% if request|is_current_page:"alp_data_collecting" %}active{% endif %}" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data collecting" %}</a>
+                    <a class="nav-link {% if request|is_current_page:"alp_data_collecting" %}active{% endif %}" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "ALP data collecting" %}</a>
                   </li>
                         {% endif %}
                         {% if request.user|has_group:"ALP_MEHE" %}
@@ -40,7 +40,7 @@
                     {% endif %}
                 {% if request.user|has_group:"SCHOOL" or request.user|has_group:"DIRECTOR" %}
                   <li class="nav-item">
-                    <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
+                    <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "Registration" %}</a>
                   </li>
                 {% endif %}
                 {% if request.user|has_group:"PMU" %}
