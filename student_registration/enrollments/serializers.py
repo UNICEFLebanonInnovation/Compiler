@@ -7,6 +7,7 @@ from student_registration.students.models import (
     Nationality
 )
 
+
 class EnrollmentSerializer(serializers.ModelSerializer):
 
     original_id = serializers.IntegerField(source='id', read_only=True)
