@@ -55,7 +55,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
 
         student_data = validated_data.pop('student', None)
-        print student_data
+
         student = instance.student
         student.first_name = student_data['first_name']
         student.father_name = student_data['father_name']
@@ -76,7 +76,6 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         student.id_number = student_data['id_number']
 
         student.save()
-        # instance.student.save(update_fields=student_data, force_update=True)
         # student_serializer = StudentSerializer(data=student_data)
         # student_serializer.is_valid(raise_exception=True)
         # student_serializer.instance = student_serializer.save()
