@@ -106,7 +106,7 @@ class RegistrationsPilotView(LoginRequiredMixin,
 
 
 class Registrations2ndShiftView(LoginRequiredMixin,
-                                SuperuserRequiredMixin,
+                                GroupRequiredMixin,
                                 TemplateView):
     """
     Provides the registration page with lookup types in the context
