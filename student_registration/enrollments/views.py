@@ -170,7 +170,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             school = self.request.user.school_id
         if school:
             queryset = queryset.filter(school_id=school)
-        if gov:
+        elif gov:
             queryset = queryset.filter(school__location__parent__id=gov)
         else:
             queryset = []
