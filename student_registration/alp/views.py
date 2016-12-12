@@ -173,15 +173,15 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
         location = int(request.GET.get('location', 0))
 
         if has_group(self.request.user, 'PARTNER'):
-            queryset = self.model.objects.filter(owner=self.request.user)
+            queryset = self.model.objects.exclude(deleted=True).filter(owner=self.request.user)
         if has_group(self.request.user, 'ALP_SCHOOL') and self.request.user.school_id:
             school = self.request.user.school_id
         if school:
-            queryset = self.model.objects.filter(school_id=school).order_by('id')
+            queryset = self.model.objects.exclude(deleted=True).filter(school_id=school).order_by('id')
         if location:
-            queryset = self.model.objects.filter(school__location_id=location).order_by('id')
+            queryset = self.model.objects.exclude(deleted=True).filter(school__location_id=location).order_by('id')
         if self.request.user.is_superuser and school == 9999:
-            queryset = self.model.objects.all()
+            queryset = self.model.objects.exclude(deleted=True)
 
         data = tablib.Dataset()
 
