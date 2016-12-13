@@ -11,14 +11,14 @@
 <div id="edit_registration_block" style="display: block;">
 
       <div class="alert alert-success" role="alert" id="alert-cancel-success" style="display: none;;">
-          {% trans 'Household visit cancelled' %}.
+          {% trans 'Household update cancelled' %}.
           {% trans 'Please click' %}
-          <a class="nav-link" href="{% url 'hhvisit:household_visit' %}?ln={{ LANGUAGE_CODE }}">{% trans "here" %}</a>
-          {% trans 'To start a new household visit' %}.
+          <!--<a class="nav-link" href="{% url 'registration-pilot:registry_search' %}?ln={{ LANGUAGE_CODE }}">{% trans "here" %}</a>-->
+
       </div>
 
 
-      <form method="post" action="" class="inlineForm" id="household_vedit_form" style="display: block;" onsubmit="return false;">
+      <form method="post" action="" class="inlineForm" id="household_update_form" style="display: block;" onsubmit="return false;">
           <input type="hidden" name="id_hhedit" id="main_id" />
           {% if form.errors %}
               {% for field in form %}
