@@ -22,10 +22,10 @@ urlpatterns = [
         view=views.HouseholdVisitListSupervisorView.as_view(),
         name='household_visit_list_supervisor'
     ),
-    url(
-        regex=r'^test/$',
-        view=views.test,
-        name='household_visit_test'
-    ),
+    # url(
+    #     regex=r'^test/$',
+    #     view=views.test,
+    #     name='household_visit_test'
+    # ),
 ]
 
