@@ -12,6 +12,15 @@
 
 {% block content-full-page %}
 
+    <style>
+        .incremental_number.success {
+            background-color: #1ABB9C !important;
+        }
+        .incremental_number.failed {
+            background-color: #ac2925 !important;
+        }
+    </style>
+
     {% include 'enrollments/prototype.html' %}
 
          <section class="main-content-wrapper">
@@ -591,6 +600,7 @@
             request.onsuccess = function() {
                 var result = request.result;
                 $(result).each(function(i, item){
+                    $(".loader").show();
                     if(item.synchronized == false) {
                         push_data_to_server(item);
                     }else if(item.deleted == true){
@@ -600,12 +610,12 @@
                     }
                     $(".loader").hide();
                 });
-                if(showFeedback && synchro_result == true){
-                    $('#alert-synchro-success').show();
-                }
-                if(showFeedback && synchro_result == false){
-                    $('#alert-synchro-warning').show();
-                }
+{#                if(showFeedback && synchro_result == true){#}
+{#                    $('#alert-synchro-success').show();#}
+{#                }#}
+{#                if(showFeedback && synchro_result == false){#}
+{#                    $('#alert-synchro-warning').show();#}
+{#                }#}
             };
 
             var col_store = getStoreByName('eav-columns');
@@ -650,11 +660,13 @@
                 url: synchro_path,
                 data: data,
                 cache: false,
-                async: false,
+                async: true,
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
                     if(jqXHR.status == 201){
+                        $('#line-'+item.id).find('.incremental_number').removeClass('failed');
+                        $('#line-'+item.id).find('.incremental_number').addClass('success');
 {#                        $('#line-'+item.id).find('#student_number').val(response.student_number);#}
 {#                        $('#line-'+item.id).find('#student_number').trigger('blur');#}
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
@@ -668,6 +680,8 @@
                     }
                 },
                 error: function (response) {
+                    $('#line-'+item.id).find('.incremental_number').removeClass('success');
+                    $('#line-'+item.id).find('.incremental_number').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
                     $('#line-'+item.id).find('.registration-field').removeClass('required');
                     $.each(required_fields, function(field_name, field_msg){
@@ -688,10 +702,13 @@
                 url: synchro_path+item.original_id+'/',
                 data: data,
                 cache: false,
+                async: true,
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
                     if(jqXHR.status == 200){
+                        $('#line-'+item.id).find('.incremental_number').removeClass('failed');
+                        $('#line-'+item.id).find('.incremental_number').addClass('success');
 {#                        $('#line-'+item.id).find('#student_number').val(response.student_number);#}
 {#                        $('#line-'+item.id).find('#student_number').trigger('blur');#}
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
@@ -701,6 +718,8 @@
                     }
                 },
                 error: function (response) {
+                    $('#line-'+item.id).find('.incremental_number').removeClass('success');
+                    $('#line-'+item.id).find('.incremental_number').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
                     $('#line-'+item.id).find('.registration-field').removeClass('required');
                     $.each(required_fields, function(field_name, field_msg){
@@ -712,9 +731,38 @@
             });
         }
 
+        function pull_registrations_data(url, store_name)
+        {
+            $.ajax({
+                type: "GET",
+                url: url,
+                cache: false,
+                async: false,
+                headers: getHeader(),
+                dataType: 'json',
+                success: function (response) {
+                    var store = getStoreByName(store_name);
+                    var data = response;
+                    if(response.data) {
+                        data = response.data;
+                    }
+                    $(data).each(function(i, item){
+                        item.synchronized = true;
+                        item.deleted = false;
+                        item.toupdate = false;
+                        store.put(item);
+                    });
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+            });
+        }
+
         function load_base_data()
         {
 {#            pull_data_from_server(host+'/api/eav/attributes/?type='+eav_type, 'eav-shared-columns');#}
+            pull_registrations_data(synchro_path, 'registrations');
         }
 
         function createStores()
@@ -733,7 +781,9 @@
                     flag = true;
                 }
                 if(flag){
-                    db.createObjectStore("registrations", {keyPath: "id", autoIncrement:true});
+                    var store = db.createObjectStore("registrations", {keyPath: "id", autoIncrement:true});
+                    store.createIndex('original_id', 'original_id');
+
                     var store1 = db.createObjectStore("eav-shared-columns", {keyPath: "id", autoIncrement:true});
                     store1.createIndex('name', 'name');
 
@@ -753,7 +803,7 @@
             request.onsuccess = function() {
                 db = request.result;
                 $(".loader").show();
-{#                load_base_data();#}
+                load_base_data();
                 setTimeout(function(){
                     build_datatable();
                     $(".loader").hide();

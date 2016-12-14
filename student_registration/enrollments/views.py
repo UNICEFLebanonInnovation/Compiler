@@ -130,11 +130,14 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     # def get_queryset(self):
-    #     if not self.request.user.is_staff:
-    #         if self.request.user.school:
-    #             return self.queryset.filter(school=self.request.user.school.id)
-    #         else:
-    #             return []
+    #     if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
+    #         return self.queryset.filter(school=self.request.user.school_id)
+    #
+    #     return self.queryset
+
+    # def list(self, request, *args, **kwargs):
+    #     if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
+    #         return self.queryset.filter(school=self.request.user.school_id)
     #
     #     return self.queryset
 
