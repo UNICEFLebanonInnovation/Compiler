@@ -197,7 +197,9 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             _('Mother fullname'),
             _('Student nationality'),
             _('Student age'),
-            _('Student birthday'),
+            _('year'),
+            _('month'),
+            _('day'),
             _('Sex'),
             _('Student fullname'),
             _('School'),
@@ -236,8 +238,10 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 line.student.mother_fullname,
                 line.student.nationality_name(),
 
-                line.student.birthday,
-                line.student.get_age(),
+                line.student.calc_age,
+                line.student.birthday_year,
+                line.student.birthday_month,
+                line.student.birthday_day,
                 _(line.student.sex) if line.student.sex else '',
                 line.student.__unicode__(),
 
