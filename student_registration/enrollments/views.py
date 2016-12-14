@@ -238,10 +238,10 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 line.student.mother_fullname,
                 line.student.nationality_name(),
 
+                line.student.calc_age,
                 line.student.birthday_year,
                 line.student.birthday_month,
                 line.student.birthday_day,
-                line.student.calc_age,
                 _(line.student.sex) if line.student.sex else '',
                 line.student.__unicode__(),
 
