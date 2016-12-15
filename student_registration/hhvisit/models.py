@@ -81,14 +81,18 @@ class HouseholdVisitTeam(models.Model):
         return teamname1 + ', '+ teamname2
 
 
-class ChildAttendanceMonitoring(models.Model):
-    date = models.DateTimeField()
+class studentAbsence(models.Model):
 
-    class Meta:
-        ordering = ['-id']
 
-    def __unicode__(self):
-        return self.comment
+        dateFrom = models.DateTimeField()
+        dateTo = models.DateTimeField()
+
+        class Meta:
+            ordering = ['-id']
+
+        def __unicode__(self):
+            return self.comment
+
 
 class HouseholdVisit(TimeStampedModel):
 
@@ -163,7 +167,10 @@ class HouseholdVisitAttempt(models.Model):
 
 
 class ChildVisit(TimeStampedModel):
-
+    STATUS = Choices(
+        ('pending', _('Pending')),
+        ('completed', _('Completed')),
+    )
     household_visit = models.ForeignKey(
         HouseholdVisit,
         blank=False, null=True,
@@ -187,6 +194,7 @@ class ChildVisit(TimeStampedModel):
     )
     specific_reason_other_specify = models.CharField(max_length=255, blank=True, null=True)
     last_attendance_date = models.DateField(blank=True, null=True)
+    child_status = models.CharField(max_length=50, blank=True, null=True, choices=STATUS)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
@@ -233,6 +241,43 @@ class ChildService(models.Model):
 
     def __unicode__(self):
         return self.ServiceType.name
+
+class ChildAttendanceMonitoring(models.Model):
+    child_visit = models.ForeignKey(
+        ChildVisit,
+        blank=False, null=True,
+        related_name='+',
+    )
+    visit_attempt = models.ForeignKey(
+        HouseholdVisitAttempt,
+        blank=False, null=True,
+        related_name='+',
+    )
+    student = models.ForeignKey(
+        Student,
+        blank=False, null=False,
+        related_name='+',
+    )
+    is_first_visit = models.BooleanField()
+    date_from = models.DateField(blank=False, null=True)
+    date_to = models.DateField(blank=False, null=True)
+
+    class Meta:
+        ordering = ['-id']
+
+    def __unicode__(self):
+        return self.comment
+
+
+class AttendanceMonitoringDate(models.Model):
+
+    date_monitoring = models.DateField()
+
+    class Meta:
+        ordering = ['-id']
+
+    def __unicode__(self):
+        return self.comment
 
 
 class HouseholdVisitComment(models.Model):
