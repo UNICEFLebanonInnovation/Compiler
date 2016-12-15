@@ -23,13 +23,29 @@
            $("#hhAllvisitAttemptCount").text(visitData.all_visit_attempt_count);
 
            $("#household-visit-attempt-table tbody").empty();
-           AddAttemptEmptyRow();
+           //AddAttemptEmptyRow();
+
            visitData.visit_attempt.forEach
            (
-              function(entry)
+              function(entry,i)
               {
-                 AddAttemptRow(entry, true);
+                 AddAttemptRow(entry, i==0);
               }
+           );
+
+           $("#household-visit-attempt-table tbody [name=found]").change
+           (
+              function()
+              {
+                if(this.checked)
+                {
+                   $("#hhSaveButton").show();
+                }
+                else
+                {
+                   $("#hhSaveButton").hide();
+                }
+             }
            );
 
 
