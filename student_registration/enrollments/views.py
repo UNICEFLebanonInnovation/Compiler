@@ -363,9 +363,6 @@ class ExportDuplicatesView(LoginRequiredMixin, ListView):
                 duplicates.append(registry)
                 schools[registry.school_id] = registry.school.name
 
-        print len(duplicates)
-        print len(schools)
-
         data = tablib.Dataset()
         data.headers = [
             'ID',
@@ -392,5 +389,5 @@ class ExportDuplicatesView(LoginRequiredMixin, ListView):
             file_format.export_data(data),
             content_type='application/vnd.ms-excel',
         )
-        response['Content-Disposition'] = 'attachment; filename=student_by_school.xls'
+        response['Content-Disposition'] = 'attachment; filename=duplications.xls'
         return response
