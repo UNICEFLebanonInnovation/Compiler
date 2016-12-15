@@ -27,8 +27,14 @@ urlpatterns = [
         name='enrollment_export'
     ),
     url(
-        regex=r'^enrollment/enrollment-export-by-school/$',
+        regex=r'^enrollment-export-by-school/$',
         view=views.ExportBySchoolView.as_view(),
         name='enrollment_export_by_school'
+    ),
+
+    url(
+        regex=r'^enrollment-export-duplicate/$',
+        view=views.ExportDuplicatesView.as_view(),
+        name='enrollment_export_duplicate'
     ),
 ]
