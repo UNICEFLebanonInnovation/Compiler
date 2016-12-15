@@ -61,6 +61,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         student.first_name = student_data['first_name']
         student.father_name = student_data['father_name']
         student.last_name = student_data['last_name']
+        student.mother_fullname = student_data['mother_fullname']
 
         student.birthday_year = student_data['birthday_year']
         student.birthday_month = student_data['birthday_month']
