@@ -97,6 +97,8 @@
               <li class="nav-item">
                 <a class="nav-link {% if request|is_current_page:"household_visit_list" %}active{% endif %}" href="{% url 'hhvisit:household_visit_list' %}?ln={{ LANGUAGE_CODE }}">{% trans "Household Visit" %}</a>
               </li>
+            {% endif %}
+            {% if request.user|has_group:"HH_SUPERVISOR" %}
               <li class="nav-item">
                 <a class="nav-link {% if request|is_current_page:"household_visit_list_supervisor" %}active{% endif %}" href="{% url 'hhvisit:household_visit_list_supervisor' %}?ln={{ LANGUAGE_CODE }}">{% trans "Household Visit Assignment" %}</a>
               </li>
