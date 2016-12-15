@@ -28,7 +28,10 @@ from student_registration.hhvisit.models import (
     ChildService,
     ChildVisit,
     HouseholdVisitComment,
-    HouseholdVisitTeam
+    HouseholdVisitTeam,
+    ChildAttendanceMonitoring,
+    AttendanceMonitoringDate,
+    Student
 )
 from .serializers import SpecificReasonSerializer , HouseholdVisitSerializer, VisitAttemptSerializer, ChildVisitSerializer, ChildServiceSerializer, HouseholdVisitCommentSerializer, HouseholdVisitRecordSerializer
 from student_registration.hhvisit.forms import (
@@ -48,6 +51,9 @@ from student_registration.attendances.models import (
     Attendance
 )
 
+from student_registration.registrations.models import (
+    Registration
+)
 
 class HouseholdVisitView(LoginRequiredMixin, TemplateView):
     """
@@ -229,6 +235,7 @@ class HouseholdVisitListSupervisorView(LoginRequiredMixin, TemplateView):
     """
     Provides the Household visit  page with lookup types in the context
     """
+
     model = HouseholdVisit
     template_name = 'hhvisit/list_supervisor.html'
 
@@ -250,14 +257,6 @@ class HouseholdVisitListSupervisorView(LoginRequiredMixin, TemplateView):
             'visit_form': HouseholdVisitForm
         }
 
-# class HouseholdVisitSaveView(LoginRequiredMixin,APIView):
-#     renderer_classes = (JSONRenderer, )
-#
-#     def put(self, request, format='json'):
-#
-#         content = {'user_count': 0}
-#         return Response(content)
-
 
 class HouseholdVisitSaveViewSet(mixins.UpdateModelMixin,
                               viewsets.GenericViewSet):
@@ -273,15 +272,8 @@ from datetime import date
 
 def test(request):
 
-    result = "test"
-    # lastDate = ChildVisit.    #
-    # data = Attendance.objects.filter(attendance_date__gte=lastDate)
-    #
-    # import pprint
-    #
-    # for record in data:
-    #     result = result + pprint.pformat(record.attendance_date)
-
-    #result = "sada "
+    #result = LoadAbsences()
+    import student_registration.attendances.management.commands.load_absences
+    result = student_registration.attendances.management.commands.load_absences.LoadAbsences()
 
     return HttpResponse(result)
