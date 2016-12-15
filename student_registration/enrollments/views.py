@@ -202,7 +202,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         return self.queryset
 
     def get(self, request, *args, **kwargs):
-        queryset = self.model.objects.all()
+        queryset = self.model.objects.exclude(deleted=True)
         school = request.GET.get('school', 0)
         gov = request.GET.get('gov', 0)
 
@@ -306,7 +306,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
 class ExportBySchoolView(LoginRequiredMixin, ListView):
 
     model = Enrollment
-    queryset = Enrollment.objects.all()
+    queryset = Enrollment.objects.exclude(deleted=True)
 
     def get(self, request, *args, **kwargs):
 
@@ -343,3 +343,51 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
         response['Content-Disposition'] = 'attachment; filename=student_by_school.xls'
         return response
 
+
+class ExportDuplicatesView(LoginRequiredMixin, ListView):
+
+    model = Enrollment
+    queryset = Enrollment.objects.exclude(deleted=True).order_by('-id')
+
+    def get(self, request, *args, **kwargs):
+
+        students = {}
+        schools = {}
+        duplicates = []
+
+        for registry in self.queryset:
+            student = registry.student
+            if not student.number in students:
+                students[student.number] = registry
+            else:
+                duplicates.append(registry)
+                schools[registry.school_id] = registry.school.name
+
+        data = tablib.Dataset()
+        data.headers = [
+            'ID',
+            'Student ID',
+            'Fullname',
+            'Number',
+            'School',
+        ]
+
+        content = []
+        for registry in duplicates:
+            student = registry.student
+            content = [
+                registry.id,
+                student.id,
+                student.__unicode__(),
+                student.number,
+                registry.school.name,
+            ]
+            data.append(content)
+
+        file_format = base_formats.XLS()
+        response = HttpResponse(
+            file_format.export_data(data),
+            content_type='application/vnd.ms-excel',
+        )
+        response['Content-Disposition'] = 'attachment; filename=duplications.xls'
+        return response

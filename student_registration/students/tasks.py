@@ -53,10 +53,29 @@ def generate_adult_unique_number():
 
 @app.task
 def generate_child_unique_number():
-    from student_registration.students.models import Student
+    from student_registration.registrations.models import Registration
 
-    students = Student.objects.all()
-    for student in students:
+    registrations = Registration.objects.all()
+    for registry in registrations:
+        try:
+            student = registry.student
+            student.number = generate_id(student.first_name, student.father_name, student.last_name,
+                                         student.mother_fullname, student.sex,
+                                         student.birthday_day, student.birthday_month, student.birthday_year)
+            print student.number, student.id
+            student.save()
+        except Exception as ex:
+            print ex.message
+            continue
+
+
+@app.task
+def generate_2ndshift_unique_number():
+    from student_registration.enrollments.models import Enrollment
+
+    registrations = Enrollment.objects.all()
+    for registry in registrations:
+        student = registry.student
         try:
             student.number = generate_id(student.first_name, student.father_name, student.last_name,
                                          student.mother_fullname, student.sex,
@@ -66,3 +85,67 @@ def generate_child_unique_number():
         except Exception as ex:
             print ex.message
             continue
+
+
+@app.task
+def generate_alp_unique_number():
+    from student_registration.enrollments.models import Enrollment
+
+    registrations = Enrollment.objects.all()
+    for registry in registrations:
+        student = registry.student
+        try:
+            student.number = generate_id(student.first_name, student.father_name, student.last_name,
+                                         student.mother_fullname, student.sex,
+                                         student.birthday_day, student.birthday_month, student.birthday_year)
+            print student.number, student.id
+            student.save()
+        except Exception as ex:
+            print ex.message
+            continue
+
+
+@app.task
+def disable_duplicate_enrolments():
+    from student_registration.enrollments.models import Enrollment
+    registrations = Enrollment.objects.exclude(deleted=True).order_by('-id')
+    print len(registrations)
+
+    students = {}
+    duplicates = []
+
+    for registry in registrations:
+        student = registry.student
+        if not student.number in students:
+            students[student.number] = registry
+        else:
+            duplicates.append(registry)
+
+    print len(duplicates)
+
+    for registry in duplicates:
+        registry.deleted = True
+        registry.save()
+
+
+@app.task
+def disable_duplicate_outreaches():
+    from student_registration.alp.models import Outreach
+    registrations = Outreach.objects.exclude(deleted=True).order_by('-id')
+    print len(registrations)
+
+    students = {}
+    duplicates = []
+
+    for registry in registrations:
+        student = registry.student
+        if not student.number in students:
+            students[student.number] = registry
+        else:
+            duplicates.append(registry)
+
+    print len(duplicates)
+
+    for registry in duplicates:
+        registry.deleted = True
+        registry.save()

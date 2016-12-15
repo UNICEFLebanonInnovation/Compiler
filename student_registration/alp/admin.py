@@ -84,6 +84,10 @@ class OutreachAdmin(ImportExportModelAdmin):
         'owner__username'
     )
 
+    def get_queryset(self, request):
+        qs = super(OutreachAdmin, self).get_queryset(request)
+        return qs.exclude(deleted=True)
+
     def caza(self, obj):
         if obj.school and obj.school.location:
             return obj.school.location.name
