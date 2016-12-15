@@ -164,11 +164,14 @@ class ExportViewSet(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
         queryset = self.model.objects.all()
         school = request.GET.get('school', 0)
+        gov = request.GET.get('gov', 0)
 
         if self.request.user.school_id:
             school = self.request.user.school_id
         if school:
             queryset = queryset.filter(school_id=school)
+        elif gov:
+            queryset = queryset.filter(school__location__parent__id=gov)
         else:
             queryset = []
 
@@ -194,7 +197,9 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             _('Mother fullname'),
             _('Student nationality'),
             _('Student age'),
-            _('Student birthday'),
+            _('year'),
+            _('month'),
+            _('day'),
             _('Sex'),
             _('Student fullname'),
             _('School'),
@@ -233,8 +238,10 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 line.student.mother_fullname,
                 line.student.nationality_name(),
 
-                line.student.birthday,
-                line.student.get_age(),
+                line.student.calc_age,
+                line.student.birthday_year,
+                line.student.birthday_month,
+                line.student.birthday_day,
                 _(line.student.sex) if line.student.sex else '',
                 line.student.__unicode__(),
 
@@ -251,4 +258,45 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             content_type='application/vnd.ms-excel',
         )
         response['Content-Disposition'] = 'attachment; filename=registration_list.xls'
+        return response
+
+
+class ExportBySchoolView(LoginRequiredMixin, ListView):
+
+    model = Enrollment
+    queryset = Enrollment.objects.all()
+
+    def get(self, request, *args, **kwargs):
+
+        schools = self.queryset.values_list(
+                        'school', 'school__number', 'school__name', 'school__location__name',
+                        'school__location__parent__name').distinct().order_by('school__number')
+        print schools
+        data = tablib.Dataset()
+        data.headers = [
+            _('CERD'),
+            _('School name'),
+            _('# Students'),
+            _('District'),
+            _('Governorate'),
+        ]
+
+        content = []
+        for school in schools:
+            nbr = self.model.objects.filter(school=school[0]).count()
+            content = [
+                school[1],
+                school[2],
+                nbr,
+                school[3],
+                school[4]
+            ]
+            data.append(content)
+
+        file_format = base_formats.XLS()
+        response = HttpResponse(
+            file_format.export_data(data),
+            content_type='application/vnd.ms-excel',
+        )
+        response['Content-Disposition'] = 'attachment; filename=student_by_school.xls'
         return response
