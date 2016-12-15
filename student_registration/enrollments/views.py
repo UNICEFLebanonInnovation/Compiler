@@ -5,17 +5,14 @@ from django.http import Http404
 from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
-from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import viewsets, mixins, permissions
 import tablib
 import json
-import datetime
-from time import mktime
 from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from django.core.urlresolvers import reverse
-# from datetime import datetime
+from datetime import datetime
 from student_registration.alp.templatetags.util_tags import has_group
 
 from student_registration.students.models import (
@@ -346,17 +343,3 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
         response['Content-Disposition'] = 'attachment; filename=student_by_school.xls'
         return response
 
-
-class MyEncoder(json.JSONEncoder):
-
-    def default(self, obj):
-        if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date):
-            return int(mktime(obj.timetuple()))
-
-        return json.JSONEncoder.default(self, obj)
-
-    def decode(self, obj):
-        if isinstance(obj, datetime.datetime):
-            return int(mktime(obj.timetuple()))
-
-        return json.JSONEncoder.default(self, obj)
