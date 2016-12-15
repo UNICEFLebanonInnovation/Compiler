@@ -42,7 +42,63 @@ class IDTypeAdmin(ImportExportModelAdmin):
         resource_class = IDTypeResource
 
 
-admin.site.register(Student)
-admin.site.register(Nationality,NationalityAdmin)
+class StudentResource(resources.ModelResource):
+    class Meta:
+        model = Student
+        fields = (
+            'first_name',
+            'father_name',
+            'last_name',
+            'mother_fullname',
+            'age',
+            'birthday_day',
+            'birthday_month',
+            'birthday_year',
+            'sex',
+            'nationality',
+            'mother_nationality',
+            'id_type',
+            'id_number',
+            'number',
+            'address',
+            'phone',
+            'phone_prefix',
+        )
+        export_order = (
+            'first_name',
+            'father_name',
+            'last_name',
+            'mother_fullname',
+            'age',
+            'birthday_day',
+            'birthday_month',
+            'birthday_year',
+            'sex',
+            'nationality',
+            'mother_nationality',
+            'id_type',
+            'id_number',
+            'number',
+            'address',
+            'phone',
+            'phone_prefix',
+        )
+
+
+class StudentAdmin(ImportExportModelAdmin):
+    resource_class = StudentResource
+    list_display = ('first_name', 'father_name', 'last_name', 'mother_fullname',
+                    'calc_age', 'sex', 'nationality', 'mother_nationality',
+                    )
+    list_filter = ('birthday_day', 'birthday_month', 'birthday_year',
+                   'sex', 'nationality', 'mother_nationality',
+                   )
+    search_fields = ('first_name', 'father_name', 'last_name', 'mother_fullname',
+                     'id_number',
+                )
+
+
+admin.site.register(Student, StudentAdmin)
+admin.site.register(Nationality, NationalityAdmin)
 admin.site.register(Language)
-admin.site.register(IDType,IDTypeAdmin)
+admin.site.register(IDType, IDTypeAdmin)
