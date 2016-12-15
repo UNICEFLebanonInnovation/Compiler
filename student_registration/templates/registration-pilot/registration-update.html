@@ -72,13 +72,13 @@
 
                           <div id = "phoneFields" style="display:none">
                             <div class="line">
-                              <label class="text">{% trans "Primary Phone Number" %}</label>
+                              <label class="text">{% trans "Primary Phone Number: " %}</label>
                               <input id="primary_phone" maxlength="45" type="text">
                               <span class="error" id="primary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
                             </div>
 
                             <div class="line">
-                              <label class="text">{% trans "Phone Number are normally answered by" %}</label>
+                              <label class="text">{% trans "Phone Number are normally answered by: " %}</label>
                               <select id="primary_phone_answered" >
                                 {% for value, text in phoneAnsweredby %}
                                       <option value="{{ value }}">{{ text }}</option>
@@ -87,14 +87,14 @@
                             </div>
 
                              <div class="line">
-                              <label class="text">{% trans "Secondary Phone Number" %}</label>
+                              <label class="text">{% trans "Secondary Phone Number: " %}</label>
                               <input id="secondary_phone" maxlength="45" type="text">
                               <span class="error" id="secondary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
                             </div>
 
 
                             <div class="line">
-                              <label class="text">{% trans "Phone Number are normally answered by" %}</label>
+                              <label class="text">{% trans "Phone Number are normally answered by: " %}</label>
                               <select id="secondary_phone_answered" >
                                 {% for value, text in phoneAnsweredby %}
                                       <option value="{{ value }}">{{ text }}</option>
@@ -102,19 +102,27 @@
                               </select>
                             </div>
                           </div>
-                          <div id = "addressFields" style="display:none">
-                            <textarea cols="50" id="address" name="address" rows="2"></textarea>
+                          <div class="line" id = "addressFields" style="display:none">
+                            <label class="text">{% trans "Address: " %}</label>
+                            <textarea cols="30" id="address" name="address" rows="4"></textarea>
                           </div>
                           <div id = "schoolFields" style="display:none">
-                            <select id="child" >
-                            </select>
-                            <select id="school" >
-                                {% for school in schools %}
-                                    <option value="{{ school.id }}">
-                                      {{ school.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                            <div class="line">
+                              <label class="text">{% trans "Child: " %}</label>
+                              <select id="child" >
+                              </select>
+                            </div>
+
+                            <div class="line">
+                              <label class="text">{% trans "School: " %}</label>
+                              <select id="school" >
+                                  {% for school in schools %}
+                                      <option value="{{ school.id }}">
+                                        {{ school.name }}
+                                      </option>
+                                  {% endfor %}
+                              </select>
+                            </div>
                           </div>
                         </li>
                   </ul>
