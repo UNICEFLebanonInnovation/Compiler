@@ -1,0 +1,167 @@
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+{% block extra_head %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
+
+{% endblock %}
+
+<div id="edit_registration_block" style="display: block;">
+
+      <div class="alert alert-success" role="alert" id="alert-cancel-success" style="display: none;;">
+          {% trans 'Household update cancelled' %}.
+          {% trans 'Please click' %}
+      </div>
+
+      <form method="post" action="" class="inlineForm" id="household_update_form" style="display: block;" onsubmit="return false;">
+          <input type="hidden" name="id_hhedit" id="main_id" />
+          {% if form.errors %}
+              {% for field in form %}
+                  {% for error in field.errors %}
+                      <div class="alert alert-danger">
+                          <strong>{{ error|escape }}</strong>
+                      </div>
+                  {% endfor %}
+              {% endfor %}
+              {% for error in form.non_field_errors %}
+                  <div class="alert alert-danger">
+                      <strong>{{ error|escape }}</strong>
+                  </div>
+              {% endfor %}
+          {% endif %}
+          <div class="panel-body">
+             <div class="panel-body">
+               <div id="oneperframe" class="frame oneperframe" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
+                  <ul class="slidee" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
+                    {# 1 Slide household Identity #}
+                        <li class="active framebox">
+                            <h3 class="panel-title">{% trans "Household Confirm Identity" %}&nbsp;&nbsp;</h3>
+                            <div class="line">
+                                <label >{% trans "Name of Household Rep: " %}&nbsp;&nbsp;</label> <span id ="hhName"></span>
+                            </div>
+                            <div class="line">
+                                <label >{% trans "ID Number: " %}&nbsp;&nbsp;</label><span id ="hhIdNumber"></span>
+                            </div>
+                            <div class="line">
+                                <label >{% trans "Date of birth: " %}&nbsp;&nbsp;</label><span id ="hhDOB"></span>
+                            </div>
+                            <div class="line">
+                                <label >{% trans "Primary phone: " %}&nbsp;&nbsp;</label><span id ="hhprimary_phone"></span>
+                            </div>
+                            <div class="line">
+                                <label >{% trans "Secondary phone: " %}&nbsp;&nbsp;</label><span id ="hhsecondary_phone"></span>
+                            </div>
+                            <div class="line">
+                                <label >{% trans "Address: " %}&nbsp;&nbsp;</label><span id ="hhAddess"></span>
+                            </div>
+                        </li>
+                    {# 2 Slide update data #}
+                        <li class="framebox">
+                          <h3 class="panel-title">{% trans "Update Type" %}</h3>
+                          <br/>
+                          <br/>
+                          <label >{% trans "Please select: " %}&nbsp;&nbsp;</label>
+                          <select id="changeOption">
+                             <option value="" selected="selected">---------</option>
+                             <option value="phone">Phone</option>
+                             <option value="address">Address</option>
+                             <option value="school">School</option>
+                          </select>
+
+                          <div id = "phoneFields" style="display:none">
+                            <div class="line">
+                              <label class="text">{% trans "Primary Phone Number: " %}</label>
+                              <input id="primary_phone" maxlength="45" type="text">
+                              <span class="error" id="primary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
+                            </div>
+
+                            <div class="line">
+                              <label class="text">{% trans "Phone Number are normally answered by: " %}</label>
+                              <select id="primary_phone_answered" >
+                                {% for value, text in phoneAnsweredby %}
+                                      <option value="{{ value }}">{{ text }}</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+
+                             <div class="line">
+                              <label class="text">{% trans "Secondary Phone Number: " %}</label>
+                              <input id="secondary_phone" maxlength="45" type="text">
+                              <span class="error" id="secondary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
+                            </div>
+
+
+                            <div class="line">
+                              <label class="text">{% trans "Phone Number are normally answered by: " %}</label>
+                              <select id="secondary_phone_answered" >
+                                {% for value, text in phoneAnsweredby %}
+                                      <option value="{{ value }}">{{ text }}</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+                          </div>
+                          <div class="line" id = "addressFields" style="display:none">
+                            <label class="text">{% trans "Address: " %}</label>
+                            <textarea cols="30" id="address" name="address" rows="4"></textarea>
+                          </div>
+                          <div id = "schoolFields" style="display:none">
+                            <div class="line">
+                              <label class="text">{% trans "Child: " %}</label>
+                              <select id="child" >
+                              </select>
+                            </div>
+
+                            <div class="line">
+                              <label class="text">{% trans "School: " %}</label>
+                              <select id="school" >
+                                  {% for school in schools %}
+                                      <option value="{{ school.id }}">
+                                        {{ school.name }}
+                                      </option>
+                                  {% endfor %}
+                              </select>
+                            </div>
+                          </div>
+                        </li>
+                  </ul>
+            </div>
+          <ul class="pages" id="slySlider">
+              <li class="active">1</li>
+              <li>2</li>
+          </ul>
+        </div>
+
+      <div class="controls center">
+      {% if LANGUAGE_CODE == 'ar-ar' %}
+        <button class="btn btn-warning" type="button" id="hhCloseButton" style="float:left;">
+          {% trans "Cancel household visit" %}
+        </button>
+        <button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left; display:none" >
+          {% trans "Save household visit" %}
+        </button>
+        <button class="btn btn-primary .prev" type="button" id="previousButton">
+            <i class="icon-next-sign icon-white"></i> {% trans "previous" %}
+        </button>
+        <button class="btn btn-primary .next" type="button" id="nextButton">
+              {% trans "next" %} <i class="icon-prev-sign icon-white"></i>
+          </button>
+      {% else %}
+
+        <button class="btn btn-warning" type="button" id="hhCloseButton" style="float:right;">
+            {% trans "Cancel household visit" %}
+        </button>
+        <button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left; display:none">
+          {% trans "Save household visit" %}
+        </button>
+        <button class="btn btn-primary .prev" type="button" id="previousButton">
+            <i class="icon-prev-sign icon-white"></i> {% trans "previous" %}
+        </button>
+        <button class="btn btn-primary .next" type="button" id="nextButton">
+              {% trans "next" %} <i class="icon-next-sign icon-white"></i>
+          </button>
+      {% endif %}
+      </div>
+    </form>
+      </div>
