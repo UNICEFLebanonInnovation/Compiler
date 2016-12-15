@@ -13,10 +13,7 @@
       <div class="alert alert-success" role="alert" id="alert-cancel-success" style="display: none;;">
           {% trans 'Household update cancelled' %}.
           {% trans 'Please click' %}
-          <!--<a class="nav-link" href="{% url 'registration-pilot:registry_search' %}?ln={{ LANGUAGE_CODE }}">{% trans "here" %}</a>-->
-
       </div>
-
 
       <form method="post" action="" class="inlineForm" id="household_update_form" style="display: block;" onsubmit="return false;">
           <input type="hidden" name="id_hhedit" id="main_id" />
@@ -48,10 +45,16 @@
                                 <label >{% trans "ID Number: " %}&nbsp;&nbsp;</label><span id ="hhIdNumber"></span>
                             </div>
                             <div class="line">
-                                <label >{% trans "Address: " %}&nbsp;&nbsp;</label><span id ="hhAddess"></span>
+                                <label >{% trans "Date of birth: " %}&nbsp;&nbsp;</label><span id ="hhDOB"></span>
                             </div>
                             <div class="line">
-                                <label >{% trans "Date of birth: " %}&nbsp;&nbsp;</label><span id ="hhDOB"></span>
+                                <label >{% trans "Primary phone: " %}&nbsp;&nbsp;</label><span id ="hhprimary_phone"></span>
+                            </div>
+                            <div class="line">
+                                <label >{% trans "Secondary phone: " %}&nbsp;&nbsp;</label><span id ="hhsecondary_phone"></span>
+                            </div>
+                            <div class="line">
+                                <label >{% trans "Address: " %}&nbsp;&nbsp;</label><span id ="hhAddess"></span>
                             </div>
                         </li>
                     {# 2 Slide update data #}
@@ -59,6 +62,60 @@
                           <h3 class="panel-title">{% trans "Update Type" %}</h3>
                           <br/>
                           <br/>
+                          <label >{% trans "Please select: " %}&nbsp;&nbsp;</label>
+                          <select id="changeOption">
+                             <option value="" selected="selected">---------</option>
+                             <option value="phone">Phone</option>
+                             <option value="address">Address</option>
+                             <option value="school">School</option>
+                          </select>
+
+                          <div id = "phoneFields" style="display:none">
+                            <div class="line">
+                              <label class="text">{% trans "Primary Phone Number" %}</label>
+                              <input id="primary_phone" maxlength="45" type="text">
+                              <span class="error" id="primary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
+                            </div>
+
+                            <div class="line">
+                              <label class="text">{% trans "Phone Number are normally answered by" %}</label>
+                              <select id="primary_phone_answered" >
+                                {% for value, text in phoneAnsweredby %}
+                                      <option value="{{ value }}">{{ text }}</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+
+                             <div class="line">
+                              <label class="text">{% trans "Secondary Phone Number" %}</label>
+                              <input id="secondary_phone" maxlength="45" type="text">
+                              <span class="error" id="secondary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
+                            </div>
+
+
+                            <div class="line">
+                              <label class="text">{% trans "Phone Number are normally answered by" %}</label>
+                              <select id="secondary_phone_answered" >
+                                {% for value, text in phoneAnsweredby %}
+                                      <option value="{{ value }}">{{ text }}</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+                          </div>
+                          <div id = "addressFields" style="display:none">
+                            <textarea cols="50" id="address" name="address" rows="2"></textarea>
+                          </div>
+                          <div id = "schoolFields" style="display:none">
+                            <select id="child" >
+                            </select>
+                            <select id="school" >
+                                {% for school in schools %}
+                                    <option value="{{ school.id }}">
+                                      {{ school.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                          </div>
                         </li>
                   </ul>
             </div>

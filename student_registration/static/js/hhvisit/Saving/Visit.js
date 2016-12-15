@@ -63,6 +63,7 @@
         {
             dropDownElement.find('option:selected').removeAttr('selected');
             dropDownElement.find('option[value="'+value+'"]').attr("selected",true);
+            dropDownElement.val(value);
         }
 
 
