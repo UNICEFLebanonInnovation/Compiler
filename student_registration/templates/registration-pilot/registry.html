@@ -1221,6 +1221,7 @@
     {
         dropDownElement.find('option:selected').removeAttr('selected');
         dropDownElement.find('option[value="'+value+'"]').attr("selected",true);
+        dropDownElement.val(value);
     }
 
     function getDropDownValueText(dropDownElement, value)
@@ -1296,7 +1297,7 @@
             $('.bootbox-body').find("#id_age").val(age);
             $('.bootbox-body').find("#id_age").trigger('blur');
 
-            if(age < 5 || age > 17) {
+            if(age < 4 || age > 17) {
                <!--bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});-->
                $('.bootbox-body').find("#age_range_error").show();
             }
