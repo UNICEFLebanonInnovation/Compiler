@@ -114,9 +114,10 @@
             </section>
          </section>
 
+
      <div id = "hhEditForm" style ="display:none">
 
-       % include 'registration-pilot/registration-update.html' %}
+       {% include 'registration-pilot/registration-update.html' %}
 
      </div>
 
@@ -129,10 +130,12 @@
     <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/registration-pilot/UI/SlyInitialisation.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/registration-pilot/Validation/validator.js' %}"></script>
     <script type="text/javascript">
         var oTable = null;
         var language  = '{{ LANGUAGE_CODE }}';
@@ -143,53 +146,116 @@
         var host = protocol+'{{ request.get_host }}';
         var synchro_path = host+'/api/registry-search/';
 
-        $(document).ready(function(){
-            oTable = $('#registrations-table').DataTable({
-                fixedHeader: false,
-                paging:   true,
-                ordering: true,
-                info:     true,
-                autoWidth: false,
-                scrollY: '50vh',
-                scrollX: true,
-                scrollCollapse: true,
-                "language": {
-                    "url": "/static/locale/"+language+".json"
-                },
-                "fnInitComplete": function(oSettings, json) {
-                    $('[data-toggle="tooltip"]').tooltip();
+        var checking_id_number_url = host+'/api/registrations-adult/';
+        var childURL = host+'/api/registrations-child/';
+
+        var hhID = null;
+
+        $(document).ready
+        (
+           function()
+           {
+              oTable = $('#registrations-table').DataTable
+              (
+                 {
+                    fixedHeader: false,
+                    paging:   true,
+                    ordering: true,
+                    info:     true,
+                    autoWidth: false,
+                    scrollY: '50vh',
+                    scrollX: true,
+                    scrollCollapse: true,
+                    "language": {
+                        "url": "/static/locale/"+language+".json"
+                    },
+                    "fnInitComplete": function(oSettings, json) {
+                        $('[data-toggle="tooltip"]').tooltip();
+                    }
+                 }
+              );
+              InitialiseSave();
+
+              InitialiseChildDropdown();
+
+              $(document).on
+              (
+                 'click',
+                 '.row-class',
+                 function()
+                 {
+                    block = $(this);
+                    hhID = block.attr('adultID')
+                    $("#hhList").hide();
+                    LoadData(hhID);
+                    $("#hhEditForm").show();
+                    CheckInitialiseSly();
+                 }
+               );
+
+                // get the list of household and fill the table with it
+                $("#id_location").change(function(){
+                   var selected_location = $(this).val();
+                   // reload the page with the location id passed in post
+                    var url = '{% url "registrations:registry_search" %}';
+                    if(selected_location){
+                        url = url+'?location='+selected_location;
+                    }
+                    window.location.href = url;
+                    <!--load_base_data();-->
+                    <!--filterSchoolsByLocation(location);-->
+                });
+
+
+
+
+
+            function load_base_data()
+              {
+                  pull_data_from_server(host+'/api/schools/', 'schools');
+              }
+
+            <!--function filterSchoolsByLocation(location)-->
+            <!--{-->
+                <!--schoolSelect = document.getElementById('school');-->
+                <!--childSelect.options[childSelect.options.length] = new Option(child.first_name+' '+child.father_name+' '+child.last_name, child.student_id);-->
+                <!--$('.bootbox-body').find('#id_enrolled_last_year_school').find('option').hide();-->
+                <!--var store = getStoreByName('schools');-->
+                <!--var request = store.index('location').getAll(location);-->
+                <!--request.onsuccess = function() {-->
+                    <!--var result = request.result;-->
+                    <!--if(result){-->
+                        <!--$(result).each(function(i, item){-->
+                            <!--$('.bootbox-body').find('#id_enrolled_last_year_school').find('option[value='+item.id+']').show();-->
+                        <!--});-->
+                    <!--}-->
+                <!--}-->
+            <!--}-->
+
+
+            // get selected option to update and set the fields visible
+            $("#changeOption").change(function () {
+              hideAll();
+              var selectedOption = $(this).val();
+
+              if(selectedOption == 'phone') {
+                $("#phoneFields").show();
                 }
-            });
-          $(document).on
-          (
-             'click',
-             '.row-class',
-             function()
-             {
-                block = $(this);
-
-                var hhID = block.attr('adultID')
-
-                $("#hhList").hide();
-
-                //LoadVisit(visitID);
-
-                $("#household_update_form").show();
-
-                CheckInitialiseSly();
-             }
-           );
-
-            // get the list of household and fill the table with it
-            $("#id_location").change(function(){
-               var selected_location = $(this).val();
-               // reload the page with the location id passed in post
-                var url = '{% url "registrations:registry_search" %}';
-                if(selected_location){
-                    url = url+'?location='+selected_location;
+                else if (selectedOption =='address' )  {
+                $("#addressFields").show();
                 }
-                window.location.href = url;
-            });
+                else if (selectedOption == 'school' ) {
+                  $("#schoolFields").show();
+                  UpdateChildSchool();
+                }
+                });
+
+          function hideAll()
+          {
+            $("#phoneFields").hide();
+            $("#addressFields").hide();
+            $("#schoolFields").hide();
+          }
 
               function loadAjaxCall(regId , data)
             {
@@ -224,6 +290,212 @@
 
       });
 
+
+      var householdRecord = null;
+
+      function LoadData(hhID)
+      {
+         $.ajax({
+                     type: "GET",
+                     url: checking_id_number_url+hhID,
+                     data: [],
+                     cache: false,
+                     async: false,
+                     headers: getHeader(),
+                     dataType: 'json',
+                     success: function (response) {
+                         var household = response;
+                         householdRecord = household;
+                         console.log(response);
+
+                         $("#hhName").text(household.first_name+' '+household.father_name+' '+household.last_name);
+                         $("#hhIdNumber").text(household.id_number);
+                         $("#hhDOB").text(household.birthday_day+'/'+household.birthday_month+'/'+household.birthday_year);
+                         $("#hhprimary_phone").text(household.primary_phone);
+                         $("#hhsecondary_phone").text(household.secondary_phone);
+                         $("#hhAddess").text(household.address);
+
+                         $("#primary_phone").val(household.primary_phone);
+                         updateDropDownValue($("#primary_phone_answered"),household.primary_phone_answered);
+                         $("#secondary_phone").val(household.secondary_phone);
+                         updateDropDownValue($("#secondary_phone_answered"),household.secondary_phone_answered);
+                         $("#address").val(household.address);
+
+
+                         childSelect = document.getElementById('child');
+                         $("#child").empty();
+
+                         for(childIndex in household.children)
+                         {
+                            var child = household.children[childIndex];
+                            childSelect.options[childSelect.options.length] = new Option
+                            (
+                               child.first_name+' '+child.father_name+' '+child.last_name,
+                               child.student_id
+                               //,childIndex == 0;
+                            );
+                         }
+
+                         UpdateChildSchool();
+                     },
+                     error: function (response) {
+                        var required_fields = JSON.parse(response.responseText);
+                        console.log(response);
+                     }
+                 });
+      }
+
+      function updateDropDownValue(dropDownElement, value)
+      {
+          dropDownElement.find('option:selected').removeAttr('selected');
+          dropDownElement.find('option[value="'+value+'"]').attr("selected",true);
+          dropDownElement.val(value);
+      }
+
+      function CloseHousehold()
+      {
+        $("#hhList").show();
+
+        $("#hhEditForm").hide();
+
+        householdRecord = null;
+        hhID = null;
+      }
+
+      function InitialiseSave()
+      {
+          $(document).on
+          (
+             'click',
+             '#hhSaveButton',
+             function()
+             {
+
+                 if($("#changeOption").val() == "phone" || $("#changeOption").val() == "address" )
+                 {
+                    SaveHousehold();
+                 }
+                 else if($("#changeOption").val() == "school")
+                 {
+                    SaveChild();
+                 }
+
+             }
+           );
+      }
+
+      function SaveHousehold()
+      {
+         var houseHoldData = new Object();
+
+         if($("#changeOption").val() == "phone")
+         {
+            houseHoldData.primary_phone = $("#primary_phone").val();
+            houseHoldData.primary_phone_answered = $("#primary_phone_answered").val();
+            houseHoldData.secondary_phone = $("#secondary_phone").val();
+            houseHoldData.secondary_phone_answered  = $("#secondary_phone_answered").val();
+         }
+         else if($("#changeOption").val() == "address")
+         {
+            houseHoldData.address = $("#address").val();
+         }
+
+         $.ajax
+         (
+            {
+              type: "PATCH",
+              url: checking_id_number_url + hhID +"/",
+              data: houseHoldData,
+              cache: false,
+              async: false,
+              headers: getHeader(),
+              dataType: 'json',
+              success: function (response)
+              {
+                  var block = $("#registrations-table tr[adultid="+hhID+"]");
+
+                  block.find("td:nth-child(5)").text($("#primary_phone").val());
+                  block.find("td:nth-child(6)").text($("#secondary_phone").val());
+
+                  block.find("td:nth-child(2)").text($("#address").val());
+
+                  CloseHousehold();
+
+              },
+              error: function (response)
+              {
+                  console.log(response);
+              }
+           }
+         );
+      }
+
+
+      function SaveChild()
+      {
+         var childID = $("#child").val();
+         var childData = new Object();
+
+         childData.school = $("#school").val();
+
+         $.ajax
+         (
+            {
+              type: "PATCH",
+              url: childURL + childID +"/",
+              data: childData,
+              cache: false,
+              async: false,
+              headers: getHeader(),
+              dataType: 'json',
+              success: function (response)
+              {
+                  CloseHousehold();
+
+              },
+              error: function (response)
+              {
+                  console.log(response);
+              }
+           }
+         );
+      }
+
+      function UpdateChildSchool()
+      {
+         var childID = $("#child").val();
+
+         var children = householdRecord.children.filter
+         (
+            function(child)
+            {
+               return child.student_id == childID;
+            }
+         );
+
+
+         if(children.length > 0)
+         {
+            childRecord = children[0];
+
+            updateDropDownValue($("#school"),childRecord.school);
+
+         }
+
+      }
+
+      function InitialiseChildDropdown()
+      {
+          $(document).on
+          (
+             'change',
+             '#child',
+             function()
+             {
+                UpdateChildSchool();
+             }
+           );
+      }
 
     </script>
 

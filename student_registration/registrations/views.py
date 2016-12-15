@@ -244,13 +244,21 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
 
         def get_context_data(self, **kwargs):
             data = []
+            schools = []
+
             locations = Location.objects.all().filter(type_id=2).order_by('name')
             location = self.request.GET.get("location", 0)
+            phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
+
+
             if location:
-                data = self.model.objects.filter(school__location_id=location).order_by('id')
+                schools = School.objects.filter(location_id=location)
+                data = self.model.objects.filter(school__location_id=location).order_by('id')[:10]
 
             return {
                 'adults': data,
                 'locations': locations,
-                'selectedLocation': int(location)
+                'selectedLocation': int(location),
+                'schools': schools,
+                'phoneAnsweredby' : phoneAnsweredby
     }
