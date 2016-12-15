@@ -168,7 +168,7 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
     model = Outreach
 
     def get(self, request, *args, **kwargs):
-        queryset = self.model.objects.exclude(deleted=True)
+        queryset = self.model.objects.exclude(deleted=True, not_enrolled_in_this_school=True)
         school = int(request.GET.get('school', 0))
         location = int(request.GET.get('location', 0))
 
