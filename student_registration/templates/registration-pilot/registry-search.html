@@ -175,7 +175,6 @@
                  }
               );
               InitialiseSave();
-
               InitialiseChildDropdown();
 
               $(document).on
@@ -202,36 +201,12 @@
                         url = url+'?location='+selected_location;
                     }
                     window.location.href = url;
-                    <!--load_base_data();-->
-                    <!--filterSchoolsByLocation(location);-->
                 });
-
-
-
-
 
             function load_base_data()
               {
                   pull_data_from_server(host+'/api/schools/', 'schools');
               }
-
-            <!--function filterSchoolsByLocation(location)-->
-            <!--{-->
-                <!--schoolSelect = document.getElementById('school');-->
-                <!--childSelect.options[childSelect.options.length] = new Option(child.first_name+' '+child.father_name+' '+child.last_name, child.student_id);-->
-                <!--$('.bootbox-body').find('#id_enrolled_last_year_school').find('option').hide();-->
-                <!--var store = getStoreByName('schools');-->
-                <!--var request = store.index('location').getAll(location);-->
-                <!--request.onsuccess = function() {-->
-                    <!--var result = request.result;-->
-                    <!--if(result){-->
-                        <!--$(result).each(function(i, item){-->
-                            <!--$('.bootbox-body').find('#id_enrolled_last_year_school').find('option[value='+item.id+']').show();-->
-                        <!--});-->
-                    <!--}-->
-                <!--}-->
-            <!--}-->
-
 
             // get selected option to update and set the fields visible
             $("#changeOption").change(function () {
