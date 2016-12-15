@@ -231,7 +231,7 @@ body .container.body .right_col {
 @media (max-width: 1200px) {
   .x_title h2 {
     width: 62%;
-    font-size: 17px; }
+    font-size: 13px; }
 
   .tile, .graph {
     zoom: 85%;
@@ -643,7 +643,7 @@ article.media {
   float: left; }
 
 h2 {
-  font-size: 18px;
+  font-size: 13px;
   font-weight: 400; }
 
 #left, #right {
