@@ -1,13 +1,13 @@
 CACHE MANIFEST
 
-# v0.61
+# v0.62
 
 #/alp/outreach/
 #/alp/outreach/?ln=ar-ar
 #/alp/outreach/?ln=en-us
-#/enrollments/enrollment/
-#/enrollments/enrollment/?ln=ar-ar
-#/enrollments/enrollment/?ln=en-us
+/enrollments/enrollment/
+/enrollments/enrollment/?ln=ar-ar
+/enrollments/enrollment/?ln=en-us
 /static/images/icon-unknown.gif
 /static/images/glyphicons-halflings.png
 /static/images/glyphicons-halflings-white.png
