@@ -104,36 +104,14 @@ def set_app_attendances():
     from student_registration.enrollments.models import Enrollment
     from student_registration.attendances.models import Attendance
 
-    # bulk = get_doc_rev('1008-5-1')
-    # print bulk
-    # return False
-    #
-    # existing_docs = {}
-    # dist_registractions = Enrollment.objects.all()\
-    #     .values_list('school', 'classroom', 'section')\
-    #     .distinct()\
-    #     .order_by('school', 'classroom', 'section')
-    # for dist in dist_registractions:
-    #     bulk = get_docs({
-    #         "id": "{}-{}-{}".format(dist[0], dist[1], dist[2]),
-    #     })
-    #     if bulk and bulk.status in [requests.codes.ok, requests.codes.created]:
-    #         existing_docs[bulk._id] = bulk._rev
-    #
-    # print existing_docs
-    #
-    # return False
-
     docs = []
     # schools = School.objects.all().order_by('id')
-    # schools = School.objects.filter(number=291)
     schools = School.objects.filter(number=1008)
     for school in schools:
         students = []
         attstudent = {}
         attendances = {}
-        # registrations = Enrollment.objects.filter(school_id=school.id)
-        registrations = Enrollment.objects.filter(school_id=school.id).values_list('classroom', 'section').distinct().order_by('classroom', 'section')
+        registrations = Enrollment.objects.exclude(deleted=True).filter(school_id=school.id).values_list('classroom', 'section').distinct().order_by('classroom', 'section')
         for reg in registrations:
             classroom_id = reg[0]
             section_id = reg[1]
@@ -141,7 +119,7 @@ def set_app_attendances():
             attendances = {}
             if not classroom_id or not section_id:
                 continue
-            students_per_class = Enrollment.objects.filter(classroom_id=classroom_id, section_id=section_id, school_id=school.id)
+            students_per_class = Enrollment.objects.exclude(deleted=True).filter(classroom_id=classroom_id, section_id=section_id, school_id=school.id)
             for reg_std in students_per_class:
                 std = reg_std.student
                 student = {

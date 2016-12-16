@@ -201,6 +201,7 @@ class Enrollment(TimeStampedModel):
         null=True,
         choices=SCHOOL_TYPE
     )
+    deleted = models.BooleanField(blank=True, default=False)
 
     @property
     def student_fullname(self):
