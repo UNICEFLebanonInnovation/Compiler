@@ -267,6 +267,7 @@ class Outreach(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
+    deleted = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['id']

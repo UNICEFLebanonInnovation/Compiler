@@ -113,6 +113,48 @@ class EnrollmentView(LoginRequiredMixin, TemplateView):
         }
 
 
+class EnrollmentEditView(LoginRequiredMixin, TemplateView):
+    """
+    Provides the enrollment page with lookup types in the context
+    """
+    model = Enrollment
+    template_name = 'enrollments/edit.html'
+
+    def get_context_data(self, **kwargs):
+
+        school_id = 0
+        school = 0
+        location = 0
+        location_parent = 0
+        if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
+            school_id = self.request.user.school_id
+        if school_id:
+            school = School.objects.get(id=school_id)
+        if school and school.location:
+            location = school.location
+        if location and location.parent:
+            location_parent = location.parent
+
+        return {
+            'school_types': Enrollment.SCHOOL_TYPE,
+            'education_levels': ClassRoom.objects.all(),
+            'education_results': Enrollment.RESULT,
+            'informal_educations': EducationLevel.objects.all(),
+            'education_final_results': ClassLevel.objects.all(),
+            'alp_rounds': ALPRound.objects.all(),
+            'classrooms': ClassRoom.objects.all(),
+            'sections': Section.objects.all(),
+            'nationalities': Nationality.objects.exclude(id=5),
+            'nationalities2': Nationality.objects.all(),
+            'genders': Person.GENDER,
+            'months': Person.MONTHS,
+            'idtypes': IDType.objects.all(),
+            'school': school,
+            'location': location,
+            'location_parent': location_parent
+        }
+
+
 ####################### API VIEWS #############################
 
 
@@ -129,14 +171,12 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
     serializer_class = EnrollmentSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    # def get_queryset(self):
-    #     if not self.request.user.is_staff:
-    #         if self.request.user.school:
-    #             return self.queryset.filter(school=self.request.user.school.id)
-    #         else:
-    #             return []
-    #
-    #     return self.queryset
+    def get_queryset(self):
+        # has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
+        if self.request.user.school_id:
+            return self.queryset.filter(school=self.request.user.school_id)
+
+        return self.queryset
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
@@ -162,7 +202,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         return self.queryset
 
     def get(self, request, *args, **kwargs):
-        queryset = self.model.objects.all()
+        queryset = self.model.objects.exclude(deleted=True)
         school = request.GET.get('school', 0)
         gov = request.GET.get('gov', 0)
 
@@ -197,6 +237,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             _('Mother fullname'),
             _('Student nationality'),
             _('Student age'),
+            _('Student birthday'),
             _('year'),
             _('month'),
             _('day'),
@@ -239,6 +280,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 line.student.nationality_name(),
 
                 line.student.calc_age,
+                line.student.birthday,
                 line.student.birthday_year,
                 line.student.birthday_month,
                 line.student.birthday_day,
@@ -264,7 +306,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
 class ExportBySchoolView(LoginRequiredMixin, ListView):
 
     model = Enrollment
-    queryset = Enrollment.objects.all()
+    queryset = Enrollment.objects.exclude(deleted=True)
 
     def get(self, request, *args, **kwargs):
 
@@ -299,4 +341,53 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
             content_type='application/vnd.ms-excel',
         )
         response['Content-Disposition'] = 'attachment; filename=student_by_school.xls'
+        return response
+
+
+class ExportDuplicatesView(LoginRequiredMixin, ListView):
+
+    model = Enrollment
+    queryset = Enrollment.objects.exclude(deleted=True).order_by('-id')
+
+    def get(self, request, *args, **kwargs):
+
+        students = {}
+        schools = {}
+        duplicates = []
+
+        for registry in self.queryset:
+            student = registry.student
+            if not student.number in students:
+                students[student.number] = registry
+            else:
+                duplicates.append(registry)
+                schools[registry.school_id] = registry.school.name
+
+        data = tablib.Dataset()
+        data.headers = [
+            'ID',
+            'Student ID',
+            'Fullname',
+            'Number',
+            'School',
+        ]
+
+        content = []
+        for registry in duplicates:
+            student = registry.student
+            content = [
+                registry.id,
+                student.id,
+                student.__unicode__(),
+                student.number,
+                registry.school.name,
+            ]
+            data.append(content)
+
+        file_format = base_formats.XLS()
+        response = HttpResponse(
+            file_format.export_data(data),
+            content_type='application/vnd.ms-excel',
+        )
+        response['Content-Disposition'] = 'attachment; filename=duplications.xls'
         return response

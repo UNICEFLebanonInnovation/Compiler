@@ -12,6 +12,11 @@ urlpatterns = [
         name='enrollment'
     ),
     url(
+        regex=r'^enrollment-edit/$',
+        view=views.EnrollmentEditView.as_view(),
+        name='enrollment_edit'
+    ),
+    url(
         regex=r'^enrollment-view/$',
         view=views.EnrollmentStaffView.as_view(),
         name='enrollment_view'
@@ -22,8 +27,14 @@ urlpatterns = [
         name='enrollment_export'
     ),
     url(
-        regex=r'^enrollment/enrollment-export-by-school/$',
+        regex=r'^enrollment-export-by-school/$',
         view=views.ExportBySchoolView.as_view(),
         name='enrollment_export_by_school'
+    ),
+
+    url(
+        regex=r'^enrollment-export-duplicate/$',
+        view=views.ExportDuplicatesView.as_view(),
+        name='enrollment_export_duplicate'
     ),
 ]
