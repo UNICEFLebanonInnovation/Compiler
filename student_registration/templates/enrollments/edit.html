@@ -46,6 +46,10 @@
                                     <i class="icon-synch-sign icon-white"></i>&nbsp;
                                         {% trans "synchronize" %}
                                   </button>
+                                  <button class="btn btn-info" id="registration-download">
+                                    <i class="icon-synch-sign icon-white"></i>&nbsp;
+                                        {% trans "download data" %}
+                                  </button>
                                 </li>
                                 <li>
                                     <select name="classroom" id="filter_class" class="col-200">
@@ -402,6 +406,23 @@
                 }
             });
 
+            $(document).on('click', '#registration-download', function(){
+                incremental_id = 0;
+                $('.alert').hide();
+                if(navigator.onLine) {
+                     $(".loader").show();
+                    load_base_data();
+                    setTimeout(function(){
+                        build_datatable();
+                        $(".loader").hide();
+                    }, 5000);
+                }else{
+                    $('#alert-connection').show();
+                }
+            });
+
+
+
         });
 
         function calculateAge(itemid)
@@ -478,6 +499,7 @@
         function build_datatable()
         {
             add_extra_columns();
+            $('#registrations-table').find('.registration-line').remove();
             var store = getStoreByName('registrations');
             var request = store.getAll();
             request.onsuccess = function() {
@@ -486,13 +508,11 @@
                     rows = item.id;
                     if(item.deleted == false){
                         $(".loader").show();
-setTimeout(
-  function()
-  {
-                        add_table_newline(item.id, prototype, table);
-                        add_fill_line_data(item);
-      $(".loader").hide();
-}, 5000);
+                        setTimeout(function() {
+                            add_table_newline(item.id, prototype, table);
+                            add_fill_line_data(item);
+                            $(".loader").hide();
+                        }, 5000);
                     }
                 });
                 rows = rows + 1;
@@ -520,12 +540,6 @@ setTimeout(
 
         function synchronize_data()
         {
-{#             $(".loader").show();#}
-{#                load_base_data();#}
-{#                setTimeout(function(){#}
-{#                    build_datatable();#}
-{#                    $(".loader").hide();#}
-{#                }, 5000);#}
             push_data();
         }
 
@@ -700,20 +714,12 @@ setTimeout(
             request.onsuccess = function() {
                 db = request.result;
                 $(".loader").show();
-{#                load_base_data();#}
                 setTimeout(function(){
                     build_datatable();
                     $(".loader").hide();
                 }, 5000);
             };
         }
-
-function getStoreByName(name)
-{
-    console.log(name);
-    var store = db.transaction([name], "readwrite").objectStore(name);
-    return store;
-}
 
     </script>
 
