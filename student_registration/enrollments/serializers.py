@@ -88,12 +88,8 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         student.id_number = student_data['id_number']
 
         student.save()
-        # student_serializer = StudentSerializer(data=student_data)
-        # student_serializer.is_valid(raise_exception=True)
-        # student_serializer.instance = student_serializer.save()
 
         try:
-            # instance.student = student_serializer.instance
 
             instance.registered_in_unhcr = validated_data['registered_in_unhcr']
             instance.participated_in_alp = validated_data['participated_in_alp']
