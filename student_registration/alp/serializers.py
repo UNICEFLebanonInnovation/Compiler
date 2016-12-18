@@ -79,17 +79,28 @@ class OutreachSerializer(serializers.ModelSerializer):
 
             student.save()
 
-            instance.registered_in_unhcr = validated_data['registered_in_unhcr']
-            instance.participated_in_alp = validated_data['participated_in_alp']
-            instance.last_informal_edu_level = validated_data['last_informal_edu_level']
-            instance.last_informal_edu_round = validated_data['last_informal_edu_round']
-            instance.last_informal_edu_final_result = validated_data['last_informal_edu_final_result']
-            instance.section = validated_data['section']
-            instance.registered_in_level = validated_data['registered_in_level']
-            instance.assigned_to_level = validated_data['assigned_to_level']
-            instance.last_education_level = validated_data['last_education_level']
-            instance.last_education_year = validated_data['last_education_year']
-            instance.level = validated_data['level']
+            if 'registered_in_unhcr' in validated_data:
+                instance.registered_in_unhcr = validated_data['registered_in_unhcr']
+            if 'participated_in_alp' in validated_data:
+                instance.participated_in_alp = validated_data['participated_in_alp']
+            if 'last_informal_edu_level' in validated_data:
+                instance.last_informal_edu_level = validated_data['last_informal_edu_level']
+            if 'last_informal_edu_round' in validated_data:
+                instance.last_informal_edu_round = validated_data['last_informal_edu_round']
+            if 'last_informal_edu_final_result' in validated_data:
+                instance.last_informal_edu_final_result = validated_data['last_informal_edu_final_result']
+            if 'section' in validated_data:
+                instance.section = validated_data['section']
+            if 'registered_in_level' in validated_data:
+                instance.registered_in_level = validated_data['registered_in_level']
+            if 'assigned_to_level' in validated_data:
+                instance.assigned_to_level = validated_data['assigned_to_level']
+            if 'last_education_level' in validated_data:
+                instance.last_education_level = validated_data['last_education_level']
+            if 'last_education_year' in validated_data:
+                instance.last_education_year = validated_data['last_education_year']
+            if 'level' in validated_data:
+                instance.level = validated_data['level']
 
             instance.save()
 
