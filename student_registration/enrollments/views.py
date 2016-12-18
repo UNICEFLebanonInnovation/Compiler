@@ -159,15 +159,15 @@ class EnrollmentEditView(LoginRequiredMixin, TemplateView):
 
 
 class EnrollmentViewSet(mixins.RetrieveModelMixin,
-                          mixins.ListModelMixin,
-                          mixins.CreateModelMixin,
-                          mixins.UpdateModelMixin,
-                          viewsets.GenericViewSet):
+                        mixins.ListModelMixin,
+                        mixins.CreateModelMixin,
+                        mixins.UpdateModelMixin,
+                        viewsets.GenericViewSet):
     """
     Provides API operations around a Enrollment record
     """
     model = Enrollment
-    queryset = Enrollment.objects.all()
+    queryset = Enrollment.objects.exclude(deleted=True)
     serializer_class = EnrollmentSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -313,7 +313,7 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
         schools = self.queryset.values_list(
                         'school', 'school__number', 'school__name', 'school__location__name',
                         'school__location__parent__name').distinct().order_by('school__number')
-        print schools
+
         data = tablib.Dataset()
         data.headers = [
             _('CERD'),
@@ -325,7 +325,7 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
 
         content = []
         for school in schools:
-            nbr = self.model.objects.filter(school=school[0]).count()
+            nbr = self.model.objects.filter(school=school[0]).exclude(deleted=True).count()
             content = [
                 school[1],
                 school[2],
