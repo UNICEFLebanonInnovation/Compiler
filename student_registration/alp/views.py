@@ -110,7 +110,7 @@ class OutreachView(LoginRequiredMixin, TemplateView):
 
         return {
             'data': data,
-            'schools': School.objects.all(),
+            'schools': School.objects.all().order_by('name'),
             'languages': Language.objects.all(),
             'locations': Location.objects.filter(type_id=2),
             'partners': PartnerOrganization.objects.all(),
