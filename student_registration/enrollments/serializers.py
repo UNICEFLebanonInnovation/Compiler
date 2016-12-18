@@ -90,18 +90,28 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         student.save()
 
         try:
-
-            instance.registered_in_unhcr = validated_data['registered_in_unhcr']
-            instance.participated_in_alp = validated_data['participated_in_alp']
-            instance.last_informal_edu_level = validated_data['last_informal_edu_level']
-            instance.last_informal_edu_round = validated_data['last_informal_edu_round']
-            instance.last_informal_edu_final_result = validated_data['last_informal_edu_final_result']
-            instance.section = validated_data['section']
-            instance.classroom = validated_data['classroom']
-            instance.last_year_result = validated_data['last_year_result']
-            instance.last_school_type = validated_data['last_school_type']
-            instance.last_education_level = validated_data['last_education_level']
-            instance.last_education_year = validated_data['last_education_year']
+            if 'registered_in_unhcr' in validated_data:
+                instance.registered_in_unhcr = validated_data['registered_in_unhcr']
+            if 'participated_in_alp' in validated_data:
+                instance.participated_in_alp = validated_data['participated_in_alp']
+            if 'last_informal_edu_level' in validated_data:
+                instance.last_informal_edu_level = validated_data['last_informal_edu_level']
+            if 'last_informal_edu_round' in validated_data:
+                instance.last_informal_edu_round = validated_data['last_informal_edu_round']
+            if 'last_informal_edu_final_result' in validated_data:
+                instance.last_informal_edu_final_result = validated_data['last_informal_edu_final_result']
+            if 'section' in validated_data:
+                instance.section = validated_data['section']
+            if 'classroom' in validated_data:
+                instance.classroom = validated_data['classroom']
+            if 'last_year_result' in validated_data:
+                instance.last_year_result = validated_data['last_year_result']
+            if 'last_school_type' in validated_data:
+                instance.last_school_type = validated_data['last_school_type']
+            if 'last_education_level' in validated_data:
+                instance.last_education_level = validated_data['last_education_level']
+            if 'last_education_year' in validated_data:
+                instance.last_education_year = validated_data['last_education_year']
 
             instance.save()
 
