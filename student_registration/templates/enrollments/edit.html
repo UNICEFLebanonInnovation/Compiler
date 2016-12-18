@@ -420,9 +420,6 @@
                     $('#alert-connection').show();
                 }
             });
-
-
-
         });
 
         function calculateAge(itemid)
@@ -523,7 +520,12 @@
         {
             var fields = $('#line-'+item.id).find('.registration-field');
             $(fields).each(function(i, field){
-                var value = item[$(field).attr('name')];
+                if($(field).attr('data-value')){
+                    var value = item[$(field).attr('data-name')];
+                }else{
+                    var value = item[$(field).attr('name')];
+                }
+
                 if(value == "yes" || value == "no"){
                     if($(field).attr('data-value') == value){
                         $(field).attr('checked', 'checked');
