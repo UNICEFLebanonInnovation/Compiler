@@ -167,7 +167,7 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
     Provides API operations around a Enrollment record
     """
     model = Enrollment
-    queryset = Enrollment.objects.all()
+    queryset = Enrollment.objects.exclude(deleted=True)
     serializer_class = EnrollmentSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
