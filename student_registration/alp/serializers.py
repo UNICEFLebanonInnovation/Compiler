@@ -85,7 +85,7 @@ class OutreachSerializer(serializers.ModelSerializer):
                 instance.participated_in_alp = validated_data['participated_in_alp']
             if 'last_informal_edu_level' in validated_data:
                 instance.last_informal_edu_level = validated_data['last_informal_edu_level']
-            if 'last_informal_edu_round' in validated_data
+            if 'last_informal_edu_round' in validated_data:
                 instance.last_informal_edu_round = validated_data['last_informal_edu_round']
             if 'last_informal_edu_final_result' in validated_data:
                 instance.last_informal_edu_final_result = validated_data['last_informal_edu_final_result']
