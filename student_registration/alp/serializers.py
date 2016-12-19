@@ -79,11 +79,28 @@ class OutreachSerializer(serializers.ModelSerializer):
 
             student.save()
 
-            # student_data = validated_data.pop('student', None)
-            # student_serializer = StudentSerializer(data=student_data)
-            # student_serializer.is_valid(raise_exception=True)
-            # student_serializer.instance = student_serializer.save()
-            # instance.student = student_serializer.instance
+            if 'registered_in_unhcr' in validated_data:
+                instance.registered_in_unhcr = validated_data['registered_in_unhcr']
+            if 'participated_in_alp' in validated_data:
+                instance.participated_in_alp = validated_data['participated_in_alp']
+            if 'last_informal_edu_level' in validated_data:
+                instance.last_informal_edu_level = validated_data['last_informal_edu_level']
+            if 'last_informal_edu_round' in validated_data:
+                instance.last_informal_edu_round = validated_data['last_informal_edu_round']
+            if 'last_informal_edu_final_result' in validated_data:
+                instance.last_informal_edu_final_result = validated_data['last_informal_edu_final_result']
+            if 'section' in validated_data:
+                instance.section = validated_data['section']
+            if 'registered_in_level' in validated_data:
+                instance.registered_in_level = validated_data['registered_in_level']
+            if 'assigned_to_level' in validated_data:
+                instance.assigned_to_level = validated_data['assigned_to_level']
+            if 'last_education_level' in validated_data:
+                instance.last_education_level = validated_data['last_education_level']
+            if 'last_education_year' in validated_data:
+                instance.last_education_year = validated_data['last_education_year']
+            if 'level' in validated_data:
+                instance.level = validated_data['level']
 
             instance.save()
 
@@ -122,6 +139,9 @@ class OutreachSerializer(serializers.ModelSerializer):
             'last_informal_edu_level',
             'last_informal_edu_year',
             'last_informal_edu_final_result',
+            'registered_in_level',
+            'assigned_to_level',
+            'last_informal_edu_round',
             'student_address',
             'school',
             'section',
@@ -180,38 +200,38 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
     student_last_name = serializers.CharField(source='student.last_name')
     student_sex = serializers.CharField(source='student.sex')
 
-    def create(self, validated_data):
+    # def create(self, validated_data):
+    #
+    #     student_data = validated_data.pop('student', None)
+    #     student_serializer = StudentSerializer(data=student_data)
+    #     student_serializer.is_valid(raise_exception=True)
+    #     student_serializer.instance = student_serializer.save()
+    #
+    #     try:
+    #         instance = Outreach.objects.create(**validated_data)
+    #         instance.student = student_serializer.instance
+    #         instance.save()
+    #
+    #     except Exception as ex:
+    #         raise serializers.ValidationError({'Outreach instance': ex.message})
+    #
+    #     return instance
 
-        student_data = validated_data.pop('student', None)
-        student_serializer = StudentSerializer(data=student_data)
-        student_serializer.is_valid(raise_exception=True)
-        student_serializer.instance = student_serializer.save()
-
-        try:
-            instance = Outreach.objects.create(**validated_data)
-            instance.student = student_serializer.instance
-            instance.save()
-
-        except Exception as ex:
-            raise serializers.ValidationError({'Outreach instance': ex.message})
-
-        return instance
-
-    def update(self, instance, validated_data):
-
-        try:
-            # student_data = validated_data.pop('student', None)
-            # student_serializer = StudentSerializer(data=student_data)
-            # student_serializer.is_valid(raise_exception=True)
-            # student_serializer.instance = student_serializer.save()
-            # instance.student = student_serializer.instance
-
-            instance.save()
-
-        except Exception as ex:
-            raise serializers.ValidationError({'Outreach instance': ex.message})
-
-        return instance
+    # def update(self, instance, validated_data):
+    #
+    #     try:
+    #         instance.level = validated_data['level']
+    #         instance.registered_in_level = validated_data['registered_in_level']
+    #         instance.assigned_to_level = validated_data['assigned_to_level']
+    #         instance.not_enrolled_in_this_school = validated_data['not_enrolled_in_this_school']
+    #         instance.exam_not_exist_in_school = validated_data['exam_not_exist_in_school']
+    #
+    #         instance.save()
+    #
+    #     except Exception as ex:
+    #         raise serializers.ValidationError({'Outreach instance': ex.message})
+    #
+    #     return instance
 
     class Meta:
         model = Outreach
