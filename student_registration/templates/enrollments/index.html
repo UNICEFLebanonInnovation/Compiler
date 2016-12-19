@@ -391,7 +391,7 @@
                     update_one_by_index('name', $(this).attr('name'), 'value_text', $(this).val(), 'eav-columns-values')
                 }else{
                     if($(this).attr('data-value')){
-                        update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).attr('data-value'), 'registrations');
+                        update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'registrations');
                     }else{
                         update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'registrations');
                     }
@@ -399,7 +399,7 @@
             });
 
             $(document).on('change', '.registration-field-check', function(){
-                update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).attr('data-value'), 'registrations');
+                update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'registrations');
             });
 
             $(document).on('click', '#registration-synchro', function(){

@@ -35,6 +35,16 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     section_name = serializers.CharField(source='section.name', read_only=True)
     grade_name = serializers.CharField(source='grade.name', read_only=True)
     classroom_name = serializers.CharField(source='classroom.name', read_only=True)
+    governorate_name = serializers.CharField(source='school.location.parent.name', read_only=True)
+    location = serializers.CharField(source='school.location.name', read_only=True)
+    student_nationality_id = serializers.CharField(source='student.nationality.id', read_only=True)
+    student_mother_nationality_id = serializers.CharField(source='student.mother_nationality.id', read_only=True)
+    student_id_type_id = serializers.CharField(source='student.id_type.id', read_only=True)
+
+    last_education_level_id = serializers.CharField(source='last_education_level.id', read_only=True)
+    last_informal_edu_level_id = serializers.CharField(source='last_informal_edu_level.id', read_only=True)
+    last_informal_edu_round_id = serializers.CharField(source='last_informal_edu_round.id', read_only=True)
+    last_informal_edu_final_result_id = serializers.CharField(source='last_informal_edu_final_result.id', read_only=True)
 
     def create(self, validated_data):
 
@@ -78,12 +88,31 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         student.id_number = student_data['id_number']
 
         student.save()
-        # student_serializer = StudentSerializer(data=student_data)
-        # student_serializer.is_valid(raise_exception=True)
-        # student_serializer.instance = student_serializer.save()
 
         try:
-            # instance.student = student_serializer.instance
+            if 'registered_in_unhcr' in validated_data:
+                instance.registered_in_unhcr = validated_data['registered_in_unhcr']
+            if 'participated_in_alp' in validated_data:
+                instance.participated_in_alp = validated_data['participated_in_alp']
+            if 'last_informal_edu_level' in validated_data:
+                instance.last_informal_edu_level = validated_data['last_informal_edu_level']
+            if 'last_informal_edu_round' in validated_data:
+                instance.last_informal_edu_round = validated_data['last_informal_edu_round']
+            if 'last_informal_edu_final_result' in validated_data:
+                instance.last_informal_edu_final_result = validated_data['last_informal_edu_final_result']
+            if 'section' in validated_data:
+                instance.section = validated_data['section']
+            if 'classroom' in validated_data:
+                instance.classroom = validated_data['classroom']
+            if 'last_year_result' in validated_data:
+                instance.last_year_result = validated_data['last_year_result']
+            if 'last_school_type' in validated_data:
+                instance.last_school_type = validated_data['last_school_type']
+            if 'last_education_level' in validated_data:
+                instance.last_education_level = validated_data['last_education_level']
+            if 'last_education_year' in validated_data:
+                instance.last_education_year = validated_data['last_education_year']
+
             instance.save()
 
         except Exception as ex:
@@ -134,5 +163,14 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'last_education_level',
             'last_education_year',
             'owner',
+            'governorate_name',
+            'location',
+            'student_nationality_id',
+            'student_mother_nationality_id',
+            'student_id_type_id',
+            'last_education_level_id',
+            'last_informal_edu_level_id',
+            'last_informal_edu_round_id',
+            'last_informal_edu_final_result_id',
         )
 
