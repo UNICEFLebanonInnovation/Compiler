@@ -46,6 +46,10 @@
                                     <i class="icon-synch-sign icon-white"></i>&nbsp;
                                         {% trans "synchronize" %}
                                   </button>
+                                  <button class="btn btn-info" id="registration-download">
+                                    <i class="icon-synch-sign icon-white"></i>&nbsp;
+                                        {% trans "download data" %}
+                                  </button>
                                 </li>
                                 <li>
                                     <select name="classroom" id="filter_class" class="col-200">
@@ -381,14 +385,14 @@
 
             $(document).on('blur', '.registration-field', function(){
                 if($(this).attr('data-value')){
-                    update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).attr('data-value'), 'registrations');
+                    update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'registrations');
                 }else{
                     update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'registrations');
                 }
             });
 
             $(document).on('change', '.registration-field-check', function(){
-                update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).attr('data-value'), 'registrations');
+                update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'registrations');
             });
 
             $(document).on('click', '#registration-synchro', function(){
@@ -402,6 +406,20 @@
                 }
             });
 
+            $(document).on('click', '#registration-download', function(){
+                incremental_id = 0;
+                $('.alert').hide();
+                if(navigator.onLine) {
+                     $(".loader").show();
+                    load_base_data();
+                    setTimeout(function(){
+                        build_datatable();
+                        $(".loader").hide();
+                    }, 5000);
+                }else{
+                    $('#alert-connection').show();
+                }
+            });
         });
 
         function calculateAge(itemid)
@@ -478,6 +496,7 @@
         function build_datatable()
         {
             add_extra_columns();
+            $('#registrations-table').find('.registration-line').remove();
             var store = getStoreByName('registrations');
             var request = store.getAll();
             request.onsuccess = function() {
@@ -486,13 +505,11 @@
                     rows = item.id;
                     if(item.deleted == false){
                         $(".loader").show();
-setTimeout(
-  function()
-  {
-                        add_table_newline(item.id, prototype, table);
-                        add_fill_line_data(item);
-      $(".loader").hide();
-}, 5000);
+                        setTimeout(function() {
+                            add_table_newline(item.id, prototype, table);
+                            add_fill_line_data(item);
+                            $(".loader").hide();
+                        }, 5000);
                     }
                 });
                 rows = rows + 1;
@@ -503,7 +520,12 @@ setTimeout(
         {
             var fields = $('#line-'+item.id).find('.registration-field');
             $(fields).each(function(i, field){
-                var value = item[$(field).attr('name')];
+                if($(field).attr('data-value')){
+                    var value = item[$(field).attr('data-name')];
+                }else{
+                    var value = item[$(field).attr('name')];
+                }
+
                 if(value == "yes" || value == "no"){
                     if($(field).attr('data-value') == value){
                         $(field).attr('checked', 'checked');
@@ -518,7 +540,12 @@ setTimeout(
             });
         }
 
-        function synchronize_data(showFeedback)
+        function synchronize_data()
+        {
+            push_data();
+        }
+
+        function push_data()
         {
             var store = getStoreByName('registrations');
             var request = store.getAll();
@@ -629,6 +656,15 @@ setTimeout(
                         item.synchronized = true;
                         item.deleted = false;
                         item.toupdate = false;
+                        item.student_nationality = item.student_nationality_id;
+                        item.student_mother_nationality = item.student_mother_nationality_id;
+                        item.student_id_type = item.student_id_type_id;
+
+                        item.last_education_level = item.last_education_level_id;
+                        item.last_informal_edu_level = item.last_informal_edu_level_id;
+                        item.last_informal_edu_round = item.last_informal_edu_round_id;
+                        item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
+
                         store.put(item);
                     });
                 },
@@ -680,20 +716,12 @@ setTimeout(
             request.onsuccess = function() {
                 db = request.result;
                 $(".loader").show();
-                load_base_data();
                 setTimeout(function(){
                     build_datatable();
                     $(".loader").hide();
                 }, 5000);
             };
         }
-
-function getStoreByName(name)
-{
-    console.log(name);
-    var store = db.transaction([name], "readwrite").objectStore(name);
-    return store;
-}
 
     </script>
 
