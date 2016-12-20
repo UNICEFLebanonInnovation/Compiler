@@ -27,5 +27,11 @@ urlpatterns = [
     #     view=views.test,
     #     name='household_visit_test'
     # ),
+    url(
+        regex=r'^load-absences/$',
+        view=views.LoadAbsences,
+        name='household_visit_load_absences'
+    ),
+
 ]
 
