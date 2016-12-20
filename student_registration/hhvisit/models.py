@@ -81,17 +81,17 @@ class HouseholdVisitTeam(models.Model):
         return teamname1 + ', '+ teamname2
 
 
-class studentAbsence(models.Model):
-
-
-        dateFrom = models.DateTimeField()
-        dateTo = models.DateTimeField()
-
-        class Meta:
-            ordering = ['-id']
-
-        def __unicode__(self):
-            return self.comment
+# class studentAbsence(models.Model):
+#
+#
+#         dateFrom = models.DateTimeField()
+#         dateTo = models.DateTimeField()
+#
+#         class Meta:
+#             ordering = ['-id']
+#
+#         def __unicode__(self):
+#             return self.comment
 
 
 class HouseholdVisit(TimeStampedModel):
@@ -294,5 +294,21 @@ class HouseholdVisitComment(models.Model):
 
     def __unicode__(self):
         return self.comment
+
+class StudentAbsence(models.Model):
+    student = models.ForeignKey(
+        Student,
+        blank=False, null=False,
+        related_name='+',
+    )
+    date_from = models.DateField(blank=False, null=True)
+    date_to = models.DateField(blank=False, null=True)
+    date_entry = models.DateField(blank=False, null=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.id
 
 
