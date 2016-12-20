@@ -273,7 +273,92 @@ from datetime import date
 def test(request):
 
     #result = LoadAbsences()
-    import student_registration.attendances.management.commands.load_absences
-    result = student_registration.attendances.management.commands.load_absences.LoadAbsences()
+    import student_registration.hhvisit.commands.load_absences
+    student_registration.hhvisit.commands.load_absences.LoadAbsences()
+
+    result = 'Absences were loaded successfully.'
 
     return HttpResponse(result)
+
+
+def LoadAbsences(request):
+
+    #result = LoadAbsences()
+    import student_registration.hhvisit.commands.load_absences
+    student_registration.hhvisit.commands.load_absences.LoadAbsences()
+
+    result = 'Absences were loaded successfully.'
+
+    #childAbsences = student_registration.hhvisit.commands.load_absences.GetDBChildrenAbsences('')
+
+    #result = student_registration.hhvisit.commands.load_absences.SaveChildAbsences(childAbsences)
+
+    #result = dumpobjectcontent(result)
+
+    return HttpResponse(result)
+
+
+
+def dumpobject(obj, level=0):
+
+    result = ''
+
+
+    import pprint
+    if isinstance(obj, (int, float, str, unicode, date, datetime)) | (obj is None):
+        result = pprint.pformat(obj)
+
+    for attr in dir(obj):
+        try:
+            val = getattr(obj, attr)
+
+            if attr in ('StudentID', 'FromDate', 'ToDate', 'NumberOfDays', 'CurrentChildAbsence', 'ChildAbsences','StudentAbsenceMonitorings'):
+
+                result += dumpobjectcontent(val,level,attr)
+
+        except Exception as exp:
+            test = 0
+
+
+    return result
+
+
+def dumpobjectcontent(obj, level=0,attr=''):
+
+    result = ''
+
+    spaces = ''
+
+    val=obj
+
+    for i in xrange(level):
+        spaces += '&nbsp;&nbsp;&nbsp;&nbsp;'
+
+    import pprint
+
+    if isinstance(val, (int, float, str, unicode, date, datetime)) | (val is None):
+        result += spaces + attr + " : " + pprint.pformat(val) + "<br/>"
+
+    elif isinstance(val, (dict)):
+
+        result += spaces + attr + "<br/>"
+
+        for x, y in val.items():
+            result += spaces + pprint.pformat(x) + ":" + "<br/>"
+            result += spaces + dumpobject(y, level=level + 1) + "<br/>"
+
+    elif isinstance(val, (list, set)):
+
+        result += spaces + attr + "<br/>"
+
+        for x in val:
+            result += dumpobject(x, level=level + 1) + "<br/>"
+
+    else:
+        if level < 10:
+            test = 0
+            result += spaces + attr + "<br/>"
+            result += dumpobject(val, level=level + 1) + "<br/>"
+
+    return result
+
