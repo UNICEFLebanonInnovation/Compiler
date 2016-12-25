@@ -96,7 +96,7 @@ def set_app_user(username, password):
 
 
 @app.task
-def set_app_attendances():
+def set_app_attendances(school_number=None):
     """
     Creates or edits a attendance document in Couchbase
     """
@@ -105,8 +105,10 @@ def set_app_attendances():
     from student_registration.attendances.models import Attendance
 
     docs = []
-    # schools = School.objects.all().order_by('id')
-    schools = School.objects.filter(number=1008)
+    if not school_number:
+        schools = School.objects.all().order_by('id')
+    else:
+        schools = School.objects.filter(number=school_number)
     for school in schools:
         students = []
         attstudent = {}
