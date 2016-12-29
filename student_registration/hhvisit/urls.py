@@ -32,6 +32,17 @@ urlpatterns = [
         view=views.LoadAbsences,
         name='household_visit_load_absences'
     ),
+    # url(
+    #     regex=r'^student-absence/$',
+    #     view=views.StudentAbsenceView.as_view(),
+    #     name='student_absence'
+    # )
+    # ,
+    # url(
+    #     regex=r'^student-search/$',
+    #     view=views.StudentSearch.as_view(),
+    #     name='student_search'
+    # )
 
 ]
 

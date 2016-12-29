@@ -298,67 +298,42 @@ def LoadAbsences(request):
     return HttpResponse(result)
 
 
+class StudentAbsenceView(LoginRequiredMixin, TemplateView):
 
-def dumpobject(obj, level=0):
+    template_name = 'hhvisit/StudentAbsence.html'
 
-    result = ''
-
-
-    import pprint
-    if isinstance(obj, (int, float, str, unicode, date, datetime)) | (obj is None):
-        result = pprint.pformat(obj)
-
-    for attr in dir(obj):
-        try:
-            val = getattr(obj, attr)
-
-            if attr in ('StudentID', 'FromDate', 'ToDate', 'NumberOfDays', 'CurrentChildAbsence', 'ChildAbsences','StudentAbsenceMonitorings'):
-
-                result += dumpobjectcontent(val,level,attr)
-
-        except Exception as exp:
-            test = 0
+    def get_context_data(self, **kwargs):
+        return {
+        }
 
 
-    return result
+
+# class StudentSearch(FormView):
+#     def get(self,request,*args,**kwargs):
+#
+#         data = request.GET
+#         username = data.get("term")
+#
+#         if username:
+#             users = []
+#         else:
+#             users = []
+#             results = []
+#
+#         for user in users:
+#             user_json = {}
+#             user_json['id'] = user.id
+#             user_json['label'] = user.username
+#             user_json['value'] = user.username
+#             results.append(user_json)
+#
+#         data = json.dumps(results)
+#         mimetype = 'application/json'
+#         return HttpResponse(data, mimetype)
 
 
-def dumpobjectcontent(obj, level=0,attr=''):
-
-    result = ''
-
-    spaces = ''
-
-    val=obj
-
-    for i in xrange(level):
-        spaces += '&nbsp;&nbsp;&nbsp;&nbsp;'
-
-    import pprint
-
-    if isinstance(val, (int, float, str, unicode, date, datetime)) | (val is None):
-        result += spaces + attr + " : " + pprint.pformat(val) + "<br/>"
-
-    elif isinstance(val, (dict)):
-
-        result += spaces + attr + "<br/>"
-
-        for x, y in val.items():
-            result += spaces + pprint.pformat(x) + ":" + "<br/>"
-            result += spaces + dumpobject(y, level=level + 1) + "<br/>"
-
-    elif isinstance(val, (list, set)):
-
-        result += spaces + attr + "<br/>"
-
-        for x in val:
-            result += dumpobject(x, level=level + 1) + "<br/>"
-
-    else:
-        if level < 10:
-            test = 0
-            result += spaces + attr + "<br/>"
-            result += dumpobject(val, level=level + 1) + "<br/>"
-
-    return result
-
+# class StudentSearch(FormView):
+#     def get(self, request, *args, **kwargs):
+#         data = '[]'
+#         mimetype = 'application/json'
+#         return HttpResponse(data, mimetype)
