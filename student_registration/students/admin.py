@@ -8,6 +8,7 @@ from import_export.admin import ImportExportModelAdmin
 
 from .models import (
     Student,
+    StudentMatching,
     Nationality,
     Language,
     IDType,
@@ -101,4 +102,5 @@ class StudentAdmin(ImportExportModelAdmin):
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Nationality, NationalityAdmin)
 admin.site.register(Language)
+admin.site.register(StudentMatching)
 admin.site.register(IDType, IDTypeAdmin)
