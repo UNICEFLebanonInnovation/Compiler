@@ -352,16 +352,29 @@ class ExportDuplicatesView(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
 
         students = {}
+        students2 = {}
         schools = {}
         duplicates = []
+        queryset = Enrollment.objects.exclude(deleted=True).order_by('-id')
 
-        for registry in self.queryset:
+        for registry in queryset:
             student = registry.student
-            if not student.number in students:
+            if student.number not in students:
                 students[student.number] = registry
             else:
                 duplicates.append(registry)
                 schools[registry.school_id] = registry.school.name
+
+            if student.number_part1 not in students2:
+                students2[student.number_part1] = registry
+            else:
+                duplicates.append(registry)
+
+            # if not student.id_number in students2:
+            #     students2[student.id_number] = registry
+            # else:
+            #     duplicates.append(registry)
+            #     duplicates.append(students2[student.id_number])
 
         data = tablib.Dataset()
         data.headers = [
@@ -369,6 +382,8 @@ class ExportDuplicatesView(LoginRequiredMixin, ListView):
             'Student ID',
             'Fullname',
             'Number',
+            'Number part1',
+            'ID number',
             'School',
         ]
 
@@ -380,6 +395,8 @@ class ExportDuplicatesView(LoginRequiredMixin, ListView):
                 student.id,
                 student.__unicode__(),
                 student.number,
+                student.number_part1,
+                student.id_number,
                 registry.school.name,
             ]
             data.append(content)

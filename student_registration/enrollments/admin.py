@@ -31,9 +31,9 @@ class EnrollmentResource(resources.ModelResource):
     class Meta:
         model = Enrollment
         form = EnrollmentForm
-        fields = ('student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
+        fields = ('student__id_number', 'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
                   'student__age', 'governorate', 'district', 'school__name', 'section__name', 'classroom__name')
-        export_order = ('student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
+        export_order = ('student__id_number', 'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
                         'student__age', 'governorate', 'district', 'school__name', 'section__name', 'classroom__name')
 
 
