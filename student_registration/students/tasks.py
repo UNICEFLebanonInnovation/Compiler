@@ -149,6 +149,7 @@ def disable_duplicate_outreaches():
     print len(registrations)
 
     students = {}
+    students2 = {}
     duplicates = []
 
     for registry in registrations:
