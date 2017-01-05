@@ -12,8 +12,9 @@ class Command(BaseCommand):
         parser.add_argument('schools', nargs='+', type=str)
 
     def handle(self, *args, **options):
+
         if 'all' in options['schools']:
             set_app_attendances()
         else:
             for school in options['schools']:
-                set_app_attendances()
+                set_app_attendances(school)
