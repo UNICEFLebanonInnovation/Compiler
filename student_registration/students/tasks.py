@@ -104,6 +104,8 @@ def generate_alp_unique_number():
             student.number = generate_id(student.first_name, student.father_name, student.last_name,
                                          student.mother_fullname, student.sex,
                                          student.birthday_day, student.birthday_month, student.birthday_year)
+            student.number_part1 = generate_id(student.first_name, student.father_name, student.last_name,
+                                               student.mother_fullname, student.sex, '', '', '')
             print student.number, student.id
             student.save()
         except Exception as ex:
@@ -151,8 +153,13 @@ def disable_duplicate_outreaches():
 
     for registry in registrations:
         student = registry.student
-        if not student.number in students:
+        if student.number not in students:
             students[student.number] = registry
+        else:
+            duplicates.append(registry)
+
+        if student.number_part1 not in students2:
+            students2[student.number_part1] = registry
         else:
             duplicates.append(registry)
 
