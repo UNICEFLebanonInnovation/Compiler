@@ -220,7 +220,7 @@ def set_app_attendances_alp(school_number=None):
                 }
                 students.append(student)
 
-                attendqueryset = Attendance.objects.filter(level_id=reg_std.registered_in_level_id, school_id=school.id)
+                attendqueryset = Attendance.objects.filter(classlevel_id=reg_std.registered_in_level_id, school_id=school.id)
                 for att in attendqueryset:
                     attendances = {
                         att.attendance_date.strftime('%d-%m-%Y'): {
