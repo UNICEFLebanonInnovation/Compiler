@@ -180,52 +180,64 @@ def set_app_attendances(school_number=None):
 
 
 @app.task
-def set_app_attendances_alp():
+def set_app_attendances_alp(school_number=None):
     """
     Creates or edits a attendance document in Couchbase
     """
-    docs = []
     from student_registration.schools.models import School
     from student_registration.alp.models import Outreach
     from student_registration.attendances.models import Attendance
-    schools = School.objects.all()
+
+    docs = []
+    if not school_number:
+        schools = School.objects.all().order_by('id')
+    else:
+        schools = School.objects.filter(number=school_number)
     for school in schools:
         students = []
         attstudent = {}
         attendances = {}
-        registrations = Outreach.objects.filter(school_id=school.id)
+        registrations = Outreach.objects.exclude(deleted=True).filter(school_id=school.id).values_list('registered_in_level', 'section').distinct().order_by('registered_in_level', 'section')
         for reg in registrations:
-            if not reg.registered_in_level_id or not reg.section_id:
-            # if not reg.assigned_to_level_id:
+            registered_in_level_id = reg[0]
+            section_id = reg[1]
+            students = []
+            attendances = {}
+            if not registered_in_level_id or not section_id:
                 continue
-            student = {
-                "student_id": str(reg.student.id),
-                "student_name": reg.student.full_name if reg.student.full_name else 'Student',
-                "gender": reg.student.sex,
-                "status": reg.student.status
-            }
-            attstudent[str(reg.student.id)] = {
-                "status": False,
-                "reason": "none"
-            }
-            students.append(student)
+            students_per_class = Outreach.objects.exclude(deleted=True).filter(registered_in_level_id=registered_in_level_id, section_id=section_id, school_id=school.id)
+            for reg_std in students_per_class:
+                std = reg_std.student
+                student = {
+                    "student_id": str(std.id),
+                    "student_name": std.__unicode__(),
+                    "gender": std.sex,
+                    "status": std.status
+                }
+                attstudent[str(std.id)] = {
+                    "status": False,
+                    "reason": "none"
+                }
+                students.append(student)
 
-            attendqueryset = Attendance.objects.filter(classlevel_id=reg.registered_in_level.id, school_id=school.id)
-            for att in attendqueryset:
-                attendances = {
-                    att.attendance_date.strftime('%d-%m-%Y'): {
-                        "validation_date": att.validation_date.strftime('%d-%m-%Y'),
-                        "students": attstudent
+                attendqueryset = Attendance.objects.filter(classlevel_id=reg_std.registered_in_level_id, school_id=school.id)
+                for att in attendqueryset:
+                    attendances = {
+                        att.attendance_date.strftime('%d-%m-%Y'): {
+                            "validation_date": att.validation_date.strftime('%d-%m-%Y'),
+                            "students": attstudent
+                        }
                     }
-                }
-                attendances[att.attendance_date.strftime('%d-%m-%Y')]["students"][str(att.student.id)] = {
-                    "status": att.status,
-                    "reason": att.absence_reason
-                }
+                    attendances[att.attendance_date.strftime('%d-%m-%Y')]["students"][str(att.student.id)] = {
+                        "status": att.status,
+                        "reason": att.absence_reason
+                    }
 
+            doc_id = "{}-{}-{}".format(school.number, reg_std.registered_in_level_id, reg_std.section_id)
             doc = {
-                "class_id": str(reg.registered_in_level.id) if reg.registered_in_level else 0,
-                "class_name": reg.registered_in_level.name if reg.registered_in_level else '',
+                "_id": doc_id,
+                "class_id": str(reg_std.registered_in_level.id),
+                "class_name": reg_std.registered_in_level.name,
                 "location_id": str(school.location.id),
                 "location_name": school.location.name,
                 "location_pcode": school.location.p_code,
@@ -233,17 +245,88 @@ def set_app_attendances_alp():
                 "school_id": school.number,
                 "school_type": "alp",
                 "school_name": school.name,
-                "section_id": str(reg.section.id) if reg.section else 0,
-                "section_name": reg.section.name if reg.section else '',
+                "section_id": str(reg_std.section.id),
+                "section_name": reg_std.section.name,
                 "students": students,
                 "attendance": attendances
             }
+            doc_rev = get_doc_rev(doc_id)
+            if doc_rev:
+                doc['_rev'] = doc_rev
             docs.append(doc)
+
+    # print json.dumps(docs)
 
     response = set_docs(docs)
     print response
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
+
+
+# @app.task
+# def set_app_attendances_alp():
+#     """
+#     Creates or edits a attendance document in Couchbase
+#     """
+#     docs = []
+#     from student_registration.schools.models import School
+#     from student_registration.alp.models import Outreach
+#     from student_registration.attendances.models import Attendance
+#     schools = School.objects.all()
+#     for school in schools:
+#         students = []
+#         attstudent = {}
+#         attendances = {}
+#         registrations = Outreach.objects.filter(school_id=school.id)
+#         for reg in registrations:
+#             if not reg.registered_in_level_id or not reg.section_id:
+#                 continue
+#             student = {
+#                 "student_id": str(reg.student.id),
+#                 "student_name": reg.student.full_name if reg.student.full_name else 'Student',
+#                 "gender": reg.student.sex,
+#                 "status": reg.student.status
+#             }
+#             attstudent[str(reg.student.id)] = {
+#                 "status": False,
+#                 "reason": "none"
+#             }
+#             students.append(student)
+#
+#             attendqueryset = Attendance.objects.filter(classlevel_id=reg.registered_in_level.id, school_id=school.id)
+#             for att in attendqueryset:
+#                 attendances = {
+#                     att.attendance_date.strftime('%d-%m-%Y'): {
+#                         "validation_date": att.validation_date.strftime('%d-%m-%Y'),
+#                         "students": attstudent
+#                     }
+#                 }
+#                 attendances[att.attendance_date.strftime('%d-%m-%Y')]["students"][str(att.student.id)] = {
+#                     "status": att.status,
+#                     "reason": att.absence_reason
+#                 }
+#
+#             doc = {
+#                 "class_id": str(reg.registered_in_level.id) if reg.registered_in_level else 0,
+#                 "class_name": reg.registered_in_level.name if reg.registered_in_level else '',
+#                 "location_id": str(school.location.id),
+#                 "location_name": school.location.name,
+#                 "location_pcode": school.location.p_code,
+#                 "school": str(school.id),
+#                 "school_id": school.number,
+#                 "school_type": "alp",
+#                 "school_name": school.name,
+#                 "section_id": str(reg.section.id) if reg.section else 0,
+#                 "section_name": reg.section.name if reg.section else '',
+#                 "students": students,
+#                 "attendance": attendances
+#             }
+#             docs.append(doc)
+#
+#     response = set_docs(docs)
+#     print response
+#     if response.status_code in [requests.codes.ok, requests.codes.created]:
+#         return response.text
 
 
 @app.task
