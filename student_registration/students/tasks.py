@@ -95,9 +95,9 @@ def generate_2ndshift_unique_number():
 
 @app.task
 def generate_alp_unique_number():
-    from student_registration.enrollments.models import Enrollment
+    from student_registration.alp.models import Outreach
 
-    registrations = Enrollment.objects.all()
+    registrations = Outreach.objects.all()
     for registry in registrations:
         student = registry.student
         try:
@@ -145,7 +145,7 @@ def disable_duplicate_enrolments():
 @app.task
 def disable_duplicate_outreaches():
     from student_registration.alp.models import Outreach
-    registrations = Outreach.objects.order_by('-id')
+    registrations = Outreach.objects.exclude(deleted=True).order_by('-id')
     print len(registrations)
 
     students = {}
@@ -153,29 +153,23 @@ def disable_duplicate_outreaches():
     duplicates = []
 
     for registry in registrations:
-        registry.deleted = False
+
+        student = registry.student
+        if student.number not in students:
+            students[student.number] = registry
+        else:
+            duplicates.append(registry)
+
+        if student.number_part1 not in students2:
+            students2[student.number_part1] = registry
+        else:
+            duplicates.append(registry)
+
+    print len(duplicates)
+
+    for registry in duplicates:
+        registry.deleted = True
         registry.save()
-
-
-
-    # for registry in registrations:
-    #
-    #     student = registry.student
-    #     if student.number not in students:
-    #         students[student.number] = registry
-    #     else:
-    #         duplicates.append(registry)
-    #
-    #     if student.number_part1 not in students2:
-    #         students2[student.number_part1] = registry
-    #     else:
-    #         duplicates.append(registry)
-    #
-    # print len(duplicates)
-    #
-    # for registry in duplicates:
-    #     registry.deleted = True
-    #     registry.save()
 
 
 @app.task
