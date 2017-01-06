@@ -145,7 +145,7 @@ def disable_duplicate_enrolments():
 @app.task
 def disable_duplicate_outreaches():
     from student_registration.alp.models import Outreach
-    registrations = Outreach.objects.exclude(deleted=True).order_by('-id')
+    registrations = Outreach.objects.order_by('-id')
     print len(registrations)
 
     students = {}
@@ -153,22 +153,29 @@ def disable_duplicate_outreaches():
     duplicates = []
 
     for registry in registrations:
-        student = registry.student
-        if student.number not in students:
-            students[student.number] = registry
-        else:
-            duplicates.append(registry)
-
-        if student.number_part1 not in students2:
-            students2[student.number_part1] = registry
-        else:
-            duplicates.append(registry)
-
-    print len(duplicates)
-
-    for registry in duplicates:
-        registry.deleted = True
+        registry.deleted = False
         registry.save()
+
+
+
+    # for registry in registrations:
+    #
+    #     student = registry.student
+    #     if student.number not in students:
+    #         students[student.number] = registry
+    #     else:
+    #         duplicates.append(registry)
+    #
+    #     if student.number_part1 not in students2:
+    #         students2[student.number_part1] = registry
+    #     else:
+    #         duplicates.append(registry)
+    #
+    # print len(duplicates)
+    #
+    # for registry in duplicates:
+    #     registry.deleted = True
+    #     registry.save()
 
 
 @app.task
