@@ -31,10 +31,10 @@ class OutreachResource(resources.ModelResource):
 
     class Meta:
         model = Outreach
-        fields = ('student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
+        fields = ('student__id_number', 'student__number', 'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
                   'student__age', 'governorate', 'district', 'school__name', 'level__name', 'exam_total',
                   'assigned_to_level__name', 'registered_in_level__name', 'section__name', 'registered_in_school',)
-        export_order = ('student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
+        export_order = ('student__id_number', 'student__number', 'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
                         'student__age', 'governorate', 'district', 'school__name', 'level__name',
                         'assigned_to_level__name', 'registered_in_level__name', 'section__name', 'registered_in_school',)
 
