@@ -123,22 +123,26 @@ def disable_duplicate_enrolments():
     students2 = {}
     duplicates = []
     duplicates2 = []
-    ctr = 1
 
+    print "Start find duplicates"
     for registry in registrations:
-        print ctr
-        ctr += 1
         student = registry.student
         if student.number not in students:
             students[student.number] = registry
         else:
             duplicates.append(registry)
 
-    print len(duplicates)
+    print "End find duplicates"
+
+    print "duplicates: ", len(duplicates)
+
+    print "Start disable duplicates 1"
 
     for registry in duplicates:
         registry.deleted = True
         registry.save()
+
+    print "End disable duplicates 1"
 
     for registry in registrations:
         student = registry.student
