@@ -114,10 +114,14 @@ def generate_alp_unique_number():
 
 
 @app.task
-def disable_duplicate_enrolments(offset=0):
+def disable_duplicate_enrolments(offset=None, school_number=None):
     from student_registration.enrollments.models import Enrollment
-    limit = offset + 50000
-    registrations = Enrollment.objects.exclude(deleted=True).order_by('-id', 'student__number', 'school__number')[offset:limit]
+    registrations = []
+    if offset:
+        limit = offset + 50000
+        registrations = Enrollment.objects.exclude(deleted=True).order_by('-id', 'student__number', 'school__number')[offset:limit]
+    elif school_number:
+        registrations = Enrollment.objects.exclude(deleted=True).filter(school__number=school_number).order_by('-id', 'student__number', 'school__number')
     print len(registrations)
 
     students = {}
