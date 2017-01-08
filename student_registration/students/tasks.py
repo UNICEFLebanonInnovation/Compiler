@@ -74,10 +74,10 @@ def generate_child_unique_number():
 
 
 @app.task
-def generate_2ndshift_unique_number():
+def generate_2ndshift_unique_number(offset=0):
     from student_registration.enrollments.models import Enrollment
-
-    registrations = Enrollment.objects.all()
+    limit = offset + 50000
+    registrations = Enrollment.objects.all()[offset:limit]
     for registry in registrations:
         student = registry.student
         try:
@@ -137,10 +137,11 @@ def disable_duplicate_enrolments(offset=None, school_number=None):
         else:
             duplicates.append(registry)
 
-        if student.number_part1 not in students2:
-            students2[student.number_part1] = registry
-        else:
-            duplicates.append(registry)
+        if student.number_part1:
+            if student.number_part1 not in students2:
+                students2[student.number_part1] = registry
+            else:
+                duplicates.append(registry)
 
     print "End find duplicates"
 
