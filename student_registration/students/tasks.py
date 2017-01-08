@@ -137,29 +137,22 @@ def disable_duplicate_enrolments(offset=None, school_number=None):
         else:
             duplicates.append(registry)
 
+        if student.number_part1 not in students2:
+            students2[student.number_part1] = registry
+        else:
+            duplicates.append(registry)
+
     print "End find duplicates"
 
     print "duplicates: ", len(duplicates)
 
-    print "Start disable duplicates 1"
+    print "Start disable duplicates"
 
     for registry in duplicates:
         registry.deleted = True
         registry.save()
 
-    print "End disable duplicates 1"
-
-    # for registry in registrations:
-    #     student = registry.student
-    #
-    #     if student.number_part1 not in students2:
-    #         students2[student.number_part1] = registry
-    #     else:
-    #         duplicates2.append(registry)
-    #
-    # for registry in duplicates2:
-    #     registry.deleted = True
-    #     registry.save()
+    print "End disable duplicates"
 
 
 @app.task
