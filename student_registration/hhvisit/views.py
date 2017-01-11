@@ -1,59 +1,29 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django.http import Http404
-from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.detail import DetailView
-from django.utils import timezone
-
-from django.http import HttpResponse, JsonResponse
-from rest_framework import viewsets, mixins, permissions
-import tablib
-import json
-from rest_framework import status
-from django.utils.translation import ugettext as _
-from import_export.formats import base_formats
 from django.core.urlresolvers import reverse
-from datetime import datetime
-
-from student_registration.eav.models import Attribute
 from django.db.models import Q
-from student_registration.hhvisit.models import (
-    HouseholdVisit,
-    MainReason,
-    SpecificReason,
-    ServiceType,
-    HouseholdVisitAttempt,
-    ChildService,
-    ChildVisit,
-    HouseholdVisitComment,
-    HouseholdVisitTeam,
-    ChildAttendanceMonitoring,
-    AttendanceMonitoringDate,
-    Student
-)
-from .serializers import SpecificReasonSerializer , HouseholdVisitSerializer, VisitAttemptSerializer, ChildVisitSerializer, ChildServiceSerializer, HouseholdVisitCommentSerializer, HouseholdVisitRecordSerializer
+from django.http import HttpResponse
+from django.views.generic import TemplateView
+from rest_framework import viewsets, mixins, permissions
+
 from student_registration.hhvisit.forms import (
     HouseholdVisitForm
 )
-
+from student_registration.hhvisit.models import (
+    MainReason,
+    ServiceType,
+    HouseholdVisitAttempt,
+    ChildService,
+    HouseholdVisitComment,
+    HouseholdVisitTeam
+)
 from student_registration.locations.models import Location
-
-from .models import HouseholdVisit , SpecificReason
 from .models import ChildVisit
+from .models import HouseholdVisit , SpecificReason
+from .serializers import SpecificReasonSerializer , HouseholdVisitSerializer, VisitAttemptSerializer, ChildVisitSerializer, ChildServiceSerializer, HouseholdVisitCommentSerializer, HouseholdVisitRecordSerializer
 
-from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
-from student_registration.attendances.models import (
-    Attendance
-)
-
-from student_registration.registrations.models import (
-    Registration
-)
 
 class HouseholdVisitView(LoginRequiredMixin, TemplateView):
     """
@@ -267,14 +237,11 @@ class HouseholdVisitSaveViewSet(mixins.UpdateModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
 
-
-from datetime import date
-
 def test(request):
 
     #result = LoadAbsences()
-    import student_registration.hhvisit.commands.load_absences
-    student_registration.hhvisit.commands.load_absences.LoadAbsences()
+    import student_registration.hhvisit.management.commands.load_absences
+    student_registration.hhvisit.management.commands.load_absences.LoadAbsences()
 
     result = 'Absences were loaded successfully.'
 
@@ -284,8 +251,8 @@ def test(request):
 def LoadAbsences(request):
 
     #result = LoadAbsences()
-    import student_registration.hhvisit.commands.load_absences
-    student_registration.hhvisit.commands.load_absences.LoadAbsences()
+    import student_registration.hhvisit.management.commands.load_absences
+    student_registration.hhvisit.management.commands.load_absences.LoadAbsences()
 
     result = 'Absences were loaded successfully.'
 
