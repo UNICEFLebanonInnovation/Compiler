@@ -16,9 +16,6 @@ from .serializers import (
     StudentSerializer,
 )
 
-from django.views.generic.edit import FormView
-
-import json
 
 class StudentViewSet(mixins.RetrieveModelMixin,
                      mixins.ListModelMixin,
