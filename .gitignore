@@ -71,6 +71,4 @@ student_registration/media/
 mailhog
 
 deis
-staticfiles
-config/urls.py
-config/urls.py
+staticfiles 
