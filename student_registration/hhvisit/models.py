@@ -81,19 +81,6 @@ class HouseholdVisitTeam(models.Model):
         return teamname1 + ', '+ teamname2
 
 
-# class studentAbsence(models.Model):
-#
-#
-#         dateFrom = models.DateTimeField()
-#         dateTo = models.DateTimeField()
-#
-#         class Meta:
-#             ordering = ['-id']
-#
-#         def __unicode__(self):
-#             return self.comment
-
-
 class HouseholdVisit(TimeStampedModel):
 
     STATUS = Choices(
@@ -138,15 +125,6 @@ class HouseholdVisit(TimeStampedModel):
         for hhv in queryset:
             total += int(HouseholdVisitAttempt.objects.filter(household_visit_id=hhv.id).count())
         return total
-
-    # @property
-    # def visit_attempt_status(self):
-    #     notfound =  HouseholdVisitAttempt.objects.filter(household_visit_id=self.id).values('household_not_found').first()['household_not_found'];
-    #     return notfound
-    #     if (not(notfound is None): return  'completed'
-    #     else: return 'pending'
-    #     # if (not(notfound is None) | notfound) : return  'pending'
-    #     # else: return 'completed'
 
 
 class HouseholdVisitAttempt(models.Model):
@@ -242,6 +220,7 @@ class ChildService(models.Model):
     def __unicode__(self):
         return self.ServiceType.name
 
+
 class ChildAttendanceMonitoring(models.Model):
     child_visit = models.ForeignKey(
         ChildVisit,
@@ -295,20 +274,21 @@ class HouseholdVisitComment(models.Model):
     def __unicode__(self):
         return self.comment
 
-class StudentAbsence(models.Model):
-    student = models.ForeignKey(
-        Student,
-        blank=False, null=False,
-        related_name='+',
-    )
-    date_from = models.DateField(blank=False, null=True)
-    date_to = models.DateField(blank=False, null=True)
-    date_entry = models.DateField(blank=False, null=True)
 
-    class Meta:
-        ordering = ['id']
-
-    def __unicode__(self):
-        return self.id
+# class StudentAbsence(models.Model):
+#     student = models.ForeignKey(
+#         Student,
+#         blank=False, null=False,
+#         related_name='+',
+#     )
+#     date_from = models.DateField(blank=False, null=True)
+#     date_to = models.DateField(blank=False, null=True)
+#     date_entry = models.DateField(blank=False, null=True)
+#
+#     class Meta:
+#         ordering = ['id']
+#
+#     def __unicode__(self):
+#         return self.id
 
 
