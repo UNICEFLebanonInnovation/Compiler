@@ -128,6 +128,8 @@ class Person(TimeStampedModel):
         null=True
     )
     number = models.CharField(max_length=45L, blank=True, null=True)
+    number_part1 = models.CharField(max_length=45L, blank=True, null=True)
+    number_part2 = models.CharField(max_length=45L, blank=True, null=True)
     old_id_number = models.CharField(max_length=45L, blank=True, null=True)
     old_id_type = models.IntegerField(blank=True, null=True)
 
@@ -211,3 +213,16 @@ class Student(Person):
             attendances[item.attendance_date] = item.status
         return attendances
 
+
+class StudentMatching(models.Model):
+
+    registry = models.ForeignKey(
+        Student,
+        blank=False, null=False,
+        related_name='+',
+    )
+    enrolment = models.ForeignKey(
+        Student,
+        blank=False, null=False,
+        related_name='+',
+    )
