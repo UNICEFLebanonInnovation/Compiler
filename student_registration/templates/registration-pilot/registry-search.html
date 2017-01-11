@@ -175,6 +175,7 @@
                  }
               );
               InitialiseSave();
+              InitialiseClose();
               InitialiseChildDropdown();
 
               $(document).on
@@ -356,6 +357,22 @@
                       SaveChild();
                    }
                 }
+             }
+           );
+      }
+
+      function InitialiseClose()
+      {
+        $(document).on
+          (
+             'click',
+             '#hhCloseButton',
+             function()
+             {
+                $("#hhList").show();
+                $("#hhEditForm").hide();
+                householdRecord = null;
+                hhID = null;
              }
            );
       }
