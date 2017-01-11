@@ -10,7 +10,7 @@ from student_registration.hhvisit.models import (
     ChildVisit,
     ChildAttendanceMonitoring,
     AttendanceMonitoringDate,
-    StudentAbsence
+    #StudentAbsence
 )
 
 from student_registration.attendances.models import (
