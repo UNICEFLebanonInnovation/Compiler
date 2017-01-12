@@ -123,8 +123,10 @@ class ClassRoomResource(resources.ModelResource):
 class ClassRoomAdmin(ImportExportModelAdmin):
     resource_class = ClassRoomResource
     fields = (
+        'id',
         'name',
     )
+    list_display = fields
 
 
 class PartnerOrganizationResource(resources.ModelResource):
