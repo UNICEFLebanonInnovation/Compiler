@@ -9,7 +9,8 @@ from student_registration.hhvisit.models import (
     HouseholdVisitAttempt,
     ChildVisit,
     ChildAttendanceMonitoring,
-    AttendanceMonitoringDate
+    AttendanceMonitoringDate,
+    #StudentAbsence
 )
 
 from student_registration.attendances.models import (
@@ -36,7 +37,8 @@ def LoadAbsences() :
     else:
         lastRunDateText = lastRunDate.strftime('%Y-%m-%d')
 
-    lcd = GetChildrenAbsences(lastRunDateText)
+    #lcd = GetChildrenAbsences(lastRunDateText)
+    lcd = GetDBChildrenAbsences(lastRunDateText)
 
     SaveChildAbsences(lcd)
 
@@ -46,12 +48,21 @@ def LoadAbsences() :
 
 def SaveChildAbsences(childAbsences):
 
+    result = ''
+
     for childAbsence in childAbsences:
         registering_adult_id = Registration.objects.filter(student_id=childAbsence.StudentID).values_list('registering_adult_id', flat=True).first()
+
+        result += '<br/>'
+        import pprint
+        result += pprint.pformat(registering_adult_id)
 
         isFirstAbsence = not ChildAttendanceMonitoring.objects.filter( \
             student_id=childAbsence.StudentID \
             ).exists()
+
+
+        result += pprint.pformat(isFirstAbsence)
 
         houseHoldVisit = None
 
@@ -142,6 +153,35 @@ def SaveChildAbsences(childAbsences):
     )
 
     attendanceMonitoringDate.save()
+
+    return result
+
+def GetDBChildrenAbsences(lastCheckDateString):
+
+    childAbsences = []
+
+    lastCheckDate = None
+
+    if lastCheckDateString:
+        lastCheckDate = datetime.strptime(lastCheckDateString, "%Y-%m-%d").date()
+
+        studentAbsences =  StudentAbsence.objects.filter(date_entry__gte=lastCheckDate).order_by('date_from')
+    else:
+        studentAbsences =  StudentAbsence.objects.order_by('date_from').all()
+
+    for studentAbsence in studentAbsences:
+
+        childAbsence = ChildAbsence()
+
+        childAbsence.StudentID =studentAbsence.student_id
+        childAbsence.FromDate =studentAbsence.date_from
+        childAbsence.ToDate =studentAbsence.date_to
+        childAbsence.NumberOfDays = 10
+
+        childAbsences.append(childAbsence)
+
+    return childAbsences
+
 
 def GetChildrenAbsences(lastCheckDateString):
 
