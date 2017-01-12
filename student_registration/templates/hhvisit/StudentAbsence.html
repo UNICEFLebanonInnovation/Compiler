@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+{% block extra_head %}
+
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/hhvisit/jquery-ui.min.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+xxx
+
+<div class="ui-widget">
+  <label for="tags">Tags: </label>
+  <input id="tags">
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script type="text/javascript" src="{% static 'js/hhvisit/Absence/jquery-ui.min.js' %}"></script>
+
+
+<script>
+
+    var protocol = 'http://';
+    {% if request.is_secure %}
+        protocol = 'https://';
+    {% endif %}
+    var host = protocol+'{{ request.get_host }}';
+    var searchStudentsURL = host+'/api/search-students/';
+
+  $(
+     function()
+     {
+
+        $( "#tags" ).autocomplete({
+          source: searchStudentsURL,
+          minLength: 2,
+        });
+
+     }
+  );
+  </script>
+
+{% endblock %}
+
+
+
+
