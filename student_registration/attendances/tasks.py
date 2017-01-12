@@ -355,7 +355,6 @@ def import_docs(**kwargs):
                 attendances = row['doc']['attendance']
 
                 for key, attendance in attendances.items():
-                    total_students, total_attend, total_absent = 0, 0, 0
                     students = attendance['students']
                     attendance_date = convert_date(key)
                     validation_date = ''
@@ -382,21 +381,7 @@ def import_docs(**kwargs):
                             attendance_record.validation_status = True
 
                         attendance_record.save()
-                        total_students += 1
-                        if attended:
-                            total_attend += 1
-                        else:
-                            total_absent += 1
 
-                    day_record, created = BySchoolByDay.objects.get_or_create(
-                        date=attendance_date,
-                        school_id=school
-                    )
-                    day_record.total_enrolled = total_students
-                    day_record.total_attended = total_attend
-                    day_record.total_absences = total_absent
-                    day_record.validated = True if validation_date else False
-                    day_record.save()
 
     except Exception as exp:
         # TODO: Add proper logging here
