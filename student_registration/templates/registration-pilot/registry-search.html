@@ -146,7 +146,7 @@
         var host = protocol+'{{ request.get_host }}';
         var synchro_path = host+'/api/registry-search/';
 
-        var checking_id_number_url = host+'/api/registrations-adult/';
+        var checking_id_number_url = host+'/api/registrations-adult-id/';
         var childURL = host+'/api/registrations-child/';
 
         var hhID = null;
@@ -175,6 +175,7 @@
                  }
               );
               InitialiseSave();
+              InitialiseClose();
               InitialiseChildDropdown();
 
               $(document).on
@@ -345,16 +346,33 @@
              '#hhSaveButton',
              function()
              {
+                if(ValidateHouseHoldUpdate())
+                {
+                   if($("#changeOption").val() == "phone" || $("#changeOption").val() == "address" )
+                   {
+                      SaveHousehold();
+                   }
+                   else if($("#changeOption").val() == "school")
+                   {
+                      SaveChild();
+                   }
+                }
+             }
+           );
+      }
 
-                 if($("#changeOption").val() == "phone" || $("#changeOption").val() == "address" )
-                 {
-                    SaveHousehold();
-                 }
-                 else if($("#changeOption").val() == "school")
-                 {
-                    SaveChild();
-                 }
-
+      function InitialiseClose()
+      {
+        $(document).on
+          (
+             'click',
+             '#hhCloseButton',
+             function()
+             {
+                $("#hhList").show();
+                $("#hhEditForm").hide();
+                householdRecord = null;
+                hhID = null;
              }
            );
       }

@@ -171,6 +171,36 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
                     return adult
             raise exp
 
+class RegisteringAdultIDViewSet(mixins.RetrieveModelMixin,
+                              mixins.ListModelMixin,
+                              mixins.CreateModelMixin,
+                              mixins.UpdateModelMixin,
+                              viewsets.GenericViewSet):
+
+    lookup_field = 'id'
+    model = RegisteringAdult
+    queryset = RegisteringAdult.objects.all()
+    serializer_class = RegisteringAdultSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    # def get_queryset(self):
+    #     queryset = super(RegisteringAdultViewSet, self).get_queryset()
+    #     id_number = self.kwargs.get('id_number')
+    #     if id_number:
+    #         return queryset.filter(id_number=id_number)
+    #     return queryset
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
+        return []
+
+    def get_object(self):
+        adults = RegisteringAdult.objects.filter(id=self.kwargs.get('id')).order_by('id')
+        if adults:
+            adults[0].signature = ''
+            return adults[0]
+
 
 class RegisteringChildViewSet(mixins.RetrieveModelMixin,
                               mixins.ListModelMixin,
