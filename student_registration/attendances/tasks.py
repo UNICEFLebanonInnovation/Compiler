@@ -336,48 +336,71 @@ def set_app_users():
 @app.task
 def import_docs(**kwargs):
     """
-    Imports docs from couch base
+    Imports attendance docs from couch base server
     """
-    from student_registration.attendances.models import Attendance
+    from student_registration.attendances.models import Attendance, BySchoolByDay
+    from student_registration.schools.models import ClassRoom, ClassLevel
 
-    data = requests.get(
-        os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
-        auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
-    ).json()
+    try:
+        data = requests.get(
+            os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+            auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
+        ).json()
 
-    for row in data['rows']:
-        if 'attendance' in row['doc']:
-            classroom = row['doc']['class_id']
-            school = row['doc']['school']
-            school_type = row['doc']['school_type']
-            attendances = row['doc']['attendance']
-            for key,attendance in attendances.items():
-                students = attendance['students']
-                attendance_date = convert_date(key)
-                validation_date = ''
-                if 'validation_date' in attendance:
-                    validation_date = convert_date(attendance['validation_date'])
+        for row in data['rows']:
+            if 'attendance' in row['doc']:
+                class_id = row['doc']['class_id']
+                school = row['doc']['school']
+                school_type = row['doc']['school_type']
+                attendances = row['doc']['attendance']
 
-                try:
+                for key, attendance in attendances.items():
+                    total_students, total_attend, total_absent = 0, 0, 0
+                    students = attendance['students']
+                    attendance_date = convert_date(key)
+                    validation_date = ''
+                    if 'validation_date' in attendance:
+                        validation_date = convert_date(attendance['validation_date'])
+
                     for student_id, student in students.items():
-
-                        attendance_record = Attendance.objects.get_or_create(
+                        attended = student['status']
+                        attendance_record, new = Attendance.objects.get_or_create(
                             student_id=student_id,
                             school_id=school,
-                            classroom=classroom,
                             attendance_date=attendance_date
                         )
-                        attendance_record.status = student['status']
+                        attendance_record.status = attended
                         attendance_record.absence_reason = student['reason']
                         if school_type == 'alp':
-                            attendance_record.class_level = classroom
+                            classlevel = ClassLevel.objects.get(id=class_id)
+                            attendance_record.class_level = classlevel
+                        else:
+                            classroom = ClassRoom.objects.get(id=class_id)
+                            attendance_record.classroom = classroom
                         if validation_date:
                             attendance_record.validation_date = validation_date
                             attendance_record.validation_status = True
 
                         attendance_record.save()
-                except Exception as exp:
-                    print exp.message
+                        total_students += 1
+                        if attended:
+                            total_attend += 1
+                        else:
+                            total_absent += 1
+
+                    day_record, created = BySchoolByDay.objects.get_or_create(
+                        date=attendance_date,
+                        school_id=school
+                    )
+                    day_record.total_enrolled = total_students
+                    day_record.total_attended = total_attend
+                    day_record.total_absences = total_absent
+                    day_record.validated = True if validation_date else False
+                    day_record.save()
+
+    except Exception as exp:
+        # TODO: Add proper logging here
+        print exp.message
 
 
 def convert_date(date):
