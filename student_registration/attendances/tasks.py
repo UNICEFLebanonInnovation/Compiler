@@ -6,10 +6,23 @@ import os
 from datetime import datetime
 
 import requests
-from django.conf import settings
-from django.db import connection
 from requests.auth import HTTPBasicAuth
+
+from django.conf import settings
+from django.db.models import Count, Case, When
+
 from student_registration.taskapp.celery import app
+
+
+def convert_date(date):
+    try:
+        date = datetime.strptime(
+            date,
+            '%d-%m-%Y'
+        ).strftime('%Y-%m-%d')
+    except Exception as exp:
+        date = ''
+    return date
 
 
 def set_docs(docs):
@@ -52,7 +65,6 @@ def get_docs(docs):
     path = os.path.join(settings.COUCHBASE_URL, '_bulk_get')
     response = requests.post(
         path,
-        # headers={'content-type': 'multipart/mixed'},
         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS),
         data=payload_json,
     )
@@ -96,166 +108,84 @@ def set_app_user(username, password):
 
 
 @app.task
-def set_app_attendances(school_number=None):
+def set_app_attendances(school_number=None, school_type=None):
     """
-    Creates or edits a attendance document in Couchbase
+    Creates or edits a attendance document in Couchbase for each school, class, section
     """
-    from student_registration.schools.models import School
     from student_registration.enrollments.models import Enrollment
     from student_registration.attendances.models import Attendance
+    from student_registration.schools.models import School, ClassRoom, Section
 
     docs = []
-    if not school_number:
-        schools = School.objects.all().order_by('id')
-    else:
-        schools = School.objects.filter(number=school_number)
-    for school in schools:
+    registrations = Enrollment.objects.exclude(
+        deleted=True
+    ).filter(
+        classroom__isnull=False,
+        section__isnull=False
+    ).distinct().values(
+        'school__number',
+        'school',
+        'classroom',
+        'section'
+    )
+    if school_number is not None:
+        registrations.filter(school__number=school_number)
+
+    for reg in registrations:
+        school = School.objects.get(id=reg['school'])
+        classroom = ClassRoom.objects.get(id=reg['classroom'])
+        section = Section.objects.get(id=reg['section'])
         students = []
-        attstudent = {}
         attendances = {}
-        registrations = Enrollment.objects.exclude(deleted=True).filter(school_id=school.id).values_list('classroom', 'section').distinct().order_by('classroom', 'section')
-        for reg in registrations:
-            classroom_id = reg[0]
-            section_id = reg[1]
-            students = []
-            attendances = {}
-            if not classroom_id or not section_id:
-                continue
-            students_per_class = Enrollment.objects.exclude(deleted=True).filter(classroom_id=classroom_id, section_id=section_id, school_id=school.id)
-            for reg_std in students_per_class:
-                std = reg_std.student
-                student = {
-                    "student_id": str(std.id),
-                    "student_name": std.__unicode__(),
-                    "gender": std.sex,
-                    "status": std.status
-                }
-                attstudent[str(std.id)] = {
-                    "status": False,
-                    "reason": "none"
-                }
-                students.append(student)
 
-                attendqueryset = Attendance.objects.filter(classroom_id=reg_std.classroom_id, school_id=school.id)
-                for att in attendqueryset:
-                    attendances = {
-                        att.attendance_date.strftime('%d-%m-%Y'): {
-                            "validation_date": att.validation_date.strftime('%d-%m-%Y'),
-                            "students": attstudent
-                        }
-                    }
-                    attendances[att.attendance_date.strftime('%d-%m-%Y')]["students"][str(att.student.id)] = {
-                        "status": att.status,
-                        "reason": att.absence_reason
-                    }
-
-            doc_id = "{}-{}-{}".format(school.number, reg_std.classroom_id, reg_std.section_id)
-            doc = {
-                "_id": doc_id,
-                "class_id": str(reg_std.classroom.id),
-                "class_name": reg_std.classroom.name,
-                "location_id": str(school.location.id),
-                "location_name": school.location.name,
-                "location_pcode": school.location.p_code,
-                "school": str(school.id),
-                "school_id": school.number,
-                "school_type": "2ndshift",
-                "school_name": school.name,
-                "section_id": str(reg_std.section.id),
-                "section_name": reg_std.section.name,
-                "students": students,
-                "attendance": attendances
+        # build dictionary of currently enrolled students for this school, class, section
+        for enrolled in Enrollment.objects.exclude(deleted=True).filter(**reg):
+            student = {
+                "student_id": str(enrolled.student.id),
+                "student_name": enrolled.student.__unicode__(),
+                "gender": enrolled.student.sex,
+                "status": enrolled.student.status
             }
-            doc_rev = get_doc_rev(doc_id)
-            if doc_rev:
-                doc['_rev'] = doc_rev
-            docs.append(doc)
+            students.append(student)
 
-    # print json.dumps(docs)
-
-    response = set_docs(docs)
-    print response
-    if response.status_code in [requests.codes.ok, requests.codes.created]:
-        return response.text
-
-
-@app.task
-def set_app_attendances_alp(school_number=None):
-    """
-    Creates or edits a attendance document in Couchbase
-    """
-    from student_registration.schools.models import School
-    from student_registration.alp.models import Outreach
-    from student_registration.attendances.models import Attendance
-
-    docs = []
-    if not school_number:
-        schools = School.objects.all().order_by('id')
-    else:
-        schools = School.objects.filter(number=school_number)
-    for school in schools:
-        students = []
-        attstudent = {}
-        attendances = {}
-        registrations = Outreach.objects.exclude(deleted=True).filter(school_id=school.id).values_list('registered_in_level', 'section').distinct().order_by('registered_in_level', 'section')
-        for reg in registrations:
-            registered_in_level_id = reg[0]
-            section_id = reg[1]
-            students = []
-            attendances = {}
-            if not registered_in_level_id or not section_id:
-                continue
-            students_per_class = Outreach.objects.exclude(deleted=True).filter(registered_in_level_id=registered_in_level_id, section_id=section_id, school_id=school.id)
-            for reg_std in students_per_class:
-                std = reg_std.student
-                student = {
-                    "student_id": str(std.id),
-                    "student_name": std.__unicode__(),
-                    "gender": std.sex,
-                    "status": std.status
-                }
-                attstudent[str(std.id)] = {
-                    "status": False,
-                    "reason": "none"
-                }
-                students.append(student)
-
-                attendqueryset = Attendance.objects.filter(classlevel_id=reg_std.registered_in_level_id, school_id=school.id)
-                for att in attendqueryset:
-                    attendances = {
-                        att.attendance_date.strftime('%d-%m-%Y'): {
-                            "validation_date": att.validation_date.strftime('%d-%m-%Y'),
-                            "students": attstudent
-                        }
-                    }
-                    attendances[att.attendance_date.strftime('%d-%m-%Y')]["students"][str(att.student.id)] = {
-                        "status": att.status,
-                        "reason": att.absence_reason
-                    }
-
-            doc_id = "{}-{}-{}".format(school.number, reg_std.registered_in_level_id, reg_std.section_id)
-            doc = {
-                "_id": doc_id,
-                "class_id": str(reg_std.registered_in_level.id),
-                "class_name": reg_std.registered_in_level.name,
-                "location_id": str(school.location.id),
-                "location_name": school.location.name,
-                "location_pcode": school.location.p_code,
-                "school": str(school.id),
-                "school_id": school.number,
-                "school_type": "alp",
-                "school_name": school.name,
-                "section_id": str(reg_std.section.id),
-                "section_name": reg_std.section.name,
-                "students": students,
-                "attendance": attendances
+        # build dictionary of current attendance records indexed by attendance day
+        reg.pop('section')
+        for att in Attendance.objects.filter(**reg):
+            attendance_date = att.attendance_date.strftime('%d-%m-%Y')
+            student_record = {
+                "status": att.status,
+                "reason": att.absence_reason
             }
-            doc_rev = get_doc_rev(doc_id)
-            if doc_rev:
-                doc['_rev'] = doc_rev
-            docs.append(doc)
+            students_attended = attendances.setdefault(attendance_date, {"students":{}})
+            students_attended['students'][str(att.student.id)] = student_record
+            if att.validation_date:
+                attendances[attendance_date]['validation_date'] = att.validation_date.strftime('%d-%m-%Y')
 
-    # print json.dumps(docs)
+        # combine into a single doc representing students and attendance for a single school, class, section
+        doc_id = "{}-{}-{}".format(reg['school__number'], classroom.id, section.id)
+        doc = {
+            "_id": doc_id,
+            "class_id": str(classroom.id),
+            "class_name": classroom.name,
+            "location_id": str(school.location.id),
+            "location_name": school.location.name,
+            "location_pcode": school.location.p_code,
+            "school": str(school.id),
+            "school_id": school.number,
+            "school_type": school_type if school_type else "2ndshift",
+            "school_name": school.name,
+            "section_id": str(section.id),
+            "section_name": section.name,
+            "students": students,
+            "attendance": attendances
+        }
+
+        # get existing document rev id if this document already exists in couchbase.
+        # this prevents it being overwritten when needed to update an existing document.
+        doc_rev = get_doc_rev(doc_id)
+        if doc_rev:
+            doc['_rev'] = doc_rev
+        docs.append(doc)
 
     response = set_docs(docs)
     print response
@@ -265,7 +195,10 @@ def set_app_attendances_alp(school_number=None):
 
 @app.task
 def set_app_schools():
-
+    """
+    Creates the schools lookup in the application
+    :return:
+    """
     docs = {}
     rev = get_app_revision('schools')
 
@@ -305,7 +238,10 @@ def set_app_schools():
 
 @app.task
 def set_app_users():
-
+    """
+    Creates a lookup
+    :return:
+    """
     docs = []
 
     # rev = get_app_revision('users')
@@ -338,7 +274,7 @@ def import_docs(**kwargs):
     """
     Imports attendance docs from couch base server
     """
-    from student_registration.attendances.models import Attendance, BySchoolByDay
+    from student_registration.attendances.models import Attendance
     from student_registration.schools.models import ClassRoom, ClassLevel
 
     try:
@@ -382,19 +318,36 @@ def import_docs(**kwargs):
 
                         attendance_record.save()
 
-
+        calculate_by_day_summary()
     except Exception as exp:
         # TODO: Add proper logging here
         print exp.message
 
 
-def convert_date(date):
-    try:
-        date = datetime.strptime(
-            date,
-            '%d-%m-%Y'
-        ).strftime('%Y-%m-%d')
-    except Exception as exp:
-        date = ''
-    return date
+def calculate_by_day_summary():
+    """
+    Calculates the total attendances and absences for each school on each day.
+    Utilises Django aggregation framework to execute this on the database.
+    :return:
+    """
+    from student_registration.attendances.models import Attendance, BySchoolByDay
 
+    days = Attendance.objects.filter(
+        # select only validated attendances
+        validation_status=True
+    ).values(
+        # group by school and day
+        'school_id',
+        'attendance_date'
+    ).annotate(
+        # create totals from raw data
+        total_enrolled=Count('student'),
+        total_attended=Count(Case(When(status=True, then=1))),
+        total_absences=Count(Case(When(status=False, then=1))),
+        vcalidated=True
+    )
+
+    day_records = [BySchoolByDay(**day) for day in days]
+
+    BySchoolByDay.objects.all().delete()
+    BySchoolByDay.objects.bulk_create(day_records)
