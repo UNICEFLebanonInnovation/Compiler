@@ -85,7 +85,7 @@ class BySchoolByDay(models.Model):
         School,
         related_name='+',
     )
-    date = models.DateField()
+    attendance_date = models.DateField()
     total_enrolled = models.IntegerField(blank=True, null=True)
     total_attended = models.IntegerField(blank=True, null=True)
     total_absences = models.IntegerField(blank=True, null=True)
