@@ -71,5 +71,22 @@ class Attendance(TimeStampedModel):
             return self.student.full_name
         return ''
 
+    @property
+    def student_gender(self):
+        return self.student.sex
+
     def __unicode__(self):
         return self.student_fullname
+
+
+class BySchoolByDay(models.Model):
+
+    school = models.ForeignKey(
+        School,
+        related_name='+',
+    )
+    date = models.DateField()
+    total_enrolled = models.IntegerField(blank=True, null=True)
+    total_attended = models.IntegerField(blank=True, null=True)
+    total_absences = models.IntegerField(blank=True, null=True)
+    validated = models.BooleanField(default=False)

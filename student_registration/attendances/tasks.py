@@ -263,72 +263,6 @@ def set_app_attendances_alp(school_number=None):
         return response.text
 
 
-# @app.task
-# def set_app_attendances_alp():
-#     """
-#     Creates or edits a attendance document in Couchbase
-#     """
-#     docs = []
-#     from student_registration.schools.models import School
-#     from student_registration.alp.models import Outreach
-#     from student_registration.attendances.models import Attendance
-#     schools = School.objects.all()
-#     for school in schools:
-#         students = []
-#         attstudent = {}
-#         attendances = {}
-#         registrations = Outreach.objects.filter(school_id=school.id)
-#         for reg in registrations:
-#             if not reg.registered_in_level_id or not reg.section_id:
-#                 continue
-#             student = {
-#                 "student_id": str(reg.student.id),
-#                 "student_name": reg.student.full_name if reg.student.full_name else 'Student',
-#                 "gender": reg.student.sex,
-#                 "status": reg.student.status
-#             }
-#             attstudent[str(reg.student.id)] = {
-#                 "status": False,
-#                 "reason": "none"
-#             }
-#             students.append(student)
-#
-#             attendqueryset = Attendance.objects.filter(classlevel_id=reg.registered_in_level.id, school_id=school.id)
-#             for att in attendqueryset:
-#                 attendances = {
-#                     att.attendance_date.strftime('%d-%m-%Y'): {
-#                         "validation_date": att.validation_date.strftime('%d-%m-%Y'),
-#                         "students": attstudent
-#                     }
-#                 }
-#                 attendances[att.attendance_date.strftime('%d-%m-%Y')]["students"][str(att.student.id)] = {
-#                     "status": att.status,
-#                     "reason": att.absence_reason
-#                 }
-#
-#             doc = {
-#                 "class_id": str(reg.registered_in_level.id) if reg.registered_in_level else 0,
-#                 "class_name": reg.registered_in_level.name if reg.registered_in_level else '',
-#                 "location_id": str(school.location.id),
-#                 "location_name": school.location.name,
-#                 "location_pcode": school.location.p_code,
-#                 "school": str(school.id),
-#                 "school_id": school.number,
-#                 "school_type": "alp",
-#                 "school_name": school.name,
-#                 "section_id": str(reg.section.id) if reg.section else 0,
-#                 "section_name": reg.section.name if reg.section else '',
-#                 "students": students,
-#                 "attendance": attendances
-#             }
-#             docs.append(doc)
-#
-#     response = set_docs(docs)
-#     print response
-#     if response.status_code in [requests.codes.ok, requests.codes.created]:
-#         return response.text
-
-
 @app.task
 def set_app_schools():
 
@@ -402,65 +336,65 @@ def set_app_users():
 @app.task
 def import_docs(**kwargs):
     """
-    Imports docs from couch base
+    Imports attendance docs from couch base server
     """
-    from student_registration.attendances.models import Attendance
+    from student_registration.attendances.models import Attendance, BySchoolByDay
+    from student_registration.schools.models import ClassRoom, ClassLevel
 
-    data = requests.get(
-        os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
-        auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
-    ).json()
+    try:
+        data = requests.get(
+            os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+            auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
+        ).json()
 
-    for row in data['rows']:
-        if 'attendance' in row['doc']:
-            classroom = row['doc']['class_id']
-            school = row['doc']['school']
-            school_type = row['doc']['school_type']
-            attendances = row['doc']['attendance']
-            for key in attendances.keys():
-                attendance = attendances[key]
-                students = attendance['students']
-                validation_date = ''
-                if 'validation_date' in attendance:
-                    validation_date = attendance['validation_date']
-                attendance_date = key
+        for row in data['rows']:
+            if 'attendance' in row['doc']:
+                class_id = row['doc']['class_id']
+                school = row['doc']['school']
+                school_type = row['doc']['school_type']
+                attendances = row['doc']['attendance']
 
-                try:
-                    validation_date = datetime.strptime(validation_date, '%d-%m-%Y').strftime('%Y-%m-%d')
-                except Exception as exp:
-                    pass
-                try:
-                    attendance_date = datetime.strptime(attendance_date, '%d-%m-%Y').strftime('%Y-%m-%d')
-                except Exception as exp:
-                    pass
+                for key, attendance in attendances.items():
+                    students = attendance['students']
+                    attendance_date = convert_date(key)
+                    validation_date = ''
+                    if 'validation_date' in attendance:
+                        validation_date = convert_date(attendance['validation_date'])
 
-                try:
-                    for student_id in students.keys():
-                        status = students[student_id]['status']
-                        reason = students[student_id]['reason']
+                    for student_id, student in students.items():
+                        attended = student['status']
+                        attendance_record, new = Attendance.objects.get_or_create(
+                            student_id=student_id,
+                            school_id=school,
+                            attendance_date=attendance_date
+                        )
+                        attendance_record.status = attended
+                        attendance_record.absence_reason = student['reason']
                         if school_type == 'alp':
-                            instance = Attendance.objects.get_or_create(
-                                student_id=student_id,
-                                class_level=classroom,
-                                school_id=school,
-                                attendance_date=attendance_date
-                            )
+                            classlevel = ClassLevel.objects.get(id=class_id)
+                            attendance_record.class_level = classlevel
                         else:
-                            instance = Attendance.objects.get_or_create(
-                                student_id=student_id,
-                                classroom_id=classroom,
-                                school_id=school,
-                                attendance_date=attendance_date
-                            )
-                        instance.status = status
-                        instance.absence_reason = reason
-
+                            classroom = ClassRoom.objects.get(id=class_id)
+                            attendance_record.classroom = classroom
                         if validation_date:
-                            instance.validation_date = validation_date
-                            instance.validation_status = True
-                        instance.save()
-                except Exception as exp:
-                    print exp.message
+                            attendance_record.validation_date = validation_date
+                            attendance_record.validation_status = True
+
+                        attendance_record.save()
 
 
+    except Exception as exp:
+        # TODO: Add proper logging here
+        print exp.message
+
+
+def convert_date(date):
+    try:
+        date = datetime.strptime(
+            date,
+            '%d-%m-%Y'
+        ).strftime('%Y-%m-%d')
+    except Exception as exp:
+        date = ''
+    return date
 
