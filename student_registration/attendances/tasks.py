@@ -43,7 +43,7 @@ def set_docs(docs):
     return response
 
 
-def get_app_revision(bulk_name):
+def get_app_collection(bulk_name):
 
     data = requests.get(
         os.path.join(settings.COUCHBASE_URL, bulk_name),
@@ -55,27 +55,14 @@ def get_app_revision(bulk_name):
     return 0
 
 
-def get_docs(docs):
-
-    payload_json = json.dumps(
-        {
-            'docs': docs,
-        }
-    )
-    path = os.path.join(settings.COUCHBASE_URL, '_bulk_get')
-    response = requests.post(
-        path,
-        auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS),
-        data=payload_json,
-    )
-    try:
-        text = response.text
-        return json.loads(text.splitlines()[3])
-    except Exception as ex:
-        print text, ex.message
+def get_docs():
+    return requests.get(
+        os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+        auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
+    ).json()
 
 
-def get_doc_rev(doc_id):
+def get_doc(doc_id):
 
     path = os.path.join(settings.COUCHBASE_URL, doc_id)
     response = requests.get(
@@ -84,8 +71,7 @@ def get_doc_rev(doc_id):
     )
 
     if response.status_code in [requests.codes.ok, requests.codes.created]:
-        doc = json.loads(response.text)
-        return doc['_rev']
+        return response.json()
     return False
 
 
@@ -129,7 +115,7 @@ def set_app_attendances(school_number=None, school_type=None):
         'section'
     )
     if school_number is not None:
-        registrations.filter(school__number=school_number)
+        registrations = registrations.filter(school__number=school_number)
 
     for reg in registrations:
         school = School.objects.get(id=reg['school'])
@@ -148,18 +134,19 @@ def set_app_attendances(school_number=None, school_type=None):
             }
             students.append(student)
 
-        # build dictionary of current attendance records indexed by attendance day
-        reg.pop('section')
-        for att in Attendance.objects.filter(**reg):
-            attendance_date = att.attendance_date.strftime('%d-%m-%Y')
-            student_record = {
-                "status": att.status,
-                "reason": att.absence_reason
-            }
-            students_attended = attendances.setdefault(attendance_date, {"students":{}})
-            students_attended['students'][str(att.student.id)] = student_record
-            if att.validation_date:
-                attendances[attendance_date]['validation_date'] = att.validation_date.strftime('%d-%m-%Y')
+        #FIXME: Why are we updating the attendance here if it could potentially wipe out attendance records in the app
+        # # build dictionary of current attendance records indexed by attendance day
+        # reg.pop('section')
+        # for att in Attendance.objects.filter(**reg):
+        #     attendance_date = att.attendance_date.strftime('%d-%m-%Y')
+        #     student_record = {
+        #         "status": att.status,
+        #         "reason": att.absence_reason
+        #     }
+        #     students_attended = attendances.setdefault(attendance_date, {"students":{}})
+        #     students_attended['students'][str(att.student.id)] = student_record
+        #     if att.validation_date:
+        #         attendances[attendance_date]['validation_date'] = att.validation_date.strftime('%d-%m-%Y')
 
         # combine into a single doc representing students and attendance for a single school, class, section
         doc_id = "{}-{}-{}".format(reg['school__number'], classroom.id, section.id)
@@ -182,9 +169,10 @@ def set_app_attendances(school_number=None, school_type=None):
 
         # get existing document rev id if this document already exists in couchbase.
         # this prevents it being overwritten when needed to update an existing document.
-        doc_rev = get_doc_rev(doc_id)
-        if doc_rev:
-            doc['_rev'] = doc_rev
+        exisiting_doc = get_doc(doc_id)
+        if exisiting_doc:
+            doc['_rev'] = exisiting_doc['_rev']
+            doc['attendance'] = exisiting_doc['attendance']
         docs.append(doc)
 
     response = set_docs(docs)
@@ -200,7 +188,7 @@ def set_app_schools():
     :return:
     """
     docs = {}
-    rev = get_app_revision('schools')
+    rev = get_app_collection('schools')
 
     from student_registration.schools.models import School
     schools = School.objects.all()
@@ -278,10 +266,7 @@ def import_docs(**kwargs):
     from student_registration.schools.models import ClassRoom, ClassLevel
 
     try:
-        data = requests.get(
-            os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
-            auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
-        ).json()
+        data = get_docs()
 
         for row in data['rows']:
             if 'attendance' in row['doc']:
