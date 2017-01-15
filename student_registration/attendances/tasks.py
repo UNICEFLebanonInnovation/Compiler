@@ -13,6 +13,9 @@ from django.db.models import Count, Case, When
 
 from student_registration.taskapp.celery import app
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 def convert_date(date):
     try:
@@ -120,15 +123,19 @@ def set_app_attendances(school_number=None, school_type=None):
     if school_number is not None:
         registrations = registrations.filter(school__number=school_number)
 
+    logger.info('{} students to process'.format(registrations.count()))
     for reg in registrations:
         school = School.objects.get(id=reg['school'])
         classroom = ClassRoom.objects.get(id=reg['classroom'])
         section = Section.objects.get(id=reg['section'])
         students = []
         attendances = {}
+        doc_id = "{}-{}-{}".format(reg['school__number'], classroom.id, section.id)
 
         # build dictionary of currently enrolled students for this school, class, section
-        for enrolled in Enrollment.objects.exclude(deleted=True).filter(**reg):
+        total_enrolled = enrollment_model.objects.exclude(deleted=True).filter(**reg)
+        logger.info('{} students in class {}'.format(total_enrolled.count(), doc_id))
+        for enrolled in total_enrolled:
             student = {
                 "student_id": str(enrolled.student.id),
                 "student_name": enrolled.student.__unicode__(),
@@ -152,7 +159,6 @@ def set_app_attendances(school_number=None, school_type=None):
         #         attendances[attendance_date]['validation_date'] = att.validation_date.strftime('%d-%m-%Y')
 
         # combine into a single doc representing students and attendance for a single school, class, section
-        doc_id = "{}-{}-{}".format(reg['school__number'], classroom.id, section.id)
         doc = {
             "_id": doc_id,
             "class_id": str(classroom.id),
@@ -170,8 +176,8 @@ def set_app_attendances(school_number=None, school_type=None):
             "attendance": attendances
         }
 
-        # get existing document rev id if this document already exists in couchbase.
-        # this prevents it being overwritten when needed to update an existing document.
+        # get existing document if this document already exists in couchbase.
+        # this prevents it being overwritten when updating an existing document.
         exisiting_doc = get_doc(doc_id)
         if exisiting_doc:
             doc['_rev'] = exisiting_doc['_rev']
@@ -179,7 +185,7 @@ def set_app_attendances(school_number=None, school_type=None):
         docs.append(doc)
 
     response = set_docs(docs)
-    print response
+    logger.info(response)
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
 
