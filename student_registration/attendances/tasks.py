@@ -98,12 +98,15 @@ def set_app_attendances(school_number=None, school_type=None):
     """
     Creates or edits a attendance document in Couchbase for each school, class, section
     """
+    from student_registration.alp.models import Outreach
     from student_registration.enrollments.models import Enrollment
     from student_registration.attendances.models import Attendance
     from student_registration.schools.models import School, ClassRoom, Section
 
     docs = []
-    registrations = Enrollment.objects.exclude(
+    enrollment_model = Outreach if school_type == 'alp' else Enrollment
+
+    registrations = enrollment_model.objects.exclude(
         deleted=True
     ).filter(
         classroom__isnull=False,
