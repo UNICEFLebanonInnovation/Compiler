@@ -11,4 +11,9 @@ urlpatterns = [
         view=views.AttendanceView.as_view(),
         name='attendance'
     ),
+    url(
+        regex=r'^absents/$',
+        view=views.AbsenteeView.as_view(),
+        name='absents'
+    ),
 ]
