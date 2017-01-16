@@ -226,4 +226,4 @@ def find_matching():
 
         if enrollment:
             e_student = enrollment.student
-            StudentMatching.objects.create(registry=r_student, enrolment=e_student)
+            StudentMatching.objects.get_or_create(registry=r_student, enrolment=e_student)
