@@ -123,7 +123,7 @@ def set_app_attendances(school_number=None, school_type=None):
     if school_number is not None:
         registrations = registrations.filter(school__number=school_number)
 
-    logger.info('{} students to process'.format(registrations.count()))
+    logger.info('{} documents to process'.format(registrations.count()))
     for reg in registrations:
         school = School.objects.get(id=reg['school'])
         classroom = ClassRoom.objects.get(id=reg['classroom'])
@@ -313,9 +313,13 @@ def import_docs(**kwargs):
                         attendance_record.save()
 
         calculate_by_day_summary()
+        absentees = calculate_absentees_in_date_range(
+            datetime.date.today()-datetime.timedelta(days=10),
+            datetime.date.today()
+        )
+        create_or_update_absentees(absentees)
     except Exception as exp:
-        # TODO: Add proper logging here
-        print exp.message
+        logger.exception(exp)
 
 
 def calculate_by_day_summary():
@@ -345,3 +349,54 @@ def calculate_by_day_summary():
 
     BySchoolByDay.objects.all().delete()
     BySchoolByDay.objects.bulk_create(day_records)
+
+
+def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
+    """
+    Calculate the consistent absentees in the last 10 days
+    :return:
+    """
+    from student_registration.attendances.models import Attendance
+
+    return Attendance.objects.filter(
+        status=False,
+        attendance_date__gte=from_date,
+        attendance_date__lte=to_date
+    ).values(
+        'student_id',
+        'school_id'
+    ).annotate(
+        absent_days=Count('attendance_date')
+    ).filter(
+        absent_days__gt=absent_threshold
+    )
+
+
+def create_or_update_absentees(absentees):
+    """
+    Create or update the absentee record for each absent student.
+    :param absentees:
+    :return:
+    """
+    from student_registration.attendances.models import Attendance, Absentee
+
+    for absentee in absentees:
+        absent_record, new = Absentee.objects.get_or_create(
+            school_id=absentee['school_id'],
+            student_id=absentee['student_id'],
+            reattend_date__isnull=True
+        )
+        attendance_date = Attendance.objects.filter(
+            school_id=absentee['school_id'],
+            student_id=absentee['student_id'],
+            status=True
+        ).latest('attendance_date').attendance_date
+        current_date = Attendance.objects.latest('attendance_date').attendance_date
+
+        absent_record.last_attendance_date = attendance_date
+        absent_record.absent_days = (current_date-attendance_date).days
+        if attendance_date >= current_date:
+            absent_record.reattend_date = attendance_date
+        absent_record.save()
+        if new:
+            logger.info('New absent record for student {}'.format(absentee['student_id']))
