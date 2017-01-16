@@ -9,6 +9,7 @@ from import_export.admin import ExportMixin
 from .models import (
     Attendance,
     BySchoolByDay,
+    Absentee
 )
 
 class AttendanceAdmin(ExportMixin, admin.ModelAdmin):
@@ -60,5 +61,24 @@ class BySchoolByDayAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
+
+class AbsenteeAdmin(admin.ModelAdmin):
+    list_display = (
+        'school',
+        'student',
+        'last_attendance_date',
+        'absent_days',
+        'reattend_date',
+    )
+    list_filter = (
+        'school__location',
+        'school',
+        'last_attendance_date',
+    )
+    date_hierarchy = 'last_attendance_date'
+    ordering = ('-absent_days',)
+
+
 admin.site.register(Attendance, AttendanceAdmin)
 admin.site.register(BySchoolByDay, BySchoolByDayAdmin)
+admin.site.register(Absentee, AbsenteeAdmin)
