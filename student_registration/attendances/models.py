@@ -90,3 +90,19 @@ class BySchoolByDay(models.Model):
     total_attended = models.IntegerField(blank=True, null=True)
     total_absences = models.IntegerField(blank=True, null=True)
     validated = models.BooleanField(default=False)
+
+
+class Absentee(TimeStampedModel):
+
+    school = models.ForeignKey(
+        School,
+        related_name='+',
+    )
+    student = models.ForeignKey(
+        Student,
+        related_name='absents',
+    )
+    last_attendance_date = models.DateField(blank=True, null=True)
+    absent_days = models.IntegerField(blank=True, null=True)
+    reattend_date = models.DateField(blank=True, null=True)
+
