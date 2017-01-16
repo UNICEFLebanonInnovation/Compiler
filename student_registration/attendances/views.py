@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
+from rest_framework.generics import ListAPIView
 from datetime import datetime
 import tablib
 import json
@@ -19,8 +20,8 @@ from student_registration.schools.models import (
 )
 from student_registration.locations.models import Location
 from student_registration.registrations.models import Registration
-from .models import Attendance
-from .serializers import AttendanceSerializer
+from .models import Attendance, Absentee
+from .serializers import AttendanceSerializer, AbsenteeSerializer
 
 
 class AttendanceViewSet(mixins.RetrieveModelMixin,
@@ -160,3 +161,9 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         )
         response['Content-Disposition'] = 'attachment; filename=registration_list.xls'
         return response
+
+
+class AbsenteeView(ListAPIView):
+    queryset = Absentee.objects.all()
+    serializer_class = AbsenteeSerializer
+    permission_classes = (permissions.IsAdminUser,)
