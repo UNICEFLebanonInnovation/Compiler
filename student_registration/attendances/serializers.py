@@ -37,17 +37,20 @@ class AttendanceSerializer(serializers.ModelSerializer):
 class AbsenteeSerializer(serializers.ModelSerializer):
     student_id = serializers.IntegerField(source='student.id', read_only=True)
     student_full_name = serializers.CharField(source='student.full_name')
+    student_number = serializers.CharField(source='student.number')
     student_sex = serializers.CharField(source='student.sex')
     school_name = serializers.CharField(source='school.name', read_only=True)
+    school_id = serializers.CharField(source='school.id', read_only=True)
+    location_id = serializers.CharField(source='location.id', read_only=True)
 
     class Meta:
         model = Absentee
         fields = (
             'school_id',
             'school_name',
-            'school__location',
+            'location_id',
             'student_id',
-            'student__number',
+            'student_number',
             'student_full_name',
             'student_sex',
             'last_attendance_date',
