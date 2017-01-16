@@ -9,12 +9,17 @@ class Command(BaseCommand):
     help = 'Push attendance data to CouchBase'
 
     def add_arguments(self, parser):
-        parser.add_argument('schools', nargs='+', type=str)
+        parser.add_argument('--schools', nargs='+', type=str)
+        parser.add_argument('--school_type', type=str, default=None)
 
     def handle(self, *args, **options):
+        school_type = options['school_type']
 
-        if 'all' in options['schools']:
-            set_app_attendances()
-        else:
+        if options['schools']:
             for school in options['schools']:
-                set_app_attendances(school)
+                set_app_attendances(
+                    school_number=school,
+                    school_type=school_type)
+        else:
+            set_app_attendances(school_type=school_type)
+
