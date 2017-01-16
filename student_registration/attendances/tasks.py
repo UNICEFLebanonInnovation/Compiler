@@ -3,6 +3,7 @@ __author__ = 'jcranwellward'
 import datetime
 import json
 import os
+import unicodedata
 from datetime import datetime
 
 import requests
@@ -17,13 +18,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def convert_date(date):
+def convert_date(date_string):
     try:
-        date = datetime.strptime(
-            date,
-            '%d-%m-%Y'
-        ).strftime('%Y-%m-%d')
+        if 'ARABIC' in unicodedata.name(date_string[0]):
+            date = datetime.date(*reversed(map(int, date_string.split('-'))))
+        else:
+            date = datetime.strptime(date_string, '%d-%m-%Y').date()
     except Exception as exp:
+        logger.exception(exp)
         date = ''
     return date
 
