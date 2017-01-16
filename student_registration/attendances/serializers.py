@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Attendance
+from .models import Attendance, Absentee
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
@@ -31,4 +31,21 @@ class AttendanceSerializer(serializers.ModelSerializer):
             'validation_status',
             'validation_date',
             'validation_owner',
+        )
+
+
+class AbsenteeSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = Absentee
+        fields = (
+            'school_id',
+            'school__cerd',
+            'school__location',
+            'student_id',
+            'student__number',
+            'last_attendance_date',
+            'absent_days',
+            'reattend_date',
         )
