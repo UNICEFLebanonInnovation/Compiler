@@ -344,7 +344,7 @@ def calculate_by_day_summary():
         total_enrolled=Count('student'),
         total_attended=Count(Case(When(status=True, then=1))),
         total_absences=Count(Case(When(status=False, then=1))),
-        vcalidated=True
+        validated=True
     )
 
     day_records = [BySchoolByDay(**day) for day in days]
