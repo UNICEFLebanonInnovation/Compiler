@@ -20,6 +20,13 @@ from student_registration.registrations.models import (
     Registration
 )
 
+from student_registration.students.models import (
+    Student
+)
+
+from datetime import datetime
+import datetime as datetime2
+
 class Command(BaseCommand):
     help = 'Load absence data'
 
@@ -121,7 +128,8 @@ def SaveChildAbsences(childAbsences):
 
                     visitAttempt = HouseholdVisitAttempt.objects.create( \
                         household_visit_id=houseHoldVisit.id, \
-                        date=datetime.now() \
+                        date=datetime.now(), \
+                        comment='' \
                         )
 
                     visitAttempt.save()
@@ -129,8 +137,8 @@ def SaveChildAbsences(childAbsences):
                     houseHoldVisit.visit_status = "pending"
                     houseHoldVisit.save()
 
-                visitAttemptID = HouseholdVisitAttempt.objects.filter(household_visit_id=houseHoldVisit.id).values_list(
-                    'id', flat=True).first()
+                visitAttemptID = HouseholdVisitAttempt.objects.filter(household_visit_id=houseHoldVisit.id) \
+                                 .order_by('-id').values_list('id', flat=True).first()
 
             attendanceMonitoring = ChildAttendanceMonitoring.objects.create( \
                 student_id=childAbsence.StudentID, \
@@ -148,7 +156,6 @@ def SaveChildAbsences(childAbsences):
             attendanceMonitoring.save()
 
 
-
     attendanceMonitoringDate = AttendanceMonitoringDate.objects.create( \
         date_monitoring=datetime.now()
     )
@@ -157,48 +164,62 @@ def SaveChildAbsences(childAbsences):
 
     return result
 
+
 def GetURLChildAbsences(absencesData):
 
     childAbsences = []
 
     for studentAbsence in absencesData:
 
-        childAbsence = ChildAbsence()
+        numberOfDays = studentAbsence['absent_days']
+        numberOf10Days = numberOfDays/10
 
-        childAbsence.StudentID =studentAbsence['student_id']
-        childAbsence.FromDate =studentAbsence['last_attendance_date']
-        childAbsence.ToDate =studentAbsence['last_attendance_date']
-        childAbsence.NumberOfDays = 10
 
-        childAbsences.append(childAbsence)
+        for x in xrange(numberOf10Days):
 
-    return childAbsences
+             childAbsence = ChildAbsence()
 
-def GetDBChildrenAbsences(lastCheckDateString):
+             attendanceDate = datetime.strptime(studentAbsence['last_attendance_date'], "%Y-%m-%d").date()
 
-    childAbsences = []
+             fromDate = attendanceDate + datetime2.timedelta(days=x*14)
+             toDate = attendanceDate + datetime2.timedelta(days=(x*14)+9)
 
-    lastCheckDate = None
+             studentID = Student.objects.filter(number=studentAbsence['student_number']).values_list('id', flat=True).first()
 
-    if lastCheckDateString:
-        lastCheckDate = datetime.strptime(lastCheckDateString, "%Y-%m-%d").date()
+             childAbsence.StudentID =studentID
+             childAbsence.FromDate =fromDate
+             childAbsence.ToDate =toDate
+             childAbsence.NumberOfDays = 10
 
-        studentAbsences =  StudentAbsence.objects.filter(date_entry__gte=lastCheckDate).order_by('date_from')
-    else:
-        studentAbsences =  StudentAbsence.objects.order_by('date_from').all()
-
-    for studentAbsence in studentAbsences:
-
-        childAbsence = ChildAbsence()
-
-        childAbsence.StudentID =studentAbsence.student_id
-        childAbsence.FromDate =studentAbsence.date_from
-        childAbsence.ToDate =studentAbsence.date_to
-        childAbsence.NumberOfDays = 10
-
-        childAbsences.append(childAbsence)
+             childAbsences.append(childAbsence)
 
     return childAbsences
+
+# def GetDBChildrenAbsences(lastCheckDateString):
+#
+#     childAbsences = []
+#
+#     lastCheckDate = None
+#
+#     if lastCheckDateString:
+#         lastCheckDate = datetime.strptime(lastCheckDateString, "%Y-%m-%d").date()
+#
+#         studentAbsences = StudentAbsence.objects.filter(date_entry__gte=lastCheckDate).order_by('date_from')
+#     else:
+#         studentAbsences = StudentAbsence.objects.order_by('date_from').all()
+#
+#     for studentAbsence in studentAbsences:
+#
+#         childAbsence = ChildAbsence()
+#
+#         childAbsence.StudentID =studentAbsence.student_id
+#         childAbsence.FromDate =studentAbsence.date_from
+#         childAbsence.ToDate =studentAbsence.date_to
+#         childAbsence.NumberOfDays = 10
+#
+#         childAbsences.append(childAbsence)
+#
+#     return childAbsences
 
 
 def GetChildrenAbsences(lastCheckDateString):
@@ -338,3 +359,10 @@ class ChildAbsence:
         self.ToDate = absenceDate
         self.NumberOfDays += 1
 
+
+    def __repr__(self):
+        import pprint
+        return 'StudentID: '+pprint.pformat(self.StudentID) + ' ' \
+               'FromDate: ' +pprint.pformat(self.FromDate) + ' ' \
+               'ToDate: ' +pprint.pformat(self.ToDate) + ' ' \
+               'NumberOfDays: ' +pprint.pformat(self.NumberOfDays) + ' '
