@@ -298,20 +298,17 @@ def import_docs(**kwargs):
                             if type(student) is bool:
                                 logger.info('bad doc: {}'.format(row['doc']['_id']))
                                 continue
-                            attended = student['status']
                             attendance_record, new = Attendance.objects.get_or_create(
                                 student_id=student_id,
                                 school_id=school,
                                 attendance_date=attendance_date
                             )
-                            attendance_record.status = attended
-                            attendance_record.absence_reason = student['reason']
+                            attendance_record.status = student['status']
+                            attendance_record.absence_reason = student['value']
                             if school_type == 'alp':
-                                classlevel = ClassLevel.objects.get(id=class_id)
-                                attendance_record.class_level = classlevel
+                                attendance_record.class_level_id = class_id
                             else:
-                                classroom = ClassRoom.objects.get(id=class_id)
-                                attendance_record.classroom = classroom
+                                attendance_record.classroom_id = class_id
                             if validation_date:
                                 attendance_record.validation_date = validation_date
                                 attendance_record.validation_status = True
