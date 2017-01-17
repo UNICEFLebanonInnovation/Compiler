@@ -149,8 +149,7 @@ def disable_duplicate_enrolments(offset=None, school_number=None):
     print "Start disable duplicates"
 
     for registry in duplicates:
-        registry.deleted = True
-        registry.save()
+        registry.update(deleted=True)
 
     print "End disable duplicates"
 
@@ -190,8 +189,7 @@ def disable_duplicate_outreaches(school_number=None):
     print "Start disable duplicates"
 
     for registry in duplicates:
-        registry.deleted = True
-        registry.save()
+        registry.update(deleted=True)
 
     print "End disable duplicates"
 
@@ -231,9 +229,9 @@ def find_matching():
                     Q(student__number_part1=r_student.number_part1)
                 )
         except Exception as ex:
-            print registry.id
+            # print registry.id
             continue
 
         if enrollment:
             e_student = enrollment.student
-            StudentMatching.objects.create(registry=r_student, enrolment=e_student)
+            StudentMatching.objects.get_or_create(registry=r_student, enrolment=e_student)
