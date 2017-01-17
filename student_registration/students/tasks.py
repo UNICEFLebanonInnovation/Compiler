@@ -149,7 +149,8 @@ def disable_duplicate_enrolments(offset=None, school_number=None):
     print "Start disable duplicates"
 
     for registry in duplicates:
-        registry.update(deleted=True)
+        registry.deleted = True
+        registry.save()
 
     print "End disable duplicates"
 
@@ -189,7 +190,8 @@ def disable_duplicate_outreaches(school_number=None):
     print "Start disable duplicates"
 
     for registry in duplicates:
-        registry.update(deleted=True)
+        registry.deleted = True
+        registry.save()
 
     print "End disable duplicates"
 
