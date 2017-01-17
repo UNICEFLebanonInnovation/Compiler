@@ -8,5 +8,12 @@ from student_registration.students.tasks import *
 class Command(BaseCommand):
     help = 'Disable duplicate ALP'
 
+    def add_arguments(self, parser):
+        parser.add_argument('--schools', nargs='+', type=str, default=None)
+
     def handle(self, *args, **options):
-        disable_duplicate_outreaches()
+        if options['schools']:
+            for school in options['schools']:
+                disable_duplicate_outreaches(school)
+        else:
+            disable_duplicate_outreaches()
