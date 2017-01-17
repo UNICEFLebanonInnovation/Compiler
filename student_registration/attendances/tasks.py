@@ -278,44 +278,48 @@ def import_docs(**kwargs):
 
     try:
         data = get_docs()
+        attendance_records = []
         logger.info('processing {} docs'.format(len(data['rows'])))
-        with transaction.atomic():
-            for num,row in enumerate(data['rows']):
-                if 'attendance' in row['doc']:
-                    class_id = row['doc']['class_id']
-                    school = row['doc']['school']
-                    school_type = row['doc']['school_type']
-                    attendances = row['doc']['attendance']
+        for num,row in enumerate(data['rows']):
+            if 'attendance' in row['doc']:
+                class_id = row['doc']['class_id']
+                school = row['doc']['school']
+                school_type = row['doc']['school_type']
+                attendances = row['doc']['attendance']
 
-                    for key, attendance in attendances.items():
-                        students = attendance['students']
-                        attendance_date = convert_date(key)
-                        validation_date = ''
-                        if 'validation_date' in attendance:
-                            validation_date = convert_date(attendance['validation_date'])
+                for key, attendance in attendances.items():
+                    students = attendance['students']
+                    attendance_date = convert_date(key)
+                    validation_date = ''
+                    if 'validation_date' in attendance:
+                        validation_date = convert_date(attendance['validation_date'])
 
-                        for student_id, student in students.items():
-                            if type(student) is bool:
-                                logger.info('bad doc: {}'.format(row['doc']['_id']))
-                                continue
-                            attendance_record, new = Attendance.objects.get_or_create(
-                                student_id=student_id,
-                                school_id=school,
-                                attendance_date=attendance_date
-                            )
-                            attendance_record.status = student['status']
-                            attendance_record.absence_reason = student['value']
-                            if school_type == 'alp':
-                                attendance_record.class_level_id = class_id
-                            else:
-                                attendance_record.classroom_id = class_id
-                            if validation_date:
-                                attendance_record.validation_date = validation_date
-                                attendance_record.validation_status = True
+                    for student_id, student in students.items():
+                        if type(student) is bool:
+                            logger.info('bad doc: {}'.format(row['doc']['_id']))
+                            continue
+                        attendance_record = Attendance(
+                            student_id=student_id,
+                            school_id=school,
+                            attendance_date=attendance_date
+                        )
+                        attendance_record.status = student['status']
+                        attendance_record.absence_reason = student['value']
+                        if school_type == 'alp':
+                            attendance_record.class_level_id = class_id
+                        else:
+                            attendance_record.classroom_id = class_id
+                        if validation_date:
+                            attendance_record.validation_date = validation_date
+                            attendance_record.validation_status = True
 
-                            attendance_record.save()
+                        attendance_records.append(attendance_record)
                 if num % 100 == 0:
                     logger.info('processed {} docs'.format(num))
+
+        with transaction.atomic():
+            Attendance.objects.all().delete()
+            Attendance.objects.bulk_create(attendance_records)
 
         calculate_by_day_summary()
         calculate_absentees_in_date_range(
