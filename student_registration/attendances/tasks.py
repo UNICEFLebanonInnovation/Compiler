@@ -1,16 +1,16 @@
 __author__ = 'jcranwellward'
 
-import datetime
 import json
 import os
 import unicodedata
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 import requests
 from requests.auth import HTTPBasicAuth
 
 from django.conf import settings
-from django.db.models import Count, Case, When
+from django.db import transaction
+from django.db.models import Count, Case, When, Value, BooleanField
 
 from student_registration.taskapp.celery import app
 
@@ -21,13 +21,13 @@ logger = logging.getLogger(__name__)
 def convert_date(date_string):
     try:
         if 'ARABIC' in unicodedata.name(date_string[0]):
-            date = datetime.date(*reversed(map(int, date_string.split('-'))))
+            date_out = date(*reversed(map(int, date_string.split('-'))))
         else:
-            date = datetime.strptime(date_string, '%d-%m-%Y').date()
+            date_out = datetime.strptime(date_string, '%d-%m-%Y').date()
     except Exception as exp:
         logger.exception(exp)
-        date = ''
-    return date
+        date_out = ''
+    return date_out
 
 
 def set_docs(docs):
@@ -278,48 +278,64 @@ def import_docs(**kwargs):
 
     try:
         data = get_docs()
+        logger.info('processing {} docs'.format(len(data['rows'])))
+        with transaction.atomic():
+            for row in data['rows']:
+                if 'attendance' in row['doc']:
+                    class_id = row['doc']['class_id']
+                    school = row['doc']['school']
+                    school_type = row['doc']['school_type']
+                    attendances = row['doc']['attendance']
 
-        for row in data['rows']:
-            if 'attendance' in row['doc']:
-                class_id = row['doc']['class_id']
-                school = row['doc']['school']
-                school_type = row['doc']['school_type']
-                attendances = row['doc']['attendance']
+                    for key, attendance in attendances.items():
+                        students = attendance['students']
+                        attendance_date = convert_date(key)
+                        validation_date = ''
+                        if 'validation_date' in attendance:
+                            validation_date = convert_date(attendance['validation_date'])
 
-                for key, attendance in attendances.items():
-                    students = attendance['students']
-                    attendance_date = convert_date(key)
-                    validation_date = ''
-                    if 'validation_date' in attendance:
-                        validation_date = convert_date(attendance['validation_date'])
+                        for student_id, student in students.items():
+                            if type(student) is bool:
+                                logger.info('bad doc: {}'.format(row['doc']['_id']))
+                                continue
+                            attended = student['status']
+                            attendance_record, new = Attendance.objects.get_or_create(
+                                student_id=student_id,
+                                school_id=school,
+                                attendance_date=attendance_date
+                            )
+                            attendance_record.status = attended
+                            attendance_record.absence_reason = student['reason']
+                            if school_type == 'alp':
+                                classlevel = ClassLevel.objects.get(id=class_id)
+                                attendance_record.class_level = classlevel
+                            else:
+                                classroom = ClassRoom.objects.get(id=class_id)
+                                attendance_record.classroom = classroom
+                            if validation_date:
+                                attendance_record.validation_date = validation_date
+                                attendance_record.validation_status = True
 
-                    for student_id, student in students.items():
-                        attended = student['status']
-                        attendance_record, new = Attendance.objects.get_or_create(
-                            student_id=student_id,
-                            school_id=school,
-                            attendance_date=attendance_date
-                        )
-                        attendance_record.status = attended
-                        attendance_record.absence_reason = student['reason']
-                        if school_type == 'alp':
-                            classlevel = ClassLevel.objects.get(id=class_id)
-                            attendance_record.class_level = classlevel
-                        else:
-                            classroom = ClassRoom.objects.get(id=class_id)
-                            attendance_record.classroom = classroom
-                        if validation_date:
-                            attendance_record.validation_date = validation_date
-                            attendance_record.validation_status = True
-
-                        attendance_record.save()
+                            attendance_record.save()
 
         calculate_by_day_summary()
-        absentees = calculate_absentees_in_date_range(
-            datetime.date.today()-datetime.timedelta(days=10),
-            datetime.date.today()
+        calculate_absentees_in_date_range(
+            date.today()-timedelta(days=10),
+            date.today()
         )
-        create_or_update_absentees(absentees)
+    except Exception as exp:
+        logger.info('importing doc: {}'.format(row['doc']['_id']))
+        logger.exception(exp)
+
+
+def calculate_attendance_and_absentees():
+
+    try:
+        calculate_by_day_summary()
+        calculate_absentees_in_date_range(
+            date.today() - timedelta(days=10),
+            date.today()
+        )
     except Exception as exp:
         logger.exception(exp)
 
@@ -344,7 +360,7 @@ def calculate_by_day_summary():
         total_enrolled=Count('student'),
         total_attended=Count(Case(When(status=True, then=1))),
         total_absences=Count(Case(When(status=False, then=1))),
-        vcalidated=True
+        validated=Value(True, BooleanField())
     )
 
     day_records = [BySchoolByDay(**day) for day in days]
@@ -358,47 +374,51 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
     Calculate the consistent absentees in the last 10 days
     :return:
     """
-    from student_registration.attendances.models import Attendance
+    from student_registration.attendances.models import Attendance, Absentee
 
-    return Attendance.objects.filter(
-        status=False,
+    absentees = Attendance.objects.filter(
+        # select only validated attendances
+        validation_status=True,
         attendance_date__gte=from_date,
         attendance_date__lte=to_date
     ).values(
         'student_id',
         'school_id'
     ).annotate(
-        absent_days=Count('attendance_date')
+        total_attended=Count(Case(When(status=True, then=1))),
+        total_absents=Count(Case(When(status=False, then=1))),
     ).filter(
-        absent_days__gt=absent_threshold
+        total_absents__gt=absent_threshold
     )
 
-
-def create_or_update_absentees(absentees):
-    """
-    Create or update the absentee record for each absent student.
-    :param absentees:
-    :return:
-    """
-    from student_registration.attendances.models import Attendance, Absentee
-
     for absentee in absentees:
-        absent_record, new = Absentee.objects.get_or_create(
-            school_id=absentee['school_id'],
-            student_id=absentee['student_id'],
-            reattend_date__isnull=True
-        )
-        attendance_date = Attendance.objects.filter(
+
+        # for each absentee check if they have attended within the absent_threshold
+        attended_date = Attendance.objects.filter(
             school_id=absentee['school_id'],
             student_id=absentee['student_id'],
             status=True
         ).latest('attendance_date').attendance_date
-        current_date = Attendance.objects.latest('attendance_date').attendance_date
 
-        absent_record.last_attendance_date = attendance_date
-        absent_record.absent_days = (current_date-attendance_date).days
-        if attendance_date >= current_date:
-            absent_record.reattend_date = attendance_date
+        if attended_date >= (to_date - timedelta(days=absent_threshold)):
+            Absentee.objects.filter(
+                school_id=absentee['school_id'],
+                student_id=absentee['student_id'],
+                reattend_date__isnull=True
+            ).update(
+                reattend_date=attended_date
+            )
+            continue
+
+        absent_record, new = Absentee.objects.update_or_create(
+            school_id=absentee['school_id'],
+            student_id=absentee['student_id'],
+            last_attendance_date=attended_date,
+            absent_days=Attendance.objects.filter(
+                attendance_date__gt=attended_date,
+                attendance_date__lte=date.today()
+            ).distinct('attendance_date').count()
+        )
         absent_record.save()
         if new:
             logger.info('New absent record for student {}'.format(absentee['student_id']))
