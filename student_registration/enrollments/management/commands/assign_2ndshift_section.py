@@ -9,7 +9,7 @@ class Command(BaseCommand):
     help = 'Assign section to null registrations'
 
     def add_arguments(self, parser):
-        parser.add_argument('section', nargs='+', type=str)
+        parser.add_argument('section', nargs='+', type=int)
 
     def handle(self, *args, **options):
         if options['section']:
