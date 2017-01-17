@@ -251,10 +251,21 @@ def test(request):
 def LoadAbsences(request):
 
     #result = LoadAbsences()
+
+    import json
+    received_json_data = json.loads(request.body)
+
+
     import student_registration.hhvisit.management.commands.load_absences
-    student_registration.hhvisit.management.commands.load_absences.LoadAbsences()
+    #student_registration.hhvisit.management.commands.load_absences.LoadAbsences(received_json_data)
 
     result = 'Absences were loaded successfully.'
+
+
+    result = student_registration.hhvisit.management.commands.load_absences.GetURLChildAbsences(received_json_data)
+
+    import pprint
+    result = pprint.pformat(result)
 
     #childAbsences = student_registration.hhvisit.commands.load_absences.GetDBChildrenAbsences('')
 

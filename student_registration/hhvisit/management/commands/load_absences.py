@@ -28,7 +28,7 @@ class Command(BaseCommand):
 
 
 
-def LoadAbsences() :
+def LoadAbsences(absencesData) :
     lastRunDate = AttendanceMonitoringDate.objects.filter() \
                   .order_by('-date_monitoring').values_list('date_monitoring', flat=True).first()
 
@@ -38,7 +38,8 @@ def LoadAbsences() :
         lastRunDateText = lastRunDate.strftime('%Y-%m-%d')
 
     #lcd = GetChildrenAbsences(lastRunDateText)
-    lcd = GetDBChildrenAbsences(lastRunDateText)
+    #lcd = GetDBChildrenAbsences(lastRunDateText)
+    lcd = GetURLChildAbsences(absencesData)
 
     SaveChildAbsences(lcd)
 
@@ -155,6 +156,23 @@ def SaveChildAbsences(childAbsences):
     attendanceMonitoringDate.save()
 
     return result
+
+def GetURLChildAbsences(absencesData):
+
+    childAbsences = []
+
+    for studentAbsence in absencesData:
+
+        childAbsence = ChildAbsence()
+
+        childAbsence.StudentID =studentAbsence['student_id']
+        childAbsence.FromDate =studentAbsence['last_attendance_date']
+        childAbsence.ToDate =studentAbsence['last_attendance_date']
+        childAbsence.NumberOfDays = 10
+
+        childAbsences.append(childAbsence)
+
+    return childAbsences
 
 def GetDBChildrenAbsences(lastCheckDateString):
 
@@ -319,6 +337,4 @@ class ChildAbsence:
 
         self.ToDate = absenceDate
         self.NumberOfDays += 1
-
-
 
