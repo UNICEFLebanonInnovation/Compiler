@@ -316,7 +316,7 @@ def import_docs(**kwargs):
                                 attendance_record.validation_status = True
 
                             attendance_records.append(attendance_record)
-                            
+
                     if num % 100 == 0:
                         Attendance.objects.bulk_create(attendance_records)
                         logger.info('processed {} docs'.format(num))
@@ -400,6 +400,7 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
         total_absents__gt=absent_threshold
     )
 
+    logger.info('{} absentees to process'.format(absentees.count()))
     for absentee in absentees:
 
         # for each absentee check if they have attended within the absent_threshold
@@ -417,6 +418,7 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
             ).update(
                 reattend_date=attended_date
             )
+            logger.info('student {} attended on {}'.format(absentee['school_id'], attended_date))
             continue
 
         absent_record, new = Absentee.objects.update_or_create(
