@@ -280,7 +280,7 @@ def import_docs(**kwargs):
         data = get_docs()
         logger.info('processing {} docs'.format(len(data['rows'])))
         with transaction.atomic():
-            for row in data['rows']:
+            for num,row in enumerate(data['rows']):
                 if 'attendance' in row['doc']:
                     class_id = row['doc']['class_id']
                     school = row['doc']['school']
@@ -317,6 +317,8 @@ def import_docs(**kwargs):
                                 attendance_record.validation_status = True
 
                             attendance_record.save()
+                if num % 100 == 0:
+                    logger.info('processed {} docs'.format(num))
 
         calculate_by_day_summary()
         calculate_absentees_in_date_range(
