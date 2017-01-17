@@ -320,12 +320,16 @@ def import_docs(**kwargs):
         with transaction.atomic():
             Attendance.objects.all().delete()
             Attendance.objects.bulk_create(attendance_records)
+        logger.info('attendance updated')
 
         calculate_by_day_summary()
+        logger.info('by day summary updated')
+
         calculate_absentees_in_date_range(
             date.today()-timedelta(days=10),
             date.today()
         )
+        ogger.info('absentees updated')
     except Exception as exp:
         logger.info('importing doc: {}'.format(row['doc']['_id']))
         logger.exception(exp)
