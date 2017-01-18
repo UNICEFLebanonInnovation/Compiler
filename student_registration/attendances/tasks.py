@@ -459,7 +459,6 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
                 reattend_date=last_attended_date
             )
             logger.info('student {} attended on {}'.format(absentee['school_id'], last_attended_date))
-            continue
 
         absent_record, new = Absentee.objects.update_or_create(
             school_id=absentee['school_id'],
