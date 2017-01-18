@@ -86,10 +86,15 @@ class BySchoolByDay(models.Model):
         related_name='+',
     )
     attendance_date = models.DateField()
+    highest_attendance_rate = models.BooleanField(default=False)
     total_enrolled = models.IntegerField(blank=True, null=True)
     total_attended = models.IntegerField(blank=True, null=True)
     total_absences = models.IntegerField(blank=True, null=True)
-    validated = models.BooleanField(default=False)
+    total_attended_male = models.IntegerField(blank=True, null=True)
+    total_attended_female = models.IntegerField(blank=True, null=True)
+    total_absent_male = models.IntegerField(blank=True, null=True)
+    total_absent_female = models.IntegerField(blank=True, null=True)
+    validation_status = models.BooleanField(default=False)
 
 
 class Absentee(TimeStampedModel):

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'jcranwellward'
 
 import json
@@ -10,7 +11,7 @@ from requests.auth import HTTPBasicAuth
 
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Count, Case, When, Value, BooleanField
+from django.db.models import Count, Case, When, Value, BooleanField, Max
 
 from student_registration.taskapp.celery import app
 
@@ -357,25 +358,56 @@ def calculate_by_day_summary():
     """
     from student_registration.attendances.models import Attendance, BySchoolByDay
 
-    days = Attendance.objects.filter(
-        # select only validated attendances
-        validation_status=True
-    ).values(
+    days = Attendance.objects.values(
         # group by school and day
         'school_id',
-        'attendance_date'
     ).annotate(
         # create totals from raw data
         total_enrolled=Count('student'),
         total_attended=Count(Case(When(status=True, then=1))),
         total_absences=Count(Case(When(status=False, then=1))),
-        validated=Value(True, BooleanField())
+        total_attended_male=Count(Case(When(status=True, student__sex=u'Male', then=1))),
+        total_attended_female=Count(Case(When(status=True, student__sex=u'Female', then=1))),
+        total_absent_male=Count(Case(When(status=False, student__sex=u'Male', then=1))),
+        total_absent_female=Count(Case(When(status=False, student__sex=u'Female', then=1))),
     )
 
-    day_records = [BySchoolByDay(**day) for day in days]
+    select_fields = (
+        'school_id',
+        'attendance_date',
+        'total_enrolled',
+        'total_attended',
+        'total_absences',
+        'total_attended_male',
+        'total_attended_female',
+        'total_absent_male',
+        'total_absent_female',
+        'validation_status'
+    )
+
+    days_valid = days.filter(validation_status=True).values(*select_fields)
+    days_invalid = days.filter(validation_status=False).values(*select_fields)
+
+    day_records = [BySchoolByDay(**day) for day in days_valid | days_invalid]
 
     BySchoolByDay.objects.all().delete()
     BySchoolByDay.objects.bulk_create(day_records)
+
+    schools_valid = BySchoolByDay.objects.filter(
+        validation_status=True
+    ).values(
+        'school_id',
+    ).distinct().annotate(
+        attended=Max('total_attended')
+    )
+
+    for school in schools_valid:
+        school_instance = BySchoolByDay.objects.filter(
+            school_id=school['school_id'],
+            total_attended=school['attended']
+        ).latest('attendance_date')
+        school_instance.highest_attendance_rate = True
+        school_instance.save()
 
 
 def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
