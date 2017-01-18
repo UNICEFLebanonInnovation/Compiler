@@ -463,5 +463,6 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
 
         if last_attended_date >= (to_date - timedelta(days=absent_threshold)):
             absent_record.reattend_date=last_attended_date
+            absent_record.save()
             logger.info('student {} attended on {}'.format(absentee['school_id'], last_attended_date))
 
