@@ -455,7 +455,7 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
             student_id=absentee['student_id'],
             reattend_date__isnull=True
         )
-        absent_record.last_attendance_date = last_attended_date,
+        absent_record.last_attendance_date = last_attended_date
         absent_record.absent_days = total_school_days_absent
         absent_record.save()
         if new:
