@@ -441,9 +441,10 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
             student_id=absentee['student_id'],
             status=True
         )
+        if attendances.count() == 0:
+            continue
 
-        last_attended_date = attendances.latest('attendance_date').attendance_date \
-            if attendances else Attendance.objects.earliest('attendance_date').attendance_date
+        last_attended_date = attendances.latest('attendance_date').attendance_date
 
         total_school_days_absent = Attendance.objects.filter(
             attendance_date__gt=last_attended_date,
