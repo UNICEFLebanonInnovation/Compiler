@@ -127,7 +127,6 @@ def disable_duplicate_enrolments(offset=None, school_number=None):
     students = {}
     students2 = {}
     duplicates = []
-    duplicates2 = []
 
     print "Start find duplicates"
     for registry in registrations:
@@ -157,15 +156,20 @@ def disable_duplicate_enrolments(offset=None, school_number=None):
 
 
 @app.task
-def disable_duplicate_outreaches():
+def disable_duplicate_outreaches(school_number=None):
     from student_registration.alp.models import Outreach
     registrations = Outreach.objects.exclude(deleted=True).order_by('-id')
+    if school_number:
+        print school_number
+        registrations = registrations.filter(school__number=school_number)
+
     print len(registrations)
 
     students = {}
     students2 = {}
     duplicates = []
 
+    print "Start find duplicates"
     for registry in registrations:
 
         student = registry.student
@@ -179,11 +183,17 @@ def disable_duplicate_outreaches():
         else:
             duplicates.append(registry)
 
-    print len(duplicates)
+    print "End find duplicates"
+
+    print "duplicates: ", len(duplicates)
+
+    print "Start disable duplicates"
 
     for registry in duplicates:
         registry.deleted = True
         registry.save()
+
+    print "End disable duplicates"
 
 
 @app.task
@@ -221,7 +231,7 @@ def find_matching():
                     Q(student__number_part1=r_student.number_part1)
                 )
         except Exception as ex:
-            print registry.id
+            # print registry.id
             continue
 
         if enrollment:
