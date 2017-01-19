@@ -107,33 +107,48 @@ def set_app_attendances(school_number=None, school_type=None):
     from student_registration.alp.models import Outreach
     from student_registration.enrollments.models import Enrollment
     from student_registration.attendances.models import Attendance
-    from student_registration.schools.models import School, ClassRoom, Section
+    from student_registration.schools.models import School, ClassRoom, Section, ClassLevel
 
     docs = []
     enrollment_model = Outreach if school_type == 'alp' else Enrollment
 
-    registrations = enrollment_model.objects.exclude(
-        deleted=True
-    ).filter(
-        classroom__isnull=False,
-        section__isnull=False
-    ).distinct().values(
-        'school__number',
-        'school',
-        'classroom',
-        'section'
-    )
+    registrations = enrollment_model.objects.exclude(deleted=True)
+
+    if school_type == 'alp':
+        registrations = registrations.filter(
+            registered_in_level__isnull=False,
+            section__isnull=False
+        ).distinct().values(
+            'school__number',
+            'school',
+            'registered_in_level',
+            'section'
+        )
+    else:
+        registrations = registrations.filter(
+            classroom__isnull=False,
+            section__isnull=False
+        ).distinct().values(
+            'school__number',
+            'school',
+            'classroom',
+            'section'
+        )
     if school_number is not None:
         registrations = registrations.filter(school__number=school_number)
 
     logger.info('{} documents to process'.format(registrations.count()))
     for reg in registrations:
         school = School.objects.get(id=reg['school'])
-        classroom = ClassRoom.objects.get(id=reg['classroom'])
+        classroom = ClassLevel.objects.get(id=reg['registered_in_level']) if school_type == 'alp' \
+                    else ClassRoom.objects.get(id=reg['classroom'])
+
         section = Section.objects.get(id=reg['section'])
         students = []
         attendances = {}
         doc_id = "{}-{}-{}".format(reg['school__number'], classroom.id, section.id)
+        if school_type == 'alp':
+            doc_id = "{}-{}".format(doc_id, 'alp')
 
         # build dictionary of currently enrolled students for this school, class, section
         total_enrolled = enrollment_model.objects.exclude(deleted=True).filter(**reg)
