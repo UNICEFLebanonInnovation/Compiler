@@ -106,6 +106,7 @@ class AttendanceAdmin(ExportMixin, admin.ModelAdmin):
 class AbsenteeAdmin(admin.ModelAdmin):
     list_display = (
         'school',
+        'student_number',
         'student',
         'last_attendance_date',
         'absent_days',
