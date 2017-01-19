@@ -1,0 +1,46 @@
+{
+  "_id": "0001-1-1",
+  "_rev": "16-c5cba01bf5d903ef8063887dd92ba2c3",
+  "attendance": {
+    "11-02-2017": {
+      "attendance_taken": true,
+      "students": {
+        "1174491": {
+          "reason": "بدون سبب",
+          "status": false,
+          "value": "no_reason"
+        },
+        "1206101": {
+          "reason": "بدون سبب",
+          "status": false,
+          "value": "no_reason"
+        }
+      }
+    }
+  },
+  "class_id": "1",
+  "class_name": "روضة",
+  "location_id": "9",
+  "location_name": "عكار",
+  "location_pcode": "",
+  "school": "436",
+  "school_id": "0001",
+  "school_name": "مدرسة للتجربة",
+  "school_type": "2ndshift",
+  "section_id": "1",
+  "section_name": "أ",
+  "students": [
+    {
+      "gender": "Male",
+      "status": true,
+      "student_id": "1174491",
+      "student_name": "بيسل بيسل سيبل"
+    },
+    {
+      "gender": "Male",
+      "status": true,
+      "student_id": "1206101",
+      "student_name": "احمد علي احمد"
+    }
+  ]
+}
