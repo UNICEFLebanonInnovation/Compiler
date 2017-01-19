@@ -112,5 +112,5 @@ class Absentee(TimeStampedModel):
     reattend_date = models.DateField(blank=True, null=True)
 
     def student_number(self):
-        return self.student.id
+        return self.student.number
 
