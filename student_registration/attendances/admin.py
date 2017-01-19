@@ -73,6 +73,9 @@ class BySchoolByDayAdmin(ExportMixin, admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 class AttendanceAdmin(ExportMixin, admin.ModelAdmin):
 
@@ -102,6 +105,9 @@ class AttendanceAdmin(ExportMixin, admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 class AbsenteeAdmin(admin.ModelAdmin):
     list_display = (
@@ -119,6 +125,9 @@ class AbsenteeAdmin(admin.ModelAdmin):
     )
     date_hierarchy = 'last_attendance_date'
     ordering = ('-absent_days',)
+
+    def has_add_permission(self, request):
+        return False
 
 
 admin.site.register(Attendance, AttendanceAdmin)
