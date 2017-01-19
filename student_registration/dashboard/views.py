@@ -241,8 +241,10 @@ class RegistrationsALPView(LoginRequiredMixin,
     Provides the registration page with lookup types in the context
     """
     model = Outreach
-    queryset = Outreach.objects.exclude(assigned_to_level__isnull=True)
-    # queryset = Outreach.objects.exclude(assigned_to_level__isnull=True, deleted=True)
+    queryset = Outreach.objects.exclude(deleted=True)
+    # queryset = Outreach.objects.exclude(assigned_to_level__isnull=True)
+    # queryset = queryset.exclude(deleted=True)
+    queryset = queryset.filter(registered_in_level__isnull=False)
     template_name = 'dashboard/registrations-alp.html'
 
     group_required = [u"ALP_MEHE"]
