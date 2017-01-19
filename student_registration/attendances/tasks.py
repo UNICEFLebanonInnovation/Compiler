@@ -452,36 +452,57 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
 
         # for each absentee check if they have attended within the absent_threshold
         attendances = Attendance.objects.filter(
+            validation_status=True,
             school_id=absentee['school_id'],
             student_id=absentee['student_id'],
-            status=True
         )
 
-        last_attended_date = attendances.latest('attendance_date').attendance_date \
-            if attendances else Attendance.objects.earliest('attendance_date').attendance_date
+        last_attended_date = attendances.filter(status=True).latest('attendance_date').attendance_date \
+        if attendances.filter(status=True).count() else attendances.filter(status=False).earliest('attendance_date').attendance_date
 
-        total_school_days_absent = Attendance.objects.filter(
-            attendance_date__gt=last_attended_date,
-            attendance_date__lte=to_date
-        ).distinct('attendance_date').count()
+        late_threshold_date = (to_date - timedelta(days=absent_threshold))
+        if last_attended_date >= late_threshold_date:
 
-        if last_attended_date >= (to_date - timedelta(days=absent_threshold)):
-            Absentee.objects.filter(
+            first_absent_date=attendances.filter(
+                status=False,
+                attendance_date__lt=last_attended_date,
+                attendance_date__gte=from_date,
+            ).earliest('attendance_date').attendance_date
+
+            total_school_days_absent = Attendance.objects.filter(
+                attendance_date__lt=last_attended_date,
+                attendance_date__gte=first_absent_date
+            ).distinct('attendance_date').count()
+
+            absent_record, new = Absentee.objects.get_or_create(
                 school_id=absentee['school_id'],
                 student_id=absentee['student_id'],
-                reattend_date__isnull=True
-            ).update(
-                reattend_date=last_attended_date
+                last_attendance_date=first_absent_date,
             )
-            logger.info('student {} attended on {}'.format(absentee['school_id'], last_attended_date))
-            continue
 
-        absent_record, new = Absentee.objects.update_or_create(
-            school_id=absentee['school_id'],
-            student_id=absentee['student_id'],
-            last_attendance_date=last_attended_date,
-            absent_days=total_school_days_absent
-        )
-        absent_record.save()
+            absent_record.absent_days = total_school_days_absent
+            absent_record.reattend_date = late_threshold_date
+            absent_record.save()
+            logger.info('student {} attended on {}'.format(absentee['school_id'], last_attended_date))
+
+        else:
+
+            total_school_days_absent = Attendance.objects.filter(
+                attendance_date__gte=last_attended_date,
+                attendance_date__lte=to_date
+            ).distinct('attendance_date').count()
+
+            absent_record, new = Absentee.objects.get_or_create(
+                school_id=absentee['school_id'],
+                student_id=absentee['student_id'],
+                last_attendance_date=last_attended_date,
+                reattend_date__isnull=True
+            )
+            absent_record.absent_days = total_school_days_absent
+            absent_record.save()
+
         if new:
             logger.info('New absent record for student {}'.format(absentee['student_id']))
+
+
+
