@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'jcranwellward'
 
 import json
@@ -10,7 +11,7 @@ from requests.auth import HTTPBasicAuth
 
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Count, Case, When, Value, BooleanField
+from django.db.models import Count, Case, When, Value, BooleanField, Max
 
 from student_registration.taskapp.celery import app
 
@@ -106,33 +107,48 @@ def set_app_attendances(school_number=None, school_type=None):
     from student_registration.alp.models import Outreach
     from student_registration.enrollments.models import Enrollment
     from student_registration.attendances.models import Attendance
-    from student_registration.schools.models import School, ClassRoom, Section
+    from student_registration.schools.models import School, ClassRoom, Section, ClassLevel
 
     docs = []
     enrollment_model = Outreach if school_type == 'alp' else Enrollment
 
-    registrations = enrollment_model.objects.exclude(
-        deleted=True
-    ).filter(
-        classroom__isnull=False,
-        section__isnull=False
-    ).distinct().values(
-        'school__number',
-        'school',
-        'classroom',
-        'section'
-    )
+    registrations = enrollment_model.objects.exclude(deleted=True)
+
+    if school_type == 'alp':
+        registrations = registrations.filter(
+            registered_in_level__isnull=False,
+            section__isnull=False
+        ).distinct().values(
+            'school__number',
+            'school',
+            'registered_in_level',
+            'section'
+        )
+    else:
+        registrations = registrations.filter(
+            classroom__isnull=False,
+            section__isnull=False
+        ).distinct().values(
+            'school__number',
+            'school',
+            'classroom',
+            'section'
+        )
     if school_number is not None:
         registrations = registrations.filter(school__number=school_number)
 
     logger.info('{} documents to process'.format(registrations.count()))
     for reg in registrations:
         school = School.objects.get(id=reg['school'])
-        classroom = ClassRoom.objects.get(id=reg['classroom'])
+        classroom = ClassLevel.objects.get(id=reg['registered_in_level']) if school_type == 'alp' \
+                    else ClassRoom.objects.get(id=reg['classroom'])
+
         section = Section.objects.get(id=reg['section'])
         students = []
         attendances = {}
         doc_id = "{}-{}-{}".format(reg['school__number'], classroom.id, section.id)
+        if school_type == 'alp':
+            doc_id = "{}-{}".format(doc_id, 'alp')
 
         # build dictionary of currently enrolled students for this school, class, section
         total_enrolled = enrollment_model.objects.exclude(deleted=True).filter(**reg)
@@ -278,9 +294,11 @@ def import_docs(**kwargs):
 
     try:
         data = get_docs()
+        attendance_records = []
         logger.info('processing {} docs'.format(len(data['rows'])))
         with transaction.atomic():
-            for row in data['rows']:
+            Attendance.objects.all().delete()
+            for num,row in enumerate(data['rows']):
                 if 'attendance' in row['doc']:
                     class_id = row['doc']['class_id']
                     school = row['doc']['school']
@@ -298,31 +316,38 @@ def import_docs(**kwargs):
                             if type(student) is bool:
                                 logger.info('bad doc: {}'.format(row['doc']['_id']))
                                 continue
-                            attended = student['status']
-                            attendance_record, new = Attendance.objects.get_or_create(
+                            attendance_record = Attendance(
                                 student_id=student_id,
                                 school_id=school,
                                 attendance_date=attendance_date
                             )
-                            attendance_record.status = attended
-                            attendance_record.absence_reason = student['reason']
+                            attendance_record.status = student['status']
+                            attendance_record.absence_reason = student['value']
                             if school_type == 'alp':
-                                classlevel = ClassLevel.objects.get(id=class_id)
-                                attendance_record.class_level = classlevel
+                                attendance_record.class_level_id = class_id
                             else:
-                                classroom = ClassRoom.objects.get(id=class_id)
-                                attendance_record.classroom = classroom
+                                attendance_record.classroom_id = class_id
                             if validation_date:
                                 attendance_record.validation_date = validation_date
                                 attendance_record.validation_status = True
 
-                            attendance_record.save()
+                            attendance_records.append(attendance_record)
+
+                    if num % 100 == 0:
+                        Attendance.objects.bulk_create(attendance_records)
+                        logger.info('processed {} docs'.format(num))
+                        attendance_records = []
+
+        logger.info('attendance updated')
 
         calculate_by_day_summary()
+        logger.info('by day summary updated')
+
         calculate_absentees_in_date_range(
             date.today()-timedelta(days=10),
             date.today()
         )
+        logger.info('absentees updated')
     except Exception as exp:
         logger.info('importing doc: {}'.format(row['doc']['_id']))
         logger.exception(exp)
@@ -348,25 +373,56 @@ def calculate_by_day_summary():
     """
     from student_registration.attendances.models import Attendance, BySchoolByDay
 
-    days = Attendance.objects.filter(
-        # select only validated attendances
-        validation_status=True
-    ).values(
+    days = Attendance.objects.values(
         # group by school and day
         'school_id',
-        'attendance_date'
     ).annotate(
         # create totals from raw data
         total_enrolled=Count('student'),
         total_attended=Count(Case(When(status=True, then=1))),
         total_absences=Count(Case(When(status=False, then=1))),
-        validated=Value(True, BooleanField())
+        total_attended_male=Count(Case(When(status=True, student__sex=u'Male', then=1))),
+        total_attended_female=Count(Case(When(status=True, student__sex=u'Female', then=1))),
+        total_absent_male=Count(Case(When(status=False, student__sex=u'Male', then=1))),
+        total_absent_female=Count(Case(When(status=False, student__sex=u'Female', then=1))),
     )
 
-    day_records = [BySchoolByDay(**day) for day in days]
+    select_fields = (
+        'school_id',
+        'attendance_date',
+        'total_enrolled',
+        'total_attended',
+        'total_absences',
+        'total_attended_male',
+        'total_attended_female',
+        'total_absent_male',
+        'total_absent_female',
+        'validation_status'
+    )
+
+    days_valid = days.filter(validation_status=True).values(*select_fields)
+    days_invalid = days.filter(validation_status=False).values(*select_fields)
+
+    day_records = [BySchoolByDay(**day) for day in days_valid | days_invalid]
 
     BySchoolByDay.objects.all().delete()
     BySchoolByDay.objects.bulk_create(day_records)
+
+    schools_valid = BySchoolByDay.objects.filter(
+        validation_status=True
+    ).values(
+        'school_id',
+    ).distinct().annotate(
+        attended=Max('total_attended')
+    )
+
+    for school in schools_valid:
+        school_instance = BySchoolByDay.objects.filter(
+            school_id=school['school_id'],
+            total_attended=school['attended']
+        ).latest('attendance_date')
+        school_instance.highest_attendance_rate = True
+        school_instance.save()
 
 
 def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
@@ -379,7 +435,7 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
     absentees = Attendance.objects.filter(
         # select only validated attendances
         validation_status=True,
-        attendance_date__gte=from_date,
+        attendance_date__gt=from_date,
         attendance_date__lte=to_date
     ).values(
         'student_id',
@@ -391,34 +447,62 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
         total_absents__gt=absent_threshold
     )
 
+    logger.info('{} absentees to process'.format(absentees.count()))
     for absentee in absentees:
 
         # for each absentee check if they have attended within the absent_threshold
-        attended_date = Attendance.objects.filter(
+        attendances = Attendance.objects.filter(
+            validation_status=True,
             school_id=absentee['school_id'],
             student_id=absentee['student_id'],
-            status=True
-        ).latest('attendance_date').attendance_date
+        )
 
-        if attended_date >= (to_date - timedelta(days=absent_threshold)):
-            Absentee.objects.filter(
+        last_attended_date = attendances.filter(status=True).latest('attendance_date').attendance_date \
+        if attendances.filter(status=True).count() else attendances.filter(status=False).earliest('attendance_date').attendance_date
+
+        late_threshold_date = (to_date - timedelta(days=absent_threshold))
+        if last_attended_date >= late_threshold_date:
+
+            first_absent_date=attendances.filter(
+                status=False,
+                attendance_date__lt=last_attended_date,
+                attendance_date__gte=from_date,
+            ).earliest('attendance_date').attendance_date
+
+            total_school_days_absent = Attendance.objects.filter(
+                attendance_date__lt=last_attended_date,
+                attendance_date__gte=first_absent_date
+            ).distinct('attendance_date').count()
+
+            absent_record, new = Absentee.objects.get_or_create(
                 school_id=absentee['school_id'],
                 student_id=absentee['student_id'],
-                reattend_date__isnull=True
-            ).update(
-                reattend_date=attended_date
+                last_attendance_date=first_absent_date,
             )
-            continue
 
-        absent_record, new = Absentee.objects.update_or_create(
-            school_id=absentee['school_id'],
-            student_id=absentee['student_id'],
-            last_attendance_date=attended_date,
-            absent_days=Attendance.objects.filter(
-                attendance_date__gt=attended_date,
-                attendance_date__lte=date.today()
+            absent_record.absent_days = total_school_days_absent
+            absent_record.reattend_date = late_threshold_date
+            absent_record.save()
+            logger.info('student {} attended on {}'.format(absentee['school_id'], last_attended_date))
+
+        else:
+
+            total_school_days_absent = Attendance.objects.filter(
+                attendance_date__gte=last_attended_date,
+                attendance_date__lte=to_date
             ).distinct('attendance_date').count()
-        )
-        absent_record.save()
+
+            absent_record, new = Absentee.objects.get_or_create(
+                school_id=absentee['school_id'],
+                student_id=absentee['student_id'],
+                last_attendance_date=last_attended_date,
+                reattend_date__isnull=True
+            )
+            absent_record.absent_days = total_school_days_absent
+            absent_record.save()
+
         if new:
             logger.info('New absent record for student {}'.format(absentee['student_id']))
+
+
+
