@@ -5,12 +5,77 @@ from django.db import models
 from django.contrib import admin
 
 from import_export.admin import ExportMixin
+from import_export import resources, fields, widgets
 
 from .models import (
+    School,
     Attendance,
     BySchoolByDay,
     Absentee
 )
+
+
+class BySchoolResource(resources.ModelResource):
+    governorate = fields.Field(
+        column_name='governorate',
+        attribute='school',
+        widget=widgets.ForeignKeyWidget(School, 'location_parent_name')
+    )
+    district = fields.Field(
+        column_name='district',
+        attribute='school',
+        widget=widgets.ForeignKeyWidget(School, 'location_name')
+    )
+
+    class Meta:
+        model = BySchoolByDay
+        fields = (
+            'school__number',
+            'school__name',
+            'governorate',
+            'district',
+            'attendance_date',
+            'total_enrolled',
+            'total_attended',
+            'total_attended_male',
+            'total_attended_female',
+            'total_absent_male',
+            'total_absent_female',
+            'validation_status',
+        )
+
+
+class BySchoolByDayAdmin(ExportMixin, admin.ModelAdmin):
+    resource_class = BySchoolResource
+    list_display = (
+        'school',
+        'attendance_date',
+        'total_enrolled',
+        'total_attended',
+        'total_absences',
+        'highest_attendance_rate',
+        'total_attended_male',
+        'total_attended_female',
+        'total_absent_male',
+        'total_absent_female',
+        'validation_status'
+    )
+    list_filter = (
+        'school__location',
+        'school',
+        'attendance_date',
+        'validation_status',
+        'highest_attendance_rate',
+    )
+    date_hierarchy = 'attendance_date'
+    ordering = ('-attendance_date',)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 class AttendanceAdmin(ExportMixin, admin.ModelAdmin):
 
@@ -40,31 +105,14 @@ class AttendanceAdmin(ExportMixin, admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
-
-class BySchoolByDayAdmin(admin.ModelAdmin):
-    list_display = (
-        'school',
-        'attendance_date',
-        'total_enrolled',
-        'total_attended',
-        'total_absences',
-        'validated'
-    )
-    list_filter = (
-        'school__location',
-        'school',
-        'attendance_date',
-    )
-    date_hierarchy = 'attendance_date'
-    ordering = ('-attendance_date',)
-
-    def has_add_permission(self, request):
+    def has_delete_permission(self, request, obj=None):
         return False
 
 
 class AbsenteeAdmin(admin.ModelAdmin):
     list_display = (
         'school',
+        'student_number',
         'student',
         'last_attendance_date',
         'absent_days',
@@ -77,6 +125,9 @@ class AbsenteeAdmin(admin.ModelAdmin):
     )
     date_hierarchy = 'last_attendance_date'
     ordering = ('-absent_days',)
+
+    def has_add_permission(self, request):
+        return False
 
 
 admin.site.register(Attendance, AttendanceAdmin)
