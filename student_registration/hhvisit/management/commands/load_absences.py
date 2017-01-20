@@ -191,7 +191,8 @@ def GetURLChildAbsences(absencesData):
              childAbsence.ToDate =toDate
              childAbsence.NumberOfDays = 10
 
-             childAbsences.append(childAbsence)
+             if childAbsence.StudentID is not None:
+                childAbsences.append(childAbsence)
 
     return childAbsences
 
