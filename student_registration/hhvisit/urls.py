@@ -32,6 +32,11 @@ urlpatterns = [
         view=views.LoadAbsences,
         name='household_visit_load_absences'
     ),
+    url(
+        regex=r'^save-absences/$',
+        view=views.SaveAbsences,
+        name='household_visit_save_absences'
+    ),
      url(
          regex=r'^student-absence/$',
          view=views.StudentAbsenceView.as_view(),
