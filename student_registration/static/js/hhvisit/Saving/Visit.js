@@ -222,9 +222,18 @@ alert(i);
 
              childRecord.id = trElement.find('td:nth-child(1)').html();
 
-             childRecord.main_reason_id = trElement.find('td:nth-child(6)').html();
 
-             childRecord.specific_reason_id = trElement.find('td:nth-child(7)').html();
+             var main_reason_id = trElement.find('td:nth-child(6)').html();
+             if ( main_reason_id != '')
+             {
+                childRecord.main_reason_id = main_reason_id;
+             }
+
+             var specific_reason_id = trElement.find('td:nth-child(7)').html();
+             if ( specific_reason_id != '')
+             {
+                childRecord.specific_reason_id = specific_reason_id;
+             }
 
              childRecord.household_visit_id = visitDataRecord.id;
 
@@ -354,6 +363,8 @@ alert(i);
                       $("#hhForm").hide();
 
                       $("#hhList").show();
+
+                      location.reload();
                    },
                    error:
                    function (response)

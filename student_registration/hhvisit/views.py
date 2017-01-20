@@ -248,31 +248,28 @@ def test(request):
     return HttpResponse(result)
 
 
+from django.conf import settings
+import requests
+
 def LoadAbsences(request):
 
-    #result = LoadAbsences()
+    received_data = requests.get(settings.ABSENCE_URL, headers={'Authorization': 'Token '+settings.ABSENCE_TOKEN})
+
+    result = received_data
+
+    return HttpResponse(result)
+
+def SaveAbsences(request):
+
+    received_data = requests.get(settings.ABSENCE_URL, headers={'Authorization': 'Token '+settings.ABSENCE_TOKEN})
 
     import json
-    received_json_data = json.loads(request.body)
-
+    received_json_data = json.loads(received_data.text)
 
     import student_registration.hhvisit.management.commands.load_absences
     student_registration.hhvisit.management.commands.load_absences.LoadAbsences(received_json_data)
 
     result = 'Absences were loaded successfully.'
-
-
-    #result = student_registration.hhvisit.management.commands.load_absences.GetURLChildAbsences(received_json_data)
-
-
-    #import pprint
-    #result = pprint.pformat(result)
-
-    #childAbsences = student_registration.hhvisit.commands.load_absences.GetDBChildrenAbsences('')
-
-    #result = student_registration.hhvisit.commands.load_absences.SaveChildAbsences(childAbsences)
-
-    #result = dumpobjectcontent(result)
 
     return HttpResponse(result)
 

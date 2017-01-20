@@ -335,3 +335,7 @@ SUIT_CONFIG = {
         {'app': 'locations', 'label': 'Locations', 'icon': 'icon-globe'},
     )
 }
+
+
+ABSENCE_URL = env('ABSENCE_URL', default='https://compile-prod.herokuapp.com/attendances/absents/')
+ABSENCE_TOKEN = env('ABSENCE_TOKEN', default='9fd81f96fa57ae2e6ba94064016615e231c82727')
