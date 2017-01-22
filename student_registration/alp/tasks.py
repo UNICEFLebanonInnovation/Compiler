@@ -84,7 +84,7 @@ def assign_section(section):
     )
     section = Section.objects.get(id=section)
 
-    print len(registrations), " registrations found"
+    print len(registrations), " ALP registrations found"
     print "Start assignment"
 
     for registry in registrations:
