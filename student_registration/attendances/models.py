@@ -110,6 +110,7 @@ class Absentee(TimeStampedModel):
     last_attendance_date = models.DateField(blank=True, null=True)
     absent_days = models.IntegerField(blank=True, null=True)
     reattend_date = models.DateField(blank=True, null=True)
+    validation_status = models.BooleanField(default=False)
 
     def student_number(self):
         return self.student.id
