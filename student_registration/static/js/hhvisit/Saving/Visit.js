@@ -7,6 +7,14 @@
            {
               date = new Date(getDateFromFormat(dateString, "dd/mm/yyyy"));
            }
+           else if(isDate(dateString, "d/mm/yyyy") )
+           {
+              date = new Date(getDateFromFormat(dateString, "d/mm/yyyy"));
+           }
+           else if(isDate(dateString, "dd/m/yyyy") )
+           {
+              date = new Date(getDateFromFormat(dateString, "dd/m/yyyy"));
+           }
            else
            {
               date = new Date(dateString);
@@ -80,11 +88,17 @@
 
            };
 
+           //var allVisitAttempts = CreateVisitAttemptsDataAll(true);
+
            <!--if(data.visit_attempt.length > 0)-->
            <!--{-->
               <!--data.visit_status = data.visit_attempt[0].household_not_found ? "pending" : "completed";-->
            <!--}-->
-           data.visit_status = data.visit_attempt[0].household_not_found ? "pending" : "completed";
+
+           //alert(JSON.stringify(allVisitAttempts));
+           //data.visit_status = allVisitAttempts[0].household_not_found ? "pending" : "completed";
+
+           data.visit_status = "completed";
 
            SaveVisitRecord(visitDataRecord.id, data);
         }
@@ -104,7 +118,13 @@
            );
         }
 
+
         function CreateVisitAttemptsData()
+        {
+            return CreateVisitAttemptsDataAll(false);
+        }
+
+        function CreateVisitAttemptsDataAll(addAll)
         {
            visitAttemptsData = [];
 
@@ -129,7 +149,10 @@
 
                  //alert(JSON.stringify(visitAttemptRecord));
 
-                 if(!visitAttemptRecord.id )
+                  alert(trElement.find('td:nth-child(2)').html());
+                  alert(FormatJSONDate((trElement.find('td:nth-child(2)').html()) ));
+alert(i);
+                 if( (i==0) || addAll )
                  {
                     visitAttemptsData.push(visitAttemptRecord);
                  }
@@ -199,9 +222,18 @@
 
              childRecord.id = trElement.find('td:nth-child(1)').html();
 
-             childRecord.main_reason_id = trElement.find('td:nth-child(6)').html();
 
-             childRecord.specific_reason_id = trElement.find('td:nth-child(7)').html();
+             var main_reason_id = trElement.find('td:nth-child(6)').html();
+             if ( main_reason_id != '')
+             {
+                childRecord.main_reason_id = main_reason_id;
+             }
+
+             var specific_reason_id = trElement.find('td:nth-child(7)').html();
+             if ( specific_reason_id != '')
+             {
+                childRecord.specific_reason_id = specific_reason_id;
+             }
 
              childRecord.household_visit_id = visitDataRecord.id;
 
@@ -331,6 +363,8 @@
                       $("#hhForm").hide();
 
                       $("#hhList").show();
+
+                      location.reload();
                    },
                    error:
                    function (response)
