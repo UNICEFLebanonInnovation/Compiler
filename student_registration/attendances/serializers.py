@@ -52,7 +52,6 @@ class AbsenteeSerializer(serializers.ModelSerializer):
         fields = (
             'school_id',
             'school_name',
-            'location_id',
             'school_location',
             'school_location_id',
             'student_id',
