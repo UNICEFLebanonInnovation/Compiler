@@ -164,6 +164,9 @@ class ExportViewSet(LoginRequiredMixin, ListView):
 
 
 class AbsenteeView(ListAPIView):
-    queryset = Absentee.objects.all()
+    """
+    API endpoint for validated absentees
+    """
+    queryset = Absentee.objects.filter(validation_status=True)
     serializer_class = AbsenteeSerializer
     permission_classes = (permissions.IsAdminUser,)
