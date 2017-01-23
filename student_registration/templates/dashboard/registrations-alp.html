@@ -396,7 +396,7 @@
           y: 'bottom',
           data: [
                   {% for nationality,numberofadults in students_by_nationality.items %}
-                        '{{ nationality }}',
+                        '{{ nationality }}' + ' ' +  '{{ numberofadults }}',
                     {% endfor %}
           ]
         },
@@ -435,7 +435,7 @@
                   {% for nationality,numberofadults in students_by_nationality.items %}
                         {
                     value: {{ numberofadults }},
-                    name: '{{ nationality }}'
+                    name: '{{ nationality }}' + ' ' +  '{{ numberofadults }}'
                   },
                     {% endfor %}
               ]
