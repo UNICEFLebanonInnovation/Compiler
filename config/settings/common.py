@@ -41,6 +41,9 @@ DJANGO_APPS = (
     # Admin
     'suit',
     'django.contrib.admin',
+    'markdown_deux',  # Required for Knowledgebase item formatting
+    'bootstrapform', # Required for nicer formatting of forms with the default templates
+    'helpdesk',  # This is us!
 )
 THIRD_PARTY_APPS = (
     'crispy_forms',  # Form layouts
