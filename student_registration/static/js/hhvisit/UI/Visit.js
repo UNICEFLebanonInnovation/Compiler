@@ -17,8 +17,6 @@
         {
            visitDataRecord = visitData;
 
-           //alert(JSON.stringify(visitData));
-
            $("#hhVisitName").text(visitData.first_name+' '+visitData.father_name+' '+visitData.last_name);
            $("#hhAllvisitAttemptCount").text(visitData.all_visit_attempt_count);
 
