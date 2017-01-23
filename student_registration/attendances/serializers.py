@@ -35,7 +35,6 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
 
 class AbsenteeSerializer(serializers.ModelSerializer):
-    school_id = serializers.IntegerField(source='school.id', read_only=True)
     student_id = serializers.IntegerField(source='student.id', read_only=True)
     student_full_name = serializers.CharField(source='student.full_name', read_only=True)
     student_first_name = serializers.CharField(source='student.first_name', read_only=True)
@@ -44,6 +43,7 @@ class AbsenteeSerializer(serializers.ModelSerializer):
     student_number = serializers.CharField(source='student.number', read_only=True)
     student_sex = serializers.CharField(source='student.sex', read_only=True)
     school_name = serializers.CharField(source='school.name', read_only=True)
+    school_id = serializers.IntegerField(source='school.id', read_only=True)
     school_location = serializers.CharField(source='school.location.name', read_only=True)
     school_location_id = serializers.CharField(source='school.location.id', read_only=True)
 
