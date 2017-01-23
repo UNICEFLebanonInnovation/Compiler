@@ -109,7 +109,35 @@ class AttendanceAdmin(ExportMixin, admin.ModelAdmin):
         return False
 
 
-class AbsenteeAdmin(admin.ModelAdmin):
+class AbsenteeResource(resources.ModelResource):
+    governorate = fields.Field(
+        column_name='governorate',
+        attribute='school',
+        widget=widgets.ForeignKeyWidget(School, 'location_parent_name')
+    )
+    district = fields.Field(
+        column_name='district',
+        attribute='school',
+        widget=widgets.ForeignKeyWidget(School, 'location_name')
+    )
+
+    class Meta:
+        model = Absentee
+        fields = (
+            'school__number',
+            'school__name',
+            'governorate',
+            'district',
+            'student_number',
+            'student__full_name',
+            'last_attendance_date',
+            'absent_days',
+            'reattend_date',
+        )
+
+
+class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
+    resource_class = AbsenteeResource
     list_display = (
         'school',
         'student_number',
@@ -126,8 +154,13 @@ class AbsenteeAdmin(admin.ModelAdmin):
     date_hierarchy = 'last_attendance_date'
     ordering = ('-absent_days',)
 
+    actions = ('validate_absentees',)
+
     def has_add_permission(self, request):
         return False
+
+    def validate_absentees(self, request, queryset):
+        queryset.update(validation_status=True)
 
 
 admin.site.register(Attendance, AttendanceAdmin)
