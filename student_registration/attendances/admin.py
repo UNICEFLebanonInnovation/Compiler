@@ -145,6 +145,7 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         'last_attendance_date',
         'absent_days',
         'reattend_date',
+        'validation_status',
     )
     list_filter = (
         'school__location',
