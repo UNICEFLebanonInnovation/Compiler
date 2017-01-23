@@ -90,14 +90,6 @@
 
            //var allVisitAttempts = CreateVisitAttemptsDataAll(true);
 
-           <!--if(data.visit_attempt.length > 0)-->
-           <!--{-->
-              <!--data.visit_status = data.visit_attempt[0].household_not_found ? "pending" : "completed";-->
-           <!--}-->
-
-           //alert(JSON.stringify(allVisitAttempts));
-           //data.visit_status = allVisitAttempts[0].household_not_found ? "pending" : "completed";
-
            data.visit_status = "completed";
 
            SaveVisitRecord(visitDataRecord.id, data);
@@ -107,7 +99,7 @@
         {
            var visitAttemptsData = CreateVisitAttemptsData();
 
-           alert(JSON.stringify(visitAttemptsData));
+           // alert(JSON.stringify(visitAttemptsData));
 
            visitAttemptsData.forEach
            (
@@ -147,11 +139,10 @@
 
                  visitAttemptRecord.household_visit_id = visitDataRecord.id;
 
-                 //alert(JSON.stringify(visitAttemptRecord));
-
-                  alert(trElement.find('td:nth-child(2)').html());
-                  alert(FormatJSONDate((trElement.find('td:nth-child(2)').html()) ));
-alert(i);
+                  // alert(JSON.stringify(visitAttemptRecord));
+                  // alert(trElement.find('td:nth-child(2)').html());
+                  // alert(FormatJSONDate((trElement.find('td:nth-child(2)').html()) ));
+                  // alert(i);
                  if( (i==0) || addAll )
                  {
                     visitAttemptsData.push(visitAttemptRecord);
@@ -337,8 +328,6 @@ alert(i);
         {
            $(".loader").show();
 
-           <!--alert(JSON.stringify(data));-->
-
            $.ajax
            (
               {
@@ -353,24 +342,19 @@ alert(i);
                    {
                       HideLoader();
 
-                      if(jqXHR.status == 200)
-                      {
-                         alert("Success");
-                      }
-
-                      <!--alert(response);-->
-
+                      // if(jqXHR.status == 200)
+                      // {
+                      //    alert("Success");
+                      // }
                       $("#hhForm").hide();
-
                       $("#hhList").show();
-
                       location.reload();
                    },
                    error:
                    function (response)
                    {
                       HideLoader();
-                      alert("Failure");
+                      // alert("Failure");
                    }
               }
             );
