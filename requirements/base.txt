@@ -1,7 +1,7 @@
 
 
 # Bleeding edge Django
-django==1.9.6
+django==1.10.5
 
 # Configuration
 django-environ==0.4.0
@@ -43,10 +43,10 @@ redis>=2.10.0
 celery==3.1.23
 
 django-datatables-view==1.13.0
-django-mptt==0.8.4
+django-mptt==0.8.6
 django-paintstore==0.2
 django-makemessages-xgettext==0.1.1
-djangorestframework==3.3.3
+djangorestframework==3.5.3
 markdown==2.6.6
 django-filter==0.13.0
 django-rest-swagger==0.3.5
@@ -56,5 +56,6 @@ tablib==0.11.2
 django-import-export==0.5.0
 django-suit==0.2.21
 django-autocomplete-light==3.2.1
+django-helpdesk==0.1.18
 
 # Your custom requirements go here
