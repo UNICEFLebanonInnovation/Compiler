@@ -59,8 +59,9 @@ class Beneficiary(models.Model):
         ordering = ['case_number']
         verbose_name_plural = "Beneficiaries"
 
+    @property
     def amount(self):
-        return self.total_children * 40
+        return '{} {}'.format(self.total_children * 40, 'USD')
 
     def __unicode__(self):
         return self.case_number
