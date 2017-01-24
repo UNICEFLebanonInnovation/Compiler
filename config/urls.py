@@ -101,6 +101,7 @@ urlpatterns = [
     url(r'^locations/', include('student_registration.locations.urls', namespace='locations')),
     url(r'^dashboard/', include('student_registration.dashboard.urls', namespace='dashboard')),
     url(r'helpdesk/', include('helpdesk.urls')),
+    url(r'^winterizations/', include('student_registration.winterizations.urls', namespace='winterization')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     # url(r'^api/docs/', include('rest_framework_swagger.urls')),
