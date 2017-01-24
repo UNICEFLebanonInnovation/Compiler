@@ -42,7 +42,7 @@ DJANGO_APPS = (
     'suit',
     'django.contrib.admin',
     'markdown_deux',  # Required for Knowledgebase item formatting
-    'bootstrapform', # Required for nicer formatting of forms with the default templates
+    'bootstrapform',  # Required for nicer formatting of forms with the default templates
     'helpdesk',  # This is us!
 )
 THIRD_PARTY_APPS = (
@@ -70,6 +70,7 @@ LOCAL_APPS = (
     'student_registration.eav',  # custom EAV app
     'student_registration.hhvisit',  # custom HH Visit app
     'student_registration.dashboard',  # custom dashboard app
+    'student_registration.helpdesks',  # custom helpdesk app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -320,6 +321,8 @@ SUIT_CONFIG = {
 
     'MENU': (
         {'label': 'View site', 'icon': 'icon-home', 'url': "/"},
+        {'app': 'helpdesk', 'label': 'Helpdesk Config', 'icon': 'icon-info-sign'},
+        {'app': 'helpdesks', 'label': 'Helpdesk Config', 'icon': 'icon-info-sign'},
         {'label': 'Dashboard', 'icon': 'icon-home', 'models': [
             {'url': '/dashboard/registrations-pilot/', 'label': 'PILOT'},
             {'url': '/dashboard/registrations-2ndshift/', 'label': '2nd Shift'},
