@@ -71,6 +71,7 @@ LOCAL_APPS = (
     'student_registration.hhvisit',  # custom HH Visit app
     'student_registration.dashboard',  # custom dashboard app
     'student_registration.helpdesks',  # custom helpdesk app
+    'student_registration.winterizations',  # custom winterizations app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -337,6 +338,7 @@ SUIT_CONFIG = {
         {'app': 'schools', 'label': 'Schools', 'icon': 'icon-th-list'},
         {'app': 'hhvisit', 'label': 'House Hold Visit', 'icon': 'icon-th-list'},
         {'app': 'attendances', 'label': 'Attendances', 'icon': 'icon-th-list'},
+        {'app': 'winterizations', 'label': 'Winterizations', 'icon': 'icon-th-list'},
         {'app': 'locations', 'label': 'Locations', 'icon': 'icon-globe'},
     )
 }
