@@ -14,16 +14,14 @@
               }
            );
 
-           if(!servicesValid)
-           {
-              alert("Services invalid");
-              //$("#household_not_found_error").show();
-           }
-           else
-           {
-              alert("Services valid");
-              //$("#household_not_found_error").hide();
-           }
+           // if(!servicesValid)
+           // {
+           //    alert("Services invalid");
+           // }
+           // else
+           // {
+           //    alert("Services valid");
+           // }
 
            return servicesValid;
         }

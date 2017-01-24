@@ -9,9 +9,6 @@ function CheckInitialiseSly()
 
       onePerFrameSly = initializeSly($('#oneperframe'));
 
-      //alert("Sly initialised");
-      //alert(JSON.stringify(onePerFrameSly));
-
       $("#previousButton").click(function()
       {
         onePerFrameSly.prev();
