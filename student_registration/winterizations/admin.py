@@ -25,7 +25,11 @@ class BeneficiaryAdmin(ImportExportModelAdmin):
     resource_class = BeneficiaryResource
     list_display = (
         'case_number', 'registration_status', 'location_type', 'governorate', 'district', 'cadastral',
-        'phone_number', 'total_children', 'card_distributed', 'card_loaded'
+        'phone_number', 'total_children', 'amount', 'card_distributed', 'card_loaded',
+    )
+    list_filter = (
+        'registration_status', 'location_type', 'governorate', 'district', 'cadastral',
+        'card_distributed', 'card_loaded'
     )
     search_fields = (
         'case_number', 'registration_status', 'location_type', 'governorate', 'district', 'cadastral',
