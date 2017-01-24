@@ -3,8 +3,6 @@
         function LoadVisit(visitID)
         {
            $(".loader").show();
-
-        <!--alert(hhVisitURL+visitID);-->
            $.ajax({
                      type: "GET",
                      url: hhVisitURL+visitID,
@@ -19,7 +17,7 @@
                      },
                      error: function (response) {
                         HideLoader();
-                        var required_fields = JSON.parse(response.responseText);
+                        // var required_fields = JSON.parse(response.responseText);
                         console.log(response);
                      }
                  });
