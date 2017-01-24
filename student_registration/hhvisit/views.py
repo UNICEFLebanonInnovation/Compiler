@@ -251,6 +251,9 @@ def test(request):
 from django.conf import settings
 import requests
 
+from student_registration.registrations.models import (
+    Registration
+)
 def LoadAbsences(request):
 
     received_data = requests.get(settings.ABSENCE_URL, headers={'Authorization': 'Token '+settings.ABSENCE_TOKEN})
