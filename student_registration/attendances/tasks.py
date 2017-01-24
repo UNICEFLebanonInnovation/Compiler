@@ -107,7 +107,7 @@ def set_app_attendances(school_number=None, school_type=None):
     from student_registration.alp.models import Outreach
     from student_registration.enrollments.models import Enrollment
     from student_registration.attendances.models import Attendance
-    from student_registration.schools.models import School, ClassRoom, Section, ClassLevel
+    from student_registration.schools.models import School, ClassRoom, Section, EducationLevel
 
     docs = []
     enrollment_model = Outreach if school_type == 'alp' else Enrollment
@@ -140,7 +140,7 @@ def set_app_attendances(school_number=None, school_type=None):
     logger.info('{} documents to process'.format(registrations.count()))
     for reg in registrations:
         school = School.objects.get(id=reg['school'])
-        classroom = ClassLevel.objects.get(id=reg['registered_in_level']) if school_type == 'alp' \
+        classroom = EducationLevel.objects.get(id=reg['registered_in_level']) if school_type == 'alp' \
                     else ClassRoom.objects.get(id=reg['classroom'])
 
         section = Section.objects.get(id=reg['section'])
@@ -290,7 +290,7 @@ def import_docs(**kwargs):
     Imports attendance docs from couch base server
     """
     from student_registration.attendances.models import Attendance
-    from student_registration.schools.models import ClassRoom, ClassLevel
+    from student_registration.schools.models import ClassRoom, EducationLevel
 
     try:
         data = get_docs()
@@ -324,7 +324,7 @@ def import_docs(**kwargs):
                             attendance_record.status = student['status']
                             attendance_record.absence_reason = student['value']
                             if school_type == 'alp':
-                                attendance_record.class_level_id = class_id
+                                attendance_record.classlevel_id = class_id
                             else:
                                 attendance_record.classroom_id = class_id
                             if validation_date:
