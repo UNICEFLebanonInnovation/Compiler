@@ -71,7 +71,7 @@ LOCAL_APPS = (
     'student_registration.hhvisit',  # custom HH Visit app
     'student_registration.dashboard',  # custom dashboard app
     'student_registration.helpdesks',  # custom helpdesk app
-    'student_registration.winterizations',  # custom winterizations app
+    'student_registration.winterization',  # custom winterization app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -323,7 +323,6 @@ SUIT_CONFIG = {
     'MENU': (
         {'label': 'View site', 'icon': 'icon-home', 'url': "/"},
         {'app': 'helpdesk', 'label': 'Helpdesk Config', 'icon': 'icon-info-sign'},
-        {'app': 'helpdesks', 'label': 'Helpdesk Config', 'icon': 'icon-info-sign'},
         {'label': 'Dashboard', 'icon': 'icon-home', 'models': [
             {'url': '/dashboard/registrations-pilot/', 'label': 'PILOT'},
             {'url': '/dashboard/registrations-2ndshift/', 'label': '2nd Shift'},
@@ -338,11 +337,15 @@ SUIT_CONFIG = {
         {'app': 'schools', 'label': 'Schools', 'icon': 'icon-th-list'},
         {'app': 'hhvisit', 'label': 'House Hold Visit', 'icon': 'icon-th-list'},
         {'app': 'attendances', 'label': 'Attendances', 'icon': 'icon-th-list'},
-        {'app': 'winterizations', 'label': 'Winterizations', 'icon': 'icon-th-list'},
+        {'app': 'winterization', 'label': 'Winterization', 'icon': 'icon-th-list'},
         {'app': 'locations', 'label': 'Locations', 'icon': 'icon-globe'},
     )
 }
 
+HELPDESK_TRANSLATE_TICKET_COMMENTS = True
+HELPDESK_SHOW_DELETE_BUTTON_SUPERUSER_FOLLOW_UP = True
+HELPDESK_STAFF_ONLY_TICKET_OWNERS = True
+HELPDESK_STAFF_ONLY_TICKET_CC = True
 
 ABSENCE_URL = env('ABSENCE_URL', default='NO URL for absentees set in the environment')
 ABSENCE_TOKEN = env('ABSENCE_TOKEN', default='No token for absentees URL set')
