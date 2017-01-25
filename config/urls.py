@@ -105,7 +105,7 @@ urlpatterns = [
     url(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    # url(r'^api/docs/', include('rest_framework_swagger.urls')),
+    url(r'^api/docs/', include('rest_framework_swagger.urls')),
 
     url(r'^api/', include(api.urls)),
 
