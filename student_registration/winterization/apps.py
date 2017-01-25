@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 
 class WinterizationsConfig(AppConfig):
-    name = 'winterizations'
+    name = 'winterization'
