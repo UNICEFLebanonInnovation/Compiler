@@ -267,6 +267,8 @@
 
                  childServiceRecord.service_provider = trElement.find('td:nth-child(3) input').val();
 
+                childServiceRecord.service_provider_followup = trElement.find('td:nth-child(4) input').is(':checked')
+
                  childServiceRecord.child_visit_id = childVisitID;
 
                  childServiceData.push(childServiceRecord);
