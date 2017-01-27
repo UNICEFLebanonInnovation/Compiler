@@ -215,6 +215,8 @@ class ChildService(models.Model):
     )
     service_provider = models.CharField(max_length=255, blank=True, null=True)
 
+    service_provider_followup = models.BooleanField(blank=True, default=False)
+
     class Meta:
         ordering = ['id']
 
