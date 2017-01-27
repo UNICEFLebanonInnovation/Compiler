@@ -74,6 +74,7 @@ class ChildServiceSerializer(serializers.ModelSerializer):
             'service_type_id',
             'service_type',
             'service_provider',
+            'service_provider_followup',
             'child_visit_id'
         )
 
