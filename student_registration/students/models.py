@@ -6,7 +6,6 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from mptt.models import MPTTModel
 from .utils import *
 from datetime import date
 import datetime
