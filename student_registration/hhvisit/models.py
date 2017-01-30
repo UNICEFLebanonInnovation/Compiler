@@ -160,14 +160,15 @@ class ChildVisit(TimeStampedModel):
         related_name='+',
     )
     child_enrolled_in_another_school = models.BooleanField(default=False)
+
     main_reason = models.ForeignKey(
         MainReason,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     specific_reason = models.ForeignKey(
         SpecificReason,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     specific_reason_other_specify = models.CharField(max_length=255, blank=True, null=True)
@@ -213,6 +214,8 @@ class ChildService(models.Model):
         related_name='+',
     )
     service_provider = models.CharField(max_length=255, blank=True, null=True)
+
+    service_provider_followup = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['id']
