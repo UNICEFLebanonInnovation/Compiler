@@ -8,7 +8,7 @@
 
         function AddServiceRow(editForm, entry)
         {
-           var serviceIDCell = "<td style = \"display:none\">"+(entry.id)+"</td>";
+           var serviceIDCell = "<td style = \"display:none\">"+(entry.id!=null?entry.id:'')+"</td>";
 
            var serviceTypeCell = "<td>"+editForm.find("[name=childServiceType]").html()+"</td>";
 

@@ -258,7 +258,16 @@
 
                  childServiceRecord = new Object();
 
-                 childServiceRecord.id = trElement.find('td:nth-child(1)').html();
+                 childServiceRecordID= trElement.find('td:nth-child(1)').html();
+
+                 if(childServiceRecordID != '')
+                 {
+                     childServiceRecord.id = trElement.find('td:nth-child(1)').html();
+                 }
+                 else
+                 {
+                      childServiceRecord.id = null;
+                 }
 
                  dropDownElement = trElement.find('td:nth-child(2) select');
 
@@ -267,7 +276,7 @@
 
                  childServiceRecord.service_provider = trElement.find('td:nth-child(3) input').val();
 
-                childServiceRecord.service_provider_followup = trElement.find('td:nth-child(4) input').is(':checked')
+                 childServiceRecord.service_provider_followup = trElement.find('td:nth-child(4) input').is(':checked')
 
                  childServiceRecord.child_visit_id = childVisitID;
 
