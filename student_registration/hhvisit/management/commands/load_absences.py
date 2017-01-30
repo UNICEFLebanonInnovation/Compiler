@@ -184,7 +184,10 @@ def GetURLChildAbsences(absencesData):
              fromDate = attendanceDate + datetime2.timedelta(days=x*14)
              toDate = attendanceDate + datetime2.timedelta(days=(x*14)+9)
 
-             studentID = Student.objects.filter(number=studentAbsence['student_number']).values_list('id', flat=True).first()
+             studentID = Registration.objects.filter \
+                         ( \
+                             student__number=studentAbsence['student_number'], \
+                         ).values_list('student__id', flat=True).first()
 
              childAbsence.StudentID =studentID
              childAbsence.FromDate =fromDate

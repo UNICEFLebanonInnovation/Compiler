@@ -84,6 +84,7 @@
                                       <option value="{{ value }}">{{ text }}</option>
                                 {% endfor %}
                               </select>
+                                <span class="error" id="primary_phone_answered_error">{% trans "Phone Number are normally answered by is missing" %}</span>
                             </div>
 
                              <div class="line">
@@ -100,6 +101,7 @@
                                       <option value="{{ value }}">{{ text }}</option>
                                 {% endfor %}
                               </select>
+                            <span class="error" id="secondary_phone_answered_error">{% trans "Phone Number are normally answered by is missing" %}</span>
                             </div>
                           </div>
                           <div class="line" id = "addressFields" style="display:none">
