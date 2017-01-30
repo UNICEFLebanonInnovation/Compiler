@@ -213,17 +213,26 @@
 
              childRecord.id = trElement.find('td:nth-child(1)').html();
 
-
              var main_reason_id = trElement.find('td:nth-child(6)').html();
+
              if ( main_reason_id != '')
              {
                 childRecord.main_reason_id = main_reason_id;
              }
+             else
+             {
+                childRecord.main_reason_id = null;
+             }
 
              var specific_reason_id = trElement.find('td:nth-child(7)').html();
+
              if ( specific_reason_id != '')
              {
                 childRecord.specific_reason_id = specific_reason_id;
+             }
+             else
+             {
+                childRecord.specific_reason_id = null;
              }
 
              childRecord.household_visit_id = visitDataRecord.id;
@@ -257,6 +266,8 @@
                  childServiceRecord.service_type = dropDownElement.find('option[value="'+childServiceRecord.service_type_id+'"]').text().trim();
 
                  childServiceRecord.service_provider = trElement.find('td:nth-child(3) input').val();
+
+                childServiceRecord.service_provider_followup = trElement.find('td:nth-child(4) input').is(':checked')
 
                  childServiceRecord.child_visit_id = childVisitID;
 
