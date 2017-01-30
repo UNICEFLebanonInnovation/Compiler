@@ -349,9 +349,13 @@ def import_docs(**kwargs):
         )
         logger.info('absentees updated')
     except Exception as exp:
+<<<<<<< HEAD
+=======
         #TAREK EDIT: The below line was breaking the script since 'row' is undefined. commenting out for now since it is only a logger within the exception block.
         #logger.info('importing doc: {}'.format(row['doc']['_id']))
+>>>>>>> develop
         logger.exception(exp)
+        raise exp
 
 
 def calculate_attendance_and_absentees():
