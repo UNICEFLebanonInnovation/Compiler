@@ -11,7 +11,11 @@
               {
                  trElement = $(obj);
 
-                 attemptsValid = attemptsValid && ValidateAttempt(trElement);
+
+                 if(i==0)
+                 {
+                    attemptsValid = attemptsValid && ValidateAttempt(trElement);
+                 }
 
               }
            );
