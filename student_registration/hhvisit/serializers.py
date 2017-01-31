@@ -45,6 +45,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ChildServiceSerializer(serializers.ModelSerializer):
 
+
     service_type_id = serializers.IntegerField()
     service_type = serializers.CharField(source='service_type.name', read_only=True)
 

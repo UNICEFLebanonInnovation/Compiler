@@ -46,11 +46,11 @@
                           {
                             var mainReasonID = editForm.find("[name=childMainReason]").val();
 
-                            row.find("td:nth-child(6)").html(mainReasonID);
+                            row.find("td:nth-child(6)").html(mainReasonID!=null?mainReasonID:'');
 
                             var specificReasonID = editForm.find("[name=childSpecificReason]").val();
 
-                            row.find("td:nth-child(7)").html(specificReasonID);
+                            row.find("td:nth-child(7)").html(specificReasonID!=null?specificReasonID:'');
 
                             var isEnrolled =
                             GetBooleanSelection
