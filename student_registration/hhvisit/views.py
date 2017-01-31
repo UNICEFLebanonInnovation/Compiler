@@ -11,6 +11,11 @@ from rest_framework import viewsets, mixins, permissions
 from student_registration.hhvisit.forms import (
     HouseholdVisitForm
 )
+
+from student_registration.registrations.models import (
+    RegisteringAdult
+)
+
 from student_registration.hhvisit.models import (
     MainReason,
     ServiceType,
@@ -211,6 +216,20 @@ class HouseholdVisitListSupervisorView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         data = []
+
+        # locations = HouseholdVisit.registering_adult.school.location.objects.all()
+        # location_ids = HouseholdVisit.registering_adults.school.objects.all()
+        # locations = Location.objects.filter(location_id__in=location_ids)
+
+
+        # location_ids = HouseholdVisit.registering_adult.school.objects.values_list('location_id', flat=True)
+        # locations = Location.objects.filter(location_id__in=location_ids)
+
+
+        # locations = Location.objects.filter(school__registering_adult__household_visit__isnull=False)
+        # A.objects.filter(b__c__isnull=False)
+
+        # locations = Location.objects.filter(school__registering_adult__household_visit__ID__isNull=False)
         locations = Location.objects.all().filter(type_id=2).order_by('name')
         location = self.request.GET.get("location", 0)
         if location:
