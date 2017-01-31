@@ -82,9 +82,9 @@ def get_doc_from_key(docs):
     keys = {"keys":[]}
     for row in rows:
         keys['keys'].append(row)
-        if i % 100 == 0 or i == len(rows):
+        if i % 1000 == 0 or i == len(rows):
             #print keys
-            
+
             response = requests.post(
             os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
             headers={'content-type': 'application/json'},
