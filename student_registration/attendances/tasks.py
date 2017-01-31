@@ -82,7 +82,7 @@ def get_doc_from_key(docs):
     keys = {"keys":[]}
     for row in rows:
         keys['keys'].append(row)
-        if i % 1000 == 0 or i == len(rows):
+        if i % 1000  == 0 or i == len(rows):
             #print keys
 
             response = requests.post(
