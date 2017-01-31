@@ -12,8 +12,8 @@
 
            var ageCell = "<td>"+(entry.calculate_age)+"</td>";
 
-           var mainReasonCell = "<td style = \"display:none;\">"+(entry.main_reason_id)+"</td>";
-           var subReasonCell = "<td style = \"display:none;\">"+(entry.specific_reason_id)+"</td>";
+           var mainReasonCell = "<td style = \"display:none;\">"+(entry.main_reason_id!=null?entry.main_reason_id:'')+"</td>";
+           var subReasonCell = "<td style = \"display:none;\">"+(entry.specific_reason_id!=null?entry.specific_reason_id:'')+"</td>";
 
            var isEnrolled = (entry.child_enrolled_in_another_school==null?false:entry.child_enrolled_in_another_school);
            var isEnrolledCell = "<td style = \"display:none;\">"+isEnrolled+"</td>";
