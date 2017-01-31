@@ -7,6 +7,7 @@ import unicodedata
 from datetime import datetime, date, timedelta
 
 import requests
+import re
 from requests.auth import HTTPBasicAuth
 
 from django.conf import settings
@@ -61,11 +62,48 @@ def get_app_collection(bulk_name):
     return 0
 
 
-def get_docs():
+
+
+def get_docs(all_docs=True):
     return requests.get(
-        os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+        os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs={}'.format('true' if all_docs else 'false')),
         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
     ).json()
+
+
+def get_doc_from_key(docs):
+    rows=[]
+    for row in docs['rows']:
+       if re.match('^\d+-\d+-\d+$',row["id"]) or re.match('^\d+-\d+-\d+-alp$',row["id"]):
+        rows.append(row["id"])
+
+    i = 1
+    data = {'rows':[]}
+    keys = {"keys":[]}
+    for row in rows:
+        keys['keys'].append(row)
+        if i % 1000  == 0 or i == len(rows):
+            #print keys
+
+            response = requests.post(
+            os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+            headers={'content-type': 'application/json'},
+            auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS),
+            data= json.dumps(keys)).json()
+
+            data['rows'].extend(response['rows'])
+            #print len(keys['keys'])
+            keys['keys'] = []
+        i+=1
+
+    return data
+
+
+# def get_docs():
+#     return requests.get(
+#         os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+#         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
+#     ).json()
 
 
 def get_doc(doc_id):
@@ -293,7 +331,10 @@ def import_docs(**kwargs):
     from student_registration.schools.models import ClassRoom, EducationLevel
 
     try:
-        data = get_docs()
+
+        couchbase_docs = get_docs(False)
+        data = get_doc_from_key(couchbase_docs)
+
         attendance_records = []
         logger.info('processing {} docs'.format(len(data['rows'])))
         with transaction.atomic():
@@ -349,8 +390,6 @@ def import_docs(**kwargs):
         )
         logger.info('absentees updated')
     except Exception as exp:
-        #TAREK EDIT: The below line was breaking the script since 'row' is undefined. commenting out for now since it is only a logger within the exception block.
-        #logger.info('importing doc: {}'.format(row['doc']['_id']))
         logger.exception(exp)
         raise exp
 
