@@ -322,7 +322,8 @@ SUIT_CONFIG = {
 
     'MENU': (
         {'label': 'View site', 'icon': 'icon-home', 'url': "/"},
-        {'app': 'helpdesk', 'label': 'Helpdesk Config', 'icon': 'icon-info-sign'},
+        {'app': 'helpdesk', 'label': 'HelpDesk Config', 'icon': 'icon-info-sign'},
+        {'label': 'HelpDesk Public', 'icon': 'icon-info-sign', 'url': '/helpdesk/dashboard/'},
         {'label': 'Dashboard', 'icon': 'icon-home', 'models': [
             {'url': '/dashboard/registrations-pilot/', 'label': 'PILOT'},
             {'url': '/dashboard/registrations-2ndshift/', 'label': '2nd Shift'},
