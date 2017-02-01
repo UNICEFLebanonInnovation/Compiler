@@ -21,6 +21,7 @@
            $("#household-visit-child-table tbody").append
            (
               "<tr class = \"child-row-class\" >"+childIDCell+childNameCell+schoolCell+gradeCell+ageCell+mainReasonCell+subReasonCell+isEnrolledCell+"</tr>"
+
            );
         }
 
