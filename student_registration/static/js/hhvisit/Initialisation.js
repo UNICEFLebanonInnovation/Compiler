@@ -59,7 +59,11 @@
                '#hhSaveButton',
                function()
                {
-                  SaveVisit();
+                   if(ValidateAttempts())
+                   {
+                       SaveVisit();
+                   }
+
                }
              );
 
