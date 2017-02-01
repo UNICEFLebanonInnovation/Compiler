@@ -7,6 +7,7 @@ import unicodedata
 from datetime import datetime, date, timedelta
 
 import requests
+import re
 from requests.auth import HTTPBasicAuth
 
 from django.conf import settings
@@ -61,11 +62,48 @@ def get_app_collection(bulk_name):
     return 0
 
 
-def get_docs():
+
+
+def get_docs(all_docs=True):
     return requests.get(
-        os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+        os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs={}'.format('true' if all_docs else 'false')),
         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
     ).json()
+
+
+def get_doc_from_key(docs):
+    rows=[]
+    for row in docs['rows']:
+       if re.match('^\d+-\d+-\d+$',row["id"]) or re.match('^\d+-\d+-\d+-alp$',row["id"]):
+        rows.append(row["id"])
+
+    i = 1
+    data = {'rows':[]}
+    keys = {"keys":[]}
+    for row in rows:
+        keys['keys'].append(row)
+        if i % 1000  == 0 or i == len(rows):
+            #print keys
+
+            response = requests.post(
+            os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+            headers={'content-type': 'application/json'},
+            auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS),
+            data= json.dumps(keys)).json()
+
+            data['rows'].extend(response['rows'])
+            #print len(keys['keys'])
+            keys['keys'] = []
+        i+=1
+
+    return data
+
+
+# def get_docs():
+#     return requests.get(
+#         os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+#         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
+#     ).json()
 
 
 def get_doc(doc_id):
@@ -107,7 +145,7 @@ def set_app_attendances(school_number=None, school_type=None):
     from student_registration.alp.models import Outreach
     from student_registration.enrollments.models import Enrollment
     from student_registration.attendances.models import Attendance
-    from student_registration.schools.models import School, ClassRoom, Section, ClassLevel
+    from student_registration.schools.models import School, ClassRoom, Section, EducationLevel
 
     docs = []
     enrollment_model = Outreach if school_type == 'alp' else Enrollment
@@ -140,7 +178,7 @@ def set_app_attendances(school_number=None, school_type=None):
     logger.info('{} documents to process'.format(registrations.count()))
     for reg in registrations:
         school = School.objects.get(id=reg['school'])
-        classroom = ClassLevel.objects.get(id=reg['registered_in_level']) if school_type == 'alp' \
+        classroom = EducationLevel.objects.get(id=reg['registered_in_level']) if school_type == 'alp' \
                     else ClassRoom.objects.get(id=reg['classroom'])
 
         section = Section.objects.get(id=reg['section'])
@@ -290,10 +328,13 @@ def import_docs(**kwargs):
     Imports attendance docs from couch base server
     """
     from student_registration.attendances.models import Attendance
-    from student_registration.schools.models import ClassRoom, ClassLevel
+    from student_registration.schools.models import ClassRoom, EducationLevel
 
     try:
-        data = get_docs()
+
+        couchbase_docs = get_docs(False)
+        data = get_doc_from_key(couchbase_docs)
+
         attendance_records = []
         logger.info('processing {} docs'.format(len(data['rows'])))
         with transaction.atomic():
@@ -324,7 +365,7 @@ def import_docs(**kwargs):
                             attendance_record.status = student['status']
                             attendance_record.absence_reason = student['value']
                             if school_type == 'alp':
-                                attendance_record.class_level_id = class_id
+                                attendance_record.classlevel_id = class_id
                             else:
                                 attendance_record.classroom_id = class_id
                             if validation_date:
@@ -349,8 +390,8 @@ def import_docs(**kwargs):
         )
         logger.info('absentees updated')
     except Exception as exp:
-        logger.info('importing doc: {}'.format(row['doc']['_id']))
         logger.exception(exp)
+        raise exp
 
 
 def calculate_attendance_and_absentees():
