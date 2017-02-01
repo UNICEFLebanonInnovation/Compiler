@@ -89,6 +89,8 @@ class LoginRedirectView(LoginRequiredMixin, RedirectView):
             has_group(self.request.user, 'CERD') or \
             has_group(self.request.user, 'ALP_SCHOOL'):
             return reverse('alp:alp_data_collecting', kwargs={}) + '?1'
+        if has_group(self.request.user, 'HELPDESK'):
+            return reverse('helpdesk_dashboard', kwargs={})
         return reverse('home')
 
 
