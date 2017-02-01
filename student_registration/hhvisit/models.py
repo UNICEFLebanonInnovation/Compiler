@@ -76,11 +76,12 @@ class HouseholdVisitTeam(models.Model):
 
     @property
     def team_name(self):
-        first_name_enumerator1 = User.objects.filter(id=self.first_enumerator_id).values('first_name').first()['first_name'];
-        last_name_enumerator1 = User.objects.filter(id=self.first_enumerator_id).values('last_name').first()['last_name'];
-        first_name_enumerator2 = User.objects.filter(id=self.second_enumerator_id).values('first_name').first()['first_name'];
-        last_name_enumerator2 = User.objects.filter(id=self.second_enumerator_id).values('last_name').first()['last_name'];
-        return first_name_enumerator1 + ' ' +last_name_enumerator1 + ', ' + first_name_enumerator2 + ' ' +last_name_enumerator2
+        first_name_enumerator1 = self.first_enumerator.first_name
+        last_name_enumerator1 = self.first_enumerator.last_name
+        first_name_enumerator2 = self.second_enumerator.first_name
+        last_name_enumerator2 = self.second_enumerator.last_name
+        return "{} {} {} {} {}".format(first_name_enumerator1, last_name_enumerator1, '-', first_name_enumerator2,
+                                       last_name_enumerator2)
 
 
 class HouseholdVisit(TimeStampedModel):
