@@ -374,6 +374,7 @@
                    function (response)
                    {
                       HideLoader();
+                      console.log(response);
                       // alert("Failure");
                    }
               }
