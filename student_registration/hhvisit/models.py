@@ -185,7 +185,7 @@ class ChildVisit(TimeStampedModel):
     last_attendance_date = models.DateField(blank=True, null=True)
     child_status = models.CharField(max_length=50, blank=True, null=True, choices=STATUS)
     child_absence_period = models.CharField(max_length=50, blank=True, null=True, choices=ABSENCE_DURATION)
-    ABSENCE_DURATION
+
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
