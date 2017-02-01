@@ -29,6 +29,7 @@ class Location(MPTTModel):
     p_code = models.CharField(max_length=32L, blank=True, null=True)
 
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+    pilot_in_use = models.BooleanField(blank=True, default=False)
     # geom = models.MultiPolygonField(null=True, blank=True)
     # point = models.PointField(null=True, blank=True)
     # objects = models.GeoManager()
