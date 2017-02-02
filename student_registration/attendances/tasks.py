@@ -75,29 +75,31 @@ def get_docs(all_docs=True):
 
 
 def get_doc_from_key(docs):
-    rows=[]
+    rows = []
     for row in docs['rows']:
-       if re.match('^\d+-\d+-\d+$',row["id"]) or re.match('^\d+-\d+-\d+-alp$',row["id"]):
-        rows.append(row["id"])
+        if re.match('^\d+-\d+-\d+$', row["id"]) or re.match('^\d+-\d+-\d+-alp$', row["id"]):
+            rows.append(row["id"])
 
     i = 1
-    data = {'rows':[]}
-    keys = {"keys":[]}
+    data = {'rows': []}
+    keys = {"keys": []}
     for row in rows:
         keys['keys'].append(row)
-        if i % 1000  == 0 or i == len(rows):
-            #print keys
+        if i % 1000 == 0 or i == len(rows):
+            # print keys
 
+            logger.info('Requesting batch: {}'.format(i))
             response = requests.post(
-            os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
-            headers={'content-type': 'application/json'},
-            auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS),
-            data= json.dumps(keys)).json()
+                os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+                headers={'content-type': 'application/json'},
+                auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS),
+                data=json.dumps(keys)
+            ).json()
 
             data['rows'].extend(response['rows'])
-            #print len(keys['keys'])
+            # print len(keys['keys'])
             keys['keys'] = []
-        i+=1
+        i += 1
 
     return data
 
