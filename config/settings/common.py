@@ -283,6 +283,8 @@ BROKER_URL = env('CELERY_BROKER_URL', default='django://')
 COUCHBASE_URL = env('COUCHBASE_URL', default='NO_URL')
 COUCHBASE_USER = env('COUCHBASE_USER', default='NO_USER')
 COUCHBASE_PASS = env('COUCHBASE_PASS', default='NO_PASS')
+
+MONGODB_URI = env(env('MONGODB_URI', default='mongodb://localhost/'))
 ########## END CELERY
 
 
