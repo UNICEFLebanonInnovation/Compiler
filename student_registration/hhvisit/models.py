@@ -152,6 +152,13 @@ class ChildVisit(TimeStampedModel):
         ('pending', _('Pending')),
         ('completed', _('Completed')),
     )
+    ABSENCE_DURATION = Choices(
+        ('first', _('5-10')),
+        ('second', _('10-20')),
+        ('third', _('20++')),
+        ('never', _('Never Attended')),
+        ('frequent', _('Frequently Absent')),
+    )
     household_visit = models.ForeignKey(
         HouseholdVisit,
         blank=False, null=True,
@@ -177,6 +184,8 @@ class ChildVisit(TimeStampedModel):
     specific_reason_other_specify = models.CharField(max_length=255, blank=True, null=True)
     last_attendance_date = models.DateField(blank=True, null=True)
     child_status = models.CharField(max_length=50, blank=True, null=True, choices=STATUS)
+    child_absence_period = models.CharField(max_length=50, blank=True, null=True, choices=ABSENCE_DURATION)
+
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
