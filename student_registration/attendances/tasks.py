@@ -66,6 +66,8 @@ def get_app_collection(bulk_name):
 
 
 def get_docs(all_docs=True):
+
+    logger.info('Connecting to: {}'.format(settings.COUCHBASE_URL))
     return requests.get(
         os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs={}'.format('true' if all_docs else 'false')),
         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
@@ -326,9 +328,11 @@ def import_docs(**kwargs):
         couchbase_docs = get_docs()
 
         # filter and reshape to only include attendance related docs
+        logger.info("Prefilter attendance")
         cleaned = [row['doc'] for row in couchbase_docs['rows'] if 'attendance' in row['doc']]
 
         # truncate existing attendance docs and insert to mongo
+        logger.info("refresing attendance in mongo")
         client.education.attendances.drop()
         client.education.attendances.insert_many(cleaned)
 
