@@ -18,6 +18,7 @@
            visitDataRecord = visitData;
 
            $("#hhVisitName").text(visitData.first_name+' '+visitData.father_name+' '+visitData.last_name);
+           $("#hhIdNumber").text(visitData.registeringadult_id_number);
            $("#hhAllvisitAttemptCount").text(visitData.all_visit_attempt_count);
 
            $("#household-visit-attempt-table tbody").empty();
@@ -76,9 +77,9 @@
         {
            var date;
 
-           if(isDate(dateString, "yyyy-mm-ddTHH:mm:ssZ") )
+           if(isDate(dateString, "yyyy-MM-ddTHH:mm:ssZ") )
            {
-              date = new Date(getDateFromFormat(dateString, "yyyy-mm-ddTHH:mm:ssZ"));
+              date = new Date(getDateFromFormat(dateString, "yyyy-MM-ddTHH:mm:ssZ"));
            }
            else
            {
