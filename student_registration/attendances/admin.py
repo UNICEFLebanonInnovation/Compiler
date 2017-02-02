@@ -41,7 +41,7 @@ class BySchoolResource(resources.ModelResource):
             'total_attended_female',
             'total_absent_male',
             'total_absent_female',
-            'validation_status',
+            'validation_date',
         )
 
 
@@ -58,12 +58,14 @@ class BySchoolByDayAdmin(ExportMixin, admin.ModelAdmin):
         'total_attended_female',
         'total_absent_male',
         'total_absent_female',
-        'validation_status'
+        'validation_date',
+        'validation_status',
     )
     list_filter = (
         'school__location',
         'school',
         'attendance_date',
+        'validation_date',
         'validation_status',
         'highest_attendance_rate',
     )
