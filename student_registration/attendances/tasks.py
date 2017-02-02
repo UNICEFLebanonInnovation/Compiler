@@ -325,11 +325,12 @@ def import_docs(**kwargs):
     """
     try:
         # get all docs form couchbase
-        couchbase_docs = get_docs()
+        couchbase_docs = get_docs(all_docs=False)
+        data = get_doc_from_key(couchbase_docs)
 
         # filter and reshape to only include attendance related docs
         logger.info("Prefilter attendance")
-        cleaned = [row['doc'] for row in couchbase_docs['rows'] if 'attendance' in row['doc']]
+        cleaned = [row['doc'] for row in data['rows'] if 'attendance' in row['doc']]
 
         # truncate existing attendance docs and insert to mongo
         logger.info("refresing attendance in mongo")
