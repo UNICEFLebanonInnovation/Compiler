@@ -17,7 +17,7 @@ from django.db.models import Count, Case, When, Value, BooleanField, Max
 from student_registration.taskapp.celery import app
 
 from mongoengine import *
-client = connect('education')
+client = connect('education', host=settings.MONGODB_URI)
 
 import logging
 logger = logging.getLogger(__name__)
