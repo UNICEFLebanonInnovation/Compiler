@@ -216,21 +216,7 @@ class HouseholdVisitListSupervisorView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         data = []
-
-        # locations = HouseholdVisit.registering_adult.school.location.objects.all()
-        # location_ids = HouseholdVisit.registering_adults.school.objects.all()
-        # locations = Location.objects.filter(location_id__in=location_ids)
-
-
-        # location_ids = HouseholdVisit.registering_adult.school.objects.values_list('location_id', flat=True)
-        # locations = Location.objects.filter(location_id__in=location_ids)
-
-
-        # locations = Location.objects.filter(school__registering_adult__household_visit__isnull=False)
-        # A.objects.filter(b__c__isnull=False)
-
-        # locations = Location.objects.filter(school__registering_adult__household_visit__ID__isNull=False)
-        locations = Location.objects.all().filter(type_id=2).order_by('name')
+        locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
         location = self.request.GET.get("location", 0)
         if location:
             data = self.model.objects.filter(registering_adult__school__location_id=location).order_by('id')
