@@ -3,17 +3,17 @@
         {
            var date;
 
-           if(isDate(dateString, "dd/mm/yyyy") )
+           if(isDate(dateString, "dd/MM/yyyy") )
            {
-              date = new Date(getDateFromFormat(dateString, "dd/mm/yyyy"));
+              date = new Date(getDateFromFormat(dateString, "d/MM/yyyy"));
            }
-           else if(isDate(dateString, "d/mm/yyyy") )
+           else if(isDate(dateString, "d/MM/yyyy") )
            {
-              date = new Date(getDateFromFormat(dateString, "d/mm/yyyy"));
+              date = new Date(getDateFromFormat(dateString, "d/MM/yyyy"));
            }
-           else if(isDate(dateString, "dd/m/yyyy") )
+           else if(isDate(dateString, "dd/M/yyyy") )
            {
-              date = new Date(getDateFromFormat(dateString, "dd/m/yyyy"));
+              date = new Date(getDateFromFormat(dateString, "dd/M/yyyy"));
            }
            else
            {

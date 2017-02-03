@@ -94,6 +94,7 @@ class BySchoolByDay(models.Model):
     total_attended_female = models.IntegerField(blank=True, null=True)
     total_absent_male = models.IntegerField(blank=True, null=True)
     total_absent_female = models.IntegerField(blank=True, null=True)
+    validation_date = models.DateField(blank=True, null=True)
     validation_status = models.BooleanField(default=False)
 
 
