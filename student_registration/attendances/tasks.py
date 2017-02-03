@@ -17,9 +17,13 @@ from django.db.models import Count, Case, When, Value, BooleanField, Max
 from student_registration.taskapp.celery import app
 
 from mongoengine import *
+from bson.code import Code
+from bson import SON
+
 client = connect(host=settings.MONGODB_URI)
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -36,7 +40,6 @@ def convert_date(date_string):
 
 
 def set_docs(docs):
-
     payload_json = json.dumps(
         {
             'docs': docs,
@@ -54,7 +57,6 @@ def set_docs(docs):
 
 
 def get_app_collection(bulk_name):
-
     data = requests.get(
         os.path.join(settings.COUCHBASE_URL, bulk_name),
         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
@@ -66,7 +68,6 @@ def get_app_collection(bulk_name):
 
 
 def get_docs(all_docs=True):
-
     logger.info('Connecting to: {}'.format(settings.COUCHBASE_URL))
     return requests.get(
         os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs={}'.format('true' if all_docs else 'false')),
@@ -74,38 +75,7 @@ def get_docs(all_docs=True):
     ).json()
 
 
-def get_doc_from_key(docs):
-    rows = []
-    for row in docs['rows']:
-        if re.match('^\d+-\d+-\d+$', row["id"]) or re.match('^\d+-\d+-\d+-alp$', row["id"]):
-            rows.append(row["id"])
-
-    i = 1
-    data = {'rows': []}
-    keys = {"keys": []}
-    for row in rows:
-        keys['keys'].append(row)
-        if i % 1000 == 0 or i == len(rows):
-            # print keys
-
-            logger.info('Requesting batch: {}'.format(i))
-            response = requests.post(
-                os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
-                headers={'content-type': 'application/json'},
-                auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS),
-                data=json.dumps(keys)
-            ).json()
-
-            data['rows'].extend(response['rows'])
-            # print len(keys['keys'])
-            keys['keys'] = []
-        i += 1
-
-    return data
-
-
 def get_doc(doc_id):
-
     path = os.path.join(settings.COUCHBASE_URL, doc_id)
     response = requests.get(
         path,
@@ -115,24 +85,6 @@ def get_doc(doc_id):
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.json()
     return False
-
-
-@app.task
-def set_app_user(username, password):
-
-    user_docs = []
-    user_docs.append(
-        {
-            "_id": username,
-            "type": "user",
-            "username": username,
-            "password": password,
-            "organisation": username,
-        }
-    )
-
-    response = set_docs(user_docs)
-    return response.text
 
 
 @app.task
@@ -177,7 +129,7 @@ def set_app_attendances(school_number=None, school_type=None):
     for reg in registrations:
         school = School.objects.get(id=reg['school'])
         classroom = EducationLevel.objects.get(id=reg['registered_in_level']) if school_type == 'alp' \
-                    else ClassRoom.objects.get(id=reg['classroom'])
+            else ClassRoom.objects.get(id=reg['classroom'])
 
         section = Section.objects.get(id=reg['section'])
         students = []
@@ -197,20 +149,6 @@ def set_app_attendances(school_number=None, school_type=None):
                 "status": enrolled.student.status
             }
             students.append(student)
-
-        #FIXME: Why are we updating the attendance here if it could potentially wipe out attendance records in the app
-        # # build dictionary of current attendance records indexed by attendance day
-        # reg.pop('section')
-        # for att in Attendance.objects.filter(**reg):
-        #     attendance_date = att.attendance_date.strftime('%d-%m-%Y')
-        #     student_record = {
-        #         "status": att.status,
-        #         "reason": att.absence_reason
-        #     }
-        #     students_attended = attendances.setdefault(attendance_date, {"students":{}})
-        #     students_attended['students'][str(att.student.id)] = student_record
-        #     if att.validation_date:
-        #         attendances[attendance_date]['validation_date'] = att.validation_date.strftime('%d-%m-%Y')
 
         # combine into a single doc representing students and attendance for a single school, class, section
         doc = {
@@ -330,17 +268,16 @@ def import_docs(**kwargs):
         couchbase_docs = get_docs(all_docs=False)
 
         ids = []
-        for num,row in enumerate(couchbase_docs['rows']):
+        for num, row in enumerate(couchbase_docs['rows']):
             if re.match('^\d+-\d+-\d+(-alp)?$', row["id"]):
                 ids.append(row["id"])
 
-        batches = [ids[x: x+1000] for x in xrange(0, len(ids), 1000)]
+        batches = [ids[x: x + 1000] for x in xrange(0, len(ids), 1000)]
 
         database = client.get_default_database()
         database.attendances.drop()
-        for num,batch in enumerate(batches):
-
-            logger.info('Requesting batch: {} of length {} keys'.format(num+1, len(batch)))
+        for num, batch in enumerate(batches):
+            logger.info('Requesting batch: {} of length {} keys'.format(num + 1, len(batch)))
             data = requests.post(
                 os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
                 headers={'content-type': 'application/json'},
@@ -361,14 +298,56 @@ def import_docs(**kwargs):
         raise exp
 
 
-def calculate_attendance_and_absentees():
-
+def calculate_attendance():
     try:
-        calculate_by_day_summary()
-        # calculate_absentees_in_date_range(
-        #     date.today() - timedelta(days=10),
-        #     date.today()
-        # )
+        map_function = Code(
+            """
+            function () {
+
+                for (var date in this.attendance) {
+                    day = this.attendance[date];
+                    for (var student in day['students']) {
+
+                        var key = this.school + '-' + date + '-' + student;
+                        record = day['students'][student];
+
+                        var valid = ((day.hasOwnProperty('validation_date')) ? new Date(day.validation_date.split("-").reverse().join("-")) : null)
+
+                        var doc = {
+                            date: new Date(date.split("-").reverse().join("-")),
+                            school: this.school,
+                            class: this.class_id,
+                            section: this.section_id,
+                            location: this.location_id,
+                            student: student,
+                            attended: record.status,
+                            reason: record.reason,
+                            validation_date: valid
+
+                        };
+                        emit(key, doc);
+                    }
+                }
+            }
+            """
+        )
+        reduce_function = Code(
+            """
+            function (key, values) {
+                return values[0];
+            }
+            """
+        )
+
+        logger.info('Performing map_reduce...')
+        database = client.get_default_database()
+        database.attendances.map_reduce(
+            map_function,
+            reduce_function,
+            out=SON([("replace", "attendances_by_school")])
+        )
+        logger.info('Finished')
+
     except Exception as exp:
         logger.exception(exp)
 
@@ -439,12 +418,13 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
         )
 
         last_attended_date = attendances.filter(status=True).latest('attendance_date').attendance_date \
-        if attendances.filter(status=True).count() else attendances.filter(status=False).earliest('attendance_date').attendance_date
+            if attendances.filter(status=True).count() else attendances.filter(status=False).earliest(
+            'attendance_date').attendance_date
 
         late_threshold_date = (to_date - timedelta(days=absent_threshold))
         if last_attended_date >= late_threshold_date:
 
-            first_absent_date=attendances.filter(
+            first_absent_date = attendances.filter(
                 status=False,
                 attendance_date__lt=last_attended_date,
                 attendance_date__gte=from_date,
@@ -484,6 +464,3 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
 
         if new:
             logger.info('New absent record for student {}'.format(absentee['student_id']))
-
-
-
