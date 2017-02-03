@@ -218,6 +218,7 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
     registeringadult_id = serializers.IntegerField(source='registering_adult.id', read_only=True)
+    registeringadult_id_number= serializers.CharField(source='registering_adult.id_number', read_only=True)
     first_name = serializers.CharField(source='registering_adult.first_name', read_only=True)
     father_name = serializers.CharField(source='registering_adult.father_name', read_only=True)
     last_name = serializers.CharField(source='registering_adult.last_name', read_only=True)
@@ -327,6 +328,7 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
         model = HouseholdVisit
         fields = (
             'id',
+            'registeringadult_id_number',
             'visit_status',
             'registeringadult_id',
             'first_name',
