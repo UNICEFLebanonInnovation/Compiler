@@ -239,6 +239,8 @@
 
              childRecord.child_enrolled_in_another_school = trElement.find('td:nth-child(8)').html()=="true";
 
+             childRecord.specific_reason_other_specify = trElement.find('td:nth-child(9)').html();
+
              childRecord.child_visit_service = GetChildVisitServiceData(childRecord.id);
 
              return childRecord;
