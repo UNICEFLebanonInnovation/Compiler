@@ -328,16 +328,30 @@ def import_docs(**kwargs):
     try:
         # get all docs form couchbase
         couchbase_docs = get_docs(all_docs=False)
-        data = get_doc_from_key(couchbase_docs)
 
-        # filter and reshape to only include attendance related docs
-        logger.info("Prefilter attendance")
-        cleaned = [row['doc'] for row in data['rows'] if 'attendance' in row['doc']]
+        ids = []
+        for num,row in enumerate(couchbase_docs['rows']):
+            if re.match('^\d+-\d+-\d+(-alp)?$', row["id"]):
+                ids.append(row["id"])
 
-        # truncate existing attendance docs and insert to mongo
-        logger.info("refresing attendance in mongo")
+        batches = [ids[x: x+1000] for x in xrange(0, len(ids), 1000)]
+
         client.education.attendances.drop()
-        client.education.attendances.insert_many(cleaned)
+        for num,batch in enumerate(batches):
+
+            logger.info('Requesting batch: {} of length {} keys'.format(num+1, len(batch)))
+            data = requests.post(
+                os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+                headers={'content-type': 'application/json'},
+                auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS),
+                data=json.dumps({'keys': batch})
+            ).json()
+
+            logger.info("Prefilter attendance")
+            cleaned = [row['doc'] for row in data['rows'] if 'attendance' in row['doc']]
+
+            logger.info("refresing attendance in mongo")
+            client.education.attendances.insert_many(cleaned)
 
         logger.info('attendance updated')
 
