@@ -336,7 +336,8 @@ def import_docs(**kwargs):
 
         batches = [ids[x: x+1000] for x in xrange(0, len(ids), 1000)]
 
-        client.education.attendances.drop()
+        database = client.get_default_database()
+        database.attendances.drop()
         for num,batch in enumerate(batches):
 
             logger.info('Requesting batch: {} of length {} keys'.format(num+1, len(batch)))
@@ -351,7 +352,7 @@ def import_docs(**kwargs):
             cleaned = [row['doc'] for row in data['rows'] if 'attendance' in row['doc']]
 
             logger.info("refresing attendance in mongo")
-            client.education.attendances.insert_many(cleaned)
+            database.attendances.insert_many(cleaned)
 
         logger.info('attendance updated')
 
