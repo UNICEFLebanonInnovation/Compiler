@@ -283,6 +283,5 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         queryset.update(validation_status=True)
 
 
-admin.site.register(Attendance, AttendanceAdmin)
 admin.site.register(BySchoolByDay, BySchoolByDayAdmin)
 admin.site.register(Absentee, AbsenteeAdmin)
