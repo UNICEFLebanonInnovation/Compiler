@@ -11,6 +11,6 @@ class Command(BaseCommand):
     help = 'Calculate attendance'
 
     def handle(self, *args, **options):
-        #import_docs()
-        #flattern_attendance()
+        import_docs()
+        flattern_attendance()
         calculate_by_day_summary()
