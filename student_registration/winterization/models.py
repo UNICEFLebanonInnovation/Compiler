@@ -24,7 +24,11 @@ class Beneficiary(models.Model):
         ('No', 'No'),
     )
 
-    case_number = models.CharField(max_length=45L, unique=True)
+    case_number = models.CharField(
+        max_length=45L,
+        unique=True,
+        primary_key=True
+    )
     registration_status = models.CharField(
         max_length=45L,
         blank=True,
