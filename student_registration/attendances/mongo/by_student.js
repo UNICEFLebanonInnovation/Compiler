@@ -1,20 +1,11 @@
 db.attendances_by_day.aggregate([
     {
-       '$lookup':
-         {
-           from: 'students',
-           localField: 'value.student',
-           foreignField: 'id',
-           as: 'gender'
-         }
-    },
-    {
         '$project': {
             'school': '$value.school',
             'date': '$value.date',
             'validation_date': '$value.validation_date',
             'student': '$value.student',
-            'gender': {'$arrayElemAt': [ "$gender", 0 ] },
+            'gender': '$value.gender',
             'Attended': {"$cond": ["$value.attended", 1, 0]},
             'Absent': {"$cond": [{"$not": "$value.attended"}, 1, 0]},
             'Attended Male': {"$cond": [{'$and': [{"$eq": ["$value.gender", "Male"]}, "$value.attended"]}, 1, 0]},
