@@ -366,7 +366,7 @@ def aggregate_attendace():
     database = client.get_default_database()
 
     logger.info('aggregate attendance by school and day')
-    database.attendances_by_day.aggregate([
+    return database.attendances_by_day.aggregate([
         {
             '$project': {
                 'school': '$value.school',
@@ -405,10 +405,12 @@ def aggregate_attendace():
                 'validation_date': {'$first': "$validation_date"},
             }
         },
-        {'$addFields': {'_id': {'$concat': ["$_id.school", "-", "$_id.date"]}}},
-        {'$out': 'attendances_by_day_school'}
+        {
+            "$project": {
+                "_id": 0
+            }
+        },
     ])
-    logger.info('Finished')
 
 
 def calculate_by_day_summary():
@@ -419,11 +421,8 @@ def calculate_by_day_summary():
     """
     from student_registration.attendances.models import BySchoolByDay
 
-    class School(DynamicDocument):
-        meta = {'collection': 'attendances_by_day_school'}
-
     logger.info('inserting new by school and day summary')
-    day_records = [BySchoolByDay(**day.to_mongo()) for day in School.objects.exclude('_id')]
+    day_records = [BySchoolByDay(**day) for day in aggregate_attendace()]
 
     BySchoolByDay.objects.all().delete()
     BySchoolByDay.objects.bulk_create(day_records)
