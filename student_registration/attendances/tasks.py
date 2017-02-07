@@ -366,7 +366,7 @@ def aggregate_attendace():
     database = client.get_default_database()
 
     logger.info('aggregate attendance by school and day')
-    data = database.attendances_by_day.aggregate([
+    database.attendances_by_day.aggregate([
         {
             '$project': {
                 'school': '$value.school',
@@ -427,7 +427,6 @@ def aggregate_attendace():
         },
         {'$out': 'attendances_by_day_school'}
     ])
-    return data
 
 
 def calculate_by_day_summary():
