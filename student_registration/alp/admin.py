@@ -31,12 +31,18 @@ class OutreachResource(resources.ModelResource):
 
     class Meta:
         model = Outreach
-        fields = ('id', 'student__id', 'student__id_number', 'student__number', 'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
-                  'student__age', 'governorate', 'district', 'school__name', 'level__name', 'exam_total',
-                  'assigned_to_level__name', 'registered_in_level__name', 'section__name', 'registered_in_school',)
-        export_order = ('id', 'student__id', 'student__id_number', 'student__number', 'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
+        fields = ('id', 'student__id', 'student__id_number', 'student__number', 'student__first_name',
+                  'student__father_name', 'student__last_name', 'student__mother_fullname', 'student__age',
+                  'governorate', 'district', 'school__name', 'level__name', 'exam_total',
+                  'assigned_to_level__name', 'registered_in_level__name', 'section__name',
+                  'not_enrolled_in_this_school',
+                  )
+        export_order = ('id', 'student__id', 'student__id_number', 'student__number', 'student__first_name',
+                        'student__father_name', 'student__last_name', 'student__mother_fullname',
                         'student__age', 'governorate', 'district', 'school__name', 'level__name',
-                        'assigned_to_level__name', 'registered_in_level__name', 'section__name', 'registered_in_school',)
+                        'assigned_to_level__name', 'registered_in_level__name', 'section__name',
+                        'not_enrolled_in_this_school',
+                        )
 
 
 class GovernorateFilter(admin.SimpleListFilter):
@@ -73,11 +79,12 @@ class OutreachAdmin(ImportExportModelAdmin):
     form = OutreachForm
     list_display = (
         'student', 'student_age', 'school', 'caza', 'governorate',
-        'level', 'total', 'assigned_to_level', 'registered_in_level', 'section', 'registered_in_school'
+        'level', 'total', 'assigned_to_level', 'registered_in_level',
+        'section', 'registered_in_school', 'not_enrolled_in_this_school'
     )
     list_filter = ('school__number', 'school', 'school__location', GovernorateFilter,
                    'level', 'assigned_to_level', 'registered_in_level',
-                   'section', 'student__sex',)
+                   'section', 'student__sex', 'not_enrolled_in_this_school', )
     search_fields = (
         'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
         'school__name', 'school__number', 'student__id_number', 'school__location__name', 'level__name',
