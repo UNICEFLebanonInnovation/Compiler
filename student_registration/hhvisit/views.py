@@ -11,6 +11,11 @@ from rest_framework import viewsets, mixins, permissions
 from student_registration.hhvisit.forms import (
     HouseholdVisitForm
 )
+
+from student_registration.registrations.models import (
+    RegisteringAdult
+)
+
 from student_registration.hhvisit.models import (
     MainReason,
     ServiceType,
@@ -211,7 +216,7 @@ class HouseholdVisitListSupervisorView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         data = []
-        locations = Location.objects.all().filter(type_id=2).order_by('name')
+        locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
         location = self.request.GET.get("location", 0)
         if location:
             data = self.model.objects.filter(registering_adult__school__location_id=location).order_by('id')
@@ -251,6 +256,9 @@ def test(request):
 from django.conf import settings
 import requests
 
+from student_registration.registrations.models import (
+    Registration
+)
 def LoadAbsences(request):
 
     received_data = requests.get(settings.ABSENCE_URL, headers={'Authorization': 'Token '+settings.ABSENCE_TOKEN})

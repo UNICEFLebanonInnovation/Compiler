@@ -45,6 +45,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ChildServiceSerializer(serializers.ModelSerializer):
 
+
     service_type_id = serializers.IntegerField()
     service_type = serializers.CharField(source='service_type.name', read_only=True)
 
@@ -74,6 +75,7 @@ class ChildServiceSerializer(serializers.ModelSerializer):
             'service_type_id',
             'service_type',
             'service_provider',
+            'service_provider_followup',
             'child_visit_id'
         )
 
@@ -153,9 +155,9 @@ class ChildVisitSerializer(serializers.ModelSerializer):
     calculate_age = serializers.CharField(source='student.calculate_age', read_only=True)
     child_school = serializers.CharField(read_only=True)
     child_grade = serializers.CharField(read_only=True)
-    main_reason_id = serializers.IntegerField(allow_null=True)
+    main_reason_id = serializers.IntegerField(allow_null=True,required=False)
     main_reason = serializers.CharField(source='main_reason.name', read_only=True)
-    specific_reason_id = serializers.IntegerField(allow_null=True)
+    specific_reason_id = serializers.IntegerField(allow_null=True,required=False)
     specific_reason = serializers.CharField(source='specific_reason.name', read_only=True)
     child_visit_service = ChildServiceSerializer(many=True, read_only=True)
     household_visit_id = serializers.IntegerField()
@@ -216,6 +218,7 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
     registeringadult_id = serializers.IntegerField(source='registering_adult.id', read_only=True)
+    registeringadult_id_number= serializers.CharField(source='registering_adult.id_number', read_only=True)
     first_name = serializers.CharField(source='registering_adult.first_name', read_only=True)
     father_name = serializers.CharField(source='registering_adult.father_name', read_only=True)
     last_name = serializers.CharField(source='registering_adult.last_name', read_only=True)
@@ -325,6 +328,7 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
         model = HouseholdVisit
         fields = (
             'id',
+            'registeringadult_id_number',
             'visit_status',
             'registeringadult_id',
             'first_name',

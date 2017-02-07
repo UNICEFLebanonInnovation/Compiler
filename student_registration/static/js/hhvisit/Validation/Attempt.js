@@ -11,7 +11,11 @@
               {
                  trElement = $(obj);
 
-                 attemptsValid = attemptsValid && ValidateAttempt(trElement);
+
+                 if(i==0)
+                 {
+                    attemptsValid = attemptsValid && ValidateAttempt(trElement);
+                 }
 
               }
            );
@@ -36,5 +40,5 @@
 
            var comment = trElement.find('td:nth-child(4) textarea').val();
 
-           return !household_not_found || comment || id;
+           return !household_not_found || comment;
         }
