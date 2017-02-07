@@ -366,7 +366,7 @@ def aggregate_attendace():
     database = client.get_default_database()
 
     logger.info('aggregate attendance by school and day')
-    return database.attendances_by_day.aggregate([
+    data = database.attendances_by_day.aggregate([
         {
             '$project': {
                 'school': '$value.school',
@@ -407,10 +407,26 @@ def aggregate_attendace():
         },
         {
             "$project": {
-                "_id": 0
+                "_id": 0,
+                'school_id': 1,
+                'attendance_date': 1,
+                'total_enrolled': 1,
+                'total_attended': 1,
+                'total_absences': 1,
+                'total_attended_male': 1,
+                'total_attended_female': 1,
+                'total_absent_male': 1,
+                'total_absent_female': 1,
+                'validation_date': 1,
+                'validation_status': {
+                    '$cond': [
+                        {'$eq': ['$validation_date', None]}, False, True
+                    ]
+                }
             }
         },
     ])
+    return data
 
 
 def calculate_by_day_summary():
@@ -423,7 +439,7 @@ def calculate_by_day_summary():
 
     day_records = [BySchoolByDay(**day) for day in aggregate_attendace()]
 
-    logger.info('inserting new by school and day summary')
+    logger.info('Inserting {} new by school and day summaries'.format(len(day_records)))
     BySchoolByDay.objects.all().delete()
     BySchoolByDay.objects.bulk_create(day_records)
 
