@@ -363,70 +363,73 @@ def flattern_attendance():
 
 
 def aggregate_attendace():
-    database = client.get_default_database()
+    try:
+        database = client.get_default_database()
 
-    logger.info('aggregate attendance by school and day')
-    database.attendances_by_day.aggregate([
-        {
-            '$project': {
-                'school': '$value.school',
-                'date': '$value.date',
-                'validation_date': '$value.validation_date',
-                'student': '$value.student',
-                'gender': '$value.gender',
-                'Attended': {"$cond": ["$value.attended", 1, 0]},
-                'Absent': {"$cond": [{"$not": "$value.attended"}, 1, 0]},
-                'Attended Male': {
-                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Male"]}, "$value.attended"]}, 1, 0]
-                },
-                'Attended Female': {
-                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Female"]}, "$value.attended"]}, 1, 0]
-                },
-                'Absent Male': {
-                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Male"]}, {"$not": "$value.attended"}]}, 1, 0]
-                },
-                'Absent Female': {
-                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Female"]}, {"$not": "$value.attended"}]}, 1, 0]
-                },
-            }
-        },
-        {
-            '$group': {
-                '_id': {'school': '$school', 'date': '$date'},
-                'school_id': {'$first': '$school'},
-                'attendance_date': {'$first': '$date'},
-                'total_enrolled': {'$sum': 1},
-                'total_attended': {'$sum': "$Attended"},
-                'total_absences': {'$sum': "$Absent"},
-                'total_attended_male': {'$sum': "$Attended Male"},
-                'total_attended_female': {'$sum': "$Attended Female"},
-                'total_absent_male': {'$sum': "$Absent Male"},
-                'total_absent_female': {'$sum': "$Absent Female"},
-                'validation_date': {'$first': "$validation_date"},
-            }
-        },
-        {
-            "$project": {
-                "_id": 0,
-                'school_id': 1,
-                'attendance_date': 1,
-                'total_enrolled': 1,
-                'total_attended': 1,
-                'total_absences': 1,
-                'total_attended_male': 1,
-                'total_attended_female': 1,
-                'total_absent_male': 1,
-                'total_absent_female': 1,
-                'validation_date': 1,
-                'validation_status': {
-                    '$cond': [
-                        {'$eq': ['$validation_date', None]}, False, True
-                    ]
+        logger.info('aggregate attendance by school and day')
+        database.attendances_by_day.aggregate([
+            {
+                '$project': {
+                    'school': '$value.school',
+                    'date': '$value.date',
+                    'validation_date': '$value.validation_date',
+                    'student': '$value.student',
+                    'gender': '$value.gender',
+                    'Attended': {"$cond": ["$value.attended", 1, 0]},
+                    'Absent': {"$cond": [{"$not": "$value.attended"}, 1, 0]},
+                    'Attended Male': {
+                        "$cond": [{'$and': [{"$eq": ["$value.gender", "Male"]}, "$value.attended"]}, 1, 0]
+                    },
+                    'Attended Female': {
+                        "$cond": [{'$and': [{"$eq": ["$value.gender", "Female"]}, "$value.attended"]}, 1, 0]
+                    },
+                    'Absent Male': {
+                        "$cond": [{'$and': [{"$eq": ["$value.gender", "Male"]}, {"$not": "$value.attended"}]}, 1, 0]
+                    },
+                    'Absent Female': {
+                        "$cond": [{'$and': [{"$eq": ["$value.gender", "Female"]}, {"$not": "$value.attended"}]}, 1, 0]
+                    },
                 }
-            }
-        },
-        {'$out': 'attendances_by_day_school'}
-    ])
+            },
+            {
+                '$group': {
+                    '_id': {'school': '$school', 'date': '$date'},
+                    'school_id': {'$first': '$school'},
+                    'attendance_date': {'$first': '$date'},
+                    'total_enrolled': {'$sum': 1},
+                    'total_attended': {'$sum': "$Attended"},
+                    'total_absences': {'$sum': "$Absent"},
+                    'total_attended_male': {'$sum': "$Attended Male"},
+                    'total_attended_female': {'$sum': "$Attended Female"},
+                    'total_absent_male': {'$sum': "$Absent Male"},
+                    'total_absent_female': {'$sum': "$Absent Female"},
+                    'validation_date': {'$first': "$validation_date"},
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    'school_id': 1,
+                    'attendance_date': 1,
+                    'total_enrolled': 1,
+                    'total_attended': 1,
+                    'total_absences': 1,
+                    'total_attended_male': 1,
+                    'total_attended_female': 1,
+                    'total_absent_male': 1,
+                    'total_absent_female': 1,
+                    'validation_date': 1,
+                    'validation_status': {
+                        '$cond': [
+                            {'$eq': ['$validation_date', None]}, False, True
+                        ]
+                    }
+                }
+            },
+            {'$out': 'attendances_by_day_school'}
+        ])
+    except Exception as exp:
+        logger.exception(exp)
 
 
 def calculate_by_day_summary():
