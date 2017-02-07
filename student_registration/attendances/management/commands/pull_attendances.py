@@ -10,3 +10,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         import_docs()
+        flattern_attendance()
