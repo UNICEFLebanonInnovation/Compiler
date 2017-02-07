@@ -86,6 +86,7 @@ class RegisteringAdult(Person):
     )
     wfp_distribution_site = models.ForeignKey(WFPDistributionSite, blank=True, null=True)
     old_number = models.CharField(max_length=45L, blank=True, null=True)
+    beneficiary_changed_verify = models.BooleanField(default=False)
 
     @property
     def case_number(self):
@@ -229,7 +230,6 @@ class Registration(TimeStampedModel):
         null=True,
         choices=ENROLLMENT_TYPE
     )
-
     enrolled_last_year_school = models.ForeignKey(
         School,
         blank=True, null=True,
@@ -242,6 +242,11 @@ class Registration(TimeStampedModel):
     )
 
     school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+    )
+    school_changed_to_verify = models.ForeignKey(
         School,
         blank=False, null=True,
         related_name='+',
