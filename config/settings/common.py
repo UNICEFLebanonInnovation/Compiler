@@ -41,6 +41,9 @@ DJANGO_APPS = (
     # Admin
     'suit',
     'django.contrib.admin',
+    'markdown_deux',  # Required for Knowledgebase item formatting
+    'bootstrapform',  # Required for nicer formatting of forms with the default templates
+    'helpdesk',  # This is us!
 )
 THIRD_PARTY_APPS = (
     'crispy_forms',  # Form layouts
@@ -67,6 +70,8 @@ LOCAL_APPS = (
     'student_registration.eav',  # custom EAV app
     'student_registration.hhvisit',  # custom HH Visit app
     'student_registration.dashboard',  # custom dashboard app
+    'student_registration.helpdesks',  # custom helpdesk app
+    'student_registration.winterization',  # custom winterization app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -278,6 +283,8 @@ BROKER_URL = env('CELERY_BROKER_URL', default='django://')
 COUCHBASE_URL = env('COUCHBASE_URL', default='NO_URL')
 COUCHBASE_USER = env('COUCHBASE_USER', default='NO_USER')
 COUCHBASE_PASS = env('COUCHBASE_PASS', default='NO_PASS')
+
+MONGODB_URI = env('MONGODB_URI', default='mongodb://localhost/education')
 ########## END CELERY
 
 
@@ -317,6 +324,8 @@ SUIT_CONFIG = {
 
     'MENU': (
         {'label': 'View site', 'icon': 'icon-home', 'url': "/"},
+        {'app': 'helpdesk', 'label': 'HelpDesk Config', 'icon': 'icon-info-sign'},
+        {'label': 'HelpDesk Public', 'icon': 'icon-info-sign', 'url': '/helpdesk/dashboard/'},
         {'label': 'Dashboard', 'icon': 'icon-home', 'models': [
             {'url': '/dashboard/registrations-pilot/', 'label': 'PILOT'},
             {'url': '/dashboard/registrations-2ndshift/', 'label': '2nd Shift'},
@@ -331,10 +340,15 @@ SUIT_CONFIG = {
         {'app': 'schools', 'label': 'Schools', 'icon': 'icon-th-list'},
         {'app': 'hhvisit', 'label': 'House Hold Visit', 'icon': 'icon-th-list'},
         {'app': 'attendances', 'label': 'Attendances', 'icon': 'icon-th-list'},
+        {'app': 'winterization', 'label': 'Winterization', 'icon': 'icon-th-list'},
         {'app': 'locations', 'label': 'Locations', 'icon': 'icon-globe'},
     )
 }
 
+HELPDESK_TRANSLATE_TICKET_COMMENTS = True
+HELPDESK_SHOW_DELETE_BUTTON_SUPERUSER_FOLLOW_UP = True
+HELPDESK_STAFF_ONLY_TICKET_OWNERS = True
+HELPDESK_STAFF_ONLY_TICKET_CC = True
 
 ABSENCE_URL = env('ABSENCE_URL', default='NO URL for absentees set in the environment')
 ABSENCE_TOKEN = env('ABSENCE_TOKEN', default='No token for absentees URL set')

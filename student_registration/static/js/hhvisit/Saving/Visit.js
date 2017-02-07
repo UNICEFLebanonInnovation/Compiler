@@ -3,17 +3,17 @@
         {
            var date;
 
-           if(isDate(dateString, "dd/mm/yyyy") )
+           if(isDate(dateString, "dd/MM/yyyy") )
            {
-              date = new Date(getDateFromFormat(dateString, "dd/mm/yyyy"));
+              date = new Date(getDateFromFormat(dateString, "d/MM/yyyy"));
            }
-           else if(isDate(dateString, "d/mm/yyyy") )
+           else if(isDate(dateString, "d/MM/yyyy") )
            {
-              date = new Date(getDateFromFormat(dateString, "d/mm/yyyy"));
+              date = new Date(getDateFromFormat(dateString, "d/MM/yyyy"));
            }
-           else if(isDate(dateString, "dd/m/yyyy") )
+           else if(isDate(dateString, "dd/M/yyyy") )
            {
-              date = new Date(getDateFromFormat(dateString, "dd/m/yyyy"));
+              date = new Date(getDateFromFormat(dateString, "dd/M/yyyy"));
            }
            else
            {
@@ -213,22 +213,33 @@
 
              childRecord.id = trElement.find('td:nth-child(1)').html();
 
-
              var main_reason_id = trElement.find('td:nth-child(6)').html();
+
              if ( main_reason_id != '')
              {
                 childRecord.main_reason_id = main_reason_id;
              }
+             else
+             {
+                childRecord.main_reason_id = null;
+             }
 
              var specific_reason_id = trElement.find('td:nth-child(7)').html();
+
              if ( specific_reason_id != '')
              {
                 childRecord.specific_reason_id = specific_reason_id;
+             }
+             else
+             {
+                childRecord.specific_reason_id = null;
              }
 
              childRecord.household_visit_id = visitDataRecord.id;
 
              childRecord.child_enrolled_in_another_school = trElement.find('td:nth-child(8)').html()=="true";
+
+             childRecord.specific_reason_other_specify = trElement.find('td:nth-child(9)').html();
 
              childRecord.child_visit_service = GetChildVisitServiceData(childRecord.id);
 
@@ -249,7 +260,16 @@
 
                  childServiceRecord = new Object();
 
-                 childServiceRecord.id = trElement.find('td:nth-child(1)').html();
+                 childServiceRecordID= trElement.find('td:nth-child(1)').html();
+
+                 if(childServiceRecordID != '')
+                 {
+                     childServiceRecord.id = trElement.find('td:nth-child(1)').html();
+                 }
+                 else
+                 {
+                      childServiceRecord.id = null;
+                 }
 
                  dropDownElement = trElement.find('td:nth-child(2) select');
 
@@ -257,6 +277,8 @@
                  childServiceRecord.service_type = dropDownElement.find('option[value="'+childServiceRecord.service_type_id+'"]').text().trim();
 
                  childServiceRecord.service_provider = trElement.find('td:nth-child(3) input').val();
+
+                 childServiceRecord.service_provider_followup = trElement.find('td:nth-child(4) input').is(':checked')
 
                  childServiceRecord.child_visit_id = childVisitID;
 
@@ -354,6 +376,7 @@
                    function (response)
                    {
                       HideLoader();
+                      console.log(response);
                       // alert("Failure");
                    }
               }

@@ -6,6 +6,7 @@ from django.contrib import admin
 
 from import_export.admin import ExportMixin
 from import_export import resources, fields, widgets
+from student_registration.alp.templatetags.util_tags import has_group
 
 from .models import (
     School,
@@ -13,6 +14,69 @@ from .models import (
     BySchoolByDay,
     Absentee
 )
+
+
+class SchoolFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'School'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'school'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        if has_group(request.user, 'COORDINATOR'):
+            return ((l.id, l.name) for l in School.objects.filter(id__in=request.user.schools.all()))
+        return ((l.id, l.name) for l in School.objects.all())
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(school_id=self.value())
+        return queryset
+
+
+class LocationFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'District'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'district'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        schools = School.objects.all()
+        if has_group(request.user, 'COORDINATOR'):
+            schools = schools.filter(id__in=request.user.schools.all())
+        return set((l.location_id, l.location.name if l.location else '') for l in schools)
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(school__location_id=self.value())
+        return queryset
 
 
 class BySchoolResource(resources.ModelResource):
@@ -41,7 +105,7 @@ class BySchoolResource(resources.ModelResource):
             'total_attended_female',
             'total_absent_male',
             'total_absent_female',
-            'validation_status',
+            'validation_date',
         )
 
 
@@ -49,6 +113,7 @@ class BySchoolByDayAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = BySchoolResource
     list_display = (
         'school',
+        'district',
         'attendance_date',
         'total_enrolled',
         'total_attended',
@@ -58,55 +123,41 @@ class BySchoolByDayAdmin(ExportMixin, admin.ModelAdmin):
         'total_attended_female',
         'total_absent_male',
         'total_absent_female',
-        'validation_status'
+        'validation_date',
+        'validation_status',
     )
     list_filter = (
-        'school__location',
-        'school',
+        # 'school__location',
+        # 'school',
+        LocationFilter,
+        SchoolFilter,
         'attendance_date',
+        'validation_date',
         'validation_status',
         'highest_attendance_rate',
     )
     date_hierarchy = 'attendance_date'
     ordering = ('-attendance_date',)
 
-    def has_add_permission(self, request):
-        return False
+    def district(self, obj):
+        if obj.school and obj.school.location:
+            return obj.school.location.name
+        return ''
 
-    def has_delete_permission(self, request, obj=None):
-        return False
+    def get_queryset(self, request):
+        qs = super(BySchoolByDayAdmin, self).get_queryset(request)
+        if has_group(request.user, 'COORDINATOR'):
+            return qs.filter(school_id__in=request.user.schools.all())
 
-
-class AttendanceAdmin(ExportMixin, admin.ModelAdmin):
-
-    list_display = (
-        'school',
-        'classroom',
-        'classlevel',
-        'student',
-        'student_gender',
-        'status',
-        'attendance_date',
-        'validation_status',
-        'validation_date'
-    )
-    list_filter = (
-        'school__location',
-        'school',
-        'classroom',
-        'classlevel',
-        'attendance_date',
-        'status',
-        'validation_status',
-    )
-    date_hierarchy = 'attendance_date'
-    ordering = ('-attendance_date',)
+        return qs
 
     def has_add_permission(self, request):
         return False
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        if has_group(request.user, 'COORDINATOR') or has_group(request.user, 'PMU'):
+            return False
+        return True
 
 
 class AbsenteeResource(resources.ModelResource):
@@ -141,6 +192,7 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
     list_display = (
         'school',
         'student_number',
+        'district',
         'student',
         'last_attendance_date',
         'absent_days',
@@ -148,8 +200,10 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         'validation_status',
     )
     list_filter = (
-        'school__location',
-        'school',
+        # 'school__location',
+        # 'school',
+        SchoolFilter,
+        LocationFilter,
         'last_attendance_date',
     )
     date_hierarchy = 'last_attendance_date'
@@ -157,13 +211,34 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
 
     actions = ('validate_absentees',)
 
+    def get_queryset(self, request):
+        qs = super(AbsenteeAdmin, self).get_queryset(request)
+        if has_group(request.user, 'COORDINATOR'):
+            return qs.filter(school_id__in=request.user.schools.all())
+
+        return qs
+
+    def district(self, obj):
+        if obj.school and obj.school.location:
+            return obj.school.location.name
+        return ''
+
     def has_add_permission(self, request):
         return False
+
+    def has_delete_permission(self, request, obj=None):
+        if has_group(request.user, 'COORDINATOR') or has_group(request.user, 'PMU'):
+            return False
+        return True
+
+    def has_validate_absentees_permission(self, request):
+        if has_group(request.user, 'COORDINATOR') or has_group(request.user, 'PMU'):
+            return False
+        return True
 
     def validate_absentees(self, request, queryset):
         queryset.update(validation_status=True)
 
 
-admin.site.register(Attendance, AttendanceAdmin)
 admin.site.register(BySchoolByDay, BySchoolByDayAdmin)
 admin.site.register(Absentee, AbsenteeAdmin)

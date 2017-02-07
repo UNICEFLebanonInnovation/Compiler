@@ -44,6 +44,9 @@ from student_registration.eav.views import (
     AttributeViewSet,
     ValueViewSet,
 )
+from student_registration.winterization.views import (
+    BeneficiaryViewSet
+)
 from student_registration.users.views import LoginRedirectView, PasswordChangeView, PasswordChangeDoneView
 from student_registration.enrollments.views import EnrollmentViewSet
 from student_registration.students.views import StudentAutocomplete
@@ -60,6 +63,7 @@ api.register(r'attendances-report', AttendanceReportViewSet, base_name='attendan
 api.register(r'class-assignment', ClassAssignmentViewSet, base_name='class_assignment')
 api.register(r'waiting-list', WaitingListViewSet, base_name='waiting_list')
 api.register(r'registry-search', RegisteringAdultListSearchView, base_name='registry_search')
+api.register(r'beneficiary', BeneficiaryViewSet, base_name='beneficiary')
 
 api.register(r'household-visit', HouseholdVisitLoadViewSet, base_name='household_visit')
 api.register(r'household-visit-attempt', HouseholdVisitAttemptViewSet, base_name='household_visit_attempt')
@@ -100,6 +104,9 @@ urlpatterns = [
     url(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
     url(r'^locations/', include('student_registration.locations.urls', namespace='locations')),
     url(r'^dashboard/', include('student_registration.dashboard.urls', namespace='dashboard')),
+
+    url(r'helpdesk/', include('helpdesk.urls')),
+    url(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/docs/', include('rest_framework_swagger.urls')),

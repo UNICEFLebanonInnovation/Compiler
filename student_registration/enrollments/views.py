@@ -54,7 +54,7 @@ class EnrollmentStaffView(LoginRequiredMixin, TemplateView):
         if has_group(self.request.user, 'MEHE'):
             schools = School.objects.all()
         elif has_group(self.request.user, 'COORDINATOR'):
-            schools = School.objects.filter(location_id__in=self.request.user.locations.all())
+            schools = self.request.user.schools.all()
         elif has_group(self.request.user, 'PMU'):
             schools = School.objects.filter(location_id=self.request.user.location_id)
 
