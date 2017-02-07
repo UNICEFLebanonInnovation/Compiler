@@ -14,7 +14,7 @@
 
 
            var isEnrolled = (entry.child_enrolled_in_another_school==null?false:entry.child_enrolled_in_another_school);
-           var isEnrolledCell = "<td style = \"display:none;\">"+isEnrolled+"</td>"; 
+           var isEnrolledCell = "<td style = \"display:none;\">"+isEnrolled+"</td>";
 
            $("#household-visit-child-table tbody").append
            (
