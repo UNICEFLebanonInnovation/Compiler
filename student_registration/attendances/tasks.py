@@ -7,6 +7,7 @@ import unicodedata
 from datetime import datetime, date, timedelta
 
 import requests
+import re
 from requests.auth import HTTPBasicAuth
 
 from django.conf import settings
@@ -15,7 +16,14 @@ from django.db.models import Count, Case, When, Value, BooleanField, Max
 
 from student_registration.taskapp.celery import app
 
+from mongoengine import *
+from bson.code import Code
+from bson import SON
+
+client = connect(host=settings.MONGODB_URI)
+
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -32,7 +40,6 @@ def convert_date(date_string):
 
 
 def set_docs(docs):
-
     payload_json = json.dumps(
         {
             'docs': docs,
@@ -50,7 +57,6 @@ def set_docs(docs):
 
 
 def get_app_collection(bulk_name):
-
     data = requests.get(
         os.path.join(settings.COUCHBASE_URL, bulk_name),
         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
@@ -61,15 +67,15 @@ def get_app_collection(bulk_name):
     return 0
 
 
-def get_docs():
+def get_docs(all_docs=True):
+    logger.info('Connecting to: {}'.format(settings.COUCHBASE_URL))
     return requests.get(
-        os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+        os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs={}'.format('true' if all_docs else 'false')),
         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
     ).json()
 
 
 def get_doc(doc_id):
-
     path = os.path.join(settings.COUCHBASE_URL, doc_id)
     response = requests.get(
         path,
@@ -79,24 +85,6 @@ def get_doc(doc_id):
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.json()
     return False
-
-
-@app.task
-def set_app_user(username, password):
-
-    user_docs = []
-    user_docs.append(
-        {
-            "_id": username,
-            "type": "user",
-            "username": username,
-            "password": password,
-            "organisation": username,
-        }
-    )
-
-    response = set_docs(user_docs)
-    return response.text
 
 
 @app.task
@@ -141,7 +129,7 @@ def set_app_attendances(school_number=None, school_type=None):
     for reg in registrations:
         school = School.objects.get(id=reg['school'])
         classroom = EducationLevel.objects.get(id=reg['registered_in_level']) if school_type == 'alp' \
-                    else ClassRoom.objects.get(id=reg['classroom'])
+            else ClassRoom.objects.get(id=reg['classroom'])
 
         section = Section.objects.get(id=reg['section'])
         students = []
@@ -161,20 +149,6 @@ def set_app_attendances(school_number=None, school_type=None):
                 "status": enrolled.student.status
             }
             students.append(student)
-
-        #FIXME: Why are we updating the attendance here if it could potentially wipe out attendance records in the app
-        # # build dictionary of current attendance records indexed by attendance day
-        # reg.pop('section')
-        # for att in Attendance.objects.filter(**reg):
-        #     attendance_date = att.attendance_date.strftime('%d-%m-%Y')
-        #     student_record = {
-        #         "status": att.status,
-        #         "reason": att.absence_reason
-        #     }
-        #     students_attended = attendances.setdefault(attendance_date, {"students":{}})
-        #     students_attended['students'][str(att.student.id)] = student_record
-        #     if att.validation_date:
-        #         attendances[attendance_date]['validation_date'] = att.validation_date.strftime('%d-%m-%Y')
 
         # combine into a single doc representing students and attendance for a single school, class, section
         doc = {
@@ -289,80 +263,170 @@ def import_docs(**kwargs):
     """
     Imports attendance docs from couch base server
     """
-    from student_registration.attendances.models import Attendance
-    from student_registration.schools.models import ClassRoom, EducationLevel
-
     try:
-        data = get_docs()
-        attendance_records = []
-        logger.info('processing {} docs'.format(len(data['rows'])))
-        with transaction.atomic():
-            Attendance.objects.all().delete()
-            for num,row in enumerate(data['rows']):
-                if 'attendance' in row['doc']:
-                    class_id = row['doc']['class_id']
-                    school = row['doc']['school']
-                    school_type = row['doc']['school_type']
-                    attendances = row['doc']['attendance']
+        # get all docs form couchbase
+        logger.info('Importing...')
+        couchbase_docs = get_docs(all_docs=False)
 
-                    for key, attendance in attendances.items():
-                        students = attendance['students']
-                        attendance_date = convert_date(key)
-                        validation_date = ''
-                        if 'validation_date' in attendance:
-                            validation_date = convert_date(attendance['validation_date'])
+        ids = []
+        for num, row in enumerate(couchbase_docs['rows']):
+            if re.match('^\d+-\d+-\d+(-alp)?$', row["id"]):
+                ids.append(row["id"])
 
-                        for student_id, student in students.items():
-                            if type(student) is bool:
-                                logger.info('bad doc: {}'.format(row['doc']['_id']))
-                                continue
-                            attendance_record = Attendance(
-                                student_id=student_id,
-                                school_id=school,
-                                attendance_date=attendance_date
-                            )
-                            attendance_record.status = student['status']
-                            attendance_record.absence_reason = student['value']
-                            if school_type == 'alp':
-                                attendance_record.classlevel_id = class_id
-                            else:
-                                attendance_record.classroom_id = class_id
-                            if validation_date:
-                                attendance_record.validation_date = validation_date
-                                attendance_record.validation_status = True
+        batches = [ids[x: x + 1000] for x in xrange(0, len(ids), 1000)]
 
-                            attendance_records.append(attendance_record)
+        database = client.get_default_database()
+        database.attendances.drop()
+        for num, batch in enumerate(batches):
+            logger.info('Requesting batch: {} of length {} keys'.format(num + 1, len(batch)))
+            data = requests.post(
+                os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+                headers={'content-type': 'application/json'},
+                auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS),
+                data=json.dumps({'keys': batch})
+            ).json()
 
-                    if num % 100 == 0:
-                        Attendance.objects.bulk_create(attendance_records)
-                        logger.info('processed {} docs'.format(num))
-                        attendance_records = []
+            logger.info("Prefilter attendance")
+            cleaned = [row['doc'] for row in data['rows'] if 'attendance' in row['doc']]
 
-        logger.info('attendance updated')
+            logger.info("refresing attendance in mongo")
+            database.attendances.insert_many(cleaned)
 
-        calculate_by_day_summary()
-        logger.info('by day summary updated')
+        logger.info('Import Finished')
 
-        calculate_absentees_in_date_range(
-            date.today()-timedelta(days=10),
-            date.today()
-        )
-        logger.info('absentees updated')
     except Exception as exp:
-        logger.info('importing doc: {}'.format(row['doc']['_id']))
+        logger.exception(exp)
+        raise exp
+
+
+def flattern_attendance():
+    try:
+        map_function = Code(
+            """
+            function () {
+
+                var lookup = {};
+                for (var index in this.students) {
+                    student = this.students[index];
+                    lookup[student.student_id] = student;
+                }
+
+                for (var date in this.attendance) {
+                    day = this.attendance[date];
+                    for (var student in day['students']) {
+
+                        var key = this.school + '-' + date + '-' + student;
+                        record = day['students'][student];
+
+                        var gender = ((lookup.hasOwnProperty(student)) ? lookup[student].gender : null);
+
+                        var valid = ((day.hasOwnProperty('validation_date')) ? new Date(day.validation_date.split("-").reverse().join("-")) : null)
+
+                        var doc = {
+                            date: new Date(date.split("-").reverse().join("-")),
+                            school: this.school,
+                            class: this.class_id,
+                            section: this.section_id,
+                            location: this.location_id,
+                            student: student,
+                            gender: gender,
+                            attended: record.status,
+                            reason: record.reason,
+                            validation_date: valid
+
+                        };
+                        emit(key, doc);
+                    }
+                }
+            }
+            """
+        )
+        reduce_function = Code(
+            """
+            function (key, values) {
+                return values[0];
+            }
+            """
+        )
+
+        logger.info('Performing map_reduce...')
+        database = client.get_default_database()
+        database.attendances.map_reduce(
+            map_function,
+            reduce_function,
+            out=SON([("replace", "attendances_by_school")])
+        )
+        logger.info('Finished')
+
+    except Exception as exp:
         logger.exception(exp)
 
 
-def calculate_attendance_and_absentees():
+def aggregate_attendace():
+    database = client.get_default_database()
 
-    try:
-        calculate_by_day_summary()
-        calculate_absentees_in_date_range(
-            date.today() - timedelta(days=10),
-            date.today()
-        )
-    except Exception as exp:
-        logger.exception(exp)
+    logger.info('aggregate attendance by school and day')
+    database.attendances_by_day.aggregate([
+        {
+            '$project': {
+                'school': '$value.school',
+                'date': '$value.date',
+                'validation_date': '$value.validation_date',
+                'student': '$value.student',
+                'gender': '$value.gender',
+                'Attended': {"$cond": ["$value.attended", 1, 0]},
+                'Absent': {"$cond": [{"$not": "$value.attended"}, 1, 0]},
+                'Attended Male': {
+                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Male"]}, "$value.attended"]}, 1, 0]
+                },
+                'Attended Female': {
+                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Female"]}, "$value.attended"]}, 1, 0]
+                },
+                'Absent Male': {
+                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Male"]}, {"$not": "$value.attended"}]}, 1, 0]
+                },
+                'Absent Female': {
+                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Female"]}, {"$not": "$value.attended"}]}, 1, 0]
+                },
+            }
+        },
+        {
+            '$group': {
+                '_id': {'school': '$school', 'date': '$date'},
+                'school_id': {'$first': '$school'},
+                'attendance_date': {'$first': '$date'},
+                'total_enrolled': {'$sum': 1},
+                'total_attended': {'$sum': "$Attended"},
+                'total_absences': {'$sum': "$Absent"},
+                'total_attended_male': {'$sum': "$Attended Male"},
+                'total_attended_female': {'$sum': "$Attended Female"},
+                'total_absent_male': {'$sum': "$Absent Male"},
+                'total_absent_female': {'$sum': "$Absent Female"},
+                'validation_date': {'$first': "$validation_date"},
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                'school_id': 1,
+                'attendance_date': 1,
+                'total_enrolled': 1,
+                'total_attended': 1,
+                'total_absences': 1,
+                'total_attended_male': 1,
+                'total_attended_female': 1,
+                'total_absent_male': 1,
+                'total_absent_female': 1,
+                'validation_date': 1,
+                'validation_status': {
+                    '$cond': [
+                        {'$eq': ['$validation_date', None]}, False, True
+                    ]
+                }
+            }
+        },
+        {'$out': 'attendances_by_day_school'}
+    ])
 
 
 def calculate_by_day_summary():
@@ -371,45 +435,19 @@ def calculate_by_day_summary():
     Utilises Django aggregation framework to execute this on the database.
     :return:
     """
-    from student_registration.attendances.models import Attendance, BySchoolByDay
+    from student_registration.attendances.models import BySchoolByDay
 
-    days = Attendance.objects.values(
-        # group by school and day
-        'school_id',
-    ).annotate(
-        # create totals from raw data
-        total_enrolled=Count('student'),
-        total_attended=Count(Case(When(status=True, then=1))),
-        total_absences=Count(Case(When(status=False, then=1))),
-        total_attended_male=Count(Case(When(status=True, student__sex=u'Male', then=1))),
-        total_attended_female=Count(Case(When(status=True, student__sex=u'Female', then=1))),
-        total_absent_male=Count(Case(When(status=False, student__sex=u'Male', then=1))),
-        total_absent_female=Count(Case(When(status=False, student__sex=u'Female', then=1))),
-    )
+    class School(DynamicDocument):
+        meta = {'collection': 'attendances_by_day_school'}
 
-    select_fields = (
-        'school_id',
-        'attendance_date',
-        'total_enrolled',
-        'total_attended',
-        'total_absences',
-        'total_attended_male',
-        'total_attended_female',
-        'total_absent_male',
-        'total_absent_female',
-        'validation_status'
-    )
+    day_records = [BySchoolByDay(**day.to_mongo()) for day in School.objects.exclude('_id')]
 
-    days_valid = days.filter(validation_status=True).values(*select_fields)
-    days_invalid = days.filter(validation_status=False).values(*select_fields)
-
-    day_records = [BySchoolByDay(**day) for day in days_valid | days_invalid]
-
+    logger.info('Inserting {} new by school and day summaries'.format(len(day_records)))
     BySchoolByDay.objects.all().delete()
     BySchoolByDay.objects.bulk_create(day_records)
 
     schools_valid = BySchoolByDay.objects.filter(
-        validation_status=True
+        validation_date__isnull=False
     ).values(
         'school_id',
     ).distinct().annotate(
@@ -423,6 +461,7 @@ def calculate_by_day_summary():
         ).latest('attendance_date')
         school_instance.highest_attendance_rate = True
         school_instance.save()
+    logger.info('Finished')
 
 
 def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
@@ -430,7 +469,12 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
     Calculate the consistent absentees in the last 10 days
     :return:
     """
-    from student_registration.attendances.models import Attendance, Absentee
+    from student_registration.attendances.models import Absentee
+
+    class Attendance(DynamicDocument):
+        meta = {'collection': 'attendances'}
+
+
 
     absentees = Attendance.objects.filter(
         # select only validated attendances
@@ -458,12 +502,15 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
         )
 
         last_attended_date = attendances.filter(status=True).latest('attendance_date').attendance_date \
-        if attendances.filter(status=True).count() else attendances.filter(status=False).earliest('attendance_date').attendance_date
+            if attendances.filter(status=True).count() else None
+
+        if last_attended_date is None:
+            continue
 
         late_threshold_date = (to_date - timedelta(days=absent_threshold))
         if last_attended_date >= late_threshold_date:
 
-            first_absent_date=attendances.filter(
+            first_absent_date = attendances.filter(
                 status=False,
                 attendance_date__lt=last_attended_date,
                 attendance_date__gte=from_date,
@@ -503,6 +550,3 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
 
         if new:
             logger.info('New absent record for student {}'.format(absentee['student_id']))
-
-
-
