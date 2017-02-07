@@ -425,6 +425,7 @@ def aggregate_attendace():
                 }
             }
         },
+        {'$out': 'attendances_by_day_school'}
     ])
     return data
 
@@ -437,7 +438,10 @@ def calculate_by_day_summary():
     """
     from student_registration.attendances.models import BySchoolByDay
 
-    day_records = [BySchoolByDay(**day) for day in aggregate_attendace()]
+    class School(DynamicDocument):
+        meta = {'collection': 'attendances_by_day_school'}
+
+    day_records = [BySchoolByDay(**day.to_mongo()) for day in School.objects.exclude('_id')]
 
     logger.info('Inserting {} new by school and day summaries'.format(len(day_records)))
     BySchoolByDay.objects.all().delete()
