@@ -68,6 +68,7 @@
                              <option value="phone">Phone</option>
                              <option value="address">Address</option>
                              <option value="school">School</option>
+                              <option value="beneficiary">Beneficiary Change</option>
                           </select>
 
                           <div id = "phoneFields" style="display:none">
@@ -108,6 +109,14 @@
                             <label class="text">{% trans "Address: " %}</label>
                             <textarea cols="30" id="address" name="address" rows="4"></textarea>
                           </div>
+
+                            <div class="line" id = "beneficiaryFields" style="display:none">
+                                <label class="text">{% trans "Beneficiary Changed: " %}</label>
+                                <div id="radioBtn" class="btn-group beneficiary_changed_block">
+                                    <a class="btn btn-primary btn-sm notActive" data-toggle="beneficiary_changed" data-title="1">{% trans "Yes" %}</a>
+                                    <a class="btn btn-primary btn-sm active" data-toggle="beneficiary_changed" data-title="0">{% trans "No" %}</a>
+                                </div>
+                            </div>
                           <div id = "schoolFields" style="display:none">
                             <div class="line">
                               <label class="text">{% trans "Child: " %}</label>
