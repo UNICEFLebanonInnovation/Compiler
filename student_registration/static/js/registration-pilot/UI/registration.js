@@ -21,16 +21,6 @@
            $("#hhIdNumber").text(RegistrationData.all_visit_attempt_count);
            $("#hhAddess").text(RegistrationData.all_visit_attempt_count);
            $("#hhDOB").text(RegistrationData.all_visit_attempt_count);
-
-//           $("#household-visit-child-table tbody").empty();
-//
-//           RegistrationData.children_visits.forEach
-//           (
-//              function(entry)
-//              {
-//                 AddChildRow(entry);
-//              }
-//           );
         }
 
 
