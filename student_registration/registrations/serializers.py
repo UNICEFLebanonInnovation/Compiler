@@ -107,13 +107,14 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'last_year_result',
             'last_education_level',
             'last_education_year',
-            'owner',
+            'owner'
         )
 
 
 class RegistrationChildSerializer(serializers.ModelSerializer):
 
     student_id = serializers.IntegerField(source='student.id', read_only=True)
+    reg_id = serializers.IntegerField(source='id', read_only=True)
     number = serializers.CharField(source='student.number', read_only=True)
     first_name = serializers.CharField(source='student.first_name')
     father_name = serializers.CharField(source='student.father_name')
@@ -126,7 +127,6 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
     id_number = serializers.CharField(source='student.id_number')
     age = serializers.CharField(source='student.age')
     school_name = serializers.CharField(source='school.name', read_only=True)
-
     def create(self, validated_data):
 
         student_data = validated_data.pop('student', None)
@@ -149,8 +149,10 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
     class Meta:
         model = Registration
         fields = (
+            'reg_id',
             'school',
             'school_name',
+            'school_changed_to_verify',
             'enrolled_last_year_school',
             'relation_to_adult',
             'related_to_family',
@@ -170,6 +172,7 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
             'id_number',
             'owner',
             'number',
+            'school_changed_to_verify'
         )
 
 
@@ -226,6 +229,7 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'number',
             'principal_applicant_living_in_house',
             'individual_id_number',
+            'beneficiary_changed_verify'
         )
 
 

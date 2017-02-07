@@ -224,6 +224,9 @@
                   $("#schoolFields").show();
                   UpdateChildSchool();
                 }
+                else if (selectedOption == 'beneficiary' ) {
+                  $("#beneficiaryFields").show();
+                }
                 });
 
           function hideAll()
@@ -231,6 +234,8 @@
             $("#phoneFields").hide();
             $("#addressFields").hide();
             $("#schoolFields").hide();
+            $("#beneficiaryFields").hide();
+
           }
 
               function loadAjaxCall(regId , data)
@@ -307,7 +312,7 @@
                             childSelect.options[childSelect.options.length] = new Option
                             (
                                child.first_name+' '+child.father_name+' '+child.last_name,
-                               child.student_id
+                               child.reg_id
                                //,childIndex == 0;
                             );
                          }
@@ -348,7 +353,7 @@
              {
                 if(ValidateHouseHoldUpdate())
                 {
-                   if($("#changeOption").val() == "phone" || $("#changeOption").val() == "address" )
+                   if($("#changeOption").val() == "phone" || $("#changeOption").val() == "address" || $("#changeOption").val() == "beneficiary" )
                    {
                       SaveHousehold();
                    }
@@ -379,6 +384,7 @@
 
       function SaveHousehold()
       {
+
          var houseHoldData = new Object();
 
          if($("#changeOption").val() == "phone")
@@ -391,6 +397,12 @@
          else if($("#changeOption").val() == "address")
          {
             houseHoldData.address = $("#address").val();
+         }
+         else if($("#changeOption").val() == "beneficiary")
+         {
+             var isbeneficiary_changed= GetBooleanSelection($("#radioBtn"));
+            houseHoldData.beneficiary_changed_verify = isbeneficiary_changed ;
+
          }
 
          $.ajax
@@ -424,12 +436,19 @@
       }
 
 
+       function GetBooleanSelection(element)
+       {
+          return element.find('a.active').attr('data-title')==1 ? "true":"false";
+       }
+
+
       function SaveChild()
       {
          var childID = $("#child").val();
          var childData = new Object();
 
-         childData.school = $("#school").val();
+         childData.school_changed_to_verify = $("#school").val();
+
 
          $.ajax
          (
@@ -471,7 +490,9 @@
          {
             childRecord = children[0];
 
-            updateDropDownValue($("#school"),childRecord.school);
+            console.log(childRecord);
+
+            updateDropDownValue($("#school"),childRecord.school_changed_to_verify);
 
          }
 
