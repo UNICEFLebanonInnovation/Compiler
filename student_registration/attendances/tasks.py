@@ -265,6 +265,7 @@ def import_docs(**kwargs):
     """
     try:
         # get all docs form couchbase
+        logger.info('Importing...')
         couchbase_docs = get_docs(all_docs=False)
 
         ids = []
@@ -291,18 +292,24 @@ def import_docs(**kwargs):
             logger.info("refresing attendance in mongo")
             database.attendances.insert_many(cleaned)
 
-        logger.info('attendance updated')
+        logger.info('Import Finished')
 
     except Exception as exp:
         logger.exception(exp)
         raise exp
 
 
-def calculate_attendance():
+def flattern_attendance():
     try:
         map_function = Code(
             """
             function () {
+
+                var lookup = {};
+                for (var index in this.students) {
+                    student = this.students[index];
+                    lookup[student.student_id] = student;
+                }
 
                 for (var date in this.attendance) {
                     day = this.attendance[date];
@@ -310,6 +317,8 @@ def calculate_attendance():
 
                         var key = this.school + '-' + date + '-' + student;
                         record = day['students'][student];
+
+                        var gender = ((lookup.hasOwnProperty(student)) ? lookup[student].gender : null);
 
                         var valid = ((day.hasOwnProperty('validation_date')) ? new Date(day.validation_date.split("-").reverse().join("-")) : null)
 
@@ -320,6 +329,7 @@ def calculate_attendance():
                             section: this.section_id,
                             location: this.location_id,
                             student: student,
+                            gender: gender,
                             attended: record.status,
                             reason: record.reason,
                             validation_date: valid
@@ -352,6 +362,73 @@ def calculate_attendance():
         logger.exception(exp)
 
 
+def aggregate_attendace():
+    database = client.get_default_database()
+
+    logger.info('aggregate attendance by school and day')
+    database.attendances_by_day.aggregate([
+        {
+            '$project': {
+                'school': '$value.school',
+                'date': '$value.date',
+                'validation_date': '$value.validation_date',
+                'student': '$value.student',
+                'gender': '$value.gender',
+                'Attended': {"$cond": ["$value.attended", 1, 0]},
+                'Absent': {"$cond": [{"$not": "$value.attended"}, 1, 0]},
+                'Attended Male': {
+                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Male"]}, "$value.attended"]}, 1, 0]
+                },
+                'Attended Female': {
+                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Female"]}, "$value.attended"]}, 1, 0]
+                },
+                'Absent Male': {
+                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Male"]}, {"$not": "$value.attended"}]}, 1, 0]
+                },
+                'Absent Female': {
+                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Female"]}, {"$not": "$value.attended"}]}, 1, 0]
+                },
+            }
+        },
+        {
+            '$group': {
+                '_id': {'school': '$school', 'date': '$date'},
+                'school_id': {'$first': '$school'},
+                'attendance_date': {'$first': '$date'},
+                'total_enrolled': {'$sum': 1},
+                'total_attended': {'$sum': "$Attended"},
+                'total_absences': {'$sum': "$Absent"},
+                'total_attended_male': {'$sum': "$Attended Male"},
+                'total_attended_female': {'$sum': "$Attended Female"},
+                'total_absent_male': {'$sum': "$Absent Male"},
+                'total_absent_female': {'$sum': "$Absent Female"},
+                'validation_date': {'$first': "$validation_date"},
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                'school_id': 1,
+                'attendance_date': 1,
+                'total_enrolled': 1,
+                'total_attended': 1,
+                'total_absences': 1,
+                'total_attended_male': 1,
+                'total_attended_female': 1,
+                'total_absent_male': 1,
+                'total_absent_female': 1,
+                'validation_date': 1,
+                'validation_status': {
+                    '$cond': [
+                        {'$eq': ['$validation_date', None]}, False, True
+                    ]
+                }
+            }
+        },
+        {'$out': 'attendances_by_day_school'}
+    ])
+
+
 def calculate_by_day_summary():
     """
     Calculates the total attendances and absences for each school on each day.
@@ -365,6 +442,7 @@ def calculate_by_day_summary():
 
     day_records = [BySchoolByDay(**day.to_mongo()) for day in School.objects.exclude('_id')]
 
+    logger.info('Inserting {} new by school and day summaries'.format(len(day_records)))
     BySchoolByDay.objects.all().delete()
     BySchoolByDay.objects.bulk_create(day_records)
 
@@ -383,6 +461,7 @@ def calculate_by_day_summary():
         ).latest('attendance_date')
         school_instance.highest_attendance_rate = True
         school_instance.save()
+    logger.info('Finished')
 
 
 def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
@@ -390,7 +469,12 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
     Calculate the consistent absentees in the last 10 days
     :return:
     """
-    from student_registration.attendances.models import Attendance, Absentee
+    from student_registration.attendances.models import Absentee
+
+    class Attendance(DynamicDocument):
+        meta = {'collection': 'attendances'}
+
+
 
     absentees = Attendance.objects.filter(
         # select only validated attendances
@@ -418,8 +502,10 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
         )
 
         last_attended_date = attendances.filter(status=True).latest('attendance_date').attendance_date \
-            if attendances.filter(status=True).count() else attendances.filter(status=False).earliest(
-            'attendance_date').attendance_date
+            if attendances.filter(status=True).count() else None
+
+        if last_attended_date is None:
+            continue
 
         late_threshold_date = (to_date - timedelta(days=absent_threshold))
         if last_attended_date >= late_threshold_date:

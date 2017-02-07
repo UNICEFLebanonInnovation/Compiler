@@ -160,49 +160,6 @@ class BySchoolByDayAdmin(ExportMixin, admin.ModelAdmin):
         return True
 
 
-class AttendanceAdmin(ExportMixin, admin.ModelAdmin):
-
-    list_display = (
-        'school',
-        'classroom',
-        'classlevel',
-        'student',
-        'student_gender',
-        'status',
-        'attendance_date',
-        'validation_status',
-        'validation_date'
-    )
-    list_filter = (
-        # 'school__location',
-        # 'school',
-        SchoolFilter,
-        LocationFilter,
-        'classroom',
-        'classlevel',
-        'attendance_date',
-        'status',
-        'validation_status',
-    )
-    date_hierarchy = 'attendance_date'
-    ordering = ('-attendance_date',)
-
-    def get_queryset(self, request):
-        qs = super(AttendanceAdmin, self).get_queryset(request)
-        if has_group(request.user, 'COORDINATOR'):
-            return qs.filter(school_id__in=request.user.schools.all())
-
-        return qs
-
-    def has_add_permission(self, request):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        if has_group(request.user, 'COORDINATOR') or has_group(request.user, 'PMU'):
-            return False
-        return True
-
-
 class AbsenteeResource(resources.ModelResource):
     governorate = fields.Field(
         column_name='governorate',
