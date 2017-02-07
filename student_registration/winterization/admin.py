@@ -12,7 +12,6 @@ class BeneficiaryResource(resources.ModelResource):
     class Meta:
         model = Beneficiary
         fields = (
-            'id',
             'case_number',
             'registration_status',
             'location_type',
@@ -25,7 +24,6 @@ class BeneficiaryResource(resources.ModelResource):
             'card_loaded'
         )
         export_order = (
-            'id',
             'case_number',
             'registration_status',
             'location_type',
