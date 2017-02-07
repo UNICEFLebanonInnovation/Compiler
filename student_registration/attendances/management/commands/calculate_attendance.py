@@ -1,10 +1,16 @@
 from django.core.management.base import BaseCommand
 
-from student_registration.attendances.tasks import calculate_attendance_and_absentees
+from student_registration.attendances.tasks import (
+    import_docs,
+    flattern_attendance,
+    calculate_by_day_summary
+)
 
 
 class Command(BaseCommand):
-    help = 'Calculate attendances and absentees'
+    help = 'Calculate attendance'
 
     def handle(self, *args, **options):
-        calculate_attendance_and_absentees()
+        import_docs()
+        flattern_attendance()
+        calculate_by_day_summary()
