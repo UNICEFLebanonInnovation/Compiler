@@ -421,9 +421,9 @@ def calculate_by_day_summary():
     """
     from student_registration.attendances.models import BySchoolByDay
 
-    logger.info('inserting new by school and day summary')
     day_records = [BySchoolByDay(**day) for day in aggregate_attendace()]
 
+    logger.info('inserting new by school and day summary')
     BySchoolByDay.objects.all().delete()
     BySchoolByDay.objects.bulk_create(day_records)
 
