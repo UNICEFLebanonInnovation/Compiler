@@ -85,6 +85,7 @@ class RegisteringAdult(Person):
         related_name='+',
     )
     wfp_distribution_site = models.ForeignKey(WFPDistributionSite, blank=True, null=True)
+    old_number = models.CharField(max_length=45L, blank=True, null=True)
 
     @property
     def case_number(self):
@@ -102,7 +103,7 @@ class Payment(models.Model):
         related_name='+',
     )
     payment_list_number = models.IntegerField(blank=True, null=True)
-    payment_amount= models.IntegerField(blank=True, null=True)
+    payment_amount = models.IntegerField(blank=True, null=True)
     payment_month = models.IntegerField(blank=True, null=True)
     payment_date = models.DateField(blank=True, null=True)
 

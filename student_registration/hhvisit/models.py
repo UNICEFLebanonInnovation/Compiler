@@ -76,9 +76,12 @@ class HouseholdVisitTeam(models.Model):
 
     @property
     def team_name(self):
-        teamname1 = User.objects.filter(id=self.first_enumerator_id).values('username').first()['username'];
-        teamname2 = User.objects.filter(id=self.second_enumerator_id).values('username').first()['username'];
-        return teamname1 + ', '+ teamname2
+        first_name_enumerator1 = self.first_enumerator.first_name
+        last_name_enumerator1 = self.first_enumerator.last_name
+        first_name_enumerator2 = self.second_enumerator.first_name
+        last_name_enumerator2 = self.second_enumerator.last_name
+        return "{} {} {} {} {}".format(first_name_enumerator1, last_name_enumerator1, '-', first_name_enumerator2,
+                                       last_name_enumerator2)
 
 
 class HouseholdVisit(TimeStampedModel):
@@ -149,6 +152,13 @@ class ChildVisit(TimeStampedModel):
         ('pending', _('Pending')),
         ('completed', _('Completed')),
     )
+    ABSENCE_DURATION = Choices(
+        ('first', _('5-10')),
+        ('second', _('10-20')),
+        ('third', _('20++')),
+        ('never', _('Never Attended')),
+        ('frequent', _('Frequently Absent')),
+    )
     household_visit = models.ForeignKey(
         HouseholdVisit,
         blank=False, null=True,
@@ -160,19 +170,22 @@ class ChildVisit(TimeStampedModel):
         related_name='+',
     )
     child_enrolled_in_another_school = models.BooleanField(default=False)
+
     main_reason = models.ForeignKey(
         MainReason,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     specific_reason = models.ForeignKey(
         SpecificReason,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='+',
     )
     specific_reason_other_specify = models.CharField(max_length=255, blank=True, null=True)
     last_attendance_date = models.DateField(blank=True, null=True)
     child_status = models.CharField(max_length=50, blank=True, null=True, choices=STATUS)
+    child_absence_period = models.CharField(max_length=50, blank=True, null=True, choices=ABSENCE_DURATION)
+
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
@@ -213,6 +226,8 @@ class ChildService(models.Model):
         related_name='+',
     )
     service_provider = models.CharField(max_length=255, blank=True, null=True)
+
+    service_provider_followup = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['id']

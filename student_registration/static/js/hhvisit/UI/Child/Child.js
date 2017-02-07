@@ -12,15 +12,18 @@
 
            var ageCell = "<td>"+(entry.calculate_age)+"</td>";
 
-           var mainReasonCell = "<td style = \"display:none;\">"+(entry.main_reason_id)+"</td>";
-           var subReasonCell = "<td style = \"display:none;\">"+(entry.specific_reason_id)+"</td>";
+           var mainReasonCell = "<td style = \"display:none;\">"+(entry.main_reason_id!=null?entry.main_reason_id:'')+"</td>";
+           var subReasonCell = "<td style = \"display:none;\">"+(entry.specific_reason_id!=null?entry.specific_reason_id:'')+"</td>";
 
            var isEnrolled = (entry.child_enrolled_in_another_school==null?false:entry.child_enrolled_in_another_school);
            var isEnrolledCell = "<td style = \"display:none;\">"+isEnrolled+"</td>";
 
+           var otherReasonCell = "<td style = \"display:none;\">"+(entry.specific_reason_other_specify!=null?entry.specific_reason_other_specify:'')+"</td>";
+
            $("#household-visit-child-table tbody").append
            (
-              "<tr class = \"child-row-class\" >"+childIDCell+childNameCell+schoolCell+gradeCell+ageCell+mainReasonCell+subReasonCell+isEnrolledCell+"</tr>"
+              "<tr class = \"child-row-class\" >"+childIDCell+childNameCell+schoolCell+gradeCell+ageCell+mainReasonCell+subReasonCell+isEnrolledCell+otherReasonCell+"</tr>"
+
            );
         }
 
@@ -46,11 +49,11 @@
                           {
                             var mainReasonID = editForm.find("[name=childMainReason]").val();
 
-                            row.find("td:nth-child(6)").html(mainReasonID);
+                            row.find("td:nth-child(6)").html(mainReasonID!=null?mainReasonID:'');
 
                             var specificReasonID = editForm.find("[name=childSpecificReason]").val();
 
-                            row.find("td:nth-child(7)").html(specificReasonID);
+                            row.find("td:nth-child(7)").html(specificReasonID!=null?specificReasonID:'');
 
                             var isEnrolled =
                             GetBooleanSelection
@@ -59,6 +62,10 @@
                             );
 
                             row.find("td:nth-child(8)").html(isEnrolled);
+
+
+                            var specific_reason_other_specify = editForm.find("[name=specific_reason_other_specify]").val();
+                            row.find("td:nth-child(9)").html(specific_reason_other_specify!=null?specific_reason_other_specify:'');
 
                             var childID = row.find("td:first-child").text();
                             var childServiceData = CreateChildServiceData(childID, editForm);
@@ -113,6 +120,8 @@
               updateDropDownValue(editForm.find("[name=childSpecificReason]"),childRowRecord.specific_reason_id );
 
               UpdateOthersSpecifyVisibility(editForm);
+
+              updateDropDownValue(editForm.find("[name=specific_reason_other_specify]"),childRowRecord.specific_reason_other_specify );
 
               ChangeBooleanSelection
               (

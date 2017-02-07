@@ -39,9 +39,9 @@
         {
            var date;
 
-           if(isDate(dateString, "yyyy-mm-ddTHH:mm:ssZ") )
+           if(isDate(dateString, "yyyy-MM-ddTHH:mm:ssZ") )
            {
-              date = new Date(getDateFromFormat(dateString, "yyyy-mm-ddTHH:mm:ssZ"));
+              date = new Date(getDateFromFormat(dateString, "yyyy-MM-ddTHH:mm:ssZ"));
            }
            else
            {
