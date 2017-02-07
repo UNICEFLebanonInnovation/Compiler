@@ -66,6 +66,47 @@
            }
 
         }
+        function GetChildVisitReasonData(childID)
+        {
+           var result = null;
+
+           var childVisits = visitDataRecord.children_visits.filter
+           (
+              function(childVisit)
+              {
+                 return childVisit.id == childID;
+              }
+           );
+
+           if(childVisits.length > 0)
+           {
+              childVisitRecord = childVisits[0];
+
+              result = childVisitRecord.child_visit_reason;
+           }
+
+           return result;
+        }
+
+        function UpdateChildVisitReasonData(childID, data)
+        {
+           var childVisitRecord = null;
+
+           var childVisits = visitDataRecord.children_visits.filter
+           (
+              function(childVisit)
+              {
+                 return childVisit.id == childID;
+              }
+           );
+
+           if(childVisits.length > 0)
+           {
+              var childVisitRecord = childVisits[0];
+              childVisitRecord.child_visit_reason = data;
+           }
+
+        }
 
         function updateDropDownValue(dropDownElement, value)
         {
@@ -99,7 +140,6 @@
         {
            var visitAttemptsData = CreateVisitAttemptsData();
 
-           // alert(JSON.stringify(visitAttemptsData));
 
            visitAttemptsData.forEach
            (
@@ -139,10 +179,6 @@
 
                  visitAttemptRecord.household_visit_id = visitDataRecord.id;
 
-                  // alert(JSON.stringify(visitAttemptRecord));
-                  // alert(trElement.find('td:nth-child(2)').html());
-                  // alert(FormatJSONDate((trElement.find('td:nth-child(2)').html()) ));
-                  // alert(i);
                  if( (i==0) || addAll )
                  {
                     visitAttemptsData.push(visitAttemptRecord);
@@ -183,7 +219,6 @@
               }
            );
 
-           <!--alert(JSON.stringify(visitCommentData));-->
            return visitCommentData;
         }
 
@@ -213,35 +248,36 @@
 
              childRecord.id = trElement.find('td:nth-child(1)').html();
 
-             var main_reason_id = trElement.find('td:nth-child(6)').html();
-
-             if ( main_reason_id != '')
-             {
-                childRecord.main_reason_id = main_reason_id;
-             }
-             else
-             {
-                childRecord.main_reason_id = null;
-             }
-
-             var specific_reason_id = trElement.find('td:nth-child(7)').html();
-
-             if ( specific_reason_id != '')
-             {
-                childRecord.specific_reason_id = specific_reason_id;
-             }
-             else
-             {
-                childRecord.specific_reason_id = null;
-             }
+             // var main_reason_id = trElement.find('td:nth-child(6)').html();
+             //
+             // if ( main_reason_id != '')
+             // {
+             //    childRecord.main_reason_id = main_reason_id;
+             // }
+             // else
+             // {
+             //    childRecord.main_reason_id = null;
+             // }
+             //
+             // var specific_reason_id = trElement.find('td:nth-child(7)').html();
+             //
+             // if ( specific_reason_id != '')
+             // {
+             //    childRecord.specific_reason_id = specific_reason_id;
+             // }
+             // else
+             // {
+             //    childRecord.specific_reason_id = null;
+             // }
 
              childRecord.household_visit_id = visitDataRecord.id;
 
-             childRecord.child_enrolled_in_another_school = trElement.find('td:nth-child(8)').html()=="true";
+             childRecord.child_enrolled_in_another_school = trElement.find('td:nth-child(6)').html()=="true";
 
-             childRecord.specific_reason_other_specify = trElement.find('td:nth-child(9)').html();
+             // childRecord.specific_reason_other_specify = trElement.find('td:nth-child(9)').html();
 
              childRecord.child_visit_service = GetChildVisitServiceData(childRecord.id);
+             childRecord.child_visit_reason = GetChildVisitReasonData(childRecord.id);
 
              return childRecord;
         }
@@ -289,6 +325,56 @@
 
            return childServiceData;
         }
+
+        function CreateChildReasonData(childVisitID,editForm)
+        {
+          childReasonData = [];
+
+          editForm.find("[name=childReasons] tbody tr")
+              .each
+              (
+                  function(i, obj)
+                  {
+                      trElement = $(obj);
+
+                      childReasonRecord = new Object();
+
+                      childReasonRecordID= trElement.find('td:nth-child(1)').html();
+
+                      if(childReasonRecordID != '')
+                      {
+                          childReasonRecord.id = trElement.find('td:nth-child(1)').html();
+                      }
+                      else
+                      {
+                           childReasonRecord.id = null;
+                      }
+
+                      dropDownElementMain = trElement.find('td:nth-child(2) select');
+                      childReasonRecord.main_reason_id = dropDownElementMain.val();
+                      childReasonRecord.main_reason = dropDownElementMain.find('option[value="'+childReasonRecord.main_reason_id+'"]').text().trim();
+
+                      dropDownElementSub = trElement.find('td:nth-child(3) select');
+
+                      childReasonRecord.specific_reason_id = dropDownElementSub.val();
+                      childReasonRecord.specific_reason = dropDownElementSub.find('option[value="'+childReasonRecord.specific_reason_id+'"]').text().trim();
+
+                      childReasonRecord.specific_reason_other_specify = trElement.find('td:nth-child(4) input').val();
+
+                      childReasonRecord.child_visit_id = childVisitID;
+
+                      childReasonData.push(childReasonRecord);
+
+
+
+
+
+                  }
+           );
+
+           return childReasonData;
+        }
+
 
         function SaveVisitRecord(id, data)
         {
