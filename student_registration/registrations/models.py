@@ -132,7 +132,7 @@ class StatusLog(TimeStampedModel):
         RegisteringAdult,
         blank=False, null=True,
         related_name='+',
-    )
+     )
     message = models.CharField(max_length=255L, blank=True, null=True)
     type = models.ForeignKey(
         MessageType,
@@ -346,6 +346,12 @@ class Registration(TimeStampedModel):
 
     def __unicode__(self):
         return self.student.__unicode__()
+
+    @property
+    def school_changed_verified(self):
+        if self.school_changed_to_verify :
+            return False
+        return True
 
 
 class WaitingList(TimeStampedModel):

@@ -304,7 +304,6 @@ class SchoolApprovalListView(LoginRequiredMixin, TemplateView):
         locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
         location = self.request.GET.get("location", 0)
         if location:
-
             data = self.model.objects.filter(school__location_id=location,school_changed_to_verify__isnull=False).order_by('id')
 
         return {
@@ -312,4 +311,27 @@ class SchoolApprovalListView(LoginRequiredMixin, TemplateView):
             'locations': locations,
             'selectedLocation': int(location),
             'Modification_form': SchoolModificationForm
+        }
+
+
+class AdultChangelListView(LoginRequiredMixin, TemplateView):
+    """
+    Provides the adult change page with lookup types in the context
+    """
+    model = RegisteringAdult
+    template_name = 'registration-pilot/household-change.html'
+
+    def get_context_data(self, **kwargs):
+        data = []
+
+        locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
+        location = self.request.GET.get("location", 0)
+
+        if location:
+            data = self.model.objects.filter(school__location_id=location,beneficiary_changed_verify=True).order_by('id')
+
+        return {
+            'adults': data,
+            'locations': locations,
+            'selectedLocation': int(location)
         }
