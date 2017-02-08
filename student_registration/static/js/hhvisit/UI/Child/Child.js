@@ -60,6 +60,7 @@
                           }
                           else
                           {
+                             alert('invalid');
                              return false;
                           }
 
@@ -135,6 +136,8 @@
 
               InitialiseReasonDeleting(editForm);
 
+              InitialiseReasonDropdowns(editForm);
+
            }
 
            function InitialiseReasonDropdowns(editForm)
@@ -144,11 +147,13 @@
                  'change', '[name=childMainReason]',
                  function()
                  {
-                    FilterSpecificReasons(editForm, parseInt($(this).val()));
+                    var parentRow = $(this).parent().parent();
 
-                    updateDropDownValue(editForm.find("[name=childSpecificReason]"),null );
+                    FilterSpecificReasons(parentRow, parseInt($(this).val()));
 
-                    UpdateOthersSpecifyVisibility(editForm);
+                    updateDropDownValue(parentRow.find("[name=childSpecificReason]"),null );
+
+                    UpdateOthersSpecifyVisibility(parentRow);
                  }
               );
 
@@ -158,11 +163,13 @@
                  'change', '[name=childSpecificReason]',
                  function()
                  {
-                    UpdateOthersSpecifyVisibility(editForm);
+                    var parentRow = $(this).parent().parent();
 
-                    if(!editForm.find("[name='otherReason']").visible())
+                    UpdateOthersSpecifyVisibility(parentRow);
+
+                    if(!parentRow.find("[name='otherReason']").is(":disabled") )
                     {
-                       editForm.find("[name='specific_reason_other_specify']").text("");
+                       parentRow.find("[name='otherReason']").text("");
                     }
                  }
               );
@@ -176,11 +183,11 @@
 
                 if(specificReasonText == "Other (specify)")
                 {
-                   editForm.find("[name='otherReason']").show();
+                   editForm.find("[name='otherReason']").prop( "disabled", false );;
                 }
                 else
                 {
-                   editForm.find("[name='otherReason']").hide();
+                   editForm.find("[name='otherReason']").prop( "disabled", true );;
                 }
            }
 
