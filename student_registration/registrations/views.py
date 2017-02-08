@@ -34,7 +34,7 @@ from student_registration.registrations.forms import (
     RegisteringAdultForm,
     RegisteringChildForm,
     WaitingListForm,
-    HouseholdListSearchForm,
+    SchoolModificationForm,
 )
 from student_registration.students.forms import StudentForm
 from student_registration.eav.models import (
@@ -276,7 +276,7 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
             data = []
             schools = []
 
-            locations = Location.objects.all().filter(type_id=2).order_by('name')
+            locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
             location = self.request.GET.get("location", 0)
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
 
@@ -290,5 +290,28 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'locations': locations,
                 'selectedLocation': int(location),
                 'schools': schools,
-                'phoneAnsweredby' : phoneAnsweredby
-    }
+                'phoneAnsweredby': phoneAnsweredby
+            }
+
+
+class SchoolApprovalListView(LoginRequiredMixin, TemplateView):
+
+    model = Registration
+    template_name = 'registration-pilot/list_school_modification.html'
+
+    def get_context_data(self, **kwargs):
+        data = []
+        schools = []
+        locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
+        location = self.request.GET.get("location", 0)
+        if location:
+            data = self.model.objects.filter(registering_adult__school__location_id=location).order_by('id')
+            schools = School.objects.filter(location_id=location)
+
+        return {
+            'registrations': data,
+            'locations': locations,
+            'schools': schools,
+            'selectedLocation': int(location),
+            'Modification_form': SchoolModificationForm
+        }
