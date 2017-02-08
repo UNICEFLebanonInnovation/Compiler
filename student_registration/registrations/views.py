@@ -301,17 +301,15 @@ class SchoolApprovalListView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         data = []
-        schools = []
         locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
         location = self.request.GET.get("location", 0)
         if location:
-            data = self.model.objects.filter(registering_adult__school__location_id=location).order_by('id')
-            schools = School.objects.filter(location_id=location)
+
+            data = self.model.objects.filter(school__location_id=location,school_changed_to_verify__isnull=False).order_by('id')
 
         return {
             'registrations': data,
             'locations': locations,
-            'schools': schools,
             'selectedLocation': int(location),
             'Modification_form': SchoolModificationForm
         }
