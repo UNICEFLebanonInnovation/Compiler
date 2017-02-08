@@ -37,23 +37,30 @@
                   <ul class="slidee" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
                     {# 1 Slide household Identity #}
                         <li class="active framebox">
-                            <h3 class="panel-title">{% trans "Household Confirm Identity" %}&nbsp;&nbsp;</h3>
+                            <h3 class="panel-title">{% trans "Verify Caller Identity" %}&nbsp;&nbsp;</h3>
+                            <br/>
+                            <label >{% trans "Caller must answer 2 of the following questions correctly." %}&nbsp;&nbsp;</label>
+                            <br/>
+                            <br/>
                             <div class="line">
-                                <label >{% trans "Name of Household Rep: " %}&nbsp;&nbsp;</label> <span id ="hhName"></span>
+                                <label >{% trans "- Name of person that registered children: " %}&nbsp;&nbsp;</label> <span id ="hhName"></span>
                             </div>
                             <div class="line">
-                                <label >{% trans "ID Number: " %}&nbsp;&nbsp;</label><span id ="hhIdNumber"></span>
+                                <label >{% trans "- ID Number: " %}&nbsp;&nbsp;</label><span id ="hhIdNumber"></span>
                             </div>
                             <div class="line">
-                                <label >{% trans "Date of birth: " %}&nbsp;&nbsp;</label><span id ="hhDOB"></span>
+                                <label >{% trans "- DOB of person that registered children " %}&nbsp;&nbsp;</label><span id ="hhDOB"></span>
                             </div>
-                            <div class="line">
+                            <div class="line" >
+                                <label >{% trans "- Last 4 digits on ATM Card: " %}&nbsp;&nbsp;</label><span id ="hhLastcardgigits"></span>
+                            </div>
+                            <div class="line" style="visibility: hidden;">
                                 <label >{% trans "Primary phone: " %}&nbsp;&nbsp;</label><span id ="hhprimary_phone"></span>
                             </div>
-                            <div class="line">
+                            <div class="line" style="visibility: hidden;">?
                                 <label >{% trans "Secondary phone: " %}&nbsp;&nbsp;</label><span id ="hhsecondary_phone"></span>
                             </div>
-                            <div class="line">
+                            <div class="line" style="visibility: hidden;">
                                 <label >{% trans "Address: " %}&nbsp;&nbsp;</label><span id ="hhAddess"></span>
                             </div>
                         </li>

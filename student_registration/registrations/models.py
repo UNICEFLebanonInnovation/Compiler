@@ -87,6 +87,7 @@ class RegisteringAdult(Person):
     wfp_distribution_site = models.ForeignKey(WFPDistributionSite, blank=True, null=True)
     old_number = models.CharField(max_length=45L, blank=True, null=True)
     beneficiary_changed_verify = models.BooleanField(default=False)
+    card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
 
     @property
     def case_number(self):
