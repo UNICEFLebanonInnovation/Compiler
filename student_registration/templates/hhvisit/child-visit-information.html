@@ -73,7 +73,7 @@
 
 
      <div name = "childMainReasons" style = "display:none">
-         <select style = "width:150px">
+         <select name=childMainReason style = "width:150px">
          <option value="">---{% trans "Main Reason" %}---</option>
          {% for mainreason in mainreasons %}
           <option value="{{ mainreason.id }}" >
@@ -84,7 +84,7 @@
      </div>
 
         <div name = "childSpecificReasons" style = "display:none">
-            <select style = "width:150px">
+            <select name = "childSpecificReason" style = "width:150px">
                 <option value="">---{% trans "Specific Reason" %}---</option>
                 {% for specificreason in specificreasons %}
                     <option value="{{ specificreason.id }}" main-reason-id="{{ specificreason.main_reason_id }}" >
