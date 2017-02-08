@@ -60,7 +60,6 @@
                           }
                           else
                           {
-                             alert('invalid');
                              return false;
                           }
 
