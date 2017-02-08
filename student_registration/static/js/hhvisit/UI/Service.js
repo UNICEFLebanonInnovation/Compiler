@@ -23,7 +23,7 @@
               "<tr>"+serviceIDCell+serviceTypeCell+serviceProvideCell+serviceProvideFollowUpCell+deleteServiceCell+"</tr>"
            );
 
-           updateDropDownValue(editForm.find("tr:last-child td:nth-child(2) select"), entry.service_type_id );
+           updateDropDownValue(editForm.find("[name=childServices] tr:last-child td:nth-child(2) select"), entry.service_type_id );
         }
 
         function InitialiseServiceDeleting(editForm)
