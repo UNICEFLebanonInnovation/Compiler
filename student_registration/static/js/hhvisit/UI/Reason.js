@@ -13,7 +13,7 @@
            var MainReasonCell = "<td>"+editForm.find("[name=childMainReasons]").html()+"</td>";
            var SpecificReasonCell = "<td>"+editForm.find("[name=childSpecificReasons]").html()+"</td>";
 
-           var SpecifyOtherReasonCell = "<td><input type=\"text\" value=\""+entry.specific_reason_other_specify+"\" style = \"width:100%;\" /></td>";
+           var SpecifyOtherReasonCell = "<td><input name = \"otherReason\" type=\"text\" value=\""+(entry.specific_reason_other_specify!=null?entry.specific_reason_other_specify:'')+"\" style = \"width:100%;\" /></td>";
 
            var deleteReasonCell = "<td><button class=\"btn btn-danger delete-Reason-row\" type=\"button\" ><i class=\"icon-trash icon-white\"></i></button></td>";
 
@@ -22,8 +22,8 @@
               "<tr>"+ReasonIDCell+MainReasonCell+SpecificReasonCell+SpecifyOtherReasonCell+deleteReasonCell+"</tr>"
            );
 
-           updateDropDownValue(editForm.find("tr:last-child td:nth-child(2) select"), entry.main_reason_id );
-           updateDropDownValue(editForm.find("tr:last-child td:nth-child(3) select"), entry.specific_reason_id );
+           updateDropDownValue(editForm.find("[name=childReasons] tr:last-child td:nth-child(2) select"), entry.main_reason_id );
+           updateDropDownValue(editForm.find("[name=childReasons] tr:last-child td:nth-child(3) select"), entry.specific_reason_id );
         }
 
         function InitialiseReasonDeleting(editForm)
