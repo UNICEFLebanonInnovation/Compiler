@@ -43,7 +43,13 @@ from student_registration.eav.models import (
 )
 from student_registration.locations.models import Location
 
-from .models import Registration, RegisteringAdult, WaitingList , BeneficiaryChangedReason
+from .models import (
+    Registration,
+    RegisteringAdult,
+    WaitingList,
+    BeneficiaryChangedReason,
+    ComplaintCategory
+)
 from .serializers import (
     RegistrationSerializer,
     RegisteringAdultSerializer,
@@ -278,6 +284,16 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
             schools = []
 
             locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
+            PAYMENTComplaintTypes = \
+                ComplaintCategory.objects.all().filter(complaint_type='PAYMENT').order_by('name')
+            CARDDISTRIBUTIONComplaintTypes = \
+                ComplaintCategory.objects.all().filter(complaint_type='CARD DISTRIBUTION').order_by('name')
+            CARDComplaintTypes = \
+                ComplaintCategory.objects.all().filter(complaint_type='CARD').order_by('name')
+            SCHOOLComplaintTypes = \
+                ComplaintCategory.objects.all().filter(complaint_type='SCHOOL-RELATED').order_by('name')
+            OTHERComplaintTypes = \
+                ComplaintCategory.objects.all().filter(complaint_type='OTHER').order_by('name')
             location = self.request.GET.get("location", 0)
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
             relationToHouseholdHead = RegisteringAdult.RELATION_TYPE
@@ -297,6 +313,7 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                                                  primary_phone__icontains=primarySearchText,
                                                  secondary_phone__icontains=secondarySearchText,
                                                  ).order_by('id')[:10]
+
             return {
                 'adults': data,
                 'locations': locations,
@@ -306,10 +323,15 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'relationToHouseholdHead': relationToHouseholdHead,
                 'beneficiaryChangedReason': beneficiaryChangedReason,
                 'addressSearchText': addressSearchText,
-                'repSearchText' : repSearchText,
-                'idSearchText' : idSearchText,
-                'primarySearchText' : primarySearchText,
+                'repSearchText': repSearchText,
+                'idSearchText': idSearchText,
+                'primarySearchText': primarySearchText,
                 'secondarySearchText':secondarySearchText,
+                'PAYMENTComplaintTypes': PAYMENTComplaintTypes,
+                'CARDDISTRIBUTIONComplaintTypes': CARDDISTRIBUTIONComplaintTypes,
+                'CARDComplaintTypes': CARDComplaintTypes,
+                'SCHOOLComplaintTypes': SCHOOLComplaintTypes,
+                'OTHERComplaintTypes': OTHERComplaintTypes,
             }
 
 
