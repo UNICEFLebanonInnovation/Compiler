@@ -182,6 +182,15 @@ class OutreachExamSerializer(serializers.ModelSerializer):
             'assigned_to_level',
             'not_enrolled_in_this_school',
             'exam_not_exist_in_school',
+            'post_exam_result_arabic',
+            'post_exam_result_language',
+            'post_exam_result_math',
+            'post_exam_result_science',
+            'post_exam_corrector_arabic',
+            'post_exam_corrector_language',
+            'post_exam_corrector_math',
+            'post_exam_corrector_science',
+            'post_exam_level',
         )
 
 
@@ -264,4 +273,13 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'assigned_to_level',
             'not_enrolled_in_this_school',
             'exam_not_exist_in_school',
+            'post_exam_result_arabic',
+            'post_exam_result_language',
+            'post_exam_result_math',
+            'post_exam_result_science',
+            'post_exam_corrector_arabic',
+            'post_exam_corrector_language',
+            'post_exam_corrector_math',
+            'post_exam_corrector_science',
+            'post_exam_level',
         )
