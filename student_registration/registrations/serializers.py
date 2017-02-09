@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Registration, RegisteringAdult, WaitingList
+from .models import Registration, RegisteringAdult, WaitingList, Complaint, Payment
 from student_registration.students.serializers import StudentSerializer
 
 
@@ -111,6 +111,38 @@ class RegistrationSerializer(serializers.ModelSerializer):
         )
 
 
+class ComplaintSerializer(serializers.ModelSerializer):
+    complaint_id = serializers.IntegerField(source='id', read_only=True)
+    complaint_type = serializers.CharField(source='complaint_category.complaint_type', read_only=True)
+    complaint_category_name = serializers.CharField(source='complaint_category.name', read_only=True)
+
+    class Meta:
+        model = Complaint
+        fields = (
+            'complaint_id',
+            'complaint_type',
+            'complaint_category',
+            'complaint_category_name',
+            'complaint_note',
+            'created',
+            'owner'
+        )
+
+class PaymentSerializer(serializers.ModelSerializer):
+    payment_id = serializers.IntegerField(source='id', read_only=True)
+
+    class Meta:
+        model = Payment
+        fields = (
+            'payment_id',
+            'payment_list_number',
+            'payment_amount',
+            'payment_month',
+            'payment_year',
+            'payment_date',
+        )
+
+
 class RegistrationChildSerializer(serializers.ModelSerializer):
 
     student_id = serializers.IntegerField(source='student.id', read_only=True)
@@ -171,8 +203,7 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
             'birthday_day',
             'id_number',
             'owner',
-            'number',
-            'school_changed_to_verify'
+            'number'
         )
 
 
@@ -181,6 +212,8 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     number = serializers.CharField(read_only=True)
     children = RegistrationChildSerializer(many=True, read_only=True)
+    complaints = ComplaintSerializer(many=True, read_only=True)
+    payments = PaymentSerializer(many=True, read_only=True)
 
     def create(self, validated_data):
 
@@ -236,7 +269,11 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'beneficiary_changed_relation_to_householdhead',
             'beneficiary_changed_same_as_caller',
             'beneficiary_changed_reason',
-            'card_last_four_digits'
+            'card_last_four_digits',
+            'card_distribution_date',
+            'card_status',
+            'complaints',
+            'payments'
         )
 
 

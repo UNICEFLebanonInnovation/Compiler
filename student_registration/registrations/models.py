@@ -48,6 +48,26 @@ class BeneficiaryChangedReason(models.Model):
         return self.name
 
 
+class ComplaintCategory(models.Model):
+    TYPE = Choices(
+        ('distribution', _('CARD DISTRIBUTION')),
+        ('card', _('CARD')),
+        ('payment', _('PAYMENT')),
+        ('school', _('SCHOOL-RELATED')),
+        ('remove', _('REMOVE FROM THE PROGRAM')),
+        ('other', _('OTHER'))
+    )
+    name = models.CharField(max_length=200, unique=True)
+    complaint_type = models.CharField(max_length=50, blank=True, null=True, choices=TYPE)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Main Reason'
+
+    def __unicode__(self):
+        return self.name
+
+
 class RegisteringAdult(Person):
     """
     Captures the details of the adult who
@@ -82,7 +102,9 @@ class RegisteringAdult(Person):
     card_issue_requested = models.BooleanField(default=False)
     card_number = models.CharField(max_length=50, blank=True, null=True)
     card_status = models.CharField(max_length=50, blank=True, null=True)
-    batch_number= models.IntegerField(blank=True, null=True)
+    card_distribution_date = models.DateField(blank=True, null=True)
+    card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
+    batch_number = models.IntegerField(blank=True, null=True)
     child_enrolled_in_this_school = models.PositiveIntegerField(blank=True, null=True)
     child_enrolled_in_other_schools = models.BooleanField(default=False)
     primary_phone = models.CharField(max_length=50, blank=True, null=True)
@@ -108,13 +130,47 @@ class RegisteringAdult(Person):
         blank=True, null=True,
         related_name='+',
     )
-    card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
+    update_owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+
 
     @property
     def case_number(self):
         if self.id_type and 'UNHCR' in self.id_type.name:
             return self.id_number
         return self.number
+
+
+class Complaint(TimeStampedModel):
+    """
+    Household complaints by hotline
+    """
+    complaint_adult = models.ForeignKey(
+        RegisteringAdult,
+        blank=True, null=True,
+        related_name='complaints',
+    )
+    complaint_category = models.ForeignKey(
+        ComplaintCategory,
+        blank=True, null=True,
+        related_name='+',
+    )
+    complaint_note = models.TextField(blank=True, null=True)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.id
+
 
 class Payment(models.Model):
     """
@@ -123,11 +179,12 @@ class Payment(models.Model):
     paid_adult = models.ForeignKey(
         RegisteringAdult,
         blank=True, null=True,
-        related_name='+',
+        related_name='payments',
     )
     payment_list_number = models.IntegerField(blank=True, null=True)
     payment_amount = models.IntegerField(blank=True, null=True)
     payment_month = models.IntegerField(blank=True, null=True)
+    payment_year = models.IntegerField(blank=True, null=True)
     payment_date = models.DateField(blank=True, null=True)
 
 
