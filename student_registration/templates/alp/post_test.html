@@ -22,7 +22,9 @@
 
 {% block content-full-page %}
 
-    {% include 'alp/prototype_new.html' %}
+    {% if alp_phase == 'pre_test' %}
+        {% include 'alp/prototype_new.html' %}
+    {% endif %}
 
          <section class="main-content-wrapper">
             <section id="main-content">
@@ -54,7 +56,9 @@
                                         <select name="school" id="filter_school" style="width: 210px;">
                                             <option value="">{% trans "Filter by School" %}</option>
                                             {% for item in schools %}
-                                                <option value="{{ item.id }}" {% if selectedSchool == item.id %}selected="selected"{% endif %}>{{ item.name }} {% if item.location %}{{ item.location.name }}{% endif %}</option>
+                                                <option value="{{ item.id }}" {% if selectedSchool == item.id %}selected="selected"{% endif %}>
+                                                    {{ item }} - {% if item.location %}{{ item.location.name }}{% endif %}
+                                                </option>
                                             {% endfor %}
                                         </select>
                                         {% endif %}
@@ -89,7 +93,7 @@
                                             {% if request.user|has_group:"ALP_SCHOOL" %}
                                                 <label class="col-100">{% trans "Not enrolled in this school" %}</label>
                                             {% endif %}
-                                            {% if request.user|has_group:"CERD" %}
+                                            {% if request.user|has_group:"CERD" and alp_phase == 'pre_test' %}
                                                 <label class="col-100">{% trans "Exam not received from this school" %}</label>
                                             {% endif %}
                                         </th>
@@ -101,9 +105,10 @@
                                         <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Sex" %}</label></th>
-{#                                        {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}#}
                                         {% if request.user|has_group:"CERD" %}
+                                            {% if alp_phase == 'pre_test' %}
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Registered in level" %}</label></th>
+                                            {% endif %}
                                         <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Assigned to level" %}</label></th>
                                         {% endif %}
@@ -123,11 +128,12 @@
                                         <th rowspan="2"><label>{% trans "Student living address" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Phone number (6 digits)" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Phone prefix (2 digits)" %}</label></th>
+                                        {% if alp_phase == 'pre_test' %}
                                         <th colspan="2" style="text-align: center; background-color: #67b168;"><label>{% trans "Last student education" %}</label></th>
                                         <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
+                                        {% endif %}
                                     </tr>
                                     <tr id="thead-line-2">
-{#                                        {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}#}
                                         {% if request.user|has_group:"CERD" %}
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
@@ -149,18 +155,20 @@
                                         <th><label>{% trans "year" %}</label></th>
                                         <th><label>{% trans "month" %}</label></th>
                                         <th><label>{% trans "day" %}</label></th>
+                                        {% if alp_phase == 'pre_test' %}
                                         <th style="background-color: #67b168;"><label class="col-100">{% trans "Last education level" %}</label></th>
                                         <th style="background-color: #67b168;"><label>{% trans "Education year" %}</label></th>
                                         <th style="background-color: #ec971f;"><label class="col-150">{% trans "Is the child participated in an ALP program" %}</label></th>
                                         <th style="background-color: #ec971f;"><label>{% trans "ALP round" %}</label></th>
                                         <th style="background-color: #ec971f;"><label>{% trans "ALP level" %}</label></th>
                                         <th style="background-color: #ec971f;"><label>{% trans "ALP result" %}</label></th>
+                                        {% endif %}
                                     </tr>
                                 </thead>
                                 <tbody>
                                 {% if request.user|has_group:"CERD" %}
                                     {% for line in data %}
-                                        {% include 'alp/prototype-view.html' with role="CERD" student=line.student level=line.level %}
+                                        {% include 'alp/prototype-view_new.html' with role="CERD" student=line.student level=line.registered_in_level %}
                                     {% endfor %}
                                 {% endif %}
                                 {% if request.user|has_group:"ALP_SCHOOL" %}
@@ -171,6 +179,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        {% if alp_phase == 'pre_test' %}
                             <div style="position: fixed; bottom: 10px; {% if LANGUAGE_CODE == 'ar-ar' %}right: 35px;{% else %}left: 35px;{% endif %}">
                               <button class="btn btn-success" id="add_datatable_line">
                                 <i class="icon-plus-sign icon-white"></i>&nbsp;
@@ -180,7 +189,8 @@
                                 <i class="icon-plus-sign icon-white"></i>&nbsp;
                                     {% trans "Add defined number of lines" %}
                               </button>
-                        </div>
+                            </div>
+                        {% endif %}
                      </div>
                 </div>
             </div>
@@ -215,8 +225,6 @@
         var user_token = '{{ user_token }}';
         var columns = 0;
         var rows = 1;
-        var entity_ct = 17;
-        var eav_type = '{{ eav_type }}';
         var synchro_result = true;
         var prototype = $('#outreach_prototype');
         var table = $('#outreaches-table');
@@ -232,8 +240,6 @@
 
         var host = protocol+'{{ request.get_host }}';
         var synchro_path = host+'/api/outreach/';
-        var synchro_path_extra = host+'/api/eav/attributes/';
-        var synchro_path_extra2 = host+'/api/eav/values/';
         var arabic_fields = "#student_address, #student_mother_fullname, #student_first_name, #student_father_name, #student_last_name";
 
         $(document).ready(function(){
@@ -249,22 +255,6 @@
 
             $('input#search').quicksearch('table tbody tr', {
                 selector: 'span'
-            });
-
-            $(document).on("click", ".delete-column", function(e) {
-                var itemid = $(this).parent().attr('itemscope');
-                var iremref = $(this).parent().attr('itemref');
-                var breakline = '<br/>';
-                var field_values = breakline + '{% trans "This column contains there following data:" %}' + breakline;
-                $('#outreaches-table').find('.extra-field-'+itemid).each(function(){
-                    field_values = field_values + $(this).val() + breakline;
-                });
-                bootbox.confirm("{% trans 'are you sure you want to delete this column?' %}"+field_values, function(result) {
-                    if(result == true){
-                        delete_extra_column(itemid, iremref);
-                        delete_column_values(itemid);
-                    }
-                });
             });
 
             $('[data-toggle="tooltip"]').tooltip();
@@ -304,7 +294,7 @@
             $("#filter_school").change(function(){
                 var selected_school = $(this).val();
                // reload the page with the school id passed in post
-                var url = '{% url "alp:alp_data_collecting" %}';
+                var url = '{% url "alp:alp_post_test" %}';
                 if(selected_school){
                     url = url+'?school='+selected_school;
                 }
@@ -352,92 +342,6 @@
                         $('#filter_cancel').trigger('click');
                     }
                 });
-            });
-
-            $(document).on('click', '#duplicate_last_line', function(){
-                if(rows == 0) {
-                    return false;
-                }else{
-                    var lastid = $('.outreach-field-id:last').val();
-                    var request = getRecord(lastid, 'outreaches');
-                    request.onsuccess = function(){
-
-                        var params = {
-                            school_number: true,
-                            school: true,
-                            exam_year: true,
-                            exam_month: true,
-                            exam_day: true,
-                            average_distance: true,
-                            preferred_language: true,
-                            last_class_level: true,
-                            last_education_year: true,
-                            last_education_level: true,
-                            partner: true
-                        };
-                        duplicate_item_values(request.result, params);
-                    };
-                }
-            });
-
-            $(document).on('click', '#duplicate_last_line_select', function(){
-                if(rows == 0) {
-                    return false;
-                }else{
-                    var lastid = $('.outreach-field-id:last').val();
-                    var request = getRecord(parseInt(lastid), 'outreaches');
-                    request.onsuccess = function(){
-
-                        var params = {
-                            school_number: $('#duplicate_school').is(':checked'),
-                            school: $('#duplicate_school').is(':checked'),
-                            exam_year: $('#duplicate_exam_year').is(':checked'),
-                            exam_month: $('#duplicate_exam_month').is(':checked'),
-                            exam_day: $('#duplicate_exam_day').is(':checked'),
-                            average_distance: $('#duplicate_average_distance').is(':checked'),
-                            preferred_language: $('#duplicate_preferred_language').is(':checked'),
-                            last_class_level: $('#duplicate_last_class_level').is(':checked'),
-                            last_education_year: $('#duplicate_last_education_year').is(':checked'),
-                            last_education_level: $('#duplicate_last_education_level').is(':checked'),
-                            partner: $('#duplicate_partner').is(':checked')
-                        };
-                        duplicate_item_values(request.result, params);
-                    };
-                }
-            });
-
-            $(document).on('click', '#duplicate_defined_lines_select', function(){
-                if(rows == 0) {
-                    return false;
-                }else{
-                    bootbox.prompt("{% trans 'Please enter the number of lines' %}", function(result) {
-                        if (result === null) {
-                        } else {
-                            var number = parseInt(result);
-                            var lastid = $('.outreach-field-id:last').val();
-                            var request = getRecord(parseInt(lastid), 'outreaches');
-                            request.onsuccess = function() {
-                                for (var i = 0; i < number; i++) {
-                                    var params = {
-                                        school_number: $('#duplicate_school').is(':checked'),
-                                        school: $('#duplicate_school').is(':checked'),
-                                        exam_year: $('#duplicate_exam_year').is(':checked'),
-                                        exam_month: $('#duplicate_exam_month').is(':checked'),
-                                        exam_day: $('#duplicate_exam_day').is(':checked'),
-                                        average_distance: $('#duplicate_average_distance').is(':checked'),
-                                        preferred_language: $('#duplicate_preferred_language').is(':checked'),
-                                        last_class_level: $('#duplicate_last_class_level').is(':checked'),
-                                        last_education_year: $('#duplicate_last_education_year').is(':checked'),
-                                        last_education_level: $('#duplicate_last_education_level').is(':checked'),
-                                        partner: $('#duplicate_partner').is(':checked')
-                                    };
-                                    duplicate_item_values(request.result, params);
-                                }
-                                scrollToBottom();
-                            };
-                        }
-                    });
-                }
             });
 
             $(document).on('click', '.delete-outreach-row', function(){
@@ -514,11 +418,37 @@
                 item.find('#exam_total').trigger('blur');
             });
 
+            $(document).on('change', '.post-exam-note', function(){
+
+                $(this).removeClass('required');
+                var item = $(this).parent().parent();
+                var max = parseInt(item.find('#level').find('option:selected').attr('data-value'));
+                if(parseFloat($(this).val()) > max){
+                    $(this).val(0);
+                    $(this).addClass('required');
+                    return false;
+                }
+
+                var note1 = parseFloat(item.find('#post_exam_result_arabic').val());
+                var note2 = parseFloat(item.find('#post_exam_result_language').val());
+                var note3 = parseFloat(item.find('#post_exam_result_math').val());
+                var note4 = parseFloat(item.find('#post_exam_result_science').val());
+                item.find('#post_exam_total').val(note1+note2+note3+note4);
+                item.find('#poat_exam_total').trigger('blur');
+            });
+
             $(document).on('blur', '#exam_total, #level', function(){
                 calc_assigned_level($(this).parent().parent());
             });
             $(document).on('change', '#exam_total, #level', function(){
                 calc_assigned_level($(this).parent().parent());
+            });
+
+            $(document).on('blur', '#post_exam_total', function(){
+                calc_assigned_post_level($(this).parent().parent());
+            });
+            $(document).on('change', '#post_exam_total', function(){
+                calc_assigned_post_level($(this).parent().parent());
             });
 
             $(document).on('change', '.note-indicator', function(){
@@ -535,18 +465,14 @@
             });
 
             $(document).on('blur', '.outreach-field', function(){
-                if($(this).hasClass('extra-field')){
-                    update_one_by_index('name', $(this).attr('name'), 'value_text', $(this).val(), 'eav-columns-values')
+                if($(this).attr('data-value')){
+                    update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'outreaches');
                 }else{
-                    if($(this).attr('data-value')){
-                        update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'outreaches');
-                    }else{
-                        var value = $(this).attr('value');
-                        if(!value){
-                            value = $(this).val();
-                        }
-                        update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), value, 'outreaches');
+                    var value = $(this).attr('value');
+                    if(!value){
+                        value = $(this).val();
                     }
+                    update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), value, 'outreaches');
                 }
             });
 
@@ -572,40 +498,6 @@
                 }
             });
 
-            $(document).on('click', '#outreach-pull', function(){
-                load_base_data();
-            });
-
-            $(document).on('click', '#outreach-add-column', function(){
-                bootbox.prompt("{% trans 'Please enter extra column name' %}", function(result) {
-                  if (result === null) {
-                  } else {
-                    columns = columns + 1;
-                    var column_name = 'extra-column-'+user_id+'-'+columns;
-                    var column_label = result;
-                    var column = {id: columns, name: column_name, label: column_label, synchronized: false, owner: user_id, deleted: false, type: eav_type};
-
-                    add_column_to_store(column);
-                    create_extra_columns_html(column, true);
-
-                    var store = getStoreByName('outreaches');
-                    var request = store.getAll();
-                    request.onsuccess = function(){
-                        var result = request.result;
-                        if(result){
-                            $(result).each(function(i, item){
-                                if(item.deleted == false){
-                                    var td = create_extra_field_html(columns, item.id, user_id);
-                                    $('#line-'+item.id).append(td);
-                                    var field_name = 'extra-field-'+user_id+'-'+columns+'-'+item.id;
-                                    create_column_values(item, field_name, {id: columns, original_id: 0});
-                                }
-                            });
-                        }
-                    };
-                  }
-                });
-            });
         });
 
         function duplicate_item_values(duplicata, fields)
@@ -638,32 +530,6 @@
                 }
             });
 
-            var store1 = getStoreByName('eav-shared-columns');
-            var request1 = store1.getAll();
-            request1.onsuccess = function(){
-                var result1 = request1.result;
-                if(result1){
-                    $(result1).each(function(i, col){
-                        var field_name = 'extra-field-'+col.owner+'-'+col.id+'-'+item.id;
-                        create_column_values(item, field_name, col);
-                    });
-                }
-            };
-
-            var store = getStoreByName('eav-columns');
-            var request = store.getAll();
-            request.onsuccess = function(){
-                var result = request.result;
-                if(result){
-                    $(result).each(function(i, col){
-                        if(col.deleted == false){
-                            var field_name = 'extra-field-'+user_id+'-'+col.id+'-'+item.id;
-                            create_column_values(item, field_name, col);
-                        }
-                    });
-                }
-            };
-
             return item;
         }
 
@@ -677,7 +543,6 @@
 
         function build_datatable()
         {
-            add_extra_columns();
             var store = getStoreByName('outreaches');
             var request = store.getAll();
             request.onsuccess = function() {
@@ -688,11 +553,9 @@
                         if(filterSchools == false){
                             add_table_newline(item.id, prototype, table);
                             add_fill_line_data(item);
-                            add_fill_extra_fields_data(item.id);
                         }else if(filterSchools == true && parseInt(item.school) == parseInt(selectedSchool)){
                             add_table_newline(item.id, prototype, table);
                             add_fill_line_data(item);
-                            add_fill_extra_fields_data(item.id);
                         }
                     }
                 });
@@ -765,38 +628,6 @@
                 $(result_p).each(function(i, item){
                     patch_data_into_server(item);
                     $(".loader").hide();
-                });
-            };
-
-            var col_store = getStoreByName('eav-columns');
-            var col_request = col_store.getAll();
-            col_request.onsuccess = function() {
-                var col_result = col_request.result;
-                $(col_result).each(function(i, col){
-                    if(col.synchronized == false && col.deleted == false) {
-                        push_extra_columns_to_server(col);
-                    }else if(col.synchronized == true && col.deleted == true){
-                        delete_data_from_server(synchro_path_extra, col.original_id, col.id, 'eav-columns');
-                    }else{
-                        col_store.delete(parseInt(col.id));
-                    }
-                });
-            };
-
-            var colv_store = getStoreByName('eav-columns-values');
-            var colv_request = colv_store.getAll();
-            colv_request.onsuccess = function() {
-                var colv_result = colv_request.result;
-                $(colv_result).each(function(i, colv){
-                    if(colv.entity_id && colv.attribute) {
-                        if (colv.synchronized == false && colv.deleted == false) {
-                            push_column_values_to_server(colv);
-                        } else if (colv.synchronized == true && colv.deleted == true) {
-                            delete_data_from_server(synchro_path_extra2, colv.original_id, colv.id, 'eav-columns-values');
-                        } else {
-                            update_data_server(synchro_path_extra2, colv, colv.original_id);
-                        }
-                    }
                 });
             };
         }
@@ -891,10 +722,18 @@
                 data.exam_result_science = data.exam_result_science.replace(",",".");
             }
 
-{#            data.exam_result_arabic = data.exam_result_arabic.replace(",",".");#}
-{#            data.exam_result_language = data.exam_result_language.replace(",",".");#}
-{#            data.exam_result_math = data.exam_result_math.replace(",",".");#}
-{#            data.exam_result_science = data.exam_result_science.replace(",",".");#}
+            if(data.post_exam_result_arabic) {
+                data.post_exam_result_arabic = data.post_exam_result_arabic.replace(",",".");
+            }
+            if(data.post_exam_result_language) {
+                data.post_exam_result_language = data.post_exam_result_language.replace(",",".");
+            }
+            if(data.post_exam_result_math) {
+                data.post_exam_result_math = data.post_exam_result_math.replace(",",".");
+            }
+            if(data.post_exam_result_science) {
+                data.post_exam_result_science = data.post_exam_result_science.replace(",",".");
+            }
 
             $.ajax({
                 type: "PATCH",
@@ -915,11 +754,6 @@
                     console.log(response);
                 }
             });
-        }
-
-        function load_base_data()
-        {
-{#            pull_data(synchro_path, 'outreaches-p');#}
         }
 
         function pull_data(url, store_name)
@@ -989,7 +823,6 @@
             request.onsuccess = function() {
                 db = request.result;
                 $(".loader").show();
-                load_base_data();
                 setTimeout(function(){
                     build_datatable();
                     $(".loader").hide();
@@ -1091,6 +924,61 @@
             assigned_level.trigger('blur');
         }
 
+        function calc_assigned_post_level(item)
+        {
+            var level = parseInt(item.find('#registered_in_level').val());
+            var total = parseInt(item.find('#post_exam_total').val());
+            var assigned_level = item.find('#post_exam_level');
+            var to_level = 0;
+
+            if(level == 1 || level == 2 || level == 3){
+                if(total < 40){
+                    to_level = 1;
+                }else if(total >= 40 && total < 80){
+                    to_level = 2;
+                }else if(total >= 80 && total <= 120){
+                    to_level = 3;
+                }
+            }
+            if(level == 4 || level == 5 || level == 6){
+                if(total < 20) {
+                    to_level = 1;
+                }else if(total >= 20 && total < 40){
+                    to_level = 2;
+                }else if(total >= 40 && total < 60){
+                    to_level = 3;
+                }else if(total >= 60 && total < 100){
+                    to_level = 4;
+                }else if(total >= 100 && total < 140){
+                    to_level = 5;
+                }else if(total >= 140 && total <= 180){
+                    to_level = 6;
+                }
+            }
+            if(level == 7 || level == 8 || level == 9){
+                if(total < 20) {
+                    to_level = 1;
+                }else if(total >= 20 && total < 40){
+                    to_level = 2;
+                }else if(total >= 40 && total < 60){
+                    to_level = 3;
+                }else if(total >= 60 && total < 80){
+                    to_level = 4;
+                }else if(total >= 80 && total < 100){
+                    to_level = 5;
+                }else if(total >= 100 && total < 120){
+                    to_level = 6;
+                }else if(total >= 120 && total < 160){
+                    to_level = 7;
+                }else if(total >= 160 && total < 200){
+                    to_level = 8;
+                }else if(total >= 200 && total <= 240){
+                    to_level = 9;
+                }
+            }
+            assigned_level.val(to_level);
+            assigned_level.trigger('blur');
+        }
     </script>
 
 {% endblock %}
