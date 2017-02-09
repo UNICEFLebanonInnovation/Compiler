@@ -43,7 +43,7 @@ from student_registration.eav.models import (
 )
 from student_registration.locations.models import Location
 
-from .models import Registration, RegisteringAdult, WaitingList
+from .models import Registration, RegisteringAdult, WaitingList , BeneficiaryChangedReason
 from .serializers import (
     RegistrationSerializer,
     RegisteringAdultSerializer,
@@ -280,18 +280,36 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
             locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
             location = self.request.GET.get("location", 0)
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
+            relationToHouseholdHead = RegisteringAdult.RELATION_TYPE
+            beneficiaryChangedReason = BeneficiaryChangedReason.objects.all()
 
-
+            addressSearchText = self.request.GET.get("addressSearchText", '')
+            repSearchText = self.request.GET.get("repSearchText", '')
+            idSearchText = self.request.GET.get("idSearchText", '')
+            primarySearchText = self.request.GET.get("primarySearchText", '')
+            secondarySearchText = self.request.GET.get("secondarySearchText", '')
             if location:
                 schools = School.objects.filter(location_id=location)
-                data = self.model.objects.filter(school__location_id=location).order_by('id')[:10]
-
+                data = self.model.objects.filter(school__location_id=location,
+                                                 address__icontains=addressSearchText,
+                                                 first_name__icontains=repSearchText,
+                                                 id_number__icontains=idSearchText,
+                                                 primary_phone__icontains=primarySearchText,
+                                                 secondary_phone__icontains=secondarySearchText,
+                                                 ).order_by('id')[:10]
             return {
                 'adults': data,
                 'locations': locations,
                 'selectedLocation': int(location),
                 'schools': schools,
-                'phoneAnsweredby': phoneAnsweredby
+                'phoneAnsweredby': phoneAnsweredby,
+                'relationToHouseholdHead': relationToHouseholdHead,
+                'beneficiaryChangedReason': beneficiaryChangedReason,
+                'addressSearchText': addressSearchText,
+                'repSearchText' : repSearchText,
+                'idSearchText' : idSearchText,
+                'primarySearchText' : primarySearchText,
+                'secondarySearchText':secondarySearchText,
             }
 
 

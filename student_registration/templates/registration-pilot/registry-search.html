@@ -27,6 +27,12 @@
            background-color: gainsboro !IMPORTANT;
         }
 
+        .transparent-header
+        {
+           background-color: transparent !IMPORTANT;
+           border: solid 0px transparent !IMPORTANT;
+        }
+
     </style>
 
 {% endblock %}
@@ -60,14 +66,7 @@
                                 <ol class="breadcrumb">
                                   <li><a>{% trans "Household Update" %}</a></li>
                                   <li>
-                                    <select id="id_location">
-                                      <option value="">---{% trans "Display by Location" %}---</option>
-                                        {% for location in locations %}
-                                            <option value="{{ location.id }}" {% if selectedLocation == location.id %}selected="selected"{% endif %}>
-                                              {{ location }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
+
                                   </li>
                                 </ol>
                             </h3>
@@ -85,6 +84,54 @@
                                        width="100%">
                                 <thead>
                                     <tr id="thead-line-1">
+                                        <th class = "transparent-header">
+
+                                        </th>
+                                        <th class = "transparent-header">
+
+                                        </th>
+                                        <th class = "transparent-header"></th>
+                                        <th class = "transparent-header"></th>
+                                        <th class = "transparent-header"></th>
+                                        <th class = "transparent-header">
+
+                                            <button class="btn btn-primary" type="button" id="searchButton">
+                                                Search
+                                            </button>
+
+                                        </th>
+                                    </tr>
+
+                                    <tr id="thead-line-1">
+                                        <th class = "transparent-header">
+
+                                            <select id="id_location">
+                                              <option value="">---{% trans "Display by Location" %}---</option>
+                                                {% for location in locations %}
+                                                    <option value="{{ location.id }}" {% if selectedLocation == location.id %}selected="selected"{% endif %}>
+                                                      {{ location }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+
+                                        </th>
+                                        <th class = "transparent-header">
+                                            <input class="form-control input-sm" id = "addressSearchText" value = "{{addressSearchText}}" />
+                                        </th>
+                                        <th class = "transparent-header">
+                                             <input class="form-control input-sm" id = "repSearchText" value = "{{repSearchText}}" />
+                                        </th>
+                                        <th class = "transparent-header">
+                                             <input class="form-control input-sm" id = "idSearchText" value = "{{idSearchText}}" />
+                                        </th>
+                                        <th class = "transparent-header">
+                                             <input class="form-control input-sm" id = "primarySearchText" value = "{{primarySearchText}}" />
+                                        </th>
+                                        <th class = "transparent-header">
+                                             <input class="form-control input-sm" id = "secondarySearchText" value = "{{secondarySearchText}}" />
+                                        </th>
+                                    </tr>
+                                    <tr id="thead-line-1">
                                         <th>{% trans "HH District" %}</th>
                                         <th>{% trans "HH Address" %}</th>
                                         <th>{% trans "HH Representative Name" %}</th>
@@ -98,7 +145,7 @@
                                         <tr class="row-class" adultID="{{ adult.id }}">
                                           <td>{{ adult.school.location.name }}</td>
                                           <td>{{ adult.address }}</td>
-                                          <td>{{ adult }}</td>
+                                          <td>{{ adult.first_name }}</td>
                                           <td>{{ adult.id_number }}</td>
                                           <td>{{ adult.primary_phone }}</td>
                                           <td>{{ adult.secondary_phone }}</td>
@@ -155,25 +202,25 @@
         (
            function()
            {
-              oTable = $('#registrations-table').DataTable
-              (
-                 {
-                    fixedHeader: false,
-                    paging:   true,
-                    ordering: true,
-                    info:     true,
-                    autoWidth: false,
-                    scrollY: '50vh',
-                    scrollX: true,
-                    scrollCollapse: true,
-                    "language": {
-                        "url": "/static/locale/"+language+".json"
-                    },
-                    "fnInitComplete": function(oSettings, json) {
-                        $('[data-toggle="tooltip"]').tooltip();
-                    }
-                 }
-              );
+{#              oTable = $('#registrations-table').DataTable#}
+{#              (#}
+{#                 {#}
+{#                    fixedHeader: false,#}
+{#                    paging:   true,#}
+{#                    ordering: true,#}
+{#                    info:     true,#}
+{#                    autoWidth: false,#}
+{#                    scrollY: '50vh',#}
+{#                    scrollX: true,#}
+{#                    scrollCollapse: true,#}
+{#                    "language": {#}
+{#                        "url": "/static/locale/"+language+".json"#}
+{#                    },#}
+{#                    "fnInitComplete": function(oSettings, json) {#}
+{#                        $('[data-toggle="tooltip"]').tooltip();#}
+{#                    }#}
+{#                 }#}
+{#              );#}
               InitialiseSave();
               InitialiseClose();
               InitialiseChildDropdown();
@@ -194,6 +241,7 @@
                );
 
                 // get the list of household and fill the table with it
+               /*
                 $("#id_location").change(function(){
                    var selected_location = $(this).val();
                    // reload the page with the location id passed in post
@@ -203,6 +251,50 @@
                     }
                     window.location.href = url;
                 });
+                */
+
+                $("#searchButton").click(function(){
+                    Search();
+                });
+
+{#                $("#addressSearch,#repSearchText,#idSearchText,#primarySearchText,#secondarySearchText").keyup#}
+{#                (#}
+{#                    function(event)#}
+{#                    {#}
+{#                        if(event.keyCode == 13)#}
+{#                        {#}
+{#                            Search();#}
+{#                        }#}
+{#                    }#}
+{#                );#}
+
+
+                function Search()
+                {
+                   var selected_location = $("#id_location").val();
+
+                   // reload the page with the location id passed in post
+                    var url = '{% url "registrations:registry_search" %}';
+                    if(selected_location){
+                        url = url+'?location='+selected_location;
+
+                        url = AddParameter(url,"addressSearchText");
+                        url = AddParameter(url,"repSearchText");
+                        url = AddParameter(url,"idSearchText");
+                        url = AddParameter(url,"primarySearchText");
+                        url = AddParameter(url,"secondarySearchText");
+                    }
+                    window.location.href = url;
+                }
+
+
+                function AddParameter( url, id)
+                {
+                   var parameterText = $("#"+id).val();
+                   url = url+'&'+id+'='+parameterText;
+
+                   return url;
+                }
 
             function load_base_data()
               {
@@ -227,6 +319,12 @@
                 else if (selectedOption == 'beneficiary' ) {
                   $("#beneficiaryFields").show();
                 }
+                else if (selectedOption == 'payment' ) {
+                  $("#paymentFields").show();
+                }
+                else if (selectedOption == 'card' ) {
+                  $("#cardFields").show();
+                }
                 });
 
           function hideAll()
@@ -235,6 +333,8 @@
             $("#addressFields").hide();
             $("#schoolFields").hide();
             $("#beneficiaryFields").hide();
+            $("#paymentFields").hide();
+            $("#cardFields").hide();
 
           }
 
@@ -303,22 +403,12 @@
                          updateDropDownValue($("#secondary_phone_answered"),household.secondary_phone_answered);
                          $("#address").val(household.address);
 
-
-                         childSelect = document.getElementById('child');
-                         $("#child").empty();
-
+                         $("#schools-table tbody").empty();
                          for(childIndex in household.children)
                          {
                             var child = household.children[childIndex];
-                            childSelect.options[childSelect.options.length] = new Option
-                            (
-                               child.first_name+' '+child.father_name+' '+child.last_name,
-                               child.reg_id
-                               //,childIndex == 0;
-                            );
+                            AddChildRow(child);
                          }
-
-                         UpdateChildSchool();
                      },
                      error: function (response) {
                         var required_fields = JSON.parse(response.responseText);
@@ -327,12 +417,58 @@
                  });
       }
 
+
+        function AddChildRow(entry)
+        {
+            var childFullName = entry.first_name+' '+entry.father_name+' '+entry.last_name;
+
+            var childIDCell = "<td style = \"display:none\">"+(entry.reg_id)+"</td>";
+            var childNameCell = "<td  >"+(childFullName)+"</td>";
+
+            var schoolCell = "<td>"+$("#childSchool").html()+"</td>";
+
+            updateDropDownValue($("#schools-table tr:last-child td:nth-child(3) select"), entry.school_changed_to_verify );
+
+            $("#schools-table tbody").append
+            (
+               "<tr>"+childIDCell+childNameCell+schoolCell+"</tr>"
+            );
+        }
+
       function updateDropDownValue(dropDownElement, value)
       {
           dropDownElement.find('option:selected').removeAttr('selected');
           dropDownElement.find('option[value="'+value+'"]').attr("selected",true);
           dropDownElement.val(value);
       }
+
+
+       function CreateChildData(childVisitID)
+        {
+           childData = [];
+
+           $("#schools-table tbody tr")
+           .each
+           (
+              function(i, obj)
+              {
+                 trElement = $(obj);
+
+                 childRecord = new Object();
+
+                 childRecord.reg_id = trElement.find('td:nth-child(1)').html();
+
+                 dropDownElement = trElement.find('td:nth-child(3) select');
+
+                 childRecord.school_changed_to_verify = dropDownElement.val();
+
+                 childData.push(childRecord);
+
+              }
+           );
+
+           return childData;
+        }
 
       function CloseHousehold()
       {
@@ -360,7 +496,7 @@
                    }
                    else if($("#changeOption").val() == "school")
                    {
-                      SaveChild();
+                      SaveChildren();
                    }
                 }
              }
@@ -442,14 +578,35 @@
           return element.find('a.active').attr('data-title')==1 ? "true":"false";
        }
 
+       function SaveChildren()
+       {
+           var childData = CreateChildData();
 
-      function SaveChild()
+           var isSuccessfull = true;
+
+           childData.forEach
+           (
+              function(entry)
+              {
+                 isSuccessfull = isSuccessfull && SaveChild(entry);
+              }
+           );
+
+           if(isSuccessfull)
+           {
+               CloseHousehold();
+           }
+       }
+
+
+      function SaveChild(entry)
       {
-         var childID = $("#child").val();
+         var childID = entry.reg_id;
          var childData = new Object();
 
-         childData.school_changed_to_verify = $("#school").val();
+         childData.school_changed_to_verify = entry.school_changed_to_verify;
 
+         var isSuccessfull = false;
 
          $.ajax
          (
@@ -463,15 +620,19 @@
               dataType: 'json',
               success: function (response)
               {
-                  CloseHousehold();
-
+                  isSuccessfull = true;
               },
               error: function (response)
               {
                   console.log(response);
-              }
+              },
+              async: false
            }
          );
+
+         alert(isSuccessfull);
+
+         return isSuccessfull;
       }
 
       function UpdateChildSchool()
