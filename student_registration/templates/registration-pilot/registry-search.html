@@ -322,8 +322,20 @@
                 else if (selectedOption == 'payment' ) {
                   $("#paymentFields").show();
                 }
+                else if (selectedOption == 'cardStatus' ) {
+                  $("#cardStatusFields").show();
+                }
                 else if (selectedOption == 'card' ) {
                   $("#cardFields").show();
+                }
+                else if (selectedOption == 'removeComplaint' ) {
+                  $("#removeFields").show();
+                }
+                else if (selectedOption == 'schoolComplaint' ) {
+                  $("#schoolFields").show();
+                }
+                else if (selectedOption == 'otherComplaint' ) {
+                  $("#otherFields").show();
                 }
                 });
 
@@ -335,6 +347,10 @@
             $("#beneficiaryFields").hide();
             $("#paymentFields").hide();
             $("#cardFields").hide();
+            $("#cardStatusFields").hide();
+            $("#removeFields").hide();
+            $("#otherFields").hide();
+            $("#schoolFields").hide();
 
           }
 
@@ -396,6 +412,8 @@
                          $("#hhprimary_phone").text(household.primary_phone);
                          $("#hhsecondary_phone").text(household.secondary_phone);
                          $("#hhAddess").text(household.address);
+                         $("#hhCardStatus").text(household.card_status);
+                         $("#hhDateOfDistribution").text(household.card_distribution_date);
 
                          $("#primary_phone").val(household.primary_phone);
                          updateDropDownValue($("#primary_phone_answered"),household.primary_phone_answered);
@@ -409,6 +427,13 @@
                             var child = household.children[childIndex];
                             AddChildRow(child);
                          }
+
+                         $("#payments-table tbody").empty();
+                         for(paymentIndex in household.payments)
+                         {
+                            var payment = household.payments[paymentIndex];
+                            AddPaymentRow(payment);
+                         }
                      },
                      error: function (response) {
                         var required_fields = JSON.parse(response.responseText);
@@ -417,23 +442,37 @@
                  });
       }
 
+          function AddChildRow(entry)
+            {
+                var childFullName = entry.first_name+' '+entry.father_name+' '+entry.last_name;
 
-        function AddChildRow(entry)
-        {
-            var childFullName = entry.first_name+' '+entry.father_name+' '+entry.last_name;
+                var childIDCell = "<td style = \"display:none\">"+(entry.reg_id)+"</td>";
+                var childNameCell = "<td  >"+(childFullName)+"</td>";
 
-            var childIDCell = "<td style = \"display:none\">"+(entry.reg_id)+"</td>";
-            var childNameCell = "<td  >"+(childFullName)+"</td>";
+                var schoolCell = "<td>"+$("#childSchool").html()+"</td>";
 
-            var schoolCell = "<td>"+$("#childSchool").html()+"</td>";
+                updateDropDownValue($("#schools-table tr:last-child td:nth-child(3) select"), entry.school_changed_to_verify );
 
-            updateDropDownValue($("#schools-table tr:last-child td:nth-child(3) select"), entry.school_changed_to_verify );
+                $("#schools-table tbody").append
+                (
+                   "<tr>"+childIDCell+childNameCell+schoolCell+"</tr>"
+                );
+            }
 
-            $("#schools-table tbody").append
-            (
-               "<tr>"+childIDCell+childNameCell+schoolCell+"</tr>"
-            );
-        }
+            function AddPaymentRow(entry)
+            {
+                var dateCell = "<td>"+entry.payment_date +"</td>";
+                var amountCell = "<td>"+entry.payment_amount+"</td>";
+                var monthCell = "<td>"+entry.payment_month+"</td>";
+                var yearCell = "<td>"+entry.payment_year+"</td>";
+
+
+                $("#payments-table tbody").append
+                (
+                   "<tr>"+dateCell+amountCell+monthCell+yearCell+"</tr>"
+                );
+            }
+
 
       function updateDropDownValue(dropDownElement, value)
       {
