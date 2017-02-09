@@ -349,6 +349,19 @@ class Outreach(TimeStampedModel):
         return total
 
     @property
+    def post_exam_total(self):
+        total = 0
+        if self.post_exam_result_arabic:
+            total += self.post_exam_result_arabic
+        if self.post_exam_result_language:
+            total += self.post_exam_result_language
+        if self.post_exam_result_math:
+            total += self.post_exam_result_math
+        if self.post_exam_result_science:
+            total += self.post_exam_result_science
+        return total
+
+    @property
     def student_age(self):
         if self.student:
             return self.student.calc_age
