@@ -269,6 +269,56 @@ class Outreach(TimeStampedModel):
     )
     deleted = models.BooleanField(blank=True, default=False)
 
+    post_exam_result_arabic = models.FloatField(
+        blank=True,
+        null=True,
+        default=0,
+    )
+    post_exam_result_language = models.FloatField(
+        blank=True,
+        null=True,
+        default=0,
+    )
+    post_exam_result_math = models.FloatField(
+        blank=True,
+        null=True,
+        default=0,
+    )
+    post_exam_result_science = models.FloatField(
+        blank=True,
+        null=True,
+        default=0,
+    )
+    post_exam_corrector_arabic = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        choices=((x, x) for x in range(0, 101))
+    )
+    post_exam_corrector_language = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        choices=((x, x) for x in range(0, 101))
+    )
+    post_exam_corrector_math = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        choices=((x, x) for x in range(0, 101))
+    )
+    post_exam_corrector_science = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        choices=((x, x) for x in range(0, 101))
+    )
+    post_exam_level = models.ForeignKey(
+        ClassLevel,
+        blank=True, null=True,
+        related_name='+',
+    )
+
     class Meta:
         ordering = ['id']
         verbose_name = "Pre Test"
