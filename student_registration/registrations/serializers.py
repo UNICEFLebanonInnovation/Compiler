@@ -230,6 +230,12 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'principal_applicant_living_in_house',
             'individual_id_number',
             'beneficiary_changed_verify',
+            'beneficiary_changed_first_name',
+            'beneficiary_changed_last_name',
+            'beneficiary_changed_father_name',
+            'beneficiary_changed_relation_to_householdhead',
+            'beneficiary_changed_same_as_caller',
+            'beneficiary_changed_reason',
             'card_last_four_digits'
         )
 
