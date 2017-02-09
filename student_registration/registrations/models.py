@@ -37,6 +37,17 @@ class WFPDistributionSite(models.Model):
         return self.name
 
 
+class BeneficiaryChangedReason(models.Model):
+    name = models.CharField(max_length=64L, unique=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Main Reason'
+
+    def __unicode__(self):
+        return self.name
+
+
 class RegisteringAdult(Person):
     """
     Captures the details of the adult who
@@ -87,6 +98,16 @@ class RegisteringAdult(Person):
     wfp_distribution_site = models.ForeignKey(WFPDistributionSite, blank=True, null=True)
     old_number = models.CharField(max_length=45L, blank=True, null=True)
     beneficiary_changed_verify = models.BooleanField(default=False)
+    beneficiary_changed_first_name = models.CharField(max_length=64L, blank=True, null=True)
+    beneficiary_changed_last_name = models.CharField(max_length=64L, blank=True, null=True)
+    beneficiary_changed_father_name = models.CharField(max_length=64L, blank=True, null=True)
+    beneficiary_changed_relation_to_householdhead = models.CharField(max_length=50, blank=True, null=True, choices=RELATION_TYPE)
+    beneficiary_changed_same_as_caller = models.BooleanField(default=False)
+    beneficiary_changed_reason = models.ForeignKey(
+        BeneficiaryChangedReason,
+        blank=True, null=True,
+        related_name='+',
+    )
     card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
 
     @property
