@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Registration, RegisteringAdult, WaitingList
+from .models import Registration, RegisteringAdult, WaitingList, Complaint, Payment
 from student_registration.students.serializers import StudentSerializer
 
 
@@ -107,13 +107,46 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'last_year_result',
             'last_education_level',
             'last_education_year',
-            'owner',
+            'owner'
+        )
+
+
+class ComplaintSerializer(serializers.ModelSerializer):
+    complaint_id = serializers.IntegerField(source='id', read_only=True)
+    complaint_type = serializers.CharField(source='complaint_category.complaint_type', read_only=True)
+    complaint_category_name = serializers.CharField(source='complaint_category.name', read_only=True)
+
+    class Meta:
+        model = Complaint
+        fields = (
+            'complaint_id',
+            'complaint_type',
+            'complaint_category',
+            'complaint_category_name',
+            'complaint_note',
+            'created',
+            'owner'
+        )
+
+class PaymentSerializer(serializers.ModelSerializer):
+    payment_id = serializers.IntegerField(source='id', read_only=True)
+
+    class Meta:
+        model = Payment
+        fields = (
+            'payment_id',
+            'payment_list_number',
+            'payment_amount',
+            'payment_month',
+            'payment_year',
+            'payment_date',
         )
 
 
 class RegistrationChildSerializer(serializers.ModelSerializer):
 
     student_id = serializers.IntegerField(source='student.id', read_only=True)
+    reg_id = serializers.IntegerField(source='id', read_only=True)
     number = serializers.CharField(source='student.number', read_only=True)
     first_name = serializers.CharField(source='student.first_name')
     father_name = serializers.CharField(source='student.father_name')
@@ -126,7 +159,6 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
     id_number = serializers.CharField(source='student.id_number')
     age = serializers.CharField(source='student.age')
     school_name = serializers.CharField(source='school.name', read_only=True)
-
     def create(self, validated_data):
 
         student_data = validated_data.pop('student', None)
@@ -149,8 +181,10 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
     class Meta:
         model = Registration
         fields = (
+            'reg_id',
             'school',
             'school_name',
+            'school_changed_to_verify',
             'enrolled_last_year_school',
             'relation_to_adult',
             'related_to_family',
@@ -169,7 +203,7 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
             'birthday_day',
             'id_number',
             'owner',
-            'number',
+            'number'
         )
 
 
@@ -178,6 +212,8 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     number = serializers.CharField(read_only=True)
     children = RegistrationChildSerializer(many=True, read_only=True)
+    complaints = ComplaintSerializer(many=True, read_only=True)
+    payments = PaymentSerializer(many=True, read_only=True)
 
     def create(self, validated_data):
 
@@ -226,6 +262,18 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'number',
             'principal_applicant_living_in_house',
             'individual_id_number',
+            'beneficiary_changed_verify',
+            'beneficiary_changed_first_name',
+            'beneficiary_changed_last_name',
+            'beneficiary_changed_father_name',
+            'beneficiary_changed_relation_to_householdhead',
+            'beneficiary_changed_same_as_caller',
+            'beneficiary_changed_reason',
+            'card_last_four_digits',
+            'card_distribution_date',
+            'card_status',
+            'complaints',
+            'payments'
         )
 
 
