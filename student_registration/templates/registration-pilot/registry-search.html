@@ -257,16 +257,16 @@
                     Search();
                 });
 
-{#                $("#addressSearch,#repSearchText,#idSearchText,#primarySearchText,#secondarySearchText").keyup#}
-{#                (#}
-{#                    function(event)#}
-{#                    {#}
-{#                        if(event.keyCode == 13)#}
-{#                        {#}
-{#                            Search();#}
-{#                        }#}
-{#                    }#}
-{#                );#}
+                $("#addressSearchText,#repSearchText,#idSearchText,#primarySearchText,#secondarySearchText").keyup
+                (
+                    function(event)
+                    {
+                        if(event.keyCode == 13)
+                        {
+                            Search();
+                        }
+                    }
+                );
 
 
                 function Search()
