@@ -139,3 +139,12 @@ class HouseholdListSearchForm(forms.ModelForm):
     class Meta:
         model = RegisteringAdult
         fields = '__all__'
+
+class SchoolModificationForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(SchoolModificationForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Registration
+        fields = '__all__'
