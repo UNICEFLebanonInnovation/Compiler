@@ -136,7 +136,7 @@ class RegisteringAdult(Person):
         blank=True,
         null=True,
         default=0,
-        choices=MONTHS
+        choices=Person.MONTHS
     )
     beneficiary_changed_birthday_day = models.CharField(
         max_length=2,

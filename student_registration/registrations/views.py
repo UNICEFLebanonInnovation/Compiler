@@ -285,7 +285,7 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
 
             locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
             PAYMENTComplaintTypes = \
-                ComplaintCategory.objects.all().filter(complaint_type='PAYMENT').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type__exact='PAYMENT').order_by('name')
             CARDDISTRIBUTIONComplaintTypes = \
                 ComplaintCategory.objects.all().filter(complaint_type='CARD DISTRIBUTION').order_by('name')
             CARDComplaintTypes = \
@@ -294,6 +294,12 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 ComplaintCategory.objects.all().filter(complaint_type='SCHOOL-RELATED').order_by('name')
             OTHERComplaintTypes = \
                 ComplaintCategory.objects.all().filter(complaint_type='OTHER').order_by('name')
+
+            # birthday_day =
+            # birthday_month =
+            # birthday_year =
+
+
             location = self.request.GET.get("location", 0)
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
             relationToHouseholdHead = RegisteringAdult.RELATION_TYPE
