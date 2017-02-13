@@ -160,6 +160,7 @@ function update_item_store(itemid, name, value, store_name)
     request.onsuccess = function(){
         var item = request.result;
         item[name] = value;
+        item.to_update = true;
         store.put(item);
     };
 }
@@ -176,6 +177,7 @@ function update_or_create_item(itemid, name, value, store_name)
             var item = {id: itemid};
             item[name] = value;
         }
+        item.to_update = true;
         store.put(item);
     };
 }

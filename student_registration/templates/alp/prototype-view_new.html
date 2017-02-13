@@ -11,7 +11,7 @@
             {% if role == "ALP_SCHOOL" %}
                 <input type="checkbox" name="not_enrolled_in_this_school" id="not_enrolled_in_this_school" {% if line.not_enrolled_in_this_school %}checked="checked"{% endif %} value="1" class="outreach-field-p" itemscope="{{ line.id }}" />
             {% endif %}
-            {% if role == "CERD" %}
+            {% if role == "CERD" and alp_phase == 'pre_test' %}
                 <input type="checkbox" name="exam_not_exist_in_school" id="exam_not_exist_in_school" {% if line.exam_not_exist_in_school %}checked="checked"{% endif %} value="1" class="outreach-field-p" itemscope="{{ line.id }}" />
             {% endif %}
             &nbsp;<input type="hidden" name="id" value="{{ line.id }}" class="outreach-field-id" />
@@ -33,7 +33,7 @@
         <td>{% if student %}{{ student.father_name }}{% endif %}</td>
         <td>{% if student %}{{ student.last_name }}{% endif %}</td>
         <td>{% if student %}{% trans student.sex %}{% endif %}</td>
-        {% if role == "CERD" and alp_phase == 'pre_test' %}
+    {% if role == "CERD" and alp_phase == 'pre_test' %}
         <td>
             <select name="level" id="level" class="outreach-field-p note-indicator" itemscope="{{ line.id }}">
                 <option value="">{% trans "Registered in level" %}</option>
@@ -87,8 +87,10 @@
                 {% endfor %}
             </select>
         </td>
-        {% endif %}
-        {% if role == "CERD" and alp_phase == 'post_test' %}
+    {% endif %}
+    {% if role == "CERD" and alp_phase == 'post_test' %}
+            <td>{% if line.registered_in_level %}{{ line.registered_in_level.name }}{% endif %}</td>
+            <td>{% if line.secion %}{{ line.section.name }}{% endif %}</td>
             <td>
                 <input type="text" name="post_exam_result_arabic" id="post_exam_result_arabic"
                        value="{% if line.post_exam_result_arabic %}{{ line.post_exam_result_arabic }}{% else %}0{% endif %}"
@@ -142,8 +144,8 @@
                     {% endfor %}
                 </select>
             </td>
-        {% endif %}
-        {% if role == "ALP_SCHOOL" %}
+    {% endif %}
+    {% if role == "ALP_SCHOOL" %}
         <td>
             {% if line.level %}
                 {{ line.level.name }}
@@ -171,7 +173,8 @@
                 {% endfor %}
             </select>
         </td>
-        {% endif %}
+    {% endif %}
+    {% if alp_phase == 'pre_test' %}
         <td>{% if student %}{{ student.birthday_year }}{% endif %}</td>
         <td>{% if student %}{{ student.birthday_month }}{% endif %}</td>
         <td>{% if student %}{{ student.birthday_day }}{% endif %}</td>
@@ -185,12 +188,11 @@
         <td>{% if student %}{{ student.address }}{% endif %}</td>
         <td>{% if student %}{{ student.phone }}{% endif %}</td>
         <td>{% if student %}{{ student.phone_prefix }}{% endif %}</td>
-        {% if alp_phase == 'pre_test' %}
         <td>{% if not role == "CERD" %}{% if line.last_education_level %}{{ line.last_education_level.name }}{% endif %}{% endif %}</td>
         <td>{{ line.last_education_year }}</td>
         <td>{% if line.participated_in_alp %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
         <td>{% if not role == "CERD" %}{% if line.last_informal_edu_round %}{{ line.last_informal_edu_round.name }}{% endif %}{% endif %}</td>
         <td>{% if not role == "CERD" %}{% if line.last_informal_edu_level %}{{ line.last_informal_edu_level.name }}{% endif %}{% endif %}</td>
         <td>{% if not role == "CERD" %}{% if line.last_informal_edu_final_result %}{{ line.last_informal_edu_final_result.name }}{% endif %}{% endif %}</td>
-        {% endif %}
+    {% endif %}
     </tr>

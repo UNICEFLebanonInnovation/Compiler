@@ -19,6 +19,12 @@ urlpatterns = [
     ),
 
     url(
+        regex=r'^pre-test/$',
+        view=views.PreTestView.as_view(),
+        name='alp_pre_test'
+    ),
+
+    url(
         regex=r'^data-view/$',
         view=views.OutreachStaffView.as_view(),
         name='alp_data_view'
