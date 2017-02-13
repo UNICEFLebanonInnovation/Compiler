@@ -40,5 +40,5 @@
 
            var comment = trElement.find('td:nth-child(4) textarea').val();
 
-           return !household_not_found || comment;
+           return !household_not_found || comment || (visitDataRecord.visit_status == "completed");
         }

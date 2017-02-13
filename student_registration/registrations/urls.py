@@ -26,4 +26,9 @@ urlpatterns = [
         view=views.RegisteringAdultListSearchView.as_view(),
         name='registry_search'
     ),
+    url(
+        regex=r'^list-school-modification/$',
+        view=views.SchoolApprovalListView.as_view(),
+        name='list_school_modification'
+    ),
 ]
