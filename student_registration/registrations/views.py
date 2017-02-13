@@ -294,14 +294,14 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 ComplaintCategory.objects.all().filter(complaint_type='SCHOOL-RELATED').order_by('name')
             OTHERComplaintTypes = \
                 ComplaintCategory.objects.all().filter(complaint_type='OTHER').order_by('name')
-            # birthday_day =
-            # birthday_month =
-            # birthday_year =
+            # days =RegisteringAdult.beneficiary_changed_birthday_day__choices
+            months = Person.MONTHS
+            # years = RegisteringAdult.beneficiary_changed_birthday_year.choices
             location = self.request.GET.get("location", 0)
+            idType = IDType.objects.all().order_by('name')
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
             relationToHouseholdHead = RegisteringAdult.RELATION_TYPE
             beneficiaryChangedReason = BeneficiaryChangedReason.objects.all()
-
             addressSearchText = self.request.GET.get("addressSearchText", '')
             repSearchText = self.request.GET.get("repSearchText", '')
             idSearchText = self.request.GET.get("idSearchText", '')
@@ -323,6 +323,7 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'selectedLocation': int(location),
                 'schools': schools,
                 'phoneAnsweredby': phoneAnsweredby,
+                'idType': idType,
                 'relationToHouseholdHead': relationToHouseholdHead,
                 'beneficiaryChangedReason': beneficiaryChangedReason,
                 'addressSearchText': addressSearchText,
@@ -335,6 +336,9 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'CARDComplaintTypes': CARDComplaintTypes,
                 'SCHOOLComplaintTypes': SCHOOLComplaintTypes,
                 'OTHERComplaintTypes': OTHERComplaintTypes,
+                'months': months,
+                # 'days': days,
+                # 'years': years,
             }
 
 
