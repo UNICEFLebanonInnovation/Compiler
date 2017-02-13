@@ -19,8 +19,10 @@ class BeneficiaryViewSet(mixins.ListModelMixin,
 
     def list(self, request, *args, **kwargs):
         string = request.GET.get("term", 0)
+        limit = request.GET.get("limit", 0)
+        offset = 0
 
-        queryset = self.queryset.filter(case_number__contains=string)
+        queryset = self.queryset.filter(case_number__contains=string)[offset:limit]
 
         data = []
         for item in queryset:
