@@ -364,9 +364,10 @@ def flattern_attendance():
 
 def aggregate_attendace():
     try:
+        database = client.get_default_database()
 
         logger.info('aggregate attendance by school and day')
-        pipeline = [
+        database.attendances_by_day.aggregate([
             {
                 '$project': {
                     'school': '$value.school',
@@ -426,10 +427,7 @@ def aggregate_attendace():
                 }
             },
             {'$out': 'attendances_by_day_school'}
-        ]
-        database = client.get_default_database()
-        result = database.command('aggregate', 'attendances_by_school', pipeline=pipeline, explain=True)
-        logger.info('OK: {}'.format(result['ok']))
+        ], useCursor=False)
     except Exception as exp:
         logger.exception(exp)
 
