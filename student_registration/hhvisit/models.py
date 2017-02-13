@@ -16,7 +16,7 @@ from student_registration.registrations.models import (
 from student_registration.users.models import User
 from student_registration.schools.models import (
     School,
-    Grade
+    ClassRoom
 )
 
 
@@ -201,16 +201,20 @@ class ChildVisit(TimeStampedModel):
 
     @property
     def child_school(self):
-        schoolid = Registration.objects.filter(student_id=self.student_id).values('school_id').first()['school_id'];
-        if not (schoolid is None): return School.objects.filter(id = schoolid).values('name').first()['name'];
-        else: return ''
+        schoolid = Registration.objects.filter(student_id=self.student_id).values('school_id').first()['school_id']
+        if not (schoolid is None):
+            return School.objects.filter(id=schoolid).values('name').first()['name']
+        else:
+            return ''
         return
 
     @property
-    def child_grade(self):
-        gradeid = Registration.objects.filter(student_id=self.student_id).values('grade_id').first()['grade_id'];
-        if not (gradeid is None): return Grade.objects.filter(id = gradeid).values('name').first()['name'];
-        else: return ''
+    def child_classroom(self):
+        classroomid = Registration.objects.filter(student_id=self.student_id).values('classroom_id').first()['classroom_id']
+        if not (classroomid is None):
+            return ClassRoom.objects.filter(id=classroomid).values('name').first()['name']
+        else:
+            return ''
 
 
 class ChildService(models.Model):
@@ -228,6 +232,32 @@ class ChildService(models.Model):
     service_provider = models.CharField(max_length=255, blank=True, null=True)
 
     service_provider_followup = models.BooleanField(blank=True, default=False)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.ServiceType.name
+
+
+class ChildReason(models.Model):
+
+    child_visit = models.ForeignKey(
+        ChildVisit,
+        blank=False, null=True,
+        related_name='child_visit_reason',
+    )
+    main_reason = models.ForeignKey(
+        MainReason,
+        blank=True, null=True,
+        related_name='+',
+    )
+    specific_reason = models.ForeignKey(
+        SpecificReason,
+        blank=True, null=True,
+        related_name='+',
+    )
+    specific_reason_other_specify = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         ordering = ['id']

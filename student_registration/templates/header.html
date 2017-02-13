@@ -75,6 +75,12 @@
                 <li class="nav-item">
                     <a class="nav-link {% if request|is_current_page:"class_assignment" %}active{% endif %}" href="{% url 'registrations:class_assignment' %}?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignments" %}</a>
                 </li>
+
+                    {% if request.user|has_group:"SCHOOL_MODIFY" %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request|is_current_page:"list_school_modification" %}active{% endif %}" href="{% url 'registrations:list_school_modification' %}?ln={{ LANGUAGE_CODE }}">{% trans "Modify School" %}</a>
+                        </li>
+                    {% endif %}
 {% if request.user|has_group:"HH_UPDATE" %}
                 <li class="nav-item">
                     <a class="nav-link {% if request|is_current_page:"registry_search" %}active{% endif %}" href="{% url 'registrations:registry_search' %}?ln={{ LANGUAGE_CODE }}">{% trans "Household Update" %}</a>
