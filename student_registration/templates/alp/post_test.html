@@ -44,7 +44,7 @@
                           <div class="panel-heading" style="position: absolute; top:0px;" id="header">
                                 <ol class="breadcrumb">
                                     <li><a>
-                                        <h3 class="panel-title">{% trans "ALP data collecting" %}</h3></a></li>
+                                        <h3 class="panel-title">{% trans "ALP Post Test" %}</h3></a></li>
                                     <li>
                                       <button class="btn btn-info" id="outreach-synchro">
                                         <i class="icon-synch-sign icon-white"></i>&nbsp;
@@ -109,12 +109,17 @@
                                             {% if alp_phase == 'pre_test' %}
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Registered in level" %}</label></th>
                                             {% endif %}
+                                            {% if alp_phase == 'post_test' %}
+                                        <th rowspan="2"><label>{% trans "Registered in level" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Registered in section" %}</label></th>
+                                            {% endif %}
                                         <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Assigned to level" %}</label></th>
                                         {% endif %}
                                         {% if request.user|has_group:"ALP_SCHOOL" %}
                                             <th colspan="5" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student actual status" %}</label></th>
                                         {% endif %}
+                                        {% if alp_phase == 'pre_test' %}
                                         <th colspan="3" style="text-align: center;"><label>{% trans "Student birthday" %}</label></th>
                                         <th rowspan="2"><label class="col-60">{% trans "Student age" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student nationality" %}</label></th>
@@ -128,7 +133,6 @@
                                         <th rowspan="2"><label>{% trans "Student living address" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Phone number (6 digits)" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Phone prefix (2 digits)" %}</label></th>
-                                        {% if alp_phase == 'pre_test' %}
                                         <th colspan="2" style="text-align: center; background-color: #67b168;"><label>{% trans "Last student education" %}</label></th>
                                         <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
                                         {% endif %}
@@ -152,10 +156,10 @@
                                             <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current Level" %}</label></th>
                                             <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current Section" %}</label></th>
                                         {% endif %}
+                                        {% if alp_phase == 'pre_test' %}
                                         <th><label>{% trans "year" %}</label></th>
                                         <th><label>{% trans "month" %}</label></th>
                                         <th><label>{% trans "day" %}</label></th>
-                                        {% if alp_phase == 'pre_test' %}
                                         <th style="background-color: #67b168;"><label class="col-100">{% trans "Last education level" %}</label></th>
                                         <th style="background-color: #67b168;"><label>{% trans "Education year" %}</label></th>
                                         <th style="background-color: #ec971f;"><label class="col-150">{% trans "Is the child participated in an ALP program" %}</label></th>
@@ -230,6 +234,7 @@
         var table = $('#outreaches-table');
         var selectedSchool = '{{ selectedSchool }}';
         var filterSchools = false;
+        var alp_phase = '{{ alp_phase }}';
         {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}
             var filterSchools = true;
         {% endif %}
@@ -294,7 +299,10 @@
             $("#filter_school").change(function(){
                 var selected_school = $(this).val();
                // reload the page with the school id passed in post
-                var url = '{% url "alp:alp_post_test" %}';
+                var url = '{% url "alp:alp_pre_test" %}';
+                if(alp_phase == 'post_test'){
+                    url = '{% url "alp:alp_post_test" %}';
+                }
                 if(selected_school){
                     url = url+'?school='+selected_school;
                 }
@@ -516,7 +524,7 @@
 
         function create_item_store_default_keys()
         {
-            var item = {id: rows, synchronized: false, deleted: false, owner: user_id, original_id: 0};
+            var item = {id: rows, synchronized: false, deleted: false, owner: user_id, original_id: 0, to_update: false};
             var fields = $('#outreach_prototype').find('.outreach-field');
             $(fields).each(function(i, field){
                 if($(field).attr('data-name')) {
@@ -602,7 +610,7 @@
                         push_data_to_server(item);
                     }else if(item.deleted == true){
                         delete_data_from_server(synchro_path, item.original_id, item.id, 'outreaches');
-                    }else{
+                    }else if(item.to_update == true) {
                         update_data_into_server(item);
                     }
                     $(".loader").hide();
@@ -626,10 +634,13 @@
             request_p.onsuccess = function() {
                 var result_p = request_p.result;
                 $(result_p).each(function(i, item){
-                    patch_data_into_server(item);
+                    if(item.to_update == true) {
+                        patch_data_into_server(item);
+                    }
                     $(".loader").hide();
                 });
             };
+            $(".loader").hide();
         }
 
         function push_data_to_server(item)
@@ -687,6 +698,7 @@
 {#                        $('#line-'+item.id).find('#student_number').trigger('blur');#}
                         $('#line-'+item.id).find('.outreach-field').removeClass('required');
                         update_item_store(parseInt(item.id), 'synchronized', true, 'outreaches');
+                        update_item_store(parseInt(item.id), 'to_update', false, 'outreaches');
                         update_items_by_index('entity', parseInt(item.id), 'entity_id', item.original_id, 'eav-columns-values');
                         synchro_result = true;
                     }
@@ -743,7 +755,7 @@
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
-
+                      update_item_store(parseInt(itemid), 'to_update', false, 'outreaches-p');
                 },
                 error: function (response) {
                     var required_fields = JSON.parse(response.responseText);
@@ -788,7 +800,7 @@
 
         function createStores()
         {
-            var request = indexedDB.open("bd9_outreaches", 3);
+            var request = indexedDB.open("bd_posttest", 3);
 
             request.onupgradeneeded = function() {
                 // The database did not previously exist, so create object stores and indexes.
