@@ -206,14 +206,6 @@ class ChildVisit(TimeStampedModel):
         else: return ''
         return
 
-    @property
-    def child_grade(self):
-        gradeid = Registration.objects.filter(student_id=self.student_id).values('grade_id').first()['grade_id']
-        if not (gradeid is None):
-            return Grade.objects.filter(id=gradeid).values('name').first()['name']
-        else:
-            return ''
-
 
 class ChildService(models.Model):
 
