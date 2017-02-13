@@ -16,7 +16,7 @@ from student_registration.registrations.models import (
 from student_registration.users.models import User
 from student_registration.schools.models import (
     School,
-    Grade
+    ClassRoom
 )
 
 
@@ -202,9 +202,19 @@ class ChildVisit(TimeStampedModel):
     @property
     def child_school(self):
         schoolid = Registration.objects.filter(student_id=self.student_id).values('school_id').first()['school_id']
-        if not (schoolid is None): return School.objects.filter(id = schoolid).values('name').first()['name']
-        else: return ''
+        if not (schoolid is None):
+            return School.objects.filter(id=schoolid).values('name').first()['name']
+        else:
+            return ''
         return
+
+    @property
+    def child_classroom(self):
+        classroomid = Registration.objects.filter(student_id=self.student_id).values('classroom_id').first()['classroom_id']
+        if not (classroomid is None):
+            return ClassRoom.objects.filter(id=classroomid).values('name').first()['name']
+        else:
+            return ''
 
 
 class ChildService(models.Model):
