@@ -4,7 +4,8 @@
 <div name = "childFormParent" style = "display:none" >
 
    <div name = "childForm" >
-      <label class="text">{% trans "Child Name" %}</label> <div name = "childName"></div>
+      <label class="text">{% trans "Child Name  " %}</label>
+       <div name = "childName"></div>
       <br/>
       <label class="text">{% trans "Is the child now enrolled in a different school?" %}</label>
      <!--<input type="checkbox" name="childEnrolled" />-->
@@ -12,32 +13,27 @@
       <a class="btn btn-primary btn-sm notActive" data-toggle="child_enrolled_in_another_school" data-title="1">{% trans "Yes" %}</a>
       <a class="btn btn-primary btn-sm active" data-toggle="child_enrolled_in_another_school" data-title="0">{% trans "No" %}</a>
       </div>
-      <br/>
-      <br/>
-     <label class="text">{% trans "Reason" %}</label>
-      <select name="childMainReason">
-         <option value="">---{% trans "Main Reason" %}---</option>
-         {% for mainreason in mainreasons %}
-          <option value="{{ mainreason.id }}" >
-              {{ mainreason }}
-          </option>
-        {% endfor %}
-       </select>
-      <select name="childSpecificReason">
-         <option value="">---{% trans "Specific Reason" %}---</option>
-         {% for specificreason in specificreasons %}
-          <option value="{{ specificreason.id }}" main-reason-id="{{ specificreason.main_reason_id }}" >
-              {{ specificreason }}
-          </option>
-        {% endfor %}
-       </select>
-     <br/>
-     <br/>
-     <div name = "otherReason" >
-       <!--Other (specify)-->
-       <label class="text">{% trans "Specify" %}</label>
-       <input type="text" name="specific_reason_other_specify"><br>
-     </div>
+       <table name="childReasons" class="table table-striped table-bordered cell-border"
+                                           data-height="500"
+                                           data-pagination="true"
+                                           data-search="true"
+                                           cellspacing="0"
+                                           width="100%">
+              <thead>
+                  <tr>
+                      <th style = "display:none">ID</th>
+                      <th style = "style:width:25%">Main Reason</th>
+                      <th style = "style:width:25%">Sub Reason</th>
+                      <th style = "style:width:40%">Specify</th>
+                      <th style = "style:width:10%"></th>
+                  </tr>
+              </thead>
+              <tbody>
+
+              </tbody>
+       </table>
+
+     <button name = "addReasonButton" >Add</button>
      <br/>
      <br/>
      <table name="childServices" class="table table-striped table-bordered cell-border"
@@ -76,6 +72,27 @@
       </div>
 
 
+     <div name = "childMainReasons" style = "display:none">
+         <select name=childMainReason style = "width:150px">
+         <option value="">---{% trans "Main Reason" %}---</option>
+         {% for mainreason in mainreasons %}
+          <option value="{{ mainreason.id }}" >
+              {{ mainreason }}
+          </option>
+        {% endfor %}
+       </select>
+     </div>
+
+        <div name = "childSpecificReasons" style = "display:none">
+            <select name = "childSpecificReason" style = "width:150px">
+                <option value="">---{% trans "Specific Reason" %}---</option>
+                {% for specificreason in specificreasons %}
+                    <option value="{{ specificreason.id }}" main-reason-id="{{ specificreason.main_reason_id }}" >
+                        {{ specificreason }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
 
    </div>
 
