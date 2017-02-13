@@ -12,17 +12,13 @@
 
            var ageCell = "<td>"+(entry.calculate_age)+"</td>";
 
-           var mainReasonCell = "<td style = \"display:none;\">"+(entry.main_reason_id!=null?entry.main_reason_id:'')+"</td>";
-           var subReasonCell = "<td style = \"display:none;\">"+(entry.specific_reason_id!=null?entry.specific_reason_id:'')+"</td>";
 
            var isEnrolled = (entry.child_enrolled_in_another_school==null?false:entry.child_enrolled_in_another_school);
            var isEnrolledCell = "<td style = \"display:none;\">"+isEnrolled+"</td>";
 
-           var otherReasonCell = "<td style = \"display:none;\">"+(entry.specific_reason_other_specify!=null?entry.specific_reason_other_specify:'')+"</td>";
-
            $("#household-visit-child-table tbody").append
            (
-              "<tr class = \"child-row-class\" >"+childIDCell+childNameCell+schoolCell+gradeCell+ageCell+mainReasonCell+subReasonCell+isEnrolledCell+otherReasonCell+"</tr>"
+              "<tr class = \"child-row-class\" >"+childIDCell+childNameCell+schoolCell+gradeCell+ageCell+isEnrolledCell+"</tr>"
 
            );
         }
@@ -47,13 +43,6 @@
 
                           if(ValidateServices(editForm))
                           {
-                            var mainReasonID = editForm.find("[name=childMainReason]").val();
-
-                            row.find("td:nth-child(6)").html(mainReasonID!=null?mainReasonID:'');
-
-                            var specificReasonID = editForm.find("[name=childSpecificReason]").val();
-
-                            row.find("td:nth-child(7)").html(specificReasonID!=null?specificReasonID:'');
 
                             var isEnrolled =
                             GetBooleanSelection
@@ -61,16 +50,13 @@
                                editForm.find('.child_enrolled_in_another_school_block')
                             );
 
-                            row.find("td:nth-child(8)").html(isEnrolled);
-
-
-                            var specific_reason_other_specify = editForm.find("[name=specific_reason_other_specify]").val();
-                            row.find("td:nth-child(9)").html(specific_reason_other_specify!=null?specific_reason_other_specify:'');
-
+                            row.find("td:nth-child(6)").html(isEnrolled);
                             var childID = row.find("td:first-child").text();
                             var childServiceData = CreateChildServiceData(childID, editForm);
+                            var childReasonData = CreateChildReasonData(childID, editForm);
 
                             UpdateChildVisitServiceData( childID, childServiceData);
+                            UpdateChildVisitReasonData( childID, childReasonData);
                           }
                           else
                           {
@@ -112,16 +98,16 @@
 
               editForm.find("[name=childName]").html( childVisit.first_name +' '+childVisit.father_name+' '+childVisit.last_name );
 
-              updateDropDownValue(editForm.find("[name=childMainReason]"),childRowRecord.main_reason_id );
-
-              FilterSpecificReasons(editForm, childRowRecord.main_reason_id);
-              InitialiseReasonDropdowns(editForm);
-
-              updateDropDownValue(editForm.find("[name=childSpecificReason]"),childRowRecord.specific_reason_id );
-
-              UpdateOthersSpecifyVisibility(editForm);
-
-              updateDropDownValue(editForm.find("[name=specific_reason_other_specify]"),childRowRecord.specific_reason_other_specify );
+              // updateDropDownValue(editForm.find("[name=childMainReason]"),childRowRecord.main_reason_id );
+              //
+              // FilterSpecificReasons(editForm, childRowRecord.main_reason_id);
+              // InitialiseReasonDropdowns(editForm);
+              //
+              // updateDropDownValue(editForm.find("[name=childSpecificReason]"),childRowRecord.specific_reason_id );
+              //
+              // UpdateOthersSpecifyVisibility(editForm);
+              //
+              // updateDropDownValue(editForm.find("[name=specific_reason_other_specify]"),childRowRecord.specific_reason_other_specify );
 
               ChangeBooleanSelection
               (
@@ -138,6 +124,19 @@
               );
 
               InitialiseServiceDeleting(editForm);
+
+              childVisit.child_visit_reason.forEach
+              (
+                 function(entry)
+                 {
+                    AddReasonRow(editForm, entry);
+                 }
+              );
+
+              InitialiseReasonDeleting(editForm);
+
+              InitialiseReasonDropdowns(editForm);
+
            }
 
            function InitialiseReasonDropdowns(editForm)
@@ -147,11 +146,13 @@
                  'change', '[name=childMainReason]',
                  function()
                  {
-                    FilterSpecificReasons(editForm, parseInt($(this).val()));
+                    var parentRow = $(this).parent().parent();
 
-                    updateDropDownValue(editForm.find("[name=childSpecificReason]"),null );
+                    FilterSpecificReasons(parentRow, parseInt($(this).val()));
 
-                    UpdateOthersSpecifyVisibility(editForm);
+                    updateDropDownValue(parentRow.find("[name=childSpecificReason]"),null );
+
+                    UpdateOthersSpecifyVisibility(parentRow);
                  }
               );
 
@@ -161,11 +162,13 @@
                  'change', '[name=childSpecificReason]',
                  function()
                  {
-                    UpdateOthersSpecifyVisibility(editForm);
+                    var parentRow = $(this).parent().parent();
 
-                    if(!editForm.find("[name='otherReason']").visible())
+                    UpdateOthersSpecifyVisibility(parentRow);
+
+                    if(!parentRow.find("[name='otherReason']").is(":disabled") )
                     {
-                       editForm.find("[name='specific_reason_other_specify']").text("");
+                       parentRow.find("[name='otherReason']").text("");
                     }
                  }
               );
@@ -179,11 +182,11 @@
 
                 if(specificReasonText == "Other (specify)")
                 {
-                   editForm.find("[name='otherReason']").show();
+                   editForm.find("[name='otherReason']").prop( "disabled", false );;
                 }
                 else
                 {
-                   editForm.find("[name='otherReason']").hide();
+                   editForm.find("[name='otherReason']").prop( "disabled", true );;
                 }
            }
 
@@ -269,6 +272,16 @@
                function()
                {
                   AddServiceEmptyRow(editForm);
+               }
+             );
+
+           editForm.on
+            (
+               'click',
+               '[name=addReasonButton]',
+               function()
+               {
+                  AddReasonEmptyRow(editForm);
                }
              );
 
