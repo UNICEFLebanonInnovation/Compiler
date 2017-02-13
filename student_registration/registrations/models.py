@@ -123,6 +123,7 @@ class RegisteringAdult(Person):
     beneficiary_changed_first_name = models.CharField(max_length=64L, blank=True, null=True)
     beneficiary_changed_last_name = models.CharField(max_length=64L, blank=True, null=True)
     beneficiary_changed_father_name = models.CharField(max_length=64L, blank=True, null=True)
+<<<<<<< HEAD
     beneficiary_changed_mother_full_name = models.CharField(max_length=64L, blank=True, null=True)
     beneficiary_changed_birthday_year = models.CharField(
         max_length=4,
@@ -148,6 +149,8 @@ class RegisteringAdult(Person):
 
 
 
+=======
+>>>>>>> develop
     beneficiary_changed_relation_to_householdhead = models.CharField(max_length=50, blank=True, null=True, choices=RELATION_TYPE)
     beneficiary_changed_same_as_caller = models.BooleanField(default=False)
     beneficiary_changed_reason = models.ForeignKey(
