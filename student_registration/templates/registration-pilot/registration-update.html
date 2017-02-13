@@ -145,6 +145,17 @@
                                     <input id="last_name" maxlength="45" type="text">
                                 </div>
                                 <div class="line">
+                                    <label class="text">{% trans "Mother Full  Name: " %}</label>
+                                    <input id="mother_full_name" maxlength="45" type="text">
+                                </div>
+                                <div class="line field-select-small-size">
+                                    <label class="text">{% trans "Date of birth" %}</label>
+{#                                    {{ form.birthday_day }}#}
+{#                                    {{ form.birthday_month }}#}
+{#                                    {{ form.birthday_year }}#}
+                                   // <span class="error" id="dob_error">{% trans "This field is required" %}</span>
+                                </div>
+                                <div class="line">
                                     <label class="text">{% trans "Realtionship to household head: " %}</label>
                                     <select id="relation_to_householdhead" >
                                         {% for value, text in relationToHouseholdHead %}
@@ -241,8 +252,8 @@
                                 <br/>
                                 <label class="text">{% trans "tt: " %}</label>
                                   <select id="card_complaint" >
-                                      {% for value, text in CARDComplaintTypes %}
-                                          <option value="{{ value }}">{{ text }}</option>
+                                      {% for itm in PAYMENTComplaintTypes %}
+                                          <option value="{{ itm.id }}">{{ itm.name }}</option>
                                       {% endfor %}
                                   </select>
                             </div>
