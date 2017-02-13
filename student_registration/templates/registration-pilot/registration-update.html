@@ -82,9 +82,13 @@
                                   <option value="payment">PAYMENT INFORMATION</option>
                                   <option value="cardStatus">ATM CARD DISTRIBUTION STATUS</option>
                                   <option value="card">CARD and PIN USAGE</option>
+                                  <option value="refusedServiceBLF"> Refused Service by BLF </option>
                                   <option value="schoolComplaint">SCHOOL REALTED</option>
                                   <option value="removeComplaint">REMOVE FROM THE PROGRAM</option>
                                   <option value="otherComplaint">OTHER</option>
+                              </optgroup>
+                              <optgroup label="Other">
+                                  <option value="UnauthorizedRequest">Unauthorized Information Request</option>
                               </optgroup>
                           </select>
                             <div id = "phoneFields" style="display:none">
@@ -133,27 +137,31 @@
                                     </div>
                                 </div>
                                 <div class="line">
-                                    <label class="text">{% trans "First Name: " %}</label>
+                                    <label class="text">{% trans "New Beneficiary First Name: " %}</label>
                                     <input id="first_name" maxlength="45" type="text">
                                 </div>
                                 <div class="line">
-                                    <label class="text">{% trans "Father Name: " %}</label>
+                                    <label class="text">{% trans "New Beneficiary Father Name: " %}</label>
                                     <input id="father_name" maxlength="45" type="text">
                                 </div>
                                 <div class="line">
-                                    <label class="text">{% trans "Last Name: " %}</label>
+                                    <label class="text">{% trans "New Beneficiary Last Name: " %}</label>
                                     <input id="last_name" maxlength="45" type="text">
                                 </div>
                                 <div class="line">
-                                    <label class="text">{% trans "Mother Full  Name: " %}</label>
+                                    <label class="text">{% trans "New Beneficiary Mother Full  Name: " %}</label>
                                     <input id="mother_full_name" maxlength="45" type="text">
                                 </div>
                                 <div class="line field-select-small-size">
-                                    <label class="text">{% trans "Date of birth" %}</label>
-{#                                    {{ form.birthday_day }}#}
-{#                                    {{ form.birthday_month }}#}
-{#                                    {{ form.birthday_year }}#}
-                                   // <span class="error" id="dob_error">{% trans "This field is required" %}</span>
+                                    <label class="text">{% trans "New Beneficiary Date of birth" %}</label>
+                                    <select id="days" ></select>
+                                    <select id="months" >
+                                        {% for value, text in months %}
+                                            <option value="{{ value }}">{{ text }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <select id="years" >
+                                    </select>
                                 </div>
                                 <div class="line">
                                     <label class="text">{% trans "Realtionship to household head: " %}</label>
@@ -164,6 +172,15 @@
                                     </select>
                                 </div>
                                 <div class="line">
+                                    <label class="text">{% trans "ID Type: " %}</label>
+                                    <select id="idType" >
+                                        {% for itm in idType %}
+                                          <option value="{{ itm.id }}">{{ itm.name }}</option>
+                                      {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="line">
                                     <label class="text">{% trans "Is the new beneficiary the same as person calling? " %}</label>
                                     <div id="radioBtn" class="btn-group same_as_caller_block">
                                         <a class="btn btn-primary btn-sm notActive" data-toggle="same_as_caller" data-title="1">{% trans "Yes" %}</a>
@@ -172,10 +189,10 @@
                                 </div>
                                 <div class="line">
                                     <label class="text">{% trans "Reason: " %}</label>
-                                    <select id="eason" >
-                                        {% for value, text in beneficiaryChangedReason %}
-                                            <option value="{{ value }}">{{ text }}</option>
-                                        {% endfor %}
+                                    <select id="reason" >
+                                        {% for itm in beneficiaryChangedReason %}
+                                          <option value="{{ itm.id }}">{{ itm.name }}</option>
+                                      {% endfor %}
                                     </select>
                                 </div>
                             </div>
@@ -266,7 +283,6 @@
                             <div class="line" id = "otherFields" style="display:none">
                                 <br/>
                             </div>
-
                         </li>
                   </ul>
             </div>

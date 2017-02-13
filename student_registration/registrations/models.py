@@ -143,7 +143,7 @@ class RegisteringAdult(Person):
         blank=True,
         null=True,
         default=0,
-        choices=((str(x), x) for x in range(1, 33))
+        choices=((str(x), x) for x in range(1, 31))
     )
     beneficiary_changed_relation_to_householdhead = models.CharField(max_length=50, blank=True, null=True, choices=RELATION_TYPE)
     beneficiary_changed_same_as_caller = models.BooleanField(default=False)
