@@ -223,7 +223,12 @@ def find_matching():
                     Q(student__id_number=id_number_2) |
                     Q(student__id_number=id_number_3) |
                     Q(student__id_number=id_number_4) |
-                    Q(student__id_number=id_number_5)
+                    Q(student__id_number=id_number_5) |
+                    Q(student__id_number__contains=id_number_1) |
+                    Q(student__id_number__contains=id_number_2) |
+                    Q(student__id_number__contains=id_number_3) |
+                    Q(student__id_number__contains=id_number_4) |
+                    Q(student__id_number__contains=id_number_5)
                 )
             else:
                 enrollment = Enrollment.objects.exclude(deleted=True).get(

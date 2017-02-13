@@ -145,6 +145,7 @@
                                     <input id="last_name" maxlength="45" type="text">
                                 </div>
                                 <div class="line">
+<<<<<<< HEAD
                                     <label class="text">{% trans "Mother Full  Name: " %}</label>
                                     <input id="mother_full_name" maxlength="45" type="text">
                                 </div>
@@ -156,6 +157,8 @@
                                    // <span class="error" id="dob_error">{% trans "This field is required" %}</span>
                                 </div>
                                 <div class="line">
+=======
+>>>>>>> develop
                                     <label class="text">{% trans "Realtionship to household head: " %}</label>
                                     <select id="relation_to_householdhead" >
                                         {% for value, text in relationToHouseholdHead %}
@@ -252,8 +255,13 @@
                                 <br/>
                                 <label class="text">{% trans "tt: " %}</label>
                                   <select id="card_complaint" >
+<<<<<<< HEAD
                                       {% for itm in PAYMENTComplaintTypes %}
                                           <option value="{{ itm.id }}">{{ itm.name }}</option>
+=======
+                                      {% for value, text in CARDComplaintTypes %}
+                                          <option value="{{ value }}">{{ text }}</option>
+>>>>>>> develop
                                       {% endfor %}
                                   </select>
                             </div>
