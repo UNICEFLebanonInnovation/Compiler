@@ -9,6 +9,7 @@ from .models import  (
     ChildService ,
     ServiceType ,
     HouseholdVisitComment,
+    ChildReason
 )
 from student_registration.registrations.serializers import (
     RegisteringAdultSerializer ,
@@ -79,6 +80,26 @@ class ChildServiceSerializer(serializers.ModelSerializer):
             'child_visit_id'
         )
 
+
+class ChildReasonSerializer(serializers.ModelSerializer):
+
+    main_reason_id = serializers.IntegerField(allow_null=True, required=False)
+    main_reason = serializers.CharField(source='main_reason.name', read_only=True)
+    specific_reason_id = serializers.IntegerField(allow_null=True, required=False)
+    specific_reason = serializers.CharField(source='specific_reason.name', read_only=True)
+    child_visit_id = serializers.IntegerField()
+
+    class Meta:
+        model = ChildReason
+        fields = (
+            'id',
+            'main_reason_id',
+            'main_reason',
+            'specific_reason_id',
+            'specific_reason',
+            'specific_reason_other_specify',
+            'child_visit_id'
+        )
 
 
 class VisitAttemptSerializer(serializers.ModelSerializer):
@@ -155,11 +176,8 @@ class ChildVisitSerializer(serializers.ModelSerializer):
     calculate_age = serializers.CharField(source='student.calculate_age', read_only=True)
     child_school = serializers.CharField(read_only=True)
     child_grade = serializers.CharField(read_only=True)
-    main_reason_id = serializers.IntegerField(allow_null=True,required=False)
-    main_reason = serializers.CharField(source='main_reason.name', read_only=True)
-    specific_reason_id = serializers.IntegerField(allow_null=True,required=False)
-    specific_reason = serializers.CharField(source='specific_reason.name', read_only=True)
     child_visit_service = ChildServiceSerializer(many=True, read_only=True)
+    child_visit_reason = ChildReasonSerializer(many=True, read_only=True)
     household_visit_id = serializers.IntegerField()
 
     def create(self, validated_data):
@@ -169,21 +187,9 @@ class ChildVisitSerializer(serializers.ModelSerializer):
         student_serializer.is_valid(raise_exception=True)
         student_serializer.instance = student_serializer.save()
 
-        mainreason_data = validated_data.pop('main_reason', None)
-        mainreason_serializer = MainReasonSerializer(data=mainreason_data)
-        mainreason_serializer.is_valid(raise_exception=True)
-        mainreason_serializer.instance = MainReasonSerializer.save()
-
-        specificreason_data = validated_data.pop('specific_reason', None)
-        specificreason_serializer = SpecificReasonSerializer(data=specificreason_data)
-        specificreason_serializer.is_valid(raise_exception=True)
-        specificreason_serializer.instance = SpecificReasonSerializer.save()
-
         try:
             instance = ChildVisit.objects.create(**validated_data)
             instance.student = student_serializer.instance
-            instance.main_reason = mainreason_serializer.instance
-            instance.specific_reason = specificreason_serializer.instance
             instance.save()
 
         except Exception as ex:
@@ -201,16 +207,12 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             'last_name',
             'mother_fullname',
             'calculate_age',
-            'main_reason_id',
-            'main_reason',
-            'specific_reason_id',
-            'specific_reason',
-            'specific_reason_other_specify',
             'child_enrolled_in_another_school',
             'child_visit_service',
+            'child_visit_reason',
             'household_visit_id',
             'child_school' ,
-            'child_grade'
+            'child_grade',
         )
 
 
@@ -260,10 +262,14 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
         children_data = allInitialDataResult['children_visits']
 
         childIdentifiers = [x['id'] for x in children_data]
+
         childServiceIdentifierLists= [[y['id'] for y in x['child_visit_service']] for x in children_data]
         childServiceIdentifiers = [val for sublist in childServiceIdentifierLists for val in sublist]
-
         ChildService.objects.filter(child_visit_id__in=childIdentifiers).exclude(id__in=childServiceIdentifiers).delete()
+
+        childReasonIdentifierLists= [[y['id'] for y in x['child_visit_reason']] for x in children_data]
+        childReasonIdentifiers = [val for sublist in childReasonIdentifierLists for val in sublist]
+        ChildReason.objects.filter(child_visit_id__in=childIdentifiers).exclude(id__in=childReasonIdentifiers).delete()
 
         for child_data in children_data:
             child_data['id'] = (child_data['id'] if child_data['id'] else None)
@@ -291,6 +297,20 @@ class HouseholdVisitSerializer(serializers.ModelSerializer):
                 serviceSerializer.is_valid(raise_exception=True)
                 serviceSerializer.save()
 
+            reasons_data = child_data['child_visit_reason']
+
+            for reason_data in reasons_data:
+                reason_data['id'] = (reason_data['id'] if reason_data['id'] else None)
+
+                reasonRecord = ChildReason.objects.filter(id=(reason_data['id'])).first()
+
+                if not reason_data['id']:
+                    reason_data.pop('id')
+
+                reasonSerializer = ChildReasonSerializer(reasonRecord, data=reason_data)
+
+                reasonSerializer.is_valid(raise_exception=True)
+                reasonSerializer.save()
 
         comments_data = allInitialDataResult['visit_comment']
 
