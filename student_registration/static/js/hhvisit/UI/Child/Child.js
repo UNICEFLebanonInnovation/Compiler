@@ -8,7 +8,7 @@
 
            var schoolCell = "<td>"+(entry.child_school)+"</td>";
 
-           var gradeCell = "<td>"+(entry.child_grade)+"</td>";
+           var gradeCell = "<td>"+(entry.child_classroom)+"</td>";
 
            var ageCell = "<td>"+(entry.calculate_age)+"</td>";
 
