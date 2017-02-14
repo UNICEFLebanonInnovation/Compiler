@@ -138,6 +138,39 @@ class OutreachView(LoginRequiredMixin, TemplateView):
         }
 
 
+class DataCollectingView(LoginRequiredMixin, TemplateView):
+    model = Outreach
+    template_name = 'alp/outreach.html'
+
+    def get_context_data(self, **kwargs):
+        data = []
+        school = 0
+        location = 0
+        location_parent = 0
+
+        return {
+            'data': data,
+            'schools': School.objects.all().order_by('name'),
+            'languages': Language.objects.all(),
+            'locations': Location.objects.filter(type_id=2),
+            'months': Person.MONTHS,
+            'genders': Person.GENDER,
+            'idtypes': IDType.objects.all(),
+            'education_levels': ClassRoom.objects.all(),
+            'education_results': Outreach.RESULT,
+            'informal_educations': EducationLevel.objects.all(),
+            'alp_rounds': ALPRound.objects.all(),
+            'education_final_results': ClassLevel.objects.all(),
+            'classrooms': ClassRoom.objects.all(),
+            'sections': Section.objects.all(),
+            'nationalities': Nationality.objects.exclude(id=5),
+            'nationalities2': Nationality.objects.all(),
+            'school': school,
+            'location': location,
+            'location_parent': location_parent,
+        }
+
+
 class PreTestView(LoginRequiredMixin, TemplateView):
     model = Outreach
     template_name = 'alp/post_test.html'
