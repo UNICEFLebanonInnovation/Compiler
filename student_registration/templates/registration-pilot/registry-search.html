@@ -139,11 +139,11 @@
                                 <tbody>
                                     {% for adult in adults %}
                                         <tr class="row-class" adultID="{{ adult.id }}">
-                                          <td>{{ adult.school.location.name }}</td>
-                                          <td>{{ adult.first_name }}</td>
-                                          <td>{{ adult.id_number }}</td>
-                                          <td>{{ adult.primary_phone }}</td>
-                                          <td>{{ adult.secondary_phone }}</td>
+                                            <td>{{ adult.school.location.name }}</td>
+                                            <td>{{ adult.adult_full_name }}</td>
+                                            <td>{{ adult.id_number }}</td>
+                                            <td>{{ adult.primary_phone }}</td>
+                                            <td>{{ adult.secondary_phone }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -176,6 +176,7 @@
     <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/date.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/registration-pilot/UI/SlyInitialisation.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/registration-pilot/Validation/validator.js' %}"></script>
     <script type="text/javascript">
@@ -408,6 +409,15 @@
                             var payment = household.payments[paymentIndex];
                             AddPaymentRow(payment);
                          }
+
+                         $("#complaints-table tbody").empty();
+                         for(complaintIndex in household.complaints)
+                         {
+                            var complaint = household.complaints[complaintIndex];
+                            AddComplaintRow(complaint);
+                         }
+
+
                      },
                      error: function (response) {
                         var required_fields = JSON.parse(response.responseText);
@@ -435,7 +445,7 @@
 
             function AddPaymentRow(entry)
             {
-                var dateCell = "<td>"+entry.payment_date +"</td>";
+                var dateCell = "<td>"+FormatDate(entry.payment_date) +"</td>";
                 var amountCell = "<td>"+entry.payment_amount+"</td>";
                 var monthCell = "<td>"+entry.payment_month+"</td>";
                 var yearCell = "<td>"+entry.payment_year+"</td>";
@@ -444,6 +454,21 @@
                 $("#payments-table tbody").append
                 (
                    "<tr>"+dateCell+amountCell+monthCell+yearCell+"</tr>"
+                );
+            }
+
+            function AddComplaintRow(entry)
+            {
+                var dateIssuedCell = "<td>"+FormatDate(entry.created)+"</td>";
+                var typeCell = "<td>"+entry.complaint_category_name +"</td>";
+                var noteCell = "<td>"+entry.complaint_note+"</td>";
+                var dateReplyCell = "<td>"+FormatDate(entry.modified)+"</td>";
+                var ReplyCell = "<td>"+entry.complaint_solution+"</td>";
+
+
+                $("#complaints-table tbody").append
+                (
+                   "<tr>"+dateIssuedCell+typeCell+noteCell+dateReplyCell+ReplyCell+"</tr>"
                 );
             }
 
@@ -659,7 +684,6 @@
            }
          );
          //alert(isSuccessfull);
-         alert(isSuccessfull);
 
          return isSuccessfull;
       }
@@ -701,6 +725,56 @@
              }
            );
       }
+
+      function FormatDate(dateString)
+        {
+           var date;
+
+           if(isDate(dateString, "yyyy-MM-ddTHH:mm:ssZ") )
+           {
+              date = new Date(getDateFromFormat(dateString, "yyyy-MM-ddTHH:mm:ssZ"));
+           }
+           else
+           {
+              date = new Date(dateString);
+           }
+
+           var result =
+           (
+              date.getDate().toString() + '/' +
+              (date.getMonth() + 1).toString() + '/' +
+              date.getFullYear().toString()
+           );
+
+           return result;
+        }
+
+        function FormatJSONDate(dateString)
+        {
+           var date;
+
+           if(isDate(dateString, "dd/MM/yyyy") )
+           {
+              date = new Date(getDateFromFormat(dateString, "d/MM/yyyy"));
+           }
+           else if(isDate(dateString, "d/MM/yyyy") )
+           {
+              date = new Date(getDateFromFormat(dateString, "d/MM/yyyy"));
+           }
+           else if(isDate(dateString, "dd/M/yyyy") )
+           {
+              date = new Date(getDateFromFormat(dateString, "dd/M/yyyy"));
+           }
+           else
+           {
+              date = new Date(dateString);
+           }
+
+           return date;
+        }
+
+
+
 
     </script>
 

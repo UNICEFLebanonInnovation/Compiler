@@ -124,7 +124,9 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'complaint_category',
             'complaint_category_name',
             'complaint_note',
+            'complaint_solution',
             'created',
+            'modified',
             'owner'
         )
 

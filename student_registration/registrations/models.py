@@ -165,6 +165,10 @@ class RegisteringAdult(Person):
             return self.id_number
         return self.number
 
+    @property
+    def adult_full_name(self):
+        return self.first_name + ' ' + self.father_name + ' ' + self.last_name
+
 
 class Complaint(TimeStampedModel):
     """
@@ -181,6 +185,7 @@ class Complaint(TimeStampedModel):
         related_name='+',
     )
     complaint_note = models.TextField(blank=True, null=True)
+    complaint_solution = models.TextField(blank=True, null=True)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
