@@ -259,11 +259,28 @@
                                     Complaint
                                 </button>
                                 <div class="line" id = "ComplaintFields" >
-                                <label class="text">{% trans "Complaint: " %}</label>
-                                <textarea cols="30" id="complaint" name="complaint" rows="4"></textarea>
-                            </div>
-
-
+                                    <label class="text">{% trans "Complaint: " %}</label>
+                                    <textarea cols="30" id="complaint" name="complaint" rows="4"></textarea>
+                                    <table id="complaints-table" class="table table-striped table-bordered cell-border"
+                                           data-height="500"
+                                           data-pagination="true"
+                                           data-search="true"
+                                           cellspacing="0"
+                                           width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th style = "display:none">>ID</th>
+                                            <th>Date Issued</th>
+                                            <th>Type</th>
+                                            <th>Message</th>
+                                            <th>Reply Date</th>
+                                            <th>Reply</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div class="line" id = "cardFields" style="display:none">
                                 <br/>
