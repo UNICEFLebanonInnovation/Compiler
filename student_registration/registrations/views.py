@@ -4,6 +4,8 @@ from __future__ import absolute_import, unicode_literals
 from django.http import Http404
 from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Value as V
+from django.db.models.functions import Concat
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
 import tablib
@@ -294,9 +296,7 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 ComplaintCategory.objects.all().filter(complaint_type='SCHOOL-RELATED').order_by('name')
             OTHERComplaintTypes = \
                 ComplaintCategory.objects.all().filter(complaint_type='OTHER').order_by('name')
-            # days =RegisteringAdult.beneficiary_changed_birthday_day__choices
             months = Person.MONTHS
-            # years = RegisteringAdult.beneficiary_changed_birthday_year.choices
             location = self.request.GET.get("location", 0)
             idType = IDType.objects.all().order_by('name')
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
@@ -309,13 +309,18 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
             secondarySearchText = self.request.GET.get("secondarySearchText", '')
             if location:
                 schools = School.objects.filter(location_id=location)
-                data = self.model.objects.filter(school__location_id=location,
-                                                 address__icontains=addressSearchText,
-                                                 first_name__icontains=repSearchText,
-                                                 id_number__icontains=idSearchText,
-                                                 primary_phone__icontains=primarySearchText,
-                                                 secondary_phone__icontains=secondarySearchText,
-                                                 ).order_by('id')[:10]
+
+
+
+                data = self.model.objects.annotate(
+                    name=Concat('first_name', V(' '), 'father_name', V(' '), 'last_name'),
+                ).filter(school__location_id=location,
+                         address__icontains=addressSearchText,
+                         name__icontains=repSearchText ,
+                         id_number__icontains=idSearchText,
+                         primary_phone__icontains=primarySearchText,
+                         secondary_phone__icontains=secondarySearchText,
+                         ).order_by('id')[:200]
 
             return {
                 'adults': data,
@@ -337,8 +342,6 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'SCHOOLComplaintTypes': SCHOOLComplaintTypes,
                 'OTHERComplaintTypes': OTHERComplaintTypes,
                 'months': months,
-                # 'days': days,
-                # 'years': years,
             }
 
 
