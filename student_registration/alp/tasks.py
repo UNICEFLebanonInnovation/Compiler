@@ -92,3 +92,13 @@ def assign_section(section):
         registry.save()
 
     print "End assignment"
+
+
+@app.task
+def assign_round(round):
+    from student_registration.alp.models import Outreach
+
+    registrations = Outreach.objects.exclude(deleted=True).filter(alp_round__isnull=True).update(alp_round_id=round)
+    print registrations
+
+    print "End assignment"

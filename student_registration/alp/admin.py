@@ -147,11 +147,11 @@ class OutreachAdmin(ImportExportModelAdmin):
     resource_class = OutreachResource
     form = OutreachForm
     list_display = (
-        'student', 'student_age', 'school', 'caza', 'governorate',
+        'student', 'student_age', 'student_sex', 'school', 'caza', 'governorate',
         'level', 'total', 'assigned_to_level', 'registered_in_level',
         'section', 'registered_in_school', 'not_enrolled_in_this_school'
     )
-    list_filter = ('school__number', 'school', 'school__location', GovernorateFilter,
+    list_filter = ('alp_round', 'school__number', 'school', 'school__location', GovernorateFilter,
                    'level', 'assigned_to_level', 'registered_in_level',
                    'section', 'student__sex', 'not_enrolled_in_this_school',
                    RegisteredInLevelFilter, RegisteredInSectionFilter, )
