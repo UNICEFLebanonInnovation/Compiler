@@ -94,12 +94,10 @@ class OutreachView(LoginRequiredMixin, TemplateView):
         location = 0
         location_parent = 0
         school_id = int(self.request.GET.get("school", 0))
-        if has_group(self.request.user, 'CERD'):
-            data = Outreach.objects.exclude(owner__partner_id=None)
-            data = data.filter(school_id=school_id)
-            data = data.exclude(deleted=True)
+        alp_round = ALPRound.objects.get(current_round=True)
+
         if has_group(self.request.user, 'ALP_SCHOOL'):
-            data = Outreach.objects.filter(school_id=self.request.user.school_id)
+            data = Outreach.objects.filter(school_id=self.request.user.school_id, alp_round=alp_round)
             data = data.exclude(owner_id=self.request.user.id)
             data = data.exclude(deleted=True)
             school_id = self.request.user.school_id
@@ -135,6 +133,133 @@ class OutreachView(LoginRequiredMixin, TemplateView):
             'school': school,
             'location': location,
             'location_parent': location_parent,
+        }
+
+
+class DataCollectingView(LoginRequiredMixin, TemplateView):
+    model = Outreach
+    template_name = 'alp/outreach.html'
+
+    def get_context_data(self, **kwargs):
+        data = []
+        school = 0
+        location = 0
+        location_parent = 0
+        alp_round = ALPRound.objects.get(current_pre_test=True)
+
+        return {
+            'data': data,
+            'schools': School.objects.all().order_by('name'),
+            'languages': Language.objects.all(),
+            'locations': Location.objects.filter(type_id=2),
+            'months': Person.MONTHS,
+            'genders': Person.GENDER,
+            'idtypes': IDType.objects.all(),
+            'education_levels': ClassRoom.objects.all(),
+            'education_results': Outreach.RESULT,
+            'informal_educations': EducationLevel.objects.all(),
+            'alp_rounds': ALPRound.objects.all(),
+            'education_final_results': ClassLevel.objects.all(),
+            'classrooms': ClassRoom.objects.all(),
+            'sections': Section.objects.all(),
+            'nationalities': Nationality.objects.exclude(id=5),
+            'nationalities2': Nationality.objects.all(),
+            'school': school,
+            'location': location,
+            'location_parent': location_parent,
+            'alp_round': alp_round.id
+        }
+
+
+class PreTestView(LoginRequiredMixin, TemplateView):
+    model = Outreach
+    template_name = 'alp/post_test.html'
+
+    def get_context_data(self, **kwargs):
+        data = []
+        school = 0
+        location = 0
+        location_parent = 0
+        school_id = int(self.request.GET.get("school", 0))
+        alp_round = ALPRound.objects.get(current_pre_test=True)
+
+        if has_group(self.request.user, 'CERD'):
+            data = Outreach.objects.exclude(owner__partner_id=None)
+            data = data.filter(school_id=school_id, alp_round=alp_round)
+            data = data.exclude(deleted=True)
+        if school_id:
+            school = School.objects.get(id=school_id)
+        if school and school.location:
+            location = school.location
+        if location and location.parent:
+            location_parent = location.parent
+
+        return {
+            'data': data,
+            'schools': School.objects.all(),
+            'months': Person.MONTHS,
+            'genders': Person.GENDER,
+            'idtypes': IDType.objects.all(),
+            'education_levels': ClassRoom.objects.all(),
+            'education_results': Outreach.RESULT,
+            'informal_educations': EducationLevel.objects.all(),
+            'alp_rounds': ALPRound.objects.all(),
+            'education_final_results': ClassLevel.objects.all(),
+            'sections': Section.objects.all(),
+            'nationalities': Nationality.objects.exclude(id=5),
+            'nationalities2': Nationality.objects.all(),
+            'selectedSchool': school_id,
+            'school': school,
+            'location': location,
+            'location_parent': location_parent,
+            'alp_phase': 'pre_test',
+        }
+
+
+class PostTestView(LoginRequiredMixin, TemplateView):
+    model = Outreach
+    template_name = 'alp/post_test.html'
+
+    def get_context_data(self, **kwargs):
+        data = []
+        school = 0
+        location = 0
+        location_parent = 0
+        school_id = int(self.request.GET.get("school", 0))
+        alp_round = ALPRound.objects.get(current_post_test=True)
+
+        if has_group(self.request.user, 'CERD'):
+            data = Outreach.objects.exclude(owner__partner_id=None, alp_round=alp_round)
+            data = data.filter(school_id=school_id)
+            data = data.exclude(deleted=True)
+        if school_id:
+            school = School.objects.get(id=school_id)
+        if school and school.location:
+            location = school.location
+        if location and location.parent:
+            location_parent = location.parent
+
+        return {
+            'data': data,
+            'schools': School.objects.all(),
+            'locations': Location.objects.filter(type_id=2),
+            'months': Person.MONTHS,
+            'genders': Person.GENDER,
+            'idtypes': IDType.objects.all(),
+            'education_levels': ClassRoom.objects.all(),
+            'education_results': Outreach.RESULT,
+            'informal_educations': EducationLevel.objects.all(),
+            'alp_rounds': ALPRound.objects.all(),
+            'education_final_results': ClassLevel.objects.all(),
+            'alp_results': ClassLevel.objects.all(),
+            'sections': Section.objects.all(),
+            'nationalities': Nationality.objects.exclude(id=5),
+            'nationalities2': Nationality.objects.all(),
+            'selectedSchool': school_id,
+            'school': school,
+            'location': location,
+            'location_parent': location_parent,
+            'alp_phase': 'post_test',
         }
 
 
@@ -176,15 +301,17 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
         # queryset = self.model.objects.exclude(deleted=True, not_enrolled_in_this_school=True)
         school = int(request.GET.get('school', 0))
         location = int(request.GET.get('location', 0))
+        alp_round = ALPRound.objects.get(current_round=True)
 
         if has_group(self.request.user, 'PARTNER'):
-            queryset = queryset.filter(owner=self.request.user)
+            alp_round = ALPRound.objects.get(current_pre_test=True)
+            queryset = queryset.filter(owner=self.request.user, alp_round=alp_round)
         if has_group(self.request.user, 'ALP_SCHOOL') and self.request.user.school_id:
             school = self.request.user.school_id
         if school:
-            queryset = queryset.filter(school_id=school).order_by('id')
+            queryset = queryset.filter(school_id=school, alp_round=alp_round).order_by('id')
         if location:
-            queryset = queryset.filter(school__location_id=location).order_by('id')
+            queryset = queryset.filter(school__location_id=location, alp_round=alp_round).order_by('id')
 
         data = tablib.Dataset()
 
