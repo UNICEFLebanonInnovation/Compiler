@@ -37,6 +37,9 @@
                   <ul class="slidee" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
                     {# 1 Slide household Identity #}
                         <li class="active framebox">
+                            <div class="line" id="hhsuspended" style="display: none">
+                                <label  style="color: red">{% trans "Please note that this household is currently suspended " %}</label><span id ="HHSuspendedNote"></span>
+                            </div>
                             <h3 class="panel-title">{% trans "Verify Caller Identity" %}&nbsp;&nbsp;</h3>
                             <br>
                             <label >{% trans "Caller must answer 2 of the following questions correctly." %}&nbsp;&nbsp;</label>
@@ -52,9 +55,6 @@
                             </div>
                             <div class="line" >
                                 <label >{% trans "- Last 4 digits on ATM Card: " %}&nbsp;&nbsp;</label><span id ="hhLastcardgigits"></span>
-                            </div>
-                            <div class="line" >
-                                <label >{% trans "- Household Status: " %}&nbsp;&nbsp;</label><span id ="hhsuspended"></span>
                             </div>
                             <div class="line" >
                                 <label >{% trans "- Primary phone: " %}&nbsp;&nbsp;</label><span id ="hhprimary_phone"></span>
@@ -86,10 +86,8 @@
                                   <option value="refusedServiceBLF"> Refused Service by BLF </option>
                                   <option value="schoolRefusedEntrance">SCHOOL DIRECTOR REFUSED RE-ENTRY</option>
                                   <option value="reinstateBeneficiary">REINSTATE BENEFICIARY</option>
+                                   <option value="twoCards">TWO RED CARDS</option>
                                   <option value="otherComplaint">OTHER</option>
-                              </optgroup>
-                              <optgroup label="Other">
-                                  <option value="UnauthorizedRequest">Unauthorized Information Request</option>
                               </optgroup>
                           </select>
                         <hr>
@@ -340,9 +338,14 @@
                                 </select>
 
                             </div>
-
-
                             <div class="line" id = "reinstateBeneficiaryFields" style="display:none">
+
+                                <label class="text" style="width: 200px;">{% trans "Complaint Type: " %}</label>
+                                <select id="school_complaint" >
+                                    {% for itm in reinstate_beneficiary_complaint_types %}
+                                        <option value="{{ itm.id }}">{{ itm.name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="line" id = "schoolRefusedEntranceFields" style="display:none">
                                 <label class="text" style="width: 200px;">{% trans "Complaint Type: " %}</label>
@@ -360,10 +363,48 @@
                                     {% endfor %}
                                 </select>
                             </div>
+                            <div class="line" id = "bankFields" style="display:none">
+                                <label class="text" style="width: 200px;">{% trans "Complaint Type: " %}</label>
+                                <select id="bank_complaint" >
+                                    {% for itm  in bank_complaint_types %}
+                                        <option value="{{ itm.id }}">{{ itm.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="line" id = "twoCardsFields" style="display:none">
+                                <div class="line">
+                                    <label class="text">{% trans "Case Number on First Card: " %}</label>
+                                    <input id="first_card_case_number" maxlength="45" type="text">
+                                </div>
+                                <div class="line">
+                                    <label class="text">{% trans "Confirm Case Number on First Card: " %}</label>
+                                    <input id="first_card_case_number_confirm" maxlength="45" type="text">
+                                </div>
+                                <div class="line">
+                                    <label class="text">{% trans "Last four digits of the  First Card: " %}</label>
+                                    <input id="first_card_last_four_digits" maxlength="45" type="text">
+                                </div>
+
+                                <div class="line">
+                                    <label class="text">{% trans "Case Number on Second Card: " %}</label>
+                                    <input id="second_card_case_number" maxlength="45" type="text">
+                                </div>
+                                <div class="line">
+                                    <label class="text">{% trans "Confirm Case Number on Second Card: " %}</label>
+                                    <input id="second_card_case_number_confirm" maxlength="45" type="text">
+                                </div>
+                                <div class="line">
+                                    <label class="text">{% trans "Last four digits of the  Second Card: " %}</label>
+                                    <input id="secondcard_last_four_digits" maxlength="45" type="text">
+                                </div>
+
+
+                            </div>
                             <div class="line" id = "ComplaintFields" style="display:none">
-                                <label class="text" style="width: 200px;">{% trans "Remark: " %}</label>
+                                <label class="text" style="width: 200px;">{% trans "Comment: " %}</label>
                                 <textarea cols="38" id="complaint" name="complaint" rows="1"></textarea>
                                 <br>
+                                <label class="text" style="width: 400px;">{% trans "Complaint History: " %}</label>
                                 <table id="complaints-table" class="table table-striped table-bordered cell-border"
                                        data-height="500"
                                        data-pagination="true"
@@ -375,7 +416,7 @@
                                         <th style = "display:none">>ID</th>
                                         <th>Type of Complaint</th>
                                         <th>Date of Complaint</th>
-                                        <th>Message</th>
+                                        <th>Details</th>
                                         <th>Complaint Status</th>
                                         <th>Comments</th>
                                         <th>Date of Resolution</th>

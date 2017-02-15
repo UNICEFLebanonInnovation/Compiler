@@ -320,7 +320,17 @@
                   $("#otherFields").show();
                   $("#ComplaintFields").show();
                 }
+                else if (selectedOption == 'refusedServiceBLF' ) {
+                  $("#bankFields").show();
+                  $("#ComplaintFields").show();
+                }
+                else if (selectedOption == 'twoCards' ) {
+                  $("#twoCardsFields").show();
+                }
+
                 });
+
+
 
           function hideAll()
           {
@@ -333,10 +343,11 @@
             $("#cardStatusFields").hide();
             $("#removeFields").hide();
             $("#otherFields").hide();
-            $("#schoolFields").hide();
+            $("#schoolRefusedEntranceFields").hide();
             $("#ComplaintFields").hide();
-
-
+            $("#reinstateBeneficiaryFields").hide();
+            $("#bankFields").hide();
+            $("#twoCardsFields").hide();
           }
 
               function loadAjaxCall(regId , data)
@@ -409,16 +420,14 @@
                          var suspended = household.household_suspended;
                          if (suspended)
                          {
-                             $("#hhsuspended").text('Suspended');
-                             document.getElementById('hhsuspended').style.color = "red";
+                             $("#hhsuspended").show();
                              $("#hhsuspended_payment").text('Suspended');
                              document.getElementById('hhsuspended_payment').style.color = "red";
                          }
                          else
                          {
-                             $("#hhsuspended").text('Active');
-                             document.getElementById('hhsuspended').style.color = "#7b7b7b";
-                             $("#hhsuspended_payment").text('SusActivepended');
+                             $("#hhsuspended").hide();
+                             $("#hhsuspended_payment").text('Active');
                              document.getElementById('hhsuspended_payment').style.color = "#7b7b7b";
                          }
 
