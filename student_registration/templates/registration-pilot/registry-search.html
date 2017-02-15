@@ -213,6 +213,8 @@
                     block = $(this);
                     hhID = block.attr('adultID')
                     $("#hhList").hide();
+                    $("#changeOption")[0].selectedIndex = 0;
+                    hideAll();
                     LoadData(hhID);
                     $("#hhEditForm").show();
                     CheckInitialiseSly();
@@ -287,8 +289,8 @@
                 else if (selectedOption =='address' )  {
                 $("#addressFields").show();
                 }
-                else if (selectedOption == 'school' ) {
-                  $("#schoolFields").show();
+                else if (selectedOption == 'school_change' ) {
+                  $("#schoolChangeFields").show();
                   UpdateChildSchool();
                 }
                 else if (selectedOption == 'beneficiary' ) {
@@ -296,21 +298,27 @@
                 }
                 else if (selectedOption == 'payment' ) {
                   $("#paymentFields").show();
+                  $("#ComplaintFields").show();
                 }
                 else if (selectedOption == 'cardStatus' ) {
                   $("#cardStatusFields").show();
+                  $("#ComplaintFields").show();
                 }
                 else if (selectedOption == 'card' ) {
                   $("#cardFields").show();
+                  $("#ComplaintFields").show();
                 }
-                else if (selectedOption == 'removeComplaint' ) {
-                  $("#removeFields").show();
+                else if (selectedOption == 'reinstateBeneficiary' ) {
+                  $("#reinstateBeneficiaryFields").show();
+                  $("#ComplaintFields").show();
                 }
-                else if (selectedOption == 'schoolComplaint' ) {
-                  $("#schoolFields").show();
+                else if (selectedOption == 'schoolRefusedEntrance' ) {
+                  $("#schoolRefusedEntranceFields").show();
+                  $("#ComplaintFields").show();
                 }
                 else if (selectedOption == 'otherComplaint' ) {
                   $("#otherFields").show();
+                  $("#ComplaintFields").show();
                 }
                 });
 
@@ -318,7 +326,7 @@
           {
             $("#phoneFields").hide();
             $("#addressFields").hide();
-            $("#schoolFields").hide();
+            $("#schoolChangeFields").hide();
             $("#beneficiaryFields").hide();
             $("#paymentFields").hide();
             $("#cardFields").hide();
@@ -326,6 +334,8 @@
             $("#removeFields").hide();
             $("#otherFields").hide();
             $("#schoolFields").hide();
+            $("#ComplaintFields").hide();
+
 
           }
 
@@ -396,11 +406,31 @@
                          updateDropDownValue($("#secondary_phone_answered"),household.secondary_phone_answered);
                          $("#address").val(household.address);
 
+                         var suspended = household.household_suspended;
+                         if (suspended)
+                         {
+                             $("#hhsuspended").text('Suspended');
+                             document.getElementById('hhsuspended').style.color = "red";
+                             $("#hhsuspended_payment").text('Suspended');
+                             document.getElementById('hhsuspended_payment').style.color = "red";
+                         }
+                         else
+                         {
+                             $("#hhsuspended").text('Active');
+                             document.getElementById('hhsuspended').style.color = "#7b7b7b";
+                             $("#hhsuspended_payment").text('SusActivepended');
+                             document.getElementById('hhsuspended_payment').style.color = "#7b7b7b";
+                         }
+
+{#                         $("#hhsuspended").text(household.household_suspended);#}
+
                          $("#schools-table tbody").empty();
+                         $("#children-table tbody").empty();
                          for(childIndex in household.children)
                          {
                             var child = household.children[childIndex];
-                            AddChildRow(child);
+                            AddChildSchoolRow(child);
+                            AddChildAgeRow(child);
                          }
 
                          $("#payments-table tbody").empty();
@@ -418,6 +448,7 @@
                          }
 
 
+
                      },
                      error: function (response) {
                         var required_fields = JSON.parse(response.responseText);
@@ -426,7 +457,7 @@
                  });
       }
 
-          function AddChildRow(entry)
+          function AddChildSchoolRow(entry)
             {
                 var childFullName = entry.first_name+' '+entry.father_name+' '+entry.last_name;
 
@@ -440,6 +471,22 @@
                 $("#schools-table tbody").append
                 (
                    "<tr>"+childIDCell+childNameCell+schoolCell+"</tr>"
+                );
+            }
+
+          function AddChildAgeRow(entry)
+            {
+                var childFullName = entry.first_name+' '+entry.father_name+' '+entry.last_name;
+                var childNameCell = "<td  >"+(childFullName)+"</td>";
+
+                var ChildDOB = entry.birthday_day+'/'+entry.birthday_month+'/'+entry.birthday_year;
+                var childDOBCell = "<td  >"+(ChildDOB)+"</td>";
+
+                var schoolCell = "<td  >"+(entry.school_name)+"</td>";
+
+                $("#children-table tbody").append
+                (
+                   "<tr>"+childNameCell+childDOBCell+schoolCell+"</tr>"
                 );
             }
 
@@ -462,13 +509,14 @@
                 var dateIssuedCell = "<td>"+FormatDate(entry.created)+"</td>";
                 var typeCell = "<td>"+entry.complaint_category_name +"</td>";
                 var noteCell = "<td>"+entry.complaint_note+"</td>";
-                var dateReplyCell = "<td>"+FormatDate(entry.modified)+"</td>";
+                var dateReplyCell = "<td>"+FormatDate(entry.complaint_resolution_date)+"</td>";
                 var ReplyCell = "<td>"+entry.complaint_solution+"</td>";
+                var statusCell = "<td>"+entry.complaint_status+"</td>";
 
 
                 $("#complaints-table tbody").append
                 (
-                   "<tr>"+dateIssuedCell+typeCell+noteCell+dateReplyCell+ReplyCell+"</tr>"
+                   "<tr>"+typeCell+dateIssuedCell+noteCell+statusCell+ReplyCell+dateReplyCell+"</tr>"
                 );
             }
 
@@ -548,7 +596,7 @@
                    {
                       SaveHousehold();
                    }
-                   else if($("#changeOption").val() == "school")
+                   else if($("#changeOption").val() == "school_change")
                    {
                       SaveChildren();
                    }
