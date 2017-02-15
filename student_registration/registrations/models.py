@@ -90,6 +90,10 @@ class RegisteringAdult(Person):
         ('relay', _('Someone who always relays the message to me')),
         ('notrelay', _('Someone who may not relay the message to me')),
     )
+    GENDER = Choices(
+            ('Male', _('Male')),
+            ('Female', _('Female')),
+    )
     individual_id_number = models.CharField(max_length=45L, blank=True, null=True)
     principal_applicant_living_in_house = models.BooleanField(blank=True, default=True)
     status = models.BooleanField(blank=True, default=True)
@@ -145,13 +149,16 @@ class RegisteringAdult(Person):
         default=0,
         choices=((str(x), x) for x in range(1, 31))
     )
+    beneficiary_changed_gender = models.CharField(max_length=50,blank=True,null=True,choices= GENDER)
     beneficiary_changed_relation_to_householdhead = models.CharField(max_length=50, blank=True, null=True, choices=RELATION_TYPE)
+    beneficiary_changed_phone = models.CharField(max_length=50, blank=True, null=True)
     beneficiary_changed_same_as_caller = models.BooleanField(default=False)
     beneficiary_changed_reason = models.ForeignKey(
         BeneficiaryChangedReason,
         blank=True, null=True,
         related_name='+',
     )
+    household_suspended = models.BooleanField(default=False)
     update_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
@@ -174,6 +181,11 @@ class Complaint(TimeStampedModel):
     """
     Household complaints by hotline
     """
+
+    STATUS = Choices(
+            ('open', _('Open')),
+            ('resolved', _('Resolved')),
+    )
     complaint_adult = models.ForeignKey(
         RegisteringAdult,
         blank=True, null=True,
@@ -185,7 +197,9 @@ class Complaint(TimeStampedModel):
         related_name='+',
     )
     complaint_note = models.TextField(blank=True, null=True)
+    complaint_status = models.CharField(max_length=20, blank=True, null=True, choices=STATUS)
     complaint_solution = models.TextField(blank=True, null=True)
+    complaint_resolution_date = models.DateField(blank=True, null=True)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,

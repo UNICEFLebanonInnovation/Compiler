@@ -50,7 +50,8 @@ from .models import (
     RegisteringAdult,
     WaitingList,
     BeneficiaryChangedReason,
-    ComplaintCategory
+    ComplaintCategory,
+    Complaint
 )
 from .serializers import (
     RegistrationSerializer,
@@ -286,21 +287,23 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
             schools = []
 
             locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
-            PAYMENTComplaintTypes = \
+            payment_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='PAYMENT').order_by('name')
-            CARDDISTRIBUTIONComplaintTypes = \
+            card_distribution_cmplaint_types= \
                 ComplaintCategory.objects.all().filter(complaint_type='CARD DISTRIBUTION').order_by('name')
-            CARDComplaintTypes = \
+            card_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='CARD').order_by('name')
-            SCHOOLComplaintTypes = \
+            school_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='SCHOOL-RELATED').order_by('name')
-            OTHERComplaintTypes = \
+            other_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='OTHER').order_by('name')
             months = Person.MONTHS
             location = self.request.GET.get("location", 0)
             idType = IDType.objects.all().order_by('name')
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
             relationToHouseholdHead = RegisteringAdult.RELATION_TYPE
+            complaint_status = Complaint.STATUS
+            gender = RegisteringAdult.GENDER
             beneficiaryChangedReason = BeneficiaryChangedReason.objects.all()
             addressSearchText = self.request.GET.get("addressSearchText", '')
             repSearchText = self.request.GET.get("repSearchText", '')
@@ -330,18 +333,20 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'phoneAnsweredby': phoneAnsweredby,
                 'idType': idType,
                 'relationToHouseholdHead': relationToHouseholdHead,
+                'gender': gender,
                 'beneficiaryChangedReason': beneficiaryChangedReason,
                 'addressSearchText': addressSearchText,
                 'repSearchText': repSearchText,
                 'idSearchText': idSearchText,
                 'primarySearchText': primarySearchText,
                 'secondarySearchText':secondarySearchText,
-                'PAYMENTComplaintTypes': PAYMENTComplaintTypes,
-                'CARDDISTRIBUTIONComplaintTypes': CARDDISTRIBUTIONComplaintTypes,
-                'CARDComplaintTypes': CARDComplaintTypes,
-                'SCHOOLComplaintTypes': SCHOOLComplaintTypes,
-                'OTHERComplaintTypes': OTHERComplaintTypes,
+                'payment_complaint_types': payment_complaint_types,
+                'card_distribution_cmplaint_types': card_distribution_cmplaint_types,
+                'card_complaint_types': card_complaint_types,
+                'school_complaint_types': school_complaint_types,
+                'other_complaint_types': other_complaint_types,
                 'months': months,
+                'complaint_status':complaint_status,
             }
 
 

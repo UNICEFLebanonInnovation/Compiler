@@ -115,7 +115,6 @@ class ComplaintSerializer(serializers.ModelSerializer):
     complaint_id = serializers.IntegerField(source='id', read_only=True)
     complaint_type = serializers.CharField(source='complaint_category.complaint_type', read_only=True)
     complaint_category_name = serializers.CharField(source='complaint_category.name', read_only=True)
-
     class Meta:
         model = Complaint
         fields = (
@@ -127,6 +126,8 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'complaint_solution',
             'created',
             'modified',
+            'complaint_status',
+            'complaint_resolution_date',
             'owner'
         )
 
@@ -272,12 +273,15 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'beneficiary_changed_birthday_year',
             'beneficiary_changed_birthday_month',
             'beneficiary_changed_birthday_day',
+            'beneficiary_changed_phone',
             'beneficiary_changed_relation_to_householdhead',
             'beneficiary_changed_same_as_caller',
             'beneficiary_changed_reason',
+            'beneficiary_changed_gender',
             'card_last_four_digits',
             'card_distribution_date',
             'card_status',
+            'household_suspended',
             'complaints',
             'payments'
         )
