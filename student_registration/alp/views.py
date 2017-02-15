@@ -147,6 +147,7 @@ class DataCollectingView(LoginRequiredMixin, TemplateView):
         school = 0
         location = 0
         location_parent = 0
+        alp_round = ALPRound.objects.get(current_pre_test=True)
 
         return {
             'data': data,
@@ -168,6 +169,7 @@ class DataCollectingView(LoginRequiredMixin, TemplateView):
             'school': school,
             'location': location,
             'location_parent': location_parent,
+            'alp_round': alp_round.id
         }
 
 

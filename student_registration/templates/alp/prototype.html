@@ -45,7 +45,7 @@
                     <option value="{{ schl.id }}" itemcontent="{{ schl.number }}"
                             {% if school and school.id == schl.id %}selected="selected"{% endif %}
                             data-parent="{% if schl.location %}{{ schl.location.id }}{% endif %}">
-                        {{ schl.name }}
+                        {{ schl }}
                     </option>
                 {% endfor %}
             </select>
