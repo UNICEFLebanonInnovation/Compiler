@@ -153,6 +153,7 @@
         var user_username = '{{ request.user.username }}';
         var user_email = '{{ request.user.email }}';
         var user_token = '{{ user_token }}';
+        var alp_round = '{{ alp_round }}';
         var columns = 0;
         var rows = 1;
         var synchro_result = true;
@@ -243,7 +244,7 @@
             });
 
             $(document).on('click', '#add_defined_lines', function(){
-                bootbox.prompt("{% trans 'Please enter extra column name' %}", function(result) {
+                bootbox.prompt("{% trans 'Please enter the number of lines' %}", function(result) {
                     if (result === null) {
                     } else {
                         var number = parseInt(result);
@@ -255,92 +256,6 @@
                         $('#filter_cancel').trigger('click');
                     }
                 });
-            });
-
-            $(document).on('click', '#duplicate_last_line', function(){
-                if(rows == 0) {
-                    return false;
-                }else{
-                    var lastid = $('.outreach-field-id:last').val();
-                    var request = getRecord(lastid, 'outreaches');
-                    request.onsuccess = function(){
-
-                        var params = {
-                            school_number: true,
-                            school: true,
-                            exam_year: true,
-                            exam_month: true,
-                            exam_day: true,
-                            average_distance: true,
-                            preferred_language: true,
-                            last_class_level: true,
-                            last_education_year: true,
-                            last_education_level: true,
-                            partner: true
-                        };
-                        duplicate_item_values(request.result, params);
-                    };
-                }
-            });
-
-            $(document).on('click', '#duplicate_last_line_select', function(){
-                if(rows == 0) {
-                    return false;
-                }else{
-                    var lastid = $('.outreach-field-id:last').val();
-                    var request = getRecord(parseInt(lastid), 'outreaches');
-                    request.onsuccess = function(){
-
-                        var params = {
-                            school_number: $('#duplicate_school').is(':checked'),
-                            school: $('#duplicate_school').is(':checked'),
-                            exam_year: $('#duplicate_exam_year').is(':checked'),
-                            exam_month: $('#duplicate_exam_month').is(':checked'),
-                            exam_day: $('#duplicate_exam_day').is(':checked'),
-                            average_distance: $('#duplicate_average_distance').is(':checked'),
-                            preferred_language: $('#duplicate_preferred_language').is(':checked'),
-                            last_class_level: $('#duplicate_last_class_level').is(':checked'),
-                            last_education_year: $('#duplicate_last_education_year').is(':checked'),
-                            last_education_level: $('#duplicate_last_education_level').is(':checked'),
-                            partner: $('#duplicate_partner').is(':checked')
-                        };
-                        duplicate_item_values(request.result, params);
-                    };
-                }
-            });
-
-            $(document).on('click', '#duplicate_defined_lines_select', function(){
-                if(rows == 0) {
-                    return false;
-                }else{
-                    bootbox.prompt("{% trans 'Please enter the number of lines' %}", function(result) {
-                        if (result === null) {
-                        } else {
-                            var number = parseInt(result);
-                            var lastid = $('.outreach-field-id:last').val();
-                            var request = getRecord(parseInt(lastid), 'outreaches');
-                            request.onsuccess = function() {
-                                for (var i = 0; i < number; i++) {
-                                    var params = {
-                                        school_number: $('#duplicate_school').is(':checked'),
-                                        school: $('#duplicate_school').is(':checked'),
-                                        exam_year: $('#duplicate_exam_year').is(':checked'),
-                                        exam_month: $('#duplicate_exam_month').is(':checked'),
-                                        exam_day: $('#duplicate_exam_day').is(':checked'),
-                                        average_distance: $('#duplicate_average_distance').is(':checked'),
-                                        preferred_language: $('#duplicate_preferred_language').is(':checked'),
-                                        last_class_level: $('#duplicate_last_class_level').is(':checked'),
-                                        last_education_year: $('#duplicate_last_education_year').is(':checked'),
-                                        last_education_level: $('#duplicate_last_education_level').is(':checked'),
-                                        partner: $('#duplicate_partner').is(':checked')
-                                    };
-                                    duplicate_item_values(request.result, params);
-                                }
-                                scrollToBottom();
-                            };
-                        }
-                    });
-                }
             });
 
             $(document).on('click', '.delete-outreach-row', function(){
@@ -409,10 +324,12 @@
                     }
                     update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), value, 'outreaches');
                 }
+                flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches');
             });
 
             $(document).on('change', '.outreach-field-check', function(){
                 update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'outreaches');
+                flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches');
             });
 
             $(document).on('click', '#outreach-synchro', function(){
@@ -444,7 +361,7 @@
 
         function create_item_store_default_keys()
         {
-            var item = {id: rows, synchronized: false, deleted: false, owner: user_id, original_id: 0, to_update: false};
+            var item = {id: rows, synchronized: false, deleted: false, owner: user_id, original_id: 0, to_update: false, alp_round: alp_round};
             var fields = $('#outreach_prototype').find('.outreach-field');
             $(fields).each(function(i, field){
                 if($(field).attr('data-name')) {
@@ -568,11 +485,11 @@
                         $('#line-'+item.id).find('.outreach-field').removeClass('required');
                         item.synchronized = true;
                         item.original_id = response.id;
+                        item.to_update = true;
 
                         update_item_store(parseInt(item.id), 'synchronized', true, 'outreaches');
                         update_item_store(parseInt(item.id), 'original_id', response.id, 'outreaches');
                         update_item_store(parseInt(item.id), 'to_update', false, 'outreaches');
-                        update_items_by_index('entity', parseInt(item.id), 'entity_id', response.id, 'eav-columns-values');
                         synchro_result = true;
                     }
                 },
@@ -601,10 +518,14 @@
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
                     if(jqXHR.status == 200){
+                        item.synchronized = true;
+                        item.original_id = response.id;
+                        item.to_update = true;
+
                         $('#line-'+item.id).find('.outreach-field').removeClass('required');
                         update_item_store(parseInt(item.id), 'synchronized', true, 'outreaches');
                         update_item_store(parseInt(item.id), 'to_update', false, 'outreaches');
-                        update_items_by_index('entity', parseInt(item.id), 'entity_id', item.original_id, 'eav-columns-values');
+                        console.log(item);
                         synchro_result = true;
                     }
                 },
