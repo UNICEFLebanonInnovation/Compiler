@@ -9,10 +9,11 @@ from student_registration.taskapp.celery import app
 
 @app.task
 def assign_alp_level():
-    from student_registration.alp.models import Outreach
+    from student_registration.alp.models import Outreach, ALPRound
     from student_registration.schools.models import EducationLevel
+    alp_round = ALPRound.objects.get(current_pre_test=True)
 
-    records = Outreach.objects.all()
+    records = Outreach.objects.filter(alp_round=alp_round)
     for record in records:
         try:
             level = record.level
@@ -75,12 +76,14 @@ def assign_alp_level():
 
 @app.task
 def assign_section(section):
-    from student_registration.alp.models import Outreach
+    from student_registration.alp.models import Outreach, ALPRound
     from student_registration.schools.models import Section
+    alp_round = ALPRound.objects.get(current_pre_test=True)
 
     registrations = Outreach.objects.exclude(deleted=True).filter(
         registered_in_level__isnull=False,
-        section__isnull=True
+        section__isnull=True,
+        alp_round=alp_round
     )
     section = Section.objects.get(id=section)
 
@@ -90,5 +93,15 @@ def assign_section(section):
     for registry in registrations:
         registry.section = section
         registry.save()
+
+    print "End assignment"
+
+
+@app.task
+def assign_round(round_id):
+    from student_registration.alp.models import Outreach
+
+    registrations = Outreach.objects.exclude(deleted=True).filter(alp_round__isnull=True).update(alp_round_id=round_id)
+    print registrations
 
     print "End assignment"
