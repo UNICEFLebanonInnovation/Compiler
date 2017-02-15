@@ -26,6 +26,8 @@ from student_registration.eav.registry import Registry as eav
 
 class ALPRound(models.Model):
     name = models.CharField(max_length=45L, unique=True)
+    current_pre_test = models.BooleanField(blank=True, default=False)
+    current_post_test = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['id']
@@ -366,6 +368,12 @@ class Outreach(TimeStampedModel):
         if self.student:
             return self.student.calc_age
         return 0
+
+    @property
+    def student_sex(self):
+        if self.student:
+            return self.student.sex
+        return ''
 
     def __unicode__(self):
         if self.student:

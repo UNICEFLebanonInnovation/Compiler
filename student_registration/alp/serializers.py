@@ -21,18 +21,18 @@ class OutreachSerializer(serializers.ModelSerializer):
     student_first_name = serializers.CharField(source='student.first_name')
     student_father_name = serializers.CharField(source='student.father_name')
     student_last_name = serializers.CharField(source='student.last_name')
-    student_mother_fullname = serializers.CharField(source='student.mother_fullname')
+    student_mother_fullname = serializers.CharField(source='student.mother_fullname', required=False)
     student_sex = serializers.CharField(source='student.sex')
     student_birthday_year = serializers.CharField(source='student.birthday_year')
     student_birthday_month = serializers.CharField(source='student.birthday_month')
     student_birthday_day = serializers.CharField(source='student.birthday_day')
-    student_phone = serializers.CharField(source='student.phone')
-    student_phone_prefix = serializers.CharField(source='student.phone_prefix')
+    student_phone = serializers.CharField(source='student.phone', required=False)
+    student_phone_prefix = serializers.CharField(source='student.phone_prefix', required=False)
     student_id_number = serializers.CharField(source='student.id_number')
     student_id_type = serializers.CharField(source='student.id_type')
     student_nationality = serializers.CharField(source='student.nationality')
-    student_mother_nationality = serializers.CharField(source='student.mother_nationality')
-    student_address = serializers.CharField(source='student.address')
+    student_mother_nationality = serializers.CharField(source='student.mother_nationality', required=False)
+    student_address = serializers.CharField(source='student.address', required=False)
 
     def create(self, validated_data):
 
