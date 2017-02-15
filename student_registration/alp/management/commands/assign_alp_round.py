@@ -13,5 +13,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options['round']:
-            for round in options['round']:
-                assign_round(round)
+            for round_id in options['round']:
+                assign_round(round_id)

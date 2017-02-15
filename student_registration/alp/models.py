@@ -26,6 +26,7 @@ from student_registration.eav.registry import Registry as eav
 
 class ALPRound(models.Model):
     name = models.CharField(max_length=45L, unique=True)
+    current_round = models.BooleanField(blank=True, default=False)
     current_pre_test = models.BooleanField(blank=True, default=False)
     current_post_test = models.BooleanField(blank=True, default=False)
 

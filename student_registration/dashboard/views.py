@@ -21,7 +21,7 @@ from student_registration.students.models import (
 
 from student_registration.registrations.models import Registration, RegisteringAdult
 from student_registration.enrollments.models import Enrollment
-from student_registration.alp.models import Outreach
+from student_registration.alp.models import Outreach, ALPRound
 import datetime
 from django.db.models import Q
 
@@ -258,6 +258,8 @@ class RegistrationsALPView(LoginRequiredMixin,
         # children by governate || get the governettes and get the number of children for each, and put them in a dictionary
         # Also schools by governate
         governorates = Location.objects.exclude(parent__isnull=False)
+        alp_round = ALPRound.objects.get(current_round=True)
+        queryset = self.queryset.filter(alp_round=alp_round)
 
         students_per_gov = {}
         schools_per_gov = {}
