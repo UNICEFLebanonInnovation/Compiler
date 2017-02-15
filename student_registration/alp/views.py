@@ -94,12 +94,10 @@ class OutreachView(LoginRequiredMixin, TemplateView):
         location = 0
         location_parent = 0
         school_id = int(self.request.GET.get("school", 0))
-        if has_group(self.request.user, 'CERD'):
-            data = Outreach.objects.exclude(owner__partner_id=None)
-            data = data.filter(school_id=school_id)
-            data = data.exclude(deleted=True)
+        alp_round = ALPRound.objects.get(current_round=True)
+
         if has_group(self.request.user, 'ALP_SCHOOL'):
-            data = Outreach.objects.filter(school_id=self.request.user.school_id)
+            data = Outreach.objects.filter(school_id=self.request.user.school_id, alp_round=alp_round)
             data = data.exclude(owner_id=self.request.user.id)
             data = data.exclude(deleted=True)
             school_id = self.request.user.school_id
@@ -183,9 +181,11 @@ class PreTestView(LoginRequiredMixin, TemplateView):
         location = 0
         location_parent = 0
         school_id = int(self.request.GET.get("school", 0))
+        alp_round = ALPRound.objects.get(current_pre_test=True)
+
         if has_group(self.request.user, 'CERD'):
             data = Outreach.objects.exclude(owner__partner_id=None)
-            data = data.filter(school_id=school_id)
+            data = data.filter(school_id=school_id, alp_round=alp_round)
             data = data.exclude(deleted=True)
         if school_id:
             school = School.objects.get(id=school_id)
@@ -226,8 +226,10 @@ class PostTestView(LoginRequiredMixin, TemplateView):
         location = 0
         location_parent = 0
         school_id = int(self.request.GET.get("school", 0))
+        alp_round = ALPRound.objects.get(current_post_test=True)
+
         if has_group(self.request.user, 'CERD'):
-            data = Outreach.objects.exclude(owner__partner_id=None)
+            data = Outreach.objects.exclude(owner__partner_id=None, alp_round=alp_round)
             data = data.filter(school_id=school_id)
             data = data.exclude(deleted=True)
         if school_id:
@@ -299,15 +301,17 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
         # queryset = self.model.objects.exclude(deleted=True, not_enrolled_in_this_school=True)
         school = int(request.GET.get('school', 0))
         location = int(request.GET.get('location', 0))
+        alp_round = ALPRound.objects.get(current_round=True)
 
         if has_group(self.request.user, 'PARTNER'):
-            queryset = queryset.filter(owner=self.request.user)
+            alp_round = ALPRound.objects.get(current_pre_test=True)
+            queryset = queryset.filter(owner=self.request.user, alp_round=alp_round)
         if has_group(self.request.user, 'ALP_SCHOOL') and self.request.user.school_id:
             school = self.request.user.school_id
         if school:
-            queryset = queryset.filter(school_id=school).order_by('id')
+            queryset = queryset.filter(school_id=school, alp_round=alp_round).order_by('id')
         if location:
-            queryset = queryset.filter(school__location_id=location).order_by('id')
+            queryset = queryset.filter(school__location_id=location, alp_round=alp_round).order_by('id')
 
         data = tablib.Dataset()
 
