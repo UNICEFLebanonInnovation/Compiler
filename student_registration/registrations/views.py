@@ -297,6 +297,10 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 ComplaintCategory.objects.all().filter(complaint_type='SCHOOL-RELATED').order_by('name')
             other_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='OTHER').order_by('name')
+            bank_complaint_types = \
+                ComplaintCategory.objects.all().filter(complaint_type='BANK').order_by('name')
+            reinstate_beneficiary_complaint_types = \
+                ComplaintCategory.objects.all().filter(complaint_type='REINSTATE BENEFICIARY').order_by('name')
             months = Person.MONTHS
             location = self.request.GET.get("location", 0)
             idType = IDType.objects.all().order_by('name')
@@ -346,7 +350,9 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'school_complaint_types': school_complaint_types,
                 'other_complaint_types': other_complaint_types,
                 'months': months,
-                'complaint_status':complaint_status,
+                'complaint_status': complaint_status,
+                'bank_complaint_types': bank_complaint_types,
+                'reinstate_beneficiary_complaint_types': reinstate_beneficiary_complaint_types,
             }
 
 

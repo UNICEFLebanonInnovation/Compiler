@@ -54,7 +54,9 @@ class ComplaintCategory(models.Model):
         ('card', _('CARD')),
         ('payment', _('PAYMENT')),
         ('school', _('SCHOOL-RELATED')),
-        ('remove', _('REMOVE FROM THE PROGRAM')),
+        ('reinstate', _('REINSTATE BENEFICIARY')),
+        ('remove', _('reinstate beneficiary')),
+        ('bank', _('BANK')),
         ('other', _('OTHER'))
     )
     name = models.CharField(max_length=200, unique=True)
