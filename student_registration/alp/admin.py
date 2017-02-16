@@ -158,7 +158,6 @@ class OutreachAdmin(ImportExportModelAdmin):
         'assigned_to_level',
         'registered_in_level',
         'section',
-        'registered_in_school',
         'not_enrolled_in_this_school'
     )
     list_filter = (
@@ -239,7 +238,6 @@ class CurrentOutreachAdmin(OutreachAdmin):
         'student__nationality',
     )
 
-
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_pre_test=True)
         users = User.objects.filter(groups__name__in=['PARTNER'])
@@ -273,10 +271,25 @@ class CurrentRound(Outreach):
 
 class CurrentRoundAdmin(OutreachAdmin):
 
+    list_display = (
+        'student',
+        'student_age',
+        'student_sex',
+        'school',
+        'caza',
+        'governorate',
+        'level',
+        'total',
+        'assigned_to_level',
+        'registered_in_level',
+        'section',
+    )
     list_filter = (
         'school',
         'school__location',
         GovernorateFilter,
+        'level',
+        'assigned_to_level',
         'registered_in_level',
         'section',
         'student__sex',
@@ -300,12 +313,12 @@ class PostTestAdmin(OutreachAdmin):
 
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_post_test=True)
-        print alp_round
         qs = super(PostTestAdmin, self).get_queryset(request)
         return qs.exclude(deleted=True).filter(
             alp_round=alp_round,
             registered_in_level__isnull=False,
-            section__isnull=False
+            section__isnull=False,
+            refer_to_level__isnull=False
         )
 
 
