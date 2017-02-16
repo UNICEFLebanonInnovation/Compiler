@@ -316,7 +316,7 @@ class Outreach(TimeStampedModel):
         default=0,
         choices=((x, x) for x in range(0, 101))
     )
-    post_exam_level = models.ForeignKey(
+    refer_to_level = models.ForeignKey(
         ClassLevel,
         blank=True, null=True,
         related_name='+',
