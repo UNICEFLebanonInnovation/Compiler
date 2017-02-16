@@ -133,6 +133,7 @@ class OutreachView(LoginRequiredMixin, TemplateView):
             'school': school,
             'location': location,
             'location_parent': location_parent,
+            'alp_round': alp_round.id,
         }
 
 
