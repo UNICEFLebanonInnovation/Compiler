@@ -59,6 +59,7 @@ from .serializers import (
     RegistrationChildSerializer,
     ClassAssignmentSerializer,
     WaitingListSerializer,
+    ComplaintSerializer
 )
 from .utils import get_unhcr_principal_applicant
 
@@ -229,6 +230,23 @@ class RegisteringChildViewSet(mixins.RetrieveModelMixin,
         return []
 
 
+class RegisteringComplaintViewSet(mixins.RetrieveModelMixin,
+                              mixins.ListModelMixin,
+                              mixins.CreateModelMixin,
+                              mixins.UpdateModelMixin,
+                              viewsets.GenericViewSet):
+
+    model = Complaint
+    queryset = Complaint.objects.all()
+    serializer_class =  ComplaintSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
+        return []
+
+
 class RegisteringPilotView(LoginRequiredMixin, FormView):
     template_name = 'registration-pilot/registry.html'
     model = RegisteringAdult
@@ -303,7 +321,7 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 ComplaintCategory.objects.all().filter(complaint_type='REINSTATE BENEFICIARY').order_by('name')
             months = Person.MONTHS
             location = self.request.GET.get("location", 0)
-            idType = IDType.objects.all().order_by('name')
+            idType = IDType.objects.all().filter(inuse=True).order_by('name')
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
             relationToHouseholdHead = RegisteringAdult.RELATION_TYPE
             complaint_status = Complaint.STATUS
