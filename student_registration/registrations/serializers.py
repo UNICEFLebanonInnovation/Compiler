@@ -265,6 +265,8 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'number',
             'principal_applicant_living_in_house',
             'individual_id_number',
+            'beneficiary_changed_id_type',
+            'beneficiary_changed_id_number',
             'beneficiary_changed_verify',
             'beneficiary_changed_first_name',
             'beneficiary_changed_last_name',
@@ -282,6 +284,10 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'card_distribution_date',
             'card_status',
             'household_suspended',
+            'duplicate_card_first_card_case_number',
+            'duplicate_card_first_card_last_four_digits',
+            'duplicate_card_second_card_case_number',
+            'duplicate_card_secondcard_last_four_digits',
             'complaints',
             'payments'
         )

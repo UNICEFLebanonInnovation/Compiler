@@ -10,6 +10,7 @@ from student_registration.students.models import (
     Person,
     Student,
     Person,
+    IDType
 )
 from student_registration.schools.models import (
     School,
@@ -126,6 +127,12 @@ class RegisteringAdult(Person):
     wfp_distribution_site = models.ForeignKey(WFPDistributionSite, blank=True, null=True)
     old_number = models.CharField(max_length=45L, blank=True, null=True)
     beneficiary_changed_verify = models.BooleanField(default=False)
+    beneficiary_changed_id_type = models.ForeignKey(
+        IDType,
+        blank=True, null=True,
+        related_name='beneficiary_changed_id',
+    )
+    beneficiary_changed_id_number = models.CharField(max_length=45L, blank=True, null=True)
     beneficiary_changed_first_name = models.CharField(max_length=64L, blank=True, null=True)
     beneficiary_changed_last_name = models.CharField(max_length=64L, blank=True, null=True)
     beneficiary_changed_father_name = models.CharField(max_length=64L, blank=True, null=True)
@@ -161,6 +168,10 @@ class RegisteringAdult(Person):
         related_name='+',
     )
     household_suspended = models.BooleanField(default=False)
+    duplicate_card_first_card_case_number= models.CharField(max_length=50, blank=True, null=True)
+    duplicate_card_first_card_last_four_digits= models.CharField(max_length=4, blank=True, null=True)
+    duplicate_card_second_card_case_number= models.CharField(max_length=50, blank=True, null=True)
+    duplicate_card_secondcard_last_four_digits= models.CharField(max_length=4, blank=True, null=True)
     update_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
