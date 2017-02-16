@@ -27,10 +27,23 @@
                 {% endif %}
                 {% if request.user.is_authenticated %}
                     {% if request.user|has_group:"ALP_OUTREACH" %}
-                        {% if request.user|has_group:"PARTNER" or request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}
-                  <li class="nav-item">
-                    <a class="nav-link {% if request|is_current_page:"alp_data_collecting" %}active{% endif %}" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "ALP data collecting" %}</a>
-                  </li>
+                        {% if request.user|has_group:"CERD" %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if request|is_current_page:"alp_post_test" %}active{% endif %}" href="{% url 'alp:alp_post_test' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "ALP Post Test" %}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request|is_current_page:"alp_pre_test" %}active{% endif %}" href="{% url 'alp:alp_pre_test' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "ALP Pre Test" %}</a>
+                            </li>
+                        {% endif %}
+                        {% if request.user|has_group:"PARTNER" %}
+                              <li class="nav-item">
+                                <a class="nav-link {% if request|is_current_page:"alp_outreach" %}active{% endif %}" href="{% url 'alp:alp_outreach' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data collecting" %}</a>
+                              </li>
+                        {% endif %}
+                        {% if request.user|has_group:"ALP_SCHOOL" %}
+                              <li class="nav-item">
+                                <a class="nav-link {% if request|is_current_page:"alp_data_collecting" %}active{% endif %}" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "ALP data collecting" %}</a>
+                              </li>
                         {% endif %}
                         {% if request.user|has_group:"ALP_MEHE" %}
                   <li class="nav-item">
