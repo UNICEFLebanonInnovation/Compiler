@@ -78,7 +78,7 @@ def assign_alp_level():
 def assign_section(section):
     from student_registration.alp.models import Outreach, ALPRound
     from student_registration.schools.models import Section
-    alp_round = ALPRound.objects.get(current_pre_test=True)
+    alp_round = ALPRound.objects.get(current_round=True)
 
     registrations = Outreach.objects.exclude(deleted=True).filter(
         registered_in_level__isnull=False,
