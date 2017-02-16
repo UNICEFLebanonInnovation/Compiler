@@ -195,7 +195,7 @@ class OutreachExamSerializer(serializers.ModelSerializer):
             'post_exam_corrector_language',
             'post_exam_corrector_math',
             'post_exam_corrector_science',
-            'post_exam_level',
+            'refer_to_level',
         )
 
 
@@ -286,5 +286,5 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'post_exam_corrector_language',
             'post_exam_corrector_math',
             'post_exam_corrector_science',
-            'post_exam_level',
+            'refer_to_level',
         )
