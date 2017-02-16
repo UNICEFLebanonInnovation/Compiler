@@ -164,6 +164,11 @@ function update_item_store(itemid, name, value, store_name)
     };
 }
 
+function flag_record_to_update(itemid, store_name)
+{
+    update_item_store(itemid, 'to_update', true, store_name);
+}
+
 function update_or_create_item(itemid, name, value, store_name)
 {
     var store = getStoreByName(store_name);
