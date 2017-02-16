@@ -74,37 +74,36 @@
                           <select id="changeOption">
                              <option value="" selected="selected">---------</option>
                              <optgroup label="UPDATE">
-                                  <option value="phone">PHONE</option>
-                                 <option value="address">ADDRESS</option>
-                                  <option value="school_change">SCHOOL</option>
-                                  <option value="beneficiary">BENEFICIARY CHANGE REQUEST</option>
+                                  <option value="phone">Phone</option>
+                                 <option value="address">Address</option>
+                                  <option value="school_change">School</option>
+                                  <option value="beneficiary">Beneficiary Change Request</option>
                              </optgroup>
                               <optgroup label="VIEW INFO / COMPLAINTS">
-                                  <option value="payment">PAYMENT INFORMATION</option>
-                                  <option value="cardStatus">ATM CARD DISTRIBUTION STATUS</option>
-                                  <option value="card">CARD and PIN USAGE</option>
+                                  <option value="payment">Payment Information</option>
+                                  <option value="cardStatus">ATM Card Distribution Status</option>
+                                  <option value="card">Card and Pin Usage</option>
                                   <option value="refusedServiceBLF"> Refused Service by BLF </option>
-                                  <option value="schoolRefusedEntrance">SCHOOL DIRECTOR REFUSED RE-ENTRY</option>
-                                  <option value="reinstateBeneficiary">REINSTATE BENEFICIARY</option>
-                                   <option value="twoCards">TWO RED CARDS</option>
-                                  <option value="otherComplaint">OTHER</option>
+                                  <option value="schoolRefusedEntrance">School Director Refused Re-entry</option>
+                                  <option value="reinstateBeneficiary">Reinstate Beneficiary</option>
+                                   <option value="twoCards">Two Red Cards</option>
+                                  <option value="otherComplaint">Other</option>
                               </optgroup>
                           </select>
                         <hr>
                             <div id = "phoneFields" style="display:none">
-                              <br>
                               <div class="line">
-                                  <label class="text">{% trans "Primary Phone Number: " %}</label>
+                                  <label class="text" style="width: 200px;">{% trans "Primary Phone Number: " %}</label>
                                   <input id="primary_phone" maxlength="45" type="text">
                                   <span class="error" id="primary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
                               </div>
                                 <div class="line">
-                                  <label class="text">{% trans "Confirm Phone Number: " %}</label>
+                                  <label class="text" style="width: 200px;">{% trans "Confirm Phone Number: " %}</label>
                                   <input id="primary_phone_confirm" maxlength="45" type="text">
                                   <span class="error" id="primary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
                               </div>
                               <div class="line">
-                                  <label class="text">{% trans "Phone Number are normally answered by: " %}</label>
+                                  <label class="text" style="width: 200px;">{% trans "Phone Number are normally answered by: " %}</label>
                                   <select id="primary_phone_answered" >
                                       {% for value, text in phoneAnsweredby %}
                                           <option value="{{ value }}">{{ text }}</option>
@@ -113,17 +112,17 @@
                                   <span class="error" id="primary_phone_answered_error">{% trans "Phone Number are normally answered by is missing" %}</span>
                               </div>
                                 <div class="line">
-                                    <label class="text">{% trans "Secondary Phone Number: " %}</label>
+                                    <label class="text" style="width: 200px;">{% trans "Secondary Phone Number: " %}</label>
                                     <input id="secondary_phone" maxlength="45" type="text">
                                     <span class="error" id="secondary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
                                 </div>
                                 <div class="line">
-                                    <label class="text">{% trans "Confirm Phone Number: " %}</label>
+                                    <label class="text" style="width: 200px;">{% trans "Confirm Phone Number: " %}</label>
                                     <input id="secondary_phone_confirm" maxlength="45" type="text">
                                     <span class="error" id="secondary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
                                 </div>
                               <div class="line">
-                                  <label class="text">{% trans "Phone Number are normally answered by: " %}</label>
+                                  <label class="text" style="width: 200px;">{% trans "Phone Number are normally answered by: " %}</label>
                                   <select id="secondary_phone_answered" >
                                       {% for value, text in phoneAnsweredby %}
                                           <option value="{{ value }}">{{ text }}</option>
@@ -133,19 +132,10 @@
                               </div>
                           </div>
                             <div class="line" id = "addressFields" style="display:none">
-                                <br>
-                                <label class="text">{% trans "Address: " %}</label>
+                                <label class="text" style="width: 200px;">{% trans "Address: " %}</label>
                                 <textarea cols="30" id="address" name="address" rows="4"></textarea>
                             </div>
                             <div class="line" id = "beneficiaryFields" style="display:none">
-                                <br>
-                                <div class="line" style="display:none">
-                                    <label class="text">{% trans "Beneficiary Changed: " %}</label>
-                                    <div id="radioBtn" class="btn-group beneficiary_changed_block">
-                                        <a class="btn btn-primary btn-sm notActive" data-toggle="beneficiary_changed" data-title="1">{% trans "Yes" %}</a>
-                                        <a class="btn btn-primary btn-sm active" data-toggle="beneficiary_changed" data-title="0">{% trans "No" %}</a>
-                                    </div>
-                                </div>
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "ID Type: " %}</label>
                                     <select id="idType" >
@@ -154,14 +144,9 @@
                                       {% endfor %}
                                     </select>
                                 </div>
-                                <div id = "UNHCR" >
+                                <div >
                                     <label class="text" style="width: 200px;">{% trans "Individual ID number: " %}</label>
-                                </div>
-                                <div  id = "Other" style="display:none">
-                                    <label class="text" style="width: 200px;">{% trans "ID number: " %}</label>
-                                </div>
-                                <div  >
-                                <input id="id_number" maxlength="45" type="text">
+                                    <input id="id_number" maxlength="45" type="text">
                                 </div>
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "New Beneficiary First Name (Arabic): " %}</label>
@@ -245,6 +230,8 @@
                                       <tr>
                                           <th style = "display:none">>ID</th>
                                           <th>Child</th>
+                                          <th>Current School</th>
+                                          <th>Location</th>
                                           <th>School</th>
                                       </tr>
                                   </thead>
@@ -261,6 +248,17 @@
                                         {% endfor %}
                                     </select>
                                 </div>
+
+                                <div id = "childSchoolLocation" style = "display:none">
+                                    <select>
+                                        {% for location in locations %}
+                                            <option value="{{ location.id }}">
+                                                {{ location }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
                             </div>
                             <div id = "paymentFields" style="display:none">
 
@@ -341,7 +339,7 @@
                             <div class="line" id = "reinstateBeneficiaryFields" style="display:none">
 
                                 <label class="text" style="width: 200px;">{% trans "Complaint Type: " %}</label>
-                                <select id="school_complaint" >
+                                <select id="reinstate_complaint" >
                                     {% for itm in reinstate_beneficiary_complaint_types %}
                                         <option value="{{ itm.id }}">{{ itm.name }}</option>
                                     {% endfor %}
