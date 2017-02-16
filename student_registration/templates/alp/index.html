@@ -554,6 +554,7 @@
         var user_username = '{{ request.user.username }}';
         var user_email = '{{ request.user.email }}';
         var user_token = '{{ user_token }}';
+        var alp_round = '{{ alp_round }}';
         var columns = 0;
         var rows = 1;
         var entity_ct = 17;
@@ -965,7 +966,7 @@
 
         function create_item_store_default_keys()
         {
-            var item = {id: rows, synchronized: false, deleted: false, owner: user_id, original_id: 0};
+            var item = {id: rows, synchronized: false, deleted: false, owner: user_id, original_id: 0, alp_round: alp_round};
             var fields = $('#outreach_prototype').find('.outreach-field');
             $(fields).each(function(i, field){
                 if($(field).attr('data-name')) {
