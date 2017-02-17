@@ -9,9 +9,15 @@ from student_registration.locations.models import Location
 
 
 class School(models.Model):
+
+    # SCHOOL_TYPE = Choices(
+    #     ('2ndshift', '2nd Shift'),
+    #     ('alp', 'ALP')
+    # )
+
     name = models.CharField(max_length=555L)
     number = models.CharField(max_length=45L, unique=True)
-
+    # types = models.SelectMultipleField(blank=True, choices=SCHOOL_TYPE)
     location = models.ForeignKey(
         Location,
         blank=False, null=True,
