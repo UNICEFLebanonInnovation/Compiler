@@ -178,19 +178,17 @@ def GetURLChildAbsences(absencesData):
                           .values_list('id', flat=True)
 
     studentIdentifiersList = Registration.objects\
-                             .values_list('student__number','student__id')
+                             .values_list('student__number', 'student__id')
 
-    studentIdentifiersDictionary = {studentIdentifier[0]: studentIdentifier[1] for studentIdentifier in studentIdentifiersList}
-
+    studentIdentifiersDictionary = {studentIdentifier[0]: studentIdentifier[1]
+                                    for studentIdentifier in studentIdentifiersList}
 
     for studentAbsence in absencesData:
 
+        numberOfDays = studentAbsence['absent_days']
+        numberOf10Days = numberOfDays/10
 
-         numberOfDays = studentAbsence['absent_days']
-         numberOf10Days = numberOfDays/10
-
-
-         for x in xrange(numberOf10Days):
+        for x in xrange(numberOf10Days):
 
               childAbsence = ChildAbsence()
 
@@ -207,9 +205,9 @@ def GetURLChildAbsences(absencesData):
                   studentID = studentIdentifiersDictionary[studentAbsence['student_number']]
 
 
-              childAbsence.StudentID =studentID
-              childAbsence.FromDate =fromDate
-              childAbsence.ToDate =toDate
+              childAbsence.StudentID = studentID
+              childAbsence.FromDate = fromDate
+              childAbsence.ToDate = toDate
               childAbsence.NumberOfDays = 10
 
 
