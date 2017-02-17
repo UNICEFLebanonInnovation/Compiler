@@ -425,8 +425,10 @@
                          $("#hhDateOfDistribution").text(household.card_distribution_date);
 
                          $("#primary_phone").val(household.primary_phone);
+                         $("#primary_phone_confirm").val('');
                          updateDropDownValue($("#primary_phone_answered"),household.primary_phone_answered);
                          $("#secondary_phone").val(household.secondary_phone);
+                         $("#secondary_phone_confirm").val('');
                          updateDropDownValue($("#secondary_phone_answered"),household.secondary_phone_answered);
                          $("#address").val(household.address);
 
@@ -449,6 +451,7 @@
                          $("#last_name").val(household.beneficiary_changed_last_name);
                          $("#mother_full_name").val(household.beneficiary_changed_mother_full_name);
                          $("#beneficiary_phone").val(household.beneficiary_changed_phone);
+                         $("#beneficiary_phone_confirm").val('');
                          ChangeBooleanSelection($("#radioBtn"), household.beneficiary_changed_phone)
                          updateDropDownValue($("#idType"),household.beneficiary_changed_id_type);
                          updateDropDownValue($("#gender"),household.beneficiary_changed_gender);
@@ -460,8 +463,10 @@
 
 
                          $("#first_card_case_number").val(household.duplicate_card_first_card_case_number);
+                         $("#first_card_case_number_confirm").val('');
                          $("#first_card_last_four_digits").val(household.duplicate_card_first_card_last_four_digits);
                          $("#second_card_case_number").val(household.duplicate_card_second_card_case_number);
+                         $("#second_card_case_number_confirm").val('');
                          $("#secondcard_last_four_digits").val(household.duplicate_card_secondcard_last_four_digits);
 
                          $("#schools-table tbody").empty();

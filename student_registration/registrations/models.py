@@ -168,10 +168,10 @@ class RegisteringAdult(Person):
         related_name='+',
     )
     household_suspended = models.BooleanField(default=False)
-    duplicate_card_first_card_case_number= models.CharField(max_length=50, blank=True, null=True)
-    duplicate_card_first_card_last_four_digits= models.CharField(max_length=4, blank=True, null=True)
-    duplicate_card_second_card_case_number= models.CharField(max_length=50, blank=True, null=True)
-    duplicate_card_secondcard_last_four_digits= models.CharField(max_length=4, blank=True, null=True)
+    duplicate_card_first_card_case_number = models.CharField(max_length=50, blank=True, null=True)
+    duplicate_card_first_card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
+    duplicate_card_second_card_case_number = models.CharField(max_length=50, blank=True, null=True)
+    duplicate_card_secondcard_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
     update_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
