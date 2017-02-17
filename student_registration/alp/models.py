@@ -26,6 +26,9 @@ from student_registration.eav.registry import Registry as eav
 
 class ALPRound(models.Model):
     name = models.CharField(max_length=45L, unique=True)
+    current_round = models.BooleanField(blank=True, default=False)
+    current_pre_test = models.BooleanField(blank=True, default=False)
+    current_post_test = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['id']
@@ -269,9 +272,59 @@ class Outreach(TimeStampedModel):
     )
     deleted = models.BooleanField(blank=True, default=False)
 
+    post_exam_result_arabic = models.FloatField(
+        blank=True,
+        null=True,
+        default=0,
+    )
+    post_exam_result_language = models.FloatField(
+        blank=True,
+        null=True,
+        default=0,
+    )
+    post_exam_result_math = models.FloatField(
+        blank=True,
+        null=True,
+        default=0,
+    )
+    post_exam_result_science = models.FloatField(
+        blank=True,
+        null=True,
+        default=0,
+    )
+    post_exam_corrector_arabic = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        choices=((x, x) for x in range(0, 101))
+    )
+    post_exam_corrector_language = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        choices=((x, x) for x in range(0, 101))
+    )
+    post_exam_corrector_math = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        choices=((x, x) for x in range(0, 101))
+    )
+    post_exam_corrector_science = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        choices=((x, x) for x in range(0, 101))
+    )
+    refer_to_level = models.ForeignKey(
+        ClassLevel,
+        blank=True, null=True,
+        related_name='+',
+    )
+
     class Meta:
         ordering = ['id']
-        verbose_name = "Pre Test"
+        verbose_name = "All ALP data"
 
     @property
     def student_fullname(self):
@@ -299,10 +352,41 @@ class Outreach(TimeStampedModel):
         return total
 
     @property
+    def post_exam_total(self):
+        total = 0
+        if self.post_exam_result_arabic:
+            total += self.post_exam_result_arabic
+        if self.post_exam_result_language:
+            total += self.post_exam_result_language
+        if self.post_exam_result_math:
+            total += self.post_exam_result_math
+        if self.post_exam_result_science:
+            total += self.post_exam_result_science
+        return total
+
+    @property
     def student_age(self):
         if self.student:
             return self.student.calc_age
         return 0
+
+    @property
+    def student_sex(self):
+        if self.student:
+            return self.student.sex
+        return ''
+
+    @property
+    def student_number(self):
+        if self.student:
+            return self.student.number
+        return ''
+
+    @property
+    def student_nationality(self):
+        if self.student:
+            return self.student.nationality
+        return ''
 
     def __unicode__(self):
         if self.student:
