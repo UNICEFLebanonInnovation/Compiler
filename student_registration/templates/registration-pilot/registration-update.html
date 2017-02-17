@@ -40,37 +40,37 @@
                             <div class="line" id="hhsuspended" style="display: none">
                                 <label  style="color: red">{% trans "Please note that this household is currently suspended " %}</label><span id ="HHSuspendedNote"></span>
                             </div>
-                            <h3 class="panel-title">{% trans "Verify Caller Identity" %}&nbsp;&nbsp;</h3>
+                            <h3 class="panel-title">{% trans "Verify Caller Identity" %}</h3>
                             <br>
-                            <label >{% trans "Caller must answer 2 of the following questions correctly." %}&nbsp;&nbsp;</label>
+                            <label >{% trans "Caller must answer 2 of the following questions correctly." %}</label>
                             <br>
                             <div class="line">
-                                <label >{% trans "- Name of person that registered children: " %}&nbsp;&nbsp;</label> <span id ="hhName"></span>
+                                <label >{% trans "- Name of person that registered children: " %}</label> <span id ="hhName"></span>
                             </div>
                             <div class="line">
-                                <label >{% trans "- ID Number: " %}&nbsp;&nbsp;</label><span id ="hhIdNumber"></span>
+                                <label >{% trans "- ID Number: " %}</label><span id ="hhIdNumber"></span>
                             </div>
                             <div class="line">
-                                <label >{% trans "- DOB of person that registered children " %}&nbsp;&nbsp;</label><span id ="hhDOB"></span>
+                                <label >{% trans "- DOB of person that registered children " %}</label><span id ="hhDOB"></span>
                             </div>
                             <div class="line" >
-                                <label >{% trans "- Last 4 digits on ATM Card: " %}&nbsp;&nbsp;</label><span id ="hhLastcardgigits"></span>
+                                <label >{% trans "- Last 4 digits on ATM Card: " %}</label><span id ="hhLastcardgigits"></span>
                             </div>
                             <div class="line" >
-                                <label >{% trans "- Primary phone: " %}&nbsp;&nbsp;</label><span id ="hhprimary_phone"></span>
+                                <label >{% trans "- Primary phone: " %}</label><span id ="hhprimary_phone"></span>
                             </div>
                             <div class="line" >
-                                <label >{% trans "- Secondary phone: " %}&nbsp;&nbsp;</label><span id ="hhsecondary_phone"></span>
+                                <label >{% trans "- Secondary phone: " %}</label><span id ="hhsecondary_phone"></span>
                             </div>
                             <div class="line" style="visibility: hidden;">
-                                <label >{% trans "- Address: " %}&nbsp;&nbsp;</label><span id ="hhAddess"></span>
+                                <label >{% trans "- Address: " %}</label><span id ="hhAddess"></span>
                             </div>
                         </li>
                     {# 2 Slide update data #}
                         <li class="framebox">
                           <h3 class="panel-title">{% trans "Updates and Complaints" %}</h3>
                           <br>
-                          <label >{% trans "Please select: " %}&nbsp;&nbsp;</label>
+                          <label >{% trans "Please select: " %}</label>
                           <select id="changeOption">
                              <option value="" selected="selected">---------</option>
                              <optgroup label="UPDATE">
@@ -98,9 +98,10 @@
                                   <span class="error" id="primary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
                               </div>
                                 <div class="line">
-                                  <label class="text" style="width: 200px;">{% trans "Confirm Phone Number: " %}</label>
-                                  <input id="primary_phone_confirm" maxlength="45" type="text">
-                                  <span class="error" id="primary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
+                                    <label class="text" style="width: 200px;">{% trans "Confirm Phone Number: " %}</label>
+                                    <input id="primary_phone_confirm" maxlength="45" type="text">
+                                    <span class="error" id="primary_phone_confirm_length_error">{% trans "The phone number must be 8 digits" %}</span>
+                                    <span class="error" id="primary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
                               </div>
                               <div class="line">
                                   <label class="text" style="width: 200px;">{% trans "Phone Number are normally answered by: " %}</label>
@@ -119,6 +120,7 @@
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "Confirm Phone Number: " %}</label>
                                     <input id="secondary_phone_confirm" maxlength="45" type="text">
+                                    <span class="error" id="secondary_phone_confirm_length_error">{% trans "The phone number must be 8 digits" %}</span>
                                     <span class="error" id="secondary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
                                 </div>
                               <div class="line">
@@ -198,7 +200,8 @@
                                 </div>
                                 <div class="line">
                                   <label class="text" style="width: 200px;">{% trans "Confirm Phone Number: " %}</label>
-                                  <input id="beneficiary__phone_confirm" maxlength="45" type="text">
+                                  <input id="beneficiary_phone_confirm" maxlength="45" type="text">
+                                    <span class="error" id="beneficiary_phone_confirm_length_error">{% trans "The phone number must be 8 digits" %}</span>
                                   <span class="error" id="beneficiary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
                               </div>
 
@@ -263,7 +266,7 @@
                             <div id = "paymentFields" style="display:none">
 
                             <div class="line" >
-                                <label >{% trans "Household Status: " %}&nbsp;&nbsp;</label><span id ="hhsuspended_payment"></span>
+                                <label >{% trans "Household Status: " %}</label><span id ="hhsuspended_payment"></span>
                             </div>
                                 <table id="payments-table" class="table table-striped table-bordered cell-border"
                                        data-height="500"
@@ -313,7 +316,7 @@
                             </div>
                             <div class="line" id = "cardStatusFields" style="display:none">
                                 <div class="line">
-                                    <label >{% trans "Card Status: " %}&nbsp;&nbsp;</label> <span id ="hhCardStatus"></span>
+                                    <label >{% trans "Card Status: " %}</label> <span id ="hhCardStatus"></span>
                                 </div>
                                 <div class="line">
                                     <label >{% trans "Date of distribution: " %}</label> <span id ="hhDateOfDistribution"></span>
@@ -373,23 +376,32 @@
                                 <div class="line">
                                     <label class="text">{% trans "Case Number on First Card: " %}</label>
                                     <input id="first_card_case_number" maxlength="45" type="text">
+                                    <span class="error" id="first_card_case_number_error">{% trans "Case number is incorrect" %}</span>
+
                                 </div>
                                 <div class="line">
                                     <label class="text">{% trans "Confirm Case Number on First Card: " %}</label>
                                     <input id="first_card_case_number_confirm" maxlength="45" type="text">
+                                    <span class="error" id="first_card_case_number_confirm_error">{% trans "Case number is incorrect" %}</span>
+                                    <span class="error" id="first_card_case_equal_error">{% trans "Case mismatch" %}</span>
                                 </div>
                                 <div class="line">
                                     <label class="text">{% trans "Last four digits of the  First Card: " %}</label>
                                     <input id="first_card_last_four_digits" maxlength="45" type="text">
+                                    <span class="error" id="first_card_last_four_digits_error">{% trans "last 4 digits is incorrect" %}</span>
                                 </div>
 
                                 <div class="line">
                                     <label class="text">{% trans "Case Number on Second Card: " %}</label>
                                     <input id="second_card_case_number" maxlength="45" type="text">
+                                    <span class="error" id="second_card_case_number_error">{% trans "Case number is incorrect" %}</span>
+                                    <span class="error" id="second_card_case_number_error_error">{% trans "last 4 digits is incorrect" %}</span>
                                 </div>
                                 <div class="line">
                                     <label class="text">{% trans "Confirm Case Number on Second Card: " %}</label>
                                     <input id="second_card_case_number_confirm" maxlength="45" type="text">
+                                    <span class="error" id="second_card_case_number_confirm_error">{% trans "Case number is incorrect" %}</span>
+                                    <span class="error" id="second_card_case_equal_error">{% trans "Case mismatch" %}</span>
                                 </div>
                                 <div class="line">
                                     <label class="text">{% trans "Last four digits of the  Second Card: " %}</label>
