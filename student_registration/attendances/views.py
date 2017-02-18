@@ -168,7 +168,7 @@ class AbsenteeView(ListAPIView):
     API endpoint for validated absentees
     """
     queryset = Absentee.objects.filter(
-        student__school__location__pilot_in_use=True
+        school__location__pilot_in_use=True
     )
     serializer_class = AbsenteeSerializer
     permission_classes = (permissions.IsAdminUser,)
