@@ -66,7 +66,7 @@ class Enrollment(TimeStampedModel):
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
-        related_name='+',
+        related_name='student_enrollment',
     )
 
     registering_adult = models.ForeignKey(
