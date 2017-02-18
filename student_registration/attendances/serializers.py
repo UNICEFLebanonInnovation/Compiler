@@ -67,4 +67,7 @@ class AbsenteeSerializer(serializers.ModelSerializer):
             'last_attendance_date',
             'absent_days',
             'reattend_date',
+            'student_birthday_day',
+            'student_birthday_month',
+            'student_birthday_year',
         )
