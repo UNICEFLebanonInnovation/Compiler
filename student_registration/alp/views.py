@@ -4,7 +4,7 @@ from __future__ import absolute_import, unicode_literals
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from rest_framework import viewsets, mixins, permissions
 from datetime import datetime
 import tablib
@@ -12,6 +12,7 @@ import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
+from braces.views import GroupRequiredMixin
 
 from .models import Outreach, ALPRound
 from .serializers import OutreachSerializer, OutreachExamSerializer, OutreachSmallSerializer
@@ -84,9 +85,18 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         return super(OutreachViewSet, self).partial_update(request)
 
 
-class OutreachView(LoginRequiredMixin, TemplateView):
+class OutreachView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   TemplateView):
     model = Outreach
     template_name = 'alp/index.html'
+
+    group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
+
+    def handle_no_permission(self, request):
+        # return HttpResponseRedirect(reverse("403.html"))
+        # return HttpResponseForbidden(reverse("404.html"))
+        return HttpResponseForbidden()
 
     def get_context_data(self, **kwargs):
         data = []
@@ -137,9 +147,18 @@ class OutreachView(LoginRequiredMixin, TemplateView):
         }
 
 
-class DataCollectingView(LoginRequiredMixin, TemplateView):
+class DataCollectingView(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         TemplateView):
     model = Outreach
     template_name = 'alp/outreach.html'
+
+    group_required = [u"PARTNER"]
+
+    def handle_no_permission(self, request):
+        # return HttpResponseRedirect(reverse("403.html"))
+        # return HttpResponseForbidden(reverse("404.html"))
+        return HttpResponseForbidden()
 
     def get_context_data(self, **kwargs):
         data = []
@@ -172,9 +191,18 @@ class DataCollectingView(LoginRequiredMixin, TemplateView):
         }
 
 
-class PreTestView(LoginRequiredMixin, TemplateView):
+class PreTestView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  TemplateView):
     model = Outreach
     template_name = 'alp/post_test.html'
+
+    group_required = [u"CERD"]
+
+    def handle_no_permission(self, request):
+        # return HttpResponseRedirect(reverse("403.html"))
+        # return HttpResponseForbidden(reverse("404.html"))
+        return HttpResponseForbidden()
 
     def get_context_data(self, **kwargs):
         data = []
@@ -218,9 +246,18 @@ class PreTestView(LoginRequiredMixin, TemplateView):
         }
 
 
-class PostTestView(LoginRequiredMixin, TemplateView):
+class PostTestView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   TemplateView):
     model = Outreach
     template_name = 'alp/post_test.html'
+
+    group_required = [u"CERD"]
+
+    def handle_no_permission(self, request):
+        # return HttpResponseRedirect(reverse("403.html"))
+        # return HttpResponseForbidden(reverse("404.html"))
+        return HttpResponseForbidden()
 
     def get_context_data(self, **kwargs):
         data = []
@@ -234,7 +271,6 @@ class PostTestView(LoginRequiredMixin, TemplateView):
             alp_round=alp_round,
             registered_in_level__isnull=False
         ).values_list('school_id').order_by('school__number').distinct('school__number')
-        print schools
 
         if school_id:
             data = Outreach.objects.exclude(deleted=True).filter(
