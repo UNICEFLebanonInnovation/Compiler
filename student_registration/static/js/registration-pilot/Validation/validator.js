@@ -199,9 +199,6 @@ function validate_beneficiary()
 
 
     var isDOBValid = true;
-    alert($("#days").val());
-    alert($("#months").val());
-    alert($("#years").val());
     if($("#days").val() == ""|| $("#months").val() == ""||$("#years").val() == "")
     {
         isDOBValid = false;
