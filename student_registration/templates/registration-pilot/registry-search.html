@@ -191,7 +191,7 @@
 
         var checking_id_number_url = host+'/api/registrations-adult-id/';
         var childURL = host+'/api/registrations-child/';
-        var complaintURL = host+'/api/registrations_complaint/';
+        var complaintURL = host+'/api/registrations-complaint/';
 
         var hhID = null;
 
@@ -996,36 +996,38 @@
                complaint_category_id = $("#other_complaint").val();
           }
 
-{#         var complaintData = new Object();#}
-{#         complaintData.complaint_category_id = complaint_category_id;#}
-{#         complaintData.complaint_note = $("#complaint").val();#}
-{##}
-{#         var isSuccessfull = false;#}
-{##}
-{#         $.ajax#}
-{#         (#}
-{#            {#}
-{#              type: "PATCH",#}
-{#              url: complaintURL + hhID +"/",#}
-{#              data: complaintData,#}
-{#              cache: false,#}
-{#              async: false,#}
-{#              headers: getHeader(),#}
-{#              dataType: 'json',#}
-{#              success: function (response)#}
-{#              {#}
-{#                  isSuccessfull = true;#}
-{#              },#}
-{#              error: function (response)#}
-{#              {#}
-{#                  console.log(response);#}
-{#              },#}
-{#              async: false#}
-{#           }#}
-{#         );#}
-{#         //alert(isSuccessfull);#}
-{##}
-{#         return isSuccessfull;#}
+         var complaintData = new Object();
+         complaintData.complaint_category_id = complaint_category_id;
+         complaintData.complaint_note = $("#complaint").val();
+         complaintData.complaint_adult_id = hhID;
+
+         var isSuccessfull = false;
+
+         $.ajax
+         (
+            {
+              type: "PUT",
+              url: complaintURL,
+              data: complaintData,
+              cache: false,
+              async: false,
+              headers: getHeader(),
+              dataType: 'json',
+              success: function (response)
+              {
+                  isSuccessfull = true;
+                  CloseHousehold();
+              },
+              error: function (response)
+              {
+                  console.log(response);
+              },
+              async: false
+           }
+         );
+         //alert(isSuccessfull);
+
+         return isSuccessfull;
       }
 
 
