@@ -142,6 +142,7 @@ function validate_beneficiary()
     var phone = $("#beneficiary_phone").val();
     var phone_confirm = $("#beneficiary_phone_confirm").val();
     var case_number = $("#id_number").val();
+    var id_type = $("#idType").val();
 
     var isPhoneValid = ValidatePhoneNumber(phone)
     var isPhoneConfirmValid = ValidatePhoneNumber(phone_confirm);
@@ -176,28 +177,6 @@ function validate_beneficiary()
             }
     }
 
-    var id_type = $("#idType").val();
-    var isCaseNumberValid = true;
-    if(id_type == 1)
-    {
-
-        isCaseNumberValid=  validateUNHCRNumber(case_number);
-        if (!isCaseNumberValid)
-        {
-            $("#beneficiary_id_number_error").show();
-        }
-        else
-        {
-            $("#beneficiary_id_number_error").hide();
-        }
-    }
-    else
-    {
-        $("#beneficiary_id_number_error").hide();
-
-    }
-
-
     var isDOBValid = true;
     if($("#days").val() == ""|| $("#months").val() == ""||$("#years").val() == "")
     {
@@ -219,8 +198,10 @@ function validate_beneficiary()
     {
         isDOBValid = false;
         $("#dob_error").show();
-
     }
+
+    var isCaseNumberValid =  ValidateBeneficiaryID(case_number,id_type);
+
     result = result && isPhoneValid;
     result = result && isPhoneConfirmValid;
     result = result && isPhoneEqualValid;
@@ -228,6 +209,35 @@ function validate_beneficiary()
     result = result && isDOBValid;
 
     return result;
+}
+
+function ValidateBeneficiaryID(case_number , id_type)
+{
+
+    var isCaseNumberValid = true;
+    if(id_type == 1)
+    {
+        isCaseNumberValid=  validateUNHCRNumber(case_number);
+        if (!isCaseNumberValid)
+        {
+            $("#beneficiary_id_number_error").show();
+            isCaseNumberValid=false;
+        }
+        else
+        {
+            $("#beneficiary_id_number_error").hide();
+        }
+    }
+    else if (case_number)
+    {
+        $("#beneficiary_id_number_error").hide();
+    }
+    else
+    {
+        $("#beneficiary_id_number_error").show();
+        isCaseNumberValid=false;
+    }
+    return isCaseNumberValid;
 }
 
 

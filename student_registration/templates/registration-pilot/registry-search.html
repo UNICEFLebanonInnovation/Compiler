@@ -408,6 +408,9 @@
                          $("#hhLastcardgigits").text(household.card_last_four_digits);
                          $("#hhprimary_phone").text(household.primary_phone);
                          $("#hhsecondary_phone").text(household.secondary_phone);
+                         $("#hh_current_primary_phone").text(household.primary_phone);
+                         $("#hh_current_secondary_phone").text(household.secondary_phone);
+
                          $("#hhAddess").text(household.address);
 
                          $("#hhCardStatus").text(household.card_status);
@@ -424,13 +427,13 @@
 
                          $("#hhDateOfDistribution").text(household.card_distribution_date);
 
-                         $("#primary_phone").val(household.primary_phone);
+                         $("#primary_phone").val('');
                          $("#primary_phone_confirm").val('');
                          updateDropDownValue($("#primary_phone_answered"),household.primary_phone_answered);
-                         $("#secondary_phone").val(household.secondary_phone);
+                         $("#secondary_phone").val('');
                          $("#secondary_phone_confirm").val('');
                          updateDropDownValue($("#secondary_phone_answered"),household.secondary_phone_answered);
-                         $("#address").val(household.address);
+                         $("#address").val('');
 
                          var suspended = household.household_suspended;
                          if (suspended)
