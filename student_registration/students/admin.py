@@ -153,8 +153,48 @@ class StudentAdmin(ImportExportModelAdmin):
     )
 
 
+class StudentMatchingResource(resources.ModelResource):
+    class Meta:
+        model = StudentMatching
+
+
+class StudentMatchingAdmin(ImportExportModelAdmin):
+    resource_class = StudentMatching
+    list_display = (
+        'id',
+        'pilot_id',
+        'registry',
+        'enrolled_id',
+        'enrolment',
+    )
+    search_fields = (
+        'registry__first_name',
+        'registry__father_name',
+        'registry__last_name',
+        'registry__mother_fullname',
+        'registry__id_number',
+        'registry__number',
+        'enrolment__first_name',
+        'enrolment__father_name',
+        'enrolment__last_name',
+        'enrolment__mother_fullname',
+        'enrolment__id_number',
+        'enrolment__number',
+    )
+
+    def pilot_id(self, obj):
+        if obj.registry:
+            return obj.registry.id
+        return ''
+
+    def enrolled_id(self, obj):
+        if obj.enrolment:
+            return obj.enrolment.id
+        return ''
+
+
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Nationality, NationalityAdmin)
 admin.site.register(Language)
-admin.site.register(StudentMatching)
+admin.site.register(StudentMatching, StudentMatchingAdmin)
 admin.site.register(IDType, IDTypeAdmin)
