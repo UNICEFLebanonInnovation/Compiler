@@ -90,7 +90,7 @@
     {% endif %}
     {% if role == "CERD" and alp_phase == 'post_test' %}
             <td>{% if line.registered_in_level %}{{ line.registered_in_level.name }}{% endif %}</td>
-            <td>{% if line.secion %}{{ line.section.name }}{% endif %}</td>
+            <td>{% if line.section %}{{ line.section.name }}{% endif %}</td>
             <td>
                 <input type="text" name="post_exam_result_arabic" id="post_exam_result_arabic"
                        value="{% if line.post_exam_result_arabic %}{{ line.post_exam_result_arabic }}{% else %}0{% endif %}"
