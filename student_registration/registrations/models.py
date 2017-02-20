@@ -167,6 +167,7 @@ class RegisteringAdult(Person):
         blank=True, null=True,
         related_name='+',
     )
+    beneficiary_specify_reason = models.CharField(max_length=100, blank=True, null=True)
     household_suspended = models.BooleanField(default=False)
     duplicate_card_first_card_case_number = models.CharField(max_length=50, blank=True, null=True)
     duplicate_card_first_card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
@@ -213,6 +214,11 @@ class Complaint(TimeStampedModel):
     complaint_status = models.CharField(max_length=20, blank=True, null=True, choices=STATUS)
     complaint_solution = models.TextField(blank=True, null=True)
     complaint_resolution_date = models.DateField(blank=True, null=True)
+    complaint_bank_date_of_incident = models.DateField(blank=True, null=True)
+    complaint_bank_time_of_incident = models.TimeField(blank=True, null=True)
+    complaint_bank_phone_used = models.CharField(max_length=50, blank=True, null=True)
+    complaint_bank_service_requested = models.TextField(blank=True, null=True)
+
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
