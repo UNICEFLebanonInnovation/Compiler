@@ -230,11 +230,18 @@ class PostTestView(LoginRequiredMixin, TemplateView):
         school_id = int(self.request.GET.get("school", 0))
         alp_round = ALPRound.objects.get(current_post_test=True)
 
-        if has_group(self.request.user, 'CERD'):
-            data = Outreach.objects.exclude(owner__partner_id=None, alp_round=alp_round)
-            data = data.filter(school_id=school_id)
-            data = data.exclude(deleted=True)
+        schools = Outreach.objects.exclude(deleted=True).filter(
+            alp_round=alp_round,
+            registered_in_level__isnull=False
+        ).values_list('school_id').order_by('school__number').distinct('school__number')
+        print schools
+
         if school_id:
+            data = Outreach.objects.exclude(deleted=True).filter(
+                school_id=school_id,
+                alp_round=alp_round,
+                registered_in_level__isnull=False
+            )
             school = School.objects.get(id=school_id)
         if school and school.location:
             location = school.location
@@ -243,7 +250,7 @@ class PostTestView(LoginRequiredMixin, TemplateView):
 
         return {
             'data': data,
-            'schools': School.objects.all(),
+            'schools': School.objects.filter(id__in=schools),
             'locations': Location.objects.filter(type_id=2),
             'months': Person.MONTHS,
             'genders': Person.GENDER,
