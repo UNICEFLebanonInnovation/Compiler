@@ -20,6 +20,11 @@ from student_registration.registrations.models import (
     Registration
 )
 
+
+from student_registration.locations.models import (
+    Location
+)
+
 from student_registration.students.models import (
     Student
 )
@@ -169,33 +174,46 @@ def GetURLChildAbsences(absencesData):
 
     childAbsences = []
 
+    locationIdentifiers = Location.objects.filter(pilot_in_use=True) \
+                          .values_list('id', flat=True)
+
+    studentIdentifiersList = Registration.objects\
+                             .values_list('student__number', 'student__id')
+
+    studentIdentifiersDictionary = {studentIdentifier[0]: studentIdentifier[1]
+                                    for studentIdentifier in studentIdentifiersList}
+
     for studentAbsence in absencesData:
 
         numberOfDays = studentAbsence['absent_days']
         numberOf10Days = numberOfDays/10
 
-
         for x in xrange(numberOf10Days):
 
-             childAbsence = ChildAbsence()
+              childAbsence = ChildAbsence()
 
-             attendanceDate = datetime.strptime(studentAbsence['last_attendance_date'], "%Y-%m-%d").date()
+              attendanceDate = datetime.strptime(studentAbsence['last_attendance_date'], "%Y-%m-%d").date()
 
-             fromDate = attendanceDate + datetime2.timedelta(days=x*14)
-             toDate = attendanceDate + datetime2.timedelta(days=(x*14)+9)
+              fromDate = attendanceDate + datetime2.timedelta(days=x*14)
+              toDate = attendanceDate + datetime2.timedelta(days=(x*14)+9)
 
-             studentID = Registration.objects.filter \
-                         ( \
-                             student__number=studentAbsence['student_number'], \
-                         ).values_list('student__id', flat=True).first()
+              studentID = None
 
-             childAbsence.StudentID =studentID
-             childAbsence.FromDate =fromDate
-             childAbsence.ToDate =toDate
-             childAbsence.NumberOfDays = 10
+              studentAbsence['student_number'] = '101052532398M'
 
-             if childAbsence.StudentID is not None:
-                childAbsences.append(childAbsence)
+              if studentIdentifiersDictionary.has_key(studentAbsence['student_number']):
+                  studentID = studentIdentifiersDictionary[studentAbsence['student_number']]
+
+
+              childAbsence.StudentID = studentID
+              childAbsence.FromDate = fromDate
+              childAbsence.ToDate = toDate
+              childAbsence.NumberOfDays = 10
+
+
+              if (childAbsence.StudentID is not None) and \
+                 (childAbsence.FromDate > datetime.strptime('2010-01-31', '%Y-%m-%d').date()) :
+                 childAbsences.append(childAbsence)
 
     return childAbsences
 

@@ -36,6 +36,7 @@ class Language(models.Model):
 
 class IDType(models.Model):
     name = models.CharField(max_length=45L, unique=True)
+    inuse = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['id']
