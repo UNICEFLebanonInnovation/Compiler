@@ -231,20 +231,19 @@ class RegisteringChildViewSet(mixins.RetrieveModelMixin,
 
 
 class RegisteringComplaintViewSet(mixins.RetrieveModelMixin,
-                              mixins.ListModelMixin,
-                              mixins.CreateModelMixin,
-                              mixins.UpdateModelMixin,
-                              viewsets.GenericViewSet):
+                                  mixins.ListModelMixin,
+                                  mixins.CreateModelMixin,
+                                  mixins.UpdateModelMixin,
+                                  viewsets.GenericViewSet):
 
     model = Complaint
     queryset = Complaint.objects.all()
-    serializer_class =  ComplaintSerializer
+    serializer_class = ComplaintSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get_queryset(self):
-        if self.request.user.is_superuser:
-            return self.queryset
-        return []
+
+    def put(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class RegisteringPilotView(LoginRequiredMixin, FormView):

@@ -129,7 +129,6 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'complaint_status',
             'complaint_resolution_date',
             'complaint_bank_date_of_incident',
-            'complaint_bank_time_of_incident',
             'complaint_bank_phone_used',
             'complaint_bank_service_requested',
             'owner'
