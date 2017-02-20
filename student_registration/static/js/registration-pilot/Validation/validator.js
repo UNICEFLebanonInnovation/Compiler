@@ -14,6 +14,11 @@ function ValidateHouseHoldUpdate()
      {
          result = ValidateTwoCard();
      }
+     else if($("#changeOption").val() == "cardStatus")
+     {
+         result = ValidateCardPhone();
+     }
+
      return result;
 }
 
@@ -351,6 +356,62 @@ function ValidatePhone()
 
     return result;
 }
+
+
+function ValidateCardPhone()
+{
+    var result = true;
+
+
+    if($("#card_distribution_complaint").val() == 12)
+     {
+         var primary_phone = $("#card_phone").val();
+         var primary_phone_confirm = $("#card_phone_confirm").val();
+
+
+        var isPrimaryValid = ValidatePhoneNumber(primary_phone)
+
+        if (!isPrimaryValid)
+        {
+            $("#card_phone_length_error").show();
+        }
+        else
+        {
+            $("#card_phone_length_error").hide();
+        }
+
+
+        var isPrimaryPhoneConfirmValid = ValidatePhoneNumber(primary_phone_confirm);
+        var isPrimaryPhoneEqualValid = primary_phone == primary_phone_confirm;
+        if (!isPrimaryPhoneConfirmValid)
+        {
+            $("#card_phone_confirm_length_error").show();
+             $("#card_phone_confirm_error").hide();
+        }
+        else
+        {
+            $("#card_phone_confirm_length_error").hide();
+            if (!isPrimaryPhoneEqualValid)
+            {
+                $("#card_phone_confirm_error").show();
+            }
+            else
+                {
+                    $("#card_phone_confirm_error").hide();
+                }
+        }
+
+        result = result && isPrimaryValid;
+        result = result && isPrimaryPhoneConfirmValid;
+        result = result && isPrimaryPhoneEqualValid;
+
+
+
+    }
+    return result;
+}
+
+
 
 function ValidatePhoneNumber(phoneNumber)
 {
