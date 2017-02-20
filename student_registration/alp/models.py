@@ -55,7 +55,7 @@ class Outreach(TimeStampedModel):
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
-        related_name='+',
+        related_name='alp_enrollment',
     )
     partner = models.ForeignKey(
         PartnerOrganization,

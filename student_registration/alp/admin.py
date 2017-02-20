@@ -78,7 +78,7 @@ class GovernorateFilter(admin.SimpleListFilter):
 class RegisteredInLevelFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
-    title = 'Registered in level'
+    title = 'Have a level assigned?'
 
     # Parameter for the filter that will be used in the URL query.
     parameter_name = 'registered_level'
@@ -112,7 +112,7 @@ class RegisteredInLevelFilter(admin.SimpleListFilter):
 class RegisteredInSectionFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
-    title = 'Registered in section'
+    title = 'Have a section assigned?'
 
     # Parameter for the filter that will be used in the URL query.
     parameter_name = 'registered_section'
@@ -211,6 +211,15 @@ class OutreachAdmin(ImportExportModelAdmin):
             )
         return total
 
+    def post_total(self, obj):
+        total = obj.post_exam_total
+        if obj.registered_in_level and obj.registered_in_level.note:
+            total = u'{}/{}'.format(
+                str(total),
+                str(obj.registered_in_level.note)
+            )
+        return total
+
 
 class CurrentOutreach(Outreach):
     class Meta:
@@ -254,6 +263,26 @@ class PreTest(Outreach):
 
 
 class PreTestAdmin(OutreachAdmin):
+
+    list_display = (
+        'student',
+        'student_age',
+        'student_sex',
+        'school',
+        'caza',
+        'governorate',
+        'level',
+        'total',
+        'assigned_to_level',
+    )
+    list_filter = (
+        'school',
+        'school__location',
+        GovernorateFilter,
+        'level',
+        'assigned_to_level',
+        'student__sex',
+    )
 
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_pre_test=True)
@@ -310,6 +339,28 @@ class PostTest(Outreach):
 
 
 class PostTestAdmin(OutreachAdmin):
+
+    list_display = (
+        'student',
+        'student_age',
+        'student_sex',
+        'school',
+        'caza',
+        'governorate',
+        'registered_in_level',
+        'post_total',
+        'refer_to_level',
+        'section',
+    )
+    list_filter = (
+        'school',
+        'school__location',
+        GovernorateFilter,
+        'registered_in_level',
+        'refer_to_level',
+        'section',
+        'student__sex',
+    )
 
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_post_test=True)
