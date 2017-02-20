@@ -133,6 +133,7 @@ class OutreachView(LoginRequiredMixin, TemplateView):
             'school': school,
             'location': location,
             'location_parent': location_parent,
+            'alp_round': alp_round.id,
         }
 
 
@@ -183,10 +184,10 @@ class PreTestView(LoginRequiredMixin, TemplateView):
         school_id = int(self.request.GET.get("school", 0))
         alp_round = ALPRound.objects.get(current_pre_test=True)
 
-        if has_group(self.request.user, 'CERD'):
-            data = Outreach.objects.exclude(owner__partner_id=None)
-            data = data.filter(school_id=school_id, alp_round=alp_round)
-            data = data.exclude(deleted=True)
+        data = Outreach.objects.exclude(owner__partner_id=None)
+        data = data.filter(school_id=school_id, alp_round=alp_round)
+        data = data.exclude(deleted=True)
+
         if school_id:
             school = School.objects.get(id=school_id)
         if school and school.location:
@@ -213,6 +214,7 @@ class PreTestView(LoginRequiredMixin, TemplateView):
             'location': location,
             'location_parent': location_parent,
             'alp_phase': 'pre_test',
+            'alp_round': alp_round.id,
         }
 
 

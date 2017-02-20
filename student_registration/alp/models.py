@@ -55,7 +55,7 @@ class Outreach(TimeStampedModel):
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
-        related_name='+',
+        related_name='alp_enrollment',
     )
     partner = models.ForeignKey(
         PartnerOrganization,
@@ -316,7 +316,7 @@ class Outreach(TimeStampedModel):
         default=0,
         choices=((x, x) for x in range(0, 101))
     )
-    post_exam_level = models.ForeignKey(
+    refer_to_level = models.ForeignKey(
         ClassLevel,
         blank=True, null=True,
         related_name='+',
@@ -324,7 +324,7 @@ class Outreach(TimeStampedModel):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Pre Test"
+        verbose_name = "All ALP data"
 
     @property
     def student_fullname(self):
@@ -374,6 +374,18 @@ class Outreach(TimeStampedModel):
     def student_sex(self):
         if self.student:
             return self.student.sex
+        return ''
+
+    @property
+    def student_number(self):
+        if self.student:
+            return self.student.number
+        return ''
+
+    @property
+    def student_nationality(self):
+        if self.student:
+            return self.student.nationality
         return ''
 
     def __unicode__(self):

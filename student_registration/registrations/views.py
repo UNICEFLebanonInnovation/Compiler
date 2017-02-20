@@ -4,6 +4,8 @@ from __future__ import absolute_import, unicode_literals
 from django.http import Http404
 from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Value as V
+from django.db.models.functions import Concat
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
 import tablib
@@ -48,7 +50,8 @@ from .models import (
     RegisteringAdult,
     WaitingList,
     BeneficiaryChangedReason,
-    ComplaintCategory
+    ComplaintCategory,
+    Complaint
 )
 from .serializers import (
     RegistrationSerializer,
@@ -56,6 +59,7 @@ from .serializers import (
     RegistrationChildSerializer,
     ClassAssignmentSerializer,
     WaitingListSerializer,
+    ComplaintSerializer
 )
 from .utils import get_unhcr_principal_applicant
 
@@ -226,6 +230,23 @@ class RegisteringChildViewSet(mixins.RetrieveModelMixin,
         return []
 
 
+class RegisteringComplaintViewSet(mixins.RetrieveModelMixin,
+                              mixins.ListModelMixin,
+                              mixins.CreateModelMixin,
+                              mixins.UpdateModelMixin,
+                              viewsets.GenericViewSet):
+
+    model = Complaint
+    queryset = Complaint.objects.all()
+    serializer_class =  ComplaintSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
+        return []
+
+
 class RegisteringPilotView(LoginRequiredMixin, FormView):
     template_name = 'registration-pilot/registry.html'
     model = RegisteringAdult
@@ -284,21 +305,28 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
             schools = []
 
             locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
-            PAYMENTComplaintTypes = \
+            payment_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='PAYMENT').order_by('name')
-            CARDDISTRIBUTIONComplaintTypes = \
+            card_distribution_cmplaint_types= \
                 ComplaintCategory.objects.all().filter(complaint_type='CARD DISTRIBUTION').order_by('name')
-            CARDComplaintTypes = \
+            card_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='CARD').order_by('name')
-            SCHOOLComplaintTypes = \
+            school_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='SCHOOL-RELATED').order_by('name')
-            OTHERComplaintTypes = \
+            other_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='OTHER').order_by('name')
+            bank_complaint_types = \
+                ComplaintCategory.objects.all().filter(complaint_type='BANK').order_by('name')
+            reinstate_beneficiary_complaint_types = \
+                ComplaintCategory.objects.all().filter(complaint_type='REINSTATE BENEFICIARY').order_by('name')
+            months = Person.MONTHS
             location = self.request.GET.get("location", 0)
+            idType = IDType.objects.all().filter(inuse=True).order_by('name')
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
             relationToHouseholdHead = RegisteringAdult.RELATION_TYPE
+            complaint_status = Complaint.STATUS
+            gender = RegisteringAdult.GENDER
             beneficiaryChangedReason = BeneficiaryChangedReason.objects.all()
-
             addressSearchText = self.request.GET.get("addressSearchText", '')
             repSearchText = self.request.GET.get("repSearchText", '')
             idSearchText = self.request.GET.get("idSearchText", '')
@@ -306,13 +334,18 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
             secondarySearchText = self.request.GET.get("secondarySearchText", '')
             if location:
                 schools = School.objects.filter(location_id=location)
-                data = self.model.objects.filter(school__location_id=location,
-                                                 address__icontains=addressSearchText,
-                                                 first_name__icontains=repSearchText,
-                                                 id_number__icontains=idSearchText,
-                                                 primary_phone__icontains=primarySearchText,
-                                                 secondary_phone__icontains=secondarySearchText,
-                                                 ).order_by('id')[:10]
+
+
+
+                data = self.model.objects.annotate(
+                    name=Concat('first_name', V(' '), 'father_name', V(' '), 'last_name'),
+                ).filter(school__location_id=location,
+                         address__icontains=addressSearchText,
+                         name__icontains=repSearchText ,
+                         id_number__icontains=idSearchText,
+                         primary_phone__icontains=primarySearchText,
+                         secondary_phone__icontains=secondarySearchText,
+                         ).order_by('id')[:200]
 
             return {
                 'adults': data,
@@ -320,18 +353,24 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'selectedLocation': int(location),
                 'schools': schools,
                 'phoneAnsweredby': phoneAnsweredby,
+                'idType': idType,
                 'relationToHouseholdHead': relationToHouseholdHead,
+                'gender': gender,
                 'beneficiaryChangedReason': beneficiaryChangedReason,
                 'addressSearchText': addressSearchText,
                 'repSearchText': repSearchText,
                 'idSearchText': idSearchText,
                 'primarySearchText': primarySearchText,
                 'secondarySearchText':secondarySearchText,
-                'PAYMENTComplaintTypes': PAYMENTComplaintTypes,
-                'CARDDISTRIBUTIONComplaintTypes': CARDDISTRIBUTIONComplaintTypes,
-                'CARDComplaintTypes': CARDComplaintTypes,
-                'SCHOOLComplaintTypes': SCHOOLComplaintTypes,
-                'OTHERComplaintTypes': OTHERComplaintTypes,
+                'payment_complaint_types': payment_complaint_types,
+                'card_distribution_cmplaint_types': card_distribution_cmplaint_types,
+                'card_complaint_types': card_complaint_types,
+                'school_complaint_types': school_complaint_types,
+                'other_complaint_types': other_complaint_types,
+                'months': months,
+                'complaint_status': complaint_status,
+                'bank_complaint_types': bank_complaint_types,
+                'reinstate_beneficiary_complaint_types': reinstate_beneficiary_complaint_types,
             }
 
 
