@@ -42,6 +42,10 @@
                             </div>
                             <h3 class="panel-title">{% trans "Verify Caller Identity" %}</h3>
                             <br>
+                            <div class="line">
+                                <label >{% trans "The information the caller provided for you to locate them in the database cannot be used to verify their identify" %}</label>
+                            </div>
+                            <br>
                             <label >{% trans "Caller must answer 2 of the following questions correctly." %}</label>
                             <br>
                             <div class="line">
@@ -61,9 +65,6 @@
                             </div>
                             <div class="line" >
                                 <label >{% trans "- Secondary phone: " %}</label><span id ="hhsecondary_phone"></span>
-                            </div>
-                            <div class="line" style="visibility: hidden;">
-                                <label >{% trans "- Address: " %}</label><span id ="hhAddess"></span>
                             </div>
                         </li>
                     {# 2 Slide update data #}
@@ -92,11 +93,14 @@
                           </select>
                         <hr>
                             <div id = "phoneFields" style="display:none">
-                              <div class="line">
+                                <div class="line" >
+                                    <label  style="width: 200px;">{% trans "Current Primary phone: " %}</label><span id ="hh_current_primary_phone"></span>
+                                </div>
+                                <div class="line">
                                   <label class="text" style="width: 200px;">{% trans "Primary Phone Number: " %}</label>
                                   <input id="primary_phone" maxlength="45" type="text">
                                   <span class="error" id="primary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
-                              </div>
+                                </div>
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "Confirm Phone Number: " %}</label>
                                     <input id="primary_phone_confirm" maxlength="45" type="text">
@@ -112,6 +116,10 @@
                                   </select>
                                   <span class="error" id="primary_phone_answered_error">{% trans "Phone Number are normally answered by is missing" %}</span>
                               </div>
+
+                                <div class="line" >
+                                    <label  style="width: 200px;">{% trans "Current Secondary phone: " %}</label><span id ="hh_current_secondary_phone"></span>
+                                </div>
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "Secondary Phone Number: " %}</label>
                                     <input id="secondary_phone" maxlength="45" type="text">
@@ -134,6 +142,9 @@
                               </div>
                           </div>
                             <div class="line" id = "addressFields" style="display:none">
+                                <div class="line">
+                                    <label  style="width: 200px;">{% trans "Current Address: " %}</label><span id ="hhAddess"></span>
+                                </div>
                                 <label class="text" style="width: 200px;">{% trans "Address: " %}</label>
                                 <textarea cols="30" id="address" name="address" rows="4"></textarea>
                             </div>
