@@ -128,6 +128,10 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'modified',
             'complaint_status',
             'complaint_resolution_date',
+            'complaint_bank_date_of_incident',
+            'complaint_bank_time_of_incident',
+            'complaint_bank_phone_used',
+            'complaint_bank_service_requested',
             'owner'
         )
 
@@ -162,6 +166,9 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
     id_number = serializers.CharField(source='student.id_number')
     age = serializers.CharField(source='student.age')
     school_name = serializers.CharField(source='school.name', read_only=True)
+    location_id = serializers.CharField(source='school.location_id', read_only=True)
+    school_changed_to_verify_location_id = serializers.CharField(source='school_changed_to_verify.location_id',
+                                                                 read_only=True)
     def create(self, validated_data):
 
         student_data = validated_data.pop('student', None)
@@ -187,7 +194,9 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
             'reg_id',
             'school',
             'school_name',
+            'location_id',
             'school_changed_to_verify',
+            'school_changed_to_verify_location_id',
             'enrolled_last_year_school',
             'relation_to_adult',
             'related_to_family',
