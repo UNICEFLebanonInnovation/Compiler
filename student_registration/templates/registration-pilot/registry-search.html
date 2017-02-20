@@ -516,6 +516,8 @@
                             AddChildAgeRow(child);
                          }
 
+                         InitialiseLocationSchoolDropdowns();
+
                          $("#payments-table tbody").empty();
                          for(paymentIndex in household.payments)
                          {
@@ -549,13 +551,55 @@
                 var currentSchoolCell = "<td  >"+(entry.school_name)+"</td>";
                 var NewslocationCell = "<td>"+$("#childSchoolLocation").html()+"</td>";
                 var NewschoolCell = "<td>"+$("#childSchool").html()+"</td>";
-                updateDropDownValue($("#schools-table tr:last-child td:nth-child(5) select"), entry.school_changed_to_verify );
 
                 $("#schools-table tbody").append
                 (
                    "<tr>"+childIDCell+childNameCell+currentSchoolCell+NewslocationCell+NewschoolCell+"</tr>"
                 );
+
+                var location_id =
+                    entry.school_changed_to_verify_location_id==null?
+                    parseInt($("#id_location").val()):
+                    entry.school_changed_to_verify_location_id;
+
+                updateDropDownValue($("#schools-table tr:last-child td:nth-child(4) select"), location_id );
+
+                FilterLocationSchools
+                (
+                    $("#schools-table tr:last-child "),
+                    location_id
+                );
+
+                updateDropDownValue($("#schools-table tr:last-child td:nth-child(5) select"), entry.school_changed_to_verify );
             }
+
+           function InitialiseLocationSchoolDropdowns()
+           {
+               var editForm = $("#schools-table tbody");
+
+               editForm.on
+               (
+                 'change', '[name=childSchoolLocation]',
+                 function()
+                 {
+                    var parentRow = $(this).parent().parent();
+
+                    FilterLocationSchools(parentRow, parseInt($(this).val()));
+
+                    updateDropDownValue(parentRow.find("[name=childSchool]"),null );
+
+                 }
+               );
+
+
+           }
+
+
+           function FilterLocationSchools(editForm, locationID)
+           {
+              editForm.find("[name=childSchool] option[location-id!="+locationID+"]").hide();
+              editForm.find("[name=childSchool] option[location-id="+locationID+"],[value='']").show();
+           }
 
           function AddChildAgeRow(entry)
             {
