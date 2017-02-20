@@ -214,8 +214,7 @@ class Complaint(TimeStampedModel):
     complaint_status = models.CharField(max_length=20, blank=True, null=True, choices=STATUS)
     complaint_solution = models.TextField(blank=True, null=True)
     complaint_resolution_date = models.DateField(blank=True, null=True)
-    complaint_bank_date_of_incident = models.DateField(blank=True, null=True)
-    complaint_bank_time_of_incident = models.TimeField(blank=True, null=True)
+    complaint_bank_date_of_incident = models.DateTimeField(blank=True, null=True)
     complaint_bank_phone_used = models.CharField(max_length=50, blank=True, null=True)
     complaint_bank_service_requested = models.TextField(blank=True, null=True)
 
