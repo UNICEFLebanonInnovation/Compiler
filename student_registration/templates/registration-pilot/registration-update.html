@@ -149,6 +149,7 @@
                                 <div >
                                     <label class="text" style="width: 200px;">{% trans "Individual ID number: " %}</label>
                                     <input id="id_number" maxlength="45" type="text">
+                                    <span class="error" id="beneficiary_id_number_error">{% trans "Invalid ID format." %}</span>
                                 </div>
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "New Beneficiary First Name (Arabic): " %}</label>
@@ -184,6 +185,7 @@
                                     </select>
                                     <select id="years" >
                                     </select>
+                                    <span class="error" id="dob_error">{% trans "DOB is not valid" %}</span>
                                 </div>
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "Realtionship to household head: " %}</label>
@@ -406,6 +408,7 @@
                                 <div class="line">
                                     <label class="text">{% trans "Last four digits of the  Second Card: " %}</label>
                                     <input id="secondcard_last_four_digits" maxlength="45" type="text">
+                                    <span class="error" id="second_card_last_four_digits_error">{% trans "last 4 digits is incorrect" %}</span>
                                 </div>
 
 
