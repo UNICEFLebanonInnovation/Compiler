@@ -15,7 +15,7 @@ from student_registration.schools.models import (
     School,
 )
 from student_registration.locations.models import Location
-
+from student_registration.users.models import User
 
 class OutreachResource(resources.ModelResource):
     governorate = fields.Field(
@@ -78,7 +78,7 @@ class GovernorateFilter(admin.SimpleListFilter):
 class RegisteredInLevelFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
-    title = 'Registered in level'
+    title = 'Have a level assigned?'
 
     # Parameter for the filter that will be used in the URL query.
     parameter_name = 'registered_level'
@@ -112,7 +112,7 @@ class RegisteredInLevelFilter(admin.SimpleListFilter):
 class RegisteredInSectionFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
-    title = 'Registered in section'
+    title = 'Have a section assigned?'
 
     # Parameter for the filter that will be used in the URL query.
     parameter_name = 'registered_section'
@@ -147,17 +147,44 @@ class OutreachAdmin(ImportExportModelAdmin):
     resource_class = OutreachResource
     form = OutreachForm
     list_display = (
-        'student', 'student_age', 'student_sex', 'school', 'caza', 'governorate',
-        'level', 'total', 'assigned_to_level', 'registered_in_level',
-        'section', 'registered_in_school', 'not_enrolled_in_this_school'
+        'student',
+        'student_age',
+        'student_sex',
+        'school',
+        'caza',
+        'governorate',
+        'level',
+        'total',
+        'assigned_to_level',
+        'registered_in_level',
+        'section',
+        'not_enrolled_in_this_school'
     )
-    list_filter = ('alp_round', 'school__number', 'school', 'school__location', GovernorateFilter,
-                   'level', 'assigned_to_level', 'registered_in_level',
-                   'section', 'student__sex', 'not_enrolled_in_this_school',
-                   RegisteredInLevelFilter, RegisteredInSectionFilter, )
+    list_filter = (
+        'alp_round',
+        'school__number',
+        'school',
+        'school__location',
+        GovernorateFilter,
+        'level',
+        'assigned_to_level',
+        'registered_in_level',
+        'section',
+        'student__sex',
+        'not_enrolled_in_this_school',
+        RegisteredInLevelFilter,
+        RegisteredInSectionFilter,
+    )
     search_fields = (
-        'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
-        'school__name', 'school__number', 'student__id_number', 'school__location__name', 'level__name',
+        'student__first_name',
+        'student__father_name',
+        'student__last_name',
+        'student__mother_fullname',
+        'school__name',
+        'school__number',
+        'student__id_number',
+        'school__location__name',
+        'level__name',
         'owner__username'
     )
 
@@ -184,5 +211,171 @@ class OutreachAdmin(ImportExportModelAdmin):
             )
         return total
 
+    def post_total(self, obj):
+        total = obj.post_exam_total
+        if obj.registered_in_level and obj.registered_in_level.note:
+            total = u'{}/{}'.format(
+                str(total),
+                str(obj.registered_in_level.note)
+            )
+        return total
+
+
+class CurrentOutreach(Outreach):
+    class Meta:
+        proxy = True
+
+
+class CurrentOutreachAdmin(OutreachAdmin):
+
+    list_display = (
+        'school',
+        'caza',
+        'governorate',
+        'student_number',
+        'student',
+        'student_age',
+        'student_sex',
+        'student_nationality',
+    )
+
+    list_filter = (
+        'school',
+        'school__location',
+        GovernorateFilter,
+        'student__sex',
+        'student__nationality',
+    )
+
+    def get_queryset(self, request):
+        alp_round = ALPRound.objects.filter(current_pre_test=True)
+        users = User.objects.filter(groups__name__in=['PARTNER'])
+        qs = super(CurrentOutreachAdmin, self).get_queryset(request)
+        return qs.exclude(deleted=True).filter(
+            alp_round=alp_round,
+            owner__in=users
+        )
+
+
+class PreTest(Outreach):
+    class Meta:
+        proxy = True
+
+
+class PreTestAdmin(OutreachAdmin):
+
+    list_display = (
+        'student',
+        'student_age',
+        'student_sex',
+        'school',
+        'caza',
+        'governorate',
+        'level',
+        'total',
+        'assigned_to_level',
+    )
+    list_filter = (
+        'school',
+        'school__location',
+        GovernorateFilter,
+        'level',
+        'assigned_to_level',
+        'student__sex',
+    )
+
+    def get_queryset(self, request):
+        alp_round = ALPRound.objects.filter(current_pre_test=True)
+        qs = super(PreTestAdmin, self).get_queryset(request)
+        return qs.exclude(deleted=True).filter(
+            alp_round=alp_round,
+            level__isnull=True,
+        )
+
+
+class CurrentRound(Outreach):
+    class Meta:
+        proxy = True
+
+
+class CurrentRoundAdmin(OutreachAdmin):
+
+    list_display = (
+        'student',
+        'student_age',
+        'student_sex',
+        'school',
+        'caza',
+        'governorate',
+        'level',
+        'total',
+        'assigned_to_level',
+        'registered_in_level',
+        'section',
+    )
+    list_filter = (
+        'school',
+        'school__location',
+        GovernorateFilter,
+        'level',
+        'assigned_to_level',
+        'registered_in_level',
+        'section',
+        'student__sex',
+    )
+
+    def get_queryset(self, request):
+        alp_round = ALPRound.objects.filter(current_round=True)
+        qs = super(CurrentRoundAdmin, self).get_queryset(request)
+        return qs.exclude(deleted=True).filter(
+            alp_round=alp_round,
+            registered_in_level__isnull=False,
+        )
+
+
+class PostTest(Outreach):
+    class Meta:
+        proxy = True
+
+
+class PostTestAdmin(OutreachAdmin):
+
+    list_display = (
+        'student',
+        'student_age',
+        'student_sex',
+        'school',
+        'caza',
+        'governorate',
+        'registered_in_level',
+        'post_total',
+        'refer_to_level',
+        'section',
+    )
+    list_filter = (
+        'school',
+        'school__location',
+        GovernorateFilter,
+        'registered_in_level',
+        'refer_to_level',
+        'section',
+        'student__sex',
+    )
+
+    def get_queryset(self, request):
+        alp_round = ALPRound.objects.filter(current_post_test=True)
+        qs = super(PostTestAdmin, self).get_queryset(request)
+        return qs.exclude(deleted=True).filter(
+            alp_round=alp_round,
+            registered_in_level__isnull=False,
+            section__isnull=False,
+            refer_to_level__isnull=False
+        )
+
+
 admin.site.register(Outreach, OutreachAdmin)
+admin.site.register(CurrentOutreach, CurrentOutreachAdmin)
+admin.site.register(PreTest, PreTestAdmin)
+admin.site.register(CurrentRound, CurrentRoundAdmin)
+admin.site.register(PostTest, PostTestAdmin)
 admin.site.register(ALPRound)
