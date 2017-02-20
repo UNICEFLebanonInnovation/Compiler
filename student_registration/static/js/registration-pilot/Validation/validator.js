@@ -129,12 +129,6 @@ function ValidateTwoCard()
     result = result && is_valid_first_card_last_four;
     result = result && is_valid_second_card_last_four;
 
-    result = result && isSecondEqualValid;
-
-
-
-    result = result && is_valid_second_card_last_four;
-
     return result;
 
 
@@ -147,10 +141,13 @@ function validate_beneficiary()
 
     var phone = $("#beneficiary_phone").val();
     var phone_confirm = $("#beneficiary_phone_confirm").val();
+    var case_number = $("#id_number").val();
 
     var isPhoneValid = ValidatePhoneNumber(phone)
     var isPhoneConfirmValid = ValidatePhoneNumber(phone_confirm);
     var isPhoneEqualValid= phone == phone_confirm;
+
+
 
     if (!isPhoneValid)
     {
@@ -179,10 +176,59 @@ function validate_beneficiary()
             }
     }
 
+    var id_type = $("#idType").val();
+    var isCaseNumberValid = true;
+    if(id_type == 1)
+    {
 
+        isCaseNumberValid=  validateUNHCRNumber(case_number);
+        if (!isCaseNumberValid)
+        {
+            $("#beneficiary_id_number_error").show();
+        }
+        else
+        {
+            $("#beneficiary_id_number_error").hide();
+        }
+    }
+    else
+    {
+        $("#beneficiary_id_number_error").hide();
+
+    }
+
+
+    var isDOBValid = true;
+    alert($("#days").val());
+    alert($("#months").val());
+    alert($("#years").val());
+    if($("#days").val() == ""|| $("#months").val() == ""||$("#years").val() == "")
+    {
+        isDOBValid = false;
+        $("#dob_error").show();
+    }
+    else
+    {
+        $("#dob_error").hide();
+
+    }
+
+    if($("#days").val() && $("#months").val() && $("#years").val())
+    {
+
+        $("#dob_error").hide();
+    }
+    else
+    {
+        isDOBValid = false;
+        $("#dob_error").show();
+
+    }
     result = result && isPhoneValid;
     result = result && isPhoneConfirmValid;
     result = result && isPhoneEqualValid;
+    result = result && isCaseNumberValid;
+    result = result && isDOBValid;
 
     return result;
 }
