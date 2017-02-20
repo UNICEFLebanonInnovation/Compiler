@@ -332,20 +332,20 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
             idSearchText = self.request.GET.get("idSearchText", '')
             primarySearchText = self.request.GET.get("primarySearchText", '')
             secondarySearchText = self.request.GET.get("secondarySearchText", '')
-            if location:
-                schools = School.objects.filter(location_id=location)
+            # if location:
+            #     schools = School.objects.filter(location_id=location)
+            schools = School.objects.all().order_by('name')
 
 
-
-                data = self.model.objects.annotate(
-                    name=Concat('first_name', V(' '), 'father_name', V(' '), 'last_name'),
-                ).filter(school__location_id=location,
-                         address__icontains=addressSearchText,
-                         name__icontains=repSearchText ,
-                         id_number__icontains=idSearchText,
-                         primary_phone__icontains=primarySearchText,
-                         secondary_phone__icontains=secondarySearchText,
-                         ).order_by('id')[:200]
+            data = self.model.objects.annotate(
+                name=Concat('first_name', V(' '), 'father_name', V(' '), 'last_name'),
+            ).filter(school__location_id=location,
+                     address__icontains=addressSearchText,
+                     name__icontains=repSearchText ,
+                     id_number__icontains=idSearchText,
+                     primary_phone__icontains=primarySearchText,
+                     secondary_phone__icontains=secondarySearchText,
+                     ).order_by('id')[:200]
 
             return {
                 'adults': data,

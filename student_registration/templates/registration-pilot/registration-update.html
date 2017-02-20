@@ -260,9 +260,9 @@
                                   </tbody>
                                 </table>
                                 <div id = "childSchool" style = "display:none">
-                                    <select>
+                                    <select name = "childSchool">
                                         {% for school in schools %}
-                                            <option value="{{ school.id }}">
+                                            <option value="{{ school.id }}" location-id = "{{ school.location_id }}" >
                                                 {{ school.name }}
                                             </option>
                                         {% endfor %}
@@ -270,9 +270,9 @@
                                 </div>
 
                                 <div id = "childSchoolLocation" style = "display:none">
-                                    <select>
+                                    <select name = "childSchoolLocation">
                                         {% for location in locations %}
-                                            <option value="{{ location.id }}">
+                                            <option value="{{ location.id }}" >
                                                 {{ location }}
                                             </option>
                                         {% endfor %}
