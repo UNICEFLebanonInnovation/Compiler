@@ -22,10 +22,6 @@
 
 {% block content-full-page %}
 
-    {% if alp_phase == 'pre_test' %}
-        {% include 'alp/prototype_new.html' %}
-    {% endif %}
-
          <section class="main-content-wrapper">
             <section id="main-content">
                  <div class="row">
@@ -52,7 +48,6 @@
                                       </button>
                                     </li>
                                     <li>
-                                        {% if request.user|has_group:"CERD" %}
                                         <select name="school" id="filter_school" style="width: 210px;">
                                             <option value="">{% trans "Filter by School" %}</option>
                                             {% for item in schools %}
@@ -61,17 +56,14 @@
                                                 </option>
                                             {% endfor %}
                                         </select>
-                                        {% endif %}
-                                        {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}
                                         <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />
                                         <button class="btn btn-warning" id="filter_cancel">
                                             {% trans "Rest filter" %}
                                         </button>
-                                        {% endif %}
-                                        <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}" target="_blank">
-                                            <i class="icon-export-sign icon-white"></i>&nbsp;
-                                                {% trans "Export" %}
-                                        </a>
+{#                                        <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}" target="_blank">#}
+{#                                            <i class="icon-export-sign icon-white"></i>&nbsp;#}
+{#                                                {% trans "Export" %}#}
+{#                                        </a>#}
                                     </li>
                                 </ol>
                             <div class="actions pull-right">
@@ -89,14 +81,7 @@
                                        width="100%" style="margin-bottom: 100px; margin-top: 75px;">
                                 <thead>
                                     <tr id="thead-line-1">
-                                        <th rowspan="2">&nbsp;
-                                            {% if request.user|has_group:"ALP_SCHOOL" %}
-                                                <label class="col-100">{% trans "Not enrolled in this school" %}</label>
-                                            {% endif %}
-                                            {% if request.user|has_group:"CERD" and alp_phase == 'pre_test' %}
-                                                <label class="col-100">{% trans "Exam not received from this school" %}</label>
-                                            {% endif %}
-                                        </th>
+                                        <th rowspan="2">&nbsp;<label class="col-100">{% trans "Exam not received from this school" %}</label></th>
                                         <th rowspan="2"><label>{% trans "District" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Governorate" %}</label></th>
                                         <th rowspan="2"><label class="col-60">{% trans "School number" %}</label></th>
@@ -105,40 +90,13 @@
                                         <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Sex" %}</label></th>
-                                        {% if request.user|has_group:"CERD" %}
-                                            {% if alp_phase == 'pre_test' %}
-                                        <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Registered in level" %}</label></th>
-                                            {% endif %}
-                                            {% if alp_phase == 'post_test' %}
                                         <th rowspan="2"><label>{% trans "Registered in level" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Registered in section" %}</label></th>
-                                            {% endif %}
                                         <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
-                                        <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Assigned to level" %}</label></th>
-                                        {% endif %}
-                                        {% if request.user|has_group:"ALP_SCHOOL" %}
-                                            <th colspan="5" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student actual status" %}</label></th>
-                                        {% endif %}
-                                        {% if alp_phase == 'pre_test' %}
-                                        <th colspan="3" style="text-align: center;"><label>{% trans "Student birthday" %}</label></th>
-                                        <th rowspan="2"><label class="col-60">{% trans "Student age" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Student nationality" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Mother fullname" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Mother nationality" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Registered in UNHCR" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Student ID Type" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Student ID Number" %}</label>
-                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"></i>
-                                        </th>
-                                        <th rowspan="2"><label>{% trans "Student living address" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Phone number (6 digits)" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Phone prefix (2 digits)" %}</label></th>
-                                        <th colspan="2" style="text-align: center; background-color: #67b168;"><label>{% trans "Last student education" %}</label></th>
-                                        <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
+                                        <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Refer to level" %}</label></th>
                                         {% endif %}
                                     </tr>
                                     <tr id="thead-line-2">
-                                        {% if request.user|has_group:"CERD" %}
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Math" %}</label></th>
@@ -148,53 +106,15 @@
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Foreign language corrector" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>
-                                        {% endif %}
-                                        {% if request.user|has_group:"ALP_SCHOOL" %}
-                                            <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Registered in level" %}</label></th>
-                                            <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Student Total grade" %}</label></th>
-                                            <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Assigned to level" %}</label></th>
-                                            <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current Level" %}</label></th>
-                                            <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current Section" %}</label></th>
-                                        {% endif %}
-                                        {% if alp_phase == 'pre_test' %}
-                                        <th><label>{% trans "year" %}</label></th>
-                                        <th><label>{% trans "month" %}</label></th>
-                                        <th><label>{% trans "day" %}</label></th>
-                                        <th style="background-color: #67b168;"><label class="col-100">{% trans "Last education level" %}</label></th>
-                                        <th style="background-color: #67b168;"><label>{% trans "Education year" %}</label></th>
-                                        <th style="background-color: #ec971f;"><label class="col-150">{% trans "Is the child participated in an ALP program" %}</label></th>
-                                        <th style="background-color: #ec971f;"><label>{% trans "ALP round" %}</label></th>
-                                        <th style="background-color: #ec971f;"><label>{% trans "ALP level" %}</label></th>
-                                        <th style="background-color: #ec971f;"><label>{% trans "ALP result" %}</label></th>
-                                        {% endif %}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {% if request.user|has_group:"CERD" %}
-                                    {% for line in data %}
-                                        {% include 'alp/prototype-view_new.html' with role="CERD" student=line.student level=line.registered_in_level %}
-                                    {% endfor %}
-                                {% endif %}
-                                {% if request.user|has_group:"ALP_SCHOOL" %}
-                                    {% for line in data %}
-                                        {% include 'alp/prototype-view_new.html' with role="ALP_SCHOOL" student=line.student level=line.level %}
-                                    {% endfor %}
-                                {% endif %}
+                                {% for line in data %}
+                                    {% include 'alp/prototype-view_new.html' with role="CERD" student=line.student level=line.registered_in_level %}
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
-                        {% if alp_phase == 'pre_test' %}
-                            <div style="position: fixed; bottom: 10px; {% if LANGUAGE_CODE == 'ar-ar' %}right: 35px;{% else %}left: 35px;{% endif %}">
-                              <button class="btn btn-success" id="add_datatable_line">
-                                <i class="icon-plus-sign icon-white"></i>&nbsp;
-                                    {% trans "Add empty line" %}
-                              </button>
-                              <button class="btn btn-success" id="add_defined_lines">
-                                <i class="icon-plus-sign icon-white"></i>&nbsp;
-                                    {% trans "Add defined number of lines" %}
-                              </button>
-                            </div>
-                        {% endif %}
                      </div>
                 </div>
             </div>
@@ -233,11 +153,7 @@
         var prototype = $('#outreach_prototype');
         var table = $('#outreaches-table');
         var selectedSchool = '{{ selectedSchool }}';
-        var filterSchools = false;
-        var alp_phase = '{{ alp_phase }}';
-        {% if request.user|has_group:"CERD" or request.user|has_group:"ALP_SCHOOL" %}
-            var filterSchools = true;
-        {% endif %}
+        var filterSchools = true;
         var protocol = 'http://';
         {% if request.is_secure %}
             protocol = 'https://';
@@ -299,10 +215,7 @@
             $("#filter_school").change(function(){
                 var selected_school = $(this).val();
                // reload the page with the school id passed in post
-                var url = '{% url "alp:alp_pre_test" %}';
-                if(alp_phase == 'post_test'){
-                    url = '{% url "alp:alp_post_test" %}';
-                }
+                url = '{% url "alp:alp_post_test" %}';
                 if(selected_school){
                     url = url+'?school='+selected_school;
                 }
@@ -330,81 +243,8 @@
                 }
             });
 
-            $(document).on('click', '#add_datatable_line', function(){
-                var item = create_item_store_default_keys();
-                add_to_store(item);
-                scrollToBottom();
-                $('#filter_cancel').trigger('click');
-            });
-
-            $(document).on('click', '#add_defined_lines', function(){
-                bootbox.prompt("{% trans 'Please enter extra column name' %}", function(result) {
-                    if (result === null) {
-                    } else {
-                        var number = parseInt(result);
-                        for (var i = 0; i < number; i++) {
-                            var item = create_item_store_default_keys();
-                            add_to_store(item);
-                        }
-                        scrollToBottom();
-                        $('#filter_cancel').trigger('click');
-                    }
-                });
-            });
-
-            $(document).on('click', '.delete-outreach-row', function(){
-                var item = $(this);
-                bootbox.confirm("{% trans 'are you sure you want to delete this row?' %}", function(result) {
-                    if(result == true){
-                        delete_from_store(item.attr('itemscope'), 'outreaches');
-                        item.parents('tr').remove();
-                    }
-                });
-            });
-
             $(document).on("click", "input[type='text']", function(){
                 $(this).select();
-            });
-
-            $(document).on('change', '.outreach-location', function(){
-                if($(this).val()){
-                    var option = $(this).find('option:selected');
-                    var itemblock = '.governorate_name_'+$(this).attr('itemscope');
-                    update_item_store(parseInt($(this).attr('itemscope')), 'governorate_name', option.attr('data-parent'), 'outreaches');
-                    $(itemblock).val(option.attr('data-parent'));
-
-                    var school = $('#line-'+$(this).attr('itemscope')).find('.outreach-school');
-                    school.find('option').hide();
-                    school.find('option[value=""]').show();
-                    school.find('option[data-parent='+$(this).val()+']').show();
-                }else{
-                    var itemblock = '.governorate_name_'+$(this).attr('itemscope');
-                    update_item_store(parseInt($(this).attr('itemscope')), 'governorate_name', '', 'outreaches');
-                    $(itemblock).val('');
-
-                    var school = $('#line-'+$(this).attr('itemscope')).find('.outreach-school');
-                    school.find('option').hide();
-                    school.find('option[value=""]').show();
-                }
-            });
-
-            $(document).on('change', '.outreach-school', function(){
-                if($(this).val()){
-                    var option = $(this).find('option:selected');
-                    update_item_store(parseInt($(this).attr('itemscope')), 'school_number', option.attr('itemcontent'), 'outreaches');
-                    var itemblock = '.school_number_'+$(this).attr('itemscope');
-                    $(itemblock).val(option.attr('itemcontent'));
-                }
-            });
-
-            $(document).on('change', '.student_birthday', function(){
-                if($(this).val()) {
-                    var option = $(this).find('option:selected');
-                    var age = calculateAge($(this).attr('itemscope'));
-                    update_item_store(parseInt($(this).attr('itemscope')), 'student_age', age, 'outreaches');
-                    var itemblock = '.student_age_'+$(this).attr('itemscope');
-                    $(itemblock).val(age);
-                }
             });
 
             $(document).on('change', '.exam-note', function(){
@@ -445,13 +285,6 @@
                 item.find('#poat_exam_total').trigger('blur');
             });
 
-            $(document).on('blur', '#exam_total, #level', function(){
-                calc_assigned_level($(this).parent().parent());
-            });
-            $(document).on('change', '#exam_total, #level', function(){
-                calc_assigned_level($(this).parent().parent());
-            });
-
             $(document).on('blur', '#post_exam_total', function(){
                 calc_assigned_post_level($(this).parent().parent());
             });
@@ -470,18 +303,6 @@
                 item.find('.note-indicator-total').text('/'+total);
                 item.find('.note-indicator-total').attr('value', '/'+total);
                 item.find('.note-indicator-total').trigger('blur');
-            });
-
-            $(document).on('blur', '.outreach-field', function(){
-                if($(this).attr('data-value')){
-                    update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'outreaches');
-                }else{
-                    var value = $(this).attr('value');
-                    if(!value){
-                        value = $(this).val();
-                    }
-                    update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), value, 'outreaches');
-                }
             });
 
             $(document).on('blur', '.outreach-field-p', function(){
@@ -507,47 +328,6 @@
             });
 
         });
-
-        function duplicate_item_values(duplicata, fields)
-        {
-            var new_item = create_item_store_default_keys();
-            $.each(fields, function(field, flag){
-                if(flag){
-                    new_item[field] = duplicata[field];
-                }
-            });
-
-            add_to_store(new_item);
-            add_fill_line_data(new_item);
-            scrollToBottom();
-        }
-
-        function create_item_store_default_keys()
-        {
-            var item = {id: rows, synchronized: false, deleted: false, owner: user_id, original_id: 0, to_update: false};
-            var fields = $('#outreach_prototype').find('.outreach-field');
-            $(fields).each(function(i, field){
-                if($(field).attr('data-name')) {
-                    item[$(field).attr('data-name')] = '';
-                }else{
-                    if(filterSchools == true){
-                        item[$(field).attr('name')] = $(field).val();
-                    }else{
-                        item[$(field).attr('name')] = '';
-                    }
-                }
-            });
-
-            return item;
-        }
-
-        function add_to_store(data)
-        {
-            var store = getStoreByName('outreaches');
-            var request = store.put(data);
-            add_table_newline(data.id, prototype, table);
-            rows = rows + 1;
-        }
 
         function build_datatable()
         {
@@ -601,34 +381,6 @@
 
         function synchronize_data(showFeedback)
         {
-            var store = getStoreByName('outreaches');
-            var request = store.getAll();
-            request.onsuccess = function() {
-                var result = request.result;
-                $(result).each(function(i, item){
-                    if(item.synchronized == false) {
-                        push_data_to_server(item);
-                    }else if(item.deleted == true){
-                        delete_data_from_server(synchro_path, item.original_id, item.id, 'outreaches');
-                    }else if(item.to_update == true) {
-                        update_data_into_server(item);
-                    }
-                    $(".loader").hide();
-                });
-                if(showFeedback && synchro_result == true){
-                    $('#alert-synchro-success').show();
-                    setTimeout(function(){
-                        $('#alert-synchro-success').hide();
-                    }, 5000);
-                }
-                if(showFeedback && synchro_result == false){
-                    $('#alert-synchro-warning').show();
-                    setTimeout(function(){
-                        $('#alert-synchro-warning').hide();
-                    }, 5000);
-                }
-            };
-
             var store_p = getStoreByName('outreaches-p');
             var request_p = store_p.getAll();
             request_p.onsuccess = function() {
@@ -643,96 +395,11 @@
             $(".loader").hide();
         }
 
-        function push_data_to_server(item)
-        {
-            var data = item;
-
-            $.ajax({
-                type: "POST",
-                url: synchro_path,
-                data: data,
-                cache: false,
-                async: false,
-                headers: getHeader(),
-                dataType: 'json',
-                success: function (response, result, jqXHR) {
-                    if(jqXHR.status == 201){
-{#                        $('#line-'+item.id).find('#student_number').val(response.student_number);#}
-{#                        $('#line-'+item.id).find('#student_number').trigger('blur');#}
-                        $('#line-'+item.id).find('.outreach-field').removeClass('required');
-                        item.synchronized = true;
-                        item.original_id = response.id;
-
-                        update_item_store(parseInt(item.id), 'synchronized', true, 'outreaches');
-                        update_item_store(parseInt(item.id), 'original_id', response.id, 'outreaches');
-                        update_items_by_index('entity', parseInt(item.id), 'entity_id', response.id, 'eav-columns-values');
-                        synchro_result = true;
-                    }
-                },
-                error: function (response) {
-                    var required_fields = JSON.parse(response.responseText);
-                    $('#line-'+item.id).find('.outreach-field').removeClass('required');
-                    $.each(required_fields, function(field_name, field_msg){
-                        $('#line-'+item.id).find('#'+field_name).addClass('required');
-                    });
-                    synchro_result = false;
-                    console.log(response);
-                }
-            });
-        }
-
-        function update_data_into_server(item)
-        {
-            var data = item;
-
-            $.ajax({
-                type: "PUT",
-                url: synchro_path+item.original_id+'/',
-                data: data,
-                cache: false,
-                headers: getHeader(),
-                dataType: 'json',
-                success: function (response, result, jqXHR) {
-                    if(jqXHR.status == 200){
-{#                        $('#line-'+item.id).find('#student_number').val(response.student_number);#}
-{#                        $('#line-'+item.id).find('#student_number').trigger('blur');#}
-                        $('#line-'+item.id).find('.outreach-field').removeClass('required');
-                        update_item_store(parseInt(item.id), 'synchronized', true, 'outreaches');
-                        update_item_store(parseInt(item.id), 'to_update', false, 'outreaches');
-                        update_items_by_index('entity', parseInt(item.id), 'entity_id', item.original_id, 'eav-columns-values');
-                        synchro_result = true;
-                    }
-                },
-                error: function (response) {
-                    var required_fields = JSON.parse(response.responseText);
-                    $('#line-'+item.id).find('.outreach-field').removeClass('required');
-                    $.each(required_fields, function(field_name, field_msg){
-                        $('#line-'+item.id).find('#'+field_name).addClass('required');
-                    });
-                    console.log(response);
-                    synchro_result = false;
-                }
-            });
-        }
-
         function patch_data_into_server(item)
         {
             var itemid = item.id;
             var data = item;
             delete data.id;
-
-            if(data.exam_result_arabic) {
-                data.exam_result_arabic = data.exam_result_arabic.replace(",",".");
-            }
-            if(data.exam_result_language) {
-                data.exam_result_language = data.exam_result_language.replace(",",".");
-            }
-            if(data.exam_result_math) {
-                data.exam_result_math = data.exam_result_math.replace(",",".");
-            }
-            if(data.exam_result_science) {
-                data.exam_result_science = data.exam_result_science.replace(",",".");
-            }
 
             if(data.post_exam_result_arabic) {
                 data.post_exam_result_arabic = data.post_exam_result_arabic.replace(",",".");
@@ -768,36 +435,6 @@
             });
         }
 
-        function pull_data(url, store_name)
-        {
-            $.ajax({
-                type: "GET",
-                url: url,
-                cache: false,
-                async: false,
-                headers: getHeader(),
-                dataType: 'json',
-                success: function (response) {
-                    var store = getStoreByName(store_name);
-                    var data = response;
-                    if(response.data) {
-                        data = response.data;
-                    }
-                    $(data).each(function(i, item){
-                        item['synchronized'] = true;
-                        item['deleted'] = false;
-                        item['student_nationality'] = item.student_nationality_id;
-                        item['student_mother_nationality'] = item.student_mother_nationality_id;
-                        item['student_id_type'] = item.student_id_type_id;
-                        store.put(item);
-                    });
-                },
-                error: function(response) {
-                    console.log(response);
-                }
-            });
-        }
-
         function createStores()
         {
             var request = indexedDB.open("bd_posttest", 3);
@@ -816,16 +453,6 @@
                 if(flag){
                     var store = db.createObjectStore("outreaches", {keyPath: "id", autoIncrement:true});
                     db.createObjectStore("outreaches-p", {keyPath: "id", autoIncrement:true});
-                    var store1 = db.createObjectStore("eav-shared-columns", {keyPath: "id", autoIncrement:true});
-                    store1.createIndex('name', 'name');
-
-                    var store2 = db.createObjectStore("eav-columns", {keyPath: "id", autoIncrement:true});
-                    store2.createIndex('name', 'name');
-                    var store3 = db.createObjectStore("eav-columns-values", {keyPath: "id", autoIncrement:true});
-                    store3.createIndex('name', 'name');
-                    store3.createIndex('entity', 'entity');
-                    store3.createIndex('column', 'column');
-                    store3.createIndex('attribute', 'attribute');
 
                     var profile_store = db.createObjectStore("user", {keyPath: "id"});
                     profile_store.put({id: user_id, username: user_username, email: user_email});
@@ -840,100 +467,6 @@
                     $(".loader").hide();
                 }, 5000);
             };
-        }
-
-        function calculateAge(itemid)
-        {
-            var age = 0;
-            var form = $('#line-'+itemid);
-
-            var birthday_day = form.find('#student_birthday_day').val();
-            var birthday_month = form.find('#student_birthday_month').val();
-            var birthday_year = form.find('#student_birthday_year').val();
-
-            var birthDate = new Date(birthday_year, birthday_month, birthday_day);
-
-            if(birthday_day != "" && birthday_month != "" && birthday_year != "" ) {
-                age = getDateDiff(birthDate,new Date());
-            }
-
-            return age;
-        }
-
-        function getDateDiff(dateOfBirth, dateToCalculate) {
-            var calculateYear = dateToCalculate.getFullYear();
-            var calculateMonth = dateToCalculate.getMonth();
-            var calculateDay = dateToCalculate.getDate();
-
-            var birthYear = dateOfBirth.getFullYear();
-            var birthMonth = dateOfBirth.getMonth();
-            var birthDay = dateOfBirth.getDate();
-
-            var age = calculateYear - birthYear;
-            var ageMonth = calculateMonth - birthMonth;
-            var ageDay = calculateDay - birthDay;
-
-            if (ageMonth < 0 || (ageMonth == 0 && ageDay < 0)) {
-                age = parseInt(age) - 1;
-            }
-
-            return age;
-        }
-
-        function calc_assigned_level(item)
-        {
-            var level = parseInt(item.find('#level').val());
-            var total = parseInt(item.find('#exam_total').val());
-            var assigned_level = item.find('#assigned_to_level');
-            var to_level = 0;
-
-            if(level == 1 || level == 2 || level == 3){
-                if(total < 40){
-                    to_level = 1;
-                }else if(total >= 40 && total < 80){
-                    to_level = 2;
-                }else if(total >= 80 && total <= 120){
-                    to_level = 3;
-                }
-            }
-            if(level == 4 || level == 5 || level == 6){
-                if(total < 20) {
-                    to_level = 1;
-                }else if(total >= 20 && total < 40){
-                    to_level = 2;
-                }else if(total >= 40 && total < 60){
-                    to_level = 3;
-                }else if(total >= 60 && total < 100){
-                    to_level = 4;
-                }else if(total >= 100 && total < 140){
-                    to_level = 5;
-                }else if(total >= 140 && total <= 180){
-                    to_level = 6;
-                }
-            }
-            if(level == 7 || level == 8 || level == 9){
-                if(total < 20) {
-                    to_level = 1;
-                }else if(total >= 20 && total < 40){
-                    to_level = 2;
-                }else if(total >= 40 && total < 60){
-                    to_level = 3;
-                }else if(total >= 60 && total < 80){
-                    to_level = 4;
-                }else if(total >= 80 && total < 100){
-                    to_level = 5;
-                }else if(total >= 100 && total < 120){
-                    to_level = 6;
-                }else if(total >= 120 && total < 160){
-                    to_level = 7;
-                }else if(total >= 160 && total < 200){
-                    to_level = 8;
-                }else if(total >= 200 && total <= 240){
-                    to_level = 9;
-                }
-            }
-            assigned_level.val(to_level);
-            assigned_level.trigger('blur');
         }
 
         function calc_assigned_post_level(item)
