@@ -382,12 +382,18 @@
                                 </select>
                             </div>
                             <div class="line" id = "schoolRefusedEntranceFields" style="display:none">
-                                <label class="text" style="width: 200px;">{% trans "Complaint Type: " %}</label>
-                                <select id="school_complaint" >
-                                    {% for itm in school_complaint_types %}
-                                        <option value="{{ itm.id }}">{{ itm.name }}</option>
-                                    {% endfor %}
-                                </select>
+                                <div  id = "schoolComplaintSelect" style="display:none">
+                                    <label class="text" style="width: 200px;">{% trans "Complaint Type: " %}</label>
+                                    <select id="school_complaint" >
+                                        {% for itm in school_complaint_types %}
+                                            <option value="{{ itm.id }}">{{ itm.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <label>{% trans "Please select the child if the child has been refused re-entry into school after dropping out" %}</label>
+                                <label class="text" style="width: 200px;">{% trans "Student: " %}</label>
+                                    <select id="student_refused_entrance" style="width: 440px;" >
+                                    </select>
                             </div>
                             <div class="line" id = "otherFields" style="display:none">
                                 <label class="text" style="width: 200px;">{% trans "Complaint Type: " %}</label>
@@ -398,30 +404,42 @@
                                 </select>
                             </div>
                             <div class="line" id = "bankFields" style="display:none">
-                                <label class="text" style="width: 200px;">{% trans "Complaint Type: " %}</label>
-                                <select id="bank_complaint" >
-                                    {% for itm  in bank_complaint_types %}
-                                        <option value="{{ itm.id }}">{{ itm.name }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="line">
+                                <div class="line" id = "bankSelect" style="display:none">
+                                    <label class="text" style="width: 200px;">{% trans "Complaint Type: " %}</label>
+                                    <select id="bank_complaint" >
+                                        {% for itm  in bank_complaint_types %}
+                                            <option value="{{ itm.id }}">{{ itm.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="line field-select-small-size">
                                     <label class="text" style="width: 200px;">{% trans "Date of incident: " %}</label>
-                                    <input id="complaint_bank_date_of_incident" maxlength="45" type="text">
+                                    <select id="complait_days" ></select>
+                                    <select id="complait_months" >
+                                        {% for value, text in months %}
+                                            <option value="{{ value }}">{{ text }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <select id="complait_years" > </select>
+                                    <span class="error" id="complait_date_error">{% trans "Date is not valid" %}</span>
+                                </div>
+                                <div class="line field-select-small-size">
+                                    <label class="text" style="width: 200px;">{% trans "Time of incident: " %}</label>
+                                    <select id="complait_hours" ></select>
+                                    <select id="complait_minutes" ></select>
+                                    <select id="complait_am_pm" >
+                                        <option value="AM">AM</option>
+                                        <option value="PM">PM</option>
+                                    </select>
                                 </div>
                                 <div class="line">
-                                    <label class="text" style="width: 200px;">{% trans "Time of incident: " %}</label>
-                                    <input id="complaint_bank_time_of_incident" maxlength="45" type="text">
-                                </div>
-                                <div class="line">
-                                    <label class="text" style="width: 200px;">{% trans "Time of incident: " %}</label>
+                                    <label class="text" style="width: 200px;">{% trans "Phone number from which call was placed: " %}</label>
                                     <input id="complaint_bank_phone_used" maxlength="45" type="text">
                                 </div>
                                 <div class="line">
-                                    <label class="text" style="width: 200px;">{% trans "Time of incident: " %}</label>
+                                    <label class="text" style="width: 200px;">{% trans "Service requested " %}</label>
                                     <input id="complaint_bank_service_requested" maxlength="45" type="text">
                                 </div>
-
-
                             </div>
                             <div class="line" id = "twoCardsFields" style="display:none">
                                 <div class="line">
@@ -463,9 +481,12 @@
 
                             </div>
                             <div class="line" id = "ComplaintFields" style="display:none">
+
                                 <label class="text" style="width: 200px;">{% trans "Comment: " %}</label>
                                 <textarea cols="38" id="complaint" name="complaint" rows="1"></textarea>
                                 <br>
+                            </div>
+                            <div class="line" id = "ComplaintHistory" style="display:none">
                                 <label class="text" style="width: 400px;">{% trans "Complaint History: " %}</label>
                                 <table id="complaints-table" class="table table-striped table-bordered cell-border"
                                        data-height="500"

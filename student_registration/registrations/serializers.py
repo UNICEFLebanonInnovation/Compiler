@@ -115,10 +115,18 @@ class ComplaintSerializer(serializers.ModelSerializer):
     complaint_id = serializers.IntegerField(source='id', read_only=True)
     complaint_type = serializers.CharField(source='complaint_category.complaint_type', read_only=True)
     complaint_category_name = serializers.CharField(source='complaint_category.name', read_only=True)
+    complaint_student_first_name = serializers.CharField(source='complaint_student_refused_entrance.first_name',
+                                                         read_only=True)
+    complaint_student_father_name = serializers.CharField(source='complaint_student_refused_entrance.father_name',
+                                                          read_only=True)
+    complaint_student_last_name = serializers.CharField(source='complaint_student_refused_entrance.last_name',
+                                                        read_only=True)
+
     class Meta:
         model = Complaint
         fields = (
             'complaint_id',
+            'complaint_adult',
             'complaint_type',
             'complaint_category',
             'complaint_category_name',
@@ -131,6 +139,10 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'complaint_bank_date_of_incident',
             'complaint_bank_phone_used',
             'complaint_bank_service_requested',
+            'complaint_student_refused_entrance',
+            'complaint_student_first_name',
+            'complaint_student_father_name',
+            'complaint_student_last_name',
             'owner'
         )
 
