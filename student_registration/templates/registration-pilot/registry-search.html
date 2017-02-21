@@ -186,12 +186,14 @@
         {% if request.is_secure %}
             protocol = 'https://';
         {% endif %}
+        var user_id = {{ request.user.id }};
+        var complaint_hh_id = null;
         var host = protocol+'{{ request.get_host }}';
         var synchro_path = host+'/api/registry-search/';
 
         var checking_id_number_url = host+'/api/registrations-adult-id/';
         var childURL = host+'/api/registrations-child/';
-        var complaintURL = host+'/api/registrations_complaint/';
+        var complaintURL = host+'/api/registrations-complaint/';
 
         var hhID = null;
 
@@ -200,7 +202,11 @@
            function()
            {
                InitialiseDays('days', 1,31);
+               InitialiseDays('complait_days', 1,31);
                InitialiseDays('years',1930,2000);
+               InitialiseDays('complait_years',2017,2100);
+               InitialiseDays('complait_hours',1,12);
+               InitialiseDays('complait_minutes',1,60);
                InitialiseSave();
                InitialiseClose();
                InitialiseChildDropdown();
@@ -279,6 +285,33 @@
                   pull_data_from_server(host+'/api/schools/', 'schools');
               }
 
+              $("#card_distribution_complaint").change(function () {
+              var selectedOption = $(this).val();
+
+              if(selectedOption == 12)
+              {
+                  bootbox.alert("Please update household phone number");
+                  $("#cardPhoneFields").show();
+              }
+              else
+                  {
+                      $("#cardPhoneFields").hide();
+                  }
+              });
+
+                $("#reason").change(function () {
+                    var selectedOptionText =  $("#reason option:selected").text();
+                    if(selectedOptionText == "Other (Specify)")
+                    {
+                        $("#beneficiary_reason").show();
+                    }
+                    else
+                    {
+                        $("#beneficiary_reason").hide();
+                    }
+                });
+
+
             // get selected option to update and set the fields visible
             $("#changeOption").change(function () {
               hideAll();
@@ -292,7 +325,6 @@
                 }
                 else if (selectedOption == 'school_change' ) {
                   $("#schoolChangeFields").show();
-                  UpdateChildSchool();
                 }
                 else if (selectedOption == 'beneficiary' ) {
                   $("#beneficiaryFields").show();
@@ -300,33 +332,42 @@
                 else if (selectedOption == 'payment' ) {
                   $("#paymentFields").show();
                   $("#ComplaintFields").show();
+                  $("#ComplaintHistory").show();
                 }
                 else if (selectedOption == 'cardStatus' ) {
                   $("#cardStatusFields").show();
                   $("#ComplaintFields").show();
+                  $("#ComplaintHistory").show();
                 }
                 else if (selectedOption == 'card' ) {
+                  bootbox.alert("Refer to BLF Hotline:01242477/03242477");
                   $("#cardFields").show();
-                  $("#ComplaintFields").show();
+                  $("#ComplaintHistory").show();
                 }
                 else if (selectedOption == 'reinstateBeneficiary' ) {
                   $("#reinstateBeneficiaryFields").show();
                   $("#ComplaintFields").show();
+                  $("#ComplaintHistory").show();
                 }
                 else if (selectedOption == 'schoolRefusedEntrance' ) {
+                  UpdateChildSchool();
                   $("#schoolRefusedEntranceFields").show();
                   $("#ComplaintFields").show();
+                  $("#ComplaintHistory").show();
                 }
                 else if (selectedOption == 'otherComplaint' ) {
                   $("#otherFields").show();
                   $("#ComplaintFields").show();
+                  $("#ComplaintHistory").show();
                 }
                 else if (selectedOption == 'refusedServiceBLF' ) {
                   $("#bankFields").show();
                   $("#ComplaintFields").show();
+                  $("#ComplaintHistory").show();
                 }
                 else if (selectedOption == 'twoCards' ) {
                   $("#twoCardsFields").show();
+                  $("#ComplaintHistory").show();
                 }
 
                 });
@@ -349,6 +390,9 @@
             $("#reinstateBeneficiaryFields").hide();
             $("#bankFields").hide();
             $("#twoCardsFields").hide();
+            $("#cardPhoneFields").hide();
+            $("#ComplaintHistory").hide();
+            ComplaintHistory
           }
 
               function loadAjaxCall(regId , data)
@@ -401,13 +445,17 @@
                          var household = response;
                          householdRecord = household;
                          console.log(response);
-
+                         complaint_hh_id = hhID;
                          $("#hhName").text(household.first_name+' '+household.father_name+' '+household.last_name);
                          $("#hhIdNumber").text(household.id_number);
                          $("#hhDOB").text(household.birthday_day+'/'+household.birthday_month+'/'+household.birthday_year);
                          $("#hhLastcardgigits").text(household.card_last_four_digits);
                          $("#hhprimary_phone").text(household.primary_phone);
                          $("#hhsecondary_phone").text(household.secondary_phone);
+                         $("#hh_current_primary_phone").text(household.primary_phone);
+                         $("#hh_current_secondary_phone").text(household.secondary_phone);
+                         $("#hh_card_primary_phone").text(household.primary_phone);
+
                          $("#hhAddess").text(household.address);
 
                          $("#hhCardStatus").text(household.card_status);
@@ -424,13 +472,16 @@
 
                          $("#hhDateOfDistribution").text(household.card_distribution_date);
 
-                         $("#primary_phone").val(household.primary_phone);
+                         $("#primary_phone").val('');
                          $("#primary_phone_confirm").val('');
                          updateDropDownValue($("#primary_phone_answered"),household.primary_phone_answered);
-                         $("#secondary_phone").val(household.secondary_phone);
+                         $("#secondary_phone").val('');
                          $("#secondary_phone_confirm").val('');
                          updateDropDownValue($("#secondary_phone_answered"),household.secondary_phone_answered);
-                         $("#address").val(household.address);
+                         $("#address").val('');
+
+                         $("#card_phone").val('');
+                         $("#card_phone_confirm").val('');
 
                          var suspended = household.household_suspended;
                          if (suspended)
@@ -460,6 +511,8 @@
                          updateDropDownValue($("#years"),household.beneficiary_changed_birthday_year);
                          updateDropDownValue($("#relation_to_householdhead"),household.beneficiary_changed_relation_to_householdhead);
                          updateDropDownValue($("#reason"),household.beneficiary_changed_reason);
+                         $("#beneficiary_specify_reason").val(household.beneficiary_specify_reason);
+
 
 
                          $("#first_card_case_number").val(household.duplicate_card_first_card_case_number);
@@ -469,6 +522,14 @@
                          $("#second_card_case_number_confirm").val('');
                          $("#secondcard_last_four_digits").val(household.duplicate_card_secondcard_last_four_digits);
 
+                         $("#complaint_bank_date_of_incident").val('');
+                         $("#complaint_bank_time_of_incident").val('');
+                         $("#complaint_bank_phone_used").val('');
+                         $("#complaint_bank_service_requested").val('');
+                         $("#complaint").val('');
+                         $("#student_refused_entrance").val('');
+
+
                          $("#schools-table tbody").empty();
                          $("#children-table tbody").empty();
                          for(childIndex in household.children)
@@ -477,6 +538,9 @@
                             AddChildSchoolRow(child);
                             AddChildAgeRow(child);
                          }
+                          AddSchoolChild(household.children);
+
+                         InitialiseLocationSchoolDropdowns();
 
                          $("#payments-table tbody").empty();
                          for(paymentIndex in household.payments)
@@ -511,13 +575,55 @@
                 var currentSchoolCell = "<td  >"+(entry.school_name)+"</td>";
                 var NewslocationCell = "<td>"+$("#childSchoolLocation").html()+"</td>";
                 var NewschoolCell = "<td>"+$("#childSchool").html()+"</td>";
-                updateDropDownValue($("#schools-table tr:last-child td:nth-child(5) select"), entry.school_changed_to_verify );
 
                 $("#schools-table tbody").append
                 (
                    "<tr>"+childIDCell+childNameCell+currentSchoolCell+NewslocationCell+NewschoolCell+"</tr>"
                 );
+
+                var location_id =
+                    entry.school_changed_to_verify_location_id==null?
+                    parseInt($("#id_location").val()):
+                    entry.school_changed_to_verify_location_id;
+
+                updateDropDownValue($("#schools-table tr:last-child td:nth-child(4) select"), location_id );
+
+                FilterLocationSchools
+                (
+                    $("#schools-table tr:last-child "),
+                    location_id
+                );
+
+                updateDropDownValue($("#schools-table tr:last-child td:nth-child(5) select"), entry.school_changed_to_verify );
             }
+
+           function InitialiseLocationSchoolDropdowns()
+           {
+               var editForm = $("#schools-table tbody");
+
+               editForm.on
+               (
+                 'change', '[name=childSchoolLocation]',
+                 function()
+                 {
+                    var parentRow = $(this).parent().parent();
+
+                    FilterLocationSchools(parentRow, parseInt($(this).val()));
+
+                    updateDropDownValue(parentRow.find("[name=childSchool]"),null );
+
+                 }
+               );
+
+
+           }
+
+
+           function FilterLocationSchools(editForm, locationID)
+           {
+              editForm.find("[name=childSchool] option[location-id!="+locationID+"]").hide();
+              editForm.find("[name=childSchool] option[location-id="+locationID+"],[value='']").show();
+           }
 
           function AddChildAgeRow(entry)
             {
@@ -554,7 +660,12 @@
                 var dateIssuedCell = "<td>"+FormatDate(entry.created)+"</td>";
                 var typeCell = "<td>"+entry.complaint_category_name +"</td>";
                 var noteCell = "<td>"+entry.complaint_note+"</td>";
-                var dateReplyCell = "<td>"+FormatDate(entry.complaint_resolution_date)+"</td>";
+
+                var dateReplyCell =
+                    entry.complaint_resolution_date == null?
+                    "<td>"+''+"</td>":
+                    "<td>"+FormatDate(entry.complaint_resolution_date)+"</td>";
+
                 var ReplyCell = "<td>"+entry.complaint_solution+"</td>";
                 var statusCell = "<td>"+entry.complaint_status+"</td>";
 
@@ -646,10 +757,14 @@
                    {
                       SaveChildren();
                    }
-                   else if($("#changeOption").val() == "payment" || $("#changeOption").val() == "cardStatus"
-                       || $("#changeOption").val() == "card" || $("#changeOption").val() == "refusedServiceBLF"
-                   || $("#changeOption").val() == "schoolRefusedEntrance" || $("#changeOption").val() == "reinstateBeneficiary"
-                   || $("#changeOption").val() == "otherComplaint" )
+                    else if($("#changeOption").val() == "cardStatus")
+                   {
+                      SaveHousehold();
+                      SaveComplaint();
+                   }
+                   else if($("#changeOption").val() == "payment" || $("#changeOption").val() == "card"
+                       || $("#changeOption").val() == "refusedServiceBLF"|| $("#changeOption").val() == "schoolRefusedEntrance"
+                       || $("#changeOption").val() == "reinstateBeneficiary" || $("#changeOption").val() == "otherComplaint" )
                    {
                        SaveComplaint();
                    }
@@ -682,8 +797,11 @@
           {
               houseHoldData.primary_phone = $("#primary_phone").val();
               houseHoldData.primary_phone_answered = $("#primary_phone_answered").val();
-              houseHoldData.secondary_phone = $("#secondary_phone").val();
-              houseHoldData.secondary_phone_answered  = $("#secondary_phone_answered").val();
+              if ($("#secondary_phone").val() !='')
+              {
+                  houseHoldData.secondary_phone = $("#secondary_phone").val();
+                  houseHoldData.secondary_phone_answered = $("#secondary_phone_answered").val();
+              }
           }
           else if($("#changeOption").val() == "address")
           {
@@ -700,6 +818,10 @@
               houseHoldData.duplicate_card_second_card_case_number = $("#second_card_case_number").val();
               houseHoldData.duplicate_card_secondcard_last_four_digits = $("#secondcard_last_four_digits").val();
           }
+          else if($("#changeOption").val() == "cardStatus")
+          {
+              houseHoldData.primary_phone = $("#card_phone").val();
+          }
           $.ajax
           (
               {
@@ -713,9 +835,18 @@
                   success: function (response)
                   {
                       var block = $("#registrations-table tr[adultid="+hhID+"]");
-
-                      block.find("td:nth-child(4)").text($("#primary_phone").val());
-                      block.find("td:nth-child(5)").text($("#secondary_phone").val());
+                      if ($("#primary_phone").val() !='')
+                      {
+                          block.find("td:nth-child(4)").text($("#primary_phone").val());
+                      }
+                      if ($("#card_phone").val() !='')
+                      {
+                          block.find("td:nth-child(4)").text($("#card_phone").val());
+                      }
+                      if ($("#secondary_phone").val() !='')
+                      {
+                          block.find("td:nth-child(5)").text($("#secondary_phone").val());
+                      }
                       CloseHousehold();
 
                   },
@@ -749,6 +880,7 @@
 
           houseHoldData.beneficiary_changed_phone = $("#beneficiary_phone").val();
           houseHoldData.beneficiary_changed_reason = $("#reason").val();
+          houseHoldData.beneficiary_specify_reason = $("#beneficiary_specify_reason").val();
       }
 
 
@@ -831,26 +963,27 @@
 
       function UpdateChildSchool()
       {
-         var childID = $("#child").val();
-
-         var children = householdRecord.children.filter
-         (
-            function(child)
-            {
-               return child.student_id == childID;
-            }
-         );
-
-
-         if(children.length > 0)
-         {
-            childRecord = children[0];
-
-            console.log(childRecord);
-
-            updateDropDownValue($("#school"),childRecord.school_changed_to_verify);
-
-         }
+{#         var childID = $("#child").val();#}
+{##}
+{#         var children = householdRecord.children.filter#}
+{#         (#}
+{#            function(child)#}
+{#            {#}
+{#               return child.student_id == childID;#}
+{##}
+{#            }#}
+{#         );#}
+{##}
+{##}
+{#         if(children.length > 0)#}
+{#         {#}
+{#            childRecord = children[0];#}
+{##}
+{#            console.log(childRecord);#}
+{##}
+{#            updateDropDownValue($("#student_refused_entrance"),childRecord.school_changed_to_verify);#}
+{##}
+{#         }#}
 
       }
 
@@ -869,11 +1002,33 @@
            );
       }
 
+      function AddSchoolChild(children)
+            {
+                $('#student_refused_entrance').find('option').remove().end();
+                (function() {
+                    var elm = document.getElementById('student_refused_entrance'),
+                        df = document.createDocumentFragment();
+                    for(childIndex in  children)
+                    {
+                        var option = document.createElement('option');
+                        var child = children[childIndex];
+                        var childFullName = child.first_name+' '+child.father_name+' '+ child.last_name;
+{#                        var schoolName = child.school_name;#}
+                        var child_school = childFullName + ' - ' + child.school_name;
+                        option.value = child.student_id;
+                        option.appendChild(document.createTextNode(child_school));
+                        df.appendChild(option);
+                    }
+                    elm.appendChild(df);
+                }());
+            }
+
 
 
 
       function SaveComplaint()
       {
+
           var complaint_category_id;
 
           if($("#changeOption").val() == "payment" )
@@ -904,41 +1059,81 @@
           {
                complaint_category_id = $("#other_complaint").val();
           }
-          alert(complaint_category_id);
 
-{#         var complaintData = new Object();#}
-{#         complaintData.complaint_category_id = complaint_category_id;#}
-{#         complaintData.complaint_note = $("#complaint").val();#}
-{##}
-{#         var isSuccessfull = false;#}
-{##}
-{#         $.ajax#}
-{#         (#}
-{#            {#}
-{#              type: "PATCH",#}
-{#              url: complaintURL + hhID +"/",#}
-{#              data: complaintData,#}
-{#              cache: false,#}
-{#              async: false,#}
-{#              headers: getHeader(),#}
-{#              dataType: 'json',#}
-{#              success: function (response)#}
-{#              {#}
-{#                  isSuccessfull = true;#}
-{#              },#}
-{#              error: function (response)#}
-{#              {#}
-{#                  console.log(response);#}
-{#              },#}
-{#              async: false#}
-{#           }#}
-{#         );#}
-{#         //alert(isSuccessfull);#}
-{##}
-{#         return isSuccessfull;#}
+         var complaintData = new Object();
+         complaintData.complaint_category = complaint_category_id;
+         complaintData.complaint_note = $("#complaint").val();
+         complaintData.complaint_adult = complaint_hh_id;
+         complaintData.complaint_status = 'open';
+         complaintData.owner = user_id;
+
+         var selected_year = $("#complait_days").val().toString();
+         var selected_month = $("#complait_months").val().toString() ;
+         var selected_day = $("#complait_years").val().toString();
+         var selected_date = [selected_year,
+          (selected_month>9 ? '' : '0') + selected_month,
+          (selected_day>9 ? '' : '0') + selected_day
+         ].join('-');
+
+         var selected_hour = $("#complait_am_pm").val()=='AM'
+             ? $("#complait_hours").val().toString()
+             : (parseInt($("#complait_hours").val()) + 12).toString() ;
+         var hour = selected_hour < 10 ? "0" + selected_hour : selected_hour;
+
+         var selected_minutes = $("#complait_minutes").val() < 10
+             ? "0" + $("#complait_minutes").val()
+             : $("#complait_minutes").val();
+
+         var selected_time = hour + ":" + selected_minutes ;
+
+         complaintData.complaint_bank_date_of_incident = formatDate_save(selected_date)+ ' '+ selected_time;
+         complaintData.complaint_bank_phone_used = $("#complaint_bank_phone_used").val();
+         complaintData.complaint_bank_service_requested =$("#complaint_bank_service_requested").val();
+         complaintData.complaint_solution ='';
+         complaintData.complaint_student_refused_entrance =$("#student_refused_entrance").val();
+
+
+         var isSuccessfull = false;
+
+         $.ajax
+         (
+            {
+              type: "PUT",
+              url: complaintURL,
+              data: complaintData,
+              cache: false,
+              async: false,
+              headers: getHeader(),
+              dataType: 'json',
+              success: function (response)
+              {
+                  isSuccessfull = true;
+                  CloseHousehold();
+              },
+              error: function (response)
+              {
+                  console.log(response);
+              },
+              async: false
+           }
+         );
+         //alert(isSuccessfull);
+
+         return isSuccessfull;
       }
 
 
+
+
+      function formatDate_save(date) {
+          var d = new Date(date),
+              month = '' + (d.getMonth() + 1),
+              day = '' + d.getDate(),
+              year = d.getFullYear();
+          if (month.length < 2) month = '0' + month;
+          if (day.length < 2) day = '0' + day;
+          return [year, month, day].join('-');
+      }
 
       function FormatDate(dateString)
         {
