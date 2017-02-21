@@ -115,10 +115,18 @@ class ComplaintSerializer(serializers.ModelSerializer):
     complaint_id = serializers.IntegerField(source='id', read_only=True)
     complaint_type = serializers.CharField(source='complaint_category.complaint_type', read_only=True)
     complaint_category_name = serializers.CharField(source='complaint_category.name', read_only=True)
+    complaint_student_first_name = serializers.CharField(source='complaint_student_refused_entrance.first_name',
+                                                         read_only=True)
+    complaint_student_father_name = serializers.CharField(source='complaint_student_refused_entrance.father_name',
+                                                          read_only=True)
+    complaint_student_last_name = serializers.CharField(source='complaint_student_refused_entrance.last_name',
+                                                        read_only=True)
+
     class Meta:
         model = Complaint
         fields = (
             'complaint_id',
+            'complaint_adult',
             'complaint_type',
             'complaint_category',
             'complaint_category_name',
@@ -128,6 +136,13 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'modified',
             'complaint_status',
             'complaint_resolution_date',
+            'complaint_bank_date_of_incident',
+            'complaint_bank_phone_used',
+            'complaint_bank_service_requested',
+            'complaint_student_refused_entrance',
+            'complaint_student_first_name',
+            'complaint_student_father_name',
+            'complaint_student_last_name',
             'owner'
         )
 
@@ -162,6 +177,9 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
     id_number = serializers.CharField(source='student.id_number')
     age = serializers.CharField(source='student.age')
     school_name = serializers.CharField(source='school.name', read_only=True)
+    location_id = serializers.CharField(source='school.location_id', read_only=True)
+    school_changed_to_verify_location_id = serializers.CharField(source='school_changed_to_verify.location_id',
+                                                                 read_only=True)
     def create(self, validated_data):
 
         student_data = validated_data.pop('student', None)
@@ -187,7 +205,9 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
             'reg_id',
             'school',
             'school_name',
+            'location_id',
             'school_changed_to_verify',
+            'school_changed_to_verify_location_id',
             'enrolled_last_year_school',
             'relation_to_adult',
             'related_to_family',
@@ -279,6 +299,7 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'beneficiary_changed_relation_to_householdhead',
             'beneficiary_changed_same_as_caller',
             'beneficiary_changed_reason',
+            'beneficiary_specify_reason',
             'beneficiary_changed_gender',
             'card_last_four_digits',
             'card_distribution_date',
