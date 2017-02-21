@@ -2,7 +2,6 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from model_utils import Choices
-from model_utils.models import TimeStampedModel
 from django.utils.translation import ugettext as _
 from django.contrib.gis.db import models
 from student_registration.locations.models import Location
@@ -131,3 +130,30 @@ class PartnerOrganization(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class ALPReferMatrix(models.Model):
+    level = models.ForeignKey(
+        EducationLevel,
+        blank=True, null=True,
+        related_name='+',
+    )
+    success_refer_to = models.ForeignKey(
+        ClassLevel,
+        blank=True, null=True,
+        related_name='success_refer_to',
+    )
+    fail_refer_to = models.ForeignKey(
+        ClassLevel,
+        blank=True, null=True,
+        related_name='fail_refer_to',
+    )
+    age = models.IntegerField(blank=True, null=True)
+    success_grade = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "ALP Refer Matrix"
+
+    def __unicode__(self):
+        return str(self.id)
