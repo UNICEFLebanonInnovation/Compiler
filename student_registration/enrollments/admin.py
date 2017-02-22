@@ -31,10 +31,52 @@ class EnrollmentResource(resources.ModelResource):
     class Meta:
         model = Enrollment
         form = EnrollmentForm
-        fields = ('id', 'student__id', 'student__id_number', 'student__number', 'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
-                  'student__age', 'governorate', 'district', 'school__name', 'section__name', 'classroom__name')
-        export_order = ('id', 'student__id', 'student__id_number', 'student__number', 'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
-                        'student__age', 'governorate', 'district', 'school__name', 'section__name', 'classroom__name')
+        fields = (
+            'id',
+            'student__id',
+            'student__id_number',
+            'student__number',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__mother_fullname',
+            'student__age',
+            'governorate',
+            'district',
+            'school__name',
+            'section__name',
+            'classroom__name',
+            'last_education_level__name',
+            'last_education_year',
+            'last_year_result',
+            'participated_in_alp',
+            'last_informal_edu_round__name',
+            'last_informal_edu_level__name',
+            'last_informal_edu_final_result__name',
+        )
+        export_order = (
+            'id',
+            'student__id',
+            'student__id_number',
+            'student__number',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__mother_fullname',
+            'student__age',
+            'governorate',
+            'district',
+            'school__name',
+            'section__name',
+            'classroom__name',
+            'last_education_level__name',
+            'last_education_year',
+            'last_year_result',
+            'participated_in_alp',
+            'last_informal_edu_round__name',
+            'last_informal_edu_level__name',
+            'last_informal_edu_final_result__name',
+        )
 
 
 class GovernorateFilter(admin.SimpleListFilter):
@@ -69,22 +111,66 @@ class GovernorateFilter(admin.SimpleListFilter):
 class EnrollmentAdmin(ImportExportModelAdmin):
     resource_class = EnrollmentResource
     form = EnrollmentForm
-    fields = ('student', 'school', 'section', 'classroom', 'owner', 'status', 'year',
-              'enrolled_in_this_school', 'registered_in_unhcr',
-              'last_education_level', 'last_education_year', 'last_year_result', 'last_school_type', 'result',
-              'participated_in_alp', 'last_informal_edu_level', 'last_informal_edu_year', 'last_informal_edu_result',
-              'last_informal_edu_round', 'last_informal_edu_final_result',
-              )
-    list_display = (
-        'student', 'student_age', 'school', 'caza', 'governorate',
-        'classroom', 'section',
+    fields = (
+        'student',
+        'school',
+        'section',
+        'classroom',
+        'owner',
+        'status',
+        'year',
+        'enrolled_in_this_school',
+        'registered_in_unhcr',
+        'last_education_level',
+        'last_education_year', 'last_year_result',
+        'last_school_type',
+        'result',
+        'participated_in_alp',
+        'last_informal_edu_level',
+        'last_informal_edu_year',
+        'last_informal_edu_result',
+        'last_informal_edu_round',
+        'last_informal_edu_final_result',
+        'deleted',
     )
-    list_filter = ('school__number', 'school', 'school__location', GovernorateFilter,
-                   'classroom', 'section', 'student__sex', 'registered_in_unhcr', 'student__id_type', )
+    list_display = (
+        'student',
+        'student_age',
+        'school',
+        'caza',
+        'governorate',
+        'classroom',
+        'section',
+    )
+    list_filter = (
+        'school__number',
+        'school',
+        'school__location',
+        GovernorateFilter,
+        'classroom',
+        'section',
+        'student__sex',
+        'registered_in_unhcr',
+        'student__id_type',
+        'last_education_level',
+        'last_education_year',
+        'last_year_result',
+        'participated_in_alp',
+        'last_informal_edu_round',
+        'last_informal_edu_level',
+        'last_informal_edu_final_result',
+    )
     search_fields = (
-        'student__first_name', 'student__father_name', 'student__last_name', 'student__mother_fullname',
-        'school__name', 'school__number', 'student__id_number', 'school__location__name', 'classroom__name',
-        'owner__username'
+        'student__first_name',
+        'student__father_name',
+        'student__last_name',
+        'student__mother_fullname',
+        'school__name',
+        'school__number',
+        'student__id_number',
+        'school__location__name',
+        'classroom__name',
+        'owner__username',
     )
 
     def get_queryset(self, request):
