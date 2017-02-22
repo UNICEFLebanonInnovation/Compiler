@@ -56,6 +56,10 @@ function HideAllErrors()
     $("#last_name_error").hide();
     $("#mother_full_name_error").hide();
     $("#reason_error").hide();
+    $("#reason_error").hide();
+    $("#relation_to_householdhead_error").hide();
+    $("#gender_error").hide();
+    $("#idType_error").hide();
     $("#primary_phone_length_error").hide();
     $("#primary_phone_confirm_length_error").hide();
     $("#primary_phone_confirm_error").hide();
@@ -205,9 +209,6 @@ function validate_beneficiary()
     var isPhoneValid = ValidatePhoneNumber(phone)
     var isPhoneConfirmValid = ValidatePhoneNumber(phone_confirm);
     var isPhoneEqualValid= phone == phone_confirm;
-
-
-
     if (!isPhoneValid)
     {
         $("#beneficiary_phone_length_error").show();
@@ -236,17 +237,6 @@ function validate_beneficiary()
     }
 
     var isDOBValid = true;
-    if($("#days").val() == ""|| $("#months").val() == ""||$("#years").val() == "")
-    {
-        isDOBValid = false;
-        $("#dob_error").show();
-    }
-    else
-    {
-        $("#dob_error").hide();
-
-    }
-
     if($("#days").val() && $("#months").val() && $("#years").val())
     {
 
@@ -260,20 +250,64 @@ function validate_beneficiary()
 
     var isCaseNumberValid =  ValidateBeneficiaryID(case_number,id_type);
 
-    result = result && isPhoneValid;
-    result = result && isPhoneConfirmValid;
-    result = result && isPhoneEqualValid;
-    result = result && isCaseNumberValid;
-
     result = validateTextBoxRequired('first_name','first_name_error',result);
     result = validateTextBoxRequired('father_name','father_name_error',result);
     result = validateTextBoxRequired('last_name','last_name_error',result);
     result = validateTextBoxRequired('mother_full_name','mother_full_name_error',result);
-    result = validateTextBoxRequired('reason','reason_error',result);
 
+    var isReasonValid = true;
+    if($("#reason").val()==null)
+    {
+        isReasonValid= false;
+        $("#reason_error").show();
+    }
+    else
+    {
+        $("#reason_error").hide();
+    }
 
+    var isRelation_to_householdheadValid = true;
+    if($("#relation_to_householdhead").val()==null)
+    {
+        isRelation_to_householdheadValid= false;
+        $("#relation_to_householdhead_error").show();
+    }
+    else
+    {
+        $("#relation_to_householdhead_error").hide();
+    }
+
+    var isGenderValid = true;
+    if($("#gender").val()==null)
+    {
+        isRelation_to_householdheadValid= false;
+        $("#gender_error").show();
+    }
+    else
+    {
+        $("#gender_error").hide();
+    }
+
+    var isIdTypeValid = true;
+    if($("#idType").val()==null)
+    {
+        isIdTypeValid= false;
+        $("#idType_error").show();
+    }
+    else
+    {
+        $("#idType_error").hide();
+    }
+
+    result = result && isPhoneValid;
+    result = result && isPhoneConfirmValid;
+    result = result && isPhoneEqualValid;
+    result = result && isCaseNumberValid;
     result = result && isDOBValid;
-
+    result = result && isReasonValid;
+    result = result && isRelation_to_householdheadValid;
+    result = result && isGenderValid;
+    result = result && isIdTypeValid;
     return result;
 }
 
