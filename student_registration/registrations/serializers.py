@@ -128,6 +128,7 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'complaint_id',
             'complaint_adult',
             'complaint_type',
+            'complaint_Other_type_specify',
             'complaint_category',
             'complaint_category_name',
             'complaint_note',
@@ -143,8 +144,9 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'complaint_student_first_name',
             'complaint_student_father_name',
             'complaint_student_last_name',
-            'owner'
+            'complaint_Other_type_specify'
         )
+
 
 class PaymentSerializer(serializers.ModelSerializer):
     payment_id = serializers.IntegerField(source='id', read_only=True)
