@@ -124,6 +124,7 @@ class Outreach(TimeStampedModel):
         Section,
         blank=True, null=True,
         related_name='+',
+        verbose_name='Current Section',
     )
     grade = models.ForeignKey(
         Grade,
@@ -254,16 +255,19 @@ class Outreach(TimeStampedModel):
         EducationLevel,
         blank=True, null=True,
         related_name='+',
+        verbose_name='Registered in level',
     )
     registered_in_level = models.ForeignKey(
         EducationLevel,
         blank=True, null=True,
         related_name='+',
+        verbose_name='Current level',
     )
     assigned_to_level = models.ForeignKey(
         EducationLevel,
         blank=True, null=True,
         related_name='+',
+        verbose_name='Assigned to level',
     )
     exam_school = models.ForeignKey(
         School,
