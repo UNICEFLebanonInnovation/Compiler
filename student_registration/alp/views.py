@@ -4,7 +4,7 @@ from __future__ import absolute_import, unicode_literals
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from rest_framework import viewsets, mixins, permissions
 from datetime import datetime
 import tablib
@@ -12,6 +12,7 @@ import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
+from braces.views import GroupRequiredMixin
 
 from .models import Outreach, ALPRound
 from .serializers import OutreachSerializer, OutreachExamSerializer, OutreachSmallSerializer
@@ -84,9 +85,18 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         return super(OutreachViewSet, self).partial_update(request)
 
 
-class OutreachView(LoginRequiredMixin, TemplateView):
+class OutreachView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   TemplateView):
     model = Outreach
     template_name = 'alp/index.html'
+
+    group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
+
+    def handle_no_permission(self, request):
+        # return HttpResponseRedirect(reverse("403.html"))
+        # return HttpResponseForbidden(reverse("404.html"))
+        return HttpResponseForbidden()
 
     def get_context_data(self, **kwargs):
         data = []
@@ -94,12 +104,12 @@ class OutreachView(LoginRequiredMixin, TemplateView):
         location = 0
         location_parent = 0
         school_id = int(self.request.GET.get("school", 0))
-        if has_group(self.request.user, 'CERD'):
-            data = Outreach.objects.exclude(owner__partner_id=None)
-            data = data.filter(school_id=school_id)
+        alp_round = ALPRound.objects.get(current_round=True)
+
         if has_group(self.request.user, 'ALP_SCHOOL'):
-            data = Outreach.objects.filter(school_id=self.request.user.school_id)
+            data = Outreach.objects.filter(school_id=self.request.user.school_id, alp_round=alp_round)
             data = data.exclude(owner_id=self.request.user.id)
+            data = data.exclude(deleted=True)
             school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
@@ -133,6 +143,168 @@ class OutreachView(LoginRequiredMixin, TemplateView):
             'school': school,
             'location': location,
             'location_parent': location_parent,
+            'alp_round': alp_round.id,
+        }
+
+
+class DataCollectingView(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         TemplateView):
+    model = Outreach
+    template_name = 'alp/outreach.html'
+
+    group_required = [u"PARTNER"]
+
+    def handle_no_permission(self, request):
+        # return HttpResponseRedirect(reverse("403.html"))
+        # return HttpResponseForbidden(reverse("404.html"))
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+        data = []
+        school = 0
+        location = 0
+        location_parent = 0
+        alp_round = ALPRound.objects.get(current_pre_test=True)
+
+        return {
+            'data': data,
+            'schools': School.objects.all().order_by('name'),
+            'languages': Language.objects.all(),
+            'locations': Location.objects.filter(type_id=2),
+            'months': Person.MONTHS,
+            'genders': Person.GENDER,
+            'idtypes': IDType.objects.all(),
+            'education_levels': ClassRoom.objects.all(),
+            'education_results': Outreach.RESULT,
+            'informal_educations': EducationLevel.objects.all(),
+            'alp_rounds': ALPRound.objects.all(),
+            'education_final_results': ClassLevel.objects.all(),
+            'classrooms': ClassRoom.objects.all(),
+            'sections': Section.objects.all(),
+            'nationalities': Nationality.objects.exclude(id=5),
+            'nationalities2': Nationality.objects.all(),
+            'school': school,
+            'location': location,
+            'location_parent': location_parent,
+            'alp_round': alp_round.id
+        }
+
+
+class PreTestView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  TemplateView):
+    model = Outreach
+    template_name = 'alp/post_test.html'
+
+    group_required = [u"CERD"]
+
+    def handle_no_permission(self, request):
+        # return HttpResponseRedirect(reverse("403.html"))
+        # return HttpResponseForbidden(reverse("404.html"))
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+        data = []
+        school = 0
+        location = 0
+        location_parent = 0
+        school_id = int(self.request.GET.get("school", 0))
+        alp_round = ALPRound.objects.get(current_pre_test=True)
+
+        data = Outreach.objects.exclude(owner__partner_id=None)
+        data = data.filter(school_id=school_id, alp_round=alp_round)
+        data = data.exclude(deleted=True)
+
+        if school_id:
+            school = School.objects.get(id=school_id)
+        if school and school.location:
+            location = school.location
+        if location and location.parent:
+            location_parent = location.parent
+
+        return {
+            'data': data,
+            'schools': School.objects.all(),
+            'months': Person.MONTHS,
+            'genders': Person.GENDER,
+            'idtypes': IDType.objects.all(),
+            'education_levels': ClassRoom.objects.all(),
+            'education_results': Outreach.RESULT,
+            'informal_educations': EducationLevel.objects.all(),
+            'alp_rounds': ALPRound.objects.all(),
+            'education_final_results': ClassLevel.objects.all(),
+            'sections': Section.objects.all(),
+            'nationalities': Nationality.objects.exclude(id=5),
+            'nationalities2': Nationality.objects.all(),
+            'selectedSchool': school_id,
+            'school': school,
+            'location': location,
+            'location_parent': location_parent,
+            'alp_phase': 'pre_test',
+            'alp_round': alp_round.id,
+        }
+
+
+class PostTestView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   TemplateView):
+    model = Outreach
+    template_name = 'alp/post_test.html'
+
+    group_required = [u"CERD"]
+
+    def handle_no_permission(self, request):
+        # return HttpResponseRedirect(reverse("403.html"))
+        # return HttpResponseForbidden(reverse("404.html"))
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+        data = []
+        school = 0
+        location = 0
+        location_parent = 0
+        school_id = int(self.request.GET.get("school", 0))
+        alp_round = ALPRound.objects.get(current_post_test=True)
+
+        schools = Outreach.objects.exclude(deleted=True).filter(
+            alp_round=alp_round,
+            registered_in_level__isnull=False
+        ).values_list('school_id').order_by('school__number').distinct('school__number')
+
+        if school_id:
+            data = Outreach.objects.exclude(deleted=True).filter(
+                school_id=school_id,
+                alp_round=alp_round,
+                registered_in_level__isnull=False
+            )
+            school = School.objects.get(id=school_id)
+        if school and school.location:
+            location = school.location
+        if location and location.parent:
+            location_parent = location.parent
+
+        return {
+            'data': data,
+            'schools': School.objects.filter(id__in=schools),
+            'locations': Location.objects.filter(type_id=2),
+            'months': Person.MONTHS,
+            'genders': Person.GENDER,
+            'idtypes': IDType.objects.all(),
+            'education_levels': ClassRoom.objects.all(),
+            'education_results': Outreach.RESULT,
+            'informal_educations': EducationLevel.objects.all(),
+            'alp_rounds': ALPRound.objects.all(),
+            'education_final_results': ClassLevel.objects.all(),
+            'alp_results': ClassLevel.objects.all(),
+            'sections': Section.objects.all(),
+            'nationalities': Nationality.objects.exclude(id=5),
+            'nationalities2': Nationality.objects.all(),
+            'selectedSchool': school_id,
+            'school': school,
+            'location': location,
+            'location_parent': location_parent,
+            'alp_phase': 'post_test',
         }
 
 
@@ -174,15 +346,17 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
         # queryset = self.model.objects.exclude(deleted=True, not_enrolled_in_this_school=True)
         school = int(request.GET.get('school', 0))
         location = int(request.GET.get('location', 0))
+        alp_round = ALPRound.objects.get(current_round=True)
 
         if has_group(self.request.user, 'PARTNER'):
-            queryset = queryset.filter(owner=self.request.user)
+            alp_round = ALPRound.objects.get(current_pre_test=True)
+            queryset = queryset.filter(owner=self.request.user, alp_round=alp_round)
         if has_group(self.request.user, 'ALP_SCHOOL') and self.request.user.school_id:
             school = self.request.user.school_id
         if school:
-            queryset = queryset.filter(school_id=school).order_by('id')
+            queryset = queryset.filter(school_id=school, alp_round=alp_round).order_by('id')
         if location:
-            queryset = queryset.filter(school__location_id=location).order_by('id')
+            queryset = queryset.filter(school__location_id=location, alp_round=alp_round).order_by('id')
 
         data = tablib.Dataset()
 

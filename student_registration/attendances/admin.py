@@ -33,8 +33,8 @@ class SchoolFilter(admin.SimpleListFilter):
         in the right sidebar.
         """
         if has_group(request.user, 'COORDINATOR'):
-            return ((l.id, l.name) for l in School.objects.filter(id__in=request.user.schools.all()))
-        return ((l.id, l.name) for l in School.objects.all())
+            return ((l.id, l.__unicode__()) for l in School.objects.filter(id__in=request.user.schools.all()))
+        return ((l.id, l.__unicode__()) for l in School.objects.all())
 
     def queryset(self, request, queryset):
         """

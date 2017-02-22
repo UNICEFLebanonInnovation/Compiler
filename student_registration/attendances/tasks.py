@@ -92,7 +92,7 @@ def set_app_attendances(school_number=None, school_type=None):
     """
     Creates or edits a attendance document in Couchbase for each school, class, section
     """
-    from student_registration.alp.models import Outreach
+    from student_registration.alp.models import Outreach, ALPRound
     from student_registration.enrollments.models import Enrollment
     from student_registration.attendances.models import Attendance
     from student_registration.schools.models import School, ClassRoom, Section, EducationLevel
@@ -103,9 +103,11 @@ def set_app_attendances(school_number=None, school_type=None):
     registrations = enrollment_model.objects.exclude(deleted=True)
 
     if school_type == 'alp':
+        alp_round = ALPRound.objects.get(current_round=True)
         registrations = registrations.filter(
             registered_in_level__isnull=False,
-            section__isnull=False
+            section__isnull=False,
+            alp_round=alp_round
         ).distinct().values(
             'school__number',
             'school',
@@ -299,7 +301,7 @@ def import_docs(**kwargs):
         raise exp
 
 
-def flattern_attendance():
+def flatten_attendance():
     try:
         map_function = Code(
             """
@@ -354,7 +356,7 @@ def flattern_attendance():
         database.attendances.map_reduce(
             map_function,
             reduce_function,
-            out=SON([("replace", "attendances_by_school")])
+            out=SON([("replace", "attendances_by_day")])
         )
         logger.info('Finished')
 
@@ -363,70 +365,74 @@ def flattern_attendance():
 
 
 def aggregate_attendace():
-    database = client.get_default_database()
+    try:
+        database = client.get_default_database()
+        attendances = database.attendances_by_day
 
-    logger.info('aggregate attendance by school and day')
-    database.attendances_by_day.aggregate([
-        {
-            '$project': {
-                'school': '$value.school',
-                'date': '$value.date',
-                'validation_date': '$value.validation_date',
-                'student': '$value.student',
-                'gender': '$value.gender',
-                'Attended': {"$cond": ["$value.attended", 1, 0]},
-                'Absent': {"$cond": [{"$not": "$value.attended"}, 1, 0]},
-                'Attended Male': {
-                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Male"]}, "$value.attended"]}, 1, 0]
-                },
-                'Attended Female': {
-                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Female"]}, "$value.attended"]}, 1, 0]
-                },
-                'Absent Male': {
-                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Male"]}, {"$not": "$value.attended"}]}, 1, 0]
-                },
-                'Absent Female': {
-                    "$cond": [{'$and': [{"$eq": ["$value.gender", "Female"]}, {"$not": "$value.attended"}]}, 1, 0]
-                },
-            }
-        },
-        {
-            '$group': {
-                '_id': {'school': '$school', 'date': '$date'},
-                'school_id': {'$first': '$school'},
-                'attendance_date': {'$first': '$date'},
-                'total_enrolled': {'$sum': 1},
-                'total_attended': {'$sum': "$Attended"},
-                'total_absences': {'$sum': "$Absent"},
-                'total_attended_male': {'$sum': "$Attended Male"},
-                'total_attended_female': {'$sum': "$Attended Female"},
-                'total_absent_male': {'$sum': "$Absent Male"},
-                'total_absent_female': {'$sum': "$Absent Female"},
-                'validation_date': {'$first': "$validation_date"},
-            }
-        },
-        {
-            "$project": {
-                "_id": 0,
-                'school_id': 1,
-                'attendance_date': 1,
-                'total_enrolled': 1,
-                'total_attended': 1,
-                'total_absences': 1,
-                'total_attended_male': 1,
-                'total_attended_female': 1,
-                'total_absent_male': 1,
-                'total_absent_female': 1,
-                'validation_date': 1,
-                'validation_status': {
-                    '$cond': [
-                        {'$eq': ['$validation_date', None]}, False, True
-                    ]
+        logger.info('aggregate attendance by school and day')
+        attendances.aggregate([
+            {
+                '$project': {
+                    'school': '$value.school',
+                    'date': '$value.date',
+                    'validation_date': '$value.validation_date',
+                    'student': '$value.student',
+                    'gender': '$value.gender',
+                    'Attended': {"$cond": ["$value.attended", 1, 0]},
+                    'Absent': {"$cond": [{"$not": "$value.attended"}, 1, 0]},
+                    'Attended Male': {
+                        "$cond": [{'$and': [{"$eq": ["$value.gender", "Male"]}, "$value.attended"]}, 1, 0]
+                    },
+                    'Attended Female': {
+                        "$cond": [{'$and': [{"$eq": ["$value.gender", "Female"]}, "$value.attended"]}, 1, 0]
+                    },
+                    'Absent Male': {
+                        "$cond": [{'$and': [{"$eq": ["$value.gender", "Male"]}, {"$not": "$value.attended"}]}, 1, 0]
+                    },
+                    'Absent Female': {
+                        "$cond": [{'$and': [{"$eq": ["$value.gender", "Female"]}, {"$not": "$value.attended"}]}, 1, 0]
+                    },
                 }
-            }
-        },
-        {'$out': 'attendances_by_day_school'}
-    ])
+            },
+            {
+                '$group': {
+                    '_id': {'school': '$school', 'date': '$date'},
+                    'school_id': {'$first': '$school'},
+                    'attendance_date': {'$first': '$date'},
+                    'total_enrolled': {'$sum': 1},
+                    'total_attended': {'$sum': "$Attended"},
+                    'total_absences': {'$sum': "$Absent"},
+                    'total_attended_male': {'$sum': "$Attended Male"},
+                    'total_attended_female': {'$sum': "$Attended Female"},
+                    'total_absent_male': {'$sum': "$Absent Male"},
+                    'total_absent_female': {'$sum': "$Absent Female"},
+                    'validation_date': {'$first': "$validation_date"},
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    'school_id': 1,
+                    'attendance_date': 1,
+                    'total_enrolled': 1,
+                    'total_attended': 1,
+                    'total_absences': 1,
+                    'total_attended_male': 1,
+                    'total_attended_female': 1,
+                    'total_absent_male': 1,
+                    'total_absent_female': 1,
+                    'validation_date': 1,
+                    'validation_status': {
+                        '$cond': [
+                            {'$eq': ['$validation_date', None]}, False, True
+                        ]
+                    }
+                }
+            },
+            {'$out': 'attendances_by_day_school'}
+        ], useCursor=False)
+    except Exception as exp:
+        logger.exception(exp)
 
 
 def calculate_by_day_summary():
@@ -472,76 +478,76 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
     from student_registration.attendances.models import Absentee
 
     class Attendance(DynamicDocument):
-        meta = {'collection': 'attendances'}
+        meta = {'collection': 'attendances_by_day'}
 
+    database = client.get_default_database()
 
+    absentees = list(database.absentees.find({}, no_cursor_timeout=False))
 
-    absentees = Attendance.objects.filter(
-        # select only validated attendances
-        validation_status=True,
-        attendance_date__gt=from_date,
-        attendance_date__lte=to_date
-    ).values(
-        'student_id',
-        'school_id'
-    ).annotate(
-        total_attended=Count(Case(When(status=True, then=1))),
-        total_absents=Count(Case(When(status=False, then=1))),
-    ).filter(
-        total_absents__gt=absent_threshold
-    )
+    late_threshold_date = (to_date - timedelta(days=absent_threshold))
 
-    logger.info('{} absentees to process'.format(absentees.count()))
-    for absentee in absentees:
+    logger.info('{} absentees to process'.format(len(absentees)))
+    for num,absentee in enumerate(absentees):
+
+        logger.info('processing {}'.format(num))
+        school = absentee['_id']['school_id']
+        student = absentee['_id']['student_id']
 
         # for each absentee check if they have attended within the absent_threshold
         attendances = Attendance.objects.filter(
-            validation_status=True,
-            school_id=absentee['school_id'],
-            student_id=absentee['student_id'],
+            school=school,
+            student=student,
         )
 
-        last_attended_date = attendances.filter(status=True).latest('attendance_date').attendance_date \
-            if attendances.filter(status=True).count() else None
+        last_attended_date = attendances.order_by('-date').filter(
+            attended=True,
+            validation_date__ne=None,
+        )
+        if not last_attended_date:
+            continue
+        last_attended_date = last_attended_date[0].date
 
-        if last_attended_date is None:
+        first_absent_date = attendances.order_by('date').filter(
+            attended=False,
+            validation_date__ne=None,
+            date__lt=to_date,
+            date__gte=last_attended_date,
+        )
+        if not first_absent_date:
+            continue
+        first_absent_date = first_absent_date[0].date
+
+        total_school_days_absent = attendances.filter(
+            attended=False,
+            validation_date__ne=None,
+            date__gte=first_absent_date,
+            date__lte=to_date
+        ).count()
+
+        if total_school_days_absent <= absent_threshold:
+            logger.info('Student {} only {} days absent'.format(
+                student, total_school_days_absent
+            ))
             continue
 
-        late_threshold_date = (to_date - timedelta(days=absent_threshold))
         if last_attended_date >= late_threshold_date:
 
-            first_absent_date = attendances.filter(
-                status=False,
-                attendance_date__lt=last_attended_date,
-                attendance_date__gte=from_date,
-            ).earliest('attendance_date').attendance_date
-
-            total_school_days_absent = Attendance.objects.filter(
-                attendance_date__lt=last_attended_date,
-                attendance_date__gte=first_absent_date
-            ).distinct('attendance_date').count()
-
             absent_record, new = Absentee.objects.get_or_create(
-                school_id=absentee['school_id'],
-                student_id=absentee['student_id'],
-                last_attendance_date=first_absent_date,
+                school_id=school,
+                student_id=student,
+                last_attendance_date=first_absent_date
             )
 
             absent_record.absent_days = total_school_days_absent
-            absent_record.reattend_date = late_threshold_date
+            absent_record.reattend_date = last_attended_date
             absent_record.save()
-            logger.info('student {} attended on {}'.format(absentee['school_id'], last_attended_date))
+            logger.info('student {} reattended on {}'.format(student, last_attended_date))
 
         else:
 
-            total_school_days_absent = Attendance.objects.filter(
-                attendance_date__gte=last_attended_date,
-                attendance_date__lte=to_date
-            ).distinct('attendance_date').count()
-
             absent_record, new = Absentee.objects.get_or_create(
-                school_id=absentee['school_id'],
-                student_id=absentee['student_id'],
+                school_id=school,
+                student_id=student,
                 last_attendance_date=last_attended_date,
                 reattend_date__isnull=True
             )
@@ -549,4 +555,4 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
             absent_record.save()
 
         if new:
-            logger.info('New absent record for student {}'.format(absentee['student_id']))
+            logger.info('New absent record for student {}'.format(student))
