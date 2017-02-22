@@ -108,13 +108,13 @@
                                     <span class="error" id="primary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
                               </div>
                               <div class="line">
-                                  <label class="text" style="width: 200px;">{% trans "Phone Number are normally answered by: " %}</label>
+                                  <label class="text" style="width: 200px;">{% trans "Phone Number is normally answered by: " %}</label>
                                   <select id="primary_phone_answered" >
                                       {% for value, text in phoneAnsweredby %}
                                           <option value="{{ value }}">{{ text }}</option>
                                       {% endfor %}
                                   </select>
-                                  <span class="error" id="primary_phone_answered_error">{% trans "Phone Number are normally answered by is missing" %}</span>
+                                  <span class="error" id="primary_phone_answered_error">{% trans "Phone Number is normally answered by is missing" %}</span>
                               </div>
 
                                 <div class="line" >
@@ -132,35 +132,35 @@
                                     <span class="error" id="secondary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
                                 </div>
                               <div class="line">
-                                  <label class="text" style="width: 200px;">{% trans "Phone Number are normally answered by: " %}</label>
+                                  <label class="text" style="width: 200px;">{% trans "Phone number is normally answered by: " %}</label>
                                   <select id="secondary_phone_answered" >
                                       {% for value, text in phoneAnsweredby %}
                                           <option value="{{ value }}">{{ text }}</option>
                                       {% endfor %}
                                   </select>
-                                  <span class="error" id="secondary_phone_answered_error">{% trans "Phone Number are normally answered by is missing" %}</span>
+                                  <span class="error" id="secondary_phone_answered_error">{% trans "Phone Number is normally answered by is missing" %}</span>
                               </div>
                           </div>
                             <div class="line" id = "addressFields" style="display:none">
                                 <div class="line">
                                     <label  style="width: 200px;">{% trans "Current Address: " %}</label><span id ="hhAddess"></span>
                                 </div>
-                                <label class="text" style="width: 200px;">{% trans "Address: " %}</label>
+                                <label class="text" style="width: 200px;">{% trans "New Address: " %}</label>
                                 <textarea cols="30" id="address" name="address" rows="4"></textarea>
                                 <span class="error" id="address_error">{% trans "Address field is required!" %}</span>
                             </div>
                             <div class="line" id = "beneficiaryFields" style="display:none">
                                 <div class="line">
-                                    <label class="text" style="width: 200px;">{% trans "ID Type: " %}</label>
+                                    <label class="text" style="width: 200px;">{% trans "New Beneficiary ID Type: " %}</label>
                                     <select id="idType" >
                                         {% for itm in idType %}
                                           <option value="{{ itm.id }}">{{ itm.name }}</option>
                                       {% endfor %}
                                     </select>
-                                    <span class="error" id="idType_error">{% trans "ID Type is missing." %}</span>
+                                    <span class="error" id="idType_error">{% trans "New Beneficiary ID Type is missing." %}</span>
                                 </div>
                                 <div  class="line">
-                                    <label class="text" style="width: 200px;">{% trans "Individual ID number: " %}</label>
+                                    <label class="text" style="width: 200px;">{% trans "New Beneficiary Individual ID Number: " %}</label>
                                     <input id="id_number" maxlength="45" type="text">
                                     <span class="error" id="beneficiary_id_number_error">{% trans "Invalid ID format." %}</span>
                                 </div>
@@ -400,7 +400,7 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <label>{% trans "Please select the child if the child has been refused re-entry into school after dropping out" %}</label>
+                                <label>{% trans "Please select the child that has been refused re-entry by the School Director" %}</label>
                                 <label class="text" style="width: 200px;">{% trans "Student: " %}</label>
                                     <select id="student_refused_entrance" style="width: 440px;" >
                                     </select>
@@ -497,6 +497,10 @@
                                 <textarea cols="38" id="complaint" name="complaint" rows="1"></textarea>
                                 <span class="error" id="complaint_error">{% trans "Comment is missing." %}</span>
                                 <br>
+                            </div>
+                            <div class="line" id = "complaint_Other_type" style="display:none">
+                                    <label class="text" style="width: 200px;">{% trans "Specify: " %}</label>
+                                    <input id="complaint_Other_type_specify" maxlength="100" type="text">
                             </div>
                             <div class="line" id = "ComplaintHistory" style="display:none">
                                 <label class="text" style="width: 400px;">{% trans "Complaint History: " %}</label>
