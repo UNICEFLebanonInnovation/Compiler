@@ -194,6 +194,7 @@
         var checking_id_number_url = host+'/api/registrations-adult-id/';
         var childURL = host+'/api/registrations-child/';
         var complaintURL = host+'/api/registrations-complaint/';
+        var arabic_fields = "#first_name, #father_name, #last_name, #mother_full_name";
 
         var hhID = null;
 
@@ -227,6 +228,10 @@
                     CheckInitialiseSly();
                  }
                );
+
+              $(document).on('blur', arabic_fields, function(){
+                  checkArabicOnly($(this));
+              });
 
                 // get the list of household and fill the table with it
                /*
@@ -446,6 +451,7 @@
                          householdRecord = household;
                          console.log(response);
                          complaint_hh_id = hhID;
+                         HideAllErrors();
                          $("#hhName").text(household.first_name+' '+household.father_name+' '+household.last_name);
                          $("#hhIdNumber").text(household.id_number);
                          $("#hhDOB").text(household.birthday_day+'/'+household.birthday_month+'/'+household.birthday_year);
@@ -757,14 +763,26 @@
                    {
                       SaveChildren();
                    }
-                    else if($("#changeOption").val() == "cardStatus")
+                    else if($("#changeOption").val() == "cardStatus" && ValidateComplaint())
                    {
                       SaveHousehold();
                       SaveComplaint();
                    }
-                   else if($("#changeOption").val() == "payment" || $("#changeOption").val() == "card"
-                       || $("#changeOption").val() == "refusedServiceBLF"|| $("#changeOption").val() == "schoolRefusedEntrance"
-                       || $("#changeOption").val() == "reinstateBeneficiary" || $("#changeOption").val() == "otherComplaint" )
+                   else if
+                   (
+                            (
+                                $("#changeOption").val() == "payment"
+                               || $("#changeOption").val() == "refusedServiceBLF"|| $("#changeOption").val() == "schoolRefusedEntrance"
+                               || $("#changeOption").val() == "reinstateBeneficiary" || $("#changeOption").val() == "otherComplaint"
+                            )
+                            && ValidateComplaint()
+                   )
+                   {
+                       SaveComplaint();
+                   }
+
+                   else if
+                   ( $("#changeOption").val() == "card" )
                    {
                        SaveComplaint();
                    }
