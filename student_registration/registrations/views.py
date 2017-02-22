@@ -4,6 +4,8 @@ from __future__ import absolute_import, unicode_literals
 from django.http import Http404
 from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Value as V
+from django.db.models.functions import Concat
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
 import tablib
@@ -34,7 +36,7 @@ from student_registration.registrations.forms import (
     RegisteringAdultForm,
     RegisteringChildForm,
     WaitingListForm,
-    HouseholdListSearchForm,
+    SchoolModificationForm,
 )
 from student_registration.students.forms import StudentForm
 from student_registration.eav.models import (
@@ -43,13 +45,21 @@ from student_registration.eav.models import (
 )
 from student_registration.locations.models import Location
 
-from .models import Registration, RegisteringAdult, WaitingList
+from .models import (
+    Registration,
+    RegisteringAdult,
+    WaitingList,
+    BeneficiaryChangedReason,
+    ComplaintCategory,
+    Complaint
+)
 from .serializers import (
     RegistrationSerializer,
     RegisteringAdultSerializer,
     RegistrationChildSerializer,
     ClassAssignmentSerializer,
     WaitingListSerializer,
+    ComplaintSerializer
 )
 from .utils import get_unhcr_principal_applicant
 
@@ -167,6 +177,7 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
                     adult.secondary_phone_answered = ''
                     adult.wfp_case_number = ''
                     adult.csc_case_number = ''
+                    adult.card_last_four_digits = ''
                     adult.save()
                     return adult
             raise exp
@@ -217,6 +228,22 @@ class RegisteringChildViewSet(mixins.RetrieveModelMixin,
         if self.request.user.is_superuser:
             return self.queryset
         return []
+
+
+class RegisteringComplaintViewSet(mixins.RetrieveModelMixin,
+                                  mixins.ListModelMixin,
+                                  mixins.CreateModelMixin,
+                                  mixins.UpdateModelMixin,
+                                  viewsets.GenericViewSet):
+
+    model = Complaint
+    queryset = Complaint.objects.all()
+    serializer_class = ComplaintSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+    def put(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class RegisteringPilotView(LoginRequiredMixin, FormView):
@@ -276,19 +303,114 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
             data = []
             schools = []
 
-            locations = Location.objects.all().filter(type_id=2).order_by('name')
+            locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
+            payment_complaint_types = \
+                ComplaintCategory.objects.all().filter(complaint_type='PAYMENT').order_by('name')
+            card_distribution_cmplaint_types= \
+                ComplaintCategory.objects.all().filter(complaint_type='CARD DISTRIBUTION').order_by('name')
+            card_complaint_types = \
+                ComplaintCategory.objects.all().filter(complaint_type='CARD').order_by('name')
+            school_complaint_types = \
+                ComplaintCategory.objects.all().filter(complaint_type='SCHOOL-RELATED').order_by('name')
+            other_complaint_types = \
+                ComplaintCategory.objects.all().filter(complaint_type='OTHER').order_by('name')
+            bank_complaint_types = \
+                ComplaintCategory.objects.all().filter(complaint_type='BANK').order_by('name')
+            reinstate_beneficiary_complaint_types = \
+                ComplaintCategory.objects.all().filter(complaint_type='REINSTATE BENEFICIARY').order_by('name')
+            months = Person.MONTHS
             location = self.request.GET.get("location", 0)
+            idType = IDType.objects.all().filter(inuse=True).order_by('name')
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
+            relationToHouseholdHead = RegisteringAdult.RELATION_TYPE
+            complaint_status = Complaint.STATUS
+            gender = RegisteringAdult.GENDER
+            beneficiaryChangedReason = BeneficiaryChangedReason.objects.all()
+            addressSearchText = self.request.GET.get("addressSearchText", '')
+            repSearchText = self.request.GET.get("repSearchText", '')
+            idSearchText = self.request.GET.get("idSearchText", '')
+            primarySearchText = self.request.GET.get("primarySearchText", '')
+            secondarySearchText = self.request.GET.get("secondarySearchText", '')
+            # if location:
+            #     schools = School.objects.filter(location_id=location)
+            schools = School.objects.all().order_by('name')
 
 
-            if location:
-                schools = School.objects.filter(location_id=location)
-                data = self.model.objects.filter(school__location_id=location).order_by('id')[:10]
+            data = self.model.objects.annotate(
+                name=Concat('first_name', V(' '), 'father_name', V(' '), 'last_name'),
+            ).filter(school__location_id=location,
+                     address__icontains=addressSearchText,
+                     name__icontains=repSearchText ,
+                     id_number__icontains=idSearchText,
+                     primary_phone__icontains=primarySearchText,
+                     secondary_phone__icontains=secondarySearchText,
+                     ).order_by('id')[:200]
 
             return {
                 'adults': data,
                 'locations': locations,
                 'selectedLocation': int(location),
                 'schools': schools,
-                'phoneAnsweredby' : phoneAnsweredby
-    }
+                'phoneAnsweredby': phoneAnsweredby,
+                'idType': idType,
+                'relationToHouseholdHead': relationToHouseholdHead,
+                'gender': gender,
+                'beneficiaryChangedReason': beneficiaryChangedReason,
+                'addressSearchText': addressSearchText,
+                'repSearchText': repSearchText,
+                'idSearchText': idSearchText,
+                'primarySearchText': primarySearchText,
+                'secondarySearchText':secondarySearchText,
+                'payment_complaint_types': payment_complaint_types,
+                'card_distribution_cmplaint_types': card_distribution_cmplaint_types,
+                'card_complaint_types': card_complaint_types,
+                'school_complaint_types': school_complaint_types,
+                'other_complaint_types': other_complaint_types,
+                'months': months,
+                'complaint_status': complaint_status,
+                'bank_complaint_types': bank_complaint_types,
+                'reinstate_beneficiary_complaint_types': reinstate_beneficiary_complaint_types,
+            }
+
+
+class SchoolApprovalListView(LoginRequiredMixin, TemplateView):
+
+    model = Registration
+    template_name = 'registration-pilot/list_school_modification.html'
+
+    def get_context_data(self, **kwargs):
+        data = []
+        locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
+        location = self.request.GET.get("location", 0)
+        if location:
+            data = self.model.objects.filter(school__location_id=location,school_changed_to_verify__isnull=False).order_by('id')
+
+        return {
+            'registrations': data,
+            'locations': locations,
+            'selectedLocation': int(location),
+            'Modification_form': SchoolModificationForm
+        }
+
+
+class AdultChangelListView(LoginRequiredMixin, TemplateView):
+    """
+    Provides the adult change page with lookup types in the context
+    """
+    model = RegisteringAdult
+    template_name = 'registration-pilot/household-change.html'
+
+    def get_context_data(self, **kwargs):
+        data = []
+
+        locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
+        location = self.request.GET.get("location", 0)
+
+        if location:
+            data = self.model.objects.filter(school__location_id=location,beneficiary_changed_verify=True).order_by('id')
+
+        return {
+            'adults': data,
+            'locations': locations,
+            'selectedLocation': int(location)
+        }
