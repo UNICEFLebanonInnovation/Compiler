@@ -18,10 +18,67 @@ function ValidateHouseHoldUpdate()
      {
          result = ValidateCardPhone();
      }
+     else if($("#changeOption").val() == "address")
+     {
+         result = validateTextBoxRequired('address','address_error',result);
+     }
+     else if($("#changeOption").val() == "refusedServiceBLF")
+     {
+         result = validateTextBoxRequired('complaint_bank_phone_used','complaint_bank_phone_used_error',result);
+         result = validateTextBoxRequired('complaint_bank_service_requested','complaint_bank_service_requested_error',result);
+     }
 
      return result;
 }
 
+function HideAllErrors()
+
+{
+    $("#address_error").hide();
+    $("#complaint_bank_phone_used_error").hide();
+    $("#complaint_bank_service_requested_error").hide();
+    $("#complaint_error").hide();
+    $("#first_card_case_number_error").hide();
+    $("#first_card_case_number_confirm_error").hide();
+    $("#first_card_case_equal_error").hide();
+    $("#first_card_last_four_digits_error").hide();
+    $("#second_card_case_number_error").hide();
+    $("#second_card_case_equal_error").hide();
+    $("#second_card_case_number_confirm_error").hide();
+    $("#second_card_last_four_digits_error").hide();
+    $("#beneficiary_phone_length_error").hide();
+    $("#beneficiary_phone_confirm_length_error").hide();
+    $("#beneficiary_phone_confirm_error").hide();
+    $("#dob_error").hide();
+    $("#beneficiary_id_number_error").hide();
+    $("#first_name_error").hide();
+    $("#father_name_error").hide();
+    $("#last_name_error").hide();
+    $("#mother_full_name_error").hide();
+    $("#reason_error").hide();
+    $("#reason_error").hide();
+    $("#relation_to_householdhead_error").hide();
+    $("#gender_error").hide();
+    $("#idType_error").hide();
+    $("#primary_phone_length_error").hide();
+    $("#primary_phone_confirm_length_error").hide();
+    $("#primary_phone_confirm_error").hide();
+    $("#primary_phone_answered_error").hide();
+    $("#secondary_phone_length_error").hide();
+    $("#secondary_phone_confirm_length_error").hide();
+    $("#secondary_phone_confirm_error").hide();
+    $("#secondary_phone_answered_error").hide();
+    $("#card_phone_confirm_length_error").hide();
+    $("#card_phone_confirm_error").hide();
+}
+
+
+function ValidateComplaint()
+{
+     var result = true;
+     result = validateTextBoxRequired('complaint','complaint_error',result);
+     return result;
+}
 
 function ValidateTwoCard()
 {
@@ -152,9 +209,6 @@ function validate_beneficiary()
     var isPhoneValid = ValidatePhoneNumber(phone)
     var isPhoneConfirmValid = ValidatePhoneNumber(phone_confirm);
     var isPhoneEqualValid= phone == phone_confirm;
-
-
-
     if (!isPhoneValid)
     {
         $("#beneficiary_phone_length_error").show();
@@ -183,17 +237,6 @@ function validate_beneficiary()
     }
 
     var isDOBValid = true;
-    if($("#days").val() == ""|| $("#months").val() == ""||$("#years").val() == "")
-    {
-        isDOBValid = false;
-        $("#dob_error").show();
-    }
-    else
-    {
-        $("#dob_error").hide();
-
-    }
-
     if($("#days").val() && $("#months").val() && $("#years").val())
     {
 
@@ -207,12 +250,64 @@ function validate_beneficiary()
 
     var isCaseNumberValid =  ValidateBeneficiaryID(case_number,id_type);
 
+    result = validateTextBoxRequired('first_name','first_name_error',result);
+    result = validateTextBoxRequired('father_name','father_name_error',result);
+    result = validateTextBoxRequired('last_name','last_name_error',result);
+    result = validateTextBoxRequired('mother_full_name','mother_full_name_error',result);
+
+    var isReasonValid = true;
+    if($("#reason").val()==null)
+    {
+        isReasonValid= false;
+        $("#reason_error").show();
+    }
+    else
+    {
+        $("#reason_error").hide();
+    }
+
+    var isRelation_to_householdheadValid = true;
+    if($("#relation_to_householdhead").val()==null)
+    {
+        isRelation_to_householdheadValid= false;
+        $("#relation_to_householdhead_error").show();
+    }
+    else
+    {
+        $("#relation_to_householdhead_error").hide();
+    }
+
+    var isGenderValid = true;
+    if($("#gender").val()==null)
+    {
+        isRelation_to_householdheadValid= false;
+        $("#gender_error").show();
+    }
+    else
+    {
+        $("#gender_error").hide();
+    }
+
+    var isIdTypeValid = true;
+    if($("#idType").val()==null)
+    {
+        isIdTypeValid= false;
+        $("#idType_error").show();
+    }
+    else
+    {
+        $("#idType_error").hide();
+    }
+
     result = result && isPhoneValid;
     result = result && isPhoneConfirmValid;
     result = result && isPhoneEqualValid;
     result = result && isCaseNumberValid;
     result = result && isDOBValid;
-
+    result = result && isReasonValid;
+    result = result && isRelation_to_householdheadValid;
+    result = result && isGenderValid;
+    result = result && isIdTypeValid;
     return result;
 }
 
@@ -447,5 +542,61 @@ function validate_individual_UNHCRNumber(val)
 {
     return /^[0-9]{3}-[0-9]{8}$/i.test(val);
 }
+
+function checkArabicOnly(field)
+{
+    checkFieldCharacters
+    (
+        field,
+        function(ch)
+        {
+            var c = ch.charCodeAt(0);
+            return !((c < 1536 || c > 1791) && ch != " ");
+        }
+    );
+}
+
+function checkFieldCharacters(field,characterCheck)
+{
+    var sNewVal = "";
+
+    var sFieldVal = field.val();
+
+    for(var i = 0; i < sFieldVal.length; i++) {
+
+        var ch = sFieldVal.charAt(i);
+
+        if(!characterCheck(ch)) {
+            // Discard
+        }
+
+        else {
+            sNewVal += ch;
+        }
+    }
+
+    if(field.val() != sNewVal) {
+        field.val(sNewVal);
+    }
+}
+
+
+function validateTextBoxRequired(id, errorID, isValid)
+{
+    return validateCondition(errorID, isValid, $('#'+id).val() != "");
+}
+
+function validateCondition(errorID, isValid, validationResult)
+{
+    var valid = isValid;
+    if(!validationResult){
+            $('#'+errorID).show();
+            valid = false ;
+        }else{
+            $('#'+errorID).hide();
+    }
+    return valid;
+}
+
 
 
