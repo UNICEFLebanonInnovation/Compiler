@@ -126,3 +126,24 @@ def assign_round(round_id):
     print registrations
 
     print "End assignment"
+
+
+def fix_round_assignment(update):
+    from student_registration.alp.models import Outreach
+
+    registrations = Outreach.objects.filter(
+        owner__username__contains='caritas',
+        alp_round__id__exact=3,
+        level__isnull=True,
+        assigned_to_level__isnull=True,
+        registered_in_level__isnull=True,
+        id__gt=14163
+    )
+
+    print len(registrations), " records to assign"
+
+    if update == 1:
+        total = registrations.update(alp_round_id=4)
+        print total, " records assigned"
+
+    print "End assignment"
