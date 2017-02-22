@@ -212,40 +212,106 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
     student_first_name = serializers.CharField(source='student.first_name')
     student_father_name = serializers.CharField(source='student.father_name')
     student_last_name = serializers.CharField(source='student.last_name')
+    student_mother_fullname = serializers.CharField(source='student.mother_fullname', required=False)
     student_sex = serializers.CharField(source='student.sex')
 
-    # def create(self, validated_data):
-    #
-    #     student_data = validated_data.pop('student', None)
-    #     student_serializer = StudentSerializer(data=student_data)
-    #     student_serializer.is_valid(raise_exception=True)
-    #     student_serializer.instance = student_serializer.save()
-    #
-    #     try:
-    #         instance = Outreach.objects.create(**validated_data)
-    #         instance.student = student_serializer.instance
-    #         instance.save()
-    #
-    #     except Exception as ex:
-    #         raise serializers.ValidationError({'Outreach instance': ex.message})
-    #
-    #     return instance
+    student_birthday_year = serializers.CharField(source='student.birthday_year', required=False)
+    student_birthday_month = serializers.CharField(source='student.birthday_month', required=False)
+    student_birthday_day = serializers.CharField(source='student.birthday_day', required=False)
+    student_phone = serializers.CharField(source='student.phone', required=False)
+    student_phone_prefix = serializers.CharField(source='student.phone_prefix', required=False)
+    student_id_number = serializers.CharField(source='student.id_number', required=False)
+    student_id_type = serializers.CharField(source='student.id_type', required=False)
+    student_nationality = serializers.CharField(source='student.nationality', required=False)
+    student_mother_nationality = serializers.CharField(source='student.mother_nationality', required=False)
+    student_address = serializers.CharField(source='student.address', required=False)
 
-    # def update(self, instance, validated_data):
-    #
-    #     try:
-    #         instance.level = validated_data['level']
-    #         instance.registered_in_level = validated_data['registered_in_level']
-    #         instance.assigned_to_level = validated_data['assigned_to_level']
-    #         instance.not_enrolled_in_this_school = validated_data['not_enrolled_in_this_school']
-    #         instance.exam_not_exist_in_school = validated_data['exam_not_exist_in_school']
-    #
-    #         instance.save()
-    #
-    #     except Exception as ex:
-    #         raise serializers.ValidationError({'Outreach instance': ex.message})
-    #
-    #     return instance
+    def create(self, validated_data):
+
+        student_data = validated_data.pop('student', None)
+        student_serializer = StudentSerializer(data=student_data)
+        student_serializer.is_valid(raise_exception=True)
+        student_serializer.instance = student_serializer.save()
+
+        try:
+            instance = Outreach.objects.create(**validated_data)
+            instance.student = student_serializer.instance
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'Outreach instance': ex.message})
+
+        return instance
+
+    def update(self, instance, validated_data):
+
+        try:
+
+            student_data = validated_data.pop('student', None)
+
+            student = instance.student
+
+            student.first_name = student_data['first_name']
+            student.father_name = student_data['father_name']
+            student.last_name = student_data['last_name']
+            if 'mother_fullname' in student_data:
+                student.mother_fullname = student_data['mother_fullname']
+
+            if 'birthday_year' in validated_data:
+                student.birthday_year = student_data['birthday_year']
+            if 'birthday_month' in validated_data:
+                student.birthday_month = student_data['birthday_month']
+            if 'birthday_day' in validated_data:
+                student.birthday_day = student_data['birthday_day']
+
+            student.sex = student_data['sex']
+            if 'phone' in student_data:
+                student.phone = student_data['phone']
+            if 'phone_prefix' in student_data:
+                student.phone_prefix = student_data['phone_prefix']
+            if 'address' in student_data:
+                student.address = student_data['address']
+            if 'nationality' in validated_data:
+                student.nationality = Nationality.objects.get(id=student_data['nationality'])
+            if 'mother_nationality' in student_data:
+                student.mother_nationality = Nationality.objects.get(id=student_data['mother_nationality'])
+
+            if 'id_type' in validated_data:
+                student.id_type = IDType.objects.get(id=student_data['id_type'])
+            if 'id_number' in validated_data:
+                student.id_number = student_data['id_number']
+
+            student.save()
+
+            if 'level' in validated_data:
+                instance.level = validated_data['level']
+            if 'assigned_to_level' in validated_data:
+                instance.assigned_to_level = validated_data['assigned_to_level']
+
+            if 'exam_result_arabic' in validated_data:
+                instance.exam_result_arabic = validated_data['exam_result_arabic']
+            if 'exam_result_language' in validated_data:
+                instance.exam_result_language = validated_data['exam_result_language']
+            if 'exam_result_math' in validated_data:
+                instance.exam_result_math = validated_data['exam_result_math']
+            if 'exam_result_science' in validated_data:
+                instance.exam_result_science = validated_data['exam_result_science']
+
+            if 'exam_corrector_arabic' in validated_data:
+                instance.exam_corrector_arabic = validated_data['exam_corrector_arabic']
+            if 'exam_corrector_language' in validated_data:
+                instance.exam_corrector_language = validated_data['exam_corrector_language']
+            if 'exam_corrector_math' in validated_data:
+                instance.exam_corrector_math = validated_data['exam_corrector_math']
+            if 'exam_corrector_science' in validated_data:
+                instance.exam_corrector_science = validated_data['exam_corrector_science']
+
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'Outreach instance': ex.message})
+
+        return instance
 
     class Meta:
         model = Outreach
@@ -256,10 +322,21 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'student_first_name',
             'student_father_name',
             'student_last_name',
+            'student_mother_fullname',
             'student_sex',
+            'student_birthday_year',
+            'student_birthday_month',
+            'student_birthday_day',
             'student_id_type_id',
+            'student_nationality',
+            'student_mother_nationality',
             'student_nationality_id',
             'student_mother_nationality_id',
+            'student_phone',
+            'student_phone_prefix',
+            'student_id_number',
+            'student_id_type',
+            'student_address',
             'school',
             'owner',
             'location',
