@@ -45,7 +45,7 @@
                     <option value="{{ schl.id }}" itemcontent="{{ schl.number }}"
                             {% if school and school.id == schl.id %}selected="selected"{% endif %}
                             data-parent="{% if schl.location %}{{ schl.location.id }}{% endif %}">
-                        {{ schl.name }}
+                        {{ schl }}
                     </option>
                 {% endfor %}
             </select>
@@ -245,7 +245,7 @@
             </select>
         </td>
         <td>
-            <input type="text" name="student_id_number" value="0" id="student_id_number" class="outreach-field"
+            <input type="text" name="student_id_number" id="student_id_number" class="outreach-field"
                    placeholder="{% trans "Student ID Number" %}" itemscope="$$itemscope_id$$" />
         </td>
         <td>

@@ -157,8 +157,9 @@ def disable_duplicate_enrolments(offset=None, school_number=None):
 
 @app.task
 def disable_duplicate_outreaches(school_number=None):
-    from student_registration.alp.models import Outreach
-    registrations = Outreach.objects.exclude(deleted=True).order_by('-id')
+    from student_registration.alp.models import Outreach, ALPRound
+    alp_round = ALPRound.objects.get(current_round=True)
+    registrations = Outreach.objects.exclude(deleted=True).filter(alp_round=alp_round).order_by('-id')
     if school_number:
         print school_number
         registrations = registrations.filter(school__number=school_number)
@@ -223,7 +224,12 @@ def find_matching():
                     Q(student__id_number=id_number_2) |
                     Q(student__id_number=id_number_3) |
                     Q(student__id_number=id_number_4) |
-                    Q(student__id_number=id_number_5)
+                    Q(student__id_number=id_number_5) |
+                    Q(student__id_number__contains=id_number_1) |
+                    Q(student__id_number__contains=id_number_2) |
+                    Q(student__id_number__contains=id_number_3) |
+                    Q(student__id_number__contains=id_number_4) |
+                    Q(student__id_number__contains=id_number_5)
                 )
             else:
                 enrollment = Enrollment.objects.exclude(deleted=True).get(
