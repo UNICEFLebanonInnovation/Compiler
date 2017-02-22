@@ -147,6 +147,7 @@
                                 </div>
                                 <label class="text" style="width: 200px;">{% trans "Address: " %}</label>
                                 <textarea cols="30" id="address" name="address" rows="4"></textarea>
+                                <span class="error" id="address_error">{% trans "Address field is required!" %}</span>
                             </div>
                             <div class="line" id = "beneficiaryFields" style="display:none">
                                 <div class="line">
@@ -156,8 +157,9 @@
                                           <option value="{{ itm.id }}">{{ itm.name }}</option>
                                       {% endfor %}
                                     </select>
+                                    <span class="error" id="idType_error">{% trans "ID Type is missing." %}</span>
                                 </div>
-                                <div >
+                                <div  class="line">
                                     <label class="text" style="width: 200px;">{% trans "Individual ID number: " %}</label>
                                     <input id="id_number" maxlength="45" type="text">
                                     <span class="error" id="beneficiary_id_number_error">{% trans "Invalid ID format." %}</span>
@@ -165,18 +167,22 @@
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "New Beneficiary First Name (Arabic): " %}</label>
                                     <input id="first_name" maxlength="45" type="text">
+                                    <span class="error" id="first_name_error">{% trans "Beneficiary First Name is missing." %}</span>
                                 </div>
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "New Beneficiary Father Name (Arabic): " %}</label>
                                     <input id="father_name" maxlength="45" type="text">
+                                    <span class="error" id="father_name_error">{% trans "Beneficiary Father Name is missing." %}</span>
                                 </div>
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "New Beneficiary Last Name (Arabic): " %}</label>
                                     <input id="last_name" maxlength="45" type="text">
+                                    <span class="error" id="last_name_error">{% trans "Beneficiary Last Name is missing." %}</span>
                                 </div>
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "New Beneficiary Mother Full  Name (Arabic): " %}</label>
                                     <input id="mother_full_name" maxlength="45" type="text">
+                                    <span class="error" id="mother_full_name_error">{% trans "Beneficiary Mother Full Name is missing." %}</span>
                                 </div>
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "New Beneficiary Gender: " %}</label>
@@ -185,6 +191,7 @@
                                             <option value="{{ value }}">{{ text }}</option>
                                         {% endfor %}
                                     </select>
+                                <span class="error" id="gender_error">{% trans "Gender is missing." %}</span>
                                 </div>
                                 <div class="line field-select-small-size">
                                     <label class="text" style="width: 200px;">{% trans "New Beneficiary DOB" %}</label>
@@ -205,6 +212,7 @@
                                             <option value="{{ value }}">{{ text }}</option>
                                         {% endfor %}
                                     </select>
+                                    <span class="error" id="relation_to_householdhead_error">{% trans "Relationship to household head is missing." %}</span>
                                 </div>
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "New Beneficiary Phone Number: " %}</label>
@@ -232,6 +240,7 @@
                                           <option value="{{ itm.id }}">{{ itm.name }}</option>
                                       {% endfor %}
                                     </select>
+                                    <span class="error" id="reason_error">{% trans "Reason is missing." %}</span>
                                 </div>
                                 <div class="line" id = "beneficiary_reason" style="display:none">
                                     <label class="text" style="width: 200px;">{% trans "Specify: " %}</label>
@@ -372,14 +381,15 @@
                                 </select>
 
                             </div>
-                            <div class="line" id = "reinstateBeneficiaryFields" style="display:none">
-
-                                <label class="text" style="width: 200px;">{% trans "Complaint Type: " %}</label>
-                                <select id="reinstate_complaint" >
-                                    {% for itm in reinstate_beneficiary_complaint_types %}
-                                        <option value="{{ itm.id }}">{{ itm.name }}</option>
-                                    {% endfor %}
-                                </select>
+                            <div id = "reinstateBeneficiaryFields" style="display:none">
+                                <div   style="display:none">
+                                    <label class="text" style="width: 200px;">{% trans "Complaint Type: " %}</label>
+                                    <select id="reinstate_complaint" >
+                                        {% for itm in reinstate_beneficiary_complaint_types %}
+                                            <option value="{{ itm.id }}">{{ itm.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                             </div>
                             <div class="line" id = "schoolRefusedEntranceFields" style="display:none">
                                 <div  id = "schoolComplaintSelect" style="display:none">
@@ -435,10 +445,12 @@
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "Phone number from which call was placed: " %}</label>
                                     <input id="complaint_bank_phone_used" maxlength="45" type="text">
+                                    <span class="error" id="complaint_bank_phone_used_error">{% trans "Phone is missing." %}</span>
                                 </div>
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "Service requested " %}</label>
                                     <input id="complaint_bank_service_requested" maxlength="45" type="text">
+                                    <span class="error" id="complaint_bank_service_requested_error">{% trans "Service requested is missing." %}</span>
                                 </div>
                             </div>
                             <div class="line" id = "twoCardsFields" style="display:none">
@@ -446,7 +458,6 @@
                                     <label class="text">{% trans "Case Number on First Card: " %}</label>
                                     <input id="first_card_case_number" maxlength="45" type="text">
                                     <span class="error" id="first_card_case_number_error">{% trans "Case number is incorrect" %}</span>
-
                                 </div>
                                 <div class="line">
                                     <label class="text">{% trans "Confirm Case Number on First Card: " %}</label>
@@ -484,6 +495,7 @@
 
                                 <label class="text" style="width: 200px;">{% trans "Comment: " %}</label>
                                 <textarea cols="38" id="complaint" name="complaint" rows="1"></textarea>
+                                <span class="error" id="complaint_error">{% trans "Comment is missing." %}</span>
                                 <br>
                             </div>
                             <div class="line" id = "ComplaintHistory" style="display:none">
