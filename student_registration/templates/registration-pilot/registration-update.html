@@ -157,8 +157,9 @@
                                           <option value="{{ itm.id }}">{{ itm.name }}</option>
                                       {% endfor %}
                                     </select>
+                                    <span class="error" id="idType_error">{% trans "ID Type is missing." %}</span>
                                 </div>
-                                <div >
+                                <div  class="line">
                                     <label class="text" style="width: 200px;">{% trans "Individual ID number: " %}</label>
                                     <input id="id_number" maxlength="45" type="text">
                                     <span class="error" id="beneficiary_id_number_error">{% trans "Invalid ID format." %}</span>
@@ -190,6 +191,7 @@
                                             <option value="{{ value }}">{{ text }}</option>
                                         {% endfor %}
                                     </select>
+                                <span class="error" id="gender_error">{% trans "Gender is missing." %}</span>
                                 </div>
                                 <div class="line field-select-small-size">
                                     <label class="text" style="width: 200px;">{% trans "New Beneficiary DOB" %}</label>
@@ -210,6 +212,7 @@
                                             <option value="{{ value }}">{{ text }}</option>
                                         {% endfor %}
                                     </select>
+                                    <span class="error" id="relation_to_householdhead_error">{% trans "Relationship to household head is missing." %}</span>
                                 </div>
                                 <div class="line">
                                     <label class="text" style="width: 200px;">{% trans "New Beneficiary Phone Number: " %}</label>
