@@ -16,6 +16,7 @@ from .models import (
     Section,
     ClassRoom,
     PartnerOrganization,
+    ALPReferMatrix,
 )
 
 
@@ -144,6 +145,22 @@ class PartnerOrganizationAdmin(ImportExportModelAdmin):
     search_fields = ('name', )
 
 
+class ALPReferMatrixResource(resources.ModelResource):
+    class Meta:
+        model = ALPReferMatrix
+
+
+class ALPReferMatrixAdmin(ImportExportModelAdmin):
+    resource_class = ALPReferMatrixResource
+    fields = (
+        'level',
+        'age',
+        'success_refer_to',
+        'fail_refer_to',
+        'success_grade',
+    )
+    list_display = fields
+
 admin.site.register(School, SchoolAdmin)
 # admin.site.register(Course)
 admin.site.register(EducationLevel, EducationLevelAdmin)
@@ -152,7 +169,7 @@ admin.site.register(ClassLevel, ClassLevelAdmin)
 admin.site.register(Section, SectionAdmin)
 admin.site.register(ClassRoom, ClassRoomAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
-
+admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
 
 
 

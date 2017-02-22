@@ -21,7 +21,7 @@ from student_registration.schools.models import (
     Grade
 )
 from student_registration.locations.models import Location
-from student_registration.eav.registry import Registry as eav
+from student_registration.alp.utils import refer_to_level
 
 
 class ALPRound(models.Model):
@@ -124,6 +124,7 @@ class Outreach(TimeStampedModel):
         Section,
         blank=True, null=True,
         related_name='+',
+        verbose_name='Current Section',
     )
     grade = models.ForeignKey(
         Grade,
@@ -254,16 +255,19 @@ class Outreach(TimeStampedModel):
         EducationLevel,
         blank=True, null=True,
         related_name='+',
+        verbose_name='Registered in level',
     )
     registered_in_level = models.ForeignKey(
         EducationLevel,
         blank=True, null=True,
         related_name='+',
+        verbose_name='Current level',
     )
     assigned_to_level = models.ForeignKey(
         EducationLevel,
         blank=True, null=True,
         related_name='+',
+        verbose_name='Assigned to level',
     )
     exam_school = models.ForeignKey(
         School,
@@ -392,6 +396,10 @@ class Outreach(TimeStampedModel):
         if self.student:
             return self.student.__unicode__()
         return str(self.id)
+
+    def save(self, **kwargs):
+        self.refer_to_level = refer_to_level(self.student_age, self.registered_in_level, self.post_exam_total)
+        super(Outreach, self).save(**kwargs)
 
 
 class ExtraColumn(TimeStampedModel):

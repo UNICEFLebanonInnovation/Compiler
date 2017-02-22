@@ -75,6 +75,27 @@ def assign_alp_level():
 
 
 @app.task
+def auto_refer_to_alp_level():
+    from student_registration.alp.utils import refer_to_level
+    from student_registration.alp.models import Outreach, ALPRound
+    alp_round = ALPRound.objects.get(current_post_test=True)
+
+    records = Outreach.objects.filter(alp_round=alp_round)
+
+    for record in records:
+        try:
+            record.refer_to_level = refer_to_level(
+                record.student.age,
+                record.registered_in_level,
+                record.post_exam_total
+            )
+            record.save()
+        except Exception as ex:
+            print ex.message
+            continue
+
+
+@app.task
 def assign_section(section):
     from student_registration.alp.models import Outreach, ALPRound
     from student_registration.schools.models import Section
@@ -103,5 +124,26 @@ def assign_round(round_id):
 
     registrations = Outreach.objects.exclude(deleted=True).filter(alp_round__isnull=True).update(alp_round_id=round_id)
     print registrations
+
+    print "End assignment"
+
+
+def fix_round_assignment(update):
+    from student_registration.alp.models import Outreach
+
+    registrations = Outreach.objects.filter(
+        owner__username__contains='caritas',
+        alp_round__id__exact=3,
+        level__isnull=True,
+        assigned_to_level__isnull=True,
+        registered_in_level__isnull=True,
+        id__gt=14163
+    )
+
+    print len(registrations), " records to assign"
+
+    if update == 1:
+        total = registrations.update(alp_round_id=4)
+        print total, " records assigned"
 
     print "End assignment"
