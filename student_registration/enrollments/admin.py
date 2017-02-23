@@ -141,6 +141,8 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'governorate',
         'classroom',
         'section',
+        'created',
+        'modified',
     )
     list_filter = (
         'school__number',
@@ -159,6 +161,8 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_informal_edu_round',
         'last_informal_edu_level',
         'last_informal_edu_final_result',
+        'created',
+        'modified',
     )
     search_fields = (
         'student__first_name',
