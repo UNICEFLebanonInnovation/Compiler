@@ -263,8 +263,12 @@
                 function Search()
                 {
                    var selected_location = $("#id_location").val();
-
+                   var repSearchText = $("#repSearchText").val();
+                   var idSearchText = $("#idSearchText").val();
+                   var primarySearchText = $("#primarySearchText").val();
+                   var secondarySearchText = $("#secondarySearchText").val();
                    // reload the page with the location id passed in post
+
                     var url = '{% url "registrations:registry_search" %}';
                     if(selected_location){
                         url = url+'?location='+selected_location;
@@ -273,7 +277,14 @@
                         url = AddParameter(url,"primarySearchText");
                         url = AddParameter(url,"secondarySearchText");
                     }
-                    window.location.href = url;
+                    else
+                        {
+                            url = url+'?repSearchText='+repSearchText;
+                            url = AddParameter(url,"idSearchText");
+                            url = AddParameter(url,"primarySearchText");
+                            url = AddParameter(url,"secondarySearchText");
+                        }
+                        window.location.href = url;
                 }
 
 
@@ -489,7 +500,16 @@
                          }
 
 
-                         $("#hhDateOfDistribution").text(household.card_distribution_date);
+                         if (household.card_distribution_date == null)
+                         {
+                           $("#hhDateOfDistribution").text('');
+                         }
+                         else
+                         {
+                             $("#hhDateOfDistribution").text(household.card_distribution_date);
+                         }
+
+
 
                          $("#primary_phone").val('');
                          $("#primary_phone_confirm").val('');
