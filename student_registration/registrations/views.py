@@ -5,6 +5,7 @@ from django.http import Http404
 from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Value as V
+from django.db.models import Q
 from django.db.models.functions import Concat
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
@@ -331,20 +332,29 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
             idSearchText = self.request.GET.get("idSearchText", '')
             primarySearchText = self.request.GET.get("primarySearchText", '')
             secondarySearchText = self.request.GET.get("secondarySearchText", '')
-            # if location:
-            #     schools = School.objects.filter(location_id=location)
+
             schools = School.objects.all().order_by('name')
 
+            if location > 0:
+                data = self.model.objects.annotate(
+                    name=Concat('first_name', V(' '), 'father_name', V(' '), 'last_name'),
+                ).filter(school__location_id=location,
+                         address__icontains=addressSearchText,
+                         name__icontains=repSearchText,
+                         id_number__icontains=idSearchText,
+                         primary_phone__icontains=primarySearchText,
+                         secondary_phone__icontains=secondarySearchText,
+                         ).order_by('id')[:200]
+            else:
+                data = self.model.objects.annotate(
+                    name=Concat('first_name', V(' '), 'father_name', V(' '), 'last_name'),
+                ).filter(address__icontains=addressSearchText,
+                         name__icontains=repSearchText,
+                         id_number__icontains=idSearchText,
+                         primary_phone__icontains=primarySearchText,
+                         secondary_phone__icontains=secondarySearchText,
+                         ).order_by('id')[:200]
 
-            data = self.model.objects.annotate(
-                name=Concat('first_name', V(' '), 'father_name', V(' '), 'last_name'),
-            ).filter(school__location_id=location,
-                     address__icontains=addressSearchText,
-                     name__icontains=repSearchText ,
-                     id_number__icontains=idSearchText,
-                     primary_phone__icontains=primarySearchText,
-                     secondary_phone__icontains=secondarySearchText,
-                     ).order_by('id')[:200]
 
             return {
                 'adults': data,
