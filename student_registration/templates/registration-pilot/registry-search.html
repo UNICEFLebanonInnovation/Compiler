@@ -106,7 +106,7 @@
                                         <th class = "transparent-header">
 
                                             <select id="id_location">
-                                              <option value="">---{% trans "Display by Location" %}---</option>
+                                              <option value="">---{% trans "Select District" %}---</option>
                                                 {% for location in locations %}
                                                     <option value="{{ location.id }}" {% if selectedLocation == location.id %}selected="selected"{% endif %}>
                                                       {{ location }}
@@ -130,7 +130,7 @@
                                     </tr>
                                     <tr id="thead-line-1">
                                         <th>{% trans "HH District" %}</th>
-                                        <th>{% trans "HH Representative Name" %}</th>
+                                        <th>{% trans "Household Representative/PA Name" %}</th>
                                         <th>{% trans "ID Number" %}</th>
                                         <th>{% trans "Primary Phone" %}</th>
                                         <th>{% trans "Secondary Phone" %}</th>
@@ -316,6 +316,19 @@
                     }
                 });
 
+                $("#card_complaint").change(function () {
+
+                    var selectedOptionText =  $("#card_complaint option:selected").text();
+                    if(selectedOptionText == "Other")
+                    {
+                        $("#complaint_Other_type").show();
+                    }
+                    else
+                    {
+                        $("#complaint_Other_type").hide();
+                    }
+                });
+
 
             // get selected option to update and set the fields visible
             $("#changeOption").change(function () {
@@ -345,7 +358,7 @@
                   $("#ComplaintHistory").show();
                 }
                 else if (selectedOption == 'card' ) {
-                  bootbox.alert("Refer to BLF Hotline:01242477/03242477");
+                  bootbox.alert("Please collect complaint type and refer beneficiary to BLF Hotline:01242477/03242477. Please explain that we can do nothing and they must call the bank");
                   $("#cardFields").show();
                   $("#ComplaintHistory").show();
                 }
@@ -397,7 +410,7 @@
             $("#twoCardsFields").hide();
             $("#cardPhoneFields").hide();
             $("#ComplaintHistory").hide();
-            ComplaintHistory
+            $("#complaint_Other_type").hide();
           }
 
               function loadAjaxCall(regId , data)
@@ -534,6 +547,8 @@
                          $("#complaint_bank_service_requested").val('');
                          $("#complaint").val('');
                          $("#student_refused_entrance").val('');
+                         $("#complaint_Other_type_specify").val('');
+
 
 
                          $("#schools-table tbody").empty();
@@ -1108,7 +1123,13 @@
          complaintData.complaint_bank_phone_used = $("#complaint_bank_phone_used").val();
          complaintData.complaint_bank_service_requested =$("#complaint_bank_service_requested").val();
          complaintData.complaint_solution ='';
-         complaintData.complaint_student_refused_entrance =$("#student_refused_entrance").val();
+         complaintData.complaint_Other_type_specify =$("#complaint_Other_type_specify").val();
+         if($("#changeOption").val() == "schoolRefusedEntrance")
+          {
+              complaintData.complaint_student_refused_entrance =$("#student_refused_entrance").val();
+          }
+
+
 
 
          var isSuccessfull = false;

@@ -203,7 +203,7 @@ function validate_beneficiary()
 
     var phone = $("#beneficiary_phone").val();
     var phone_confirm = $("#beneficiary_phone_confirm").val();
-    var case_number = $("#id_number").val();
+    var id_number = $("#id_number").val();
     var id_type = $("#idType").val();
 
     var isPhoneValid = ValidatePhoneNumber(phone)
@@ -248,7 +248,7 @@ function validate_beneficiary()
         $("#dob_error").show();
     }
 
-    var isCaseNumberValid =  ValidateBeneficiaryID(case_number,id_type);
+    var isNumberValid =  ValidateBeneficiaryID(id_number,id_type);
 
     result = validateTextBoxRequired('first_name','first_name_error',result);
     result = validateTextBoxRequired('father_name','father_name_error',result);
@@ -302,7 +302,7 @@ function validate_beneficiary()
     result = result && isPhoneValid;
     result = result && isPhoneConfirmValid;
     result = result && isPhoneEqualValid;
-    result = result && isCaseNumberValid;
+    result = result && isNumberValid;
     result = result && isDOBValid;
     result = result && isReasonValid;
     result = result && isRelation_to_householdheadValid;
@@ -311,33 +311,32 @@ function validate_beneficiary()
     return result;
 }
 
-function ValidateBeneficiaryID(case_number , id_type)
+function ValidateBeneficiaryID(id_number , id_type)
 {
 
-    var isCaseNumberValid = true;
+    var isNumberValid = true;
     if(id_type == 1)
     {
-        isCaseNumberValid=  validateUNHCRNumber(case_number);
-        if (!isCaseNumberValid)
+        isNumberValid=  validate_individual_UNHCRNumber(id_number);
+        if (!isNumberValid)
         {
             $("#beneficiary_id_number_error").show();
-            isCaseNumberValid=false;
         }
         else
         {
             $("#beneficiary_id_number_error").hide();
         }
     }
-    else if (case_number)
+    else if (id_number)
     {
         $("#beneficiary_id_number_error").hide();
     }
     else
     {
         $("#beneficiary_id_number_error").show();
-        isCaseNumberValid=false;
+        isNumberValid=false;
     }
-    return isCaseNumberValid;
+    return isNumberValid;
 }
 
 
@@ -538,9 +537,9 @@ function validateUNHCRNumber(cardCaseNumber)
     // return /^[0-9]{3}-1[1-5][C]\d{5}$/i.test($('#id_id_number').val());
     return validrecorded || validregistered || validOther;
 }
-function validate_individual_UNHCRNumber(val)
+function validate_individual_UNHCRNumber(Number)
 {
-    return /^[0-9]{3}-[0-9]{8}$/i.test(val);
+    return /^[0-9]{3}-[0-9]{8}$/i.test(Number);
 }
 
 function checkArabicOnly(field)

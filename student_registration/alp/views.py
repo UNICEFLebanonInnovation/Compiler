@@ -195,13 +195,11 @@ class PreTestView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   TemplateView):
     model = Outreach
-    template_name = 'alp/post_test.html'
+    template_name = 'alp/pre_test.html'
 
     group_required = [u"CERD"]
 
     def handle_no_permission(self, request):
-        # return HttpResponseRedirect(reverse("403.html"))
-        # return HttpResponseForbidden(reverse("404.html"))
         return HttpResponseForbidden()
 
     def get_context_data(self, **kwargs):
@@ -211,6 +209,10 @@ class PreTestView(LoginRequiredMixin,
         location_parent = 0
         school_id = int(self.request.GET.get("school", 0))
         alp_round = ALPRound.objects.get(current_pre_test=True)
+
+        schools = Outreach.objects.exclude(deleted=True).filter(
+            alp_round=alp_round,
+        ).values_list('school_id').order_by('school__number').distinct('school__number')
 
         data = Outreach.objects.exclude(owner__partner_id=None)
         data = data.filter(school_id=school_id, alp_round=alp_round)
@@ -225,7 +227,7 @@ class PreTestView(LoginRequiredMixin,
 
         return {
             'data': data,
-            'schools': School.objects.all(),
+            'schools': School.objects.filter(id__in=schools),
             'months': Person.MONTHS,
             'genders': Person.GENDER,
             'idtypes': IDType.objects.all(),

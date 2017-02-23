@@ -217,6 +217,7 @@ class Complaint(TimeStampedModel):
     complaint_bank_date_of_incident = models.DateTimeField(blank=True, null=True)
     complaint_bank_phone_used = models.CharField(max_length=50, blank=True, null=True)
     complaint_bank_service_requested = models.TextField(blank=True, null=True)
+    complaint_Other_type_specify = models.TextField(blank=True, null=True)
     complaint_student_refused_entrance = models.ForeignKey(
         Student,
         blank=True, null=True,
