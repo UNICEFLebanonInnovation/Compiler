@@ -17,6 +17,9 @@
         .outreach-field:focus {
             background-color: yellow;
         }
+        tr.warning {
+            border: 3px solid #90111A;
+        }
     </style>
 {% endblock %}
 
@@ -162,6 +165,7 @@
     <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/appcache.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/indexedDB.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/eav.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/jquery.quicksearch.js' %}"></script>
     <script type="text/javascript">
@@ -172,7 +176,6 @@
         var user_email = '{{ request.user.email }}';
         var user_token = '{{ user_token }}';
         var alp_round = '{{ alp_round }}';
-        var columns = 0;
         var rows = 1;
         var synchro_result = true;
         var prototype = $('#outreach_prototype');
@@ -202,8 +205,6 @@
             $('input#search').quicksearch('table tbody tr', {
                 selector: 'span'
             });
-
-            $('[data-toggle="tooltip"]').tooltip();
 
             $(document).on('blur', arabic_fields, function(){
                 checkArabicOnly($(this));
@@ -330,7 +331,7 @@
                 }
             });
 
-            $(document).on('change', '.exam-note', function(){
+            $(document).on('change, blur', '.exam-note', function(){
 
                 $(this).removeClass('required');
                 var item = $(this).parent().parent();
@@ -393,7 +394,7 @@
 
             $(document).on('change', '.outreach-field-check', function(){
                 update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'outreaches');
-                flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches-p');
+                flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches');
             });
 
             $(document).on('click', '#outreach-synchro', function(){
@@ -488,6 +489,12 @@
 
         function synchronize_data(showFeedback)
         {
+            $('.outreach-line-p').removeClass('warning');
+            $('.outreach-line').removeClass('warning');
+
+            $('.outreach-field').removeClass('required');
+            $('.outreach-field-p').removeClass('required');
+
             var store = getStoreByName('outreaches');
             var request = store.getAll();
             request.onsuccess = function() {
@@ -525,6 +532,7 @@
                         patch_data_into_server(item);
                         $(".loader").hide();
                     }
+                    $(".loader").hide();
                 });
             };
         }
@@ -543,7 +551,6 @@
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
                     if(jqXHR.status == 201){
-                        $('#line-'+item.id).find('.outreach-field').removeClass('required');
                         item.synchronized = true;
                         item.original_id = response.id;
                         item.to_update = false;
@@ -555,13 +562,13 @@
                     }
                 },
                 error: function (response) {
+                    $('#line-'+item.id).addClass('warning');
+                    console.log(response);
                     var required_fields = JSON.parse(response.responseText);
-                    $('#line-'+item.id).find('.outreach-field').removeClass('required');
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+item.id).find('#'+field_name).addClass('required');
                     });
                     synchro_result = false;
-                    console.log(response);
                 }
             });
         }
@@ -579,19 +586,18 @@
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
                     if(jqXHR.status == 200){
-                        $('#line-'+item.id).find('.outreach-field').removeClass('required');
                         update_item_store(parseInt(item.id), 'synchronized', true, 'outreaches');
                         update_item_store(parseInt(item.id), 'to_update', false, 'outreaches');
                         synchro_result = true;
                     }
                 },
                 error: function (response) {
+                    $('#line-'+item.id).addClass('warning');
+                    console.log(response);
                     var required_fields = JSON.parse(response.responseText);
-                    $('#line-'+item.id).find('.outreach-field').removeClass('required');
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+item.id).find('#'+field_name).addClass('required');
                     });
-                    console.log(response);
                     synchro_result = false;
                 }
             });
@@ -627,19 +633,19 @@
                     update_item_store(parseInt(itemid), 'to_update', false, 'outreaches-p');
                 },
                 error: function (response) {
+                    console.log(response);
+                    $('#line-'+itemid).addClass('warning');
                     var required_fields = JSON.parse(response.responseText);
-                    $('#line-'+itemid).find('.outreach-field-p').removeClass('required');
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+itemid).find('#'+field_name).addClass('required');
                     });
-                    console.log(response);
                 }
             });
         }
 
         function createStores()
         {
-            var request = indexedDB.open("bd11_outreaches", 3);
+            var request = indexedDB.open("bd_pretest", 3);
 
             request.onupgradeneeded = function() {
                 // The database did not previously exist, so create object stores and indexes.
