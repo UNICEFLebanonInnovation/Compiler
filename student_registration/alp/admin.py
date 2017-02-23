@@ -158,7 +158,9 @@ class OutreachAdmin(ImportExportModelAdmin):
         'assigned_to_level',
         'registered_in_level',
         'section',
-        'not_enrolled_in_this_school'
+        'not_enrolled_in_this_school',
+        'created',
+        'modified',
     )
     list_filter = (
         'alp_round',
@@ -174,6 +176,8 @@ class OutreachAdmin(ImportExportModelAdmin):
         'not_enrolled_in_this_school',
         RegisteredInLevelFilter,
         RegisteredInSectionFilter,
+        'created',
+        'modified',
     )
     search_fields = (
         'student__first_name',
@@ -237,6 +241,8 @@ class CurrentOutreachAdmin(OutreachAdmin):
         'student_age',
         'student_sex',
         'student_nationality',
+        'created',
+        'modified',
     )
 
     list_filter = (
@@ -245,6 +251,8 @@ class CurrentOutreachAdmin(OutreachAdmin):
         GovernorateFilter,
         'student__sex',
         'student__nationality',
+        'created',
+        'modified',
     )
 
     def get_queryset(self, request):
@@ -274,6 +282,8 @@ class PreTestAdmin(OutreachAdmin):
         'level',
         'total',
         'assigned_to_level',
+        'created',
+        'modified',
     )
     list_filter = (
         'school',
@@ -282,6 +292,8 @@ class PreTestAdmin(OutreachAdmin):
         'level',
         'assigned_to_level',
         'student__sex',
+        'created',
+        'modified',
     )
 
     def get_queryset(self, request):
@@ -289,7 +301,7 @@ class PreTestAdmin(OutreachAdmin):
         qs = super(PreTestAdmin, self).get_queryset(request)
         return qs.exclude(deleted=True).filter(
             alp_round=alp_round,
-            level__isnull=True,
+            level__isnull=False,
         )
 
 
@@ -312,6 +324,8 @@ class CurrentRoundAdmin(OutreachAdmin):
         'assigned_to_level',
         'registered_in_level',
         'section',
+        'created',
+        'modified',
     )
     list_filter = (
         'school',
@@ -322,6 +336,8 @@ class CurrentRoundAdmin(OutreachAdmin):
         'registered_in_level',
         'section',
         'student__sex',
+        'created',
+        'modified',
     )
 
     def get_queryset(self, request):
@@ -351,6 +367,8 @@ class PostTestAdmin(OutreachAdmin):
         'post_total',
         'refer_to_level',
         'section',
+        'created',
+        'modified',
     )
     list_filter = (
         'school',
@@ -360,6 +378,8 @@ class PostTestAdmin(OutreachAdmin):
         'refer_to_level',
         'section',
         'student__sex',
+        'created',
+        'modified',
     )
 
     def get_queryset(self, request):
