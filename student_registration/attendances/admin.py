@@ -179,12 +179,17 @@ class AbsenteeResource(resources.ModelResource):
             'school__name',
             'governorate',
             'district',
-            'student_number',
-            'student__full_name',
+            'student__number',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__mother_fullname',
+            'student__sex',
             'last_attendance_date',
             'absent_days',
             'reattend_date',
         )
+        export_order = fields
 
 
 class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
