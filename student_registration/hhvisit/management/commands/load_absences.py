@@ -249,7 +249,7 @@ def GetURLChildAbsences(absencesData):
 
 
               if (childAbsence.StudentID is not None) and \
-                 (childAbsence.FromDate > datetime.strptime('2010-01-31', '%Y-%m-%d').date()) :
+                 (childAbsence.FromDate > datetime.strptime('2017-01-01', '%Y-%m-%d').date()):
                  childAbsences.append(childAbsence)
 
     return childAbsences
