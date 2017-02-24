@@ -264,17 +264,17 @@ from student_registration.registrations.models import (
 def LoadAbsences(request):
 
     received_data = requests.get(settings.ABSENCE_URL, headers={'Authorization': 'Token '+settings.ABSENCE_TOKEN})
+    result = received_data
 
-    import json
-    received_json_data = json.loads(received_data.text)
-
-
-    import student_registration.hhvisit.management.commands.load_absences
-    lcd = student_registration.hhvisit.management.commands.load_absences.GetURLChildAbsences(received_json_data)
-
-    import pprint
-    result = pprint.pformat(lcd)
-
+    # import json
+    # received_json_data = json.loads(received_data.text)
+    #
+    #
+    # import student_registration.hhvisit.management.commands.load_absences
+    # lcd = student_registration.hhvisit.management.commands.load_absences.GetURLChildAbsences(received_json_data)
+    #
+    # import pprint
+    # result = pprint.pformat(lcd)
 
     return HttpResponse(result)
 

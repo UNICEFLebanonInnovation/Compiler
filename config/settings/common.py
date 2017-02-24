@@ -350,5 +350,5 @@ HELPDESK_SHOW_DELETE_BUTTON_SUPERUSER_FOLLOW_UP = True
 HELPDESK_STAFF_ONLY_TICKET_OWNERS = True
 HELPDESK_STAFF_ONLY_TICKET_CC = True
 
-ABSENCE_URL = env('ABSENCE_URL', default='NO URL for absentees set in the environment')
-ABSENCE_TOKEN = env('ABSENCE_TOKEN', default='No token for absentees URL set')
+ABSENCE_URL = env('ABSENCE_URL', default='https://compile-prod.herokuapp.com/attendances/absents/')
+ABSENCE_TOKEN = env('ABSENCE_TOKEN', default='9fd81f96fa57ae2e6ba94064016615e231c82727')

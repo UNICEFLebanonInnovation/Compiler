@@ -156,6 +156,7 @@ def SaveChildAbsences(childAbsences):
             if not childVisit is None:
                 attendanceMonitoring.child_visit_id = childVisit.id
                 childVisit.child_status = "pending"
+                childVisit.child_absence_period = childAbsence.GetPeriod()
                 childVisit.save()
 
             attendanceMonitoring.save()
@@ -183,6 +184,28 @@ def GetURLChildAbsences(absencesData):
     studentIdentifiersDictionary = {studentIdentifier[0]: studentIdentifier[1]
                                     for studentIdentifier in studentIdentifiersList}
 
+
+    studentFieldsList = Registration.objects\
+                             .values_list\
+                             ( \
+                                'student__first_name',\
+                                'student__father_name',\
+                                'student__last_name',\
+                                'student__birthday_month',\
+                                'student__birthday_day',\
+                                'student__birthday_year',\
+                                'student__id'\
+                             )
+
+    studentFieldsDictionary = { \
+                                 studentFields[0]+'-'+ \
+                                 studentFields[1]+'-'+ \
+                                 studentFields[2]+'-'+ \
+                                 studentFields[3]+'-'+ \
+                                 studentFields[4]+'-'+ \
+                                 studentFields[5]: studentFields[6]\
+                                 for studentFields in studentFieldsList}
+
     for studentAbsence in absencesData:
 
         numberOfDays = studentAbsence['absent_days']
@@ -194,34 +217,35 @@ def GetURLChildAbsences(absencesData):
 
               attendanceDate = datetime.strptime(studentAbsence['last_attendance_date'], "%Y-%m-%d").date()
 
+
               fromDate = attendanceDate + datetime2.timedelta(days=x*14)
               toDate = attendanceDate + datetime2.timedelta(days=(x*14)+9)
 
               studentID = None
 
-              studentAbsence['student_number'] = '101052532398M'
+              #studentAbsence['student_number'] = '101052532398M'
 
               if studentIdentifiersDictionary.has_key(studentAbsence['student_number']):
 
                   studentID = studentIdentifiersDictionary[studentAbsence['student_number']]
               else:
-                  studentID =\
-                  Registration.objects.filter \
-                          ( \
-                          student__first_name=studentAbsence['student_first_name'], \
-                          student__father_name=studentAbsence['student_father_name'], \
-                          student__last_name=studentAbsence['student_last_name'], \
-                          student__birthday_month=studentAbsence['student_birthday_month'], \
-                          student__birthday_day=studentAbsence['student_birthday_day'], \
-                          student__birthday_year=studentAbsence['student_birthday_year'], \
-                          ).values_list('student__id', flat=True).first()
 
+                  concatenatedFields = studentAbsence['student_first_name']+'-'+ \
+                                       studentAbsence['student_father_name']+'-'+ \
+                                       studentAbsence['student_last_name']+'-'+ \
+                                       studentAbsence['student_birthday_month']+'-'+ \
+                                       studentAbsence['student_birthday_day']+'-'+ \
+                                       studentAbsence['student_birthday_year'] \
+
+                  if studentFieldsDictionary.has_key(concatenatedFields):
+                      studentID = studentFieldsDictionary[concatenatedFields]
 
 
               childAbsence.StudentID = studentID
               childAbsence.FromDate = fromDate
               childAbsence.ToDate = toDate
               childAbsence.NumberOfDays = 10
+              childAbsence.Index = x
 
 
               if (childAbsence.StudentID is not None) and \
@@ -380,12 +404,14 @@ class ChildAbsence:
         self.FromDate = None
         self.ToDate = None
         self.NumberOfDays = 0
+        self.Index = 0
 
     def Reset(self, studentID):
         self.StudentID = studentID
         self.FromDate = None
         self.ToDate = None
         self.NumberOfDays = 0
+        self.Index = 0
 
     def AddAbsenceDate(self, absenceDate):
         if self.FromDate is None :
@@ -393,6 +419,15 @@ class ChildAbsence:
 
         self.ToDate = absenceDate
         self.NumberOfDays += 1
+
+    def GetPeriod(self):
+
+        import pprint
+
+        startingDays = (self.Index)*10
+        endingDays = (self.Index+1)*10
+
+        return pprint.pformat(startingDays)+'-'+pprint.pformat(endingDays)
 
 
     def __repr__(self):
