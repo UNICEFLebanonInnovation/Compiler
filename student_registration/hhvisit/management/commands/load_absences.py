@@ -202,7 +202,20 @@ def GetURLChildAbsences(absencesData):
               studentAbsence['student_number'] = '101052532398M'
 
               if studentIdentifiersDictionary.has_key(studentAbsence['student_number']):
+
                   studentID = studentIdentifiersDictionary[studentAbsence['student_number']]
+              else:
+                  studentID =\
+                  Registration.objects.filter \
+                          ( \
+                          student__first_name=studentAbsence['student_first_name'], \
+                          student__father_name=studentAbsence['student_father_name'], \
+                          student__last_name=studentAbsence['student_last_name'], \
+                          student__birthday_month=studentAbsence['student_birthday_month'], \
+                          student__birthday_day=studentAbsence['student_birthday_day'], \
+                          student__birthday_year=studentAbsence['student_birthday_year'], \
+                          ).values_list('student__id', flat=True).first()
+
 
 
               childAbsence.StudentID = studentID
