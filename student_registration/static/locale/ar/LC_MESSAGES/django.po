@@ -1158,3 +1158,15 @@ msgstr "مجموع علامات التلميذ"
 
 msgid "Search a student"
 msgstr "ابحث عن تلميذ"
+
+msgid "School type"
+msgstr "نوع المدرسة"
+
+msgid "School shift"
+msgstr "دوام المدرسة"
+
+msgid "First shift"
+msgstr "دوام صباحي"
+
+msgid "Second shift"
+msgstr "دوام بعد الظهر"
