@@ -19,6 +19,18 @@
         .incremental_number.failed {
             background-color: #ac2925 !important;
         }
+        tr.highlighted {
+            background-color: darkseagreen !important;
+        }
+        .registration-field-p:focus {
+            background-color: yellow;
+        }
+        .registration-field:focus {
+            background-color: yellow;
+        }
+        tr.warning {
+            border: 3px solid #90111A;
+        }
     </style>
 
     {% include 'enrollments/prototype.html' %}
@@ -212,6 +224,11 @@
 
             $(document).on('blur', arabic_fields, function(){
                 checkArabicOnly($(this));
+            });
+
+            $(document).on('click', 'tbody tr', function(){
+                $('tbody').find('tr').removeClass('highlighted');
+                $(this).addClass('highlighted');
             });
 
             $(window).scroll(function () {
