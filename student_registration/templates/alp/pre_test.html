@@ -84,7 +84,9 @@
                                        width="100%" style="margin-bottom: 100px; margin-top: 75px;">
                                 <thead>
                                     <tr id="thead-line-1">
-                                        <th rowspan="2">&nbsp;<label class="col-100">{% trans "Exam not received from this school" %}</label></th>
+                                        <th rowspan="2">&nbsp
+{#                                            <label class="col-100">{% trans "Exam not received from this school" %}</label>#}
+                                        </th>
                                         <th rowspan="2"><label>{% trans "District" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Governorate" %}</label></th>
                                         <th rowspan="2"><label class="col-60">{% trans "School number" %}</label></th>
@@ -111,15 +113,15 @@
                                         <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Math" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Total" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Arabic language corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Foreign language corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Arabic language" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Foreign language" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Math" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Science" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Total" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Arabic language corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Foreign language corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Math corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Science corrector" %}</label></th>
                                         <th><label>{% trans "year" %}</label></th>
                                         <th><label>{% trans "month" %}</label></th>
                                         <th><label>{% trans "day" %}</label></th>
@@ -206,6 +208,14 @@
                 selector: 'span'
             });
 
+            $(document).on('keypress', 'input#search', function(){
+                $('body, html').scrollLeft(400);
+            });
+
+            $(document).on('blur', '#exam_corrector_science', function(){
+                $('body, html').scrollLeft(800);
+            });
+
             $(document).on('blur', arabic_fields, function(){
                 checkArabicOnly($(this));
             });
@@ -273,7 +283,6 @@
                 var item = create_item_store_default_keys();
                 add_to_store(item);
                 scrollToBottom();
-                $('#filter_cancel').trigger('click');
             });
 
             $(document).on('click', '.delete-outreach-row', function(){
@@ -348,6 +357,13 @@
                 var note4 = parseFloat(item.find('#exam_result_science').val());
                 item.find('#exam_total').val(note1+note2+note3+note4);
                 item.find('#exam_total').trigger('blur');
+            });
+
+            $(document).on('blur', '.exam-corrector', function(){
+                if(parseInt($(this).val()) < 11){
+                    $(this).focus();
+                    alert('Enter the exam corrector');
+                }
             });
 
             $(document).on('blur', '#exam_total, #level', function(){
