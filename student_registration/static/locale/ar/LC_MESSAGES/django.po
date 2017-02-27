@@ -482,7 +482,7 @@ msgid "add column"
 msgstr "اضف عامود"
 
 msgid "Export"
-msgstr "تصدير البيانات"
+msgstr "تصدير البيانات على اكسيل"
 
 msgid "outreach synchronize"
 msgstr "تطابق المعلومات"
@@ -1170,3 +1170,9 @@ msgstr "دوام صباحي"
 
 msgid "Second shift"
 msgstr "دوام بعد الظهر"
+
+msgid "download data"
+msgstr "تحميل البيانات"
+
+msgid "Registration editing"
+msgstr "تعديل بيانات التسجيل"
