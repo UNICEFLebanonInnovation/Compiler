@@ -175,8 +175,8 @@
         <td>
             <select name="last_school" id="last_school" class="registration-field" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "School" %}</option>
-                {% for key, item in schools %}
-                    <option value="{{ key }}">{{ item }}</option>
+                {% for item in schools %}
+                    <option value="{{ item.id }}">{{ item }}</option>
                 {% endfor %}
             </select>
         </td>

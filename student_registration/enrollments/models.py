@@ -209,7 +209,7 @@ class Enrollment(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        choices=SCHOOL_TYPE
+        choices=SCHOOL_SHIFT
     )
     last_school = models.ForeignKey(
         School,
