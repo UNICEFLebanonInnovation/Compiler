@@ -359,6 +359,14 @@ def flatten_attendance():
             out=SON([("replace", "attendances_by_day")])
         )
         logger.info('Finished')
+        logger.info('Replace root document')
+        database.attendances_by_day.aggregate([
+            {
+                '$replaceRoot': {'newRoot': '$value'}
+            },
+            {'$out': "attendances_by_day"}
+        ])
+        logger.info('Finished')
 
     except Exception as exp:
         logger.exception(exp)
@@ -482,7 +490,38 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
 
     database = client.get_default_database()
 
-    absentees = list(database.absentees.find({}, no_cursor_timeout=False))
+    absentees = database.attendances_by_day.aggregate([
+        {
+            '$match': {
+                'validation_date': {'$not': {'$type': 'null'}},
+                'date': {'$gt': from_date},
+            }
+        },
+        {'$sort': {'value.date': 1}},
+        {
+            '$project': {
+                'date': '$date',
+                'school_id': '$school',
+                'student_id': '$student',
+                'attended': {'$cond': [{'$eq': ['$attended', True]}, 1, 0]},
+                'absent': {'$cond': [{'$eq': ['$attended', False]}, 1, 0]},
+            }
+        },
+        {
+            '$group': {
+                '_id': {'school_id': '$school_id', 'student_id': '$student_id'},
+                'total_attended': {'$sum': "$attended"},
+                'total_absences': {'$sum': "$absent"},
+            }
+        },
+        {
+            '$match': {
+                'total_absences': {'$gt': absent_threshold},
+            }
+        },
+    ], allowDiskUse=True)
+
+    absentees = list(absentees)
 
     late_threshold_date = (to_date - timedelta(days=absent_threshold))
 
@@ -504,6 +543,7 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
             validation_date__ne=None,
         )
         if not last_attended_date:
+            logger.info('Student {} did not attend school {}'.format(student, school))
             continue
         last_attended_date = last_attended_date[0].date
 
@@ -514,8 +554,10 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
             date__gte=last_attended_date,
         )
         if not first_absent_date:
+            logger.info('Student {} was not absent in school {}'.format(student, school))
             continue
         first_absent_date = first_absent_date[0].date
+        last_absent_date = first_absent_date[-1].date
 
         total_school_days_absent = attendances.filter(
             attended=False,
@@ -537,7 +579,7 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
                 student_id=student,
                 last_attendance_date=first_absent_date
             )
-
+            absent_record.last_absent_date = last_absent_date
             absent_record.absent_days = total_school_days_absent
             absent_record.reattend_date = last_attended_date
             absent_record.save()
@@ -551,6 +593,7 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
                 last_attendance_date=last_attended_date,
                 reattend_date__isnull=True
             )
+            absent_record.last_absent_date = last_absent_date
             absent_record.absent_days = total_school_days_absent
             absent_record.save()
 
