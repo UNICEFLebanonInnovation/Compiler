@@ -136,7 +136,7 @@ class HouseholdVisitAttempt(models.Model):
         blank=False, null=True,
         related_name='visit_attempt',
     )
-    household_not_found = models.BooleanField(blank=True, default=True)
+    household_not_found = models.BooleanField(blank=True, default=False)
     comment = models.CharField(max_length=255, blank=True, null=True)
     date = models.DateTimeField()
 
