@@ -136,6 +136,8 @@ class EnrollmentEditView(LoginRequiredMixin, TemplateView):
             location_parent = location.parent
 
         return {
+            'schools': School.objects.all(),
+            'school_shifts': Enrollment.SCHOOL_SHIFT,
             'school_types': Enrollment.SCHOOL_TYPE,
             'education_levels': ClassRoom.objects.all(),
             'education_results': Enrollment.RESULT,
