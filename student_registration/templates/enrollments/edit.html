@@ -129,9 +129,6 @@
                             </table>
                         </div>
                         <div style="position: fixed; bottom: 10px; {% if LANGUAGE_CODE == 'ar-ar' %}right: 35px;{% else %}left: 35px;{% endif %}">
-                              <button class="btn btn-success" id="load_more_data" style="display: none;">
-                                    {% trans "Load more" %}
-                              </button>
 {#                              <button class="btn btn-success" id="add_datatable_line">#}
 {#                                <i class="icon-plus-sign icon-white"></i>&nbsp;#}
 {#                                    {% trans "Add empty line" %}#}
@@ -228,17 +225,13 @@
                 if($(window).scrollTop() == $(document).height() - $(window).height()){
                     var total_records = $('#registrations-table').find('tr.registration-line').length;
                     if(total_records < total) {
-                        $('#load_more_data').show();
+                        offset = limit;
+                        limit = limit + 100;
+                        $('#load_more_data').hide();
+                        $(".loader").show();
+                        build_datatable();
                     }
                 }
-            });
-
-            $(document).on('click', '#load_more_data', function(){
-                offset = limit + 1;
-                limit = limit + 100;
-                $('#load_more_data').hide();
-                $(".loader").show();
-                build_datatable();
             });
 
             $(document).on('click', '#registered_in_unhcr_1, #registered_in_unhcr_0', function(){
@@ -322,9 +315,6 @@
                         var params = {
                             classroom: $('#duplicate_classroom').is(':checked'),
                             section: $('#duplicate_section').is(':checked'),
-{#                            last_education_level: $('#duplicate_last_education_level').is(':checked'),#}
-{#                            last_education_year: $('#duplicate_last_education_year').is(':checked'),#}
-{#                            last_year_result: $('#duplicate_last_year_result').is(':checked')#}
                         };
                         duplicate_item_values(request.result, params);
                         scrollToBottom();
@@ -347,9 +337,6 @@
                                     var params = {
                                         classroom: $('#duplicate_classroom').is(':checked'),
                                         section: $('#duplicate_section').is(':checked'),
-{#                                        last_education_level: $('#duplicate_last_education_level').is(':checked'),#}
-{#                                        last_education_year: $('#duplicate_last_education_year').is(':checked'),#}
-{#                                        last_year_result: $('#duplicate_last_year_result').is(':checked'),#}
                                     };
                                     duplicate_item_values(request.result, params);
                                 }
@@ -420,7 +407,7 @@
             $(document).on('click', '#registration-synchro', function(){
                 synchro_result = true;
                 $('.alert').hide();
-                if(navigator.onLine == false) {
+                if(navigator.onLine) {
                     $(".loader").show();
                     synchronize_data(true);
                 }else{
@@ -431,7 +418,7 @@
             $(document).on('click', '#registration-download', function(){
                 incremental_id = 0;
                 $('.alert').hide();
-                if(navigator.onLine == false) {
+                if(navigator.onLine) {
                      $(".loader").show();
                     load_base_data();
                     setTimeout(function(){
@@ -523,7 +510,6 @@
                 var result = request.result;
                 $(result).each(function(i, item){
                     rows = item.id;
-                    total = i;
                     if(item.deleted == false &&  i > offset && i <= limit){
                         $(".loader").show();
                         add_table_newline(item.id, prototype, table);
@@ -609,6 +595,7 @@
 
                         update_item_store(parseInt(item.id), 'synchronized', true, 'registrations');
                         update_item_store(parseInt(item.id), 'original_id', response.id, 'registrations');
+                        update_item_store(parseInt(item.id), 'toupdate', false, 'registrations');
                         synchro_result = true;
                     }
                 },
@@ -677,20 +664,27 @@
                     if(response.data) {
                         data = response.data;
                     }
+                    total = data.length;
                     $(data).each(function(i, item){
-                        item.synchronized = true;
-                        item.deleted = false;
-                        item.toupdate = false;
-                        item.student_nationality = item.student_nationality_id;
-                        item.student_mother_nationality = item.student_mother_nationality_id;
-                        item.student_id_type = item.student_id_type_id;
+                        var request = store.index('original_id').get(parseInt(item.original_id));
+                        request.onsuccess = function() {
+                            if(request.result === undefined) {
+                                item.synchronized = true;
+                                item.deleted = false;
+                                item.toupdate = false;
+                                item.student_nationality = item.student_nationality_id;
+                                item.student_mother_nationality = item.student_mother_nationality_id;
+                                item.student_id_type = item.student_id_type_id;
 
-                        item.last_education_level = item.last_education_level_id;
-                        item.last_informal_edu_level = item.last_informal_edu_level_id;
-                        item.last_informal_edu_round = item.last_informal_edu_round_id;
-                        item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
+                                item.last_education_level = item.last_education_level_id;
+                                item.last_informal_edu_level = item.last_informal_edu_level_id;
+                                item.last_informal_edu_round = item.last_informal_edu_round_id;
+                                item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
+                                item.last_school = item.last_school_id;
 
-                        store.put(item);
+                                store.put(item);
+                            }
+                        };
                     });
                 },
                 error: function(response) {
