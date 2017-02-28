@@ -292,6 +292,10 @@ class PreTestAdmin(OutreachAdmin):
         'level',
         'assigned_to_level',
         'student__sex',
+        'exam_corrector_arabic',
+        'exam_corrector_language',
+        'exam_corrector_math',
+        'exam_corrector_science',
         'created',
         'modified',
     )
@@ -378,6 +382,10 @@ class PostTestAdmin(OutreachAdmin):
         'refer_to_level',
         'section',
         'student__sex',
+        'exam_corrector_arabic',
+        'exam_corrector_language',
+        'exam_corrector_math',
+        'exam_corrector_science',
         'created',
         'modified',
     )
