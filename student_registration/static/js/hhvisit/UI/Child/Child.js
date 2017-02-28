@@ -101,6 +101,7 @@
               var childRowRecord = CreateChildDataRecord(row);
 
               editForm.find("[name=childName]").html( childVisit.first_name +' '+childVisit.father_name+' '+childVisit.last_name );
+              editForm.find("[name=child_absence_period]").html( childVisit.child_absence_period );
 
               // updateDropDownValue(editForm.find("[name=childMainReason]"),childRowRecord.main_reason_id );
               //

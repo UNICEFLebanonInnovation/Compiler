@@ -213,6 +213,7 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             'household_visit_id',
             'child_school',
             'child_classroom',
+            'child_absence_period'
         )
 
 
