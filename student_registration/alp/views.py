@@ -342,9 +342,10 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
     model = Outreach
 
     def get(self, request, *args, **kwargs):
-        queryset = self.model.objects.exclude(not_enrolled_in_this_school=True)
-        queryset = queryset.exclude(deleted=True)
-        queryset = queryset.filter(registered_in_level__isnull=False)
+        queryset = self.model.objects.exclude(deleted=True)
+        # queryset = self.model.objects.exclude(not_enrolled_in_this_school=True)
+        # queryset = queryset.exclude(deleted=True)
+        # queryset = queryset.filter(registered_in_level__isnull=False)
         # queryset = self.model.objects.exclude(deleted=True, not_enrolled_in_this_school=True)
         school = int(request.GET.get('school', 0))
         location = int(request.GET.get('location', 0))
@@ -407,7 +408,8 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
             _('School'),
             _('School number'),
             _('District'),
-            _('Governorate')
+            _('Governorate'),
+            _('Not enrolled in this school')
         ]
 
         content = []
@@ -460,6 +462,7 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
                 line.school.number,
                 line.school.location.name,
                 line.school.location.parent.name,
+                line.not_enrolled_in_this_school,
             ]
             data.append(content)
 
