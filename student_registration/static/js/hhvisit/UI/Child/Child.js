@@ -41,7 +41,11 @@
                           var editForm = $('.bootbox-body').find('[name=childForm]');
 
 
-                          if(ValidateServices(editForm))
+                          if
+                          (
+                              ValidateServices(editForm) &&
+                              ValidateReasons(editForm)
+                          )
                           {
 
                             var isEnrolled =
