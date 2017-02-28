@@ -7,7 +7,7 @@ from django.contrib import admin
 from import_export.admin import ExportMixin
 from import_export import resources, fields, widgets
 from student_registration.alp.templatetags.util_tags import has_group
-
+from student_registration.locations.models import Location
 from .models import (
     School,
     Attendance,
@@ -44,6 +44,35 @@ class SchoolFilter(admin.SimpleListFilter):
         """
         if self.value():
             return queryset.filter(school_id=self.value())
+        return queryset
+
+
+class GovernorateFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Governorate'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'governorate'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l.id, l.name) for l in Location.objects.filter(type_id=1))
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(school__location__parent_id=self.value())
         return queryset
 
 
@@ -130,6 +159,7 @@ class BySchoolByDayAdmin(ExportMixin, admin.ModelAdmin):
         # 'school__location',
         # 'school',
         LocationFilter,
+        GovernorateFilter,
         SchoolFilter,
         'attendance_date',
         'validation_date',
@@ -179,12 +209,17 @@ class AbsenteeResource(resources.ModelResource):
             'school__name',
             'governorate',
             'district',
-            'student_number',
-            'student__full_name',
+            'student__number',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__mother_fullname',
+            'student__sex',
             'last_attendance_date',
             'absent_days',
             'reattend_date',
         )
+        export_order = fields
 
 
 class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
@@ -204,6 +239,7 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         # 'school',
         SchoolFilter,
         LocationFilter,
+        GovernorateFilter,
         'last_attendance_date',
     )
     date_hierarchy = 'last_attendance_date'
