@@ -117,7 +117,7 @@
             </select>
         </td>
         <td>
-            <input type="text" name="student_id_number" value="0" id="student_id_number" class="registration-field"
+            <input type="text" name="student_id_number" value="" id="student_id_number" class="registration-field"
                    placeholder="{% trans "Student ID Number" %}" itemscope="$$itemscope_id$$" />
         </td>
         <td>
@@ -158,9 +158,25 @@
         </td>
         <td>
             <select name="last_school_type" id="last_school_type" class="registration-field" itemscope="$$itemscope_id$$">
-                <option value="">{% trans "School" %}</option>
+                <option value="">{% trans "School type" %}</option>
                 {% for key, item in school_types %}
                     <option value="{{ key }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="last_school_shift" id="last_school_shift" class="registration-field" itemscope="$$itemscope_id$$">
+                <option value="">{% trans "School shift" %}</option>
+                {% for key, item in school_shifts %}
+                    <option value="{{ key }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="last_school" id="last_school" class="registration-field" itemscope="$$itemscope_id$$">
+                <option value="">{% trans "School" %}</option>
+                {% for item in schools %}
+                    <option value="{{ item.id }}">{{ item }}</option>
                 {% endfor %}
             </select>
         </td>
