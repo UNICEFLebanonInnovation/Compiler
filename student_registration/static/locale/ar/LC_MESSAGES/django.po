@@ -482,7 +482,7 @@ msgid "add column"
 msgstr "اضف عامود"
 
 msgid "Export"
-msgstr "تصدير البيانات"
+msgstr "تصدير البيانات على اكسيل"
 
 msgid "outreach synchronize"
 msgstr "تطابق المعلومات"
@@ -1158,3 +1158,21 @@ msgstr "مجموع علامات التلميذ"
 
 msgid "Search a student"
 msgstr "ابحث عن تلميذ"
+
+msgid "School type"
+msgstr "نوع المدرسة"
+
+msgid "School shift"
+msgstr "دوام المدرسة"
+
+msgid "First shift"
+msgstr "دوام صباحي"
+
+msgid "Second shift"
+msgstr "دوام بعد الظهر"
+
+msgid "download data"
+msgstr "تحميل البيانات"
+
+msgid "Registration editing"
+msgstr "تعديل بيانات التسجيل"

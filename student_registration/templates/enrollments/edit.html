@@ -19,6 +19,18 @@
         .incremental_number.failed {
             background-color: #ac2925 !important;
         }
+        tr.highlighted {
+            background-color: darkseagreen !important;
+        }
+        .registration-field-p:focus {
+            background-color: yellow;
+        }
+        .registration-field:focus {
+            background-color: yellow;
+        }
+        tr.warning {
+            border: 3px solid #90111A;
+        }
     </style>
 
     {% include 'enrollments/prototype.html' %}
@@ -99,15 +111,13 @@
                                         <th rowspan="2"><label>{% trans "Mother nationality" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Registered in UNHCR" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student ID Type" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Student ID Number" %}</label>
-                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"></i>
-                                        </th>
+                                        <th rowspan="2"><label>{% trans "Student ID Number" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student living address" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Phone number (6 digits)" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Phone prefix (2 digits)" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Current Class" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Current Section" %}</label></th>
-                                        <th colspan="4" style="text-align: center; background-color: #67b168;"><label>{% trans "Last student education" %}</label></th>
+                                        <th colspan="6" style="text-align: center; background-color: #67b168;"><label>{% trans "Last student education" %}</label></th>
                                         <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
@@ -115,6 +125,8 @@
                                         <th><label>{% trans "month" %}</label></th>
                                         <th><label>{% trans "day" %}</label></th>
                                         <th style="background-color: #67b168;"><label class="col-100">{% trans "Last education level" %}</label></th>
+                                        <th style="background-color: #67b168;"><label>{% trans "School type" %}</label></th>
+                                        <th style="background-color: #67b168;"><label>{% trans "School shift" %}</label></th>
                                         <th style="background-color: #67b168;"><label>{% trans "School" %}</label></th>
                                         <th style="background-color: #67b168;"><label>{% trans "Education year" %}</label></th>
                                         <th style="background-color: #67b168;"><label>{% trans "Result" %}</label></th>
@@ -128,7 +140,7 @@
                                 </tbody>
                             </table>
                         </div>
-{#                        <div style="position: fixed; bottom: 10px; {% if LANGUAGE_CODE == 'ar-ar' %}right: 35px;{% else %}left: 35px;{% endif %}">#}
+                        <div style="position: fixed; bottom: 10px; {% if LANGUAGE_CODE == 'ar-ar' %}right: 35px;{% else %}left: 35px;{% endif %}">
 {#                              <button class="btn btn-success" id="add_datatable_line">#}
 {#                                <i class="icon-plus-sign icon-white"></i>&nbsp;#}
 {#                                    {% trans "Add empty line" %}#}
@@ -137,7 +149,7 @@
 {#                                <i class="icon-plus-sign icon-white"></i>&nbsp;#}
 {#                                    {% trans "Add defined number of lines" %}#}
 {#                              </button>#}
-{#                        </div>#}
+                        </div>
                      </div>
                 </div>
             </div>
@@ -166,7 +178,6 @@
     <script type="text/javascript" src="{% static 'js/eav.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
     <script type="text/javascript">
-        var oTable = null;
         var db = null;
         var language  = '{{ LANGUAGE_CODE }}';
         var user_id = {{ request.user.id }};
@@ -177,6 +188,9 @@
         var columns = 0;
         var rows = 1;
         var entity_ct = 20;
+        var limit = 100;
+        var offset = 0;
+        var total = 0;
         var synchro_result = true;
         var prototype = $('#registration_prototype');
         var table = $('#registrations-table');
@@ -212,12 +226,28 @@
                 checkArabicOnly($(this));
             });
 
+            $(document).on('click', 'tbody tr', function(){
+                $('tbody').find('tr').removeClass('highlighted');
+                $(this).addClass('highlighted');
+            });
+
             $(window).scroll(function () {
                 var l = $(this).scrollLeft();
                 if(parseInt(l) <= 0){
                     $('#header').css({'left': l});
                 }else{
                     $('#header').css({'right': -l});
+                }
+
+                if($(window).scrollTop() == $(document).height() - $(window).height()){
+                    var total_records = $('#registrations-table').find('tr.registration-line').length;
+                    if(total_records < total) {
+                        offset = limit;
+                        limit = limit + 100;
+                        $('#load_more_data').hide();
+                        $(".loader").show();
+                        build_datatable();
+                    }
                 }
             });
 
@@ -302,9 +332,6 @@
                         var params = {
                             classroom: $('#duplicate_classroom').is(':checked'),
                             section: $('#duplicate_section').is(':checked'),
-{#                            last_education_level: $('#duplicate_last_education_level').is(':checked'),#}
-{#                            last_education_year: $('#duplicate_last_education_year').is(':checked'),#}
-{#                            last_year_result: $('#duplicate_last_year_result').is(':checked')#}
                         };
                         duplicate_item_values(request.result, params);
                         scrollToBottom();
@@ -327,9 +354,6 @@
                                     var params = {
                                         classroom: $('#duplicate_classroom').is(':checked'),
                                         section: $('#duplicate_section').is(':checked'),
-{#                                        last_education_level: $('#duplicate_last_education_level').is(':checked'),#}
-{#                                        last_education_year: $('#duplicate_last_education_year').is(':checked'),#}
-{#                                        last_year_result: $('#duplicate_last_year_result').is(':checked'),#}
                                     };
                                     duplicate_item_values(request.result, params);
                                 }
@@ -389,10 +413,12 @@
                 }else{
                     update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'registrations');
                 }
+                flag_record_to_update(parseInt($(this).attr('itemscope')), 'registrations');
             });
 
             $(document).on('change', '.registration-field-check', function(){
                 update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'registrations');
+                flag_record_to_update(parseInt($(this).attr('itemscope')), 'registrations');
             });
 
             $(document).on('click', '#registration-synchro', function(){
@@ -495,21 +521,17 @@
 
         function build_datatable()
         {
-            add_extra_columns();
-            $('#registrations-table').find('.registration-line').remove();
             var store = getStoreByName('registrations');
             var request = store.getAll();
             request.onsuccess = function() {
                 var result = request.result;
                 $(result).each(function(i, item){
                     rows = item.id;
-                    if(item.deleted == false){
+                    if(item.deleted == false &&  i > offset && i <= limit){
                         $(".loader").show();
-                        setTimeout(function() {
-                            add_table_newline(item.id, prototype, table);
-                            add_fill_line_data(item);
-                            $(".loader").hide();
-                        }, 5000);
+                        add_table_newline(item.id, prototype, table);
+                        add_fill_line_data(item);
+                        $(".loader").hide();
                     }
                 });
                 rows = rows + 1;
@@ -545,6 +567,11 @@
             push_data();
         }
 
+        function flag_record_to_update(itemid, store_name)
+        {
+            update_item_store(itemid, 'toupdate', true, store_name);
+        }
+
         function push_data()
         {
             var store = getStoreByName('registrations');
@@ -555,7 +582,7 @@
                     $(".loader").show();
                     if(item.deleted == true){
                         delete_data_from_server(synchro_path, item.original_id, item.id, 'registrations');
-                    }else{
+                    }else if(item.toupdate == true){
                         update_data_into_server(item);
                     }
                     $(".loader").hide();
@@ -585,6 +612,7 @@
 
                         update_item_store(parseInt(item.id), 'synchronized', true, 'registrations');
                         update_item_store(parseInt(item.id), 'original_id', response.id, 'registrations');
+                        update_item_store(parseInt(item.id), 'toupdate', false, 'registrations');
                         synchro_result = true;
                     }
                 },
@@ -620,6 +648,7 @@
                         $('#line-'+item.id).find('.incremental_number').addClass('success');
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
                         update_item_store(parseInt(item.id), 'synchronized', true, 'registrations');
+                        update_item_store(parseInt(item.id), 'toupdate', false, 'registrations');
                         synchro_result = true;
                     }
                 },
@@ -652,20 +681,27 @@
                     if(response.data) {
                         data = response.data;
                     }
+                    total = data.length;
                     $(data).each(function(i, item){
-                        item.synchronized = true;
-                        item.deleted = false;
-                        item.toupdate = false;
-                        item.student_nationality = item.student_nationality_id;
-                        item.student_mother_nationality = item.student_mother_nationality_id;
-                        item.student_id_type = item.student_id_type_id;
+                        var request = store.index('original_id').get(parseInt(item.original_id));
+                        request.onsuccess = function() {
+                            if(request.result === undefined) {
+                                item.synchronized = true;
+                                item.deleted = false;
+                                item.toupdate = false;
+                                item.student_nationality = item.student_nationality_id;
+                                item.student_mother_nationality = item.student_mother_nationality_id;
+                                item.student_id_type = item.student_id_type_id;
 
-                        item.last_education_level = item.last_education_level_id;
-                        item.last_informal_edu_level = item.last_informal_edu_level_id;
-                        item.last_informal_edu_round = item.last_informal_edu_round_id;
-                        item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
+                                item.last_education_level = item.last_education_level_id;
+                                item.last_informal_edu_level = item.last_informal_edu_level_id;
+                                item.last_informal_edu_round = item.last_informal_edu_round_id;
+                                item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
+                                item.last_school = item.last_school_id;
 
-                        store.put(item);
+                                store.put(item);
+                            }
+                        };
                     });
                 },
                 error: function(response) {

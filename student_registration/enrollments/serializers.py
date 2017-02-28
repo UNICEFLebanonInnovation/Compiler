@@ -42,6 +42,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     student_id_type_id = serializers.CharField(source='student.id_type.id', read_only=True)
 
     last_education_level_id = serializers.CharField(source='last_education_level.id', read_only=True)
+    last_school_id = serializers.CharField(source='last_school.id', read_only=True)
     last_informal_edu_level_id = serializers.CharField(source='last_informal_edu_level.id', read_only=True)
     last_informal_edu_round_id = serializers.CharField(source='last_informal_edu_round.id', read_only=True)
     last_informal_edu_final_result_id = serializers.CharField(source='last_informal_edu_final_result.id', read_only=True)
@@ -108,6 +109,10 @@ class EnrollmentSerializer(serializers.ModelSerializer):
                 instance.last_year_result = validated_data['last_year_result']
             if 'last_school_type' in validated_data:
                 instance.last_school_type = validated_data['last_school_type']
+            if 'last_school_shift' in validated_data:
+                instance.last_school_shift = validated_data['last_school_shift']
+            if 'last_school' in validated_data:
+                instance.last_school = validated_data['last_school']
             if 'last_education_level' in validated_data:
                 instance.last_education_level = validated_data['last_education_level']
             if 'last_education_year' in validated_data:
@@ -160,6 +165,9 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'classroom_name',
             'last_year_result',
             'last_school_type',
+            'last_school_shift',
+            'last_school',
+            'last_school_id',
             'last_education_level',
             'last_education_year',
             'owner',
