@@ -1,0 +1,160 @@
+{% load staticfiles i18n %}
+{% load util_tags %}
+
+{% get_range 1990 2051 as years %}
+{% get_range 1 32 as days %}
+{% get_range_str 2001 2020 as last_education_years %}
+{% get_range_str 2001 2020 as last_informal_years %}
+
+<table style="display:none;" id="registration_prototype">
+    <tr id="line-{{ line.id }}" class="registration-line" itemscope="{{ line.id }}">
+        <td>
+            <input type="hidden" name="id" value="{{ line.id }}" class="registration-field-id" />
+            <span class="incremental_number" itemscope="{{ line.id }}" style="font-weight: bold;"></span>
+        </td>
+        <td>
+            {% if location_parent %}{{ location_parent.name }}{% endif %}
+        </td>
+        <td>
+            {% if location %}{{ location.name }}{% endif %}
+        </td>
+        <td>
+            {% if school %}{{ school.number }}{% endif %}
+        </td>
+        <td>
+            {% if school %}{{ school.name }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.first_name }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.father_name }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.last_name }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.sex }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.birthday_year }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.birthday_month }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.birthday_day }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.calc_age }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.nationality_name }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.mother_fullname }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.mother_nationality }}{% endif %}
+        </td>
+        <td>
+            {% if line.registered_in_unhcr %}Yes{% else %}No{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.id_type }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.id_number }}{% endif %}
+        <td>
+            {% if line.student %}{{ line.student.address }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.phone }}{% endif %}
+        </td>
+        <td>
+            {% if line.student %}{{ line.student.phone_prefix }}{% endif %}
+        </td>
+        <td>
+            {% if line.classroom %}{{ line.classroom.name }}{% endif %}
+        </td>
+        <td>
+            {% if line.section %}{{ line.section.name }}{% endif %}
+        </td>
+        <td>
+            <select name="last_education_level" id="last_education_level" class="registration-field" itemscope="{{ line.id }}">
+                <option value="">{% trans "Last education level" %}</option>
+                {% for item in education_levels %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="last_school_type" id="last_school_type" class="registration-field" itemscope="{{ line.id }}">
+                <option value="">{% trans "School type" %}</option>
+                {% for key, item in school_types %}
+                    <option value="{{ key }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="last_school_shift" id="last_school_shift" class="registration-field" itemscope="{{ line.id }}">
+                <option value="">{% trans "School shift" %}</option>
+                {% for key, item in school_shifts %}
+                    <option value="{{ key }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="last_school" id="last_school" class="registration-field" itemscope="{{ line.id }}">
+                <option value="">{% trans "School" %}</option>
+                {% for item in schools %}
+                    <option value="{{ item.id }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="last_education_year" id="last_education_year" class="registration-field" itemscope="{{ line.id }}">
+                <option value="">{% trans "Education year" %}</option>
+                {% for item in last_education_years %}
+                    <option value="{{ item }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="last_year_result" id="last_year_result" class="registration-field" itemscope="{{ line.id }}">
+                <option value="">{% trans "Result" %}</option>
+                {% for key, item in education_results %}
+                    <option value="{{ key }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <label><input type="radio" name="participated_in_alp_{{ line.id }}" data-name="participated_in_alp" value="1" data-value="yes" id="participated_in_alp_1" class="registration-field registration-field-check" itemscope="{{ line.id }}" itemref="" />{% trans "Yes" %}</label>
+            <label><input type="radio" name="participated_in_alp_{{ line.id }}" data-name="participated_in_alp" value="0" data-value="no" id="participated_in_alp_0" class="registration-field registration-field-check" itemscope="{{ line.id }}" itemref="alp_details" />{% trans "No" %}</label>
+        </td>
+        <td>
+            <select name="last_informal_edu_level" id="last_informal_edu_level" class="registration-field alp_details" itemscope="{{ line.id }}">
+                <option value="">{% trans "ALP level" %}</option>
+                {% for item in informal_educations %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="last_informal_edu_round" id="last_informal_edu_round" class="registration-field alp_details" itemscope="{{ line.id }}">
+                <option value="">{% trans "ALP round" %}</option>
+                {% for item in alp_rounds %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <select name="last_informal_edu_final_result" id="last_informal_edu_final_result" class="registration-field alp_details" itemscope="{{ line.id }}">
+                <option value="">{% trans "ALP result" %}</option>
+                {% for item in education_final_results %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+</table>
