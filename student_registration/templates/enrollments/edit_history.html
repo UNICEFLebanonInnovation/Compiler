@@ -67,6 +67,7 @@
                                             <option value="{{ item.id }}">{{ item.name }}</option>
                                         {% endfor %}
                                     </select>
+                                    <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />
                                     <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">
                                         <i class="icon-export-sign icon-white"></i>&nbsp;
                                             {% trans "Export" %}
@@ -145,75 +146,35 @@
         <td>
             <input type="hidden" name="id" value="{{ line.id }}" class="registration-field-id" />
             <span class="incremental_number" itemscope="{{ line.id }}" style="font-weight: bold;"></span>
+            <span class="student_fullname" style="display: none;">
+                {{ line.student_first_name }}
+                {{ line.student_father_name }}
+                {{ line.student_last_name }}
+            </span>
         </td>
-        <td>
-            {% if location_parent %}{{ location_parent.name }}{% endif %}
-        </td>
-        <td>
-            {% if location %}{{ location.name }}{% endif %}
-        </td>
-        <td>
-            {% if school %}{{ school.number }}{% endif %}
-        </td>
-        <td>
-            {% if school %}{{ school.name }}{% endif %}
-        </td>
-        <td>
-            {{ line.student_first_name }}
-        </td>
-        <td>
-            {{ line.student_father_name }}
-        </td>
-        <td>
-            {{ line.student_last_name }}
-        </td>
-        <td>
-            {{ line.student_sex }}
-        </td>
-        <td>
-            {{ line.student_birthday_year }}
-        </td>
-        <td>
-            {{ line.student_birthday_month }}
-        </td>
-        <td>
-            {{ line.student_birthday_day }}
-        </td>
-        <td>
-            {{ line.student_age }}
-        </td>
-        <td>
-            {{ line.student_nationality }}
-        </td>
-        <td>
-            {{ line.student_mother_fullname }}
-        </td>
-        <td>
-            {{ line.student_mother_nationality }}
-        </td>
-        <td>
-            {% if line.registered_in_unhcr %}Yes{% else %}No{% endif %}
-        </td>
-        <td>
-            {{ line.student_id_type }}
-        </td>
-        <td>
-            {{ line.student_id_number }}
-        <td>
-            {{ line.student_address }}
-        </td>
-        <td>
-            {{ line.student_phone }}
-        </td>
-        <td>
-            {{ line.student_phone_prefix }}
-        </td>
-        <td>
-            {{ line.classroom_name }}
-        </td>
-        <td>
-            {{ line.section_name }}
-        </td>
+        <td>{% if location_parent %}{{ location_parent.name }}{% endif %}</td>
+        <td>{% if location %}{{ location.name }}{% endif %}</td>
+        <td>{% if school %}{{ school.number }}{% endif %}</td>
+        <td>{% if school %}{{ school.name }}{% endif %}</td>
+        <td>{{ line.student_first_name }}</td>
+        <td>{{ line.student_father_name }}</td>
+        <td>{{ line.student_last_name }}</td>
+        <td>{{ line.student_sex }}</td>
+        <td>{{ line.student_birthday_year }}</td>
+        <td>{{ line.student_birthday_month }}</td>
+        <td>{{ line.student_birthday_day }}</td>
+        <td>{{ line.student_age }}</td>
+        <td>{{ line.student_nationality }}</td>
+        <td>{{ line.student_mother_fullname }}</td>
+        <td>{{ line.student_mother_nationality }}</td>
+        <td>{% if line.registered_in_unhcr %}Yes{% else %}No{% endif %}</td>
+        <td>{{ line.student_id_type }}</td>
+        <td>{{ line.student_id_number }}</td>
+        <td>{{ line.student_address }}</td>
+        <td>{{ line.student_phone }}</td>
+        <td>{{ line.student_phone_prefix }}</td>
+        <td>{{ line.classroom_name }}</td>
+        <td>{{ line.section_name }}</td>
         <td>
             <select name="last_education_level" id="last_education_level" class="registration-field" itemscope="{{ line.id }}">
                 <option value="">{% trans "Last education level" %}</option>
@@ -347,6 +308,7 @@
     <script type="text/javascript" src="{% static 'js/indexedDB.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/eav.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.quicksearch.js' %}"></script>
     <script type="text/javascript">
         var db = null;
         var language  = '{{ LANGUAGE_CODE }}';
@@ -382,6 +344,7 @@
 
         $(document).ready(function(){
 
+            $('#search').val('');
             createStores();
 
             $(document).on('blur', arabic_fields, function(){
@@ -391,6 +354,14 @@
             $(document).on('click', 'tbody tr', function(){
                 $('tbody').find('tr').removeClass('highlighted');
                 $(this).addClass('highlighted');
+            });
+
+            $('input#search').quicksearch('table tbody tr', {
+                selector: 'span'
+            });
+
+            $(document).on('keypress', 'input#search', function(){
+                $('body, html').scrollLeft(400);
             });
 
             $(window).scroll(function () {
@@ -436,6 +407,7 @@
                 $('#filter_class').val('');
                 $('#filter_id_type').val('');
                 $('#filter_nationality').val('');
+                $('#search').val('');
             });
 
             $(document).on('blur, change', '.registration-field', function(){
