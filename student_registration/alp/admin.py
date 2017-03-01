@@ -78,6 +78,7 @@ class OutreachResource(resources.ModelResource):
             'post_exam_corrector_math',
             'post_exam_corrector_science',
             'refer_to_level__name',
+            'owner__username',
         )
         export_order = fields
 

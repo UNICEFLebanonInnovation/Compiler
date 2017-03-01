@@ -438,7 +438,7 @@
                 $('#filter_nationality').val('');
             });
 
-            $(document).on('blur', '.registration-field', function(){
+            $(document).on('blur, change', '.registration-field', function(){
                 if($(this).attr('data-value')){
                     update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'registrations');
                 }else{
@@ -478,7 +478,7 @@
                 var result = request.result;
                 $(result).each(function(i, item){
                     $(".loader").show();
-                    if(item.toupdate == true){
+                    if(item.to_update == true){
                         patch_data_into_server(item);
                     }
                     $(".loader").hide();
