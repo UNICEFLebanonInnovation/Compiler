@@ -65,7 +65,12 @@ def generate_child_unique_number():
                                          student.birthday_day, student.birthday_month, student.birthday_year)
 
             student.number_part1 = generate_id(student.first_name, student.father_name, student.last_name,
-                                               student.mother_fullname, student.sex, '', '', '')
+                                               student.mother_fullname, student.sex,
+                                               '', '', '')
+
+            student.number_part2 = generate_id(student.first_name, student.father_name, student.last_name,
+                                               '', '',
+                                               student.birthday_day, student.birthday_month, student.birthday_year)
             print student.number, student.id
             student.save()
         except Exception as ex:
@@ -84,8 +89,14 @@ def generate_2ndshift_unique_number(offset=0):
             student.number = generate_id(student.first_name, student.father_name, student.last_name,
                                          student.mother_fullname, student.sex,
                                          student.birthday_day, student.birthday_month, student.birthday_year)
+
             student.number_part1 = generate_id(student.first_name, student.father_name, student.last_name,
-                                               student.mother_fullname, student.sex, '', '', '')
+                                               student.mother_fullname, student.sex,
+                                               '', '', '')
+
+            student.number_part2 = generate_id(student.first_name, student.father_name, student.last_name,
+                                               '', '',
+                                               student.birthday_day, student.birthday_month, student.birthday_year)
             print student.number, student.id
             student.save()
         except Exception as ex:
@@ -104,8 +115,14 @@ def generate_alp_unique_number():
             student.number = generate_id(student.first_name, student.father_name, student.last_name,
                                          student.mother_fullname, student.sex,
                                          student.birthday_day, student.birthday_month, student.birthday_year)
+
             student.number_part1 = generate_id(student.first_name, student.father_name, student.last_name,
-                                               student.mother_fullname, student.sex, '', '', '')
+                                               student.mother_fullname, student.sex,
+                                               '', '', '')
+
+            student.number_part2 = generate_id(student.first_name, student.father_name, student.last_name,
+                                               '', '',
+                                               student.birthday_day, student.birthday_month, student.birthday_year)
             print student.number, student.id
             student.save()
         except Exception as ex:
@@ -224,17 +241,13 @@ def find_matching():
                     Q(student__id_number=id_number_2) |
                     Q(student__id_number=id_number_3) |
                     Q(student__id_number=id_number_4) |
-                    Q(student__id_number=id_number_5) |
-                    Q(student__id_number__contains=id_number_1) |
-                    Q(student__id_number__contains=id_number_2) |
-                    Q(student__id_number__contains=id_number_3) |
-                    Q(student__id_number__contains=id_number_4) |
-                    Q(student__id_number__contains=id_number_5)
+                    Q(student__id_number=id_number_5)
                 )
             else:
                 enrollment = Enrollment.objects.exclude(deleted=True).get(
                     Q(student__number=r_student.number) |
-                    Q(student__number_part1=r_student.number_part1)
+                    Q(student__number_part1=r_student.number_part1) |
+                    Q(student__number_part2=r_student.number_part2)
                 )
         except Exception as ex:
             # print registry.id
