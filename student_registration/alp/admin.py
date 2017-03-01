@@ -33,6 +33,7 @@ class OutreachResource(resources.ModelResource):
 
     student_age = fields.Field(column_name='Student age')
     exam_total = fields.Field(column_name='Total pre test')
+    post_exam_total = fields.Field(column_name='Total post test')
 
     class Meta:
         model = Outreach
@@ -67,7 +68,16 @@ class OutreachResource(resources.ModelResource):
             'assigned_to_level__name',
             'registered_in_level__name',
             'section__name',
-            'not_enrolled_in_this_school',
+            'post_exam_result_arabic',
+            'post_exam_result_language',
+            'post_exam_result_math',
+            'post_exam_result_science',
+            'post_exam_total',
+            'post_exam_corrector_arabic',
+            'post_exam_corrector_language',
+            'post_exam_corrector_math',
+            'post_exam_corrector_science',
+            'refer_to_level__name',
         )
         export_order = fields
 
@@ -76,6 +86,9 @@ class OutreachResource(resources.ModelResource):
 
     def dehydrate_exam_total(self, obj):
         return obj.exam_total
+
+    def dehydrate_post_exam_total(self, obj):
+        return obj.post_exam_total
 
 
 class GovernorateFilter(admin.SimpleListFilter):
