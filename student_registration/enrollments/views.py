@@ -235,6 +235,10 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
         instance = serializer.save()
         instance.save()
 
+    def partial_update(self, request, *args, **kwargs):
+        self.serializer_class = EnrollmentSerializer
+        return super(EnrollmentViewSet, self).partial_update(request)
+
 
 class ExportViewSet(LoginRequiredMixin, ListView):
 
@@ -268,6 +272,8 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             _('Is the child participated in an ALP/2016-2 program'),
             _('Result'),
             _('Education year'),
+            _('School type'),
+            _('School shift'),
             _('School'),
             _('Last education level'),
             _('Current Section'),
@@ -306,6 +312,8 @@ class ExportViewSet(LoginRequiredMixin, ListView):
 
                 _(line.last_year_result) if line.last_year_result else '',
                 line.last_education_year if line.last_education_year else '',
+                line.last_school.name if line.last_school else '',
+                _(line.last_school_shift) if line.last_school_shift else '',
                 _(line.last_school_type) if line.last_school_type else '',
                 line.last_education_level.name if line.last_education_level else '',
 
