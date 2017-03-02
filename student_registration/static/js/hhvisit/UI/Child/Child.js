@@ -58,8 +58,14 @@
                             (
                                editForm.find('.child_enrolled_in_another_school_block')
                             );
+                            var isPilot =
+                            GetBooleanSelection
+                            (
+                               editForm.find('.child_no_longer_living_in_the_pilot_area_block')
+                            );
 
                             row.find("td:nth-child(6)").html(isEnrolled);
+                             row.find("td:nth-child(7)").html(isPilot);
                             var childID = row.find("td:first-child").text();
                             var childServiceData = CreateChildServiceData(childID, editForm);
                             var childReasonData = CreateChildReasonData(childID, editForm);
@@ -123,6 +129,12 @@
               (
                  editForm.find('.child_enrolled_in_another_school_block'),
                  childRowRecord.child_enrolled_in_another_school
+              );
+
+              ChangeBooleanSelection
+              (
+                 editForm.find('.child_no_longer_living_in_the_pilot_area_block'),
+                 childRowRecord.child_no_longer_living_in_the_pilot_area
               );
 
               childVisit.child_visit_service.forEach
