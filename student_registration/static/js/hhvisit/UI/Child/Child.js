@@ -16,9 +16,14 @@
            var isEnrolled = (entry.child_enrolled_in_another_school==null?false:entry.child_enrolled_in_another_school);
            var isEnrolledCell = "<td style = \"display:none;\">"+isEnrolled+"</td>";
 
+           var ispilot = (entry.child_no_longer_living_in_the_pilot_area==null?false:entry.child_no_longer_living_in_the_pilot_area);
+           var ispilotCell = "<td style = \"display:none;\">"+ispilot+"</td>";
+
+
+
            $("#household-visit-child-table tbody").append
            (
-              "<tr class = \"child-row-class\" >"+childIDCell+childNameCell+schoolCell+gradeCell+ageCell+isEnrolledCell+"</tr>"
+              "<tr class = \"child-row-class\" >"+childIDCell+childNameCell+schoolCell+gradeCell+ageCell+isEnrolledCell+ispilotCell+"</tr>"
 
            );
         }

@@ -195,6 +195,11 @@
         var childURL = host+'/api/registrations-child/';
         var complaintURL = host+'/api/registrations-complaint/';
         var arabic_fields = "#first_name, #father_name, #last_name, #mother_full_name";
+        var months = [
+                'January', 'February', 'March', 'April', 'May',
+                'June', 'July', 'August', 'September',
+                'October', 'November', 'December'
+            ];
 
         var hhID = null;
 
@@ -286,7 +291,6 @@
                         }
                         window.location.href = url;
                 }
-
 
                 function AddParameter( url, id)
                 {
@@ -670,31 +674,37 @@
             {
                 var childFullName = entry.first_name+' '+entry.father_name+' '+entry.last_name;
                 var childNameCell = "<td  >"+(childFullName)+"</td>";
-
-                var ChildDOB = entry.birthday_day+'/'+entry.birthday_month+'/'+entry.birthday_year;
-                var childDOBCell = "<td  >"+(ChildDOB)+"</td>";
-
+{#                var ChildDOB = entry.birthday_day+'/'+entry.birthday_month+'/'+entry.birthday_year;#}
+{#                var childDOBCell = "<td  >"+(ChildDOB)+"</td>";#}
+                var ageCell = "<td  >"+(entry.calculate_age)+"</td>";
                 var schoolCell = "<td  >"+(entry.school_name)+"</td>";
 
                 $("#children-table tbody").append
                 (
-                   "<tr>"+childNameCell+childDOBCell+schoolCell+"</tr>"
+                   "<tr>"+childNameCell+ageCell+schoolCell+"</tr>"
                 );
             }
 
             function AddPaymentRow(entry)
             {
+
                 var dateCell = "<td>"+FormatDate(entry.payment_date) +"</td>";
                 var amountCell = "<td>"+entry.payment_amount+"</td>";
                 var monthCell = "<td>"+entry.payment_month+"</td>";
                 var yearCell = "<td>"+entry.payment_year+"</td>";
 
+                var MonthshortName = monthNumToName(entry.payment_month);
+
+                var MonthshortNameCell = "<td>"+MonthshortName+"</td>";
 
                 $("#payments-table tbody").append
                 (
-                   "<tr>"+dateCell+amountCell+monthCell+yearCell+"</tr>"
+                   "<tr>"+dateCell+amountCell+MonthshortNameCell+yearCell+"</tr>"
                 );
             }
+            function monthNumToName(monthnum) {
+                    return months[monthnum - 1] || '';
+                }
 
             function AddComplaintRow(entry)
             {
