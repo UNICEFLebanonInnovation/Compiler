@@ -1130,9 +1130,9 @@
          complaintData.complaint_status = 'open';
          complaintData.owner = user_id;
 
-         var selected_year = $("#complait_days").val().toString();
+         var selected_year = $("#complait_years").val().toString();
          var selected_month = $("#complait_months").val().toString() ;
-         var selected_day = $("#complait_years").val().toString();
+         var selected_day = $("#complait_days").val().toString();
          var selected_date = [selected_year,
           (selected_month>9 ? '' : '0') + selected_month,
           (selected_day>9 ? '' : '0') + selected_day
