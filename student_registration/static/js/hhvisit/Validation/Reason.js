@@ -1,6 +1,7 @@
   function ValidateReasons(editForm)
         {
            var reasonsValid = true;
+           var rowCount =  0;
 
            editForm.find("[name=childReasons] tbody tr")
            .each
@@ -10,12 +11,20 @@
                  trElement = $(obj);
 
                  reasonsValid = reasonsValid && ValidateReason(trElement);
+                 rowCount +=1;
 
               }
            );
+           if(reasonsValid & rowCount>0)
+           {
+               editForm.find("#reasons_error").hide();
+           }
+           else
+           {
+               editForm.find("#reasons_error").show();
+           }
 
-
-           return reasonsValid;
+           return reasonsValid & rowCount>0;
         }
 
         function ValidateReason(trElement)
