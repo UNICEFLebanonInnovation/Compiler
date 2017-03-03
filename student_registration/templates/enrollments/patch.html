@@ -50,9 +50,9 @@
             <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                          <div class="panel-heading" style="position: absolute; top:0px;" id="header">
+                          <div class="panel-heading" style="position: absolute; top:50px;" id="header">
                             <ol class="breadcrumb">
-                                <li><h3 class="panel-title">{% trans "Edit students education history" %}</h3></li>
+                                <li><h3 class="panel-title">{% trans "Editing students data" %}</h3></li>
                                 <li>
                                   <button class="btn btn-info" id="registration-synchro">
                                     <i class="icon-synch-sign icon-white"></i>&nbsp;
@@ -62,18 +62,28 @@
                                     <i class="icon-synch-sign icon-white"></i>&nbsp;
                                         {% trans "download data" %}
                                   </button>
-                                </li>
-                                <li>
-                                    <select name="classroom" id="filter_class" class="col-200">
-                                        <option value="">{% trans "Filter by Class" %}</option>
-                                        {% for item in classrooms %}
-                                            <option value="{{ item.id }}">{{ item.name }}</option>
-                                        {% endfor %}
-                                    </select>
                                     <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">
                                         <i class="icon-export-sign icon-white"></i>&nbsp;
                                             {% trans "Export" %}
                                     </a>
+                                </li>
+                                <li>
+                                    <select name="classroom" id="filter_class" class="col-200">
+                                        <option value="0">{% trans "Filter by Class" %}</option>
+                                        {% for item in classrooms %}
+                                            <option value="{{ item.id }}">{{ item.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <select name="section" id="filter_section" class="col-200">
+                                        <option value="0">{% trans "Filter by Section" %}</option>
+                                        {% for item in sections %}
+                                            <option value="{{ item.id }}">{{ item.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button class="btn btn-success" id="filter_go">
+                                        {% trans "Filter data" %}
+                                    </button>
+{#                                    <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />#}
                                     <button class="btn btn-warning" id="filter_cancel">
                                         {% trans "Rest filter" %}
                                     </button>
@@ -84,6 +94,13 @@
                                 <i class="fa fa-times"></i>
                             </div>
                           </div>
+                        <div class="panel-heading">
+                            <ol class="breadcrumb">
+                                <li>{{ school }}</li>
+                                <li>{{ location }}</li>
+                                <li>{{ location_parent }}</li>
+                            </ol>
+                        </div>
                           <div class="panel-body">
                               <div class="loader"></div>
                                 <table id="registrations-table" class="table table-striped table-bordered cell-border"
@@ -94,12 +111,12 @@
                                        width="100%" style="margin-bottom: 100px; margin-top: 75px;">
                                 <thead>
                                     <tr id="thead-line-1">
-                                        <th rowspan="2">&nbsp;</th>
+{#                                        <th rowspan="2">&nbsp;</th>#}
                                         <th rowspan="2">#</th>
-                                        <th rowspan="2"><label>{% trans "Governorate" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "District" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "School number" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "School" %}</label></th>
+{#                                        <th rowspan="2"><label>{% trans "Governorate" %}</label></th>#}
+{#                                        <th rowspan="2"><label>{% trans "District" %}</label></th>#}
+{#                                        <th rowspan="2"><label>{% trans "School number" %}</label></th>#}
+{#                                        <th rowspan="2"><label>{% trans "School" %}</label></th>#}
                                         <th rowspan="2"><label>{% trans "Student first name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
@@ -177,6 +194,7 @@
     <script type="text/javascript" src="{% static 'js/indexedDB.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/eav.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.quicksearch.js' %}"></script>
     <script type="text/javascript">
         var db = null;
         var language  = '{{ LANGUAGE_CODE }}';
@@ -188,7 +206,8 @@
         var rows = 1;
         var limit = 100;
         var offset = 0;
-        var total = 0;
+        var total = {{ total }};
+        var filter_on = false;
         var synchro_result = true;
         var prototype = $('#registration_prototype');
         var table = $('#registrations-table');
@@ -230,6 +249,9 @@
                 }
 
                 if($(window).scrollTop() == $(document).height() - $(window).height()){
+                    if(filter_on == true){
+                        return false;
+                    }
                     var total_records = $('#registrations-table').find('tr.registration-line').length;
                     if(total_records < total) {
                         offset = limit;
@@ -237,6 +259,8 @@
                         $('#load_more_data').hide();
                         $(".loader").show();
                         build_datatable();
+                    }else{
+                        $(".loader").hide();
                     }
                 }
             });
@@ -267,28 +291,28 @@
                 }
             });
 
-            $(document).on('change', '#filter_section, #filter_class, #filter_id_type, #filter_nationality', function(){
-                if($(this).val()){
-                    var value = $(this).val();
-                    var name = $(this).attr('name');
-                    $('.registration-line').hide();
-                    $('.registration-line').each(function(i, item){
-                        var select = $(this).find('#'+name);
-                        if($(select).val() == value){
-                            $(this).show();
-                        }
-                    });
+            $(document).on('click', '#filter_go', function(){
+                filter_on = true;
+                $(".loader").show();
+                var classroom = $('#filter_class').val();
+                var section = $('#filter_section').val();
+
+                if((classroom != 0 && section != 0) || classroom != 0){
+                    filterByClass(classroom, section);
                 }else{
-                    $('.registration-line').show();
+                    filter_on = false;
+                    $(".loader").hide();
                 }
             });
 
             $(document).on('click', '#filter_cancel', function(){
-                $('.registration-line').show();
-                $('#filter_section').val('');
+                filter_on = false;
+                incremental_id = 1;
+                offset = 0;
+                limit = 100;
+                build_datatable();
                 $('#filter_class').val('');
-                $('#filter_id_type').val('');
-                $('#filter_nationality').val('');
+                $('#input#search').val('');
             });
 
             $(document).on('click', '#add_datatable_line', function(){
@@ -415,6 +439,9 @@
 
             $(document).on('click', '#registration-download', function(){
                 incremental_id = 0;
+                offset = 0;
+                limit = 100;
+                $('#registrations-table').find('.registration-line').remove();
                 $('.alert').hide();
                 if(navigator.onLine) {
                      $(".loader").show();
@@ -428,6 +455,23 @@
                 }
             });
         });
+
+        function init_quicksearch()
+        {
+            $('input#search').quicksearch('table tbody tr', {
+                'selector': 'input',
+                'stripeRows': ['odd', 'even'],
+                'loader': '.loader',
+                'noResults': 'tr#noresults',
+                'bind': 'keyup keydown',
+                'onBefore': function () {
+{#                    console.log('on before');#}
+                },
+                'onAfter': function () {
+{#                    console.log('on after');#}
+                }
+            });
+        }
 
         function calculateAge(itemid)
         {
@@ -516,6 +560,7 @@
                     }
                 });
                 rows = rows + 1;
+{#                init_quicksearch();#}
             };
         }
 
@@ -543,11 +588,35 @@
             });
         }
 
-        function filterBy()
+        function filterByClass(classroom, section)
         {
-                        var store = getStoreByName('classroomsAttendances');
-            var index = store.index("classroom");
-            var request = index.getAll(parseInt(classroom));
+            var store = getStoreByName('registrations');
+            if(section != 0) {
+                var index = store.index("classroomAndSection");
+                var request = index.getAll([parseInt(classroom), parseInt(section)]);
+            }else{
+                var index = store.index("classroom");
+                var request = index.getAll(parseInt(classroom));
+            }
+
+            request.onsuccess = function() {
+                var result = request.result;
+                reBuildTable(result);
+            }
+        }
+
+        function reBuildTable(data)
+        {
+            incremental_id = 0;
+            $('#registrations-table').find('.registration-line').remove();
+            $(data).each(function(i, item){
+                if(item.deleted == false){
+                    $(".loader").show();
+                    add_table_newline(item.id, prototype, table);
+                    add_fill_line_data(item);
+                    $(".loader").hide();
+                }
+            });
         }
 
         function synchronize_data()
@@ -709,24 +778,27 @@
                     if(response.data) {
                         data = response.data;
                     }
-                    total = data.length;
                     $(data).each(function(i, item){
                         var request = store.index('original_id').get(parseInt(item.original_id));
                         request.onsuccess = function() {
+                            item.synchronized = true;
+                            item.deleted = false;
+                            item.to_update = false;
+                            item.student_nationality = item.student_nationality_id;
+                            item.student_mother_nationality = item.student_mother_nationality_id;
+                            item.student_id_type = item.student_id_type_id;
+
+                            item.last_education_level = item.last_education_level_id;
+                            item.last_informal_edu_level = item.last_informal_edu_level_id;
+                            item.last_informal_edu_round = item.last_informal_edu_round_id;
+                            item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
+                            item.last_school = item.last_school_id;
+
                             if(request.result === undefined) {
-                                item.synchronized = true;
-                                item.deleted = false;
-                                item.to_update = false;
-                                item.student_nationality = item.student_nationality_id;
-                                item.student_mother_nationality = item.student_mother_nationality_id;
-                                item.student_id_type = item.student_id_type_id;
-
-                                item.last_education_level = item.last_education_level_id;
-                                item.last_informal_edu_level = item.last_informal_edu_level_id;
-                                item.last_informal_edu_round = item.last_informal_edu_round_id;
-                                item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
-                                item.last_school = item.last_school_id;
-
+                                store.put(item);
+                            }else{
+                                var result = request.result;
+                                result = item;
                                 store.put(item);
                             }
                         };
@@ -745,7 +817,7 @@
 
         function createStores()
         {
-            var request = indexedDB.open("compile_bd_patch", 3);
+            var request = indexedDB.open("registrations_patch_2", 3);
 
             request.onupgradeneeded = function() {
                 // The database did not previously exist, so create object stores and indexes.
