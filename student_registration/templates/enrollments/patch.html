@@ -653,7 +653,7 @@
                 $(result).each(function(i, item){
                     $(".loader").show();
                     if(item.to_update == true){
-                        update_data_into_server(item);
+                        patch_data_into_server(item);
                     }
                     $(".loader").hide();
                 });

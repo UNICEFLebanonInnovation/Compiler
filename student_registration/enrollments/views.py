@@ -224,7 +224,7 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
     def get_queryset(self):
         # has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
         if self.request.user.school_id:
-            return self.queryset.filter(school=self.request.user.school_id).order_by('classroom_id', 'section_id').asc()
+            return self.queryset.filter(school=self.request.user.school_id).order_by('classroom_id', 'section_id')
 
         return self.queryset
 
