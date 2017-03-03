@@ -171,16 +171,19 @@ class EnrollmentPatchView(LoginRequiredMixin, TemplateView):
         school = 0
         location = 0
         location_parent = 0
+        total = 0
         if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
             school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
+            total = self.model.objects.exclude(deleted=True).filter(school_id=school_id).count()
         if school and school.location:
             location = school.location
         if location and location.parent:
             location_parent = location.parent
 
         return {
+            'total': total,
             'schools': School.objects.all(),
             'school_shifts': Enrollment.SCHOOL_SHIFT,
             'school_types': Enrollment.SCHOOL_TYPE,
@@ -221,16 +224,13 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
     def get_queryset(self):
         # has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
         if self.request.user.school_id:
-            return self.queryset.filter(school=self.request.user.school_id)
+            return self.queryset.filter(school=self.request.user.school_id).order_by('classroom_id', 'section_id').asc()
 
         return self.queryset
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
-        # student = instance.student
         instance.delete()
-        # if student:
-        #     student.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
     def perform_update(self, serializer):
