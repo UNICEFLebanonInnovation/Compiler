@@ -170,6 +170,7 @@ class ChildVisit(TimeStampedModel):
         related_name='+',
     )
     child_enrolled_in_another_school = models.BooleanField(default=False)
+    child_no_longer_living_in_the_pilot_area = models.BooleanField(default=False)
 
     main_reason = models.ForeignKey(
         MainReason,
