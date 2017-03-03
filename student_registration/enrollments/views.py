@@ -163,7 +163,7 @@ class EnrollmentPatchView(LoginRequiredMixin, TemplateView):
     Provides the enrollment page with lookup types in the context
     """
     model = Enrollment
-    template_name = 'enrollments/edit_history.html'
+    template_name = 'enrollments/patch.html'
 
     def get_context_data(self, **kwargs):
 
@@ -171,20 +171,16 @@ class EnrollmentPatchView(LoginRequiredMixin, TemplateView):
         school = 0
         location = 0
         location_parent = 0
-        data = []
         if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
             school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
-            data = self.model.objects.exclude(deleted=True).filter(school_id=school_id)
-            data = EnrollmentSerializer(data, many=True).data
         if school and school.location:
             location = school.location
         if location and location.parent:
             location_parent = location.parent
 
         return {
-            'data': data,
             'schools': School.objects.all(),
             'school_shifts': Enrollment.SCHOOL_SHIFT,
             'school_types': Enrollment.SCHOOL_TYPE,
@@ -194,6 +190,12 @@ class EnrollmentPatchView(LoginRequiredMixin, TemplateView):
             'education_final_results': ClassLevel.objects.all(),
             'alp_rounds': ALPRound.objects.all(),
             'classrooms': ClassRoom.objects.all(),
+            'sections': Section.objects.all(),
+            'nationalities': Nationality.objects.exclude(id=5),
+            'nationalities2': Nationality.objects.all(),
+            'genders': Person.GENDER,
+            'months': Person.MONTHS,
+            'idtypes': IDType.objects.all(),
             'school': school,
             'location': location,
             'location_parent': location_parent
