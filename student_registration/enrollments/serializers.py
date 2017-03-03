@@ -15,6 +15,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     student_first_name = serializers.CharField(source='student.first_name')
     student_father_name = serializers.CharField(source='student.father_name')
     student_last_name = serializers.CharField(source='student.last_name')
+    student_full_name = serializers.CharField(source='student.full_name')
     student_mother_fullname = serializers.CharField(source='student.mother_fullname')
     student_sex = serializers.CharField(source='student.sex')
     student_birthday_year = serializers.CharField(source='student.birthday_year')
@@ -135,6 +136,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'student_first_name',
             'student_father_name',
             'student_last_name',
+            'student_full_name',
             'student_mother_fullname',
             'student_sex',
             'student_birthday_year',
