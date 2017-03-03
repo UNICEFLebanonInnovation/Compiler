@@ -8,13 +8,18 @@ urlpatterns = [
 
     url(
         regex=r'^enrollment/$',
-        view=views.EnrollmentView.as_view(),
+        view=views.EnrollmentPatchView.as_view(),
         name='enrollment'
     ),
     url(
         regex=r'^enrollment-edit/$',
-        view=views.EnrollmentEditView.as_view(),
+        view=views.EnrollmentPatchView.as_view(),
         name='enrollment_edit'
+    ),
+    url(
+        regex=r'^enrollment-patch/$',
+        view=views.EnrollmentPatchView.as_view(),
+        name='enrollment_patch'
     ),
     url(
         regex=r'^enrollment-view/$',

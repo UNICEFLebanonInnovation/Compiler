@@ -84,7 +84,7 @@ class LoginRedirectView(LoginRequiredMixin, RedirectView):
 
     def get_redirect_url(self):
         if has_group(self.request.user, 'SCHOOL'):
-            return reverse('enrollments:enrollment_edit', kwargs={})
+            return reverse('enrollments:enrollment_patch', kwargs={})
         if has_group(self.request.user, 'ALP_SCHOOL'):
             return reverse('alp:alp_data_collecting', kwargs={}) + '?1'
         if has_group(self.request.user, 'PARTNER'):
