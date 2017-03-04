@@ -217,6 +217,7 @@ class Enrollment(TimeStampedModel):
         related_name='+',
     )
     deleted = models.BooleanField(blank=True, default=False)
+    dropout_status = models.BooleanField(blank=True, default=False)
 
     @property
     def student_fullname(self):
