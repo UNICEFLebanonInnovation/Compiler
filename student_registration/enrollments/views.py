@@ -222,9 +222,10 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        # has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
+        if self.request.method in ["PATCH", "POST", "PUT"]:
+            return self.queryset
         if self.request.user.school_id:
-            return self.queryset.filter(school=self.request.user.school_id).order_by('classroom_id', 'section_id')
+            return self.queryset.filter(school_id=self.request.user.school_id).order_by('classroom_id', 'section_id')
 
         return self.queryset
 
