@@ -220,7 +220,7 @@ def find_matching():
     from student_registration.enrollments.models import Enrollment
     from student_registration.students.models import StudentMatching
 
-    offset = 28000
+    offset = 36000
     limit = offset + 2000
     registrations = Registration.objects.all().order_by('id')[offset:limit]
     for registry in registrations:
