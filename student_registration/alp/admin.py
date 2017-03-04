@@ -17,6 +17,8 @@ from student_registration.schools.models import (
 from student_registration.locations.models import Location
 from student_registration.users.models import User
 from student_registration.students.models import Student
+from django.db.models import Q
+from django.db.models import Sum
 
 
 class OutreachResource(resources.ModelResource):
@@ -428,10 +430,10 @@ class PostTestAdmin(OutreachAdmin):
         'refer_to_level',
         'section',
         'student__sex',
-        'exam_corrector_arabic',
-        'exam_corrector_language',
-        'exam_corrector_math',
-        'exam_corrector_science',
+        'post_exam_corrector_arabic',
+        'post_exam_corrector_language',
+        'post_exam_corrector_math',
+        'post_exam_corrector_science',
         'created',
         'modified',
     )
@@ -445,6 +447,10 @@ class PostTestAdmin(OutreachAdmin):
             section__isnull=False,
             refer_to_level__isnull=False
         )
+        # .annotate(post_exam_corrector__gt=0).aggregate(
+        # post_exam_corrector_arabic + post_exam_corrector_language +
+        # post_exam_corrector_math + post_exam_corrector_science
+        # )
 
 
 admin.site.register(Outreach, OutreachAdmin)

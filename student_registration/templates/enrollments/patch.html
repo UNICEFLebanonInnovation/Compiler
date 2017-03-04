@@ -5,6 +5,7 @@
 
 {% block extra_head %}
 
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
 
@@ -13,10 +14,10 @@
 {% block content-full-page %}
 
     <style>
-        .incremental_number.success {
+        .synchro-status.success {
             background-color: #1ABB9C !important;
         }
-        .incremental_number.failed {
+        .synchro-status.failed {
             background-color: #ac2925 !important;
         }
         tr.highlighted {
@@ -99,6 +100,7 @@
                                 <li>{{ school }}</li>
                                 <li>{{ location }}</li>
                                 <li>{{ location_parent }}</li>
+                                <li>{% trans "Total students" %} <span class="badge ttl_students">{{ total }}</span></li>
                             </ol>
                         </div>
                           <div class="panel-body">
@@ -312,6 +314,7 @@
                 limit = 100;
                 build_datatable();
                 $('#filter_class').val('');
+                $('#filter_section').val('');
                 $('#input#search').val('');
             });
 
@@ -438,12 +441,12 @@
             });
 
             $(document).on('click', '#registration-download', function(){
-                incremental_id = 0;
-                offset = 0;
-                limit = 100;
-                $('#registrations-table').find('.registration-line').remove();
-                $('.alert').hide();
-                if(navigator.onLine) {
+                if(navigator.onLine == false) {
+                    incremental_id = 0;
+                    offset = 0;
+                    limit = 100;
+                    $('#registrations-table').find('.registration-line').remove();
+                    $('.alert').hide();
                      $(".loader").show();
                     load_base_data();
                     setTimeout(function(){
@@ -552,7 +555,7 @@
                 var result = request.result;
                 $(result).each(function(i, item){
                     rows = item.id;
-                    if(item.deleted == false &&  i > offset && i <= limit){
+                    if(item.deleted == false &&  i >= offset && i < limit){
                         $(".loader").show();
                         add_table_newline(item.id, prototype, table);
                         add_fill_line_data(item);
@@ -674,8 +677,9 @@
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
                     if(jqXHR.status == 201){
-                        $('#line-'+item.id).find('.incremental_number').removeClass('failed');
-                        $('#line-'+item.id).find('.incremental_number').addClass('success');
+                        $('#line-'+itemid).removeClass('warning');
+                        $('#line-'+item.id).find('.synchro-status').removeClass('failed');
+                        $('#line-'+item.id).find('.synchro-status').addClass('success');
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
                         item.synchronized = true;
                         item.original_id = response.id;
@@ -687,8 +691,9 @@
                     }
                 },
                 error: function (response) {
-                    $('#line-'+item.id).find('.incremental_number').removeClass('success');
-                    $('#line-'+item.id).find('.incremental_number').addClass('failed');
+                    $('#line-'+itemid).addClass('warning');
+                    $('#line-'+item.id).find('.synchro-status').removeClass('success');
+                    $('#line-'+item.id).find('.synchro-status').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
                     $('#line-'+item.id).find('.registration-field').removeClass('required');
                     $.each(required_fields, function(field_name, field_msg){
@@ -714,8 +719,9 @@
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
                     if(jqXHR.status == 200){
-                        $('#line-'+item.id).find('.incremental_number').removeClass('failed');
-                        $('#line-'+item.id).find('.incremental_number').addClass('success');
+                        $('#line-'+itemid).removeClass('warning');
+                        $('#line-'+item.id).find('.synchro-status').removeClass('failed');
+                        $('#line-'+item.id).find('.synchro-status').addClass('success');
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
                         update_item_store(parseInt(item.id), 'synchronized', true, 'registrations');
                         update_item_store(parseInt(item.id), 'to_update', false, 'registrations');
@@ -723,8 +729,9 @@
                     }
                 },
                 error: function (response) {
-                    $('#line-'+item.id).find('.incremental_number').removeClass('success');
-                    $('#line-'+item.id).find('.incremental_number').addClass('failed');
+                    $('#line-'+itemid).addClass('warning');
+                    $('#line-'+item.id).find('.synchro-status').removeClass('success');
+                    $('#line-'+item.id).find('.synchro-status').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
                     $('#line-'+item.id).find('.registration-field').removeClass('required');
                     $.each(required_fields, function(field_name, field_msg){
@@ -750,11 +757,17 @@
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
+                    $('#line-'+itemid).removeClass('warning');
+                    $('#line-'+itemid).find('.synchro-status').removeClass('failed');
+                    $('#line-'+itemid).find('.synchro-status').addClass('success');
+                    $('#line-'+itemid).find('.registration-field').removeClass('required');
                     update_item_store(parseInt(itemid), 'to_update', false, 'registrations-p');
                 },
                 error: function (response) {
                     console.log(response);
                     $('#line-'+itemid).addClass('warning');
+                    $('#line-'+itemid).find('.synchro-status').removeClass('success');
+                    $('#line-'+itemid).find('.synchro-status').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+itemid).find('#'+field_name).addClass('required');
