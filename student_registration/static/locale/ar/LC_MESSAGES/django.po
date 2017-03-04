@@ -1182,3 +1182,6 @@ msgstr "تعديل بيانات الطلاب"
 
 msgid "Filter data"
 msgstr "قم بالتصفية"
+
+msgid "Total students"
+msgstr "مجموع التلاميذ"
