@@ -22,6 +22,7 @@ from student_registration.students.models import (
 from student_registration.registrations.models import Registration, RegisteringAdult
 from student_registration.enrollments.models import Enrollment
 from student_registration.alp.models import Outreach, ALPRound
+from student_registration.users.models import User
 import datetime
 from django.db.models import Q
 
@@ -259,7 +260,229 @@ class RegistrationsALPView(LoginRequiredMixin,
         # Also schools by governate
         governorates = Location.objects.exclude(parent__isnull=False)
         alp_round = ALPRound.objects.get(current_round=True)
-        queryset = self.queryset.filter(alp_round=alp_round)
+        self.queryset = self.queryset.filter(alp_round=alp_round)
+
+        students_per_gov = {}
+        schools_per_gov = {}
+        students_per_school = {}
+        for gov in governorates:
+            # get schools of this governate and its districts
+            govdistschools = School.objects.filter(Q(location__parent__id=gov.id) | Q(location=gov.id))
+            schools_per_gov[gov.name] = govdistschools.count()
+            # get number of children of each of these schools
+            numchildren = 0
+            for oneschool in govdistschools:
+                nbr = self.queryset.filter(school=oneschool.id).count()
+                if nbr:
+                    students_per_school[oneschool.name] = nbr
+                numchildren += nbr
+
+            students_per_gov[gov.name] = numchildren
+
+        # get children by age range
+        now = datetime.datetime.now()
+        age_range = {}
+        age_range['0-6'] = self.queryset.filter(student__birthday_year__gte=(now.year - 6)).count()
+        age_range['7-9'] = self.queryset.filter(student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
+        age_range['10-12'] = self.queryset.filter(student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
+        age_range['13+'] = self.queryset.filter(student__birthday_year__lte=(now.year - 13)).count()
+
+        # get HHs by ID Type
+        students_by_idtype = {}
+        id_types = IDType.objects.all()
+        for type in id_types:
+            students_by_idtype[type] = self.queryset.filter(student__id_type=type).count()
+
+        # get HHs by Nationality
+        students_by_nationality = {}
+        nationalities = Nationality.objects.all()
+        for nationality in nationalities:
+            students_by_nationality[nationality] = self.queryset.filter(student__nationality_id=nationality.id).count()
+
+        return {
+                'schools': len(students_per_school),
+                'registrations': self.queryset.count(),
+                'males': self.queryset.filter(student__sex='Male').count(),
+                'females': self.queryset.filter(student__sex='Female').count(),
+                'students_per_gov': students_per_gov,
+                'students_per_school': students_per_school,
+                'age_range': age_range,
+                'students_by_idtype': students_by_idtype,
+                'students_by_nationality': students_by_nationality,
+                'schools_per_gov': schools_per_gov,
+        }
+
+
+class RegistrationsALPOutreachView(LoginRequiredMixin,
+                                   GroupRequiredMixin,
+                                   TemplateView):
+    """
+    Provides the registration page with lookup types in the context
+    """
+    model = Outreach
+    queryset = Outreach.objects.exclude(deleted=True)
+    template_name = 'dashboard/registrations-alp-outreach.html'
+
+    group_required = [u"ALP_MEHE"]
+
+    def handle_no_permission(self, request):
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+        governorates = Location.objects.exclude(parent__isnull=False)
+
+        alp_round = ALPRound.objects.filter(current_pre_test=True)
+        users = User.objects.filter(groups__name__in=['PARTNER'])
+        self.queryset = self.queryset.filter(alp_round=alp_round, owner__in=users)
+
+        students_per_gov = {}
+        schools_per_gov = {}
+        students_per_school = {}
+        for gov in governorates:
+            # get schools of this governate and its districts
+            govdistschools = School.objects.filter(Q(location__parent__id=gov.id) | Q(location=gov.id))
+            schools_per_gov[gov.name] = govdistschools.count()
+            # get number of children of each of these schools
+            numchildren = 0
+            for oneschool in govdistschools:
+                nbr = self.queryset.filter(school=oneschool.id).count()
+                if nbr:
+                    students_per_school[oneschool.name] = nbr
+                numchildren += nbr
+
+            students_per_gov[gov.name] = numchildren
+
+        # get children by age range
+        now = datetime.datetime.now()
+        age_range = {}
+        age_range['0-6'] = self.queryset.filter(student__birthday_year__gte=(now.year - 6)).count()
+        age_range['7-9'] = self.queryset.filter(student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
+        age_range['10-12'] = self.queryset.filter(student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
+        age_range['13+'] = self.queryset.filter(student__birthday_year__lte=(now.year - 13)).count()
+
+        # get HHs by ID Type
+        students_by_idtype = {}
+        id_types = IDType.objects.all()
+        for type in id_types:
+            students_by_idtype[type] = self.queryset.filter(student__id_type=type).count()
+
+        # get HHs by Nationality
+        students_by_nationality = {}
+        nationalities = Nationality.objects.all()
+        for nationality in nationalities:
+            students_by_nationality[nationality] = self.queryset.filter(student__nationality_id=nationality.id).count()
+
+        return {
+                'schools': len(students_per_school),
+                'registrations': self.queryset.count(),
+                'males': self.queryset.filter(student__sex='Male').count(),
+                'females': self.queryset.filter(student__sex='Female').count(),
+                'students_per_gov': students_per_gov,
+                'students_per_school': students_per_school,
+                'age_range': age_range,
+                'students_by_idtype': students_by_idtype,
+                'students_by_nationality': students_by_nationality,
+                'schools_per_gov': schools_per_gov,
+        }
+
+
+class RegistrationsALPPreTestView(LoginRequiredMixin,
+                                  GroupRequiredMixin,
+                                  TemplateView):
+    """
+    Provides the registration page with lookup types in the context
+    """
+    model = Outreach
+    queryset = Outreach.objects.exclude(deleted=True)
+    template_name = 'dashboard/registrations-alp-pre-test.html'
+
+    group_required = [u"ALP_MEHE"]
+
+    def handle_no_permission(self, request):
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+        governorates = Location.objects.exclude(parent__isnull=False)
+
+        alp_round = ALPRound.objects.get(current_pre_test=True)
+        self.queryset = self.queryset.filter(alp_round=alp_round, level__isnull=False)
+
+        students_per_gov = {}
+        schools_per_gov = {}
+        students_per_school = {}
+        for gov in governorates:
+            # get schools of this governate and its districts
+            govdistschools = School.objects.filter(Q(location__parent__id=gov.id) | Q(location=gov.id))
+            schools_per_gov[gov.name] = govdistschools.count()
+            # get number of children of each of these schools
+            numchildren = 0
+            for oneschool in govdistschools:
+                nbr = self.queryset.filter(school=oneschool.id).count()
+                if nbr:
+                    students_per_school[oneschool.name] = nbr
+                numchildren += nbr
+
+            students_per_gov[gov.name] = numchildren
+
+        # get children by age range
+        now = datetime.datetime.now()
+        age_range = {}
+        age_range['0-6'] = self.queryset.filter(student__birthday_year__gte=(now.year - 6)).count()
+        age_range['7-9'] = self.queryset.filter(student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
+        age_range['10-12'] = self.queryset.filter(student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
+        age_range['13+'] = self.queryset.filter(student__birthday_year__lte=(now.year - 13)).count()
+
+        # get HHs by ID Type
+        students_by_idtype = {}
+        id_types = IDType.objects.all()
+        for type in id_types:
+            students_by_idtype[type] = self.queryset.filter(student__id_type=type).count()
+
+        # get HHs by Nationality
+        students_by_nationality = {}
+        nationalities = Nationality.objects.all()
+        for nationality in nationalities:
+            students_by_nationality[nationality] = self.queryset.filter(student__nationality_id=nationality.id).count()
+
+        return {
+                'schools': len(students_per_school),
+                'registrations': self.queryset.count(),
+                'males': self.queryset.filter(student__sex='Male').count(),
+                'females': self.queryset.filter(student__sex='Female').count(),
+                'students_per_gov': students_per_gov,
+                'students_per_school': students_per_school,
+                'age_range': age_range,
+                'students_by_idtype': students_by_idtype,
+                'students_by_nationality': students_by_nationality,
+                'schools_per_gov': schools_per_gov,
+        }
+
+
+class RegistrationsALPPostTestView(LoginRequiredMixin,
+                                   GroupRequiredMixin,
+                                   TemplateView):
+    """
+    Provides the registration page with lookup types in the context
+    """
+    model = Outreach
+    queryset = Outreach.objects.exclude(deleted=True)
+    template_name = 'dashboard/registrations-alp-post-test.html'
+
+    group_required = [u"ALP_MEHE"]
+
+    def handle_no_permission(self, request):
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+        governorates = Location.objects.exclude(parent__isnull=False)
+
+        alp_round = ALPRound.objects.get(current_post_test=True)
+        self.queryset = self.queryset.filter(
+            alp_round=alp_round,
+            registered_in_level__isnull=False,
+            section__isnull=False,
+            refer_to_level__isnull=False
+        )
 
         students_per_gov = {}
         schools_per_gov = {}
