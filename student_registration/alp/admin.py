@@ -94,6 +94,96 @@ class OutreachResource(resources.ModelResource):
         return obj.post_exam_total
 
 
+class PreTestTotalFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Pre test total'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'pre_test_total'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('0', 'Equal 0'),
+            ('1', 'More than 0')
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            if self.value() == '0':
+                return queryset.filter(
+                    exam_result_arabic=0,
+                    exam_result_language=0,
+                    exam_result_math=0,
+                    exam_result_science=0
+                )
+            else:
+                return queryset.filter(
+                    Q(exam_result_arabic__gt=0) |
+                    Q(exam_result_language__gt=0) |
+                    Q(exam_result_math__gt=0) |
+                    Q(exam_result_science__gt=0)
+                )
+        return queryset
+
+
+class PostTestTotalFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Post test total'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'post_test_total'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('0', 'Equal 0'),
+            ('1', 'More than 0')
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            if self.value() == '0':
+                return queryset.filter(
+                    post_exam_result_arabic=0,
+                    post_exam_result_language=0,
+                    post_exam_result_math=0,
+                    post_exam_result_science=0
+                )
+            else:
+                return queryset.filter(
+                    Q(post_exam_result_arabic__gt=0) |
+                    Q(post_exam_result_language__gt=0) |
+                    Q(post_exam_result_math__gt=0) |
+                    Q(post_exam_result_science__gt=0)
+                )
+        return queryset
+
+
 class GovernorateFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
@@ -344,6 +434,7 @@ class PreTestAdmin(OutreachAdmin):
         'exam_corrector_language',
         'exam_corrector_math',
         'exam_corrector_science',
+        PreTestTotalFilter,
         'created',
         'modified',
     )
@@ -434,6 +525,7 @@ class PostTestAdmin(OutreachAdmin):
         'post_exam_corrector_language',
         'post_exam_corrector_math',
         'post_exam_corrector_science',
+        PostTestTotalFilter,
         'created',
         'modified',
     )
@@ -447,10 +539,6 @@ class PostTestAdmin(OutreachAdmin):
             section__isnull=False,
             refer_to_level__isnull=False
         )
-        # .annotate(post_exam_corrector__gt=0).aggregate(
-        # post_exam_corrector_arabic + post_exam_corrector_language +
-        # post_exam_corrector_math + post_exam_corrector_science
-        # )
 
 
 admin.site.register(Outreach, OutreachAdmin)
