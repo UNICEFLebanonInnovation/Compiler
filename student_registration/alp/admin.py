@@ -477,6 +477,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         'level',
         'assigned_to_level',
         'registered_in_level',
+        'refer_to_level',
         'section',
         'student__sex',
         'created',
