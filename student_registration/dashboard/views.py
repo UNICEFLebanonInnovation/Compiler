@@ -313,6 +313,34 @@ class RegistrationsALPView(LoginRequiredMixin,
         }
 
 
+class RegistrationsALPOverallView(LoginRequiredMixin,
+                                  GroupRequiredMixin,
+                                  TemplateView):
+    """
+    Provides the registration page with lookup types in the context
+    """
+    model = Outreach
+    queryset = Outreach.objects.exclude(deleted=True)
+    template_name = 'dashboard/alp-overall.html'
+
+    group_required = [u"ALP_MEHE"]
+
+    def handle_no_permission(self, request):
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+
+        alp_round = ALPRound.objects.get(current_round=True)
+        self.queryset = self.queryset.filter(registered_in_level__isnull=False)
+        self.queryset = self.queryset.filter(alp_round=alp_round)
+
+        return {
+                'registrations': self.queryset.count(),
+                'males': self.queryset.filter(student__sex='Male').count(),
+                'females': self.queryset.filter(student__sex='Female').count(),
+        }
+
+
 class RegistrationsALPOutreachView(LoginRequiredMixin,
                                    GroupRequiredMixin,
                                    TemplateView):
