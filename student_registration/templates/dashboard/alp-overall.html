@@ -2,7 +2,7 @@
 {% load humanize %}
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
-{% load util_tags %}
+{#{% load util_tags %}#}
 
 {% block extra_head %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome/css/font-awesome.min.css' %}">
@@ -11,6 +11,7 @@
 
 {% block content %}
 
+{% load util_tags %}
 <section class="main-content-wrapper">
             <section id="main-content">
                 <div class="title_left">
@@ -21,17 +22,17 @@
          <div class="row tile_count">
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-user"></i>{% trans 'Total Students' %}</span>
-              <div class="count">{{ registrations|intcomma }}</div>
+              <div class="count">{{ enrolled|intcomma }}</div>
 {#              <span class="count_bottom"><i class="green">4% </i> From Yesterday</span>#}
             </div>
              <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-user"></i>{% trans 'Total Males' %}</span>
-              <div class="count">{{ males|intcomma }}</div>
+              <div class="count">{{ enrolled_males|intcomma }}</div>
 {#              <span class="count_bottom"><i class="red">4% </i> From Yesterday</span>#}
             </div>
              <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-user"></i>{% trans 'Total Females' %}</span>
-              <div class="count">{{ females|intcomma }}</div>
+              <div class="count">{{ enrolled_females|intcomma }}</div>
 {#              <span class="count_bottom"><i class="green">4% </i> From Yesterday</span>#}
             </div>
 
@@ -53,7 +54,7 @@
                            data-pagination="true"
                            data-search="true"
                            cellspacing="0"
-                           width="100%" style="margin-bottom: 100px; margin-top: 75px;">
+                           width="100%">
                         <thead>
                             <tr>
                                 <th rowspan="2">ALP 2016 Round 3</th>
@@ -73,65 +74,74 @@
                         <tbody>
                             <tr>
                                 <td>Children outreached</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ outreached_males }}</td>
+                                <td>{{ outreached_males|percentage:outreached }}</td>
+                                <td>{{ outreached_females }}</td>
+                                <td>{{ outreached_females|percentage:outreached }}</td>
+                                <td>{{ outreached }}</td>
                                 <td></td>
                             </tr>
                             <tr>
                                 <td>Children who sat for placement test</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ pretested_males }}</td>
+                                <td>{{ pretested_males|percentage:pretested }}</td>
+                                <td>{{ pretested_females }}</td>
+                                <td>{{ pretested_females|percentage:pretested }}</td>
+                                <td>{{ pretested }}</td>
                                 <td></td>
                             </tr>
                             <tr>
                                 <td>Children enrolled</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ enrolled_males }}</td>
+                                <td>{{ enrolled_males|percentage:enrolled }}</td>
+                                <td>{{ enrolled_females }}</td>
+                                <td>{{ enrolled_females|percentage:enrolled }}</td>
+                                <td>{{ enrolled }}</td>
                                 <td></td>
                             </tr>
                             <tr>
                                 <td>Children who sat for post test</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ posttested_males }}</td>
+                                <td>{{ posttested_males|percentage:posttested }}</td>
+                                <td>{{ posttested_females }}</td>
+                                <td>{{ posttested_females|percentage:posttested }}</td>
+                                <td>{{ posttested }}</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>Children who passsed ALP level</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>Children who passed ALP level</td>
+                                <td>{{ passed_level_males }}</td>
+                                <td>{{ passed_level_males|percentage:passed_level }}</td>
+                                <td>{{ passed_level_females }}</td>
+                                <td>{{ passed_level_females|percentage:passed_level }}</td>
+                                <td>{{ passed_level }}</td>
                                 <td></td>
                             </tr>
                             <tr>
                                 <td>Children referred to ALP following level</td>
+                                <td>{{ referred_to_following_males }}</td>
+                                <td>{{ referred_to_following_males|percentage:referred_to_following }}</td>
+                                <td>{{ referred_to_following_females }}</td>
+                                <td>{{ referred_to_following_females|percentage:referred_to_following }}</td>
+                                <td>{{ referred_to_following }}</td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Children repeat ALP level</td>
+                                <td>{{ repeated_level_males }}</td>
+                                <td>{{ repeated_level_males|percentage:repeated_level }}</td>
+                                <td>{{ repeated_level_females }}</td>
+                                <td>{{ repeated_level_females|percentage:repeated_level }}</td>
+                                <td>{{ repeated_level }}</td>
                                 <td></td>
                             </tr>
                             <tr>
                                 <td>Children referred to formal</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ referred_to_formal_males }}</td>
+                                <td>{{ referred_to_formal_males|percentage:referred_to_formal }}</td>
+                                <td>{{ referred_to_formal_females }}</td>
+                                <td>{{ referred_to_formal_females|percentage:referred_to_formal }}</td>
+                                <td>{{ referred_to_formal }}</td>
                                 <td></td>
                             </tr>
                         </tbody>
