@@ -220,7 +220,7 @@ def find_matching():
     from student_registration.enrollments.models import Enrollment
     from student_registration.students.models import StudentMatching
 
-    offset = 28000
+    offset = 54000
     limit = offset + 2000
     registrations = Registration.objects.all().order_by('id')[offset:limit]
     for registry in registrations:
@@ -258,3 +258,59 @@ def find_matching():
         if enrollment:
             e_student = enrollment.student
             StudentMatching.objects.get_or_create(registry=r_student, enrolment=e_student)
+
+
+@app.task
+def find_matching_2():
+    from student_registration.registrations.models import Registration
+    from student_registration.enrollments.models import Enrollment
+    from student_registration.students.models import StudentMatching
+
+    offset = 0
+    limit = offset + 2000
+    registrations = Enrollment.objects.exclude(deleted=True).filter(
+        school__location__parent_id__in=[1,5]
+    ).order_by('id')  #[offset:limit]
+
+    print len(registrations)
+
+    for registry in registrations:
+        enrollment = None
+        r_student = registry.student
+        if not r_student:
+            continue
+        try:
+            if r_student.id_number:
+                id_number_1 = r_student.id_number.replace("-", "")
+                id_number_2 = id_number_1.replace("C", "c")
+                id_number_3 = id_number_1.replace("c", "C")
+                id_number_4 = r_student.id_number.replace("C", "c")
+                id_number_5 = r_student.id_number.replace("c", "C")
+                id_number_6 = r_student.id_number.replace("ID", "")
+                id_number_6 = id_number_6.replace(":", "")
+                id_number_6 = id_number_6.replace("LEB", "")
+                enrollment = Registration.objects.get(
+                    Q(student__number=r_student.number) |
+                    Q(student__number_part1=r_student.number_part1) |
+                    Q(student__id_number=r_student.id_number) |
+                    Q(student__id_number=id_number_1) |
+                    Q(student__id_number=id_number_2) |
+                    Q(student__id_number=id_number_3) |
+                    Q(student__id_number=id_number_4) |
+                    Q(student__id_number=id_number_5) |
+                    Q(student__id_number=id_number_6)
+                )
+            else:
+                enrollment = Registration.objects.get(
+                    Q(student__number=r_student.number) |
+                    Q(student__number_part1=r_student.number_part1) |
+                    Q(student__number_part2=r_student.number_part2)
+                )
+        except Exception as ex:
+            print ex.message
+            # print registry.id
+            continue
+
+        if enrollment:
+            e_student = enrollment.student
+            StudentMatching.objects.get_or_create(registry=e_student, enrolment=r_student)
