@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Registration, RegisteringAdult, WaitingList, Complaint, Payment
+from .models import Registration, RegisteringAdult, WaitingList, Complaint, Payment , HouseholdNotFound
 from student_registration.students.serializers import StudentSerializer
 
 
@@ -145,6 +145,70 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'complaint_student_father_name',
             'complaint_student_last_name',
             'complaint_Other_type_specify'
+        )
+
+
+class HouseholdNotFoundSerializer(serializers.ModelSerializer):
+
+    complaint_id = serializers.IntegerField(source='complaint.id', read_only=True)
+    complaint_type = serializers.CharField(source='complaint_category.complaint_type', read_only=True)
+    complaint_category = serializers.IntegerField(source='complaint.complaint_category', read_only=True)
+    complaint_category_name = serializers.CharField(source='complaint_category.name', read_only=True)
+    complaint_note = serializers.IntegerField(source='complaint.complaint_note', read_only=True)
+    complaint_solution = serializers.IntegerField(source='complaint.complaint_solution', read_only=True)
+    created = serializers.IntegerField(source='complaint.created', read_only=True)
+    modified = serializers.IntegerField(source='complaint.modified', read_only=True)
+    complaint_status = serializers.IntegerField(source='complaint.complaint_status', read_only=True)
+
+    def create(self, validated_data):
+
+        complaint_data = validated_data.pop('complaint', None)
+        complaint_serializer = ComplaintSerializer(data=complaint_data)
+        complaint_serializer.is_valid(raise_exception=True)
+        complaint_serializer.instance = complaint_serializer.save()
+
+        try:
+            instance = HouseholdNotFound.objects.create(**validated_data)
+            instance.complaint = complaint_serializer.instance
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'HouseholdNotFound instance': ex.message})
+
+        return instance
+
+    class Meta:
+        model = HouseholdNotFound
+        fields = (
+            'id',
+            'id_type',
+            'id_number',
+            'first_name',
+            'father_name',
+            'last_name',
+            'mother_fullname',
+            'sex',
+            'nationality',
+            'birthday_day',
+            'birthday_month',
+            'birthday_year',
+            'relation_to_householdhead',
+            'address',
+            'primary_phone',
+            'primary_phone_answered',
+            'secondary_phone',
+            'secondary_phone_answered',
+            'number_children_five_to_nine',
+            'number_children_ten_to_seventeen',
+            'complaint_id',
+            'complaint_type',
+            'complaint_category',
+            'complaint_category_name',
+            'complaint_note',
+            'complaint_solution',
+            'created',
+            'modified',
+            'complaint_status',
         )
 
 
