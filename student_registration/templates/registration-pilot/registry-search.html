@@ -85,20 +85,17 @@
                                 <thead>
                                     <tr id="thead-line-1">
                                         <th class = "transparent-header">
-
+                                            <button class="btn btn-primary" type="button" id="notFoundButton">
+                                                Household Not Found
+                                            </button>
                                         </th>
-                                        <th class = "transparent-header">
-
-                                        </th>
                                         <th class = "transparent-header"></th>
                                         <th class = "transparent-header"></th>
                                         <th class = "transparent-header"></th>
                                         <th class = "transparent-header">
-
                                             <button class="btn btn-primary" type="button" id="searchButton">
                                                 Search
                                             </button>
-
                                         </th>
                                     </tr>
 
@@ -160,6 +157,12 @@
      <div id = "hhEditForm" style ="display:none">
 
        {% include 'registration-pilot/registration-update.html' %}
+
+     </div>
+
+    <div id = "hhNotFoundForm" style ="display:none">
+
+       {% include 'registration-pilot/household-not-found.html' %}
 
      </div>
 
@@ -250,6 +253,10 @@
                     window.location.href = url;
                 });
                 */
+                $("#notFoundButton").click(function(){
+                    alert('not found');
+                     $("#hhNotFoundForm").show();
+                });
 
                 $("#searchButton").click(function(){
                     Search();
@@ -768,6 +775,15 @@
         $("#hhList").show();
 
         $("#hhEditForm").hide();
+
+        householdRecord = null;
+        hhID = null;
+      }
+       function CloseHouseholdNOtFound()
+      {
+        $("#hhList").show();
+
+        $("#hhNotFoundForm").hide();
 
         householdRecord = null;
         hhID = null;
