@@ -237,6 +237,23 @@ class Complaint(TimeStampedModel):
         return self.id
 
 
+class HouseholdNotFound(Person):
+
+    complaint = models.ForeignKey(
+        Complaint,
+        blank=True, null=True,
+        related_name='+',
+    )
+    number_children_five_to_nine = models.IntegerField(blank=True, null=True)
+    number_children_ten_to_seventeen = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.id
+
+
 class Payment(models.Model):
     """
     Monthly household payment in PILOT
@@ -251,7 +268,6 @@ class Payment(models.Model):
     payment_month = models.IntegerField(blank=True, null=True)
     payment_year = models.IntegerField(blank=True, null=True)
     payment_date = models.DateField(blank=True, null=True)
-
 
     class Meta:
         ordering = ['id']
