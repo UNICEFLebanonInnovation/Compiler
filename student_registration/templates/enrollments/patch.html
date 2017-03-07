@@ -441,7 +441,7 @@
             });
 
             $(document).on('click', '#registration-download', function(){
-                if(navigator.onLine == false) {
+                if(navigator.onLine) {
                     incremental_id = 0;
                     offset = 0;
                     limit = 100;
