@@ -15,6 +15,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     student_first_name = serializers.CharField(source='student.first_name')
     student_father_name = serializers.CharField(source='student.father_name')
     student_last_name = serializers.CharField(source='student.last_name')
+    student_full_name = serializers.CharField(source='student.full_name')
     student_mother_fullname = serializers.CharField(source='student.mother_fullname')
     student_sex = serializers.CharField(source='student.sex')
     student_birthday_year = serializers.CharField(source='student.birthday_year')
@@ -68,27 +69,28 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
         student_data = validated_data.pop('student', None)
 
-        student = instance.student
-        student.first_name = student_data['first_name']
-        student.father_name = student_data['father_name']
-        student.last_name = student_data['last_name']
-        student.mother_fullname = student_data['mother_fullname']
+        if student_data:
+            student = instance.student
+            student.first_name = student_data['first_name']
+            student.father_name = student_data['father_name']
+            student.last_name = student_data['last_name']
+            student.mother_fullname = student_data['mother_fullname']
 
-        student.birthday_year = student_data['birthday_year']
-        student.birthday_month = student_data['birthday_month']
-        student.birthday_day = student_data['birthday_day']
+            student.birthday_year = student_data['birthday_year']
+            student.birthday_month = student_data['birthday_month']
+            student.birthday_day = student_data['birthday_day']
 
-        student.sex = student_data['sex']
-        student.phone = student_data['phone']
-        student.phone_prefix = student_data['phone_prefix']
-        student.address = student_data['address']
-        student.nationality = Nationality.objects.get(id=student_data['nationality'])
-        student.mother_nationality = Nationality.objects.get(id=student_data['mother_nationality'])
+            student.sex = student_data['sex']
+            student.phone = student_data['phone']
+            student.phone_prefix = student_data['phone_prefix']
+            student.address = student_data['address']
+            student.nationality = Nationality.objects.get(id=student_data['nationality'])
+            student.mother_nationality = Nationality.objects.get(id=student_data['mother_nationality'])
 
-        student.id_type = IDType.objects.get(id=student_data['id_type'])
-        student.id_number = student_data['id_number']
+            student.id_type = IDType.objects.get(id=student_data['id_type'])
+            student.id_number = student_data['id_number']
 
-        student.save()
+            student.save()
 
         try:
             if 'registered_in_unhcr' in validated_data:
@@ -134,6 +136,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'student_first_name',
             'student_father_name',
             'student_last_name',
+            'student_full_name',
             'student_mother_fullname',
             'student_sex',
             'student_birthday_year',

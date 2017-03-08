@@ -1176,3 +1176,12 @@ msgstr "تحميل البيانات"
 
 msgid "Registration editing"
 msgstr "تعديل بيانات التسجيل"
+
+msgid "Editing students data"
+msgstr "تعديل بيانات الطلاب"
+
+msgid "Filter data"
+msgstr "قم بالتصفية"
+
+msgid "Total students"
+msgstr "مجموع التلاميذ"
