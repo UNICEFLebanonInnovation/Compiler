@@ -22,5 +22,6 @@ def refer_to_level(
         else:
             return matrix.fail_refer_to
     except ALPReferMatrix.DoesNotExist:
-        return None
+        default = ALPReferMatrix.objects.get(id=50)
+        return default.fail_refer_to
 
