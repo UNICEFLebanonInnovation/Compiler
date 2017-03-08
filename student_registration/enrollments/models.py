@@ -18,7 +18,6 @@ from student_registration.schools.models import (
 )
 from student_registration.locations.models import Location
 from student_registration.alp.models import ALPRound
-from student_registration.eav.registry import Registry as eav
 
 
 class Enrollment(TimeStampedModel):
@@ -57,6 +56,11 @@ class Enrollment(TimeStampedModel):
         ('out_the_country', _('School out of the country')),
         ('public_in_country', _('Public school in the country')),
         ('private_in_country', _('Private school in the country')),
+    )
+
+    SCHOOL_SHIFT = Choices(
+        ('first', _('First shift')),
+        ('second', _('Second shift')),
     )
 
     YEARS = ((str(x), x) for x in range(2016, 2051))
@@ -201,6 +205,17 @@ class Enrollment(TimeStampedModel):
         null=True,
         choices=SCHOOL_TYPE
     )
+    last_school_shift = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=SCHOOL_SHIFT
+    )
+    last_school = models.ForeignKey(
+        School,
+        blank=True, null=True,
+        related_name='+',
+    )
     deleted = models.BooleanField(blank=True, default=False)
 
     @property
@@ -217,7 +232,3 @@ class Enrollment(TimeStampedModel):
 
     def __unicode__(self):
         return self.student.__unicode__()
-
-
-eav.register(Enrollment)
-

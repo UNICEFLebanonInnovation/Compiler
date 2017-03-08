@@ -176,6 +176,7 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
     birthday_year = serializers.CharField(source='student.birthday_year')
     birthday_month = serializers.CharField(source='student.birthday_month')
     birthday_day = serializers.CharField(source='student.birthday_day')
+    calculate_age = serializers.CharField(source='student.calculate_age', read_only=True)
     id_number = serializers.CharField(source='student.id_number')
     age = serializers.CharField(source='student.age')
     school_name = serializers.CharField(source='school.name', read_only=True)
@@ -226,6 +227,7 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
             'birthday_year',
             'birthday_month',
             'birthday_day',
+            'calculate_age',
             'id_number',
             'owner',
             'number'

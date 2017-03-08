@@ -273,6 +273,8 @@
              childRecord.household_visit_id = visitDataRecord.id;
 
              childRecord.child_enrolled_in_another_school = trElement.find('td:nth-child(6)').html()=="true";
+             childRecord.child_no_longer_living_in_the_pilot_area = trElement.find('td:nth-child(7)').html()=="true";
+
 
              // childRecord.specific_reason_other_specify = trElement.find('td:nth-child(9)').html();
 

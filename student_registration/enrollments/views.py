@@ -14,6 +14,7 @@ from import_export.formats import base_formats
 from django.core.urlresolvers import reverse
 from datetime import datetime
 from student_registration.alp.templatetags.util_tags import has_group
+from django.core import serializers
 
 from student_registration.students.models import (
     Person,
@@ -136,6 +137,55 @@ class EnrollmentEditView(LoginRequiredMixin, TemplateView):
             location_parent = location.parent
 
         return {
+            'schools': School.objects.all(),
+            'school_shifts': Enrollment.SCHOOL_SHIFT,
+            'school_types': Enrollment.SCHOOL_TYPE,
+            'education_levels': ClassRoom.objects.all(),
+            'education_results': Enrollment.RESULT,
+            'informal_educations': EducationLevel.objects.all(),
+            'education_final_results': ClassLevel.objects.all(),
+            'alp_rounds': ALPRound.objects.all(),
+            'classrooms': ClassRoom.objects.all(),
+            'sections': Section.objects.all(),
+            'nationalities': Nationality.objects.exclude(id=5),
+            'nationalities2': Nationality.objects.all(),
+            'genders': Person.GENDER,
+            'months': Person.MONTHS,
+            'idtypes': IDType.objects.all(),
+            'school': school,
+            'location': location,
+            'location_parent': location_parent
+        }
+
+
+class EnrollmentPatchView(LoginRequiredMixin, TemplateView):
+    """
+    Provides the enrollment page with lookup types in the context
+    """
+    model = Enrollment
+    template_name = 'enrollments/patch.html'
+
+    def get_context_data(self, **kwargs):
+
+        school_id = 0
+        school = 0
+        location = 0
+        location_parent = 0
+        total = 0
+        if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
+            school_id = self.request.user.school_id
+        if school_id:
+            school = School.objects.get(id=school_id)
+            total = self.model.objects.exclude(deleted=True).filter(school_id=school_id).count()
+        if school and school.location:
+            location = school.location
+        if location and location.parent:
+            location_parent = location.parent
+
+        return {
+            'total': total,
+            'schools': School.objects.all(),
+            'school_shifts': Enrollment.SCHOOL_SHIFT,
             'school_types': Enrollment.SCHOOL_TYPE,
             'education_levels': ClassRoom.objects.all(),
             'education_results': Enrollment.RESULT,
@@ -172,23 +222,25 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        # has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
+        if self.request.method in ["PATCH", "POST", "PUT"]:
+            return self.queryset
         if self.request.user.school_id:
-            return self.queryset.filter(school=self.request.user.school_id)
+            return self.queryset.filter(school_id=self.request.user.school_id).order_by('classroom_id', 'section_id')
 
         return self.queryset
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
-        # student = instance.student
         instance.delete()
-        # if student:
-        #     student.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
     def perform_update(self, serializer):
         instance = serializer.save()
         instance.save()
+
+    def partial_update(self, request, *args, **kwargs):
+        self.serializer_class = EnrollmentSerializer
+        return super(EnrollmentViewSet, self).partial_update(request)
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):
@@ -223,6 +275,8 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             _('Is the child participated in an ALP/2016-2 program'),
             _('Result'),
             _('Education year'),
+            _('School type'),
+            _('School shift'),
             _('School'),
             _('Last education level'),
             _('Current Section'),
@@ -261,6 +315,8 @@ class ExportViewSet(LoginRequiredMixin, ListView):
 
                 _(line.last_year_result) if line.last_year_result else '',
                 line.last_education_year if line.last_education_year else '',
+                line.last_school.name if line.last_school else '',
+                _(line.last_school_shift) if line.last_school_shift else '',
                 _(line.last_school_type) if line.last_school_type else '',
                 line.last_education_level.name if line.last_education_level else '',
 
