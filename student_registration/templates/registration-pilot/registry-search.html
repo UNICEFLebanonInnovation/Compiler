@@ -161,9 +161,7 @@
      </div>
 
     <div id = "hhNotFoundForm" style ="display:none">
-
        {% include 'registration-pilot/household-not-found.html' %}
-
      </div>
 
 {% endblock %}
@@ -205,6 +203,8 @@
             ];
 
         var hhID = null;
+        var nfID = null;
+        var notFoundRecord = null;
 
         $(document).ready
         (
@@ -228,7 +228,6 @@
                  {
                     block = $(this);
                     hhID = block.attr('adultID')
-                    $("#hhList").hide();
                     $("#changeOption")[0].selectedIndex = 0;
                     hideAll();
                     LoadData(hhID);
@@ -254,8 +253,8 @@
                 });
                 */
                 $("#notFoundButton").click(function(){
-                    alert('not found');
-                     $("#hhNotFoundForm").show();
+                    hideAll();
+                    $("#hhNotFoundForm").show();
                 });
 
                 $("#searchButton").click(function(){
@@ -272,6 +271,12 @@
                         }
                     }
                 );
+                function hideForms()
+                {
+                    $("#hhList").hide();
+                    $("#hhEditForm").hide();
+                    $("#hhNotFoundForm").hide();
+                }
                 function Search()
                 {
                    var selected_location = $("#id_location").val();
@@ -470,6 +475,7 @@
 
 
       var householdRecord = null;
+
 
       function LoadData(hhID)
       {
@@ -772,21 +778,19 @@
 
       function CloseHousehold()
       {
-        $("#hhList").show();
-
-        $("#hhEditForm").hide();
+          hideForms();
+          $("#hhList").show();
 
         householdRecord = null;
         hhID = null;
       }
+
        function CloseHouseholdNOtFound()
       {
+        hideForms();
         $("#hhList").show();
-
-        $("#hhNotFoundForm").hide();
-
-        householdRecord = null;
-        hhID = null;
+        notFoundRecord = null;
+        nfID = null;
       }
 
 
@@ -860,10 +864,23 @@
              '#hhCloseButton',
              function()
              {
+                 hideForms();
                 $("#hhList").show();
-                $("#hhEditForm").hide();
                 householdRecord = null;
                 hhID = null;
+             }
+           );
+
+        $(document).on
+          (
+             'click',
+             '#nfCloseButton',
+             function()
+             {
+                 hideForms();
+                 $("#hhList").show();
+                 householdRecord = null;
+                 hhID = null;
              }
            );
       }
