@@ -325,7 +325,7 @@
                                     <tr>
                                         <th style = "display:none">>ID</th>
                                         <th>Child</th>
-                                        <th>DOB</th>
+                                        <th>Age</th>
                                         <th>School</th>
                                     </tr>
                                     </thead>
@@ -534,7 +534,7 @@
           </ul>
         </div>
 
-      <div class="controls center">
+    <div class="controls center">
       {% if LANGUAGE_CODE == 'ar-ar' %}
         <button class="btn btn-warning" type="button" id="hhCloseButton" style="float:left;">
           {% trans "Cancel" %}
@@ -553,9 +553,14 @@
         <button class="btn btn-warning" type="button" id="hhCloseButton" style="float:right;">
             {% trans "Cancel" %}
         </button>
+
+        <div style="width:190px;height:40px;float:left;">
+
         <button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left; display:none">
           {% trans "Save" %}
         </button>
+
+        </div>
         <button class="btn btn-primary .prev" type="button" id="previousButton">
             <i class="icon-prev-sign icon-white"></i> {% trans "previous" %}
         </button>
