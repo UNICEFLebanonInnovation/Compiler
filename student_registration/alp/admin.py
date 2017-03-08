@@ -16,6 +16,10 @@ from student_registration.schools.models import (
 )
 from student_registration.locations.models import Location
 from student_registration.users.models import User
+from student_registration.students.models import Student
+from django.db.models import Q
+from django.db.models import Sum
+
 
 class OutreachResource(resources.ModelResource):
     governorate = fields.Field(
@@ -29,21 +33,155 @@ class OutreachResource(resources.ModelResource):
         widget=ForeignKeyWidget(School, 'location_name')
     )
 
+    student_age = fields.Field(column_name='Student age')
+    exam_total = fields.Field(column_name='Total pre test')
+    post_exam_total = fields.Field(column_name='Total post test')
+
     class Meta:
         model = Outreach
-        fields = ('id', 'student__id', 'student__id_number', 'student__number', 'student__first_name',
-                  'student__father_name', 'student__last_name', 'student__mother_fullname',
-                  'student__age', 'student__sex',
-                  'governorate', 'district', 'school__name', 'level__name', 'exam_total',
-                  'assigned_to_level__name', 'registered_in_level__name', 'section__name',
-                  'not_enrolled_in_this_school',
-                  )
-        export_order = ('id', 'student__id', 'student__id_number', 'student__number', 'student__first_name',
-                        'student__father_name', 'student__last_name', 'student__mother_fullname',
-                        'student__age', 'student__sex', 'governorate', 'district', 'school__name', 'level__name',
-                        'assigned_to_level__name', 'registered_in_level__name', 'section__name',
-                        'not_enrolled_in_this_school',
-                        )
+        fields = (
+            'id',
+            'student__id',
+            'student__id_number',
+            'student__number',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__mother_fullname',
+            'student__birthday_year',
+            'student__birthday_month',
+            'student__birthday_day',
+            'student_age',
+            'student__sex',
+            'student__nationality__name',
+            'governorate',
+            'district',
+            'school__name',
+            'level__name',
+            'exam_result_arabic',
+            'exam_result_language',
+            'exam_result_math',
+            'exam_result_science',
+            'exam_total',
+            'exam_corrector_arabic',
+            'exam_corrector_language',
+            'exam_corrector_math',
+            'exam_corrector_science',
+            'assigned_to_level__name',
+            'registered_in_level__name',
+            'section__name',
+            'post_exam_result_arabic',
+            'post_exam_result_language',
+            'post_exam_result_math',
+            'post_exam_result_science',
+            'post_exam_total',
+            'post_exam_corrector_arabic',
+            'post_exam_corrector_language',
+            'post_exam_corrector_math',
+            'post_exam_corrector_science',
+            'refer_to_level__name',
+            'owner__username',
+        )
+        export_order = fields
+
+    def dehydrate_student_age(self, obj):
+        return obj.student_age
+
+    def dehydrate_exam_total(self, obj):
+        return obj.exam_total
+
+    def dehydrate_post_exam_total(self, obj):
+        return obj.post_exam_total
+
+
+class PreTestTotalFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Pre test total'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'pre_test_total'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('0', 'Equal 0'),
+            ('1', 'More than 0')
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            if self.value() == '0':
+                return queryset.filter(
+                    exam_result_arabic=0,
+                    exam_result_language=0,
+                    exam_result_math=0,
+                    exam_result_science=0
+                )
+            else:
+                return queryset.filter(
+                    Q(exam_result_arabic__gt=0) |
+                    Q(exam_result_language__gt=0) |
+                    Q(exam_result_math__gt=0) |
+                    Q(exam_result_science__gt=0)
+                )
+        return queryset
+
+
+class PostTestTotalFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Post test total'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'post_test_total'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('0', 'Equal 0'),
+            ('1', 'More than 0')
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            if self.value() == '0':
+                return queryset.filter(
+                    post_exam_result_arabic=0,
+                    post_exam_result_language=0,
+                    post_exam_result_math=0,
+                    post_exam_result_science=0
+                )
+            else:
+                return queryset.filter(
+                    Q(post_exam_result_arabic__gt=0) |
+                    Q(post_exam_result_language__gt=0) |
+                    Q(post_exam_result_math__gt=0) |
+                    Q(post_exam_result_science__gt=0)
+                )
+        return queryset
 
 
 class GovernorateFilter(admin.SimpleListFilter):
@@ -296,6 +434,7 @@ class PreTestAdmin(OutreachAdmin):
         'exam_corrector_language',
         'exam_corrector_math',
         'exam_corrector_science',
+        PreTestTotalFilter,
         'created',
         'modified',
     )
@@ -338,6 +477,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         'level',
         'assigned_to_level',
         'registered_in_level',
+        'refer_to_level',
         'section',
         'student__sex',
         'created',
@@ -382,10 +522,11 @@ class PostTestAdmin(OutreachAdmin):
         'refer_to_level',
         'section',
         'student__sex',
-        'exam_corrector_arabic',
-        'exam_corrector_language',
-        'exam_corrector_math',
-        'exam_corrector_science',
+        'post_exam_corrector_arabic',
+        'post_exam_corrector_language',
+        'post_exam_corrector_math',
+        'post_exam_corrector_science',
+        PostTestTotalFilter,
         'created',
         'modified',
     )

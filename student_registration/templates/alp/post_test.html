@@ -161,6 +161,14 @@
                 selector: 'span'
             });
 
+            $(document).on('keypress', 'input#search', function(){
+                $('body, html').scrollLeft(400);
+            });
+
+            $(document).on('blur', '#post_exam_corrector_science', function(){
+                $('body, html').scrollLeft(800);
+            });
+
             $("#filter_school").change(function(){
                 var selected_school = $(this).val();
                // reload the page with the school id passed in post
@@ -215,10 +223,18 @@
                 item.find('#poat_exam_total').trigger('blur');
             });
 
+            $(document).on('blur', '.exam-corrector', function(){
+                if(parseInt($(this).val()) < 11){
+                    $(this).focus();
+                    alert('Enter the exam corrector');
+                }
+            });
+
             $(document).on('blur', '.outreach-field-p', function(){
                 update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
                 flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches-p');
             });
+
             $(document).on('change', '.outreach-field-p', function(){
                 update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
                 flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches-p');
