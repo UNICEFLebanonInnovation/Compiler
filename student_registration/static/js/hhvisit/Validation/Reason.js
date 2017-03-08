@@ -15,7 +15,7 @@
 
               }
            );
-           if(reasonsValid & rowCount>0)
+           if(reasonsValid && rowCount>0)
            {
                editForm.find("#reasons_error").hide();
            }
@@ -24,7 +24,7 @@
                editForm.find("#reasons_error").show();
            }
 
-           return reasonsValid & rowCount>0;
+           return reasonsValid && rowCount>0;
         }
 
         function ValidateReason(trElement)
@@ -33,6 +33,7 @@
 
            mainReasonDropDownElement = trElement.find('td:nth-child(2) select');
 
+
            subReasonDropDownElement = trElement.find('td:nth-child(3) select');
 
            childReasonRecord.main_reason_id = mainReasonDropDownElement.val();
@@ -40,6 +41,5 @@
            childReasonRecord.sub_reason_id = subReasonDropDownElement.val();
 
            //console.log(childReasonRecord);
-
            return childReasonRecord.main_reason_id && childReasonRecord.sub_reason_id;
         }
