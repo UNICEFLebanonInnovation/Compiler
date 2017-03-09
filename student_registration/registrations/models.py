@@ -191,6 +191,18 @@ class RegisteringAdult(Person):
         return self.first_name + ' ' + self.father_name + ' ' + self.last_name
 
 
+class HouseholdNotFound(Person):
+
+    number_children_five_to_nine = models.IntegerField(blank=True, null=True)
+    number_children_ten_to_seventeen = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.id
+
+
 class Complaint(TimeStampedModel):
     """
     Household complaints by hotline
@@ -208,7 +220,12 @@ class Complaint(TimeStampedModel):
     complaint_category = models.ForeignKey(
         ComplaintCategory,
         blank=True, null=True,
-        related_name='+',
+        related_name='complaints',
+    )
+    household_not_found = models.ForeignKey(
+        HouseholdNotFound,
+        blank=True, null=True,
+        related_name='HHNotFound',
     )
     complaint_note = models.TextField(blank=True, null=True)
     complaint_status = models.CharField(max_length=20, blank=True, null=True, choices=STATUS)
@@ -252,10 +269,8 @@ class Payment(models.Model):
     payment_year = models.IntegerField(blank=True, null=True)
     payment_date = models.DateField(blank=True, null=True)
 
-
     class Meta:
         ordering = ['id']
-
 
     def __unicode__(self):
         return self.id

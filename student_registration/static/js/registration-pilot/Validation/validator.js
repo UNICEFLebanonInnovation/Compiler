@@ -1,3 +1,13 @@
+
+function ValidateHouseHoldNotFound()
+{
+     var result = true;
+
+
+
+     return result;
+}
+
 function ValidateHouseHoldUpdate()
 {
      var result = true;
