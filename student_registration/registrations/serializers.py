@@ -144,7 +144,8 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'complaint_student_first_name',
             'complaint_student_father_name',
             'complaint_student_last_name',
-            'complaint_Other_type_specify'
+            'complaint_Other_type_specify',
+            'owner'
         )
 class HouseholdNotFoundSerializer(serializers.ModelSerializer):
 

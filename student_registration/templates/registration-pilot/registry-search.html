@@ -85,7 +85,7 @@
                                 <thead>
                                     <tr id="thead-line-1">
                                         <th class = "transparent-header">
-                                            <button class="btn btn-primary" type="button" id="notFoundButton">
+                                            <button class="btn btn-primary" type="button" id="notFoundButton" style="visibility: hidden">
                                                 Household Not Found
                                             </button>
                                         </th>
@@ -782,7 +782,7 @@
 
       function CloseHousehold()
       {
-          hideForms();
+          $("#hhEditForm").hide();
           $("#hhList").show();
 
         householdRecord = null;
@@ -791,10 +791,10 @@
 
        function CloseHouseholdNotFound()
       {
-        hideForms();
-        $("#hhList").show();
-        nfID = null;
-        notFoundRecord = null;
+          $("#hhNotFoundForm").hide();
+          $("#hhList").show();
+          nfID = null;
+          notFoundRecord = null;
       }
 
 
@@ -826,16 +826,16 @@
                    if($("#changeOption").val() == "phone" || $("#changeOption").val() == "address"
                        || $("#changeOption").val() == "beneficiary" || $("#changeOption").val() == "twoCards")
                    {
-                      SaveHousehold();
+                      SaveHousehold(true);
                    }
                    else if($("#changeOption").val() == "school_change")
                    {
-                      SaveChildren();
+                      SaveChildren(true);
                    }
                     else if($("#changeOption").val() == "cardStatus" && ValidateComplaint())
                    {
                       SaveHousehold();
-                      SaveComplaint();
+                      SaveComplaint(true);
                    }
                    else if
                    (
@@ -847,13 +847,13 @@
                             && ValidateComplaint()
                    )
                    {
-                       SaveComplaint();
+                       SaveComplaint(true);
                    }
 
                    else if
                    ( $("#changeOption").val() == "card" )
                    {
-                       SaveComplaint();
+                       SaveComplaint(true);
                    }
                 }
              }
@@ -1184,12 +1184,12 @@
               complaint_category_id = $("#not_found_complaint").val();
               note = $("#nf_complaint").val();
           }
-
          var complaintData = new Object();
          complaintData.complaint_category = complaint_category_id;
          complaintData.complaint_note = note;
          complaintData.complaint_adult = complaint_hh_id;
          complaintData.complaint_status = 'open';
+
          complaintData.owner = user_id;
 
          var selected_year = $("#complait_years").val().toString();
@@ -1220,10 +1220,6 @@
           {
               complaintData.complaint_student_refused_entrance =$("#student_refused_entrance").val();
           }
-
-
-
-
          var isSuccessfull = false;
 
          $.ajax
