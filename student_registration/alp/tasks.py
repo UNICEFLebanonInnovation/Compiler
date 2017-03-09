@@ -128,6 +128,16 @@ def assign_round(round_id):
     print "End assignment"
 
 
+@app.task
+def assign_round_to_deleted(round_id):
+    from student_registration.alp.models import Outreach
+
+    registrations = Outreach.objects.filter(deleted=True, alp_round__isnull=True, id__lt=13724).update(alp_round_id=round_id)
+    print registrations
+
+    print "End assignment"
+
+
 def fix_round_assignment(update):
     from student_registration.alp.models import Outreach
 
