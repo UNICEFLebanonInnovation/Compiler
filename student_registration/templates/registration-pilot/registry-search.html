@@ -212,7 +212,9 @@
            {
                InitialiseDays('days', 1,31);
                InitialiseDays('complait_days', 1,31);
+               InitialiseDays('nf_days', 1,31);
                InitialiseDays('years',1930,2000);
+               InitialiseDays('nf_years',1930,2000);
                InitialiseDays('complait_years',2017,2100);
                InitialiseDays('complait_hours',1,12);
                InitialiseDays('complait_minutes',1,60);
@@ -228,11 +230,13 @@
                  {
                     block = $(this);
                     hhID = block.attr('adultID')
+                    $("#hhList").hide();
                     $("#changeOption")[0].selectedIndex = 0;
-                    hideAll();
                     LoadData(hhID);
+                    hideAll();
                     $("#hhEditForm").show();
                     CheckInitialiseSly();
+
                  }
                );
 
@@ -253,7 +257,7 @@
                 });
                 */
                 $("#notFoundButton").click(function(){
-                    hideAll();
+                    hideForms();
                     $("#hhNotFoundForm").show();
                 });
 
@@ -785,12 +789,12 @@
         hhID = null;
       }
 
-       function CloseHouseholdNOtFound()
+       function CloseHouseholdNotFound()
       {
         hideForms();
         $("#hhList").show();
-        notFoundRecord = null;
         nfID = null;
+        notFoundRecord = null;
       }
 
 
@@ -854,6 +858,21 @@
                 }
              }
            );
+           $(document).on
+          (
+             'click',
+             '#nfSaveButton',
+             function()
+             {
+                if(ValidateHouseHoldNotFound())
+                {
+                      SaveHousehold();
+                      SaveComplaint();
+
+                }
+             }
+           );
+
       }
 
       function InitialiseClose()
@@ -864,8 +883,9 @@
              '#hhCloseButton',
              function()
              {
-                 hideForms();
-                $("#hhList").show();
+                 $("#hhEditForm").hide();
+                 $("#hhNotFoundForm").hide();
+                 $("#hhList").show();
                 householdRecord = null;
                 hhID = null;
              }
@@ -877,10 +897,11 @@
              '#nfCloseButton',
              function()
              {
-                 hideForms();
+                 $("#hhEditForm").hide();
+                 $("#hhNotFoundForm").hide();
                  $("#hhList").show();
-                 householdRecord = null;
-                 hhID = null;
+                 nfID = null;
+                 notFoundRecord = null;
              }
            );
       }
@@ -1122,43 +1143,51 @@
 
 
 
-      function SaveComplaint()
+      function SaveComplaint(hh_Complaint)
       {
-
           var complaint_category_id;
-
-          if($("#changeOption").val() == "payment" )
+          var note ;
+          if (hh_Complaint)
           {
-              complaint_category_id = $("#payment_complaint").val();
+              if($("#changeOption").val() == "payment" )
+              {
+                  complaint_category_id = $("#payment_complaint").val();
+              }
+              else if($("#changeOption").val() == "cardStatus")
+              {
+                   complaint_category_id = $("#card_distribution_complaint").val();
+              }
+              else if($("#changeOption").val() == "card")
+              {
+                  complaint_category_id = $("#card_complaint").val();
+              }
+              else if($("#changeOption").val() == "refusedServiceBLF")
+              {
+                   complaint_category_id = $("#bank_complaint").val();
+              }
+              else if($("#changeOption").val() == "schoolRefusedEntrance")
+              {
+                   complaint_category_id = $("#school_complaint").val();
+              }
+              else if($("#changeOption").val() == "reinstateBeneficiary")
+              {
+                   complaint_category_id = $("#reinstate_complaint").val();
+              }
+              else if($("#changeOption").val() == "otherComplaint")
+              {
+                   complaint_category_id = $("#other_complaint").val();
+              }
+              note = $("#complaint").val();
           }
-          else if($("#changeOption").val() == "cardStatus")
+          else
           {
-               complaint_category_id = $("#card_distribution_complaint").val();
-          }
-          else if($("#changeOption").val() == "card")
-          {
-              complaint_category_id = $("#card_complaint").val();
-          }
-          else if($("#changeOption").val() == "refusedServiceBLF")
-          {
-               complaint_category_id = $("#bank_complaint").val();
-          }
-          else if($("#changeOption").val() == "schoolRefusedEntrance")
-          {
-               complaint_category_id = $("#school_complaint").val();
-          }
-          else if($("#changeOption").val() == "reinstateBeneficiary")
-          {
-               complaint_category_id = $("#reinstate_complaint").val();
-          }
-          else if($("#changeOption").val() == "otherComplaint")
-          {
-               complaint_category_id = $("#other_complaint").val();
+              complaint_category_id = $("#not_found_complaint").val();
+              note = $("#nf_complaint").val();
           }
 
          var complaintData = new Object();
          complaintData.complaint_category = complaint_category_id;
-         complaintData.complaint_note = $("#complaint").val();
+         complaintData.complaint_note = note;
          complaintData.complaint_adult = complaint_hh_id;
          complaintData.complaint_status = 'open';
          complaintData.owner = user_id;
