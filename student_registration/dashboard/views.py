@@ -313,6 +313,95 @@ class RegistrationsALPView(LoginRequiredMixin,
         }
 
 
+class RegistrationsALPOverallView(LoginRequiredMixin,
+                                  GroupRequiredMixin,
+                                  TemplateView):
+    """
+    Provides the registration page with lookup types in the context
+    """
+    model = Outreach
+    queryset = Outreach.objects.exclude(deleted=True)
+    template_name = 'dashboard/alp-overall.html'
+
+    group_required = [u"ALP_MEHE"]
+
+    def handle_no_permission(self, request):
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+
+        alp_round = ALPRound.objects.get(current_round=True)
+        enrolled = self.queryset.filter(registered_in_level__isnull=False, alp_round=alp_round)
+
+        partners = User.objects.filter(groups__name__in=['PARTNER'])
+        outreached = self.queryset.filter(alp_round=alp_round, owner__in=partners)
+
+        not_schools = User.objects.filter(groups__name__in=['PARTNER', 'CERD'])
+        pretested = self.queryset.filter(
+            alp_round=alp_round,
+            owner__in=not_schools,
+            level__isnull=False,
+            registered_in_level__isnull=True
+        )
+
+        posttested = self.queryset.filter(
+            alp_round=alp_round,
+            registered_in_level__isnull=False,
+            refer_to_level__isnull=False
+        )
+
+        referred_to_formal = self.queryset.filter(
+            alp_round=alp_round,
+            registered_in_level__isnull=False,
+            refer_to_level_id__in=[10, 11, 12, 13, 14, 15, 16, 17]
+        )
+
+        referred_to_following = self.queryset.filter(
+            alp_round=alp_round,
+            registered_in_level__isnull=False,
+            refer_to_level_id__in=[2, 3, 4, 5, 6, 7, 8, 9]
+        )
+
+        repeated_level = self.queryset.filter(
+            alp_round=alp_round,
+            registered_in_level__isnull=False,
+            refer_to_level_id__in=[18, 19, 20, 21, 22, 23, 24, 25, 26]
+        )
+
+        passed_level = self.queryset.filter(
+            alp_round=alp_round,
+            registered_in_level__isnull=False,
+            refer_to_level_id__in=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+        )
+
+        return {
+                'enrolled': enrolled.count(),
+                'enrolled_males': enrolled.filter(student__sex='Male').count(),
+                'enrolled_females': enrolled.filter(student__sex='Female').count(),
+                'outreached': outreached.count(),
+                'outreached_males': outreached.filter(student__sex='Male').count(),
+                'outreached_females': outreached.filter(student__sex='Female').count(),
+                'pretested': pretested.count(),
+                'pretested_males': pretested.filter(student__sex='Male').count(),
+                'pretested_females': pretested.filter(student__sex='Female').count(),
+                'posttested': posttested.count(),
+                'posttested_males': posttested.filter(student__sex='Male').count(),
+                'posttested_females': posttested.filter(student__sex='Female').count(),
+                'referred_to_formal': referred_to_formal.count(),
+                'referred_to_formal_males': referred_to_formal.filter(student__sex='Male').count(),
+                'referred_to_formal_females': referred_to_formal.filter(student__sex='Female').count(),
+                'referred_to_following': referred_to_following.count(),
+                'referred_to_following_males': referred_to_following.filter(student__sex='Male').count(),
+                'referred_to_following_females': referred_to_following.filter(student__sex='Female').count(),
+                'repeated_level': repeated_level.count(),
+                'repeated_level_males': repeated_level.filter(student__sex='Male').count(),
+                'repeated_level_females': repeated_level.filter(student__sex='Female').count(),
+                'passed_level': passed_level.count(),
+                'passed_level_males': passed_level.filter(student__sex='Male').count(),
+                'passed_level_females': passed_level.filter(student__sex='Female').count(),
+        }
+
+
 class RegistrationsALPOutreachView(LoginRequiredMixin,
                                    GroupRequiredMixin,
                                    TemplateView):
