@@ -1,0 +1,418 @@
+{% extends "base.online.html" %}
+{% load humanize %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{#{% load util_tags %}#}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% load util_tags %}
+<section class="main-content-wrapper">
+            <section id="main-content">
+                <div class="title_left">
+                    <h3 style="color:#73879C;">{% trans 'Registrations ALP' %}</h3>
+                </div>
+                <hr>
+     <div class="row">
+         <div class="row tile_count">
+            <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-user"></i>{% trans 'Total Students' %}</span>
+              <div class="count">{{ enrolled|intcomma }}</div>
+{#              <span class="count_bottom"><i class="green">4% </i> From Yesterday</span>#}
+            </div>
+             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-user"></i>{% trans 'Total Males' %}</span>
+              <div class="count">{{ enrolled_males|intcomma }}</div>
+{#              <span class="count_bottom"><i class="red">4% </i> From Yesterday</span>#}
+            </div>
+             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
+              <span class="count_top"><i class="fa fa-user"></i>{% trans 'Total Females' %}</span>
+              <div class="count">{{ enrolled_females|intcomma }}</div>
+{#              <span class="count_bottom"><i class="green">4% </i> From Yesterday</span>#}
+            </div>
+
+         </div>
+
+         <div class="col-md-8 col-sm-6 col-xs-12">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>{% trans 'ALP overall' %}</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <div id="schools_by_governate" style="height:350px;">
+                    <table class="table table-striped table-bordered cell-border"
+                           data-height="500"
+                           data-pagination="true"
+                           data-search="true"
+                           cellspacing="0"
+                           width="100%">
+                        <thead>
+                            <tr>
+                                <th rowspan="2"></th>
+                                <th rowspan="2">ALP 2016 Round 3</th>
+                                <th colspan="2">Male</th>
+                                <th colspan="2">Female</th>
+                                <th colspan="2">Total</th>
+                            </tr>
+                            <tr>
+                                <th>#</th>
+                                <th>%</th>
+                                <th>#</th>
+                                <th>%</th>
+                                <th>#</th>
+                                <th>%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Children outreached</td>
+                                <td>{{ outreached_males }}</td>
+                                <td>{{ outreached_males|percentage:outreached }}</td>
+                                <td>{{ outreached_females }}</td>
+                                <td>{{ outreached_females|percentage:outreached }}</td>
+                                <td>{{ outreached }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Children who sat for placement test</td>
+                                <td>{{ pretested_males }}</td>
+                                <td>{{ pretested_males|percentage:pretested }}</td>
+                                <td>{{ pretested_females }}</td>
+                                <td>{{ pretested_females|percentage:pretested }}</td>
+                                <td>{{ pretested }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Children enrolled</td>
+                                <td>{{ enrolled_males }}</td>
+                                <td>{{ enrolled_males|percentage:enrolled }}</td>
+                                <td>{{ enrolled_females }}</td>
+                                <td>{{ enrolled_females|percentage:enrolled }}</td>
+                                <td>{{ enrolled }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><strong>Post test results</strong></td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Children who sat for post test</td>
+                                <td>{{ posttested_males }}</td>
+                                <td>{{ posttested_males|percentage:posttested }}</td>
+                                <td>{{ posttested_females }}</td>
+                                <td>{{ posttested_females|percentage:posttested }}</td>
+                                <td>{{ posttested }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Children who passed ALP level</td>
+                                <td>{{ passed_level_males }}</td>
+                                <td>{{ passed_level_males|percentage:passed_level }}</td>
+                                <td>{{ passed_level_females }}</td>
+                                <td>{{ passed_level_females|percentage:passed_level }}</td>
+                                <td>{{ passed_level }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>Children referred to ALP following level</td>
+                                <td>{{ referred_to_following_males }}</td>
+                                <td>{{ referred_to_following_males|percentage:referred_to_following }}</td>
+                                <td>{{ referred_to_following_females }}</td>
+                                <td>{{ referred_to_following_females|percentage:referred_to_following }}</td>
+                                <td>{{ referred_to_following }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>Children repeat ALP level</td>
+                                <td>{{ repeated_level_males }}</td>
+                                <td>{{ repeated_level_males|percentage:repeated_level }}</td>
+                                <td>{{ repeated_level_females }}</td>
+                                <td>{{ repeated_level_females|percentage:repeated_level }}</td>
+                                <td>{{ repeated_level }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>Children referred to formal</td>
+                                <td>{{ referred_to_formal_males }}</td>
+                                <td>{{ referred_to_formal_males|percentage:referred_to_formal }}</td>
+                                <td>{{ referred_to_formal_females }}</td>
+                                <td>{{ referred_to_formal_females|percentage:referred_to_formal }}</td>
+                                <td>{{ referred_to_formal }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>Total number of public schools</td>
+                                <td>1283</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>Total number of ALP public schools </td>
+                                <td>40</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+            </div>
+         </div>
+
+    </div>
+
+</section>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" src="{% static 'js/echarts/dist/echarts.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/custom.min.js' %}"></script>
+
+    <script>
+
+     var theme = {
+          color: [
+              '#26B99A', '#34495E', '#BDC3C7', '#3498DB',
+              '#9B59B6', '#8abb6f', '#759c6a', '#bfd3b7'
+          ],
+
+          title: {
+              itemGap: 8,
+              textStyle: {
+                  fontWeight: 'normal',
+                  color: '#408829'
+              }
+          },
+
+          dataRange: {
+              color: ['#1f610a', '#97b58d']
+          },
+
+          toolbox: {
+              color: ['#408829', '#408829', '#408829', '#408829']
+          },
+
+          tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              axisPointer: {
+                  type: 'line',
+                  lineStyle: {
+                      color: '#408829',
+                      type: 'dashed'
+                  },
+                  crossStyle: {
+                      color: '#408829'
+                  },
+                  shadowStyle: {
+                      color: 'rgba(200,200,200,0.3)'
+                  }
+              }
+          },
+
+          dataZoom: {
+              dataBackgroundColor: '#eee',
+              fillerColor: 'rgba(64,136,41,0.2)',
+              handleColor: '#408829'
+          },
+          grid: {
+              borderWidth: 0
+          },
+
+          categoryAxis: {
+              axisLine: {
+                  lineStyle: {
+                      color: '#408829'
+                  }
+              },
+              splitLine: {
+                  lineStyle: {
+                      color: ['#eee']
+                  }
+              }
+          },
+
+          valueAxis: {
+              axisLine: {
+                  lineStyle: {
+                      color: '#408829'
+                  }
+              },
+              splitArea: {
+                  show: true,
+                  areaStyle: {
+                      color: ['rgba(250,250,250,0.1)', 'rgba(200,200,200,0.1)']
+                  }
+              },
+              splitLine: {
+                  lineStyle: {
+                      color: ['#eee']
+                  }
+              }
+          },
+          timeline: {
+              lineStyle: {
+                  color: '#408829'
+              },
+              controlStyle: {
+                  normal: {color: '#408829'},
+                  emphasis: {color: '#408829'}
+              }
+          },
+
+          k: {
+              itemStyle: {
+                  normal: {
+                      color: '#68a54a',
+                      color0: '#a9cba2',
+                      lineStyle: {
+                          width: 1,
+                          color: '#408829',
+                          color0: '#86b379'
+                      }
+                  }
+              }
+          },
+          map: {
+              itemStyle: {
+                  normal: {
+                      areaStyle: {
+                          color: '#ddd'
+                      },
+                      label: {
+                          textStyle: {
+                              color: '#c12e34'
+                          }
+                      }
+                  },
+                  emphasis: {
+                      areaStyle: {
+                          color: '#99d2dd'
+                      },
+                      label: {
+                          textStyle: {
+                              color: '#c12e34'
+                          }
+                      }
+                  }
+              }
+          },
+          force: {
+              itemStyle: {
+                  normal: {
+                      linkStyle: {
+                          strokeColor: '#408829'
+                      }
+                  }
+              }
+          },
+          chord: {
+              padding: 4,
+              itemStyle: {
+                  normal: {
+                      lineStyle: {
+                          width: 1,
+                          color: 'rgba(128, 128, 128, 0.5)'
+                      },
+                      chordStyle: {
+                          lineStyle: {
+                              width: 1,
+                              color: 'rgba(128, 128, 128, 0.5)'
+                          }
+                      }
+                  },
+                  emphasis: {
+                      lineStyle: {
+                          width: 1,
+                          color: 'rgba(128, 128, 128, 0.5)'
+                      },
+                      chordStyle: {
+                          lineStyle: {
+                              width: 1,
+                              color: 'rgba(128, 128, 128, 0.5)'
+                          }
+                      }
+                  }
+              }
+          },
+          gauge: {
+              startAngle: 225,
+              endAngle: -45,
+              axisLine: {
+                  show: true,
+                  lineStyle: {
+                      color: [[0.2, '#86b379'], [0.8, '#68a54a'], [1, '#408829']],
+                      width: 8
+                  }
+              },
+              axisTick: {
+                  splitNumber: 10,
+                  length: 12,
+                  lineStyle: {
+                      color: 'auto'
+                  }
+              },
+              axisLabel: {
+                  textStyle: {
+                      color: 'auto'
+                  }
+              },
+              splitLine: {
+                  length: 18,
+                  lineStyle: {
+                      color: 'auto'
+                  }
+              },
+              pointer: {
+                  length: '90%',
+                  color: 'auto'
+              },
+              title: {
+                  textStyle: {
+                      color: '#333'
+                  }
+              },
+              detail: {
+                  textStyle: {
+                      color: 'auto'
+                  }
+              }
+          },
+          textStyle: {
+              fontFamily: 'Arial, Verdana, sans-serif'
+          }
+      };
+
+    </script>
+{% endblock %}
