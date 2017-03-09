@@ -334,14 +334,14 @@ class RegistrationsALPOverallView(LoginRequiredMixin,
         enrolled = self.queryset.filter(registered_in_level__isnull=False, alp_round=alp_round)
 
         partners = User.objects.filter(groups__name__in=['PARTNER'])
-        outreached = self.queryset.filter(alp_round=alp_round, owner__in=partners)
+        outreached = self.model.objects.filter(alp_round=alp_round, owner__in=partners)
 
         not_schools = User.objects.filter(groups__name__in=['PARTNER', 'CERD'])
-        pretested = self.queryset.filter(
+        pretested = self.model.objects.filter(
             alp_round=alp_round,
             owner__in=not_schools,
             level__isnull=False,
-            registered_in_level__isnull=True
+            assigned_to_level__isnull=False,
         )
 
         posttested = self.queryset.filter(
