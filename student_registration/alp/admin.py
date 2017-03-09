@@ -537,7 +537,6 @@ class PostTestAdmin(OutreachAdmin):
         return qs.exclude(deleted=True).filter(
             alp_round=alp_round,
             registered_in_level__isnull=False,
-            section__isnull=False,
             refer_to_level__isnull=False
         )
 
