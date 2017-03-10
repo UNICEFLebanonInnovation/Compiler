@@ -356,6 +356,12 @@ class Outreach(TimeStampedModel):
         return total
 
     @property
+    def pretest_total(self):
+        if self.level:
+            return "{}/{}".format(self.exam_total, self.level.note)
+        return 0
+
+    @property
     def post_exam_total(self):
         total = 0
         if self.post_exam_result_arabic:
