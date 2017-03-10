@@ -109,6 +109,44 @@
                     <span class="error" id="beneficiary_phone_confirm_length_error">{% trans "The phone number must be 8 digits" %}</span>
                     <span class="error" id="beneficiary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
                 </div>
+                 <div class="line">
+                     <label class="text" style="width: 200px;">{% trans "Phone Number is normally answered by: " %}</label>
+                     <select id="nf_primary_phone_answered" >
+                         {% for value, text in phoneAnsweredby %}
+                             <option value="{{ value }}">{{ text }}</option>
+                         {% endfor %}
+                     </select>
+                      <span class="error" id="primary_phone_answered_error">{% trans "Phone Number is normally answered by is missing" %}</span>
+                 </div>
+                 <div class="line">
+                     <label class="text" style="width: 200px;">{% trans "Secondary Phone Number: " %}</label>
+                     <input id="nf_secondary_phone" maxlength="45" type="text">
+                     <span class="error" id="secondary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
+                 </div>
+                 <div class="line">
+                     <label class="text" style="width: 200px;">{% trans "Confirm Phone Number: " %}</label>
+                     <input id="nf_secondary_phone_confirm" maxlength="45" type="text">
+                     <span class="error" id="secondary_phone_confirm_length_error">{% trans "The phone number must be 8 digits" %}</span>
+                     <span class="error" id="secondary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
+                 </div>
+                 <div class="line">
+                      <label class="text" style="width: 200px;">{% trans "Phone number is normally answered by: " %}</label>
+                      <select id="nf_secondary_phone_answered" >
+                          {% for value, text in phoneAnsweredby %}
+                              <option value="{{ value }}">{{ text }}</option>
+                          {% endfor %}
+                      </select>
+                      <span class="error" id="secondary_phone_answered_error">{% trans "Phone Number is normally answered by is missing" %}</span>
+                </div>
+
+
+
+                 <div class="line" id = "addressFields" style="display:none">
+                    <label class="text" style="width: 200px;">{% trans " Address: " %}</label>
+                    <textarea cols="30" id="address" name="nf_address" rows="4"></textarea>
+                    <span class="error" id="address_error">{% trans "Address field is required!" %}</span>
+                 </div>
+
                 <div class="line"  style="display:none"  >
                     <label class="text" style="width: 200px;">{% trans "Type: " %}</label>
                     <select id="not_found_complaint" >
@@ -119,7 +157,7 @@
                 </div>
                  <div class="line" id = "hh_Complaint_text">
                     <label class="text" style="width: 200px;">{% trans "Comment: " %}</label>
-                    <textarea cols="38" id="complaint" name="nf_complaint" rows="1"></textarea>
+                    <textarea cols="38" id="nf_complaint" name="nf_complaint" rows="1"></textarea>
                     <span class="error" id="complaint_error">{% trans "Comment is missing." %}</span>
                 </div>
              </div>
