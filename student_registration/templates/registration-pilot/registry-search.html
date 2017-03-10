@@ -797,6 +797,46 @@
           $("#hhList").show();
           nfID = null;
           notFoundRecord = null;
+
+          $("#nf_idType").val('');
+          $("#nf_id_number").val('');
+          $("#nf_first_name").val('');
+          $("#nf_father_name").val('');
+          $("#nf_last_name").val('');
+          $("#nf_mother_full_name").val('');
+          $("#nf_gender").val('');
+          $("#nf_days").val('');
+          $("#nf_months").val('');
+          $("#nf_years").val('');
+          $("#nf_relation_to_householdhead").val('');
+          $("#nf_address").val('');
+          $("#nf_primary_phone").val('');
+          $("#nf_primary_phone_confirm").val('');
+          $("#nf_primary_phone_answered").val('');
+          $("#nf_secondary_phone").val('');
+          $("#nf_secondary_phone_confirm").val('');
+          $("#nf_secondary_phone_answered").val('');
+          $("#number_children_five_to_nine").val('');
+          $("#number_children_ten_to_seventeen").val('');
+          $("#nf_complaint").val('');
+          $("#nf_primary_phone_length_error").hide();
+          $("#nf_primary_phone_confirm_error").hide();
+          $("#nf_primary_phone_answered_error").hide();
+          $("#nf_secondary_phone_length_error").hide();
+          $("#nf_secondary_phone_confirm_error").hide();
+          $("#nf_secondary_phone_confirm_length_error").hide();
+          $("#nf_secondary_phone_confirm_error").hide();
+          $("#nf_secondary_phone_answered_error").hide();
+          $("#nf_idType_error").hide();
+          $("#nf_id_number_error").hide();
+          $("#nf_dob_error").hide();
+          $("#nf_gender_error").hide();
+          $("#nf_number_children_error").hide();
+          $("#nf_first_name_error").hide();
+          $("#nf_father_name_error").hide();
+          $("#nf_last_name_error").hide();
+          $("#nf_mother_full_name_error").hide();
+          $("#nf_complaint_error").hide();
       }
 
 
@@ -1182,6 +1222,7 @@
                    complaint_category_id = $("#other_complaint").val();
               }
               note = $("#complaint").val();
+              complaintData.complaint_adult = complaint_hh_id;
           }
           else
           {
@@ -1189,11 +1230,10 @@
               note = $("#nf_complaint").val();
               complaintData.household_not_found =nfID;
           }
-          alert (note);
 
          complaintData.complaint_category = complaint_category_id;
          complaintData.complaint_note = note;
-         complaintData.complaint_adult = complaint_hh_id;
+
          complaintData.complaint_status = 'open';
 
          complaintData.owner = user_id;
@@ -1261,7 +1301,7 @@
 
          var notfoundData = new Object();
 
-         // address,  nationality_id , number_children_five_to_nine, number_children_ten_to_seventeen,
+         //   nationality_id
           notfoundData.id_type = $("#nf_idType").val();
           notfoundData.id_number = $("#nf_id_number").val();
           notfoundData.first_name = $("#nf_first_name").val();
@@ -1307,8 +1347,6 @@
               async: false
            }
          );
-
-         alert(isSuccessfull);
 
          return isSuccessfull;
       }
