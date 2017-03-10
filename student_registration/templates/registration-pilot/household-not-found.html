@@ -1,0 +1,152 @@
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+{% block extra_head %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
+
+{% endblock %}
+
+<div id="not_found_block" style="display: block;">
+
+      <div class="alert alert-success" role="alert" id="alert-cancel-success" style="display: none;">
+          {% trans 'Household not found cancelled' %}.
+          {% trans 'Please click' %}
+      </div>
+
+      <form method="post" action="" class="inlineForm" id="household_update_form" style="display: block;" onsubmit="return false;">
+          <input type="hidden" name="id_not_found_edit" id="main_id" />
+          {% if form.errors %}
+              {% for field in form %}
+                  {% for error in field.errors %}
+                      <div class="alert alert-danger">
+                          <strong>{{ error|escape }}</strong>
+                      </div>
+                  {% endfor %}
+              {% endfor %}
+              {% for error in form.non_field_errors %}
+                  <div class="alert alert-danger">
+                      <strong>{{ error|escape }}</strong>
+                  </div>
+              {% endfor %}
+          {% endif %}
+
+             <div class="panel-body">
+                 <h3 class="panel-title">{% trans "Household not found" %}</h3>
+                 <div class="line">
+                     <label class="text" style="width: 200px;">{% trans "Household ID Type: " %}</label>
+                     <select id="nf_idType" >
+                         {% for itm in idType %}
+                             <option value="{{ itm.id }}">{{ itm.name }}</option>
+                         {% endfor %}
+                     </select>
+                     <span class="error" id="idType_error">{% trans "Household ID Type is missing." %}</span>
+                 </div>
+                 <div  class="line">
+                     <label class="text" style="width: 200px;">{% trans "Household Case Number: " %}</label>
+                     <input id="nf_id_number" maxlength="45" type="text">
+                     <span class="error" id="beneficiary_id_number_error">{% trans "Invalid Case format." %}</span>
+                 </div>
+                <div class="line">
+                    <label class="text" style="width: 200px;">{% trans "Household First Name (Arabic): " %}</label>
+                    <input id="nf_first_name" maxlength="45" type="text">
+                    <span class="error" id="first_name_error">{% trans "Household First Name is missing." %}</span>
+                </div>
+                <div class="line">
+                    <label class="text" style="width: 200px;">{% trans "Household Father Name (Arabic): " %}</label>
+                    <input id="nf_father_name" maxlength="45" type="text">
+                    <span class="error" id="father_name_error">{% trans "Household Father Name is missing." %}</span>
+                </div>
+                <div class="line">
+                    <label class="text" style="width: 200px;">{% trans "Household Last Name (Arabic): " %}</label>
+                    <input id="nf_last_name" maxlength="45" type="text">
+                    <span class="error" id="last_name_error">{% trans "Household Last Name is missing." %}</span>
+                </div>
+                <div class="line">
+                    <label class="text" style="width: 200px;">{% trans "Household Mother Full  Name (Arabic): " %}</label>
+                    <input id="nf_mother_full_name" maxlength="45" type="text">
+                    <span class="error" id="mother_full_name_error">{% trans "Household Mother Full Name is missing." %}</span>
+                </div>
+                <div class="line">
+                    <label class="text" style="width: 200px;">{% trans "Household Gender: " %}</label>
+                    <select id="nf_gender" >
+                        {% for value, text in gender %}
+                            <option value="{{ value }}">{{ text }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="error" id="gender_error">{% trans "Household Gender is missing." %}</span>
+                </div>
+                <div class="line field-select-small-size">
+                    <label class="text" style="width: 200px;">{% trans "Household DOB" %}</label>
+                    <select id="nf_days" ></select>
+                    <select id="nf_months" >
+                        {% for value, text in months %}
+                            <option value="{{ value }}">{{ text }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="nf_years" >
+                    </select>
+                    <span class="error" id="dob_error">{% trans "Household DOB is not valid" %}</span>
+                </div>
+                <div class="line">
+                    <label class="text" style="width: 200px;">{% trans "Realtionship to household head: " %}</label>
+                    <select id="nf_relation_to_householdhead" >
+                        {% for value, text in relationToHouseholdHead %}
+                            <option value="{{ value }}">{{ text }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="error" id="relation_to_householdhead_error">{% trans "Relationship to household head is missing." %}</span>
+                </div>
+                <div class="line">
+                    <label class="text" style="width: 200px;">{% trans "Household Phone Number: " %}</label>
+                    <input id="nf_primary_phone" maxlength="45" type="text">
+                    <span class="error" id="beneficiary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
+                </div>
+                <div class="line">
+                    <label class="text" style="width: 200px;">{% trans "Confirm Phone Number: " %}</label>
+                    <input id="nf_primary_phone_confirm" maxlength="45" type="text">
+                    <span class="error" id="beneficiary_phone_confirm_length_error">{% trans "The phone number must be 8 digits" %}</span>
+                    <span class="error" id="beneficiary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
+                </div>
+                <div class="line"  style="display:none"  >
+                    <label class="text" style="width: 200px;">{% trans "Type: " %}</label>
+                    <select id="not_found_complaint" >
+                        {% for itm in not_found_complaint_types %}
+                            <option value="{{ itm.id }}">{{ itm.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                 <div class="line" id = "hh_Complaint_text">
+                    <label class="text" style="width: 200px;">{% trans "Comment: " %}</label>
+                    <textarea cols="38" id="complaint" name="nf_complaint" rows="1"></textarea>
+                    <span class="error" id="complaint_error">{% trans "Comment is missing." %}</span>
+                </div>
+             </div>
+
+    <div class="controls center">
+      {% if LANGUAGE_CODE == 'ar-ar' %}
+        <button class="btn btn-warning" type="button" id="nfCloseButton" style="float:left;">
+          {% trans "Cancel" %}
+        </button>
+        <button class="btn btn-primary" type="button" id="nfSaveButton" style="float:left;" >
+          {% trans "Save" %}
+        </button>
+      {% else %}
+
+        <button class="btn btn-warning" type="button" id="nfCloseButton" style="float:right;">
+            {% trans "Cancel" %}
+        </button>
+
+        <div style="width:190px;height:40px;float:left;">
+
+        <button class="btn btn-primary" type="button" id="nfSaveButton" style="float:left;">
+          {% trans "Save" %}
+        </button>
+        </div>
+
+      {% endif %}
+      </div>
+
+    </form>
+      </div>
