@@ -52,7 +52,8 @@ from .models import (
     WaitingList,
     BeneficiaryChangedReason,
     ComplaintCategory,
-    Complaint
+    Complaint,
+    HouseholdNotFound
 )
 from .serializers import (
     RegistrationSerializer,
@@ -60,7 +61,8 @@ from .serializers import (
     RegistrationChildSerializer,
     ClassAssignmentSerializer,
     WaitingListSerializer,
-    ComplaintSerializer
+    ComplaintSerializer,
+    HouseholdNotFoundSerializer
 )
 from .utils import get_unhcr_principal_applicant
 
@@ -242,6 +244,19 @@ class RegisteringComplaintViewSet(mixins.RetrieveModelMixin,
     serializer_class = ComplaintSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
+
+    def put(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+class RegisteringNotFoundViewSet(mixins.RetrieveModelMixin,
+                                  mixins.ListModelMixin,
+                                  mixins.CreateModelMixin,
+                                  mixins.UpdateModelMixin,
+                                  viewsets.GenericViewSet):
+    model = HouseholdNotFound
+    queryset = HouseholdNotFound.objects.all()
+    serializer_class = HouseholdNotFoundSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
     def put(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
