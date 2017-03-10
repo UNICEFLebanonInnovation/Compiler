@@ -18,7 +18,8 @@ from student_registration.registrations.views import (
     WaitingListViewSet,
     RegisteringAdultListSearchView,
     RegisteringAdultIDViewSet,
-    RegisteringComplaintViewSet
+    RegisteringComplaintViewSet,
+    RegisteringNotFoundViewSet
 )
 from student_registration.hhvisit.views import (
     HouseholdVisitLoadViewSet,
@@ -60,6 +61,7 @@ api.register(r'registrations-adult', RegisteringAdultViewSet, base_name='registr
 api.register(r'registrations-adult-id', RegisteringAdultIDViewSet, base_name='registrations_adult_id')
 api.register(r'registrations-child', RegisteringChildViewSet, base_name='registrations_child')
 api.register(r'registrations-complaint', RegisteringComplaintViewSet, base_name='registrations_complaint')
+api.register(r'registrations-notfound', RegisteringNotFoundViewSet, base_name='registrations_notfound')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
 api.register(r'attendances-report', AttendanceReportViewSet, base_name='attendances_report')
 api.register(r'class-assignment', ClassAssignmentViewSet, base_name='class_assignment')
