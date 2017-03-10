@@ -1185,3 +1185,6 @@ msgstr "قم بالتصفية"
 
 msgid "Total students"
 msgstr "مجموع التلاميذ"
+
+msgid "ALP Registrations"
+msgstr "تسجيل التلاميذ"

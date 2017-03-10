@@ -52,12 +52,11 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
     serializer_class = OutreachSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    # def get_queryset(self):
-    #     if has_group(self.request.user, 'CERD'):
-    #         return self.queryset
-    #     if has_group(self.request.user, 'ALP_SCHOOL'):
-    #         return self.queryset.filter(school_id=self.request.user.school_id)
-    #     return self.queryset.filter(owner=self.request.user)
+    def get_queryset(self):
+        if self.request.method in ["PATCH", "POST", "PUT"]:
+            return self.queryset
+        if self.request.user.school_id:
+            return self.queryset.filter(school_id=self.request.user.school_id, alp_round=4)
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
@@ -81,7 +80,8 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         return super(OutreachViewSet, self).update(request)
 
     def partial_update(self, request, *args, **kwargs):
-        self.serializer_class = OutreachExamSerializer
+        if has_group(self.request.user, 'CERD'):
+            self.serializer_class = OutreachExamSerializer
         return super(OutreachViewSet, self).partial_update(request)
 
 
@@ -171,8 +171,8 @@ class CurrentRoundView(LoginRequiredMixin,
             alp_round = ALPRound.objects.get(current_round=True)
 
         if has_group(self.request.user, 'ALP_SCHOOL'):
-            data = Outreach.objects.filter(school_id=self.request.user.school_id, alp_round=alp_round)
-            data = data.exclude(deleted=True)
+            # data = Outreach.objects.filter(school_id=self.request.user.school_id, alp_round=alp_round)
+            # data = data.exclude(deleted=True)
             school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
@@ -202,7 +202,7 @@ class CurrentRoundView(LoginRequiredMixin,
             'nationalities2': Nationality.objects.all(),
             'columns': Attribute.objects.filter(type=Outreach.EAV_TYPE),
             'eav_type': Outreach.EAV_TYPE,
-            'selectedSchool': school_id,
+            'school_id': school_id,
             'school': school,
             'location': location,
             'location_parent': location_parent,
