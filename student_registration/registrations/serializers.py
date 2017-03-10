@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Registration, RegisteringAdult, WaitingList, Complaint, Payment
+from .models import Registration, RegisteringAdult, WaitingList, Complaint, Payment , HouseholdNotFound
 from student_registration.students.serializers import StudentSerializer
 
 
@@ -144,7 +144,107 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'complaint_student_first_name',
             'complaint_student_father_name',
             'complaint_student_last_name',
-            'complaint_Other_type_specify'
+            'complaint_Other_type_specify',
+            'owner'
+        )
+class HouseholdNotFoundSerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField(read_only=True)
+
+    def create(self, validated_data):
+
+        try:
+            instance = HouseholdNotFound.objects.create(**validated_data)
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'Household not found instance': ex.message})
+
+        return instance
+
+    class Meta:
+        model = HouseholdNotFound
+        fields = (
+            'id',
+            'id_type',
+            'id_number',
+            'first_name',
+            'father_name',
+            'last_name',
+            'mother_fullname',
+            'sex',
+            'age',
+            'nationality',
+            'birthday_day',
+            'birthday_month',
+            'birthday_year',
+            'relation_to_householdhead',
+            'address',
+            'primary_phone',
+            'primary_phone_answered',
+            'secondary_phone',
+            'secondary_phone_answered'
+        )
+
+class ComplaintHouseholdNotFoundSerializer(serializers.ModelSerializer):
+
+    complaint_id = serializers.IntegerField(source='id', read_only=True)
+    complaint_type = serializers.CharField(source='complaint_category.complaint_type', read_only=True)
+    complaint_category_name = serializers.CharField(source='complaint_category.name', read_only=True)
+    hh_id = serializers.IntegerField(source='household_not_found.id', read_only=True)
+    id_type = serializers.IntegerField(source='household_not_found.id_type', read_only=True)
+    id_number = serializers.IntegerField(source='household_not_found.id_number', read_only=True)
+    first_name = serializers.CharField(source='household_not_found.first_name')
+    father_name = serializers.CharField(source='household_not_found.father_name')
+    last_name = serializers.CharField(source='household_not_found.last_name')
+    mother_fullname = serializers.CharField(source='household_not_found.mother_fullname')
+    sex = serializers.CharField(source='household_not_found.sex')
+    nationality = serializers.CharField(source='household_not_found.nationality', read_only=True)
+    birthday_year = serializers.CharField(source='household_not_found.birthday_year')
+    birthday_month = serializers.CharField(source='household_not_found.birthday_month')
+    birthday_day = serializers.CharField(source='household_not_found.birthday_day')
+    relation_to_householdhead = serializers.CharField(source='household_not_found.relation_to_householdhead')
+    address = serializers.CharField(source='household_not_found.address')
+    primary_phone = serializers.CharField(source='household_not_found.primary_phone')
+    primary_phone_answered = serializers.CharField(source='household_not_found.primary_phone_answered')
+    secondary_phone = serializers.CharField(source='household_not_found.secondary_phone')
+    secondary_phone_answered = serializers.CharField(source='household_not_found.secondary_phone_answered')
+    number_children_five_to_nine = serializers.CharField(source='household_not_found.number_children_five_to_nine')
+    number_children_ten_to_seventeen = serializers.CharField(source='household_not_found.number_children_ten_to_seventeen')
+
+    class Meta:
+        model = Complaint
+        fields = (
+            'complaint_id',
+            'complaint_type',
+            'complaint_category',
+            'complaint_category_name',
+            'complaint_note',
+            'complaint_solution',
+            'created',
+            'modified',
+            'complaint_status',
+            'complaint_resolution_date',
+            'hh_id',
+            'id_type',
+            'id_number',
+            'first_name',
+            'father_name',
+            'last_name',
+            'mother_fullname',
+            'sex',
+            'nationality',
+            'birthday_day',
+            'birthday_month',
+            'birthday_year',
+            'relation_to_householdhead',
+            'address',
+            'primary_phone',
+            'primary_phone_answered',
+            'secondary_phone',
+            'secondary_phone_answered',
+            'number_children_five_to_nine',
+            'number_children_ten_to_seventeen'
         )
 
 
