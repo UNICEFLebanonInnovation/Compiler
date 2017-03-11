@@ -193,6 +193,29 @@ class RegisteringAdult(Person):
 
 class HouseholdNotFound(Person):
 
+    RELATION_TYPE = Choices(
+        ('head', _('I am the household head')),
+        ('spouse', _('Spouse')),
+        ('parent', _('Father/Mother')),
+        ('relative', _('Other Relative')),
+        ('other', _('Other non-Relative')),
+    )
+
+    PHONE_ANSWEREDBY = Choices(
+        ('me', _('Me personally')),
+        ('relay', _('Someone who always relays the message to me')),
+        ('notrelay', _('Someone who may not relay the message to me')),
+    )
+    GENDER = Choices(
+        ('Male', _('Male')),
+        ('Female', _('Female')),
+    )
+
+    relation_to_householdhead = models.CharField(max_length=50, blank=True, null=True, choices=RELATION_TYPE)
+    primary_phone = models.CharField(max_length=50, blank=True, null=True)
+    primary_phone_answered = models.CharField(max_length=50, blank=True, null=True, choices=PHONE_ANSWEREDBY)
+    secondary_phone = models.CharField(max_length=50, blank=True, null=True)
+    secondary_phone_answered = models.CharField(max_length=50, blank=True, null=True, choices=PHONE_ANSWEREDBY)
     number_children_five_to_nine = models.IntegerField(blank=True, null=True)
     number_children_ten_to_seventeen = models.IntegerField(blank=True, null=True)
 
