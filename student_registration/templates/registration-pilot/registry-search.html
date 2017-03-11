@@ -85,7 +85,8 @@
                                 <thead>
                                     <tr id="thead-line-1">
                                         <th class = "transparent-header">
-                                            <button class="btn btn-primary" type="button" id="notFoundButton" style="visibility: hidden">
+                                            <button class="btn btn-primary" type="button" id="notFoundButton" >
+{#                                                style="visibility: hidden"#}
                                                 Household Not Found
                                             </button>
                                         </th>
@@ -195,6 +196,7 @@
         var checking_id_number_url = host+'/api/registrations-adult-id/';
         var childURL = host+'/api/registrations-child/';
         var complaintURL = host+'/api/registrations-complaint/';
+        var notfoundURL = host+'/api/registrations-notfound/';
         var arabic_fields = "#first_name, #father_name, #last_name, #mother_full_name";
         var months = [
                 'January', 'February', 'March', 'April', 'May',
@@ -795,6 +797,46 @@
           $("#hhList").show();
           nfID = null;
           notFoundRecord = null;
+
+          $("#nf_idType").val('');
+          $("#nf_id_number").val('');
+          $("#nf_first_name").val('');
+          $("#nf_father_name").val('');
+          $("#nf_last_name").val('');
+          $("#nf_mother_full_name").val('');
+          $("#nf_gender").val('');
+          $("#nf_days").val('');
+          $("#nf_months").val('');
+          $("#nf_years").val('');
+          $("#nf_relation_to_householdhead").val('');
+          $("#nf_address").val('');
+          $("#nf_primary_phone").val('');
+          $("#nf_primary_phone_confirm").val('');
+          $("#nf_primary_phone_answered").val('');
+          $("#nf_secondary_phone").val('');
+          $("#nf_secondary_phone_confirm").val('');
+          $("#nf_secondary_phone_answered").val('');
+          $("#number_children_five_to_nine").val('');
+          $("#number_children_ten_to_seventeen").val('');
+          $("#nf_complaint").val('');
+          $("#nf_primary_phone_length_error").hide();
+          $("#nf_primary_phone_confirm_error").hide();
+          $("#nf_primary_phone_answered_error").hide();
+          $("#nf_secondary_phone_length_error").hide();
+          $("#nf_secondary_phone_confirm_error").hide();
+          $("#nf_secondary_phone_confirm_length_error").hide();
+          $("#nf_secondary_phone_confirm_error").hide();
+          $("#nf_secondary_phone_answered_error").hide();
+          $("#nf_idType_error").hide();
+          $("#nf_id_number_error").hide();
+          $("#nf_dob_error").hide();
+          $("#nf_gender_error").hide();
+          $("#nf_number_children_error").hide();
+          $("#nf_first_name_error").hide();
+          $("#nf_father_name_error").hide();
+          $("#nf_last_name_error").hide();
+          $("#nf_mother_full_name_error").hide();
+          $("#nf_complaint_error").hide();
       }
 
 
@@ -866,7 +908,7 @@
              {
                 if(ValidateHouseHoldNotFound())
                 {
-                      SaveHousehold();
+                      SaveNotFound();
                       SaveComplaint();
 
                 }
@@ -1147,6 +1189,8 @@
       {
           var complaint_category_id;
           var note ;
+          var complaintData = new Object();
+
           if (hh_Complaint)
           {
               if($("#changeOption").val() == "payment" )
@@ -1178,16 +1222,18 @@
                    complaint_category_id = $("#other_complaint").val();
               }
               note = $("#complaint").val();
+              complaintData.complaint_adult = complaint_hh_id;
           }
           else
           {
               complaint_category_id = $("#not_found_complaint").val();
               note = $("#nf_complaint").val();
+              complaintData.household_not_found =nfID;
           }
-         var complaintData = new Object();
+
          complaintData.complaint_category = complaint_category_id;
          complaintData.complaint_note = note;
-         complaintData.complaint_adult = complaint_hh_id;
+
          complaintData.complaint_status = 'open';
 
          complaintData.owner = user_id;
@@ -1236,6 +1282,7 @@
               {
                   isSuccessfull = true;
                   CloseHousehold();
+                  CloseHouseholdNotFound();
               },
               error: function (response)
               {
@@ -1249,7 +1296,60 @@
          return isSuccessfull;
       }
 
+      function SaveNotFound()
+      {
 
+         var notfoundData = new Object();
+
+         //   nationality_id
+          notfoundData.id_type = $("#nf_idType").val();
+          notfoundData.id_number = $("#nf_id_number").val();
+          notfoundData.first_name = $("#nf_first_name").val();
+          notfoundData.father_name = $("#nf_father_name").val();
+          notfoundData.last_name = $("#nf_last_name").val();
+          notfoundData.mother_fullname = $("#nf_mother_full_name").val()
+          notfoundData.sex = $("#nf_gender").val();
+          notfoundData.birthday_day = $("#nf_days").val();
+          notfoundData.birthday_month = $("#nf_months").val();
+          notfoundData.birthday_year = $("#nf_years").val();
+          notfoundData.relation_to_householdhead = $("#nf_relation_to_householdhead").val();
+          notfoundData.address = $("#nf_address").val();
+          notfoundData.primary_phone = $("#nf_primary_phone").val();
+          notfoundData.primary_phone_answered = $("#nf_primary_phone_answered").val();
+          notfoundData.secondary_phone = $("#nf_secondary_phone").val();
+          notfoundData.secondary_phone_answered = $("#nf_secondary_phone_answered").val();
+          notfoundData.number_children_five_to_nine = $("#nf_primary_phone").val();
+          notfoundData.number_children_ten_to_seventeen = $("#nf_primary_phone").val();
+
+
+         var isSuccessfull = false;
+
+         $.ajax
+         (
+            {
+              type: "PUT",
+              url: notfoundURL,
+              data: notfoundData,
+              cache: false,
+              async: false,
+              headers: getHeader(),
+              dataType: 'json',
+              success: function (response)
+              {
+                  isSuccessfull = true;
+                  nfID = response.id
+                  console.log(response);
+              },
+              error: function (response)
+              {
+                  console.log(response);
+              },
+              async: false
+           }
+         );
+
+         return isSuccessfull;
+      }
 
 
       function formatDate_save(date) {
