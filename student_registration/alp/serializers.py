@@ -4,23 +4,26 @@ from .models import Outreach
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
     IDType,
-    Nationality
+    Nationality,
+    Student,
 )
 
 
 class OutreachSerializer(serializers.ModelSerializer):
 
     original_id = serializers.IntegerField(source='id', read_only=True)
-    student_id = serializers.IntegerField(source='student.id', read_only=True)
+    # student_id = serializers.IntegerField(source='student.id', read_only=True)
+    student_id = serializers.IntegerField(source='student.id', required=False)
     student_first_name = serializers.CharField(source='student.first_name')
     student_father_name = serializers.CharField(source='student.father_name')
     student_last_name = serializers.CharField(source='student.last_name')
-    student_full_name = serializers.CharField(source='student.full_name', read_only=True)
+    student_full_name = serializers.CharField(source='student', read_only=True)
     student_mother_fullname = serializers.CharField(source='student.mother_fullname')
     student_sex = serializers.CharField(source='student.sex')
     student_birthday_year = serializers.CharField(source='student.birthday_year')
     student_birthday_month = serializers.CharField(source='student.birthday_month')
     student_birthday_day = serializers.CharField(source='student.birthday_day')
+    student_birthday = serializers.CharField(source='student.birthday', read_only=True)
     student_age = serializers.CharField(source='student.calc_age', read_only=True)
     student_phone = serializers.CharField(source='student.phone')
     student_phone_prefix = serializers.CharField(source='student.phone_prefix')
@@ -35,6 +38,8 @@ class OutreachSerializer(serializers.ModelSerializer):
     school_number = serializers.CharField(source='school.number', read_only=True)
     section_name = serializers.CharField(source='section.name', read_only=True)
     level_name = serializers.CharField(source='level.name', read_only=True)
+    registered_in_level_name = serializers.CharField(source='registered_in_level.name', read_only=True)
+    refer_to_level_name = serializers.CharField(source='refer_to_level.name', read_only=True)
     governorate_name = serializers.CharField(source='school.location.parent.name', read_only=True)
     location = serializers.CharField(source='school.location.name', read_only=True)
     student_nationality_id = serializers.CharField(source='student.nationality.id', read_only=True)
@@ -51,13 +56,18 @@ class OutreachSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         student_data = validated_data.pop('student', None)
-        student_serializer = StudentSerializer(data=student_data)
-        student_serializer.is_valid(raise_exception=True)
-        student_serializer.instance = student_serializer.save()
+        if 'id' in student_data:
+            student = Student.objects.get(id=student_data['id'])
+            student.save()
+        else:
+            student_serializer = StudentSerializer(data=student_data)
+            student_serializer.is_valid(raise_exception=True)
+            student_serializer.instance = student_serializer.save()
+            student = student_serializer.instance
 
         try:
             instance = Outreach.objects.create(**validated_data)
-            instance.student = student_serializer.instance
+            instance.student = student
             instance.save()
 
         except Exception as ex:
@@ -143,6 +153,7 @@ class OutreachSerializer(serializers.ModelSerializer):
             'student_birthday_year',
             'student_birthday_month',
             'student_birthday_day',
+            'student_birthday',
             'student_age',
             'student_phone',
             'student_phone_prefix',
@@ -179,7 +190,11 @@ class OutreachSerializer(serializers.ModelSerializer):
             'last_informal_edu_final_result_id',
             'pretest_total',
             'assigned_to_level',
+            'registered_in_level',
             'alp_round',
+            'registered_in_level_name',
+            'refer_to_level',
+            'refer_to_level_name'
         )
 
 
