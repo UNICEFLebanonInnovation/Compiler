@@ -5,6 +5,7 @@
 
 {% block extra_head %}
 
+{#    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">#}
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
     <style>
@@ -51,15 +52,17 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                           <div class="panel-heading">
-                                <ol class="breadcrumb">
-                                    <li><a>{% trans "ALP Registrations" %}</a></li>
-                                    <li>{{ school }}</li>
-                                    <li>{{ location }}</li>
-                                    <li>{{ location_parent }}</li>
-                            </ol>
-                        </div>
+                              <ol class="breadcrumb">
+                                    <li><b>{% trans "ALP Registrations" %}</b></li>
+                                    <li><b>{{ school }}</b></li>
+                                    <li><b>{{ location }}</b></li>
+                                    <li><b>{{ location_parent }}</b></li>
+                                    <li><input type="text" id="search_old_student" size="300" style="width: 200px;" placeholder="{% trans "Search an old student" %}" /></li>
+                              </ol>
+                          </div>
                           <div class="panel-heading" style="position: absolute; top:50px;" id="header">
                             <ol class="breadcrumb">
+                                <li>
                                       <button class="btn btn-info" id="registration-synchro">
                                         <i class="icon-synch-sign icon-white"></i>&nbsp;
                                             {% trans "synchronize" %}
@@ -68,18 +71,15 @@
                                         <i class="icon-synch-sign icon-white"></i>&nbsp;
                                             {% trans "download data" %}
                                       </button>
-                                        <a class="btn btn-info" id="registration-export" href="{% url "alp:alp_data_export" %}" target="_blank">
-                                            <i class="icon-export-sign icon-white"></i>&nbsp;
-                                                {% trans "Export" %}
-                                        </a>
-                                    </li>
-{#                                    <li>#}
-{#                                        <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />#}
-{#                                    </li>#}
+                                    <a class="btn btn-info" id="registration-export" href="{% url "alp:alp_data_export" %}" target="_blank">
+                                        <i class="icon-export-sign icon-white"></i>&nbsp;
+                                            {% trans "Export" %}
+                                    </a>
+                                </li>
                                     <li>
                                         <select name="level" id="filter_class" class="col-200">
                                             <option value="0">{% trans "Filter by Class" %}</option>
-                                            {% for item in levels %}
+                                            {% for item in education_levels %}
                                                 <option value="{{ item.id }}">{{ item.name }}</option>
                                             {% endfor %}
                                         </select>
@@ -97,6 +97,7 @@
                                         </button>
                                     </li>
                                 </ol>
+                          </div>
                             <div class="actions pull-right">
                                 <i class="fa fa-chevron-down"></i>
                                 <i class="fa fa-times"></i>
@@ -179,6 +180,7 @@
 
     {% get_user_token request.user.id as user_token %}
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+{#    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>#}
     <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
@@ -216,7 +218,7 @@
 
         $(document).ready(function(){
 
-            $('#search').val('');
+            $('#search_old_student').val('');
             createStores();
 
             bootbox.addLocale(language, {
@@ -264,7 +266,8 @@
 
             $(document).on('click', '#filter_cancel', function(){
                 $('.registration-line').show();
-                $('#search').val('');
+                $('#filter_class').val(0);
+                $('#filter_section').val(0);
                 $('tbody').find('tr').removeClass('highlighted');
             });
 
@@ -349,7 +352,7 @@
             $(document).on('click', '#registration-synchro', function(){
                 synchro_result = true;
                 $('.alert').hide();
-                if(navigator.onLine) {
+                if(navigator.onLine == false) {
                     $(".loader").show();
                     synchronize_data(true);
                 }else{
@@ -358,13 +361,13 @@
             });
 
             $(document).on('click', '#registration-download', function(){
-                if(navigator.onLine) {
+                if(navigator.onLine == false) {
                     incremental_id = 0;
                     offset = 0;
                     limit = 100;
                     $('#registrations-table').find('.registration-line').remove();
                     $('.alert').hide();
-                     $(".loader").show();
+                    $(".loader").show();
                     load_base_data();
                     setTimeout(function(){
                         build_datatable();
@@ -374,6 +377,42 @@
                     $('#alert-connection').show();
                 }
             });
+
+            $("#search_old_student").autocomplete({
+              source: function( request, response ) {
+                $.ajax( {
+                  url: "http://127.0.0.1:8181/api/outreach/",
+                  dataType: "json",
+                  data: {
+                    term: request.term
+                  },
+                  success: function( data ) {
+                    response( data);
+                  }
+                } );
+              },
+              minLength: 3,
+              select: function( event, ui ) {
+                  add_external_record(ui.item);
+                  return false;
+              }
+            }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
+                 var that = this;
+                 $.each( items, function( index, item ) {
+                     that._renderItemData( ul, item );
+                });
+                $( ul ).find( "li:odd" ).addClass( "odd" );
+            };
+
+            $("#search_old_student").autocomplete( "instance" )._renderItem = function( ul, item ) {
+                  return $( "<li>" )
+                    .append( "<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_birthday + ") "
+                                   + "<br>" + '{% trans "Last year situation" %}: ' + item.registered_in_level_name + " / " + item.section_name
+                                   + "<br>" + '{% trans "Referred to level" %}: ' + " / " + item.referred_to_level_name
+                                   + "</div>" )
+                    .appendTo( ul );
+            };
+
         });
 
         function create_item_store_default_keys()
@@ -386,7 +425,8 @@
                 original_id: 0,
                 alp_round: alp_round,
                 to_update: true,
-                school: school
+                school: school,
+                student_id: 0
             };
             var fields = prototype.find('.registration-field');
             $(fields).each(function(i, field){
@@ -616,24 +656,81 @@
 
                         var request = store.index('original_id').get(parseInt(item.original_id));
                         request.onsuccess = function() {
+                            item.synchronized = true;
+                            item.deleted = false;
+                            item.to_update = false;
+                            item.to_patch = true;
+                            item.student_nationality = item.student_nationality_id;
+                            item.student_mother_nationality = item.student_mother_nationality_id;
+                            item.student_id_type = item.student_id_type_id;
+
+                            item.last_education_level = item.last_education_level_id;
+                            item.last_informal_edu_level = item.last_informal_edu_level_id;
+                            item.last_informal_edu_round = item.last_informal_edu_round_id;
+                            item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
+
                             if(request.result === undefined) {
-                                item.synchronized = true;
-                                item.deleted = false;
-                                item.to_update = false;
-                                item.to_patch = true;
-                                item.student_nationality = item.student_nationality_id;
-                                item.student_mother_nationality = item.student_mother_nationality_id;
-                                item.student_id_type = item.student_id_type_id;
-
-                                item.last_education_level = item.last_education_level_id;
-                                item.last_informal_edu_level = item.last_informal_edu_level_id;
-                                item.last_informal_edu_round = item.last_informal_edu_round_id;
-                                item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
-
                                 store.put(item);
+                            }else{
+                                var result = request.result;
+                                result = item;
+                                store.put(result);
                             }
                         };
                     });
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+            });
+        }
+
+        function add_external_record(item)
+        {
+            var store = getStoreByName('registrations');
+            var request = store.index('student_id').get(parseInt(item.student_id));
+            request.onsuccess = function() {
+                if(request.result === undefined) {
+                    item.synchronized = false;
+                    item.deleted = false;
+                    item.to_update = false;
+                    item.student_nationality = item.student_nationality_id;
+                    item.student_mother_nationality = item.student_mother_nationality_id;
+                    item.student_id_type = item.student_id_type_id;
+
+                    item.last_education_level = item.last_education_level_id;
+                    item.last_informal_edu_level = item.last_informal_edu_level_id;
+                    item.last_informal_edu_round = item.last_informal_edu_round_id;
+                    item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
+
+                    var itemid = item.id;
+                    var data = item;
+                    data.id = rows;
+                    delete data.original_id;
+                    add_to_store(data);
+                    add_fill_line_data(data);
+                }else{
+                    bootbox.alert("{% trans 'This student already added to the list' %}", function(result) {
+                        return true;
+                    });
+                }
+            };
+        }
+
+        function pull_registration_record(itemid)
+        {
+            //18302
+            //1243156
+            $.ajax({
+                type: "GET",
+                url: synchro_path+'?id='+itemid,
+                cache: false,
+                async: false,
+                headers: getHeader(),
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    add_external_record(response[0])
                 },
                 error: function(response) {
                     console.log(response);
@@ -665,6 +762,7 @@
                 if(flag){
                     var store = db.createObjectStore("registrations", {keyPath: "id", autoIncrement:true});
                     store.createIndex('original_id', 'original_id');
+                    store.createIndex('student_id', 'student_id');
                     store.createIndex('level', 'level');
                     store.createIndex('section', 'section');
                     store.createIndex('levelAndSection', ['level', 'section']);

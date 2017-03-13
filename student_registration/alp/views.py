@@ -11,6 +11,7 @@ import tablib
 import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
+from django.db.models import Q
 from import_export.formats import base_formats
 from braces.views import GroupRequiredMixin
 
@@ -55,6 +56,17 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
     def get_queryset(self):
         if self.request.method in ["PATCH", "POST", "PUT"]:
             return self.queryset
+        term = self.request.GET.get('term', 0)
+        if self.request.user.school_id and term:
+            return self.queryset.filter(
+                Q(school_id=self.request.user.school_id) &
+                Q(alp_round=3) &
+                Q(Q(student__first_name__contains=term) |
+                  Q(student__father_name__contains=term) |
+                  Q(student__last_name__contains=term) |
+                  Q(student__id_number__contains=term)
+                )
+            )
         if self.request.user.school_id:
             return self.queryset.filter(school_id=self.request.user.school_id, alp_round=4)
 
