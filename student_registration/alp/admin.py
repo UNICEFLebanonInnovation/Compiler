@@ -13,6 +13,7 @@ from .models import (
 )
 from student_registration.schools.models import (
     School,
+    EducationLevel,
 )
 from student_registration.locations.models import Location
 from student_registration.users.models import User
@@ -36,6 +37,7 @@ class OutreachResource(resources.ModelResource):
     student_age = fields.Field(column_name='Student age')
     exam_total = fields.Field(column_name='Total pre test')
     post_exam_total = fields.Field(column_name='Total post test')
+    referred_to = fields.Field(column_name='Referred to level')
 
     class Meta:
         model = Outreach
@@ -79,7 +81,7 @@ class OutreachResource(resources.ModelResource):
             'post_exam_corrector_language',
             'post_exam_corrector_math',
             'post_exam_corrector_science',
-            'refer_to_level__name',
+            'referred_to',
             'owner__username',
         )
         export_order = fields
@@ -92,6 +94,23 @@ class OutreachResource(resources.ModelResource):
 
     def dehydrate_post_exam_total(self, obj):
         return obj.post_exam_total
+
+    def dehydrate_referred_to(self, obj):
+        if obj.refer_to_level:
+            if obj.refer_to_level_id == 1:
+                if obj.post_exam_total >= 40:
+                    if obj.registered_in_level_id < 9:
+                        to_level = EducationLevel.objects.get(id=int(obj.registered_in_level_id) +1)
+                        return to_level.name
+                    else:
+                        return obj.registered_in_level.name
+                    # return 'Refer to ALP following level'
+                # return 'Repeat ALP level/'+obj.registered_in_level.name
+                return obj.registered_in_level.name
+            else:
+                return obj.refer_to_level.name
+
+        return ''
 
 
 class PreTestTotalFilter(admin.SimpleListFilter):
