@@ -145,6 +145,7 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'complaint_student_father_name',
             'complaint_student_last_name',
             'complaint_Other_type_specify',
+            'household_not_found',
             'owner'
         )
 class HouseholdNotFoundSerializer(serializers.ModelSerializer):
@@ -183,7 +184,9 @@ class HouseholdNotFoundSerializer(serializers.ModelSerializer):
             'primary_phone',
             'primary_phone_answered',
             'secondary_phone',
-            'secondary_phone_answered'
+            'secondary_phone_answered',
+            'number_children_five_to_nine',
+            'number_children_ten_to_seventeen'
         )
 
 class ComplaintHouseholdNotFoundSerializer(serializers.ModelSerializer):
