@@ -5,24 +5,36 @@
 
 {% block extra_head %}
 
+{#    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">#}
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
     <style>
+        input[readonly=readonly], select[readonly=readonly] {
+            background: #CCCCCC;
+        }
+        .synchro-status.success {
+            background-color: #1ABB9C !important;
+        }
+        .synchro-status.failed {
+            background-color: #ac2925 !important;
+        }
         tr.highlighted {
             background-color: darkseagreen !important;
         }
-        .outreach-field-p:focus {
+        .registration-field:focus {
             background-color: yellow;
         }
-        .outreach-field:focus {
-            background-color: yellow;
+        tr.warning {
+            border: 3px solid #90111A;
         }
     </style>
 {% endblock %}
 
 {% block content-full-page %}
 
+    {% include 'alp/prototype_current.html' %}
     {% include 'alp/prototype.html' %}
+
 
          <section class="main-content-wrapper">
             <section id="main-content">
@@ -39,12 +51,19 @@
             <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                          <div class="panel-heading" style="position: absolute; top:0px;" id="header">
-                                <ol class="breadcrumb">
-                                    <li><a>
-                                        <h3 class="panel-title">{% trans "ALP data collecting" %}</h3></a></li>
-                                    <li>
-                                      <button class="btn btn-info" id="outreach-synchro">
+                          <div class="panel-heading">
+                              <ol class="breadcrumb">
+                                    <li><b>{% trans "ALP Registrations" %}</b></li>
+                                    <li><b>{{ school }}</b></li>
+                                    <li><b>{{ location }}</b></li>
+                                    <li><b>{{ location_parent }}</b></li>
+                                    <li><input type="text" id="search_old_student" size="300" style="width: 200px;" placeholder="{% trans "Search an old student" %}" /></li>
+                              </ol>
+                          </div>
+                          <div class="panel-heading" style="position: absolute; top:50px;" id="header">
+                            <ol class="breadcrumb">
+                                <li>
+                                      <button class="btn btn-info" id="registration-synchro">
                                         <i class="icon-synch-sign icon-white"></i>&nbsp;
                                             {% trans "synchronize" %}
                                       </button>
@@ -52,21 +71,15 @@
                                         <i class="icon-synch-sign icon-white"></i>&nbsp;
                                             {% trans "download data" %}
                                       </button>
-                                        <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}" target="_blank">
-                                            <i class="icon-export-sign icon-white"></i>&nbsp;
-                                                {% trans "Export" %}
-                                        </a>
-                                    </li>
+                                    <a class="btn btn-info" id="registration-export" href="{% url "alp:alp_data_export" %}" target="_blank">
+                                        <i class="icon-export-sign icon-white"></i>&nbsp;
+                                            {% trans "Export" %}
+                                    </a>
+                                </li>
                                     <li>
-                                        <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />
-                                        <button class="btn btn-warning" id="filter_cancel">
-                                            {% trans "Rest filter" %}
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <select name="classroom" id="filter_class" class="col-200">
+                                        <select name="level" id="filter_class" class="col-200">
                                             <option value="0">{% trans "Filter by Class" %}</option>
-                                            {% for item in classrooms %}
+                                            {% for item in education_levels %}
                                                 <option value="{{ item.id }}">{{ item.name }}</option>
                                             {% endfor %}
                                         </select>
@@ -84,6 +97,7 @@
                                         </button>
                                     </li>
                                 </ol>
+                          </div>
                             <div class="actions pull-right">
                                 <i class="fa fa-chevron-down"></i>
                                 <i class="fa fa-times"></i>
@@ -91,8 +105,8 @@
                           </div>
                           <div class="panel-body">
                               <div class="loader"></div>
-                                <table id="outreaches-table" class="table table-striped table-bordered cell-border"
-                                       data-height="500"
+                                <table id="registrations-table" class="table table-striped table-bordered cell-border"
+                                       data-height= "500"
                                        data-pagination="true"
                                        data-search="true"
                                        cellspacing="0"
@@ -100,8 +114,9 @@
                                 <thead>
                                     <tr id="thead-line-1">
                                         <th rowspan="2">&nbsp;
-                                            <label class="col-100">{% trans "Not enrolled in this school" %}</label>
+{#                                            <label class="col-100">{% trans "Not enrolled in this school" %}</label>#}
                                         </th>
+                                        <th rowspan="2">#</th>
                                         <th rowspan="2"><label>{% trans "Student first name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
@@ -139,11 +154,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-{#                                {% if request.user|has_group:"ALP_SCHOOL" %}#}
-{#                                    {% for line in data %}#}
-{#                                        {% include 'alp/prototype-view.html' with role="ALP_SCHOOL" student=line.student level=line.level %}#}
-{#                                    {% endfor %}#}
-{#                                {% endif %}#}
                                 </tbody>
                             </table>
                         </div>
@@ -170,6 +180,7 @@
 
     {% get_user_token request.user.id as user_token %}
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+{#    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>#}
     <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
@@ -180,7 +191,7 @@
     <script type="text/javascript" src="{% static 'js/indexedDB.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/eav.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jquery.quicksearch.js' %}"></script>
+{#    <script type="text/javascript" src="{% static 'js/jquery.quicksearch.js' %}"></script>#}
     <script type="text/javascript">
         var db = null;
         var language  = '{{ LANGUAGE_CODE }}';
@@ -189,12 +200,12 @@
         var user_email = '{{ request.user.email }}';
         var user_token = '{{ user_token }}';
         var alp_round = '{{ alp_round }}';
-        var columns = 0;
+        var school = '{{ school_id }}';
         var rows = 1;
         var synchro_result = true;
-        var prototype = $('#outreach_prototype');
-        var table = $('#outreaches-table');
-        var selectedSchool = '{{ selectedSchool }}';
+        var prototype = $('#registration_prototype');
+        var prototype_view = $('#registration_view_prototype');
+        var table = $('#registrations-table');
         var filterSchools = false;
         var protocol = 'http://';
         {% if request.is_secure %}
@@ -207,7 +218,7 @@
 
         $(document).ready(function(){
 
-            $('#search').val('');
+            $('#search_old_student').val('');
             createStores();
 
             bootbox.addLocale(language, {
@@ -217,9 +228,9 @@
             });
             bootbox.setLocale(language);
 
-            $('input#search').quicksearch('table tbody tr', {
-                selector: 'span'
-            });
+{#            $('input#search').quicksearch('table tbody tr', {#}
+{#                selector: 'span'#}
+{#            });#}
 
             $(document).on('blur', arabic_fields, function(){
                 checkArabicOnly($(this));
@@ -254,9 +265,9 @@
             });
 
             $(document).on('click', '#filter_cancel', function(){
-                $('.outreach-line').show();
-                $('.outreach-line-p').show();
-                $('#search').val('');
+                $('.registration-line').show();
+                $('#filter_class').val(0);
+                $('#filter_section').val(0);
                 $('tbody').find('tr').removeClass('highlighted');
             });
 
@@ -296,11 +307,11 @@
                 });
             });
 
-            $(document).on('click', '.delete-outreach-row', function(){
+            $(document).on('click', '.delete-registration-row', function(){
                 var item = $(this);
                 bootbox.confirm("{% trans 'are you sure you want to delete this row?' %}", function(result) {
                     if(result == true){
-                        delete_from_store(item.attr('itemscope'), 'outreaches');
+                        delete_from_store(item.attr('itemscope'), 'registrations');
                         item.parents('tr').remove();
                     }
                 });
@@ -314,52 +325,34 @@
                 if($(this).val()) {
                     var option = $(this).find('option:selected');
                     var age = calculateAge($(this).attr('itemscope'));
-                    update_item_store(parseInt($(this).attr('itemscope')), 'student_age', age, 'outreaches');
+                    update_item_store(parseInt($(this).attr('itemscope')), 'student_age', age, 'registrations');
                     var itemblock = '.student_age_'+$(this).attr('itemscope');
                     $(itemblock).val(age);
                 }
             });
 
-            $(document).on('change', '.note-indicator', function(){
-                var item = $(this).parent().parent();
-                var note = parseInt($(this).find('option:selected').attr('data-value'));
-                var total = note*4;
-                item.find('.note-indicator-value').text('/'+note);
-                item.find('.note-indicator-value').attr('value', '/'+note);
-                item.find('.note-indicator-value').trigger('blur');
-
-                item.find('.note-indicator-total').text('/'+total);
-                item.find('.note-indicator-total').attr('value', '/'+total);
-                item.find('.note-indicator-total').trigger('blur');
-            });
-
-            $(document).on('blur', '.outreach-field', function(){
+            $(document).on('blur', '.registration-field', function(){
                 if($(this).attr('data-value')){
-                    update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'outreaches');
+                    update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'registrations');
                 }else{
                     var value = $(this).attr('value');
                     if(!value){
                         value = $(this).val();
                     }
-                    update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), value, 'outreaches');
+                    update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('name'), value, 'registrations');
                 }
+                flag_record_to_update(parseInt($(this).attr('itemscope')), 'registrations');
             });
 
-            $(document).on('blur', '.outreach-field-p', function(){
-                update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
-            });
-            $(document).on('change', '.outreach-field-p', function(){
-                update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
+            $(document).on('change', '.registration-field-check', function(){
+                update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'registrations');
+                flag_record_to_update(parseInt($(this).attr('itemscope')), 'registrations');
             });
 
-            $(document).on('change', '.outreach-field-check', function(){
-                update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'outreaches');
-            });
-
-            $(document).on('click', '#outreach-synchro', function(){
+            $(document).on('click', '#registration-synchro', function(){
                 synchro_result = true;
                 $('.alert').hide();
-                if(navigator.onLine) {
+                if(navigator.onLine == false) {
                     $(".loader").show();
                     synchronize_data(true);
                 }else{
@@ -368,13 +361,13 @@
             });
 
             $(document).on('click', '#registration-download', function(){
-                if(navigator.onLine) {
+                if(navigator.onLine == false) {
                     incremental_id = 0;
                     offset = 0;
                     limit = 100;
                     $('#registrations-table').find('.registration-line').remove();
                     $('.alert').hide();
-                     $(".loader").show();
+                    $(".loader").show();
                     load_base_data();
                     setTimeout(function(){
                         build_datatable();
@@ -384,12 +377,58 @@
                     $('#alert-connection').show();
                 }
             });
+
+            $("#search_old_student").autocomplete({
+              source: function( request, response ) {
+                $.ajax( {
+                  url: "http://127.0.0.1:8181/api/outreach/",
+                  dataType: "json",
+                  data: {
+                    term: request.term
+                  },
+                  success: function( data ) {
+                    response( data);
+                  }
+                } );
+              },
+              minLength: 3,
+              select: function( event, ui ) {
+                  add_external_record(ui.item);
+                  return false;
+              }
+            }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
+                 var that = this;
+                 $.each( items, function( index, item ) {
+                     that._renderItemData( ul, item );
+                });
+                $( ul ).find( "li:odd" ).addClass( "odd" );
+            };
+
+            $("#search_old_student").autocomplete( "instance" )._renderItem = function( ul, item ) {
+                  return $( "<li>" )
+                    .append( "<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_birthday + ") "
+                                   + "<br>" + '{% trans "Last year situation" %}: ' + item.registered_in_level_name + " / " + item.section_name
+                                   + "<br>" + '{% trans "Referred to level" %}: ' + " / " + item.referred_to_level_name
+                                   + "</div>" )
+                    .appendTo( ul );
+            };
+
         });
 
         function create_item_store_default_keys()
         {
-            var item = {id: rows, synchronized: false, deleted: false, owner: user_id, original_id: 0, alp_round: alp_round, to_update: true};
-            var fields = $('#outreach_prototype').find('.outreach-field');
+            var item = {
+                id: rows,
+                synchronized: false,
+                deleted: false,
+                owner: user_id,
+                original_id: 0,
+                alp_round: alp_round,
+                to_update: true,
+                school: school,
+                student_id: 0
+            };
+            var fields = prototype.find('.registration-field');
             $(fields).each(function(i, field){
                 if($(field).attr('data-name')) {
                     item[$(field).attr('data-name')] = '';
@@ -407,7 +446,7 @@
 
         function add_to_store(data)
         {
-            var store = getStoreByName('outreaches');
+            var store = getStoreByName('registrations');
             var request = store.put(data);
             add_table_newline(data.id, prototype, table);
             rows = rows + 1;
@@ -415,20 +454,19 @@
 
         function build_datatable()
         {
-            var store = getStoreByName('outreaches');
+            var store = getStoreByName('registrations');
             var request = store.getAll();
             request.onsuccess = function() {
                 var result = request.result;
                 $(result).each(function(i, item){
                     rows = item.id;
                     if(item.deleted == false){
-                        if(filterSchools == false){
+                        if(item.owner == user_id){
                             add_table_newline(item.id, prototype, table);
-                            add_fill_line_data(item);
-                        }else if(filterSchools == true && parseInt(item.school) == parseInt(selectedSchool)){
-                            add_table_newline(item.id, prototype, table);
-                            add_fill_line_data(item);
+                        }else{
+                            add_table_newline(item.id, prototype_view, table);
                         }
+                        add_fill_line_data(item);
                     }
                 });
                 rows = rows + 1;
@@ -437,7 +475,7 @@
 
         function add_fill_line_data(item)
         {
-            var fields = $('#line-'+item.id).find('.outreach-field');
+            var fields = $('#line-'+item.id).find('.registration-field');
             $(fields).each(function(i, field){
                 if($(field).attr('data-value')){
                     var value = item[$(field).attr('data-name')];
@@ -465,15 +503,22 @@
 
         function synchronize_data(showFeedback)
         {
-            var store = getStoreByName('outreaches');
+            var store = getStoreByName('registrations');
             var request = store.getAll();
             request.onsuccess = function() {
                 var result = request.result;
                 $(result).each(function(i, item){
+                    $('#line-'+item.id).removeClass('warning');
+                    $('#line-'+item.id).find('.synchro-status').removeClass('failed');
+                    $('#line-'+item.id).find('.synchro-status').removeClass('success');
+                    $('#line-'+item.id).find('.registration-field').removeClass('required');
+
                     if(item.synchronized == false) {
                         push_data_to_server(item);
-                    }else if(item.deleted == true){
-                        delete_data_from_server(synchro_path, item.original_id, item.id, 'outreaches');
+                    }else if(item.deleted == true) {
+                        delete_data_from_server(synchro_path, item.original_id, item.id, 'registrations');
+                    }else if(item.to_patch && item.to_update){
+                        patch_data_into_server(item);
                     }else if(item.to_update){
                         update_data_into_server(item);
                     }
@@ -492,16 +537,6 @@
                     }, 5000);
                 }
             };
-
-            var store_p = getStoreByName('outreaches-p');
-            var request_p = store_p.getAll();
-            request_p.onsuccess = function() {
-                var result_p = request_p.result;
-                $(result_p).each(function(i, item){
-                    patch_data_into_server(item);
-                    $(".loader").hide();
-                });
-            };
         }
 
         function push_data_to_server(item)
@@ -518,26 +553,22 @@
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
                     if(jqXHR.status == 201){
-{#                        $('#line-'+item.id).find('#student_number').val(response.student_number);#}
-{#                        $('#line-'+item.id).find('#student_number').trigger('blur');#}
-                        $('#line-'+item.id).find('.outreach-field').removeClass('required');
-                        item.synchronized = true;
-                        item.original_id = response.id;
-
-                        update_item_store(parseInt(item.id), 'synchronized', true, 'outreaches');
-                        update_item_store(parseInt(item.id), 'original_id', response.id, 'outreaches');
-                        update_item_store(parseInt(item.id), 'to_update', response.id, 'outreaches');
+                        $('#line-'+item.id).find('.synchro-status').addClass('success');
+                        update_item_store(parseInt(item.id), 'synchronized', true, 'registrations');
+                        update_item_store(parseInt(item.id), 'original_id', response.id, 'registrations');
+                        update_item_store(parseInt(item.id), 'to_update', false, 'registrations');
                         synchro_result = true;
                     }
                 },
                 error: function (response) {
+                    console.log(response);
+                    $('#line-'+item.id).addClass('warning');
+                    $('#line-'+item.id).find('.synchro-status').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
-                    $('#line-'+item.id).find('.outreach-field').removeClass('required');
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+item.id).find('#'+field_name).addClass('required');
                     });
                     synchro_result = false;
-                    console.log(response);
                 }
             });
         }
@@ -555,30 +586,57 @@
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
                     if(jqXHR.status == 200){
-                        $('#line-'+item.id).find('.outreach-field').removeClass('required');
-                        update_item_store(parseInt(item.id), 'synchronized', true, 'outreaches');
-                        update_item_store(parseInt(item.id), 'to_update', true, 'outreaches');
+                        $('#line-'+item.id).find('.synchro-status').addClass('success');
+                        $('#line-'+item.id).find('.registration-field').removeClass('required');
+                        update_item_store(parseInt(item.id), 'synchronized', true, 'registrations');
+                        update_item_store(parseInt(item.id), 'to_update', false, 'registrations');
                         synchro_result = true;
                     }
                 },
                 error: function (response) {
+                    console.log(response);
+                    $('#line-'+item.id).addClass('warning');
+                    $('#line-'+item.id).find('.synchro-status').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
-                    $('#line-'+item.id).find('.outreach-field').removeClass('required');
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+item.id).find('#'+field_name).addClass('required');
                     });
-                    console.log(response);
                     synchro_result = false;
                 }
             });
         }
 
-        function load_base_data()
+        function patch_data_into_server(item)
         {
-{#            pull_data(synchro_path, 'outreaches-p');#}
+            var itemid = item.id;
+            var data = item;
+            delete data.id;
+
+            $.ajax({
+                type: "PATCH",
+                url: synchro_path+itemid+'/',
+                data: data,
+                cache: false,
+                headers: getHeader(),
+                dataType: 'json',
+                success: function (response, result, jqXHR) {
+                    $('#line-'+itemid).find('.synchro-status').addClass('success');
+                    update_item_store(parseInt(itemid), 'to_update', false, 'registrations');
+                },
+                error: function (response) {
+                    console.log(response);
+                    $('#line-'+itemid).addClass('warning');
+                    $('#line-'+itemid).find('.synchro-status').addClass('failed');
+                    var required_fields = JSON.parse(response.responseText);
+                    $.each(required_fields, function(field_name, field_msg){
+                        $('#line-'+itemid).find('#'+field_name).addClass('required');
+                    });
+                    synchro_result = false;
+                }
+            });
         }
 
-        function pull_data(url, store_name)
+        function pull_registrations_data(url, store_name)
         {
             $.ajax({
                 type: "GET",
@@ -593,19 +651,96 @@
                     if(response.data) {
                         data = response.data;
                     }
+                    total = data.length;
                     $(data).each(function(i, item){
-                        item['synchronized'] = true;
-                        item['deleted'] = false;
-                        item['student_nationality'] = item.student_nationality_id;
-                        item['student_mother_nationality'] = item.student_mother_nationality_id;
-                        item['student_id_type'] = item.student_id_type_id;
-                        store.put(item);
+
+                        var request = store.index('original_id').get(parseInt(item.original_id));
+                        request.onsuccess = function() {
+                            item.synchronized = true;
+                            item.deleted = false;
+                            item.to_update = false;
+                            item.to_patch = true;
+                            item.student_nationality = item.student_nationality_id;
+                            item.student_mother_nationality = item.student_mother_nationality_id;
+                            item.student_id_type = item.student_id_type_id;
+
+                            item.last_education_level = item.last_education_level_id;
+                            item.last_informal_edu_level = item.last_informal_edu_level_id;
+                            item.last_informal_edu_round = item.last_informal_edu_round_id;
+                            item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
+
+                            if(request.result === undefined) {
+                                store.put(item);
+                            }else{
+                                var result = request.result;
+                                result = item;
+                                store.put(result);
+                            }
+                        };
                     });
                 },
                 error: function(response) {
                     console.log(response);
                 }
             });
+        }
+
+        function add_external_record(item)
+        {
+            var store = getStoreByName('registrations');
+            var request = store.index('student_id').get(parseInt(item.student_id));
+            request.onsuccess = function() {
+                if(request.result === undefined) {
+                    item.synchronized = false;
+                    item.deleted = false;
+                    item.to_update = false;
+                    item.student_nationality = item.student_nationality_id;
+                    item.student_mother_nationality = item.student_mother_nationality_id;
+                    item.student_id_type = item.student_id_type_id;
+
+                    item.last_education_level = item.last_education_level_id;
+                    item.last_informal_edu_level = item.last_informal_edu_level_id;
+                    item.last_informal_edu_round = item.last_informal_edu_round_id;
+                    item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
+
+                    var itemid = item.id;
+                    var data = item;
+                    data.id = rows;
+                    delete data.original_id;
+                    add_to_store(data);
+                    add_fill_line_data(data);
+                }else{
+                    bootbox.alert("{% trans 'This student already added to the list' %}", function(result) {
+                        return true;
+                    });
+                }
+            };
+        }
+
+        function pull_registration_record(itemid)
+        {
+            //18302
+            //1243156
+            $.ajax({
+                type: "GET",
+                url: synchro_path+'?id='+itemid,
+                cache: false,
+                async: false,
+                headers: getHeader(),
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    add_external_record(response[0])
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+            });
+        }
+
+        function load_base_data()
+        {
+            pull_registrations_data(synchro_path, 'registrations');
         }
 
         function createStores()
@@ -618,20 +753,19 @@
                 db = request.result;
                 var flag = false;
                 try {
-                    if(!db.objectStoreNames().contains('outreaches')) {
+                    if(!db.objectStoreNames().contains('registrations')) {
                         flag = true;
                     }
                 }catch(err) {
                     flag = true;
                 }
                 if(flag){
-                    var store = db.createObjectStore("outreaches", {keyPath: "id", autoIncrement:true});
+                    var store = db.createObjectStore("registrations", {keyPath: "id", autoIncrement:true});
                     store.createIndex('original_id', 'original_id');
-                    store.createIndex('classroom', 'classroom');
+                    store.createIndex('student_id', 'student_id');
+                    store.createIndex('level', 'level');
                     store.createIndex('section', 'section');
-                    store.createIndex('classroomAndSection', ['classroom', 'section']);
-
-                    db.createObjectStore("outreaches-p", {keyPath: "id", autoIncrement:true});
+                    store.createIndex('levelAndSection', ['level', 'section']);
 
                     var profile_store = db.createObjectStore("user", {keyPath: "id"});
                     profile_store.put({id: user_id, username: user_username, email: user_email});
@@ -641,7 +775,6 @@
             request.onsuccess = function() {
                 db = request.result;
                 $(".loader").show();
-                load_base_data();
                 setTimeout(function(){
                     build_datatable();
                     $(".loader").hide();

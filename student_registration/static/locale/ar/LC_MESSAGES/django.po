@@ -1185,3 +1185,18 @@ msgstr "قم بالتصفية"
 
 msgid "Total students"
 msgstr "مجموع التلاميذ"
+
+msgid "ALP Registrations"
+msgstr "تسجيل التلاميذ"
+
+msgid "Search an old student"
+msgstr "ابحث عن تلميذ سابق"
+
+msgid "Last year situation"
+msgstr "وضع التلميذ في السنة الماضية"
+
+msgid "Referred to level"
+msgstr "موجه الى المستوى"
+
+msgid "This student already added to the list"
+msgstr "لقد سبق وتم اضافة هذا التلميذ الى القائمة"
