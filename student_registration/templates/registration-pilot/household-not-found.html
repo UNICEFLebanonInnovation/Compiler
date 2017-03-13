@@ -34,6 +34,7 @@
 
              <div class="panel-body">
                  <h3 class="panel-title">{% trans "Household not found" %}</h3>
+                 <span class="error" >{% trans "Please inform the household they can't be added this year, but we will collect their information to investigate what happened." %}</span>
                  <div class="line">
                      <label class="text" style="width: 200px;">{% trans "Household ID Type: " %}</label>
                      <select id="nf_idType" >
@@ -41,32 +42,32 @@
                              <option value="{{ itm.id }}">{{ itm.name }}</option>
                          {% endfor %}
                      </select>
-                     <span class="error" id="idType_error">{% trans "Household ID Type is missing." %}</span>
+                     <span class="error" id="nf_idType_error">{% trans "Household ID Type is missing." %}</span>
                  </div>
                  <div  class="line">
                      <label class="text" style="width: 200px;">{% trans "Household Case Number: " %}</label>
                      <input id="nf_id_number" maxlength="45" type="text">
-                     <span class="error" id="beneficiary_id_number_error">{% trans "Invalid Case format." %}</span>
+                     <span class="error" id="nf_id_number_error">{% trans "Invalid Case format." %}</span>
                  </div>
                 <div class="line">
                     <label class="text" style="width: 200px;">{% trans "Household First Name (Arabic): " %}</label>
                     <input id="nf_first_name" maxlength="45" type="text">
-                    <span class="error" id="first_name_error">{% trans "Household First Name is missing." %}</span>
+                    <span class="error" id="nf_first_name_error">{% trans "Household First Name is missing." %}</span>
                 </div>
                 <div class="line">
                     <label class="text" style="width: 200px;">{% trans "Household Father Name (Arabic): " %}</label>
                     <input id="nf_father_name" maxlength="45" type="text">
-                    <span class="error" id="father_name_error">{% trans "Household Father Name is missing." %}</span>
+                    <span class="error" id="nf_father_name_error">{% trans "Household Father Name is missing." %}</span>
                 </div>
                 <div class="line">
                     <label class="text" style="width: 200px;">{% trans "Household Last Name (Arabic): " %}</label>
                     <input id="nf_last_name" maxlength="45" type="text">
-                    <span class="error" id="last_name_error">{% trans "Household Last Name is missing." %}</span>
+                    <span class="error" id="nf_last_name_error">{% trans "Household Last Name is missing." %}</span>
                 </div>
                 <div class="line">
                     <label class="text" style="width: 200px;">{% trans "Household Mother Full  Name (Arabic): " %}</label>
                     <input id="nf_mother_full_name" maxlength="45" type="text">
-                    <span class="error" id="mother_full_name_error">{% trans "Household Mother Full Name is missing." %}</span>
+                    <span class="error" id="nf_mother_full_name_error">{% trans "Household Mother Full Name is missing." %}</span>
                 </div>
                 <div class="line">
                     <label class="text" style="width: 200px;">{% trans "Household Gender: " %}</label>
@@ -75,7 +76,7 @@
                             <option value="{{ value }}">{{ text }}</option>
                         {% endfor %}
                     </select>
-                    <span class="error" id="gender_error">{% trans "Household Gender is missing." %}</span>
+                    <span class="error" id="nf_gender_error">{% trans "Household Gender is missing." %}</span>
                 </div>
                 <div class="line field-select-small-size">
                     <label class="text" style="width: 200px;">{% trans "Household DOB" %}</label>
@@ -87,7 +88,7 @@
                     </select>
                     <select id="nf_years" >
                     </select>
-                    <span class="error" id="dob_error">{% trans "Household DOB is not valid" %}</span>
+                    <span class="error" id="nf_dob_error">{% trans "Household DOB is not valid" %}</span>
                 </div>
                 <div class="line">
                     <label class="text" style="width: 200px;">{% trans "Realtionship to household head: " %}</label>
@@ -96,19 +97,68 @@
                             <option value="{{ value }}">{{ text }}</option>
                         {% endfor %}
                     </select>
-                    <span class="error" id="relation_to_householdhead_error">{% trans "Relationship to household head is missing." %}</span>
+                    <span class="error" id="nf_relation_to_householdhead_error">{% trans "Relationship to household head is missing." %}</span>
                 </div>
                 <div class="line">
-                    <label class="text" style="width: 200px;">{% trans "Household Phone Number: " %}</label>
+                    <label class="text" style="width: 200px;">{% trans "Household Primary Phone Number: " %}</label>
                     <input id="nf_primary_phone" maxlength="45" type="text">
-                    <span class="error" id="beneficiary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
+                    <span class="error" id="nf_primary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
                 </div>
                 <div class="line">
                     <label class="text" style="width: 200px;">{% trans "Confirm Phone Number: " %}</label>
                     <input id="nf_primary_phone_confirm" maxlength="45" type="text">
-                    <span class="error" id="beneficiary_phone_confirm_length_error">{% trans "The phone number must be 8 digits" %}</span>
-                    <span class="error" id="beneficiary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
+                    <span class="error" id="nf_primary_phone_confirm_length_error">{% trans "The phone number must be 8 digits" %}</span>
+                    <span class="error" id="nf_primary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
                 </div>
+                 <div class="line">
+                     <label class="text" style="width: 200px;">{% trans "Phone Number is normally answered by: " %}</label>
+                     <select id="nf_primary_phone_answered" >
+                         {% for value, text in phoneAnsweredby %}
+                             <option value="{{ value }}">{{ text }}</option>
+                         {% endfor %}
+                     </select>
+                      <span class="error" id="nf_primary_phone_answered_error">{% trans "Phone Number is normally answered by is missing" %}</span>
+                 </div>
+                 <div class="line">
+                     <label class="text" style="width: 200px;">{% trans "Secondary Phone Number: " %}</label>
+                     <input id="nf_secondary_phone" maxlength="45" type="text">
+                     <span class="error" id="nf_secondary_phone_length_error">{% trans "The phone number must be 8 digits" %}</span>
+                 </div>
+                 <div class="line">
+                     <label class="text" style="width: 200px;">{% trans "Confirm Phone Number: " %}</label>
+                     <input id="nf_secondary_phone_confirm" maxlength="45" type="text">
+                     <span class="error" id="nf_secondary_phone_confirm_length_error">{% trans "The phone number must be 8 digits" %}</span>
+                     <span class="error" id="nf_secondary_phone_confirm_error">{% trans "Phone mismatch" %}</span>
+                 </div>
+                 <div class="line">
+                      <label class="text" style="width: 200px;">{% trans "Phone number is normally answered by: " %}</label>
+                      <select id="nf_secondary_phone_answered" >
+                          {% for value, text in phoneAnsweredby %}
+                              <option value="{{ value }}">{{ text }}</option>
+                          {% endfor %}
+                      </select>
+                      <span class="error" id="nf_secondary_phone_answered_error">{% trans "Phone Number is normally answered by is missing" %}</span>
+                </div>
+
+                 <div class="line">
+                     <label class="text" style="width: 200px;">{% trans "Number of children 5 to 9: " %}</label>
+                     <input id="number_children_five_to_nine" maxlength="45" type="text">
+                 </div>
+
+                 <div class="line">
+                     <label class="text" style="width: 200px;">{% trans "Number of children 10 to 17: " %}</label>
+                     <input id="number_children_ten_to_seventeen" maxlength="45" type="text">
+                 </div>
+              <div class="line">
+                     <span class="error" id="number_children_error">{% trans "Number of children is missing" %}</span>
+                 </div>
+
+{#                 <div class="line" id = "addressFields" style="display:none">#}
+{#                    <label class="text" style="width: 200px;">{% trans " Address: " %}</label>#}
+{#                    <textarea cols="30" id="address" name="nf_address" rows="4"></textarea>#}
+{#                    <span class="error" id="address_error">{% trans "Address field is required!" %}</span>#}
+{#                 </div>#}
+
                 <div class="line"  style="display:none"  >
                     <label class="text" style="width: 200px;">{% trans "Type: " %}</label>
                     <select id="not_found_complaint" >
@@ -119,8 +169,8 @@
                 </div>
                  <div class="line" id = "hh_Complaint_text">
                     <label class="text" style="width: 200px;">{% trans "Comment: " %}</label>
-                    <textarea cols="38" id="complaint" name="nf_complaint" rows="1"></textarea>
-                    <span class="error" id="complaint_error">{% trans "Comment is missing." %}</span>
+                    <textarea cols="38" id="nf_complaint" name="nf_complaint" rows="1"></textarea>
+                    <span class="error" id="nf_complaint_error">{% trans "Comment is missing." %}</span>
                 </div>
              </div>
 
