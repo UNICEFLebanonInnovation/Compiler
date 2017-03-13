@@ -95,7 +95,7 @@
                                 <i class="fa fa-times"></i>
                             </div>
                           </div>
-                        <div class="panel-heading">
+                          <div class="panel-heading">
                             <ol class="breadcrumb">
                                 <li>{{ school }}</li>
                                 <li>{{ location }}</li>
@@ -677,7 +677,7 @@
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
                     if(jqXHR.status == 201){
-                        $('#line-'+itemid).removeClass('warning');
+                        $('#line-'+item.id).removeClass('warning');
                         $('#line-'+item.id).find('.synchro-status').removeClass('failed');
                         $('#line-'+item.id).find('.synchro-status').addClass('success');
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
@@ -691,7 +691,8 @@
                     }
                 },
                 error: function (response) {
-                    $('#line-'+itemid).addClass('warning');
+                    console.log(response);
+                    $('#line-'+item.id).addClass('warning');
                     $('#line-'+item.id).find('.synchro-status').removeClass('success');
                     $('#line-'+item.id).find('.synchro-status').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
@@ -700,7 +701,6 @@
                         $('#line-'+item.id).find('#'+field_name).addClass('required');
                     });
                     synchro_result = false;
-                    console.log(response);
                 }
             });
         }
@@ -719,7 +719,7 @@
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
                     if(jqXHR.status == 200){
-                        $('#line-'+itemid).removeClass('warning');
+                        $('#line-'+item.id).removeClass('warning');
                         $('#line-'+item.id).find('.synchro-status').removeClass('failed');
                         $('#line-'+item.id).find('.synchro-status').addClass('success');
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
@@ -729,7 +729,8 @@
                     }
                 },
                 error: function (response) {
-                    $('#line-'+itemid).addClass('warning');
+                    console.log(response);
+                    $('#line-'+item.id).addClass('warning');
                     $('#line-'+item.id).find('.synchro-status').removeClass('success');
                     $('#line-'+item.id).find('.synchro-status').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
@@ -737,7 +738,6 @@
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+item.id).find('#'+field_name).addClass('required');
                     });
-                    console.log(response);
                     synchro_result = false;
                 }
             });
@@ -772,6 +772,7 @@
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+itemid).find('#'+field_name).addClass('required');
                     });
+                    synchro_result = false;
                 }
             });
         }

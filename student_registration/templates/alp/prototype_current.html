@@ -5,14 +5,9 @@
 {% get_range 1 32 as days %}
 {% get_range_str 2001 2020 as last_education_years %}
 
-<table style="display:none;" id="registration_prototype">
+<table style="display:none;" id="registration_view_prototype">
     <tr id="line-$$itemscope_id$$" class="registration-line" itemscope="$$itemscope_id$$">
-        <td>
-            <button class="btn btn-danger delete-registration-row" itemscope="$$itemscope_id$$">
-                <i class="icon-trash icon-white"></i>
-                {% trans "Delete" %}
-            </button>
-        </td>
+        <td>&nbsp;</td>
         <td class="synchro-status">
             <input type="hidden" name="id" value="$$itemscope_id$$" class="registration-field-id" />
             <span class="badge incremental_number" itemscope="$$itemscope_id$$" style="font-weight: bold;"></span>
@@ -46,7 +41,7 @@
             </select>
         </td>
         <td>
-            <input type="text" name="exam_total" id="exam_total" class="registration-field"
+            <input type="text" name="pretest_total" id="pretest_total" class="registration-field"
                    itemscope="$$itemscope_id$$" readonly="readonly" disabled="disabled"/>
         </td>
         <td>
