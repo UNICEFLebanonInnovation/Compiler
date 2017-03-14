@@ -76,7 +76,7 @@ class RegisteredInFilter(admin.SimpleListFilter):
         if self.value() and self.value() == 'alp':
             return queryset.exclude(alp_enrollment__deleted=True).filter(alp_enrollment__isnull=False)
         if self.value() and self.value() == '2ndshift':
-            return queryset.exclude(student_enrollment__deleted=True).filter(student_enrollment__isnull=False)
+            return queryset.exclude(student_enrollment__deleted=True).exclude(student_enrollment__dropout_status=True).filter(student_enrollment__isnull=False)
         return queryset
 
 
