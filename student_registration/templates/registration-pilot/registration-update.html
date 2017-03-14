@@ -31,7 +31,6 @@
                   </div>
               {% endfor %}
           {% endif %}
-          <div class="panel-body">
              <div class="panel-body">
                <div id="oneperframe" class="frame oneperframe" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
                   <ul class="slidee" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
@@ -157,7 +156,7 @@
                                           <option value="{{ itm.id }}">{{ itm.name }}</option>
                                       {% endfor %}
                                     </select>
-                                    <span class="error" id="idType_error">{% trans "New Beneficiary ID Type is missing." %}</span>
+                                    <span class="error" id="nf_dType_error">{% trans "New Beneficiary ID Type is missing." %}</span>
                                 </div>
                                 <div  class="line">
                                     <label class="text" style="width: 200px;">{% trans "New Beneficiary Individual ID Number: " %}</label>
