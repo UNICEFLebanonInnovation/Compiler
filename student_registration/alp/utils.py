@@ -15,10 +15,12 @@ def refer_to_level(
         student_age = 9
     if student_age > 17:
         student_age = 17
+    try:
+        matrix = ALPReferMatrix.objects.get(age=student_age, level=registered_in_level)
+    except ALPReferMatrix.DoesNotExist:
+        matrix = ALPReferMatrix.objects.get(id=50)
 
-    matrix = ALPReferMatrix.objects.get(age=student_age, level=registered_in_level)
     if total_grades >= matrix.success_grade:
         return matrix.success_refer_to
     else:
         return matrix.fail_refer_to
-

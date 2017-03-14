@@ -357,6 +357,12 @@ class Outreach(TimeStampedModel):
         return total
 
     @property
+    def pretest_total(self):
+        if self.level:
+            return "{}/{}".format(self.exam_total, self.level.note)
+        return 0
+
+    @property
     def post_exam_total(self):
         total = 0
         if self.post_exam_result_arabic:
@@ -399,7 +405,13 @@ class Outreach(TimeStampedModel):
         return str(self.id)
 
     def save(self, **kwargs):
-        self.refer_to_level = refer_to_level(self.student_age, self.registered_in_level, self.post_exam_total)
+        if self.post_exam_total or (self.post_exam_corrector_arabic
+                                    or self.post_exam_corrector_language
+                                    or self.post_exam_corrector_math
+                                    or self.post_exam_corrector_science):
+            self.refer_to_level = refer_to_level(self.student_age, self.registered_in_level, self.post_exam_total)
+        else:
+            self.refer_to_level = None
         super(Outreach, self).save(**kwargs)
 
 
@@ -411,5 +423,3 @@ class ExtraColumn(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
-
-# eav.register(Outreach)

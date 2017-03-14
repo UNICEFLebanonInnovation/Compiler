@@ -191,6 +191,41 @@ class RegisteringAdult(Person):
         return self.first_name + ' ' + self.father_name + ' ' + self.last_name
 
 
+class HouseholdNotFound(Person):
+
+    RELATION_TYPE = Choices(
+        ('head', _('I am the household head')),
+        ('spouse', _('Spouse')),
+        ('parent', _('Father/Mother')),
+        ('relative', _('Other Relative')),
+        ('other', _('Other non-Relative')),
+    )
+
+    PHONE_ANSWEREDBY = Choices(
+        ('me', _('Me personally')),
+        ('relay', _('Someone who always relays the message to me')),
+        ('notrelay', _('Someone who may not relay the message to me')),
+    )
+    GENDER = Choices(
+        ('Male', _('Male')),
+        ('Female', _('Female')),
+    )
+
+    relation_to_householdhead = models.CharField(max_length=50, blank=True, null=True, choices=RELATION_TYPE)
+    primary_phone = models.CharField(max_length=50, blank=True, null=True)
+    primary_phone_answered = models.CharField(max_length=50, blank=True, null=True, choices=PHONE_ANSWEREDBY)
+    secondary_phone = models.CharField(max_length=50, blank=True, null=True)
+    secondary_phone_answered = models.CharField(max_length=50, blank=True, null=True, choices=PHONE_ANSWEREDBY)
+    number_children_five_to_nine = models.IntegerField(blank=True, null=True)
+    number_children_ten_to_seventeen = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.id
+
+
 class Complaint(TimeStampedModel):
     """
     Household complaints by hotline
@@ -208,7 +243,12 @@ class Complaint(TimeStampedModel):
     complaint_category = models.ForeignKey(
         ComplaintCategory,
         blank=True, null=True,
-        related_name='+',
+        related_name='complaints',
+    )
+    household_not_found = models.ForeignKey(
+        HouseholdNotFound,
+        blank=True, null=True,
+        related_name='HHNotFound',
     )
     complaint_note = models.TextField(blank=True, null=True)
     complaint_status = models.CharField(max_length=20, blank=True, null=True, choices=STATUS)
@@ -252,10 +292,8 @@ class Payment(models.Model):
     payment_year = models.IntegerField(blank=True, null=True)
     payment_date = models.DateField(blank=True, null=True)
 
-
     class Meta:
         ordering = ['id']
-
 
     def __unicode__(self):
         return self.id
