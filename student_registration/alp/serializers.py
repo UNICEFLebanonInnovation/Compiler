@@ -9,6 +9,46 @@ from student_registration.students.models import (
 )
 
 
+def update_student(student_data, student):
+
+    if 'first_name' in student_data:
+        student.first_name = student_data['first_name']
+    if 'father_name' in student_data:
+        student.father_name = student_data['father_name']
+    if 'last_name' in student_data:
+        student.last_name = student_data['last_name']
+    if 'mother_fullname' in student_data:
+        student.mother_fullname = student_data['mother_fullname']
+
+    if 'birthday_year' in student_data:
+        student.birthday_year = student_data['birthday_year']
+    if 'birthday_month' in student_data:
+        student.birthday_month = student_data['birthday_month']
+    if 'birthday_day' in student_data:
+        student.birthday_day = student_data['birthday_day']
+
+    if 'sex' in student_data:
+        student.sex = student_data['sex']
+    if 'phone' in student_data:
+        student.phone = student_data['phone']
+    if 'phone_prefix' in student_data:
+        student.phone_prefix = student_data['phone_prefix']
+    if 'address' in student_data:
+        student.address = student_data['address']
+    if 'nationality' in student_data:
+        student.nationality_id = student_data['nationality']
+    if 'mother_nationality' in student_data:
+        student.mother_nationality_id = student_data['mother_nationality']
+    if 'id_type' in student_data:
+        student.id_type_id = student_data['id_type']
+    if 'id_number' in student_data:
+        student.id_number = student_data['id_number']
+
+    student.save()
+
+    return student
+
+
 class OutreachSerializer(serializers.ModelSerializer):
 
     original_id = serializers.IntegerField(source='id', read_only=True)
@@ -57,8 +97,7 @@ class OutreachSerializer(serializers.ModelSerializer):
 
         student_data = validated_data.pop('student', None)
         if 'id' in student_data:
-            student = Student.objects.get(id=student_data['id'])
-            student.save()
+            student = update_student(student_data, Student.objects.get(id=student_data['id']))
         else:
             student_serializer = StudentSerializer(data=student_data)
             student_serializer.is_valid(raise_exception=True)
@@ -80,33 +119,7 @@ class OutreachSerializer(serializers.ModelSerializer):
         try:
 
             student_data = validated_data.pop('student', None)
-
-            student = instance.student
-            student.first_name = student_data['first_name']
-            student.father_name = student_data['father_name']
-            student.last_name = student_data['last_name']
-            if 'mother_fullname' in student_data:
-                student.mother_fullname = student_data['mother_fullname']
-
-            student.birthday_year = student_data['birthday_year']
-            student.birthday_month = student_data['birthday_month']
-            student.birthday_day = student_data['birthday_day']
-
-            student.sex = student_data['sex']
-            if 'phone' in student_data:
-                student.phone = student_data['phone']
-            if 'phone_prefix' in student_data:
-                student.phone_prefix = student_data['phone_prefix']
-            if 'address' in student_data:
-                student.address = student_data['address']
-            student.nationality = Nationality.objects.get(id=student_data['nationality'])
-            if 'mother_nationality' in student_data:
-                student.mother_nationality = Nationality.objects.get(id=student_data['mother_nationality'])
-
-            student.id_type = IDType.objects.get(id=student_data['id_type'])
-            student.id_number = student_data['id_number']
-
-            student.save()
+            student = update_student(student_data, instance.student)
 
             if 'registered_in_unhcr' in validated_data:
                 instance.registered_in_unhcr = validated_data['registered_in_unhcr']
@@ -278,40 +291,7 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
         try:
 
             student_data = validated_data.pop('student', None)
-
-            student = instance.student
-
-            student.first_name = student_data['first_name']
-            student.father_name = student_data['father_name']
-            student.last_name = student_data['last_name']
-            if 'mother_fullname' in student_data:
-                student.mother_fullname = student_data['mother_fullname']
-
-            if 'birthday_year' in validated_data:
-                student.birthday_year = student_data['birthday_year']
-            if 'birthday_month' in validated_data:
-                student.birthday_month = student_data['birthday_month']
-            if 'birthday_day' in validated_data:
-                student.birthday_day = student_data['birthday_day']
-
-            student.sex = student_data['sex']
-            if 'phone' in student_data:
-                student.phone = student_data['phone']
-            if 'phone_prefix' in student_data:
-                student.phone_prefix = student_data['phone_prefix']
-            if 'address' in student_data:
-                student.address = student_data['address']
-            if 'nationality' in validated_data:
-                student.nationality = Nationality.objects.get(id=student_data['nationality'])
-            if 'mother_nationality' in student_data:
-                student.mother_nationality = Nationality.objects.get(id=student_data['mother_nationality'])
-
-            if 'id_type' in validated_data:
-                student.id_type = IDType.objects.get(id=student_data['id_type'])
-            if 'id_number' in validated_data:
-                student.id_number = student_data['id_number']
-
-            student.save()
+            student = update_student(student_data, instance.student)
 
             if 'level' in validated_data:
                 instance.level = validated_data['level']

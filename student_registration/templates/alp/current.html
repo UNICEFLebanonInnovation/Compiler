@@ -5,7 +5,7 @@
 
 {% block extra_head %}
 
-{#    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">#}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
     <style>
@@ -180,7 +180,7 @@
 
     {% get_user_token request.user.id as user_token %}
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
-{#    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>#}
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
@@ -352,7 +352,7 @@
             $(document).on('click', '#registration-synchro', function(){
                 synchro_result = true;
                 $('.alert').hide();
-                if(navigator.onLine == false) {
+                if(navigator.onLine) {
                     $(".loader").show();
                     synchronize_data(true);
                 }else{
@@ -361,7 +361,7 @@
             });
 
             $(document).on('click', '#registration-download', function(){
-                if(navigator.onLine == false) {
+                if(navigator.onLine) {
                     incremental_id = 0;
                     offset = 0;
                     limit = 100;
@@ -393,6 +393,7 @@
               },
               minLength: 3,
               select: function( event, ui ) {
+                  $("#search_old_student").val('');
                   add_external_record(ui.item);
                   return false;
               }
@@ -408,7 +409,7 @@
                   return $( "<li>" )
                     .append( "<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_birthday + ") "
                                    + "<br>" + '{% trans "Last year situation" %}: ' + item.registered_in_level_name + " / " + item.section_name
-                                   + "<br>" + '{% trans "Referred to level" %}: ' + " / " + item.referred_to_level_name
+                                   + "<br>" + '{% trans "Referred to level" %}: ' + " / " + item.refer_to_level_name
                                    + "</div>" )
                     .appendTo( ul );
             };
@@ -697,6 +698,7 @@
                     item.student_nationality = item.student_nationality_id;
                     item.student_mother_nationality = item.student_mother_nationality_id;
                     item.student_id_type = item.student_id_type_id;
+                    item.alp_round = alp_round;
 
                     item.last_education_level = item.last_education_level_id;
                     item.last_informal_edu_level = item.last_informal_edu_level_id;
@@ -719,9 +721,7 @@
 
         function pull_registration_record(itemid)
         {
-            //18302
-            //1243156
-            $.ajax({
+           return $.ajax({
                 type: "GET",
                 url: synchro_path+'?id='+itemid,
                 cache: false,
@@ -729,7 +729,6 @@
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
-                    console.log(response);
                     add_external_record(response[0])
                 },
                 error: function(response) {
