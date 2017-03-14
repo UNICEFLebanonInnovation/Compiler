@@ -1200,3 +1200,15 @@ msgstr "موجه الى المستوى"
 
 msgid "This student already added to the list"
 msgstr "لقد سبق وتم اضافة هذا التلميذ الى القائمة"
+
+msgid "Filter by current level"
+msgstr " المستوى الحالي"
+
+msgid "Filter by current section"
+msgstr " الشعبة الحالية"
+
+msgid "Filter by assigned level"
+msgstr " المستوي المرفع اليه"
+
+msgid "Filter by"
+msgstr "تصفية القائمة حسب"
