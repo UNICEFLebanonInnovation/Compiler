@@ -21,6 +21,26 @@ urlpatterns = [
         name='registrations-alp'
     ),
     url(
+        regex=r'^alp-overall/$',
+        view=views.RegistrationsALPOverallView.as_view(),
+        name='alp-overall'
+    ),
+    url(
+        regex=r'^registrations-alp-outreach/$',
+        view=views.RegistrationsALPOutreachView.as_view(),
+        name='registrations-alp-outreach'
+    ),
+    url(
+        regex=r'^registrations-alp-pre-test/$',
+        view=views.RegistrationsALPPreTestView.as_view(),
+        name='registrations-alp-pre-test'
+    ),
+    url(
+        regex=r'^registrations-alp-post-test/$',
+        view=views.RegistrationsALPPostTestView.as_view(),
+        name='registrations-alp-post-test'
+    ),
+    url(
         regex=r'^attendances/$',
         view=views.AttendanceView.as_view(),
         name='attendances'
