@@ -176,4 +176,16 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         return ''
 
 
+class Dropout(Enrollment):
+    class Meta:
+        proxy = True
+
+
+class DropoutAdmin(EnrollmentAdmin):
+
+    def get_queryset(self, request):
+        return Enrollment.objects.filter(dropout_status=True)
+
+
 admin.site.register(Enrollment, EnrollmentAdmin)
+admin.site.register(Dropout, DropoutAdmin)
