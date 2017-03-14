@@ -176,7 +176,7 @@ class EnrollmentPatchView(LoginRequiredMixin, TemplateView):
             school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
-            total = self.model.objects.exclude(deleted=True).filter(school_id=school_id).count()
+            total = self.model.objects.exclude(deleted=True).exclude(dropout_status=True).filter(school_id=school_id).count()
         if school and school.location:
             location = school.location
         if location and location.parent:
@@ -217,7 +217,7 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
     Provides API operations around a Enrollment record
     """
     model = Enrollment
-    queryset = Enrollment.objects.exclude(deleted=True)
+    queryset = Enrollment.objects.exclude(deleted=True).exclude(dropout_status=True)
     serializer_class = EnrollmentSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -254,7 +254,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         return self.queryset
 
     def get(self, request, *args, **kwargs):
-        queryset = self.model.objects.exclude(deleted=True)
+        queryset = self.model.objects.exclude(deleted=True).exclude(dropout_status=True)
         school = request.GET.get('school', 0)
         gov = request.GET.get('gov', 0)
 
@@ -362,7 +362,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
 class ExportBySchoolView(LoginRequiredMixin, ListView):
 
     model = Enrollment
-    queryset = Enrollment.objects.exclude(deleted=True)
+    queryset = Enrollment.objects.exclude(deleted=True).exclude(dropout_status=True)
 
     def get(self, request, *args, **kwargs):
 
@@ -381,7 +381,7 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
 
         content = []
         for school in schools:
-            nbr = self.model.objects.filter(school=school[0]).exclude(deleted=True).count()
+            nbr = self.model.objects.filter(school=school[0]).exclude(deleted=True).exclude(dropout_status=True).count()
             content = [
                 school[1],
                 school[2],
@@ -403,7 +403,7 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
 class ExportDuplicatesView(LoginRequiredMixin, ListView):
 
     model = Enrollment
-    queryset = Enrollment.objects.exclude(deleted=True).order_by('-id')
+    queryset = Enrollment.objects.exclude(deleted=True).exclude(dropout_status=True).order_by('-id')
 
     def get(self, request, *args, **kwargs):
 
@@ -411,7 +411,7 @@ class ExportDuplicatesView(LoginRequiredMixin, ListView):
         students2 = {}
         schools = {}
         duplicates = []
-        queryset = Enrollment.objects.exclude(deleted=True).order_by('-id')
+        queryset = Enrollment.objects.exclude(deleted=True).exclude(dropout_status=True).order_by('-id')
 
         for registry in queryset:
             student = registry.student
