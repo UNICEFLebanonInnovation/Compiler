@@ -349,6 +349,18 @@
                     }
                 });
 
+                $("#not_eligible_select").change(function () {
+                    var selectedOptionText =  $("#not_eligible_select option:selected").text();
+                    if(selectedOptionText == "Other (Specify)")
+                    {
+                        $("#not_eligible_specify_reason").show();
+                    }
+                    else
+                    {
+                        $("#not_eligible_specify_reason").hide();
+                    }
+                });
+
                 $("#card_complaint").change(function () {
 
                     var selectedOptionText =  $("#card_complaint option:selected").text();
@@ -421,6 +433,11 @@
                   $("#ComplaintHistory").show();
                 }
 
+                else if (selectedOption == 'notEligible' ) {
+                  $("#notEligibleFields").show();
+                  $("#ComplaintHistory").show();
+                }
+
                 });
 
 
@@ -444,6 +461,7 @@
             $("#cardPhoneFields").hide();
             $("#ComplaintHistory").hide();
             $("#complaint_Other_type").hide();
+            $("#notEligibleFields").hide();
           }
 
               function loadAjaxCall(regId , data)
@@ -508,6 +526,20 @@
                          $("#hh_current_primary_phone").text(household.primary_phone);
                          $("#hh_current_secondary_phone").text(household.secondary_phone);
                          $("#hh_card_primary_phone").text(household.primary_phone);
+                         updateDropDownValue($("#not_eligible_select"),household.no_logner_eligible_reason);
+                         var selectedOptionText =  $("#not_eligible_select option:selected").text();
+                         if(selectedOptionText == "Other (Specify)")
+                            {
+                                $("#not_eligible_specify_reason").show();
+                            }
+                            else
+                            {
+                                $("#not_eligible_specify_reason").hide();
+                            }
+
+                         alert(household.no_logner_eligible_specify);
+                         $("#not_eligible_reason_specify").val(household.no_logner_eligible_specify);
+
 
                          $("#hhAddess").text(household.address);
 
@@ -532,8 +564,6 @@
                              $("#hhDateOfDistribution").text(household.card_distribution_date);
                          }
 
-
-
                          $("#primary_phone").val('');
                          $("#primary_phone_confirm").val('');
                          updateDropDownValue($("#primary_phone_answered"),household.primary_phone_answered);
@@ -541,7 +571,6 @@
                          $("#secondary_phone_confirm").val('');
                          updateDropDownValue($("#secondary_phone_answered"),household.secondary_phone_answered);
                          $("#address").val('');
-
                          $("#card_phone").val('');
                          $("#card_phone_confirm").val('');
 
@@ -866,7 +895,7 @@
                 if(ValidateHouseHoldUpdate())
                 {
                    if($("#changeOption").val() == "phone" || $("#changeOption").val() == "address"
-                       || $("#changeOption").val() == "beneficiary" || $("#changeOption").val() == "twoCards")
+                       || $("#changeOption").val() == "beneficiary" || $("#changeOption").val() == "twoCards" || $("#changeOption").val() == "notEligible")
                    {
                       SaveHousehold(true);
                    }
@@ -980,6 +1009,12 @@
           else if($("#changeOption").val() == "cardStatus")
           {
               houseHoldData.primary_phone = $("#card_phone").val();
+          }
+          else if($("#changeOption").val() == "notEligible")
+          {
+              houseHoldData.no_logner_eligible = true;
+              houseHoldData.no_logner_eligible_reason = $("#not_eligible_select").val();
+              houseHoldData.no_logner_eligible_specify = $("#not_eligible_reason_specify").val();
           }
           $.ajax
           (
