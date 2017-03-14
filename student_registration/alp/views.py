@@ -177,6 +177,7 @@ class CurrentRoundView(LoginRequiredMixin,
         school = 0
         location = 0
         location_parent = 0
+        total = 0
         school_id = int(self.request.GET.get("school", 0))
         round_id = int(self.request.GET.get("round_id", 0))
         if round_id:
@@ -188,6 +189,7 @@ class CurrentRoundView(LoginRequiredMixin,
             school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
+            total = self.model.objects.exclude(deleted=True).filter(school_id=school_id, alp_round=alp_round).count()
         if school and school.location:
             location = school.location
         if location and location.parent:
@@ -195,6 +197,7 @@ class CurrentRoundView(LoginRequiredMixin,
 
         return {
             'data': data,
+            'total': total,
             'schools': School.objects.all().order_by('name'),
             'languages': Language.objects.all(),
             'locations': Location.objects.filter(type_id=2),
