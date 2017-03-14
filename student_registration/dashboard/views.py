@@ -113,7 +113,7 @@ class Registrations2ndShiftView(LoginRequiredMixin,
     Provides the registration page with lookup types in the context
     """
     model = Enrollment
-    queryset = Enrollment.objects.exclude(deleted=True)
+    queryset = Enrollment.objects.exclude(deleted=True).exclude(dropout_status=True)
     template_name = 'dashboard/registrations-2ndshift.html'
 
     group_required = [u"MEHE"]
@@ -124,6 +124,7 @@ class Registrations2ndShiftView(LoginRequiredMixin,
         return HttpResponseForbidden()
 
     def get_context_data(self, **kwargs):
+
         # children by governate || get the governettes and get the number of children for each, and put them in a dictionary
         # Also schools by governate
         governorates = Location.objects.exclude(parent__isnull=False)
