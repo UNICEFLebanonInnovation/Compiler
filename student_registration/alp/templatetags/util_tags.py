@@ -97,3 +97,10 @@ def is_current_page(request, url_name):
 @register.filter(name='multiply')
 def multiply(value, arg):
     return value*arg
+
+
+@register.filter(name='percentage')
+def percentage(number, total):
+    if number:
+        return round((number*100)/total)
+    return 0
