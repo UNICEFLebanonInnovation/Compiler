@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Registration, RegisteringAdult, WaitingList, Complaint, Payment , HouseholdNotFound
+from .models import Registration, RegisteringAdult, WaitingList, Complaint, Payment , HouseholdNotFound, ComplaintCategory
 from student_registration.students.serializers import StudentSerializer
 
 
@@ -421,6 +421,7 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'no_logner_eligible_reason_name',
             'no_logner_eligible_reason',
             'no_logner_eligible_specify',
+            'no_logner_eligible_comment',
             'complaints',
             'payments'
         )
@@ -455,3 +456,20 @@ class WaitingListSerializer(serializers.ModelSerializer):
             'owner',
         )
 
+
+
+
+
+
+class ComplaintCategorySerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField(read_only=True)
+    complaints = ComplaintSerializer(many=True, read_only=True)
+
+
+    class Meta:
+        model = ComplaintCategory
+        fields = (
+            'id',
+            'complaints'
+        )
