@@ -14,6 +14,7 @@ from student_registration.schools.models import (
     School,
 )
 from student_registration.locations.models import Location
+from student_registration.attendances.tasks import set_app_attendances
 
 
 class EnrollmentResource(resources.ModelResource):
@@ -161,6 +162,8 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'owner__username',
     )
 
+    actions = ('push_attendances',)
+
     def get_queryset(self, request):
         qs = super(EnrollmentAdmin, self).get_queryset(request)
         return qs.exclude(deleted=True)
@@ -174,6 +177,11 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         if obj.school and obj.school.location and obj.school.location.parent:
             return obj.school.location.parent.name
         return ''
+
+    def push_attendances(self, request, queryset):
+        if 'school__id__exact' in request.GET:
+            school = School.objects.get(id=request.GET['school__id__exact'])
+            set_app_attendances(school_number=school.number)
 
 
 admin.site.register(Enrollment, EnrollmentAdmin)
