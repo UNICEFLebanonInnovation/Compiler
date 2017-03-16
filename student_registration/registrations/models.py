@@ -70,6 +70,11 @@ class ComplaintCategory(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def complaint_count(self):
+        return int(self.complaints.all().count())
+
+
 class NotEligibleReason(models.Model):
     name = models.CharField(max_length=64L, unique=True)
 
@@ -190,6 +195,7 @@ class RegisteringAdult(Person):
         related_name='+',
     )
     no_logner_eligible_specify = models.CharField(max_length=50, blank=True, null=True)
+    no_logner_eligible_comment = models.CharField(max_length=50, blank=True, null=True)
     update_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
