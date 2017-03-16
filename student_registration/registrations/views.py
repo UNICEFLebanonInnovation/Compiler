@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-
 from django.http import Http404
 from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -63,7 +62,8 @@ from .serializers import (
     ClassAssignmentSerializer,
     WaitingListSerializer,
     ComplaintSerializer,
-    HouseholdNotFoundSerializer
+    HouseholdNotFoundSerializer,
+    ComplaintCategorySerializer
 )
 from .utils import get_unhcr_principal_applicant
 
@@ -249,6 +249,19 @@ class RegisteringComplaintViewSet(mixins.RetrieveModelMixin,
     def put(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
+
+class RegisteringComplaintCategoryViewSet(mixins.RetrieveModelMixin,
+                                  mixins.ListModelMixin,
+                                  mixins.CreateModelMixin,
+                                  mixins.UpdateModelMixin,
+                                  viewsets.GenericViewSet):
+
+    model = ComplaintCategory
+    queryset = ComplaintCategory.objects.all()
+    serializer_class = ComplaintCategorySerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
 class RegisteringNotFoundViewSet(mixins.RetrieveModelMixin,
                                   mixins.ListModelMixin,
                                   mixins.CreateModelMixin,
@@ -402,6 +415,73 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'not_found_complaint_types': not_found_complaint_types,
                 'not_eligible_reason': not_eligible_reason
             }
+
+class ComplaintCategoryListSearchView(LoginRequiredMixin, TemplateView):
+
+    model = ComplaintCategory
+    template_name = 'registration-pilot/compalints-search.html'
+
+    def get_context_data(self, **kwargs):
+
+        data = []
+
+        data = self.model.objects.order_by('complaint_type')
+        complaintStatistics = []
+        complaintStatisticsTotal = ComplaintStatistics()
+        complaintStatisticsTotal.Name = 'TOTAL'
+        complaintStatisticsTotal.Statistics = 0
+
+        for record in data:
+            complaintStatisticsRecord = ComplaintStatistics()
+            complaintStatisticsRecord.ID = record.id
+            complaintStatisticsRecord.Name = record.name
+            complaintStatisticsRecord.complaint_type = record.complaint_type
+            complaintStatisticsRecord.Statistics = record.complaint_count
+            complaintStatistics.append(complaintStatisticsRecord)
+            complaintStatisticsTotal.Statistics += complaintStatisticsRecord.Statistics
+
+        students=[]
+        school_changed_to_verify = []
+
+        school_changed_to_verify = ComplaintStatistics()
+        school_changed_to_verify.complaint_type = 'Update'
+        school_changed_to_verify.Name = 'Change of school'
+        school_changed_to_verify.Statistics = 0
+
+        students = Registration.objects.filter(school_changed_to_verify__isnull=False).order_by('id')
+        for student in students:
+            school_changed_to_verify.Statistics += 1
+        complaintStatisticsTotal.Statistics += school_changed_to_verify.Statistics
+
+        beneficiaries=[]
+        beneficiary_changed_verify = []
+
+        beneficiary_changed_verify = ComplaintStatistics()
+        beneficiary_changed_verify.complaint_type = 'Update'
+        beneficiary_changed_verify.Name = 'Change of benefeciary'
+        beneficiary_changed_verify.Statistics = 0
+
+        beneficiaries = RegisteringAdult.objects.filter(beneficiary_changed_verify=True).order_by('id')
+        for beneficiary in beneficiaries:
+            beneficiary_changed_verify.Statistics += 1
+        complaintStatisticsTotal.Statistics += beneficiary_changed_verify.Statistics
+
+        return {
+            'complaints': complaintStatistics,
+            'school_changed_to_verify': school_changed_to_verify,
+            'beneficiary_changed_verify':beneficiary_changed_verify,
+            'total': complaintStatisticsTotal
+        }
+
+class ComplaintStatistics:
+
+    def __init__(self, *args, **kwargs):
+
+        self.ID = None
+        self.Name = ''
+        self.complaint_type = ''
+        self.Statistics = 0
+
 
 
 class SchoolApprovalListView(LoginRequiredMixin, TemplateView):
