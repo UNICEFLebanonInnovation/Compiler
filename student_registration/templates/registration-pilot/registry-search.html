@@ -538,6 +538,7 @@
                             }
 
                          $("#not_eligible_reason_specify").val(household.no_logner_eligible_specify);
+                         $("#no_logner_eligible_comment").val(household.no_logner_eligible_comment);
 
 
                          $("#hhAddess").text(household.address);
@@ -1014,6 +1015,7 @@
               houseHoldData.no_logner_eligible = true;
               houseHoldData.no_logner_eligible_reason = $("#not_eligible_select").val();
               houseHoldData.no_logner_eligible_specify = $("#not_eligible_reason_specify").val();
+              houseHoldData.no_logner_eligible_comment = $("#no_logner_eligible_comment").val();
           }
           $.ajax
           (
