@@ -6,6 +6,7 @@
 {% block extra_head %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
     <style>
@@ -58,6 +59,7 @@
                                     <li><b>{{ location }}</b></li>
                                     <li><b>{{ location_parent }}</b></li>
                                     <li><input type="text" id="search_old_student" size="300" style="width: 200px;" placeholder="{% trans "Search an old student" %}" /></li>
+{#                                    <li><input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search student" %}" /></li>#}
                               </ol>
                           </div>
                           <div class="panel-heading" style="position: absolute; top:50px;" id="header">
@@ -240,10 +242,6 @@
                 CONFIRM : '{% trans "Confirm" %}'
             });
             bootbox.setLocale(language);
-
-{#            $('input#search').quicksearch('table tbody tr', {#}
-{#                selector: 'span'#}
-{#            });#}
 
             $(document).on('blur', arabic_fields, function(){
                 checkArabicOnly($(this));
@@ -466,6 +464,23 @@
             };
 
         });
+
+{#        function init_quicksearch()#}
+{#        {#}
+{#            $('input#search').quicksearch('table tbody tr', {#}
+{#                'selector': 'td',#}
+{#                'stripeRows': ['odd', 'even'],#}
+{#                'loader': '.loader',#}
+{#                'noResults': 'tr#noresults',#}
+{#                'bind': 'keyup keydown',#}
+{#                'onBefore': function () {#}
+{#                    console.log('on before');#}
+{#                },#}
+{#                'onAfter': function () {#}
+{#                    console.log('on after');#}
+{#                }#}
+{#            });#}
+{#        }#}
 
         function create_item_store_default_keys()
         {
