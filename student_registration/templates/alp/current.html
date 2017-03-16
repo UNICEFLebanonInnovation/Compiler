@@ -5,7 +5,8 @@
 
 {% block extra_head %}
 
-{#    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">#}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
     <style>
@@ -46,7 +47,7 @@
             <div class="row">
                 <div class="alert alert-success" role="alert" id="alert-synchro-success" style="display: none;"><strong>{% trans 'Well done' %}</strong> {% trans 'Synchronization success' %}</div>
                 <div class="alert alert-warning" role="alert" id="alert-synchro-warning" style="display: none;"><strong>{% trans 'Warning' %}</strong> {% trans 'Please check fill required field' %}</div>
-                <div class="alert alert-danger" role="alert" id="alert-connection" style="display: none;">{% trans 'Please check you internet connectivity' %}</div>
+                <div class="alert alert-danger" role="alert" id="alert-connection" style="display: none;">{% trans 'Please check your internet connectivity' %}</div>
             </div>
             <div class="row">
                     <div class="col-md-12">
@@ -58,6 +59,7 @@
                                     <li><b>{{ location }}</b></li>
                                     <li><b>{{ location_parent }}</b></li>
                                     <li><input type="text" id="search_old_student" size="300" style="width: 200px;" placeholder="{% trans "Search an old student" %}" /></li>
+{#                                    <li><input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search student" %}" /></li>#}
                               </ol>
                           </div>
                           <div class="panel-heading" style="position: absolute; top:50px;" id="header">
@@ -77,14 +79,21 @@
                                     </a>
                                 </li>
                                     <li>
-                                        <select name="level" id="filter_class" class="col-200">
-                                            <option value="0">{% trans "Filter by Class" %}</option>
-                                            {% for item in education_levels %}
+                                        <label><b>{% trans "Filter by" %}</b></label>
+                                        <select name="assignedlevel" id="filter_assignedlevel" class="col-120">
+                                            <option value="0">{% trans "Filter by assigned level" %}</option>
+                                            {% for item in informal_educations %}
                                                 <option value="{{ item.id }}">{{ item.name }}</option>
                                             {% endfor %}
                                         </select>
-                                        <select name="section" id="filter_section" class="col-200">
-                                            <option value="0">{% trans "Filter by Section" %}</option>
+                                        <select name="level" id="filter_class" class="col-120">
+                                            <option value="0">{% trans "Filter by current level" %}</option>
+                                            {% for item in informal_educations %}
+                                                <option value="{{ item.id }}">{{ item.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <select name="section" id="filter_section" class="col-120">
+                                            <option value="0">{% trans "Filter by current section" %}</option>
                                             {% for item in sections %}
                                                 <option value="{{ item.id }}">{{ item.name }}</option>
                                             {% endfor %}
@@ -180,7 +189,7 @@
 
     {% get_user_token request.user.id as user_token %}
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
-{#    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>#}
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
@@ -202,11 +211,14 @@
         var alp_round = '{{ alp_round }}';
         var school = '{{ school_id }}';
         var rows = 1;
+        var limit = 100;
+        var offset = 0;
+        var total = {{ total }};
+        var filter_on = false;
         var synchro_result = true;
         var prototype = $('#registration_prototype');
         var prototype_view = $('#registration_view_prototype');
         var table = $('#registrations-table');
-        var filterSchools = false;
         var protocol = 'http://';
         {% if request.is_secure %}
             protocol = 'https://';
@@ -219,6 +231,9 @@
         $(document).ready(function(){
 
             $('#search_old_student').val('');
+            $('#filter_class').val(0);
+            $('#filter_section').val(0);
+            $('#filter_assignedlevel').val(0);
             createStores();
 
             bootbox.addLocale(language, {
@@ -227,10 +242,6 @@
                 CONFIRM : '{% trans "Confirm" %}'
             });
             bootbox.setLocale(language);
-
-{#            $('input#search').quicksearch('table tbody tr', {#}
-{#                selector: 'span'#}
-{#            });#}
 
             $(document).on('blur', arabic_fields, function(){
                 checkArabicOnly($(this));
@@ -264,11 +275,33 @@
                 }
             });
 
+            $(document).on('click', '#filter_go', function(){
+                filter_on = true;
+                $(".loader").show();
+                var classroom = $('#filter_class').val();
+                var section = $('#filter_section').val();
+                var assigned_level = $('#filter_assignedlevel').val();
+
+                if(assigned_level != 0) {
+                    filterByAssignedLevel(assigned_level);
+                }else if((classroom != 0 && section != 0) || classroom != 0){
+                    filterByClass(classroom, section);
+                }else{
+                    filter_on = false;
+                    $(".loader").hide();
+                }
+            });
+
             $(document).on('click', '#filter_cancel', function(){
-                $('.registration-line').show();
+                filter_on = false;
+                incremental_id = 1;
+                offset = 0;
+                limit = 100;
+                build_datatable();
                 $('#filter_class').val(0);
                 $('#filter_section').val(0);
-                $('tbody').find('tr').removeClass('highlighted');
+                $('#filter_assignedlevel').val(0);
+                $('#loader').hide();
             });
 
             $(document).on('click', 'tbody tr', function(){
@@ -283,17 +316,33 @@
                 }else{
                     $('#header').css({'right': -l});
                 }
+
+                if($(window).scrollTop() == $(document).height() - $(window).height()){
+                    if(filter_on == true){
+                        return false;
+                    }
+                    var total_records = $('#registrations-table').find('tr.registration-line').length;
+                    if(total_records < total) {
+                        offset = limit;
+                        limit = limit + 100;
+                        $('#load_more_data').hide();
+                        $(".loader").show();
+                        build_datatable();
+                    }else{
+                        $(".loader").hide();
+                    }
+                }
             });
 
             $(document).on('click', '#add_datatable_line', function(){
                 var item = create_item_store_default_keys();
                 add_to_store(item);
                 scrollToBottom();
-                $('#filter_cancel').trigger('click');
+                //$('#filter_cancel').trigger('click');
             });
 
             $(document).on('click', '#add_defined_lines', function(){
-                bootbox.prompt("{% trans 'Please enter extra column name' %}", function(result) {
+                bootbox.prompt("{% trans 'Please enter the number of lines' %}", function(result) {
                     if (result === null) {
                     } else {
                         var number = parseInt(result);
@@ -352,7 +401,7 @@
             $(document).on('click', '#registration-synchro', function(){
                 synchro_result = true;
                 $('.alert').hide();
-                if(navigator.onLine == false) {
+                if(navigator.onLine) {
                     $(".loader").show();
                     synchronize_data(true);
                 }else{
@@ -361,7 +410,7 @@
             });
 
             $(document).on('click', '#registration-download', function(){
-                if(navigator.onLine == false) {
+                if(navigator.onLine) {
                     incremental_id = 0;
                     offset = 0;
                     limit = 100;
@@ -393,6 +442,7 @@
               },
               minLength: 3,
               select: function( event, ui ) {
+                  $("#search_old_student").val('');
                   add_external_record(ui.item);
                   return false;
               }
@@ -408,12 +458,29 @@
                   return $( "<li>" )
                     .append( "<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_birthday + ") "
                                    + "<br>" + '{% trans "Last year situation" %}: ' + item.registered_in_level_name + " / " + item.section_name
-                                   + "<br>" + '{% trans "Referred to level" %}: ' + " / " + item.referred_to_level_name
+                                   + "<br>" + '{% trans "Referred to level" %}: ' + " / " + item.refer_to_level_name
                                    + "</div>" )
                     .appendTo( ul );
             };
 
         });
+
+{#        function init_quicksearch()#}
+{#        {#}
+{#            $('input#search').quicksearch('table tbody tr', {#}
+{#                'selector': 'td',#}
+{#                'stripeRows': ['odd', 'even'],#}
+{#                'loader': '.loader',#}
+{#                'noResults': 'tr#noresults',#}
+{#                'bind': 'keyup keydown',#}
+{#                'onBefore': function () {#}
+{#                    console.log('on before');#}
+{#                },#}
+{#                'onAfter': function () {#}
+{#                    console.log('on after');#}
+{#                }#}
+{#            });#}
+{#        }#}
 
         function create_item_store_default_keys()
         {
@@ -433,11 +500,7 @@
                 if($(field).attr('data-name')) {
                     item[$(field).attr('data-name')] = '';
                 }else{
-                    if(filterSchools == true){
-                        item[$(field).attr('name')] = $(field).val();
-                    }else{
-                        item[$(field).attr('name')] = '';
-                    }
+                    item[$(field).attr('name')] = '';
                 }
             });
 
@@ -452,6 +515,53 @@
             rows = rows + 1;
         }
 
+        function filterByAssignedLevel(level)
+        {
+            var store = getStoreByName('registrations');
+            var index = store.index("assigned_to_level");
+            var request = index.getAll(parseInt(level));
+
+            request.onsuccess = function() {
+                var result = request.result;
+                reBuildTable(result);
+            }
+        }
+
+        function filterByClass(classroom, section)
+        {
+            var store = getStoreByName('registrations');
+            if(section != 0) {
+                var index = store.index("registered_in_levelAndSection");
+                var request = index.getAll([parseInt(classroom), parseInt(section)]);
+            }else{
+                var index = store.index("registered_in_level");
+                var request = index.getAll(parseInt(classroom));
+            }
+
+            request.onsuccess = function() {
+                var result = request.result;
+                reBuildTable(result);
+            }
+        }
+
+        function reBuildTable(data)
+        {
+            incremental_id = 0;
+            $('#registrations-table').find('.registration-line').remove();
+            $(data).each(function(i, item){
+                if(item.deleted == false){
+                    $(".loader").show();
+                    if(item.owner == user_id){
+                        add_table_newline(item.id, prototype, table);
+                    }else{
+                        add_table_newline(item.id, prototype_view, table);
+                    }
+                    add_fill_line_data(item);
+                    $(".loader").hide();
+                }
+            });
+        }
+
         function build_datatable()
         {
             var store = getStoreByName('registrations');
@@ -460,7 +570,7 @@
                 var result = request.result;
                 $(result).each(function(i, item){
                     rows = item.id;
-                    if(item.deleted == false){
+                    if(item.deleted == false && i >= offset && i < limit){
                         if(item.owner == user_id){
                             add_table_newline(item.id, prototype, table);
                         }else{
@@ -697,6 +807,7 @@
                     item.student_nationality = item.student_nationality_id;
                     item.student_mother_nationality = item.student_mother_nationality_id;
                     item.student_id_type = item.student_id_type_id;
+                    item.alp_round = alp_round;
 
                     item.last_education_level = item.last_education_level_id;
                     item.last_informal_edu_level = item.last_informal_edu_level_id;
@@ -719,9 +830,7 @@
 
         function pull_registration_record(itemid)
         {
-            //18302
-            //1243156
-            $.ajax({
+           return $.ajax({
                 type: "GET",
                 url: synchro_path+'?id='+itemid,
                 cache: false,
@@ -729,7 +838,6 @@
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
-                    console.log(response);
                     add_external_record(response[0])
                 },
                 error: function(response) {
@@ -763,9 +871,13 @@
                     var store = db.createObjectStore("registrations", {keyPath: "id", autoIncrement:true});
                     store.createIndex('original_id', 'original_id');
                     store.createIndex('student_id', 'student_id');
+
                     store.createIndex('level', 'level');
+                    store.createIndex('assigned_to_level', 'assigned_to_level');
+
+                    store.createIndex('registered_in_level', 'registered_in_level');
                     store.createIndex('section', 'section');
-                    store.createIndex('levelAndSection', ['level', 'section']);
+                    store.createIndex('registered_in_levelAndSection', ['registered_in_level', 'section']);
 
                     var profile_store = db.createObjectStore("user", {keyPath: "id"});
                     profile_store.put({id: user_id, username: user_username, email: user_email});
