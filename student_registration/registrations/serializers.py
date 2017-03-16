@@ -465,11 +465,11 @@ class ComplaintCategorySerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
     complaints = ComplaintSerializer(many=True, read_only=True)
-
-
     class Meta:
         model = ComplaintCategory
         fields = (
             'id',
+            'name',
+            'complaint_type',
             'complaints'
         )

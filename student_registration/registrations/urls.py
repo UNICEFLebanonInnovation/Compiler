@@ -31,4 +31,9 @@ urlpatterns = [
         view=views.SchoolApprovalListView.as_view(),
         name='list_school_modification'
     ),
+    url(
+        regex=r'^complaints-search/$',
+        view=views.ComplaintCategoryListSearchView.as_view(),
+        name='complaints_search'
+    ),
 ]
