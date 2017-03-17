@@ -11,6 +11,9 @@
   <link rel="stylesheet" type="text/css" href="{% static 'css/sly.css' %}"
           xmlns:font-weight="http://www.w3.org/1999/xhtml" xmlns:font-weight="http://www.w3.org/1999/xhtml">
 
+    <link rel="stylesheet" type="text/css" href="{% static 'css/toggle-switch.css' %}"
+          xmlns:font-weight="http://www.w3.org/1999/xhtml" xmlns:font-weight="http://www.w3.org/1999/xhtml">
+
 
     <style>
         .row-class {
@@ -34,6 +37,9 @@
         }
 
     </style>
+
+<script type="text/javascript" src="{% static 'js/registration-pilot/UI/coffee-script.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/registration-pilot/UI/ect.min.js' %}"></script>
 
 {% endblock %}
 
@@ -89,7 +95,7 @@
                                 </thead>
                                 <tbody>
                                 {% for complaint in complaints %}
-                                    <tr class="row-class" complaintID="{{ complaint.ID }}">
+                                    <tr class="row-class" complaintID="{{ complaint.ID }}" complaint_type="{{ complaint.complaint_type }}">
                                         <td>{{ complaint.complaint_type }}</td>
                                         <td>{{ complaint.Name }}</td>
                                         <td>{{ complaint.Statistics }}</td>
@@ -141,7 +147,7 @@
              <button class="btn btn-warning" type="button" id="CloseButton" style="float:left;">
               {% trans "Cancel" %}
             </button>
-            <button class="btn btn-primary" type="button" id="SaveButton" style="float:left; " >
+            <button class="btn btn-primary" type="button" id="SaveButton" style="float:right; " >
               {% trans "Save" %}
             </button>
          </div>
@@ -174,6 +180,25 @@
     <div id = "hhNotFoundForm" style ="display:none">
        {% include 'registration-pilot/household-not-found.html' %}
      </div>
+
+    <div id = "acceptRejectToggle">
+
+
+        <div class="switch-toggle switch-3 switch-candy" style = "width:220px">
+
+            <input id="on" name="state-d" type="radio" checked="" >
+            <label for="on" onclick="">Accept</label> </input>
+
+            <input id="na" name="state-d" type="radio" checked="checked">
+                <label for="na" onclick="">-</label> </input>
+
+            <input id="off" name="state-d" type="radio">
+            <label for="off" onclick="">Reject</label> </input>
+
+            <a></a>
+        </div>
+
+    </div>
 
 {% endblock %}
 
@@ -224,8 +249,10 @@
                  {
                     block = $(this);
                     complaintID = block.attr('complaintID');
+                     complaint_type = block.attr('complaint_type');
+                     //alert(complaint_type);
 
-                    LoadData(complaintID);
+                    LoadData(complaintID , complaint_type );
 
                      hideForms();
                      $("#editComplaintForm").show();
@@ -282,7 +309,7 @@
       var householdRecord = null;
 
 
-      function LoadData(complaintCategoryID)
+      function LoadData(complaintCategoryID , complaint_type)
       {
          $.ajax({
                      type: "GET",
@@ -300,7 +327,7 @@
                          for(complaintIndex in complaintCategory.complaints)
                          {
                             var complaint = complaintCategory.complaints[complaintIndex];
-                            AddComplaintRow(complaint);
+                            AddComplaintRow(complaint, complaint_type);
                          }
 
                      },
@@ -310,6 +337,93 @@
                      }
                  });
       }
+
+
+            function AddComplaintRow(entry, complaint_type)
+            {
+                var idCell = "<td style = 'display:none;'>"+entry.complaint_id +"</td>";
+                var adultCell =  "<td>"+entry.adult_first_name + ' ' + entry.adult_father_name + ' ' + entry.adult_last_name+"</td>";
+                var adultIDCell =  "<td>"+entry.adult_id_number +"</td>";
+                var noteCell =  "<td>"+entry.complaint_note +"</td>";
+                var dateCell =  "<td>"+entry.created +"</td>";
+
+{#                     var oldSchoolCell = "<td>"+entry.complaint_type +"</td>";#}
+{#                     var newSchoolCell = "<td>"+entry.complaint_type +"</td>";#}
+
+
+
+                 if(complaint_type= 'Bank') {
+                     var bankDateCell =  "<td>"+entry.complaint_bank_date_of_incident +"</td>";
+                     var phoneCell =  "<td>"+entry.complaint_bank_phone_used +"</td>";
+                     var serviceCell =  "<td>"+entry.complaint_bank_service_requested +"</td>";
+
+                     $("#complaints-table tbody").append
+                     (
+                         "<tr>"+idCell+adultIDCell+adultCell+phoneCell+dateCell+bankDateCell+serviceCell+noteCell+"</tr>"
+                     );
+                 }
+                 else if(complaint_type= 'Card'){
+
+                     var phoneCell =  "<td>"+entry.adult_primary_phone +"</td>";
+                     $("#complaints-table tbody").append
+                     (
+                         "<tr>"+idCell+adultIDCell+adultCell+dateCell+phoneCell+"</tr>"
+                     );
+
+                 }
+                 else if(complaint_type = 'Card Distribution'){
+                     var phoneCell =  "<td>"+entry.adult_primary_phone +"</td>";
+                     $("#complaints-table tbody").append
+                     (
+                         "<tr>"+idCell+adultIDCell+adultCell+dateCell+phoneCell+noteCell+"</tr>"
+                     );
+
+                 }
+                 else if(complaint_type = 'Payment') {
+                     var phoneCell =  "<td>"+entry.adult_primary_phone +"</td>";
+
+                     $("#complaints-table tbody").append
+                     (
+                         "<tr>"+idCell+adultIDCell+adultCell+noteCell+dateCell+"</tr>"
+                     );
+
+                 }
+                 else if(complaint_type = 'Reinstate Beneficiary') {
+
+                     var phoneCell =  "<td>"+entry.adult_primary_phone +"</td>";
+
+                     $("#complaints-table tbody").append
+                     (
+                         "<tr>"+idCell+adultIDCell+adultCell+noteCell+dateCell+"</tr>"
+                     );
+
+                 }
+                 else if(complaint_type = 'School Related') {
+
+                     var phoneCell =  "<td>"+entry.adult_primary_phone +"</td>";
+                     var studentCell =  "<td>"+entry.student_first_name + ' ' + entry.student_father_name + ' ' + entry.student_last_name+"</td>";
+
+
+                     $("#complaints-table tbody").append
+                     (
+                         "<tr>"+idCell+adultIDCell+adultCell+phoneCell+dateCell+noteCell+studentCell+"</tr>"
+                     );
+                 }
+                 else if(complaint_type = 'Not Found') {
+                     var notFoundNameCell =  "<td>"+entry.not_found_first_name + ' ' + entry.not_found_father_name + ' ' + entry.not_found_last_name+"</td>";
+                     var notFoundIDCell =  "<td>"+entry.not_found_id_number +"</td>";
+
+                     $("#complaints-table tbody").append
+                     (
+                         "<tr>"+idCell+notFoundIDCell+notFoundNameCell+phoneCell+dateCell+noteCell+studentCell+"</tr>"
+                     );
+
+                 }
+                 else if(complaint_type = 'Other') {
+
+                 }
+
+            }
 
       function updateDropDownValue(dropDownElement, value)
       {
