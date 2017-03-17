@@ -38,6 +38,16 @@ class ALPRound(models.Model):
         return self.name
 
 
+class OutreachManager(models.Manager):
+    def get_queryset(self):
+        return super(OutreachManager, self).get_queryset().exclude(deleted=True).exclude(dropout_status=True)
+
+
+class OutreachDropoutManager(models.Manager):
+    def get_queryset(self):
+        return super(OutreachDropoutManager, self).get_queryset().exclude(deleted=True).filter(dropout_status=True)
+
+
 class Outreach(TimeStampedModel):
 
     EAV_TYPE = 'outreach'
@@ -325,6 +335,10 @@ class Outreach(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
+    dropout_status = models.BooleanField(blank=True, default=False)
+
+    objects = OutreachManager()
+    drop_objects = OutreachDropoutManager()
 
     class Meta:
         ordering = ['id']
