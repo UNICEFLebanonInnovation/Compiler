@@ -70,6 +70,21 @@ class ComplaintCategory(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def complaint_count(self):
+        return int(self.complaints.all().count())
+
+
+class NotEligibleReason(models.Model):
+    name = models.CharField(max_length=64L, unique=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Main Reason'
+
+    def __unicode__(self):
+        return self.name
+
 
 class RegisteringAdult(Person):
     """
@@ -173,12 +188,19 @@ class RegisteringAdult(Person):
     duplicate_card_first_card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
     duplicate_card_second_card_case_number = models.CharField(max_length=50, blank=True, null=True)
     duplicate_card_secondcard_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
+    no_logner_eligible = models.BooleanField(default=False)
+    no_logner_eligible_reason = models.ForeignKey(
+        NotEligibleReason,
+        blank=True, null=True,
+        related_name='+',
+    )
+    no_logner_eligible_specify = models.CharField(max_length=50, blank=True, null=True)
+    no_logner_eligible_comment = models.CharField(max_length=50, blank=True, null=True)
     update_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
     )
-
 
     @property
     def case_number(self):
