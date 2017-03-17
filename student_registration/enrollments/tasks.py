@@ -118,3 +118,29 @@ def generate_2ndshift_report(school=0, location=0, email=None, user=None):
     file_object = open("enrolment_data_120000_180000.xls", "w")
     file_object.write(file_format.export_data(data))
     file_object.close()
+
+
+@app.task
+def track_student_moves():
+
+    from student_registration.enrollments.models import Enrollment
+    from student_registration.enrollments.models import StudentMove
+
+    registrations = Enrollment.objects.order_by('created')
+
+    for registry in registrations:
+        student = registry.student
+        match_records = Enrollment.objects.exclude(school_id=registry.school_id).filter(
+            Q(student__number=student.number) |
+            Q(student__number_part1=student.number_part1)
+              # Q(student__number_part2=student.number_part2)
+        )
+        # match_records = Enrollment.objects.exclude(school_id=registry.school_id).exclude(deleted=True).filter(
+        #     created__gt=registry.created,
+        #     student__number=student.number
+        # )
+
+        if len(match_records):
+            print match_records
+            for item in match_records:
+                StudentMove.objects.get_or_create(enrolment1=registry, enrolment2=item, school1=registry.school, school2=item.school)

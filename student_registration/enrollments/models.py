@@ -246,3 +246,38 @@ class Enrollment(TimeStampedModel):
 
     def __unicode__(self):
         return self.student.__unicode__()
+
+
+class StudentMove(models.Model):
+
+    enrolment1 = models.ForeignKey(
+        Enrollment,
+        blank=False, null=False,
+        related_name='+',
+        verbose_name='Student name',
+    )
+    enrolment2 = models.ForeignKey(
+        Enrollment,
+        blank=False, null=False,
+        related_name='+',
+        verbose_name='Student name',
+    )
+    school1 = models.ForeignKey(
+        School,
+        blank=False, null=False,
+        related_name='+',
+        verbose_name='From school',
+    )
+    school2 = models.ForeignKey(
+        School,
+        blank=False, null=False,
+        related_name='+',
+        verbose_name='To school',
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Student move"
+
+    def __unicode__(self):
+        return str(self.id)
