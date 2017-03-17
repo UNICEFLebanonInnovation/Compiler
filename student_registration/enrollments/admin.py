@@ -184,6 +184,17 @@ class EnrollmentAdmin(ImportExportModelAdmin):
             set_app_attendances.delay(school_number=school.number)
 
 
+class Dropout(Enrollment):
+    class Meta:
+        proxy = True
+
+
+class DropoutAdmin(EnrollmentAdmin):
+
+    def get_queryset(self, request):
+        return Enrollment.drop_objects.all()
+
+
 class StudentMoveResource(resources.ModelResource):
 
     class Meta:
@@ -208,4 +219,5 @@ class StudentMoveAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(Enrollment, EnrollmentAdmin)
+admin.site.register(Dropout, DropoutAdmin)
 admin.site.register(StudentMove, StudentMoveAdmin)
