@@ -115,12 +115,22 @@ class ComplaintSerializer(serializers.ModelSerializer):
     complaint_id = serializers.IntegerField(source='id', read_only=True)
     complaint_type = serializers.CharField(source='complaint_category.complaint_type', read_only=True)
     complaint_category_name = serializers.CharField(source='complaint_category.name', read_only=True)
-    complaint_student_first_name = serializers.CharField(source='complaint_student_refused_entrance.first_name',
-                                                         read_only=True)
-    complaint_student_father_name = serializers.CharField(source='complaint_student_refused_entrance.father_name',
-                                                          read_only=True)
-    complaint_student_last_name = serializers.CharField(source='complaint_student_refused_entrance.last_name',
-                                                        read_only=True)
+
+    adult_first_name = serializers.CharField(source='complaint_adult.first_name', read_only=True)
+    adult_father_name = serializers.CharField(source='complaint_adult.father_name', read_only=True)
+    adult_last_name = serializers.CharField(source='complaint_adult.last_name', read_only=True)
+    adult_id_number = serializers.CharField(source='complaint_adult.id_number', read_only=True)
+    adult_primary_phone = serializers.CharField(source='complaint_adult.primary_phone', read_only=True)
+    student_first_name = serializers.CharField(source='complaint_student_refused_entrance.first_name', read_only=True)
+    student_father_name = serializers.CharField(source='complaint_student_refused_entrance.father_name', read_only=True)
+    student_last_name = serializers.CharField(source='complaint_student_refused_entrance.last_name', read_only=True)
+
+    not_found_first_name = serializers.CharField(source='household_not_found.first_name', read_only=True)
+    not_found_father_name = serializers.CharField(source='household_not_found.father_name', read_only=True)
+    not_found_last_name = serializers.CharField(source='household_not_found.last_name', read_only=True)
+    not_found_id_number = serializers.CharField(source='household_not_found.id_number', read_only=True)
+    not_found_primary_phone = serializers.CharField(source='household_not_found.primary_phone', read_only=True)
+
 
     class Meta:
         model = Complaint
@@ -141,11 +151,21 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'complaint_bank_phone_used',
             'complaint_bank_service_requested',
             'complaint_student_refused_entrance',
-            'complaint_student_first_name',
-            'complaint_student_father_name',
-            'complaint_student_last_name',
+            'student_first_name',
+            'student_father_name',
+            'student_last_name',
             'complaint_Other_type_specify',
             'household_not_found',
+            'adult_first_name',
+            'adult_father_name',
+            'adult_last_name',
+            'adult_id_number',
+            'adult_primary_phone',
+            'not_found_first_name',
+            'not_found_father_name',
+            'not_found_last_name',
+            'not_found_id_number',
+            'not_found_primary_phone',
             'owner'
         )
 class HouseholdNotFoundSerializer(serializers.ModelSerializer):
