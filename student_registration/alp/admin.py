@@ -310,6 +310,7 @@ class OutreachAdmin(ImportExportModelAdmin):
         'school',
         'caza',
         'governorate',
+        'alp_round',
         'level',
         'total',
         'assigned_to_level',
