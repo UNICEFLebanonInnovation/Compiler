@@ -20,6 +20,7 @@ from student_registration.users.models import User
 from student_registration.students.models import Student
 from django.db.models import Q
 from django.db.models import Sum
+from student_registration.attendances.tasks import set_app_attendances
 
 
 class OutreachResource(resources.ModelResource):
@@ -504,6 +505,8 @@ class CurrentRoundAdmin(OutreachAdmin):
         'modified',
     )
 
+    actions = ('push_attendances',)
+
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_round=True)
         qs = super(CurrentRoundAdmin, self).get_queryset(request)
@@ -511,6 +514,11 @@ class CurrentRoundAdmin(OutreachAdmin):
             alp_round=alp_round,
             registered_in_level__isnull=False,
         )
+
+    def push_attendances(self, request, queryset):
+        if 'school__id__exact' in request.GET:
+            school = School.objects.get(id=request.GET['school__id__exact'])
+            set_app_attendances.delay(school_number=school.number, school_type='alp')
 
 
 class PostTest(Outreach):
