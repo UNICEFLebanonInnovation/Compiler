@@ -181,7 +181,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
     def push_attendances(self, request, queryset):
         if 'school__id__exact' in request.GET:
             school = School.objects.get(id=request.GET['school__id__exact'])
-            set_app_attendances(school_number=school.number)
+            set_app_attendances.delay(school_number=school.number)
 
 
 admin.site.register(Enrollment, EnrollmentAdmin)
