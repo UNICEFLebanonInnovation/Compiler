@@ -287,11 +287,12 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
 
     def dropout(self, request, queryset):
         queryset.update(dropout_status=True)
-        student = queryset.first().student
-        enrollment = student.student_enrollment.first()
-        if enrollment:
-            enrollment.dropout_status = True
-            enrollment.save()
+        for obj in queryset:
+            student = obj.student
+            enrollment = student.student_enrollment.first()
+            if enrollment:
+                enrollment.dropout_status = True
+                enrollment.save()
 
 
 admin.site.register(BySchoolByDay, BySchoolByDayAdmin)

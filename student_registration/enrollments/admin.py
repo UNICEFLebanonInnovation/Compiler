@@ -163,7 +163,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
 
     def get_queryset(self, request):
         qs = super(EnrollmentAdmin, self).get_queryset(request)
-        return qs.exclude(deleted=True).exclude(dropout_status=True)
+        return qs
 
     def caza(self, obj):
         if obj.school and obj.school.location:
@@ -184,7 +184,7 @@ class Dropout(Enrollment):
 class DropoutAdmin(EnrollmentAdmin):
 
     def get_queryset(self, request):
-        return Enrollment.objects.filter(dropout_status=True)
+        return Enrollment.drop_objects.all()
 
 
 admin.site.register(Enrollment, EnrollmentAdmin)
