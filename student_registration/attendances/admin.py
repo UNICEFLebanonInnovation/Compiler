@@ -218,6 +218,8 @@ class AbsenteeResource(resources.ModelResource):
             'last_attendance_date',
             'absent_days',
             'reattend_date',
+            'validation_status',
+            'dropout_status',
         )
         export_order = fields
 
@@ -233,6 +235,7 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         'absent_days',
         'reattend_date',
         'validation_status',
+        'dropout_status',
     )
     list_filter = (
         # 'school__location',
@@ -241,11 +244,13 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         LocationFilter,
         GovernorateFilter,
         'last_attendance_date',
+        'validation_status',
+        'dropout_status',
     )
     date_hierarchy = 'last_attendance_date'
     ordering = ('-absent_days',)
 
-    actions = ('validate_absentees',)
+    actions = ('validate_absentees', 'dropout')
 
     def get_queryset(self, request):
         qs = super(AbsenteeAdmin, self).get_queryset(request)
@@ -274,6 +279,20 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
 
     def validate_absentees(self, request, queryset):
         queryset.update(validation_status=True)
+
+    def has_dropout_permission(self, request):
+        if has_group(request.user, 'COORDINATOR') or has_group(request.user, 'PMU'):
+            return False
+        return True
+
+    def dropout(self, request, queryset):
+        queryset.update(dropout_status=True)
+        for obj in queryset:
+            student = obj.student
+            enrollment = student.student_enrollment.first()
+            if enrollment:
+                enrollment.dropout_status = True
+                enrollment.save()
 
 
 admin.site.register(BySchoolByDay, BySchoolByDayAdmin)
