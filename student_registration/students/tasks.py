@@ -134,7 +134,7 @@ def generate_alp_unique_number():
 def disable_duplicate_enrolments(offset=None, school_number=None):
     from student_registration.enrollments.models import Enrollment
     registrations = []
-    queryset = Enrollment.objects.exclude(deleted=True).exclude(dropout_status=True)
+    queryset = Enrollment.objects.all()
     if offset:
         limit = offset + 50000
         registrations = queryset.order_by('-id', 'student__number', 'school__number')[offset:limit]
@@ -177,7 +177,7 @@ def disable_duplicate_enrolments(offset=None, school_number=None):
 def disable_duplicate_outreaches(school_number=None):
     from student_registration.alp.models import Outreach, ALPRound
     alp_round = ALPRound.objects.get(current_round=True)
-    registrations = Outreach.objects.exclude(deleted=True).filter(alp_round=alp_round).order_by('-id')
+    registrations = Outreach.objects.filter(alp_round=alp_round).order_by('-id')
     if school_number:
         print school_number
         registrations = registrations.filter(school__number=school_number)
@@ -230,7 +230,7 @@ def find_matching():
         if not r_student:
             continue
         try:
-            queryset = Enrollment.objects.exclude(deleted=True).exclude(dropout_status=True)
+            queryset = Enrollment.objects.all()
             if r_student.id_number:
                 id_number_1 = r_student.id_number.replace("-", "")
                 id_number_2 = id_number_1.replace("C", "c")
@@ -270,7 +270,7 @@ def find_matching_2():
 
     offset = 0
     limit = offset + 2000
-    registrations = Enrollment.objects.exclude(deleted=True).exclude(dropout_status=True).filter(
+    registrations = Enrollment.objects.filter(
         school__location__parent_id__in=[1,5]
     ).order_by('id')  #[offset:limit]
 

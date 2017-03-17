@@ -113,7 +113,7 @@ class Registrations2ndShiftView(LoginRequiredMixin,
     Provides the registration page with lookup types in the context
     """
     model = Enrollment
-    queryset = Enrollment.objects.exclude(deleted=True).exclude(dropout_status=True)
+    queryset = Enrollment.objects.all()
     template_name = 'dashboard/registrations-2ndshift.html'
 
     group_required = [u"MEHE"]
@@ -243,9 +243,7 @@ class RegistrationsALPView(LoginRequiredMixin,
     Provides the registration page with lookup types in the context
     """
     model = Outreach
-    queryset = Outreach.objects.exclude(deleted=True)
-    # queryset = Outreach.objects.exclude(assigned_to_level__isnull=True)
-    # queryset = queryset.exclude(deleted=True)
+    queryset = Outreach.objects.all()
     queryset = queryset.filter(registered_in_level__isnull=False)
     template_name = 'dashboard/registrations-alp.html'
 
@@ -321,7 +319,7 @@ class RegistrationsALPOverallView(LoginRequiredMixin,
     Provides the registration page with lookup types in the context
     """
     model = Outreach
-    queryset = Outreach.objects.exclude(deleted=True)
+    queryset = Outreach.objects.all()
     template_name = 'dashboard/alp-overall.html'
 
     group_required = [u"ALP_MEHE"]
@@ -410,7 +408,7 @@ class RegistrationsALPOutreachView(LoginRequiredMixin,
     Provides the registration page with lookup types in the context
     """
     model = Outreach
-    queryset = Outreach.objects.exclude(deleted=True)
+    queryset = Outreach.objects.all()
     template_name = 'dashboard/registrations-alp-outreach.html'
 
     group_required = [u"ALP_MEHE"]
@@ -483,7 +481,7 @@ class RegistrationsALPPreTestView(LoginRequiredMixin,
     Provides the registration page with lookup types in the context
     """
     model = Outreach
-    queryset = Outreach.objects.exclude(deleted=True)
+    queryset = Outreach.objects.all()
     template_name = 'dashboard/registrations-alp-pre-test.html'
 
     group_required = [u"ALP_MEHE"]
@@ -555,7 +553,7 @@ class RegistrationsALPPostTestView(LoginRequiredMixin,
     Provides the registration page with lookup types in the context
     """
     model = Outreach
-    queryset = Outreach.objects.exclude(deleted=True)
+    queryset = Outreach.objects.all()
     template_name = 'dashboard/registrations-alp-post-test.html'
 
     group_required = [u"ALP_MEHE"]

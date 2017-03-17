@@ -20,6 +20,16 @@ from student_registration.locations.models import Location
 from student_registration.alp.models import ALPRound
 
 
+class EnrollmentManager(models.Manager):
+    def get_queryset(self):
+        return super(EnrollmentManager, self).get_queryset().exclude(deleted=True).exclude(dropout_status=True)
+
+
+class EnrollmentDropoutManager(models.Manager):
+    def get_queryset(self):
+        return super(EnrollmentDropoutManager, self).get_queryset().exclude(deleted=True).filter(dropout_status=True)
+
+
 class Enrollment(TimeStampedModel):
     """
     Captures the details of the child in the cash pilot
@@ -218,6 +228,9 @@ class Enrollment(TimeStampedModel):
     )
     deleted = models.BooleanField(blank=True, default=False)
     dropout_status = models.BooleanField(blank=True, default=False)
+
+    objects = EnrollmentManager()
+    drop_objects = EnrollmentDropoutManager()
 
     @property
     def student_fullname(self):
