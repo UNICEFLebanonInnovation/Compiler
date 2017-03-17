@@ -14,7 +14,7 @@ from student_registration.taskapp.celery import app
 def assign_section(section):
     from student_registration.enrollments.models import Enrollment
     from student_registration.schools.models import Section
-    registrations = Enrollment.objects.exclude(deleted=True).filter(section__isnull=True)
+    registrations = Enrollment.objects.filter(section__isnull=True)
     section = Section.objects.get(id=section)
 
     print len(registrations), " registration found"
@@ -33,7 +33,7 @@ def generate_2ndshift_report(school=0, location=0, email=None, user=None):
 
     offset = 120000
     limit = 180000
-    queryset = Enrollment.objects.exclude(deleted=True)[offset:limit]
+    queryset = Enrollment.objects.all()[offset:limit]
 
     data = tablib.Dataset()
     data.headers = [
