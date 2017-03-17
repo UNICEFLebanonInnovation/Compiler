@@ -352,7 +352,7 @@ class OutreachAdmin(ImportExportModelAdmin):
 
     def get_queryset(self, request):
         qs = super(OutreachAdmin, self).get_queryset(request)
-        return qs.exclude(deleted=True)
+        return qs
 
     def caza(self, obj):
         if obj.school and obj.school.location:
@@ -417,7 +417,7 @@ class CurrentOutreachAdmin(OutreachAdmin):
         alp_round = ALPRound.objects.filter(current_pre_test=True)
         users = User.objects.filter(groups__name__in=['PARTNER'])
         qs = super(CurrentOutreachAdmin, self).get_queryset(request)
-        return qs.exclude(deleted=True).filter(
+        return qs.filter(
             alp_round=alp_round,
             owner__in=users
         )
@@ -462,7 +462,7 @@ class PreTestAdmin(OutreachAdmin):
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_pre_test=True)
         qs = super(PreTestAdmin, self).get_queryset(request)
-        return qs.exclude(deleted=True).filter(
+        return qs.filter(
             alp_round=alp_round,
             level__isnull=False,
         )
@@ -507,7 +507,7 @@ class CurrentRoundAdmin(OutreachAdmin):
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_round=True)
         qs = super(CurrentRoundAdmin, self).get_queryset(request)
-        return qs.exclude(deleted=True).filter(
+        return qs.filter(
             alp_round=alp_round,
             registered_in_level__isnull=False,
         )
@@ -554,7 +554,7 @@ class PostTestAdmin(OutreachAdmin):
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_post_test=True)
         qs = super(PostTestAdmin, self).get_queryset(request)
-        return qs.exclude(deleted=True).filter(
+        return qs.filter(
             alp_round=alp_round,
             registered_in_level__isnull=False,
             refer_to_level__isnull=False
