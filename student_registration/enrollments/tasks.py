@@ -135,6 +135,14 @@ def track_student_moves():
             Q(student__number_part1=student.number_part1)
               # Q(student__number_part2=student.number_part2)
         )
+
+        if not match_records:
+            match_records = Enrollment.objects.exclude(school_id=registry.school_id).filter(
+                student__first_name=student.first_name,
+                student__father_name=student.father_name,
+                student__last_name=student.last_name,
+            )
+
         # match_records = Enrollment.objects.exclude(school_id=registry.school_id).exclude(deleted=True).filter(
         #     created__gt=registry.created,
         #     student__number=student.number
