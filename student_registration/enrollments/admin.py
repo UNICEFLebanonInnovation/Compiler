@@ -200,21 +200,47 @@ class StudentMoveResource(resources.ModelResource):
     class Meta:
         model = StudentMove
         fields = (
-            'id'
+            'enrolment1__student__first_name',
+            'enrolment1__student__father_name',
+            'enrolment1__student__last_name',
+            'enrolment1__student__mother_fullname',
+            'school1__name',
+            'enrolment2__student__first_name',
+            'enrolment2__student__father_name',
+            'enrolment2__student__last_name',
+            'enrolment2__student__mother_fullname',
+            'school2__name',
         )
         export_order = fields
 
 
 class StudentMoveAdmin(ImportExportModelAdmin):
     resource_class = StudentMoveResource
-    fields = (
-    )
+    fields = ()
 
     list_display = (
         'enrolment1',
         'school1',
         'enrolment2',
         'school2',
+    )
+
+    list_filter = (
+        'school1',
+        'school2',
+    )
+
+    search_fields = (
+        'enrolment1__student__first_name',
+        'enrolment1__student__father_name',
+        'enrolment1__student__last_name',
+        'enrolment1__student__mother_fullname',
+        'school1__name',
+        'enrolment2__student__first_name',
+        'enrolment2__student__father_name',
+        'enrolment2__student__last_name',
+        'enrolment2__student__mother_fullname',
+        'school2__name',
     )
 
 
