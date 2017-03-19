@@ -100,7 +100,7 @@ def set_app_attendances(school_number=None, school_type=None):
     docs = []
     enrollment_model = Outreach if school_type == 'alp' else Enrollment
 
-    registrations = enrollment_model.objects.exclude(deleted=True)
+    registrations = enrollment_model.objects.all()
 
     if school_type == 'alp':
         alp_round = ALPRound.objects.get(current_round=True)
@@ -141,7 +141,7 @@ def set_app_attendances(school_number=None, school_type=None):
             doc_id = "{}-{}".format(doc_id, 'alp')
 
         # build dictionary of currently enrolled students for this school, class, section
-        total_enrolled = enrollment_model.objects.exclude(deleted=True).filter(**reg)
+        total_enrolled = enrollment_model.objects.filter(**reg)
         logger.info('{} students in class {}'.format(total_enrolled.count(), doc_id))
         for enrolled in total_enrolled:
             student = {

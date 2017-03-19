@@ -27,13 +27,22 @@ function CheckInitialiseSly()
          else if(onePerFrameSly.rel.activeItem == 1)
          {
               onePerFrameSly.next();
-              $("#hhSaveButton").show();
+              if (visit_status=='completed')
+              {
+
+                 $("#hhSaveButton").hide();
+              }
+              else
+              {
+                 $("#hhSaveButton").show();
+              }
          }
          else
          {
             onePerFrameSly.next();
          }
       });
+
    }
 
    onePerFrameSly.toStart(true);

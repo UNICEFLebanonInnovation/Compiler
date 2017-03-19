@@ -16,6 +16,8 @@
   function InitialiseVisitForm(visitData)
         {
            visitDataRecord = visitData;
+           visit_status = visitData.visit_status;
+
 
            $("#hhVisitName").text(visitData.first_name+' '+visitData.father_name+' '+visitData.last_name);
            $("#hhIdNumber").text(visitData.registeringadult_id_number);

@@ -482,7 +482,7 @@ msgid "add column"
 msgstr "اضف عامود"
 
 msgid "Export"
-msgstr "تصدير البيانات"
+msgstr "تصدير البيانات على اكسيل"
 
 msgid "outreach synchronize"
 msgstr "تطابق المعلومات"
@@ -1158,3 +1158,58 @@ msgstr "مجموع علامات التلميذ"
 
 msgid "Search a student"
 msgstr "ابحث عن تلميذ"
+
+msgid "School type"
+msgstr "نوع المدرسة"
+
+msgid "School shift"
+msgstr "دوام المدرسة"
+
+msgid "First shift"
+msgstr "دوام صباحي"
+
+msgid "Second shift"
+msgstr "دوام بعد الظهر"
+
+msgid "download data"
+msgstr "تحميل البيانات"
+
+msgid "Registration editing"
+msgstr "تعديل بيانات التسجيل"
+
+msgid "Editing students data"
+msgstr "تعديل بيانات الطلاب"
+
+msgid "Filter data"
+msgstr "قم بالتصفية"
+
+msgid "Total students"
+msgstr "مجموع التلاميذ"
+
+msgid "ALP Registrations"
+msgstr "تسجيل التلاميذ"
+
+msgid "Search an old student"
+msgstr "ابحث عن تلميذ سابق"
+
+msgid "Last year situation"
+msgstr "وضع التلميذ في السنة الماضية"
+
+msgid "Referred to level"
+msgstr "موجه الى المستوى"
+
+msgid "This student already added to the list"
+msgstr "لقد سبق وتم اضافة هذا التلميذ الى القائمة"
+
+msgid "Filter by current level"
+msgstr " المستوى الحالي"
+
+msgid "Filter by current section"
+msgstr " الشعبة الحالية"
+
+msgid "Filter by assigned level"
+msgstr " المستوي المرفع اليه"
+
+msgid "Filter by"
+msgstr "تصفية القائمة حسب"
+

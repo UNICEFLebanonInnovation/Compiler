@@ -14,15 +14,6 @@
               }
            );
 
-           // if(!servicesValid)
-           // {
-           //    alert("Services invalid");
-           // }
-           // else
-           // {
-           //    alert("Services valid");
-           // }
-
            return servicesValid;
         }
 

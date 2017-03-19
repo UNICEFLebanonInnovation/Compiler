@@ -101,7 +101,7 @@ def assign_section(section):
     from student_registration.schools.models import Section
     alp_round = ALPRound.objects.get(current_round=True)
 
-    registrations = Outreach.objects.exclude(deleted=True).filter(
+    registrations = Outreach.objects.filter(
         registered_in_level__isnull=False,
         section__isnull=True,
         alp_round=alp_round
@@ -122,7 +122,17 @@ def assign_section(section):
 def assign_round(round_id):
     from student_registration.alp.models import Outreach
 
-    registrations = Outreach.objects.exclude(deleted=True).filter(alp_round__isnull=True).update(alp_round_id=round_id)
+    registrations = Outreach.objects.filter(alp_round__isnull=True).update(alp_round_id=round_id)
+    print registrations
+
+    print "End assignment"
+
+
+@app.task
+def assign_round_to_deleted(round_id):
+    from student_registration.alp.models import Outreach
+
+    registrations = Outreach.objects.filter(alp_round__isnull=True, id__lt=13724).update(alp_round_id=round_id)
     print registrations
 
     print "End assignment"
