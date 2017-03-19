@@ -18,7 +18,16 @@ from student_registration.schools.models import (
 )
 from student_registration.locations.models import Location
 from student_registration.alp.models import ALPRound
-from student_registration.eav.registry import Registry as eav
+
+
+class EnrollmentManager(models.Manager):
+    def get_queryset(self):
+        return super(EnrollmentManager, self).get_queryset().exclude(deleted=True).exclude(dropout_status=True)
+
+
+class EnrollmentDropoutManager(models.Manager):
+    def get_queryset(self):
+        return super(EnrollmentDropoutManager, self).get_queryset().exclude(deleted=True).filter(dropout_status=True)
 
 
 class Enrollment(TimeStampedModel):
@@ -57,6 +66,11 @@ class Enrollment(TimeStampedModel):
         ('out_the_country', _('School out of the country')),
         ('public_in_country', _('Public school in the country')),
         ('private_in_country', _('Private school in the country')),
+    )
+
+    SCHOOL_SHIFT = Choices(
+        ('first', _('First shift')),
+        ('second', _('Second shift')),
     )
 
     YEARS = ((str(x), x) for x in range(2016, 2051))
@@ -201,7 +215,22 @@ class Enrollment(TimeStampedModel):
         null=True,
         choices=SCHOOL_TYPE
     )
+    last_school_shift = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=SCHOOL_SHIFT
+    )
+    last_school = models.ForeignKey(
+        School,
+        blank=True, null=True,
+        related_name='+',
+    )
     deleted = models.BooleanField(blank=True, default=False)
+    dropout_status = models.BooleanField(blank=True, default=False)
+
+    objects = EnrollmentManager()
+    drop_objects = EnrollmentDropoutManager()
 
     @property
     def student_fullname(self):
@@ -219,5 +248,36 @@ class Enrollment(TimeStampedModel):
         return self.student.__unicode__()
 
 
-eav.register(Enrollment)
+class StudentMove(models.Model):
 
+    enrolment1 = models.ForeignKey(
+        Enrollment,
+        blank=False, null=False,
+        related_name='+',
+        verbose_name='Student name',
+    )
+    enrolment2 = models.ForeignKey(
+        Enrollment,
+        blank=False, null=False,
+        related_name='+',
+        verbose_name='Student name',
+    )
+    school1 = models.ForeignKey(
+        School,
+        blank=False, null=False,
+        related_name='+',
+        verbose_name='From school',
+    )
+    school2 = models.ForeignKey(
+        School,
+        blank=False, null=False,
+        related_name='+',
+        verbose_name='To school',
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Student move"
+
+    def __unicode__(self):
+        return str(self.id)

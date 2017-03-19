@@ -1,3 +1,211 @@
+
+function ValidateHouseHoldNotFound()
+{
+    var result = true;
+    var primary_phone = $("#nf_primary_phone").val();
+    var primary_phone_confirm = $("#nf_primary_phone_confirm").val();
+    var secondary_phone = $("#nf_secondary_phone").val();
+    var secondary_phone_confirm = $("#nf_secondary_phone_confirm").val();
+    var primary_phone_answered = $("#nf_primary_phone_answered").val();
+    var secondary_phone_answered  = $("#nf_secondary_phone_answered").val();
+    var isPhoneValid = ValidatePhoneNumber(primary_phone)
+    var isPhoneConfirmValid = ValidatePhoneNumber(primary_phone_confirm);
+    var isPhoneEqualValid= primary_phone == primary_phone_confirm;
+    if (!isPhoneValid)
+    {
+        $("#nf_primary_phone_length_error").show();
+    }
+    else
+    {
+        $("#nf_primary_phone_length_error").hide();
+    }
+
+    if (!isPhoneConfirmValid)
+    {
+        $("#nf_primary_phone_confirm_length_error").show();
+        $("#nf_primary_phone_confirm_error").hide();
+    }
+    else
+    {
+        $("#nf_primary_phone_confirm_length_error").hide();
+        if (!isPhoneEqualValid)
+        {
+            $("#nf_primary_phone_confirm_error").show();
+        }
+        else
+            {
+                $("#nf_primary_phone_confirm_error").hide();
+            }
+    }
+
+    var is_primary_answered_valid =primary_phone_answered!=null;
+    if (!is_primary_answered_valid)
+    {
+        $("#nf_primary_phone_answered_error").show();
+    }
+    else
+    {
+        $("#nf_primary_phone_answered_error").hide();
+    }
+
+    var isSecondaryValid = ValidatePhoneNumber(secondary_phone) || secondary_phone=='';
+
+    if (!isSecondaryValid)
+    {
+        $("#nf_secondary_phone_length_error").show();
+    }
+    else
+    {
+        $("#nf_secondary_phone_length_error").hide();
+    }
+
+    var isSecondaryPhoneConfirmValid = ValidatePhoneNumber(secondary_phone_confirm)  || secondary_phone=='';
+    var isSecondaryPhoneEqualValid = secondary_phone == secondary_phone_confirm;
+    if (!isSecondaryPhoneConfirmValid)
+    {
+        $("#nf_secondary_phone_confirm_length_error").show();
+        $("#nf_secondary_phone_confirm_error").hide();
+    }
+    else
+    {
+        $("#nf_secondary_phone_confirm_length_error").hide();
+        if (!isSecondaryPhoneEqualValid)
+        {
+            $("#nf_secondary_phone_confirm_error").show();
+        }
+        else
+            {
+                $("#nf_secondary_phone_confirm_error").hide();
+            }
+    }
+
+    var is_secondary_answered_valid =secondary_phone_answered!=null || secondary_phone == '';
+    if (!is_secondary_answered_valid)
+    {
+        $("#nf_secondary_phone_answered_error").show();
+    }
+    else
+    {
+        $("#nf_secondary_phone_answered_error").hide();
+    }
+
+
+
+    var id_type = $("#nf_idType").val();
+    var isIdTypeValid = true;
+    if(id_type==null)
+    {
+        isIdTypeValid= false;
+        $("#nf_idType_error").show();
+    }
+    else
+    {
+        $("#nf_idType_error").hide();
+    }
+    var id_number = $("#nf_id_number").val();
+    var isNumberValid =  ValidateNotFoundID(id_number,id_type);
+
+
+    var isDOBValid = true;
+    if($("#nf_days").val() && $("#nf_months").val() && $("#nf_years").val())
+    {
+
+        $("#nf_dob_error").hide();
+    }
+    else
+    {
+        isDOBValid = false;
+        $("#nf_dob_error").show();
+    }
+
+    var isRelation_to_householdheadValid = true;
+    if($("#nf_relation_to_householdhead").val()==null)
+    {
+        isRelation_to_householdheadValid= false;
+        $("#nf_relation_to_householdhead_error").show();
+    }
+    else
+    {
+        $("#nf_relation_to_householdhead_error").hide();
+    }
+
+    var isGenderValid = true;
+    if($("#nf_gender").val()==null)
+    {
+        isRelation_to_householdheadValid= false;
+        $("#nf_gender_error").show();
+    }
+    else
+    {
+        $("nf_#gender_error").hide();
+    }
+
+    var number_children_five_to_nine = $("#number_children_five_to_nine").val();
+    var number_children_ten_to_seventeen = $("#number_children_ten_to_seventeen").val();
+    var isChildrenNumberValid= number_children_five_to_nine =='' && number_children_ten_to_seventeen=='';
+
+    if ( !isChildrenNumberValid)
+    {
+        $("#number_children_error").hide();
+    }
+    else
+    {
+        $("#number_children_error").show();
+    }
+
+
+    result = result && isPhoneValid;
+    result = result && isPhoneConfirmValid;
+    result = result && isPhoneEqualValid;
+    result = result && is_primary_answered_valid;
+    result = result && isSecondaryValid;
+    result = result && isSecondaryPhoneConfirmValid;
+    result = result && isSecondaryPhoneEqualValid;
+    result = result && is_secondary_answered_valid ;
+    result = result && isIdTypeValid;
+    result = result && isNumberValid;
+    result = result && isDOBValid;
+    result = result && isRelation_to_householdheadValid;
+    result = result && isGenderValid;
+    result = result && !isChildrenNumberValid;
+
+    result = validateTextBoxRequired('nf_first_name','',result);
+    result = validateTextBoxRequired('nf_father_name','nf_father_name_error',result);
+    result = validateTextBoxRequired('nf_last_name','nf_last_name_error',result);
+    result = validateTextBoxRequired('nf_mother_full_name','nf_mother_full_name_error',result);;
+    result = validateTextBoxRequired('nf_complaint','nf_complaint_error',result);
+    return result;
+}
+
+function ValidateNotFoundID(id_number , id_type)
+{
+
+    var isNumberValid = true;
+    if(id_type == 1)
+    {
+        isNumberValid=  validateUNHCRNumber(id_number);
+        if (!isNumberValid)
+        {
+            $("#nf_id_number_error").show();
+        }
+        else
+        {
+            $("#nf_id_number_error").hide();
+        }
+    }
+    else if (id_number)
+    {
+        $("#nf_id_number_error").hide();
+    }
+    else
+    {
+        $("#nf_id_number_error").show();
+        isNumberValid=false;
+    }
+    return isNumberValid;
+}
+
+
 function ValidateHouseHoldUpdate()
 {
      var result = true;

@@ -65,7 +65,12 @@ def generate_child_unique_number():
                                          student.birthday_day, student.birthday_month, student.birthday_year)
 
             student.number_part1 = generate_id(student.first_name, student.father_name, student.last_name,
-                                               student.mother_fullname, student.sex, '', '', '')
+                                               student.mother_fullname, student.sex,
+                                               '', '', '')
+
+            student.number_part2 = generate_id(student.first_name, student.father_name, student.last_name,
+                                               '', '',
+                                               student.birthday_day, student.birthday_month, student.birthday_year)
             print student.number, student.id
             student.save()
         except Exception as ex:
@@ -84,8 +89,14 @@ def generate_2ndshift_unique_number(offset=0):
             student.number = generate_id(student.first_name, student.father_name, student.last_name,
                                          student.mother_fullname, student.sex,
                                          student.birthday_day, student.birthday_month, student.birthday_year)
+
             student.number_part1 = generate_id(student.first_name, student.father_name, student.last_name,
-                                               student.mother_fullname, student.sex, '', '', '')
+                                               student.mother_fullname, student.sex,
+                                               '', '', '')
+
+            student.number_part2 = generate_id(student.first_name, student.father_name, student.last_name,
+                                               '', '',
+                                               student.birthday_day, student.birthday_month, student.birthday_year)
             print student.number, student.id
             student.save()
         except Exception as ex:
@@ -104,8 +115,14 @@ def generate_alp_unique_number():
             student.number = generate_id(student.first_name, student.father_name, student.last_name,
                                          student.mother_fullname, student.sex,
                                          student.birthday_day, student.birthday_month, student.birthday_year)
+
             student.number_part1 = generate_id(student.first_name, student.father_name, student.last_name,
-                                               student.mother_fullname, student.sex, '', '', '')
+                                               student.mother_fullname, student.sex,
+                                               '', '', '')
+
+            student.number_part2 = generate_id(student.first_name, student.father_name, student.last_name,
+                                               '', '',
+                                               student.birthday_day, student.birthday_month, student.birthday_year)
             print student.number, student.id
             student.save()
         except Exception as ex:
@@ -117,11 +134,12 @@ def generate_alp_unique_number():
 def disable_duplicate_enrolments(offset=None, school_number=None):
     from student_registration.enrollments.models import Enrollment
     registrations = []
+    queryset = Enrollment.objects.all()
     if offset:
         limit = offset + 50000
-        registrations = Enrollment.objects.exclude(deleted=True).order_by('-id', 'student__number', 'school__number')[offset:limit]
+        registrations = queryset.order_by('-id', 'student__number', 'school__number')[offset:limit]
     elif school_number:
-        registrations = Enrollment.objects.exclude(deleted=True).filter(school__number=school_number).order_by('-id', 'student__number', 'school__number')
+        registrations = queryset.filter(school__number=school_number).order_by('-id', 'student__number', 'school__number')
     print len(registrations)
 
     students = {}
@@ -159,7 +177,7 @@ def disable_duplicate_enrolments(offset=None, school_number=None):
 def disable_duplicate_outreaches(school_number=None):
     from student_registration.alp.models import Outreach, ALPRound
     alp_round = ALPRound.objects.get(current_round=True)
-    registrations = Outreach.objects.exclude(deleted=True).filter(alp_round=alp_round).order_by('-id')
+    registrations = Outreach.objects.filter(alp_round=alp_round).order_by('-id')
     if school_number:
         print school_number
         registrations = registrations.filter(school__number=school_number)
@@ -203,7 +221,61 @@ def find_matching():
     from student_registration.enrollments.models import Enrollment
     from student_registration.students.models import StudentMatching
 
-    registrations = Registration.objects.all().order_by('id')
+    offset = 54000
+    limit = offset + 2000
+    registrations = Registration.objects.all().order_by('id')[offset:limit]
+    for registry in registrations:
+        enrollment = None
+        r_student = registry.student
+        if not r_student:
+            continue
+        try:
+            queryset = Enrollment.objects.all()
+            if r_student.id_number:
+                id_number_1 = r_student.id_number.replace("-", "")
+                id_number_2 = id_number_1.replace("C", "c")
+                id_number_3 = id_number_1.replace("c", "C")
+                id_number_4 = r_student.id_number.replace("C", "c")
+                id_number_5 = r_student.id_number.replace("c", "C")
+                enrollment = queryset.get(
+                    Q(student__number=r_student.number) |
+                    Q(student__number_part1=r_student.number_part1) |
+                    Q(student__id_number=r_student.id_number) |
+                    Q(student__id_number=id_number_1) |
+                    Q(student__id_number=id_number_2) |
+                    Q(student__id_number=id_number_3) |
+                    Q(student__id_number=id_number_4) |
+                    Q(student__id_number=id_number_5)
+                )
+            else:
+                enrollment = queryset.get(
+                    Q(student__number=r_student.number) |
+                    Q(student__number_part1=r_student.number_part1) |
+                    Q(student__number_part2=r_student.number_part2)
+                )
+        except Exception as ex:
+            # print registry.id
+            continue
+
+        if enrollment:
+            e_student = enrollment.student
+            StudentMatching.objects.get_or_create(registry=r_student, enrolment=e_student)
+
+
+@app.task
+def find_matching_2():
+    from student_registration.registrations.models import Registration
+    from student_registration.enrollments.models import Enrollment
+    from student_registration.students.models import StudentMatching
+
+    offset = 0
+    limit = offset + 2000
+    registrations = Enrollment.objects.filter(
+        school__location__parent_id__in=[1,5]
+    ).order_by('id')  #[offset:limit]
+
+    print len(registrations)
+
     for registry in registrations:
         enrollment = None
         r_student = registry.student
@@ -216,7 +288,10 @@ def find_matching():
                 id_number_3 = id_number_1.replace("c", "C")
                 id_number_4 = r_student.id_number.replace("C", "c")
                 id_number_5 = r_student.id_number.replace("c", "C")
-                enrollment = Enrollment.objects.exclude(deleted=True).get(
+                id_number_6 = r_student.id_number.replace("ID", "")
+                id_number_6 = id_number_6.replace(":", "")
+                id_number_6 = id_number_6.replace("LEB", "")
+                enrollment = Registration.objects.get(
                     Q(student__number=r_student.number) |
                     Q(student__number_part1=r_student.number_part1) |
                     Q(student__id_number=r_student.id_number) |
@@ -225,21 +300,19 @@ def find_matching():
                     Q(student__id_number=id_number_3) |
                     Q(student__id_number=id_number_4) |
                     Q(student__id_number=id_number_5) |
-                    Q(student__id_number__contains=id_number_1) |
-                    Q(student__id_number__contains=id_number_2) |
-                    Q(student__id_number__contains=id_number_3) |
-                    Q(student__id_number__contains=id_number_4) |
-                    Q(student__id_number__contains=id_number_5)
+                    Q(student__id_number=id_number_6)
                 )
             else:
-                enrollment = Enrollment.objects.exclude(deleted=True).get(
+                enrollment = Registration.objects.get(
                     Q(student__number=r_student.number) |
-                    Q(student__number_part1=r_student.number_part1)
+                    Q(student__number_part1=r_student.number_part1) |
+                    Q(student__number_part2=r_student.number_part2)
                 )
         except Exception as ex:
+            print ex.message
             # print registry.id
             continue
 
         if enrollment:
             e_student = enrollment.student
-            StudentMatching.objects.get_or_create(registry=r_student, enrolment=e_student)
+            StudentMatching.objects.get_or_create(registry=e_student, enrolment=r_student)

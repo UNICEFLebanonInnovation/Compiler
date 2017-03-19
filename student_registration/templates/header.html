@@ -41,9 +41,9 @@
                               </li>
                         {% endif %}
                         {% if request.user|has_group:"ALP_SCHOOL" %}
-                              <li class="nav-item">
-                                <a class="nav-link {% if request|is_current_page:"alp_data_collecting" %}active{% endif %}" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "ALP data collecting" %}</a>
-                              </li>
+{#                              <li class="nav-item">#}
+{#                                <a class="nav-link {% if request|is_current_page:"alp_registrations" %}active{% endif %}" href="{% url 'alp:alp_registrations' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "ALP Registrations" %}</a>#}
+{#                              </li>#}
                         {% endif %}
                         {% if request.user|has_group:"ALP_MEHE" %}
                   <li class="nav-item">
@@ -52,12 +52,12 @@
                         {% endif %}
                     {% endif %}
                 {% if request.user|has_group:"SCHOOL" or request.user|has_group:"DIRECTOR" %}
-                  <li class="nav-item">
-                    <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "Registration" %}</a>
-                  </li>
+{#                  <li class="nav-item">#}
+{#                    <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "Registration" %}</a>#}
+{#                  </li>#}
 
                   <li class="nav-item">
-                    <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment_edit' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "Registration editing" %}</a>
+                    <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment_patch' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "Registration editing" %}</a>
                   </li>
                 {% endif %}
                 {% if request.user|has_group:"PMU" %}

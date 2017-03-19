@@ -1,4 +1,6 @@
-        var oTable = null;
+
+var oTable = null;
+var  visit_status = null;
 
         $(document).ready(function(){
 
@@ -37,6 +39,7 @@
                   $("#hhForm").show();
 
                   CheckInitialiseSly();
+
                }
              );
 

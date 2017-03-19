@@ -208,11 +208,13 @@ class ChildVisitSerializer(serializers.ModelSerializer):
             'mother_fullname',
             'calculate_age',
             'child_enrolled_in_another_school',
+            'child_no_longer_living_in_the_pilot_area',
             'child_visit_service',
             'child_visit_reason',
             'household_visit_id',
             'child_school',
             'child_classroom',
+            'child_absence_period'
         )
 
 
