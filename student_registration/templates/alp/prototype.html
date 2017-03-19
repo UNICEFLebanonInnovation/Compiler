@@ -4,75 +4,41 @@
 {% get_range 1990 2020 as years %}
 {% get_range 1 32 as days %}
 {% get_range_str 2001 2020 as last_education_years %}
-{% get_range_int 11 60 as notes1 %}
-{% get_range_int 11 60 as notes2 %}
-{% get_range_int 11 60 as notes3 %}
-{% get_range_int 11 60 as notes4 %}
 
-<table style="display:none;" id="outreach_prototype">
-    <tr id="line-$$itemscope_id$$" class="outreach-line" itemscope="$$itemscope_id$$">
+<table style="display:none;" id="registration_prototype">
+    <tr id="line-$$itemscope_id$$" class="registration-line" itemscope="$$itemscope_id$$">
         <td>
-            <button class="btn btn-danger delete-outreach-row" itemscope="$$itemscope_id$$">
+            <button class="btn btn-danger delete-registration-row" itemscope="$$itemscope_id$$">
                 <i class="icon-trash icon-white"></i>
                 {% trans "Delete" %}
             </button>
         </td>
-        <td>
-            <select name="location" id="location" class="outreach-location outreach-field" itemscope="$$itemscope_id$$">
-                <option value="">{% trans "District" %}</option>
-                {% for item in locations %}
-                    <option value="{{ item.id }}"
-                            {% if location and location.id == item.id %}selected="selected"{% endif %}
-                            data-parent="{% if item.parent %}{{ item.parent.name }}{% endif %}">
-                        {{ item.name }}
-                    </option>
-                {% endfor %}
-            </select>
+        <td class="synchro-status">
+            <input type="hidden" name="id" value="$$itemscope_id$$" class="registration-field-id" />
+            <span class="badge incremental_number" itemscope="$$itemscope_id$$" style="font-weight: bold;"></span>
         </td>
         <td>
-            <input type="text" name="governorate_name" class="outreach-field governorate_name_$$itemscope_id$$" readonly="readonly"
-                   itemscope="$$itemscope_id$$" id="governorate_name" value="{% if location_parent %}{{ location_parent.name }}{% endif %}" style="width: 50px;"/>
-        </td>
-        <td>
-            <input type="hidden" name="id" value="$$itemscope_id$$" class="outreach-field-id" />
-            <input type="text" name="school_number" class="outreach-field school_number_$$itemscope_id$$" readonly="readonly"
-                   itemscope="$$itemscope_id$$" id="school_number" value="{% if school %}{{ school.number }}{% endif %}" style="width: 50px;"/>
-        </td>
-        <td>
-            <select name="school" id="school" class="outreach-school outreach-field" itemscope="$$itemscope_id$$" style="width: 110px;">
-                <option value="">{% trans "School" %}</option>
-                {% for schl in schools %}
-                    <option value="{{ schl.id }}" itemcontent="{{ schl.number }}"
-                            {% if school and school.id == schl.id %}selected="selected"{% endif %}
-                            data-parent="{% if schl.location %}{{ schl.location.id }}{% endif %}">
-                        {{ schl }}
-                    </option>
-                {% endfor %}
-            </select>
-        </td>
-        <td>
-            <input type="text" name="student_first_name" id="student_first_name" class="outreach-field"
+            <input type="text" name="student_first_name" id="student_first_name" class="registration-field"
                    itemscope="$$itemscope_id$$" style="width: 110px;" placeholder="{% trans "Student first name" %}"/>
         </td>
         <td>
-            <input type="text" name="student_father_name" id="student_father_name" class="outreach-field"
+            <input type="text" name="student_father_name" id="student_father_name" class="registration-field"
                    itemscope="$$itemscope_id$$" style="width: 110px;" placeholder="{% trans "Student father name" %}"/>
         </td>
         <td>
-            <input type="text" name="student_last_name" id="student_last_name" class="outreach-field"
+            <input type="text" name="student_last_name" id="student_last_name" class="registration-field"
                    itemscope="$$itemscope_id$$" style="width: 110px;" placeholder="{% trans "Student last name" %}" />
         </td>
         <td>
-            <select name="student_sex" id="student_sex" class="outreach-field" itemscope="$$itemscope_id$$">
+            <select name="student_sex" id="student_sex" class="registration-field" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "Sex" %}</option>
                 {% for key, item in genders %}
                     <option value="{{ key }}">{{ item }}</option>
                 {% endfor %}
             </select>
         </td>
-    {% if request.user|has_group:"CERD" %}
         <td>
-            <select name="level" id="level" class="outreach-field note-indicator" itemscope="$$itemscope_id$$">
+            <select name="level" id="level" class="registration-field note-indicator" itemscope="$$itemscope_id$$" readonly="readonly" disabled="disabled">
                 <option value="">{% trans "Registered in level" %}</option>
                 {% for item in informal_educations %}
                     <option value="{{ item.id }}" data-value="{{ item.note }}">{{ item.name }}</option>
@@ -80,87 +46,11 @@
             </select>
         </td>
         <td>
-            <input type="text" name="exam_result_arabic" id="exam_result_arabic" class="outreach-field exam-note"
-                   itemscope="$$itemscope_id$$" maxlength="5" size="6" placeholder="{% trans "Arabic language" %}"/>
-            <span class="note-indicator-value outreach-field" name="note-indicator-value" id="note-indicator-value" itemscope="$$itemscope_id$$"></span>
+            <input type="text" name="exam_total" id="exam_total" class="registration-field"
+                   itemscope="$$itemscope_id$$" readonly="readonly" disabled="disabled"/>
         </td>
         <td>
-            <input type="text" name="exam_result_language" id="exam_result_language" class="outreach-field exam-note"
-                   itemscope="$$itemscope_id$$" maxlength="5" size="6" placeholder="{% trans "Foreign language" %}" />
-            <span class="note-indicator-value outreach-field" name="note-indicator-value" id="note-indicator-value" itemscope="$$itemscope_id$$"></span>
-        </td>
-        <td>
-            <input type="text" name="exam_result_math" id="exam_result_math" class="outreach-field exam-note"
-                   itemscope="$$itemscope_id$$" maxlength="5" size="6" placeholder="{% trans "Math" %}" />
-            <span class="note-indicator-value outreach-field" name="note-indicator-value" id="note-indicator-value" itemscope="$$itemscope_id$$"></span>
-        </td>
-        <td>
-            <input type="text" name="exam_result_science" id="exam_result_science" class="outreach-field exam-note"
-                   itemscope="$$itemscope_id$$" maxlength="5" size="4" placeholder="{% trans "Science" %}"/>
-            <span class="note-indicator-value outreach-field" name="note-indicator-value" id="note-indicator-value" itemscope="$$itemscope_id$$"></span>
-        </td>
-        <td>
-            <input type="text" name="" class="exam_total_$$itemscope_id$$" readonly="readonly"
-                   itemscope="$$itemscope_id$$" id="exam_total" disabled="disabled" size="3" />
-            <span class="note-indicator-total outreach-field" name="note-indicator-total" id="note-indicator-total" itemscope="$$itemscope_id$$"></span>
-        </td>
-        <td>
-            <select name="exam_corrector_arabic" id="exam_corrector_arabic" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 70px;">
-                <option value="">{% trans "Arabic language" %}</option>
-                {% for note in notes1 %}
-                    <option value="{{ note }}">{{ note }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td>
-            <select name="exam_corrector_language" id="exam_corrector_language" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 70px;">
-                <option value="">{% trans "Foreign language" %}</option>
-                {% for note in notes2 %}
-                    <option value="{{ note }}">{{ note }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td>
-            <select name="exam_corrector_math" id="exam_corrector_math" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 70px;">
-                <option value="">{% trans "Math" %}</option>
-                {% for note in notes3 %}
-                    <option value="{{ note }}">{{ note }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td>
-            <select name="exam_corrector_science" id="exam_corrector_science" class="outreach-field" itemscope="$$itemscope_id$$" style="width: 70px;">
-                <option value="">{% trans "Science" %}</option>
-                {% for note in notes4 %}
-                    <option value="{{ note }}">{{ note }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td>
-            <select name="assigned_to_level" id="assigned_to_level" class="outreach-field" itemscope="$$itemscope_id$$">
-                <option value="">-------</option>
-                {% for item in informal_educations %}
-                    <option value="{{ item.id }}">{{ item.name }}</option>
-                {% endfor %}
-            </select>
-        </td>
-    {% endif %}
-    {% if request.user|has_group:"ALP_SCHOOL" %}
-        <td>
-            <select name="level" id="level" class="outreach-field note-indicator" itemscope="$$itemscope_id$$">
-                <option value="">{% trans "Registered in level" %}</option>
-                {% for item in informal_educations %}
-                    <option value="{{ item.id }}" data-value="{{ item.note }}">{{ item.name }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td>
-            <input type="text" name="" class="exam_total_$$itemscope_id$$" readonly="readonly"
-                   itemscope="$$itemscope_id$$" id="exam_total" disabled="disabled" size="3" />
-            <span class="note-indicator-total outreach-field" name="note-indicator-total" id="note-indicator-total" itemscope="$$itemscope_id$$"></span>
-        </td>
-        <td>
-            <select name="assigned_to_level" id="assigned_to_level" class="outreach-field" itemscope="$$itemscope_id$$">
+            <select name="assigned_to_level" id="assigned_to_level" class="registration-field" itemscope="$$itemscope_id$$" readonly="readonly" disabled="disabled">
                 <option value="">{% trans "Assigned to level" %}</option>
                 {% for item in informal_educations %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
@@ -168,7 +58,7 @@
             </select>
         </td>
         <td>
-            <select name="registered_in_level" id="registered_in_level" class="outreach-field" itemscope="$$itemscope_id$$">
+            <select name="registered_in_level" id="registered_in_level" class="registration-field" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "Current Level" %}</option>
                 {% for item in informal_educations %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
@@ -176,16 +66,15 @@
             </select>
         </td>
         <td>
-            <select name="section" id="section" class="outreach-field" itemscope="$$itemscope_id$$">
+            <select name="section" id="section" class="registration-field" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "Current Section" %}</option>
                 {% for item in sections %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
         </td>
-    {% endif %}
         <td>
-            <select name="student_birthday_year" id="student_birthday_year" class="outreach-field student_birthday" itemscope="$$itemscope_id$$">
+            <select name="student_birthday_year" id="student_birthday_year" class="registration-field student_birthday" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "year" %}</option>
                 {% for item in years %}
                     <option value="{{ item }}">{{ item }}</option>
@@ -193,7 +82,7 @@
             </select>
         </td>
         <td>
-            <select name="student_birthday_month" id="student_birthday_month" class="outreach-field student_birthday" itemscope="$$itemscope_id$$">
+            <select name="student_birthday_month" id="student_birthday_month" class="registration-field student_birthday" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "month" %}</option>
                 {% for key, name in months %}
                     <option value="{{ key }}">{{ name }}</option>
@@ -201,7 +90,7 @@
             </select>
         </td>
         <td>
-            <select name="student_birthday_day" id="student_birthday_day" class="outreach-field student_birthday" itemscope="$$itemscope_id$$">
+            <select name="student_birthday_day" id="student_birthday_day" class="registration-field student_birthday" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "day" %}</option>
                 {% for item in days %}
                     <option value="{{ item }}">{{ item }}</option>
@@ -209,11 +98,11 @@
             </select>
         </td>
         <td>
-            <input type="text" name="student_age" class="outreach-field student_age_$$itemscope_id$$" readonly="readonly"
+            <input type="text" name="student_age" class="registration-field student_age_$$itemscope_id$$" readonly="readonly"
                    disabled="disabled" itemscope="$$itemscope_id$$" id="student_age" value="" size="4"/>
         </td>
         <td>
-            <select name="student_nationality" id="student_nationality" class="outreach-field" itemscope="$$itemscope_id$$">
+            <select name="student_nationality" id="student_nationality" class="registration-field" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "Student nationality" %}</option>
                 {% for item in nationalities %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
@@ -221,11 +110,11 @@
             </select>
         </td>
         <td>
-            <input type="text" name="student_mother_fullname" id="student_mother_fullname" class="outreach-field"
+            <input type="text" name="student_mother_fullname" id="student_mother_fullname" class="registration-field"
                   placeholder="{% trans "Mother fullname" %}" itemscope="$$itemscope_id$$" />
         </td>
         <td>
-            <select name="student_mother_nationality" id="student_mother_nationality" class="outreach-field" itemscope="$$itemscope_id$$">
+            <select name="student_mother_nationality" id="student_mother_nationality" class="registration-field" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "Mother nationality" %}</option>
                 {% for item in nationalities2 %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
@@ -233,11 +122,11 @@
             </select>
         </td>
         <td>
-            <label><input type="radio" name="registered_in_unhcr_$$itemscope_id$$" data-name="registered_in_unhcr" value="1" data-value="yes" id="registered_in_unhcr_1" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="student_id_type" />{% trans "Yes" %}</label>
-            <label><input type="radio" name="registered_in_unhcr_$$itemscope_id$$" data-name="registered_in_unhcr" value="0" data-value="no" id="registered_in_unhcr_0" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="" />{% trans "No" %}</label>
+            <label><input type="radio" name="registered_in_unhcr_$$itemscope_id$$" data-name="registered_in_unhcr" value="1" data-value="yes" id="registered_in_unhcr_1" class="registration-field registration-field-check" itemscope="$$itemscope_id$$" itemref="student_id_type" />{% trans "Yes" %}</label>
+            <label><input type="radio" name="registered_in_unhcr_$$itemscope_id$$" data-name="registered_in_unhcr" value="0" data-value="no" id="registered_in_unhcr_0" class="registration-field registration-field-check" itemscope="$$itemscope_id$$" itemref="" />{% trans "No" %}</label>
         </td>
         <td>
-            <select name="student_id_type" id="student_id_type" class="outreach-field student_id_type" itemscope="$$itemscope_id$$">
+            <select name="student_id_type" id="student_id_type" class="registration-field student_id_type" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "Student ID Type" %}</option>
                 {% for item in idtypes %}
                     <option value="{{ item.id }}">{% trans item.name %}</option>
@@ -245,23 +134,23 @@
             </select>
         </td>
         <td>
-            <input type="text" name="student_id_number" id="student_id_number" class="outreach-field"
+            <input type="text" name="student_id_number" id="student_id_number" class="registration-field"
                    placeholder="{% trans "Student ID Number" %}" itemscope="$$itemscope_id$$" />
         </td>
         <td>
-            <input type="text" name="student_address" id="student_address" class="outreach-field"
+            <input type="text" name="student_address" id="student_address" class="registration-field"
                    placeholder="{% trans "Student living address" %}" itemscope="$$itemscope_id$$" />
         </td>
         <td>
-            <input type="text" name="student_phone" id="student_phone" class="outreach-field"
+            <input type="text" name="student_phone" id="student_phone" class="registration-field"
                    placeholder="{% trans "Phone number (6 digits)" %}" itemscope="$$itemscope_id$$" maxlength="6" size="12" />
         </td>
         <td>
-            <input type="text" name="student_phone_prefix" id="student_phone_prefix" class="outreach-field"
+            <input type="text" name="student_phone_prefix" id="student_phone_prefix" class="registration-field"
                    placeholder="{% trans "Phone prefix (2 digits)" %}" itemscope="$$itemscope_id$$" maxlength="2" size="6" />
         </td>
         <td>
-            <select name="last_education_level" id="last_education_level" class="outreach-field" itemscope="$$itemscope_id$$">
+            <select name="last_education_level" id="last_education_level" class="registration-field" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "Last education level" %}</option>
                 {% for item in education_levels %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
@@ -269,7 +158,7 @@
             </select>
         </td>
         <td>
-            <select name="last_education_year" id="last_education_year" class="outreach-field" itemscope="$$itemscope_id$$">
+            <select name="last_education_year" id="last_education_year" class="registration-field" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "Education year" %}</option>
                 {% for item in last_education_years %}
                     <option value="{{ item }}">{{ item }}</option>
@@ -277,11 +166,11 @@
             </select>
         </td>
         <td>
-            <label><input type="radio" name="participated_in_alp_$$itemscope_id$$" data-name="participated_in_alp" value="1" data-value="yes" id="participated_in_alp_1" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="" />{% trans "Yes" %}</label>
-            <label><input type="radio" name="participated_in_alp_$$itemscope_id$$" data-name="participated_in_alp" value="0" data-value="no" id="participated_in_alp_0" class="outreach-field outreach-field-check" itemscope="$$itemscope_id$$" itemref="alp_details" />{% trans "No" %}</label>
+            <label><input type="radio" name="participated_in_alp_$$itemscope_id$$" data-name="participated_in_alp" value="1" data-value="yes" id="participated_in_alp_1" class="registration-field registration-field-check" itemscope="$$itemscope_id$$" itemref="" />{% trans "Yes" %}</label>
+            <label><input type="radio" name="participated_in_alp_$$itemscope_id$$" data-name="participated_in_alp" value="0" data-value="no" id="participated_in_alp_0" class="registration-field registration-field-check" itemscope="$$itemscope_id$$" itemref="alp_details" />{% trans "No" %}</label>
         </td>
         <td>
-            <select name="last_informal_edu_round" id="last_informal_edu_round" class="outreach-field alp_details" itemscope="$$itemscope_id$$">
+            <select name="last_informal_edu_round" id="last_informal_edu_round" class="registration-field alp_details" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "ALP round" %}</option>
                 {% for item in alp_rounds %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
@@ -289,7 +178,7 @@
             </select>
         </td>
         <td>
-            <select name="last_informal_edu_level" id="last_informal_edu_level" class="outreach-field alp_details" itemscope="$$itemscope_id$$">
+            <select name="last_informal_edu_level" id="last_informal_edu_level" class="registration-field alp_details" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "ALP level" %}</option>
                 {% for item in informal_educations %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
@@ -297,7 +186,7 @@
             </select>
         </td>
         <td>
-            <select name="last_informal_edu_final_result" id="last_informal_edu_final_result" class="outreach-field alp_details" itemscope="$$itemscope_id$$">
+            <select name="last_informal_edu_final_result" id="last_informal_edu_final_result" class="registration-field alp_details" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "ALP result" %}</option>
                 {% for item in education_final_results %}
                     <option value="{{ item.id }}">{{ item.name }}</option>

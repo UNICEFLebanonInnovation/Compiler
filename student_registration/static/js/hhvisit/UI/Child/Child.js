@@ -16,9 +16,14 @@
            var isEnrolled = (entry.child_enrolled_in_another_school==null?false:entry.child_enrolled_in_another_school);
            var isEnrolledCell = "<td style = \"display:none;\">"+isEnrolled+"</td>";
 
+           var ispilot = (entry.child_no_longer_living_in_the_pilot_area==null?false:entry.child_no_longer_living_in_the_pilot_area);
+           var ispilotCell = "<td style = \"display:none;\">"+ispilot+"</td>";
+
+
+
            $("#household-visit-child-table tbody").append
            (
-              "<tr class = \"child-row-class\" >"+childIDCell+childNameCell+schoolCell+gradeCell+ageCell+isEnrolledCell+"</tr>"
+              "<tr class = \"child-row-class\" >"+childIDCell+childNameCell+schoolCell+gradeCell+ageCell+isEnrolledCell+ispilotCell+"</tr>"
 
            );
         }
@@ -53,8 +58,14 @@
                             (
                                editForm.find('.child_enrolled_in_another_school_block')
                             );
+                            var isPilot =
+                            GetBooleanSelection
+                            (
+                               editForm.find('.child_no_longer_living_in_the_pilot_area_block')
+                            );
 
                             row.find("td:nth-child(6)").html(isEnrolled);
+                             row.find("td:nth-child(7)").html(isPilot);
                             var childID = row.find("td:first-child").text();
                             var childServiceData = CreateChildServiceData(childID, editForm);
                             var childReasonData = CreateChildReasonData(childID, editForm);
@@ -101,6 +112,7 @@
               var childRowRecord = CreateChildDataRecord(row);
 
               editForm.find("[name=childName]").html( childVisit.first_name +' '+childVisit.father_name+' '+childVisit.last_name );
+              editForm.find("[name=child_absence_period]").html( childVisit.child_absence_period );
 
               // updateDropDownValue(editForm.find("[name=childMainReason]"),childRowRecord.main_reason_id );
               //
@@ -117,6 +129,12 @@
               (
                  editForm.find('.child_enrolled_in_another_school_block'),
                  childRowRecord.child_enrolled_in_another_school
+              );
+
+              ChangeBooleanSelection
+              (
+                 editForm.find('.child_no_longer_living_in_the_pilot_area_block'),
+                 childRowRecord.child_no_longer_living_in_the_pilot_area
               );
 
               childVisit.child_visit_service.forEach

@@ -70,9 +70,10 @@ def SaveChildAbsences(childAbsences):
         import pprint
         result += pprint.pformat(registering_adult_id)
 
-        isFirstAbsence = not ChildAttendanceMonitoring.objects.filter( \
-            student_id=childAbsence.StudentID \
-            ).exists()
+        # isFirstAbsence = not ChildAttendanceMonitoring.objects.filter( \
+        #     student_id=childAbsence.StudentID \
+        #     ).exists()
+        isFirstAbsence = False
 
 
         result += pprint.pformat(isFirstAbsence)
@@ -209,48 +210,46 @@ def GetURLChildAbsences(absencesData):
     for studentAbsence in absencesData:
 
         numberOfDays = studentAbsence['absent_days']
-        numberOf10Days = numberOfDays/10
 
-        for x in xrange(numberOf10Days):
+        if numberOfDays is None:
+            numberOfDays = 0
 
-              childAbsence = ChildAbsence()
+        childAbsence = ChildAbsence()
 
-              attendanceDate = datetime.strptime(studentAbsence['last_attendance_date'], "%Y-%m-%d").date()
+        attendanceDate = datetime.strptime(studentAbsence['last_attendance_date'], "%Y-%m-%d").date()
 
+        fromDate = attendanceDate
+        toDate = attendanceDate + datetime2.timedelta(days=numberOfDays)
 
-              fromDate = attendanceDate + datetime2.timedelta(days=x*14)
-              toDate = attendanceDate + datetime2.timedelta(days=(x*14)+9)
+        studentID = None
 
-              studentID = None
+        # studentAbsence['student_number'] = '101052532398M'
 
-              #studentAbsence['student_number'] = '101052532398M'
+        if studentIdentifiersDictionary.has_key(studentAbsence['student_number']):
 
-              if studentIdentifiersDictionary.has_key(studentAbsence['student_number']):
+            studentID = studentIdentifiersDictionary[studentAbsence['student_number']]
+        else:
 
-                  studentID = studentIdentifiersDictionary[studentAbsence['student_number']]
-              else:
+            concatenatedFields = studentAbsence['student_first_name'] + '-' + \
+                                 studentAbsence['student_father_name'] + '-' + \
+                                 studentAbsence['student_last_name'] + '-' + \
+                                 studentAbsence['student_birthday_month'] + '-' + \
+                                 studentAbsence['student_birthday_day'] + '-' + \
+                                 studentAbsence['student_birthday_year'] \
 
-                  concatenatedFields = studentAbsence['student_first_name']+'-'+ \
-                                       studentAbsence['student_father_name']+'-'+ \
-                                       studentAbsence['student_last_name']+'-'+ \
-                                       studentAbsence['student_birthday_month']+'-'+ \
-                                       studentAbsence['student_birthday_day']+'-'+ \
-                                       studentAbsence['student_birthday_year'] \
+            if studentFieldsDictionary.has_key(concatenatedFields):
+                studentID = studentFieldsDictionary[concatenatedFields]
 
-                  if studentFieldsDictionary.has_key(concatenatedFields):
-                      studentID = studentFieldsDictionary[concatenatedFields]
+        childAbsence.StudentID = studentID
+        childAbsence.FromDate = fromDate
+        childAbsence.ToDate = toDate
+        childAbsence.NumberOfDays = numberOfDays
+        childAbsence.Index = 1
+        if (childAbsence.StudentID is not None) and \
+            (childAbsence.FromDate > datetime.strptime('2010-01-01', '%Y-%m-%d').date()) and \
+            ((studentAbsence['reattend_date'] is None)):
+            childAbsences.append(childAbsence)
 
-
-              childAbsence.StudentID = studentID
-              childAbsence.FromDate = fromDate
-              childAbsence.ToDate = toDate
-              childAbsence.NumberOfDays = 10
-              childAbsence.Index = x
-
-
-              if (childAbsence.StudentID is not None) and \
-                 (childAbsence.FromDate > datetime.strptime('2017-01-01', '%Y-%m-%d').date()):
-                 childAbsences.append(childAbsence)
 
     return childAbsences
 
@@ -424,10 +423,7 @@ class ChildAbsence:
 
         import pprint
 
-        startingDays = (self.Index)*10
-        endingDays = (self.Index+1)*10
-
-        return pprint.pformat(startingDays)+'-'+pprint.pformat(endingDays)
+        return pprint.pformat(self.NumberOfDays)
 
 
     def __repr__(self):

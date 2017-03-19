@@ -31,7 +31,6 @@
                   </div>
               {% endfor %}
           {% endif %}
-          <div class="panel-body">
              <div class="panel-body">
                <div id="oneperframe" class="frame oneperframe" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
                   <ul class="slidee" {% if LANGUAGE_CODE == 'ar-ar' %}lang="en" dir="ltr"{% endif %}>
@@ -79,6 +78,7 @@
                                  <option value="address">Address</option>
                                   <option value="school_change">School</option>
                                   <option value="beneficiary">Beneficiary Change Request</option>
+                                  <option value="notEligible">Household No Longer Eligible</option>
                              </optgroup>
                               <optgroup label="VIEW INFO / COMPLAINTS">
                                   <option value="payment">Payment Information</option>
@@ -87,7 +87,7 @@
                                   <option value="refusedServiceBLF"> Refused Service by BLF </option>
                                   <option value="schoolRefusedEntrance">School Director Refused Re-entry</option>
                                   <option value="reinstateBeneficiary">Reinstate Beneficiary</option>
-                                   <option value="twoCards">Two Red Cards</option>
+                                  <option value="twoCards">Two Red Cards</option>
                                   <option value="otherComplaint">Other</option>
                               </optgroup>
                           </select>
@@ -157,7 +157,7 @@
                                           <option value="{{ itm.id }}">{{ itm.name }}</option>
                                       {% endfor %}
                                     </select>
-                                    <span class="error" id="idType_error">{% trans "New Beneficiary ID Type is missing." %}</span>
+                                    <span class="error" id="nf_dType_error">{% trans "New Beneficiary ID Type is missing." %}</span>
                                 </div>
                                 <div  class="line">
                                     <label class="text" style="width: 200px;">{% trans "New Beneficiary Individual ID Number: " %}</label>
@@ -289,10 +289,28 @@
                                 </div>
 
                             </div>
-                            <div id = "paymentFields" style="display:none">
-                            <div class="line" >
-                                <label >{% trans "Household Status:  " %}</label><span id ="hhsuspended_payment"></span>
+                            <div class="line" id = "notEligibleFields" style="display:none">
+                                <div  id = "notEligibleSelect" >
+                                    <label class="text" style="width: 200px;">{% trans "Reason: " %}</label>
+                                    <select id="not_eligible_select" >
+                                        {% for itm in not_eligible_reason %}
+                                          <option value="{{ itm.id }}">{{ itm.name }}</option>
+                                      {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="line" id = "not_eligible_specify_reason" style="display:none">
+                                    <label class="text" style="width: 200px;">{% trans "Specify: " %}</label>
+                                    <input id="not_eligible_reason_specify" maxlength="100" type="text">
+                                </div>
+                             <div class="line">
+                                    <label class="text" style="width: 200px;">{% trans "Comment: " %}</label>
+                                    <input id="no_logner_eligible_comment" maxlength="100" type="text">
+                                </div>
                             </div>
+                            <div id = "paymentFields" style="display:none">
+                                <div class="line" >
+                                    <label >{% trans "Household Status:  " %}</label><span id ="hhsuspended_payment"></span>
+                                </div>
                             <label class="text" style="width: 400px;">{% trans "Payment History: " %}</label>
                                 <table id="payments-table" class="table table-striped table-bordered cell-border"
                                        data-height="500"
@@ -325,7 +343,7 @@
                                     <tr>
                                         <th style = "display:none">>ID</th>
                                         <th>Child</th>
-                                        <th>DOB</th>
+                                        <th>Age</th>
                                         <th>School</th>
                                     </tr>
                                     </thead>
@@ -534,7 +552,7 @@
           </ul>
         </div>
 
-      <div class="controls center">
+    <div class="controls center">
       {% if LANGUAGE_CODE == 'ar-ar' %}
         <button class="btn btn-warning" type="button" id="hhCloseButton" style="float:left;">
           {% trans "Cancel" %}
@@ -553,9 +571,14 @@
         <button class="btn btn-warning" type="button" id="hhCloseButton" style="float:right;">
             {% trans "Cancel" %}
         </button>
+
+        <div style="width:190px;height:40px;float:left;">
+
         <button class="btn btn-primary" type="button" id="hhSaveButton" style="float:left; display:none">
           {% trans "Save" %}
         </button>
+
+        </div>
         <button class="btn btn-primary .prev" type="button" id="previousButton">
             <i class="icon-prev-sign icon-white"></i> {% trans "previous" %}
         </button>

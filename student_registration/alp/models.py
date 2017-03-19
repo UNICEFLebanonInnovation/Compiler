@@ -38,6 +38,16 @@ class ALPRound(models.Model):
         return self.name
 
 
+class OutreachManager(models.Manager):
+    def get_queryset(self):
+        return super(OutreachManager, self).get_queryset().exclude(deleted=True).exclude(dropout_status=True)
+
+
+class OutreachDropoutManager(models.Manager):
+    def get_queryset(self):
+        return super(OutreachDropoutManager, self).get_queryset().exclude(deleted=True).filter(dropout_status=True)
+
+
 class Outreach(TimeStampedModel):
 
     EAV_TYPE = 'outreach'
@@ -325,6 +335,10 @@ class Outreach(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
+    dropout_status = models.BooleanField(blank=True, default=False)
+
+    objects = OutreachManager()
+    drop_objects = OutreachDropoutManager()
 
     class Meta:
         ordering = ['id']
@@ -354,6 +368,12 @@ class Outreach(TimeStampedModel):
         if self.exam_result_science:
             total += self.exam_result_science
         return total
+
+    @property
+    def pretest_total(self):
+        if self.level:
+            return "{}/{}".format(self.exam_total, self.level.note)
+        return 0
 
     @property
     def post_exam_total(self):
@@ -398,7 +418,13 @@ class Outreach(TimeStampedModel):
         return str(self.id)
 
     def save(self, **kwargs):
-        self.refer_to_level = refer_to_level(self.student_age, self.registered_in_level, self.post_exam_total)
+        if self.post_exam_total or (self.post_exam_corrector_arabic
+                                    or self.post_exam_corrector_language
+                                    or self.post_exam_corrector_math
+                                    or self.post_exam_corrector_science):
+            self.refer_to_level = refer_to_level(self.student_age, self.registered_in_level, self.post_exam_total)
+        else:
+            self.refer_to_level = None
         super(Outreach, self).save(**kwargs)
 
 
@@ -410,5 +436,3 @@ class ExtraColumn(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
-
-# eav.register(Outreach)
