@@ -329,7 +329,11 @@ SUIT_CONFIG = {
         {'label': 'Dashboard', 'icon': 'icon-home', 'models': [
             {'url': '/dashboard/registrations-pilot/', 'label': 'PILOT'},
             {'url': '/dashboard/registrations-2ndshift/', 'label': '2nd Shift'},
-            {'url': '/dashboard/registrations-alp/', 'label': 'ALP'},
+            {'url': '/dashboard/alp-overall/', 'label': 'ALP Overall'},
+            {'url': '/dashboard/registrations-alp/', 'label': 'ALP Current round'},
+            {'url': '/dashboard/registrations-alp-outreach/', 'label': 'ALP Outreach'},
+            {'url': '/dashboard/registrations-alp-pre-test/', 'label': 'ALP Pre-test'},
+            {'url': '/dashboard/registrations-alp-post-test/', 'label': 'ALP Post-test'},
         ]},
         {'app': 'auth', 'label': 'Groups', 'icon': 'icon-user'},
         {'app': 'users', 'label': 'Users', 'icon': 'icon-user'},

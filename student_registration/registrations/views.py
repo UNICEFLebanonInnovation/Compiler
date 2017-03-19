@@ -52,7 +52,9 @@ from .models import (
     WaitingList,
     BeneficiaryChangedReason,
     ComplaintCategory,
-    Complaint
+    Complaint,
+    HouseholdNotFound,
+    NotEligibleReason
 )
 from .serializers import (
     RegistrationSerializer,
@@ -60,7 +62,8 @@ from .serializers import (
     RegistrationChildSerializer,
     ClassAssignmentSerializer,
     WaitingListSerializer,
-    ComplaintSerializer
+    ComplaintSerializer,
+    HouseholdNotFoundSerializer
 )
 from .utils import get_unhcr_principal_applicant
 
@@ -246,6 +249,19 @@ class RegisteringComplaintViewSet(mixins.RetrieveModelMixin,
     def put(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
+class RegisteringNotFoundViewSet(mixins.RetrieveModelMixin,
+                                  mixins.ListModelMixin,
+                                  mixins.CreateModelMixin,
+                                  mixins.UpdateModelMixin,
+                                  viewsets.GenericViewSet):
+    model = HouseholdNotFound
+    queryset = HouseholdNotFound.objects.all()
+    serializer_class = HouseholdNotFoundSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def put(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
 
 class RegisteringPilotView(LoginRequiredMixin, FormView):
     template_name = 'registration-pilot/registry.html'
@@ -319,19 +335,22 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 ComplaintCategory.objects.all().filter(complaint_type='BANK').order_by('name')
             reinstate_beneficiary_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='REINSTATE BENEFICIARY').order_by('name')
+            not_found_complaint_types = \
+                ComplaintCategory.objects.all().filter(complaint_type='Not Found').order_by('name')
             months = Person.MONTHS
             location = self.request.GET.get("location", 0)
-            idType = IDType.objects.all().filter(inuse=True).order_by('name')
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
             relationToHouseholdHead = RegisteringAdult.RELATION_TYPE
             complaint_status = Complaint.STATUS
             gender = RegisteringAdult.GENDER
             beneficiaryChangedReason = BeneficiaryChangedReason.objects.all()
+            not_eligible_reason = NotEligibleReason.objects.all()
             addressSearchText = self.request.GET.get("addressSearchText", '')
             repSearchText = self.request.GET.get("repSearchText", '')
             idSearchText = self.request.GET.get("idSearchText", '')
             primarySearchText = self.request.GET.get("primarySearchText", '')
             secondarySearchText = self.request.GET.get("secondarySearchText", '')
+            idType = IDType.objects.all().filter(inuse=True).order_by('name')
 
             schools = School.objects.all().order_by('name')
 
@@ -380,6 +399,8 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'complaint_status': complaint_status,
                 'bank_complaint_types': bank_complaint_types,
                 'reinstate_beneficiary_complaint_types': reinstate_beneficiary_complaint_types,
+                'not_found_complaint_types': not_found_complaint_types,
+                'not_eligible_reason': not_eligible_reason
             }
 
 

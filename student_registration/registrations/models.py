@@ -70,6 +70,21 @@ class ComplaintCategory(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def complaint_count(self):
+        return int(self.complaints.all().count())
+
+
+class NotEligibleReason(models.Model):
+    name = models.CharField(max_length=64L, unique=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Main Reason'
+
+    def __unicode__(self):
+        return self.name
+
 
 class RegisteringAdult(Person):
     """
@@ -173,12 +188,19 @@ class RegisteringAdult(Person):
     duplicate_card_first_card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
     duplicate_card_second_card_case_number = models.CharField(max_length=50, blank=True, null=True)
     duplicate_card_secondcard_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
+    no_logner_eligible = models.BooleanField(default=False)
+    no_logner_eligible_reason = models.ForeignKey(
+        NotEligibleReason,
+        blank=True, null=True,
+        related_name='+',
+    )
+    no_logner_eligible_specify = models.CharField(max_length=50, blank=True, null=True)
+    no_logner_eligible_comment = models.CharField(max_length=50, blank=True, null=True)
     update_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
     )
-
 
     @property
     def case_number(self):
@@ -189,6 +211,41 @@ class RegisteringAdult(Person):
     @property
     def adult_full_name(self):
         return self.first_name + ' ' + self.father_name + ' ' + self.last_name
+
+
+class HouseholdNotFound(Person):
+
+    RELATION_TYPE = Choices(
+        ('head', _('I am the household head')),
+        ('spouse', _('Spouse')),
+        ('parent', _('Father/Mother')),
+        ('relative', _('Other Relative')),
+        ('other', _('Other non-Relative')),
+    )
+
+    PHONE_ANSWEREDBY = Choices(
+        ('me', _('Me personally')),
+        ('relay', _('Someone who always relays the message to me')),
+        ('notrelay', _('Someone who may not relay the message to me')),
+    )
+    GENDER = Choices(
+        ('Male', _('Male')),
+        ('Female', _('Female')),
+    )
+
+    relation_to_householdhead = models.CharField(max_length=50, blank=True, null=True, choices=RELATION_TYPE)
+    primary_phone = models.CharField(max_length=50, blank=True, null=True)
+    primary_phone_answered = models.CharField(max_length=50, blank=True, null=True, choices=PHONE_ANSWEREDBY)
+    secondary_phone = models.CharField(max_length=50, blank=True, null=True)
+    secondary_phone_answered = models.CharField(max_length=50, blank=True, null=True, choices=PHONE_ANSWEREDBY)
+    number_children_five_to_nine = models.IntegerField(blank=True, null=True)
+    number_children_ten_to_seventeen = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.id
 
 
 class Complaint(TimeStampedModel):
@@ -208,7 +265,12 @@ class Complaint(TimeStampedModel):
     complaint_category = models.ForeignKey(
         ComplaintCategory,
         blank=True, null=True,
-        related_name='+',
+        related_name='complaints',
+    )
+    household_not_found = models.ForeignKey(
+        HouseholdNotFound,
+        blank=True, null=True,
+        related_name='HHNotFound',
     )
     complaint_note = models.TextField(blank=True, null=True)
     complaint_status = models.CharField(max_length=20, blank=True, null=True, choices=STATUS)
@@ -252,10 +314,8 @@ class Payment(models.Model):
     payment_year = models.IntegerField(blank=True, null=True)
     payment_date = models.DateField(blank=True, null=True)
 
-
     class Meta:
         ordering = ['id']
-
 
     def __unicode__(self):
         return self.id
