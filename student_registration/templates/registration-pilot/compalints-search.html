@@ -161,20 +161,17 @@
           <thead>
               <tr>
                   <th style = "display:none">>ID</th>
-                  <th>Child Name</th>
-                  <th>Old School</th>
-                  <th>New School</th>
-                  <th>Approve/Reject</th>
-                  <th>Comments</th>
+                  <th id="tbl-child-name" style = "display:none" >Child Name</th>
+                  <th id="tbl-child-current-school" style = "display:none" >Old School</th>
+                  <th id="tbl-child-new-school" style = "display:none" >New School</th>
+                  <th id="tbl-approve-reject"  >Approve/Reject</th>
+                  <th id="tbl-commnets"  >Comments</th>
               </tr>
           </thead>
           <tbody>
 
           </tbody>
         </table>
-
-
-
      </div>
 
     <div id = "hhNotFoundForm" style ="display:none">
@@ -347,9 +344,15 @@
                 var noteCell =  "<td>"+entry.complaint_note +"</td>";
                 var dateCell =  "<td>"+entry.created +"</td>";
 
-{#                     var oldSchoolCell = "<td>"+entry.complaint_type +"</td>";#}
-{#                     var newSchoolCell = "<td>"+entry.complaint_type +"</td>";#}
+{#                $("#tbl-child-old-school").style.visibility = "visible";#}
+{#                     document.getElementById('tbl-child-current-school').style.visibility = "visible";#}
+{#                     document.getElementById('tbl-child-name').style.visibility = "visible";#}
+{#                     document.getElementById('tbl-child-new-school').style.visibility = "visible";#}
+{#                     document.getElementById('tbl-child-old-school').style.visibility = "visible";#}
+{#                     document.getElementById('tbl-child-old-school').style.visibility = "visible";#}
+{#                     document.getElementById('tbl-child-old-school').style.visibility = "visible";#}
 
+                var app_rej
 
 
                  if(complaint_type= 'Bank') {
@@ -402,6 +405,9 @@
 
                      var phoneCell =  "<td>"+entry.adult_primary_phone +"</td>";
                      var studentCell =  "<td>"+entry.student_first_name + ' ' + entry.student_father_name + ' ' + entry.student_last_name+"</td>";
+
+
+
 
 
                      $("#complaints-table tbody").append
