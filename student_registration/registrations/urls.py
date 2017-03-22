@@ -36,4 +36,14 @@ urlpatterns = [
         view=views.ComplaintCategoryListSearchView.as_view(),
         name='complaints_search'
     ),
+    url(
+        regex=r'^complaints-grid/$',
+        view=views.ComplaintsGridView.as_view(),
+        name='complaints_grid'
+    ),
+    url(
+        regex=r'^changebeneficiary-grid/$',
+        view=views.ChangeBeneficiaryGridView.as_view(),
+        name='changebeneficiary_grid'
+    ),
 ]

@@ -427,6 +427,8 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'beneficiary_changed_reason',
             'beneficiary_specify_reason',
             'beneficiary_changed_gender',
+            'beneficiary_changed_comment',
+            'beneficiary_changed_status',
             'card_last_four_digits',
             'card_distribution_date',
             'card_status',
