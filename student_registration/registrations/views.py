@@ -483,6 +483,36 @@ class ComplaintStatistics:
         self.Statistics = 0
 
 
+class ComplaintsGridView(LoginRequiredMixin, TemplateView):
+
+    model = Complaint
+    template_name = 'registration-pilot/compalints-grid.html'
+
+    def get_context_data(self, **kwargs):
+
+        CategoryID = self.request.GET.get('CategoryID', 0)
+        ComplaintType = self.request.GET.get('ComplaintType', '')
+
+        complaintRecords = Complaint.objects.filter(complaint_category=CategoryID)
+
+        return {
+            'complaints': complaintRecords,
+            'ComplaintType': ComplaintType
+        }
+
+class ChangeBeneficiaryGridView(LoginRequiredMixin, TemplateView):
+
+    template_name = 'registration-pilot/changebeneficiary-grid.html'
+
+    def get_context_data(self, **kwargs):
+
+        beneficiarRecords = RegisteringAdult.objects.filter(beneficiary_changed_verify=True)
+
+        return {
+            'beneficiaries': beneficiarRecords,
+        }
+
+
 
 class SchoolApprovalListView(LoginRequiredMixin, TemplateView):
 

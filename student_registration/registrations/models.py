@@ -112,6 +112,11 @@ class RegisteringAdult(Person):
             ('Male', _('Male')),
             ('Female', _('Female')),
     )
+    CHANGESTATUS = Choices(
+        ('open', _('Open')),
+        ('accepted', _('Accepted')),
+        ('rejected', _('Rejected')),
+    )
     individual_id_number = models.CharField(max_length=45L, blank=True, null=True)
     principal_applicant_living_in_house = models.BooleanField(blank=True, default=True)
     status = models.BooleanField(blank=True, default=True)
@@ -183,6 +188,8 @@ class RegisteringAdult(Person):
         related_name='+',
     )
     beneficiary_specify_reason = models.CharField(max_length=100, blank=True, null=True)
+    beneficiary_changed_status = models.CharField(max_length=20, blank=True, null=True, choices=CHANGESTATUS)
+    beneficiary_changed_comment = models.CharField(max_length=200, blank=True, null=True)
     household_suspended = models.BooleanField(default=False)
     duplicate_card_first_card_case_number = models.CharField(max_length=50, blank=True, null=True)
     duplicate_card_first_card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
@@ -254,8 +261,9 @@ class Complaint(TimeStampedModel):
     """
 
     STATUS = Choices(
-            ('open', _('Open')),
-            ('resolved', _('Resolved')),
+        ('open', _('Open')),
+        ('accepted', _('Accepted')),
+        ('rejected', _('Rejected')),
     )
     complaint_adult = models.ForeignKey(
         RegisteringAdult,
