@@ -335,19 +335,19 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
 
             locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
             payment_complaint_types = \
-                ComplaintCategory.objects.all().filter(complaint_type='PAYMENT').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='Payment').order_by('name')
             card_distribution_cmplaint_types= \
-                ComplaintCategory.objects.all().filter(complaint_type='CARD DISTRIBUTION').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='Card Distribution').order_by('name')
             card_complaint_types = \
-                ComplaintCategory.objects.all().filter(complaint_type='CARD').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='Card').order_by('name')
             school_complaint_types = \
-                ComplaintCategory.objects.all().filter(complaint_type='SCHOOL-RELATED').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='School Related').order_by('name')
             other_complaint_types = \
-                ComplaintCategory.objects.all().filter(complaint_type='OTHER').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='Other').order_by('name')
             bank_complaint_types = \
-                ComplaintCategory.objects.all().filter(complaint_type='BANK').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='Bank').order_by('name')
             reinstate_beneficiary_complaint_types = \
-                ComplaintCategory.objects.all().filter(complaint_type='REINSTATE BENEFICIARY').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='Reinstate Beneficiary').order_by('name')
             not_found_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='Not Found').order_by('name')
             months = Person.MONTHS
@@ -436,7 +436,7 @@ class ComplaintCategoryListSearchView(LoginRequiredMixin, TemplateView):
             complaintStatisticsRecord.ID = record.id
             complaintStatisticsRecord.Name = record.name
             complaintStatisticsRecord.complaint_type = record.complaint_type
-            complaintStatisticsRecord.Statistics = record.complaint_count
+            complaintStatisticsRecord.Statistics = record.complaint_count(self.request.user)
             complaintStatistics.append(complaintStatisticsRecord)
             complaintStatisticsTotal.Statistics += complaintStatisticsRecord.Statistics
 
@@ -448,7 +448,11 @@ class ComplaintCategoryListSearchView(LoginRequiredMixin, TemplateView):
         school_changed_to_verify.Name = 'Change of school'
         school_changed_to_verify.Statistics = 0
 
-        students = Registration.objects.filter(school_changed_to_verify__isnull=False).order_by('id')
+        students = Registration.objects
+        if not self.request.user.is_superuser:
+            students = students.filter(school__location__parent_id=self.request.user.governante_id)
+
+        students = students.filter(school_changed_to_verify__isnull=False).order_by('id')
         for student in students:
             school_changed_to_verify.Statistics += 1
         complaintStatisticsTotal.Statistics += school_changed_to_verify.Statistics
@@ -461,7 +465,12 @@ class ComplaintCategoryListSearchView(LoginRequiredMixin, TemplateView):
         beneficiary_changed_verify.Name = 'Change of benefeciary'
         beneficiary_changed_verify.Statistics = 0
 
-        beneficiaries = RegisteringAdult.objects.filter(beneficiary_changed_verify=True).order_by('id')
+        beneficiaries = RegisteringAdult.objects
+        if not self.request.user.is_superuser:
+            beneficiaries = beneficiaries.filter(school__location__parent_id=self.request.user.governante_id)
+
+        beneficiaries = beneficiaries.filter(beneficiary_changed_verify=True).order_by('id')
+
         for beneficiary in beneficiaries:
             beneficiary_changed_verify.Statistics += 1
         complaintStatisticsTotal.Statistics += beneficiary_changed_verify.Statistics
@@ -500,6 +509,7 @@ class ComplaintsGridView(LoginRequiredMixin, TemplateView):
             'ComplaintType': ComplaintType
         }
 
+
 class ChangeBeneficiaryGridView(LoginRequiredMixin, TemplateView):
 
     template_name = 'registration-pilot/changebeneficiary-grid.html'
@@ -507,6 +517,9 @@ class ChangeBeneficiaryGridView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
 
         beneficiarRecords = RegisteringAdult.objects.filter(beneficiary_changed_verify=True)
+
+        if not self.request.user.is_superuser:
+            beneficiarRecords = beneficiarRecords.filter(school__location__parent_id=self.request.user.governante_id)
 
         return {
             'beneficiaries': beneficiarRecords,
@@ -516,21 +529,15 @@ class ChangeBeneficiaryGridView(LoginRequiredMixin, TemplateView):
 
 class SchoolApprovalListView(LoginRequiredMixin, TemplateView):
 
-    model = Registration
-    template_name = 'registration-pilot/list_school_modification.html'
+    template_name = 'registration-pilot/students-grid.html'
 
     def get_context_data(self, **kwargs):
-        data = []
-        locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
-        location = self.request.GET.get("location", 0)
-        if location:
-            data = self.model.objects.filter(school__location_id=location,school_changed_to_verify__isnull=False).order_by('id')
+        student_records = Registration.objects.filter(school_changed_to_verify__isnull=False)
 
+        if not self.request.user.is_superuser:
+            student_records = student_records.filter(school__location__parent_id=self.request.user.governante_id)
         return {
-            'registrations': data,
-            'locations': locations,
-            'selectedLocation': int(location),
-            'Modification_form': SchoolModificationForm
+            'students': student_records,
         }
 
 

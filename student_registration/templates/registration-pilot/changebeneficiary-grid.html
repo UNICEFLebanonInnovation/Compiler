@@ -7,21 +7,23 @@ width="100%">
     <thead>
         <tr>
             <th style = "display:none">>ID</th>
-            <th id="tbl-child-name" >Child Name</th>
-            <th id="tbl-child-current-school" >Old School</th>
-            <th id="tbl-child-new-school" >New School</th>
-            <th id="tbl-child-new-school" >New School</th>
-            <th id="tbl-approve-reject"  >Approve/Reject</th>
-            <th id="tbl-comments"  >Comments</th>
+            <th >Old beneficiary</th>
+            <th >New beneficiary</th>
+            <th >ID</th>
+            <th >Relation to HH</th>
+            <th >Reason</th>
+            <th >Approve/Reject</th>
+            <th >Comments</th>
         </tr>
     </thead>
     <tbody>
         {% for beneficiary in beneficiaries %}
             <tr class="row-class" beneficiary-id="{{ beneficiary.id }}" >
-                <td>{{ beneficiary.id }}</td>
-                <td>{{ beneficiary.id }}</td>
-                <td>{{ beneficiary.id }}</td>
-                <td>{{ beneficiary.id }}</td>
+                <td>{{ beneficiary.first_name }} {{ beneficiary.father_name }} {{ beneficiary.last_name }}</td>
+                <td>{{ beneficiary.beneficiary_changed_first_name }} {{ beneficiary.beneficiary_changed_father_name }} {{ beneficiary.beneficiary_changed_last_name }}</td>
+                <td>{{ beneficiary.beneficiary_changed_id_number }}</td>
+                <td>{{ beneficiary.beneficiary_changed_relation_to_householdhead }}</td>
+                <td>{{ beneficiary.beneficiary_changed_reason }} {{ beneficiary.beneficiary_specify_reason }}</td>
                 <td>
 
                     <div class="switch-toggle switch-3 switch-candy" style = "width:220px">
@@ -47,8 +49,21 @@ width="100%">
                 </td>
 
                 <td style = "display:none">{{ beneficiary.beneficiary_changed_status  }}</td>
-
                 <td style = "display:none">{{ beneficiary.beneficiary_changed_comment  }}</td>
+                <td style = "display:none">{{ beneficiary.beneficiary_changed_id_type_id  }}</td>
+                <td style = "display:none">{{ beneficiary.beneficiary_changed_id_number  }}</td>
+                <td style = "display:none">{{ beneficiary.beneficiary_changed_first_name  }}</td>
+                <td style = "display:none">{{ beneficiary.beneficiary_changed_father_name  }}</td>
+                <td style = "display:none">{{ beneficiary.beneficiary_changed_last_name  }}</td>
+                <td style = "display:none">{{ beneficiary.beneficiary_changed_mother_full_name  }}</td>
+                <td style = "display:none">{{ beneficiary.beneficiary_changed_birthday_year  }}</td>
+                <td style = "display:none">{{ beneficiary.beneficiary_changed_birthday_month  }}</td>
+                <td style = "display:none">{{ beneficiary.beneficiary_changed_birthday_day  }}</td>
+                <td style = "display:none">{{ beneficiary.beneficiary_changed_phone  }}</td>
+                <td style = "display:none">{{ beneficiary.beneficiary_changed_relation_to_householdhead  }}</td>
+                <td style = "display:none">{{ beneficiary.beneficiary_changed_gender  }}</td>
+
+
             </tr>
         {% endfor %}
     </tbody>
