@@ -7,20 +7,26 @@ width="100%">
     <thead>
         <tr>
             <th style = "display:none">>ID</th>
-            <th id="tbl-child-name" style = "display:none" >Child Name</th>
-            <th id="tbl-child-current-school" style = "display:none" >Old School</th>
-            <th id="tbl-child-new-school"  {% if ComplaintType == 'Payment' %}style = "display:none;"{% endif %}>New School</th>
-            <th id="tbl-approve-reject"  >Approve/Reject</th>
-            <th id="tbl-comments"  >Comments</th>
+            <th>Case #</th>
+            <th>HH Name</th>
+            <th>Comment</th>
+            <th>Date of Complaint</th>
+            <th {% if ComplaintType != 'Card Distribution' %}style = "display:none;"{% endif %}>Phone #</th>
+            <th>Approve/Reject</th>
+            <th>Comments</th>
+{#            <th {% if ComplaintType == 'Payment' %}style = "display:none;"{% endif %}>New School</th>#}
         </tr>
     </thead>
     <tbody>
+
         {% for complaint in complaints %}
             <tr class="row-class" complaint-id="{{ complaint.id }}" >
-                <td>{{ complaint.id }}</td>
-                <td>{{ complaint.id }}</td>
-                <td>{{ complaint.id }}</td>
-                <td  {% if ComplaintType == 'Payment' %}style = "display:none;"{% endif %}>{{ complaint.id }}</td>
+                <td>{{ complaint.complaint_adult.id_number }}</td>
+                <td>{{ complaint.complaint_adult.first_name }} {{ complaint.complaint_adult.father_name }} {{ complaint.complaint_adult.last_name }}</td>
+                <td>{{ complaint.complaint_note }}</td>
+                <td>{{ complaint.created }}</td>
+                <td  {% if ComplaintType != 'Card Distribution' %}style = "display:none;"{% endif %}>{{ complaint.complaint_bank_phone_used }}</td>
+{#                <td  {% if ComplaintType == 'Payment' %}style = "display:none;"{% endif %}>{{ complaint.id }}</td>#}
                 <td>
 
                     <div class="switch-toggle switch-3 switch-candy" style = "width:220px">
