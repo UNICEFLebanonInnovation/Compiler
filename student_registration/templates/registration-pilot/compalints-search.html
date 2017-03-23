@@ -185,6 +185,8 @@
         var student_url = host+'/api/registrations-child/';
         var student_grid_url = host+'/registrations/students-grid';
 
+        var user_id = {{ request.user.id }};
+
 
 
         $(document).ready
@@ -431,8 +433,7 @@
 
           studentRecord.school_changed_status = entry.school_changed_status;
           studentRecord.school_changed_comment = entry.school_changed_comment;
-
-
+          studentRecord.school_changed_update_owner = user_id;
 
           if (entry.school_changed_status.toLowerCase()=='accepted' && entry.school_changed_status_initial.toLowerCase() != 'accepted')
           {
@@ -504,6 +505,8 @@
           var complaintRecord = new Object();
           complaintRecord.complaint_status = entry.complaint_status;
           complaintRecord.complaint_solution = entry.complaint_solution;
+          complaintRecord.complaint_update_owner = user_id;
+
 
           var isSuccessfull = false;
 
@@ -531,8 +534,6 @@
       }
 
       function SaveBeneficiary(entry) {
-
-          alert(entry.beneficiary_changed_first_name);
           var beneficiaryRecord = new Object();
           beneficiaryRecord.id_type = entry.beneficiary_changed_id_type;
           beneficiaryRecord.id_number = entry.beneficiary_changed_id_number;
@@ -549,6 +550,7 @@
           beneficiaryRecord.sex = entry.beneficiary_changed_gender;
           beneficiaryRecord.beneficiary_changed_status = entry.beneficiary_changed_status;
           beneficiaryRecord.beneficiary_changed_comment = entry.beneficiary_changed_comment;
+          beneficiaryRecord.beneficiary_changed_update_owner = user_id;
 
 {#                             if (entry.school_changed_status.toLowerCase()=='accepted' && entry.school_changed_status_initial.toLowerCase() != 'accepted')#}
 {#          {#}
