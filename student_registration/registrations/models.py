@@ -192,6 +192,11 @@ class RegisteringAdult(Person):
     beneficiary_specify_reason = models.CharField(max_length=100, blank=True, null=True)
     beneficiary_changed_status = models.CharField(max_length=20, blank=True, null=True, choices=CHANGESTATUS)
     beneficiary_changed_comment = models.CharField(max_length=200, blank=True, null=True)
+    beneficiary_changed_update_owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
     household_suspended = models.BooleanField(default=False)
     duplicate_card_first_card_case_number = models.CharField(max_length=50, blank=True, null=True)
     duplicate_card_first_card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
@@ -295,8 +300,12 @@ class Complaint(TimeStampedModel):
         blank=True, null=True,
         related_name='complaints',
     )
-
     owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+    complaint_update_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
@@ -479,6 +488,11 @@ class Registration(TimeStampedModel):
     )
 
     school_changed_comment = models.CharField(max_length=200, blank=True, null=True)
+    school_changed_update_owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
     section = models.ForeignKey(
         Section,
         blank=True, null=True,
