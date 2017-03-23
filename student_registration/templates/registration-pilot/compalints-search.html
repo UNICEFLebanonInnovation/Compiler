@@ -182,6 +182,11 @@
         var beneficiaries_grid_url = host+'/registrations/changebeneficiary-grid';
 
 
+        var student_url = host+'/api/registrations-child/';
+        var student_grid_url = host+'/registrations/students-grid';
+
+
+
         $(document).ready
         (
            function()
@@ -238,6 +243,10 @@
           {
               LoadPartialView(beneficiaries_grid_url);
           }
+          else if(complaintCategoryID==100)
+          {
+              LoadPartialView(student_grid_url);
+          }
           else
           {
               LoadPartialView(complaints_grid_url+"?CategoryID="+complaintCategoryID+"&ComplaintType="+complaint_type);
@@ -286,21 +295,27 @@
        (
           function(i, obj)
           {
-             trElement = $(obj);
+              trElement = $(obj);
+              beneficiaryRecord = new Object();
+              beneficiaryRecord.id = trElement.attr('beneficiary-id');
+              beneficiaryRecord.beneficiary_changed_status = GetDecision(trElement);
+              beneficiaryRecord.beneficiary_changed_comment = trElement.find('td:nth-child(7) textarea').val();
+              beneficiaryRecord.beneficiary_changed_status_initial = trElement.find('td:nth-child(8)').html();
+              beneficiaryRecord.beneficiary_changed_comment_initial = trElement.find('td:nth-child(9)').html();
 
-             beneficiaryRecord = new Object();
-
-             beneficiaryRecord.id = trElement.attr('beneficiary-id');
-
-             beneficiaryRecord.beneficiary_changed_status = GetDecision(trElement);
-
-             beneficiaryRecord.beneficiary_changed_comment = trElement.find('td:nth-child(6) textarea').val();
-
-             beneficiaryRecord.beneficiary_changed_status_initial = trElement.find('td:nth-child(7)').html();
-
-             beneficiaryRecord.beneficiary_changed_comment_initial = trElement.find('td:nth-child(8)').html();
-
-             beneficiaryData.push(beneficiaryRecord);
+              beneficiaryRecord.beneficiary_changed_id_type= trElement.find('td:nth-child(10)').html();
+              beneficiaryRecord.beneficiary_changed_id_number= trElement.find('td:nth-child(11)').html();
+              beneficiaryRecord.beneficiary_changed_first_name= trElement.find('td:nth-child(12)').html();
+              beneficiaryRecord.beneficiary_changed_father_name= trElement.find('td:nth-child(13)').html();
+              beneficiaryRecord.beneficiary_changed_last_name= trElement.find('td:nth-child(14)').html();
+              beneficiaryRecord.beneficiary_changed_mother_full_name= trElement.find('td:nth-child(15)').html();
+              beneficiaryRecord.beneficiary_changed_birthday_year= trElement.find('td:nth-child(16)').html();
+              beneficiaryRecord.beneficiary_changed_birthday_month= trElement.find('td:nth-child(17)').html();
+              beneficiaryRecord.beneficiary_changed_birthday_day= trElement.find('td:nth-child(18)').html();
+              beneficiaryRecord.beneficiary_changed_phone= trElement.find('td:nth-child(19)').html();
+              beneficiaryRecord.beneficiary_changed_relation_to_householdhead= trElement.find('td:nth-child(20)').html();
+              beneficiaryRecord.beneficiary_changed_gender= trElement.find('td:nth-child(21)').html();
+              beneficiaryData.push(beneficiaryRecord);
 
           }
        );
@@ -327,11 +342,11 @@
 
                  complaintRecord.complaint_status = GetDecision(trElement);
 
-                 complaintRecord.complaint_solution = trElement.find('td:nth-child(6) textarea').val();
+                 complaintRecord.complaint_solution = trElement.find('td:nth-child(7) textarea').val();
 
-                 complaintRecord.complaint_status_initial = trElement.find('td:nth-child(7)').html();
+                 complaintRecord.complaint_status_initial = trElement.find('td:nth-child(8)').html();
 
-                 complaintRecord.complaint_solution_initial = trElement.find('td:nth-child(8)').html();
+                 complaintRecord.complaint_solution_initial = trElement.find('td:nth-child(9)').html();
 
                  complaintData.push(complaintRecord);
 
@@ -343,10 +358,89 @@
            return complaintData;
         }
 
+
+
+     function CreateStudentData()
+    {
+       studentData = [];
+
+       $("#students-table tbody tr")
+       .each
+       (
+          function(i, obj)
+          {
+              trElement = $(obj);
+              studentRecord = new Object();
+              studentRecord.id = trElement.attr('student-id');
+              studentRecord.school_changed_status = GetDecision(trElement);
+              studentRecord.school_changed_comment = trElement.find('td:nth-child(6) textarea').val();
+              studentRecord.school_changed_status_initial = trElement.find('td:nth-child(7)').html();
+              studentRecord.school_changed_comment_initial = trElement.find('td:nth-child(8)').html();
+              studentRecord.school_changed_to_verify = trElement.find('td:nth-child(9)').html();
+
+
+              studentData.push(studentRecord);
+
+          }
+       );
+
+       console.log(studentData);
+
+       return studentData;
+    }
+
+
         function GetDecision(trElement)
         {
             return trElement.find('input[name^=state-d-]:checked').val();
         }
+
+
+         function SaveStudents()
+       {
+           var studentData = CreateStudentData();
+
+           var isSuccessfull = true;
+
+           studentData.forEach
+           (
+              function(entry)
+              {
+                  if
+                  (
+                      entry.school_changed_status != entry.school_changed_status_initial ||
+                      entry.school_changed_comment != entry.school_changed_comment_initial
+                  )
+                  {
+                     isSuccessfull = isSuccessfull && SaveStudent(entry);
+
+
+                  }
+              }
+           );
+
+           if(isSuccessfull)
+           {
+               CloseComplaintCategory();
+           }
+       }
+
+      function SaveStudent(entry) {
+
+          var studentRecord = new Object();
+
+          studentRecord.school_changed_status = entry.school_changed_status;
+          studentRecord.school_changed_comment = entry.school_changed_comment;
+
+
+
+          if (entry.school_changed_status.toLowerCase()=='accepted' && entry.school_changed_status_initial.toLowerCase() != 'accepted')
+          {
+              studentRecord.school = entry.school_changed_to_verify;
+          }
+
+          return SaveRecord(studentRecord,student_url,entry.id);
+      }
 
          function SaveBeneficiaries()
        {
@@ -438,12 +532,33 @@
 
       function SaveBeneficiary(entry) {
 
+          alert(entry.beneficiary_changed_first_name);
           var beneficiaryRecord = new Object();
-
+          beneficiaryRecord.id_type = entry.beneficiary_changed_id_type;
+          beneficiaryRecord.id_number = entry.beneficiary_changed_id_number;
+{#          beneficiaryRecord.beneficiary_changed_verify = false;#}
+          beneficiaryRecord.first_name = entry.beneficiary_changed_first_name;
+          beneficiaryRecord.last_name = entry.beneficiary_changed_last_name;
+          beneficiaryRecord.father_name = entry.beneficiary_changed_father_name;
+          beneficiaryRecord.mother_fullname = entry.beneficiary_changed_mother_full_name;
+          beneficiaryRecord.birthday_month = entry.beneficiary_changed_birthday_month;
+          beneficiaryRecord.birthday_year = entry.beneficiary_changed_birthday_year;
+          beneficiaryRecord.birthday_day = entry.beneficiary_changed_birthday_day;
+          beneficiaryRecord.primary_phone = entry.beneficiary_changed_phone;
+          beneficiaryRecord.relation_to_householdhead = entry.beneficiary_changed_relation_to_householdhead;
+          beneficiaryRecord.sex = entry.beneficiary_changed_gender;
           beneficiaryRecord.beneficiary_changed_status = entry.beneficiary_changed_status;
           beneficiaryRecord.beneficiary_changed_comment = entry.beneficiary_changed_comment;
 
+{#                             if (entry.school_changed_status.toLowerCase()=='accepted' && entry.school_changed_status_initial.toLowerCase() != 'accepted')#}
+{#          {#}
+{#              studentRecord.school = entry.school_changed_to_verify;#}
+{#          }#}
           return SaveRecord(beneficiaryRecord,adult_url,entry.id);
+
+
+
+
       }
 
       function SaveRecord(record,url,id) {
@@ -483,7 +598,11 @@
              '#SaveButton',
              function()
              {
-                 if ( currentCategory.CategoryID ==200)
+                 if ( currentCategory.CategoryID ==100)
+                 {
+                     SaveStudents();
+                 }
+                 else if ( currentCategory.CategoryID ==200)
                  {
                      SaveBeneficiaries();
                  }

@@ -302,8 +302,10 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
     age = serializers.CharField(source='student.age')
     school_name = serializers.CharField(source='school.name', read_only=True)
     location_id = serializers.CharField(source='school.location_id', read_only=True)
+    school_changed_name = serializers.CharField(source='school_changed_to_verify.name', read_only=True)
     school_changed_to_verify_location_id = serializers.CharField(source='school_changed_to_verify.location_id',
                                                                  read_only=True)
+
     def create(self, validated_data):
 
         student_data = validated_data.pop('student', None)
@@ -331,7 +333,10 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
             'school_name',
             'location_id',
             'school_changed_to_verify',
+            'school_changed_name',
             'school_changed_to_verify_location_id',
+            'school_changed_status',
+            'school_changed_comment',
             'enrolled_last_year_school',
             'relation_to_adult',
             'related_to_family',
@@ -363,6 +368,7 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
     complaints = ComplaintSerializer(many=True, read_only=True)
     payments = PaymentSerializer(many=True, read_only=True)
     no_logner_eligible_reason_name = serializers.CharField(source='no_logner_eligible_reason.name', read_only=True)
+    beneficiary_changed_id_type_id = serializers.CharField(source='beneficiary_changed_id_type.id', read_only=True)
 
     def create(self, validated_data):
 
@@ -412,6 +418,7 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'principal_applicant_living_in_house',
             'individual_id_number',
             'beneficiary_changed_id_type',
+            'beneficiary_changed_id_type_id',
             'beneficiary_changed_id_number',
             'beneficiary_changed_verify',
             'beneficiary_changed_first_name',

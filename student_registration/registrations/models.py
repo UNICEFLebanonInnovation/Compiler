@@ -70,9 +70,11 @@ class ComplaintCategory(models.Model):
     def __unicode__(self):
         return self.name
 
-    @property
-    def complaint_count(self):
-        return int(self.complaints.all().count())
+    def complaint_count(self, user):
+        records = self.complaints
+        if not user.is_superuser:
+            records = records.filter(complaint_adult__school__location__parent_id=user.governante_id)
+        return int(records.all().count())
 
 
 class NotEligibleReason(models.Model):
@@ -415,6 +417,12 @@ class Registration(TimeStampedModel):
         ('no', _('No'))
     )
 
+    SCHOOL_CHANGE_STATUS = Choices(
+        ('open', _('Open')),
+        ('accepted', _('Accepted')),
+        ('rejected', _('Rejected')),
+    )
+
     YEARS = ((str(x), x) for x in range(2016, 2051))
 
     EDUCATION_YEARS = ((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
@@ -463,6 +471,14 @@ class Registration(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
+    school_changed_status = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=SCHOOL_CHANGE_STATUS
+    )
+
+    school_changed_comment = models.CharField(max_length=200, blank=True, null=True)
     section = models.ForeignKey(
         Section,
         blank=True, null=True,

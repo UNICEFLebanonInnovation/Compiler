@@ -27,11 +27,6 @@ urlpatterns = [
         name='registry_search'
     ),
     url(
-        regex=r'^list-school-modification/$',
-        view=views.SchoolApprovalListView.as_view(),
-        name='list_school_modification'
-    ),
-    url(
         regex=r'^complaints-search/$',
         view=views.ComplaintCategoryListSearchView.as_view(),
         name='complaints_search'
@@ -45,5 +40,10 @@ urlpatterns = [
         regex=r'^changebeneficiary-grid/$',
         view=views.ChangeBeneficiaryGridView.as_view(),
         name='changebeneficiary_grid'
+    ),
+    url(
+        regex=r'^students-grid/$',
+        view=views.SchoolApprovalListView.as_view(),
+        name='students_grid'
     ),
 ]
