@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Registration, RegisteringAdult, WaitingList, Complaint, Payment , HouseholdNotFound
+from .models import Registration, RegisteringAdult, WaitingList, Complaint, Payment , HouseholdNotFound, ComplaintCategory
 from student_registration.students.serializers import StudentSerializer
 
 
@@ -344,6 +344,7 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
     children = RegistrationChildSerializer(many=True, read_only=True)
     complaints = ComplaintSerializer(many=True, read_only=True)
     payments = PaymentSerializer(many=True, read_only=True)
+    no_logner_eligible_reason_name = serializers.CharField(source='no_logner_eligible_reason.name', read_only=True)
 
     def create(self, validated_data):
 
@@ -416,10 +417,14 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'duplicate_card_first_card_last_four_digits',
             'duplicate_card_second_card_case_number',
             'duplicate_card_secondcard_last_four_digits',
+            'no_logner_eligible',
+            'no_logner_eligible_reason_name',
+            'no_logner_eligible_reason',
+            'no_logner_eligible_specify',
+            'no_logner_eligible_comment',
             'complaints',
             'payments'
         )
-
 
 class ClassAssignmentSerializer(serializers.ModelSerializer):
 
@@ -451,3 +456,20 @@ class WaitingListSerializer(serializers.ModelSerializer):
             'owner',
         )
 
+
+
+
+
+
+class ComplaintCategorySerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField(read_only=True)
+    complaints = ComplaintSerializer(many=True, read_only=True)
+
+
+    class Meta:
+        model = ComplaintCategory
+        fields = (
+            'id',
+            'complaints'
+        )
