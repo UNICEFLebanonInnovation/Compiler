@@ -378,7 +378,7 @@ class Outreach(TimeStampedModel):
     @property
     def posttest_total(self):
         if self.level:
-            return "{}/{}".format(self.post_exam_total, '40')
+            return "{}/{}".format(self.post_exam_total, '80')
         return 0
 
     @property
@@ -387,7 +387,7 @@ class Outreach(TimeStampedModel):
             return self.registered_in_level_id
         if self.refer_to_level and self.post_exam_total >= 40:
             return self.registered_in_level_id + 1
-        return 0
+        return ''
 
     @property
     def post_exam_total(self):
