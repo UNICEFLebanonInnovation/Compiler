@@ -487,10 +487,6 @@ class WaitingListSerializer(serializers.ModelSerializer):
         )
 
 
-
-
-
-
 class ComplaintCategorySerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
