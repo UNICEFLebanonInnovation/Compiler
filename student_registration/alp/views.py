@@ -56,17 +56,19 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
     def get_queryset(self):
         if self.request.method in ["PATCH", "POST", "PUT"]:
             return self.queryset
-        term = self.request.GET.get('term', 0)
-        if self.request.user.school_id and term:
-            return self.queryset.filter(
-                Q(school_id=self.request.user.school_id) &
-                Q(alp_round=3) &
-                Q(Q(student__first_name__contains=term) |
-                  Q(student__father_name__contains=term) |
-                  Q(student__last_name__contains=term) |
-                  Q(student__id_number__contains=term)
+        terms = self.request.GET.get('term', 0)
+        if self.request.user.school_id and terms:
+            qs = self.queryset.filter(school_id=self.request.user.school_id, alp_round__lt=4)
+            for term in terms.split():
+                qs = qs.filter(
+                    Q(student__first_name__contains=term) |
+                    Q(student__father_name__contains=term) |
+                    Q(student__last_name__contains=term) |
+                    Q(student__id_number__contains=term)
                 )
-            )
+            return qs
+        if self.request.GET.get('id', 0):
+            return self.queryset.filter(id=self.request.GET.get('id', 0))
         if self.request.user.school_id:
             return self.queryset.filter(school_id=self.request.user.school_id, alp_round=4)
 
@@ -121,7 +123,6 @@ class OutreachView(LoginRequiredMixin,
         if has_group(self.request.user, 'ALP_SCHOOL'):
             data = Outreach.objects.filter(school_id=self.request.user.school_id, alp_round=alp_round)
             data = data.exclude(owner_id=self.request.user.id)
-            data = data.exclude(deleted=True)
             school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
@@ -175,19 +176,19 @@ class CurrentRoundView(LoginRequiredMixin,
         school = 0
         location = 0
         location_parent = 0
+        total = 0
         school_id = int(self.request.GET.get("school", 0))
         round_id = int(self.request.GET.get("round_id", 0))
         if round_id:
             alp_round = ALPRound.objects.get(id=round_id)
         else:
-            alp_round = ALPRound.objects.get(current_round=True)
+            alp_round = ALPRound.objects.get(current_pre_test=True)
 
         if has_group(self.request.user, 'ALP_SCHOOL'):
-            # data = Outreach.objects.filter(school_id=self.request.user.school_id, alp_round=alp_round)
-            # data = data.exclude(deleted=True)
             school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
+            total = self.model.objects.filter(school_id=school_id, alp_round=alp_round).count()
         if school and school.location:
             location = school.location
         if location and location.parent:
@@ -195,6 +196,7 @@ class CurrentRoundView(LoginRequiredMixin,
 
         return {
             'data': data,
+            'total': total,
             'schools': School.objects.all().order_by('name'),
             'languages': Language.objects.all(),
             'locations': Location.objects.filter(type_id=2),
@@ -285,13 +287,12 @@ class PreTestView(LoginRequiredMixin,
         school_id = int(self.request.GET.get("school", 0))
         alp_round = ALPRound.objects.get(current_pre_test=True)
 
-        schools = Outreach.objects.exclude(deleted=True).filter(
+        schools = Outreach.objects.filter(
             alp_round=alp_round,
         ).values_list('school_id').order_by('school__number').distinct('school__number')
 
         data = Outreach.objects.exclude(owner__partner_id=None)
         data = data.filter(school_id=school_id, alp_round=alp_round)
-        data = data.exclude(deleted=True)
 
         if school_id:
             school = School.objects.get(id=school_id)
@@ -344,13 +345,13 @@ class PostTestView(LoginRequiredMixin,
         school_id = int(self.request.GET.get("school", 0))
         alp_round = ALPRound.objects.get(current_post_test=True)
 
-        schools = Outreach.objects.exclude(deleted=True).filter(
+        schools = Outreach.objects.filter(
             alp_round=alp_round,
             registered_in_level__isnull=False
         ).values_list('school_id').order_by('school__number').distinct('school__number')
 
         if school_id:
-            data = Outreach.objects.exclude(deleted=True).filter(
+            data = Outreach.objects.filter(
                 school_id=school_id,
                 alp_round=alp_round,
                 registered_in_level__isnull=False
@@ -417,11 +418,7 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
     model = Outreach
 
     def get(self, request, *args, **kwargs):
-        queryset = self.model.objects.exclude(deleted=True)
-        # queryset = self.model.objects.exclude(not_enrolled_in_this_school=True)
-        # queryset = queryset.exclude(deleted=True)
-        # queryset = queryset.filter(registered_in_level__isnull=False)
-        # queryset = self.model.objects.exclude(deleted=True, not_enrolled_in_this_school=True)
+        queryset = self.model.objects.all()
         school = int(request.GET.get('school', 0))
         location = int(request.GET.get('location', 0))
         alp_round = ALPRound.objects.get(current_round=True)
