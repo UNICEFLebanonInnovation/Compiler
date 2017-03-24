@@ -53,7 +53,8 @@ from .models import (
     BeneficiaryChangedReason,
     ComplaintCategory,
     Complaint,
-    HouseholdNotFound
+    HouseholdNotFound,
+    NotEligibleReason
 )
 from .serializers import (
     RegistrationSerializer,
@@ -338,17 +339,18 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 ComplaintCategory.objects.all().filter(complaint_type='Not Found').order_by('name')
             months = Person.MONTHS
             location = self.request.GET.get("location", 0)
-            idType = IDType.objects.all().filter(inuse=True).order_by('name')
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
             relationToHouseholdHead = RegisteringAdult.RELATION_TYPE
             complaint_status = Complaint.STATUS
             gender = RegisteringAdult.GENDER
             beneficiaryChangedReason = BeneficiaryChangedReason.objects.all()
+            not_eligible_reason = NotEligibleReason.objects.all()
             addressSearchText = self.request.GET.get("addressSearchText", '')
             repSearchText = self.request.GET.get("repSearchText", '')
             idSearchText = self.request.GET.get("idSearchText", '')
             primarySearchText = self.request.GET.get("primarySearchText", '')
             secondarySearchText = self.request.GET.get("secondarySearchText", '')
+            idType = IDType.objects.all().filter(inuse=True).order_by('name')
 
             schools = School.objects.all().order_by('name')
 
@@ -397,7 +399,8 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'complaint_status': complaint_status,
                 'bank_complaint_types': bank_complaint_types,
                 'reinstate_beneficiary_complaint_types': reinstate_beneficiary_complaint_types,
-                'not_found_complaint_types': not_found_complaint_types
+                'not_found_complaint_types': not_found_complaint_types,
+                'not_eligible_reason': not_eligible_reason
             }
 
 
