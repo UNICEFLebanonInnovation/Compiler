@@ -92,6 +92,8 @@ class OutreachSerializer(serializers.ModelSerializer):
     last_informal_edu_final_result_id = serializers.CharField(source='last_informal_edu_final_result.id', read_only=True)
 
     pretest_total = serializers.CharField(read_only=True)
+    posttest_total = serializers.CharField(read_only=True)
+    next_level = serializers.CharField(read_only=True)
 
     def create(self, validated_data):
 
@@ -202,8 +204,10 @@ class OutreachSerializer(serializers.ModelSerializer):
             'last_informal_edu_round_id',
             'last_informal_edu_final_result_id',
             'pretest_total',
+            'posttest_total',
             'assigned_to_level',
             'registered_in_level',
+            'next_level',
             'alp_round',
             'registered_in_level_name',
             'refer_to_level',
