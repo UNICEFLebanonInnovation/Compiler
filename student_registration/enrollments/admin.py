@@ -46,7 +46,7 @@ class EnrollmentResource(resources.ModelResource):
             'student__birthday_month',
             'student__birthday_day',
             'student_age',
-            'student_sex',
+            'student__sex',
             'governorate',
             'district',
             'school__name',
