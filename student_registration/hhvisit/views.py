@@ -183,7 +183,11 @@ class HouseholdVisitListView(LoginRequiredMixin, TemplateView):
             specificreasons = SpecificReason.objects.order_by('name')
             servicetypes = ServiceType.objects.order_by('name')
             # location = self.request.GET.get("location", 0)
-            data = self.model.objects.filter(Q(household_visit_team__first_enumerator = self.request.user.id) | Q(household_visit_team__second_enumerator = self.request.user.id)).order_by('id')
+            data = self.model.objects.filter(
+                Q(household_visit_team__first_enumerator=self.request.user.id)
+                | Q(household_visit_team__second_enumerator = self.request.user.id)
+                | Q(registering_adult__school__location__parent_id=self.request.user.governante_id)
+            ).order_by('id')
             return {
                 'visits': data,
                 # 'locations': locations,
