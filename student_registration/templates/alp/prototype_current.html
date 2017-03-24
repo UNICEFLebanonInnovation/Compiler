@@ -33,14 +33,6 @@
             </select>
         </td>
         <td>
-            <select name="level" id="level" class="registration-field note-indicator" itemscope="$$itemscope_id$$" readonly="readonly" disabled="disabled">
-                <option value="">{% trans "Registered in level" %}</option>
-                {% for item in informal_educations %}
-                    <option value="{{ item.id }}" data-value="{{ item.note }}">{{ item.name }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td>
             <input type="text" name="pretest_total" id="pretest_total" class="registration-field"
                    itemscope="$$itemscope_id$$" readonly="readonly" disabled="disabled"/>
         </td>
@@ -51,6 +43,10 @@
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
+        </td>
+        <td>
+            <input type="text" name="posttest_total" id="posttest_total" class="registration-field"
+                   itemscope="$$itemscope_id$$" readonly="readonly" disabled="disabled"/>
         </td>
         <td>
             <select name="registered_in_level" id="registered_in_level" class="registration-field" itemscope="$$itemscope_id$$">
