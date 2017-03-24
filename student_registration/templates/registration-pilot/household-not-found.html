@@ -34,8 +34,10 @@
 
              <div class="panel-body">
                  <h3 class="panel-title">{% trans "Household not found" %}</h3>
-                 <span class="error" >{% trans "Please inform the household they can't be added this year, but we will collect their information to investigate what happened." %}</span>
                  <div class="line">
+                     <span class="error" style="display: block"  >{% trans "Please inform the household they can't be added this year, but we will collect their information to investigate what happened." %}</span>
+                     <br/>
+                 </div><div class="line">
                      <label class="text" style="width: 200px;">{% trans "Household ID Type: " %}</label>
                      <select id="nf_idType" >
                          {% for itm in idType %}
