@@ -458,18 +458,9 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
             _('Current Section'),
             _('Current Level'),
 
-            _('Science corrector'),
-            _('Math corrector'),
-            _('Foreign language corrector'),
-            _('Arabic language corrector'),
-
+            _('Post-test result'),
             _('Assigned to level'),
-            _('Total'),
-            _('Science'),
-            _('Math'),
-            _('Foreign language'),
-            _('Arabic language'),
-            _('Registered in level'),
+            _('Pre-test result'),
 
             _('Student nationality'),
             _('Student age'),
@@ -511,18 +502,9 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
                 line.section.name if line.section else '',
                 line.registered_in_level.name if line.registered_in_level else '',
 
-                line.exam_corrector_science,
-                line.exam_corrector_math,
-                line.exam_corrector_language,
-                line.exam_corrector_arabic,
-
+                line.post_exam_total,
                 line.assigned_to_level.name if line.assigned_to_level else '',
                 line.exam_total,
-                line.exam_result_science,
-                line.exam_result_math,
-                line.exam_result_language,
-                line.exam_result_arabic,
-                line.level.name if line.level else '',
 
                 line.student.nationality_name(),
                 line.student.birthday,

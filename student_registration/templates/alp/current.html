@@ -80,20 +80,20 @@
                                 </li>
                                     <li>
                                         <label><b>{% trans "Filter by" %}</b></label>
-                                        <select name="assignedlevel" id="filter_assignedlevel" class="col-120">
-                                            <option value="0">{% trans "Filter by assigned level" %}</option>
-                                            {% for item in informal_educations %}
-                                                <option value="{{ item.id }}">{{ item.name }}</option>
-                                            {% endfor %}
-                                        </select>
+{#                                        <select name="assignedlevel" id="filter_assignedlevel" class="col-120">#}
+{#                                            <option value="0">{% trans "Filter by assigned level" %}</option>#}
+{#                                            {% for item in informal_educations %}#}
+{#                                                <option value="{{ item.id }}">{{ item.name }}</option>#}
+{#                                            {% endfor %}#}
+{#                                        </select>#}
                                         <select name="level" id="filter_class" class="col-120">
-                                            <option value="0">{% trans "Filter by current level" %}</option>
+                                            <option value="0">{% trans "Current Level" %}</option>
                                             {% for item in informal_educations %}
                                                 <option value="{{ item.id }}">{{ item.name }}</option>
                                             {% endfor %}
                                         </select>
                                         <select name="section" id="filter_section" class="col-120">
-                                            <option value="0">{% trans "Filter by current section" %}</option>
+                                            <option value="0">{% trans "Current Section" %}</option>
                                             {% for item in sections %}
                                                 <option value="{{ item.id }}">{{ item.name }}</option>
                                             {% endfor %}
@@ -146,9 +146,9 @@
                                         <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Registered in level" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Student Total grade" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Pre-test result" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Assigned to level" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Post-test result" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current Level" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Current Section" %}</label></th>
                                         <th><label>{% trans "year" %}</label></th>
@@ -322,6 +322,8 @@
                         return false;
                     }
                     var total_records = $('#registrations-table').find('tr.registration-line').length;
+                    console.log(total_records);
+                    console.log(total);
                     if(total_records < total) {
                         offset = limit;
                         limit = limit + 100;
@@ -774,6 +776,7 @@
                             item.student_mother_nationality = item.student_mother_nationality_id;
                             item.student_id_type = item.student_id_type_id;
 
+                            item.registered_in_level = item.next_level;
                             item.last_education_level = item.last_education_level_id;
                             item.last_informal_edu_level = item.last_informal_edu_level_id;
                             item.last_informal_edu_round = item.last_informal_edu_round_id;
@@ -809,6 +812,7 @@
                     item.student_id_type = item.student_id_type_id;
                     item.alp_round = alp_round;
 
+                    item.registered_in_level = item.next_level;
                     item.last_education_level = item.last_education_level_id;
                     item.last_informal_edu_level = item.last_informal_edu_level_id;
                     item.last_informal_edu_round = item.last_informal_edu_round_id;
