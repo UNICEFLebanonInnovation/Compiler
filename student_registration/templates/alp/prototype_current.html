@@ -15,14 +15,17 @@
         <td>
             <input type="text" name="student_first_name" id="student_first_name" class="registration-field"
                    itemscope="$$itemscope_id$$" style="width: 110px;" placeholder="{% trans "Student first name" %}"/>
+            <span class="required">*</span>
         </td>
         <td>
             <input type="text" name="student_father_name" id="student_father_name" class="registration-field"
                    itemscope="$$itemscope_id$$" style="width: 110px;" placeholder="{% trans "Student father name" %}"/>
+            <span class="required">*</span>
         </td>
         <td>
             <input type="text" name="student_last_name" id="student_last_name" class="registration-field"
                    itemscope="$$itemscope_id$$" style="width: 110px;" placeholder="{% trans "Student last name" %}" />
+            <span class="required">*</span>
         </td>
         <td>
             <select name="student_sex" id="student_sex" class="registration-field" itemscope="$$itemscope_id$$">
@@ -31,9 +34,10 @@
                     <option value="{{ key }}">{{ item }}</option>
                 {% endfor %}
             </select>
+            <span class="required">*</span>
         </td>
         <td>
-            <input type="text" name="pretest_total" id="pretest_total" class="registration-field"
+            <input type="text" name="pretest_total" id="pretest_total" class="registration-field col-60"
                    itemscope="$$itemscope_id$$" readonly="readonly" disabled="disabled"/>
         </td>
         <td>
@@ -45,24 +49,24 @@
             </select>
         </td>
         <td>
-            <input type="text" name="posttest_total" id="posttest_total" class="registration-field"
-                   itemscope="$$itemscope_id$$" readonly="readonly" disabled="disabled"/>
         </td>
         <td>
             <select name="registered_in_level" id="registered_in_level" class="registration-field" itemscope="$$itemscope_id$$">
-                <option value="">{% trans "Current Level" %}</option>
+                <option value="">{% trans "Current Level if applicable" %}</option>
                 {% for item in informal_educations %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
+            <span class="required">*</span>
         </td>
         <td>
             <select name="section" id="section" class="registration-field" itemscope="$$itemscope_id$$">
-                <option value="">{% trans "Current Section" %}</option>
+                <option value="">{% trans "Current Section if applicable" %}</option>
                 {% for item in sections %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
+            <span class="required">*</span>
         </td>
         <td>
             <select name="student_birthday_year" id="student_birthday_year" class="registration-field student_birthday" itemscope="$$itemscope_id$$">
@@ -71,6 +75,7 @@
                     <option value="{{ item }}">{{ item }}</option>
                 {% endfor %}
             </select>
+            <span class="required">*</span>
         </td>
         <td>
             <select name="student_birthday_month" id="student_birthday_month" class="registration-field student_birthday" itemscope="$$itemscope_id$$">
@@ -79,6 +84,7 @@
                     <option value="{{ key }}">{{ name }}</option>
                 {% endfor %}
             </select>
+            <span class="required">*</span>
         </td>
         <td>
             <select name="student_birthday_day" id="student_birthday_day" class="registration-field student_birthday" itemscope="$$itemscope_id$$">
@@ -87,6 +93,7 @@
                     <option value="{{ item }}">{{ item }}</option>
                 {% endfor %}
             </select>
+            <span class="required">*</span>
         </td>
         <td>
             <input type="text" name="student_age" class="registration-field student_age_$$itemscope_id$$" readonly="readonly"
@@ -99,10 +106,12 @@
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
+            <span class="required">*</span>
         </td>
         <td>
             <input type="text" name="student_mother_fullname" id="student_mother_fullname" class="registration-field"
                   placeholder="{% trans "Mother fullname" %}" itemscope="$$itemscope_id$$" />
+            <span class="required">*</span>
         </td>
         <td>
             <select name="student_mother_nationality" id="student_mother_nationality" class="registration-field" itemscope="$$itemscope_id$$">
@@ -111,6 +120,7 @@
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
+            <span class="required">*</span>
         </td>
         <td>
             <label><input type="radio" name="registered_in_unhcr_$$itemscope_id$$" data-name="registered_in_unhcr" value="1" data-value="yes" id="registered_in_unhcr_1" class="registration-field registration-field-check" itemscope="$$itemscope_id$$" itemref="student_id_type" />{% trans "Yes" %}</label>
@@ -123,22 +133,27 @@
                     <option value="{{ item.id }}">{% trans item.name %}</option>
                 {% endfor %}
             </select>
+            <span class="required">*</span>
         </td>
         <td>
             <input type="text" name="student_id_number" id="student_id_number" class="registration-field"
                    placeholder="{% trans "Student ID Number" %}" itemscope="$$itemscope_id$$" />
+            <span class="required">*</span>
         </td>
         <td>
             <input type="text" name="student_address" id="student_address" class="registration-field"
                    placeholder="{% trans "Student living address" %}" itemscope="$$itemscope_id$$" />
+            <span class="required">*</span>
         </td>
         <td>
             <input type="text" name="student_phone" id="student_phone" class="registration-field"
                    placeholder="{% trans "Phone number (6 digits)" %}" itemscope="$$itemscope_id$$" maxlength="6" size="12" />
+            <span class="required">*</span>
         </td>
         <td>
             <input type="text" name="student_phone_prefix" id="student_phone_prefix" class="registration-field"
                    placeholder="{% trans "Phone prefix (2 digits)" %}" itemscope="$$itemscope_id$$" maxlength="2" size="6" />
+            <span class="required">*</span>
         </td>
         <td>
             <select name="last_education_level" id="last_education_level" class="registration-field" itemscope="$$itemscope_id$$">
