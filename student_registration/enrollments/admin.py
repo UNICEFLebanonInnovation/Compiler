@@ -7,13 +7,14 @@ from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import *
 
-from .models import Enrollment
+from .models import Enrollment, StudentMove
 from .forms import EnrollmentForm
 from student_registration.students.models import Student
 from student_registration.schools.models import (
     School,
 )
 from student_registration.locations.models import Location
+from student_registration.attendances.tasks import set_app_attendances
 
 
 class EnrollmentResource(resources.ModelResource):
@@ -161,6 +162,8 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'owner__username',
     )
 
+    actions = ('push_attendances',)
+
     def get_queryset(self, request):
         qs = super(EnrollmentAdmin, self).get_queryset(request)
         return qs.exclude(deleted=True)
@@ -175,5 +178,72 @@ class EnrollmentAdmin(ImportExportModelAdmin):
             return obj.school.location.parent.name
         return ''
 
+    def push_attendances(self, request, queryset):
+        if 'school__id__exact' in request.GET:
+            school = School.objects.get(id=request.GET['school__id__exact'])
+            set_app_attendances.delay(school_number=school.number)
+
+
+class Dropout(Enrollment):
+    class Meta:
+        proxy = True
+
+
+class DropoutAdmin(EnrollmentAdmin):
+
+    def get_queryset(self, request):
+        return Enrollment.drop_objects.all()
+
+
+class StudentMoveResource(resources.ModelResource):
+
+    class Meta:
+        model = StudentMove
+        fields = (
+            'enrolment1__student__first_name',
+            'enrolment1__student__father_name',
+            'enrolment1__student__last_name',
+            'enrolment1__student__mother_fullname',
+            'school1__name',
+            'enrolment2__student__first_name',
+            'enrolment2__student__father_name',
+            'enrolment2__student__last_name',
+            'enrolment2__student__mother_fullname',
+            'school2__name',
+        )
+        export_order = fields
+
+
+class StudentMoveAdmin(ImportExportModelAdmin):
+    resource_class = StudentMoveResource
+    fields = ()
+
+    list_display = (
+        'enrolment1',
+        'school1',
+        'enrolment2',
+        'school2',
+    )
+
+    list_filter = (
+        'school1',
+        'school2',
+    )
+
+    search_fields = (
+        'enrolment1__student__first_name',
+        'enrolment1__student__father_name',
+        'enrolment1__student__last_name',
+        'enrolment1__student__mother_fullname',
+        'school1__name',
+        'enrolment2__student__first_name',
+        'enrolment2__student__father_name',
+        'enrolment2__student__last_name',
+        'enrolment2__student__mother_fullname',
+        'school2__name',
+    )
+
 
 admin.site.register(Enrollment, EnrollmentAdmin)
+admin.site.register(Dropout, DropoutAdmin)
+admin.site.register(StudentMove, StudentMoveAdmin)
