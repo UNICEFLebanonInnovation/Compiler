@@ -98,7 +98,7 @@ class OutreachSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         student_data = validated_data.pop('student', None)
-        if 'id' in student_data:
+        if 'id' in student_data and student_data['id']:
             student = update_student(student_data, Student.objects.get(id=student_data['id']))
         else:
             student_serializer = StudentSerializer(data=student_data)
