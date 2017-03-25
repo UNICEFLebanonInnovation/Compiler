@@ -78,6 +78,11 @@
                             <a class="nav-link {% if request|is_current_page:"registry_search" %}active{% endif %}" href="{% url 'registrations:registry_search' %}?ln={{ LANGUAGE_CODE }}">{% trans "Updates and Complaints" %}</a>
                         </li>
                     {% endif %}
+                    {% if request.user|has_group:"COMPLAINTS" %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request|is_current_page:"complaints_search" %}active{% endif %}" href="{% url 'registrations:complaints_search' %}?ln={{ LANGUAGE_CODE }}">{% trans "Updates and Complaints Approval Layer" %}</a>
+                        </li>
+                    {% endif %}
                 {% if request.user|has_group:"PILOT" %}
                 <li class="nav-item">
                     <a class="nav-link {% if request|is_current_page:"registering_pilot" %}active{% endif %}" href="{% url 'registrations:registering_pilot' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
