@@ -376,6 +376,20 @@ class Outreach(TimeStampedModel):
         return 0
 
     @property
+    def posttest_total(self):
+        if self.level:
+            return "{}/{}".format(self.post_exam_total, '80')
+        return 0
+
+    @property
+    def next_level(self):
+        if self.registered_in_level and not self.refer_to_level:
+            return self.registered_in_level_id
+        if self.refer_to_level and self.post_exam_total >= 40:
+            return self.registered_in_level_id + 1
+        return ''
+
+    @property
     def post_exam_total(self):
         total = 0
         if self.post_exam_result_arabic:
