@@ -121,8 +121,6 @@ class OutreachView(LoginRequiredMixin,
         alp_round = ALPRound.objects.get(current_round=True)
 
         if has_group(self.request.user, 'ALP_SCHOOL'):
-            data = Outreach.objects.filter(school_id=self.request.user.school_id, alp_round=alp_round)
-            data = data.exclude(owner_id=self.request.user.id)
             school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
@@ -152,7 +150,7 @@ class OutreachView(LoginRequiredMixin,
             'nationalities2': Nationality.objects.all(),
             'columns': Attribute.objects.filter(type=Outreach.EAV_TYPE),
             'eav_type': Outreach.EAV_TYPE,
-            'selectedSchool': school_id,
+            'school_id': school_id,
             'school': school,
             'location': location,
             'location_parent': location_parent,
