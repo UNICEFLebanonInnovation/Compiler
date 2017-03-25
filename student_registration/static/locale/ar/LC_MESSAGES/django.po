@@ -1025,7 +1025,7 @@ msgid "Current Class"
 msgstr "الصف الحالي"
 
 msgid "Current Level"
-msgstr "المستوى الحالي"
+msgstr " المستوى المسجل فيه حالياً"
 
 msgid "Current Section"
 msgstr "الشعبة الحالية"
@@ -1142,7 +1142,7 @@ msgid "Science corrector"
 msgstr "مصحح العلوم"
 
 msgid "Assigned to level"
-msgstr "مرفع الى المستوى"
+msgstr "نتيجة ALP"
 
 msgid "Student actual status"
 msgstr "تم تسجيل التلميذ في"
@@ -1213,3 +1213,8 @@ msgstr " المستوي المرفع اليه"
 msgid "Filter by"
 msgstr "تصفية القائمة حسب"
 
+msgid "Pre-test result"
+msgstr "نتيجة امتحان تحديد المستوى "
+
+msgid "Post-test result"
+msgstr "نتيجة امتحان آخر الدورة"

@@ -39,6 +39,8 @@ class OutreachResource(resources.ModelResource):
     exam_total = fields.Field(column_name='Total pre test')
     post_exam_total = fields.Field(column_name='Total post test')
     referred_to = fields.Field(column_name='Referred to level')
+    passed_pre = fields.Field(column_name='Passed the Pre-test')
+    passed_post = fields.Field(column_name='Passed the Post-test')
 
     class Meta:
         model = Outreach
@@ -66,6 +68,7 @@ class OutreachResource(resources.ModelResource):
             'exam_result_math',
             'exam_result_science',
             'exam_total',
+            'passed_pre',
             'exam_corrector_arabic',
             'exam_corrector_language',
             'exam_corrector_math',
@@ -83,6 +86,7 @@ class OutreachResource(resources.ModelResource):
             'post_exam_corrector_math',
             'post_exam_corrector_science',
             'referred_to',
+            'passed_post',
             'owner__username',
         )
         export_order = fields
@@ -112,6 +116,18 @@ class OutreachResource(resources.ModelResource):
                 return obj.refer_to_level.name
 
         return ''
+
+    def dehydrate_passed_pre(self, obj):
+        if obj.assigned_to_level:
+            if obj.exam_total >= 40:
+                return 'Yes'
+        return 'No'
+
+    def dehydrate_passed_post(self, obj):
+        if obj.refer_to_level:
+            if obj.post_exam_total >= 40:
+                return 'Yes'
+        return 'No'
 
 
 class PreTestTotalFilter(admin.SimpleListFilter):
