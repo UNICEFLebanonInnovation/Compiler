@@ -115,12 +115,20 @@ class ComplaintSerializer(serializers.ModelSerializer):
     complaint_id = serializers.IntegerField(source='id', read_only=True)
     complaint_type = serializers.CharField(source='complaint_category.complaint_type', read_only=True)
     complaint_category_name = serializers.CharField(source='complaint_category.name', read_only=True)
-    complaint_student_first_name = serializers.CharField(source='complaint_student_refused_entrance.first_name',
-                                                         read_only=True)
-    complaint_student_father_name = serializers.CharField(source='complaint_student_refused_entrance.father_name',
-                                                          read_only=True)
-    complaint_student_last_name = serializers.CharField(source='complaint_student_refused_entrance.last_name',
-                                                        read_only=True)
+    adult_first_name = serializers.CharField(source='complaint_adult.first_name', read_only=True)
+    adult_father_name = serializers.CharField(source='complaint_adult.father_name', read_only=True)
+    adult_last_name = serializers.CharField(source='complaint_adult.last_name', read_only=True)
+    adult_id_number = serializers.CharField(source='complaint_adult.id_number', read_only=True)
+    adult_primary_phone = serializers.CharField(source='complaint_adult.primary_phone', read_only=True)
+    student_first_name = serializers.CharField(source='complaint_student_refused_entrance.first_name', read_only=True)
+    student_father_name = serializers.CharField(source='complaint_student_refused_entrance.father_name', read_only=True)
+    student_last_name = serializers.CharField(source='complaint_student_refused_entrance.last_name', read_only=True)
+    not_found_first_name = serializers.CharField(source='household_not_found.first_name', read_only=True)
+    not_found_father_name = serializers.CharField(source='household_not_found.father_name', read_only=True)
+    not_found_last_name = serializers.CharField(source='household_not_found.last_name', read_only=True)
+    not_found_id_number = serializers.CharField(source='household_not_found.id_number', read_only=True)
+    not_found_primary_phone = serializers.CharField(source='household_not_found.primary_phone', read_only=True)
+
 
     class Meta:
         model = Complaint
@@ -133,6 +141,7 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'complaint_category_name',
             'complaint_note',
             'complaint_solution',
+            'complaint_update_owner',
             'created',
             'modified',
             'complaint_status',
@@ -141,11 +150,21 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'complaint_bank_phone_used',
             'complaint_bank_service_requested',
             'complaint_student_refused_entrance',
-            'complaint_student_first_name',
-            'complaint_student_father_name',
-            'complaint_student_last_name',
+            'student_first_name',
+            'student_father_name',
+            'student_last_name',
             'complaint_Other_type_specify',
             'household_not_found',
+            'adult_first_name',
+            'adult_father_name',
+            'adult_last_name',
+            'adult_id_number',
+            'adult_primary_phone',
+            'not_found_first_name',
+            'not_found_father_name',
+            'not_found_last_name',
+            'not_found_id_number',
+            'not_found_primary_phone',
             'owner'
         )
 class HouseholdNotFoundSerializer(serializers.ModelSerializer):
@@ -284,8 +303,10 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
     age = serializers.CharField(source='student.age')
     school_name = serializers.CharField(source='school.name', read_only=True)
     location_id = serializers.CharField(source='school.location_id', read_only=True)
+    school_changed_name = serializers.CharField(source='school_changed_to_verify.name', read_only=True)
     school_changed_to_verify_location_id = serializers.CharField(source='school_changed_to_verify.location_id',
                                                                  read_only=True)
+
     def create(self, validated_data):
 
         student_data = validated_data.pop('student', None)
@@ -313,7 +334,11 @@ class RegistrationChildSerializer(serializers.ModelSerializer):
             'school_name',
             'location_id',
             'school_changed_to_verify',
+            'school_changed_name',
             'school_changed_to_verify_location_id',
+            'school_changed_status',
+            'school_changed_comment',
+            'school_changed_update_owner',
             'enrolled_last_year_school',
             'relation_to_adult',
             'related_to_family',
@@ -345,6 +370,7 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
     complaints = ComplaintSerializer(many=True, read_only=True)
     payments = PaymentSerializer(many=True, read_only=True)
     no_logner_eligible_reason_name = serializers.CharField(source='no_logner_eligible_reason.name', read_only=True)
+    beneficiary_changed_id_type_id = serializers.CharField(source='beneficiary_changed_id_type.id', read_only=True)
 
     def create(self, validated_data):
 
@@ -394,6 +420,7 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'principal_applicant_living_in_house',
             'individual_id_number',
             'beneficiary_changed_id_type',
+            'beneficiary_changed_id_type_id',
             'beneficiary_changed_id_number',
             'beneficiary_changed_verify',
             'beneficiary_changed_first_name',
@@ -409,6 +436,9 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'beneficiary_changed_reason',
             'beneficiary_specify_reason',
             'beneficiary_changed_gender',
+            'beneficiary_changed_comment',
+            'beneficiary_changed_status',
+            'beneficiary_changed_update_owner',
             'card_last_four_digits',
             'card_distribution_date',
             'card_status',
@@ -457,19 +487,15 @@ class WaitingListSerializer(serializers.ModelSerializer):
         )
 
 
-
-
-
-
 class ComplaintCategorySerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
     complaints = ComplaintSerializer(many=True, read_only=True)
-
-
     class Meta:
         model = ComplaintCategory
         fields = (
             'id',
+            'name',
+            'complaint_type',
             'complaints'
         )

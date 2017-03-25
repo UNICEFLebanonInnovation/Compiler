@@ -1,0 +1,703 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+{% block extra_head %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/sly.css' %}"
+          xmlns:font-weight="http://www.w3.org/1999/xhtml" xmlns:font-weight="http://www.w3.org/1999/xhtml">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/toggle-switch.css' %}"
+          xmlns:font-weight="http://www.w3.org/1999/xhtml" xmlns:font-weight="http://www.w3.org/1999/xhtml">
+
+
+    <style>
+        .category-row-class {
+            cursor: pointer;
+        }
+        .category-row-class:hover {
+           background-color: gainsboro !IMPORTANT;
+        }
+
+
+    </style>
+
+
+{% endblock %}
+
+
+{% block content %}
+
+
+         <div class="loader"></div>
+
+         <section class="main-content-wrapper" id = "hhList">
+            <section id="main-content">
+                 <div class="row">
+                    <div class="col-md-12">
+                        </br>
+                    </div>
+                </div>
+            <div class="row">
+
+                <div class="alert alert-success" role="alert" style="display: none;">
+                    <strong>{% trans 'Success' %}</strong> {% trans 'Your change is successfully Saved' %}
+                </div>
+                <div class="alert alert-warning" role="alert" style="display: none;">
+                    <strong>{% trans 'Oops' %}</strong> {% trans 'Error saving changes, please contact system administrators' %}
+                </div>
+
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <ol class="breadcrumb">
+                                  <li><a>{% trans "Updates and Complaints Approval Layer" %}</a></li>
+                                </ol>
+                            </h3>
+                            <div class="actions pull-right">
+                                <i class="fa fa-chevron-down"></i>
+                                <i class="fa fa-times"></i>
+                            </div>
+                          </div>
+                          <div class="panel-body">
+                                <table id="registrations-table" class="table table-striped table-bordered cell-border"
+                                       data-height="500"
+                                       data-pagination="true"
+                                       data-search="true"
+                                       cellspacing="0"
+                                       width="100%">
+                                <thead>
+                                    <tr id="thead-line-1">
+                                        <th>{% trans "Category" %}</th>
+                                        <th>{% trans "Type" %}</th>
+                                        <th>{% trans "Number" %}</th>
+                                        <th>{% trans "Urgent" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for complaint in complaints %}
+                                    <tr class="row-class category-row-class" complaintID="{{ complaint.ID }}" complaint_type="{{ complaint.complaint_type }}">
+                                        <td>{{ complaint.complaint_type }}</td>
+                                        <td>{{ complaint.Name }}</td>
+                                        <td>{{ complaint.Statistics }}</td>
+                                        <td></td>
+                                    </tr>
+                                {% endfor %}
+                                <tr class="row-class category-row-class" complaintID="{{ 100 }}">
+                                    <td>{{ school_changed_to_verify.complaint_type }}</td>
+                                    <td>{{ school_changed_to_verify.Name }}</td>
+                                    <td>{{ school_changed_to_verify.Statistics }}</td>
+                                    <td></td>
+                                </tr>
+                                <tr class="row-class category-row-class" complaintID="{{ 200 }}">
+                                    <td>{{ beneficiary_changed_verify.complaint_type }}</td>
+                                    <td>{{ beneficiary_changed_verify.Name }}</td>
+                                    <td>{{ beneficiary_changed_verify.Statistics }}</td>
+                                    <td></td>
+                                </tr>
+                                <tr class="row-class" style="font-weight:bold;" >
+                                        <td>{{ total.Name }}</td>
+                                        <td></td>
+                                        <td>{{ total.Statistics }}</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+            </section>
+         </section>
+
+
+     <div id = "editComplaintForm" style ="display:none">
+         <div class="panel-heading">
+             <h3 class="panel-title">
+                 <ol class="breadcrumb">
+                     <li><a>{% trans "Updates and Complaints" %}</a></li>
+                 </ol>
+             </h3>
+             <div class="actions pull-right">
+                 <i class="fa fa-chevron-down"></i>
+                 <i class="fa fa-times"></i>
+             </div>
+         </div>
+         <div>
+             <button class="btn btn-warning" type="button" id="CloseButton" style="float:left;">
+              {% trans "Cancel" %}
+            </button>
+            <button class="btn btn-primary" type="button" id="SaveButton" style="float:right; " >
+              {% trans "Save" %}
+            </button>
+         </div>
+
+         <div id = "ComplaintsGrid">
+
+
+         </div>
+
+     </div>
+
+{#    <div id = "hhNotFoundForm" style ="display:none">#}
+{#       {% include 'registration-pilot/household-not-found.html' %}#}
+{#     </div>#}
+
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/sly.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/date.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/registration-pilot/UI/SlyInitialisation.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/registration-pilot/Validation/validator.js' %}"></script>
+    <script type="text/javascript">
+        var oTable = null;
+        var language  = '{{ LANGUAGE_CODE }}';
+        var protocol = 'http://';
+        {% if request.is_secure %}
+            protocol = 'https://';
+        {% endif %}
+
+        var host = protocol+'{{ request.get_host }}';
+
+        var complaint_url = host+'/api/registrations-complaint/';
+        var complaints_grid_url = host+'/registrations/complaints-grid';
+        var adult_url = host+'/api/registrations-adult-id/';
+        var beneficiaries_grid_url = host+'/registrations/changebeneficiary-grid';
+
+
+        var student_url = host+'/api/registrations-child/';
+        var student_grid_url = host+'/registrations/students-grid';
+
+        var user_id = {{ request.user.id }};
+
+
+
+        $(document).ready
+        (
+           function()
+           {
+
+               InitialiseClose();
+               InitialiseSave();
+               InitialiseGridRowClickEvent();
+           }
+        );
+
+        function InitialiseGridRowClickEvent()
+        {
+
+           $(document).on
+           (
+             'click',
+             '.category-row-class',
+             function()
+             {
+                block = $(this);
+                complaintID = block.attr('complaintID');
+                 complaint_type = block.attr('complaint_type');
+
+                LoadData(complaintID , complaint_type );
+
+                 hideForms();
+
+                 $("#editComplaintForm").show();
+
+
+             }
+           );
+
+        }
+
+    function hideForms()
+    {
+        $("#hhList").hide();
+        $("#editComplaintForm").hide();
+    }
+
+
+    var currentCategory = new Object();
+
+
+      function LoadData(complaintCategoryID , complaint_type)
+      {
+          currentCategory.CategoryID = complaintCategoryID;
+          currentCategory.Type = complaint_type;
+
+
+          if(complaintCategoryID==200)
+          {
+              LoadPartialView(beneficiaries_grid_url);
+          }
+          else if(complaintCategoryID==100)
+          {
+              LoadPartialView(student_grid_url);
+          }
+          else
+          {
+              LoadPartialView(complaints_grid_url+"?CategoryID="+complaintCategoryID+"&ComplaintType="+complaint_type);
+          }
+      }
+
+
+
+      function LoadPartialView(url )
+      {
+         $.ajax({
+                     type: "GET",
+                     url: url,
+                     data: [],
+                     cache: false,
+                     async: false,
+                     headers: getHeader(),
+                     dataType: 'html',
+                     success: function (response) {
+
+                         $("#ComplaintsGrid").html(response);
+
+                     },
+                     error: function (response) {
+                        var required_fields = JSON.parse(response.responseText);
+                        console.log(response);
+                     }
+                 });
+      }
+
+
+      function updateDropDownValue(dropDownElement, value)
+      {
+          dropDownElement.find('option:selected').removeAttr('selected');
+          dropDownElement.find('option[value="'+value+'"]').attr("selected",true);
+          dropDownElement.val(value);
+      }
+
+
+     function CreateBeneficiaryData()
+    {
+       beneficiaryData = [];
+
+       $("#beneficiary-table tbody tr")
+       .each
+       (
+          function(i, obj)
+          {
+              trElement = $(obj);
+              beneficiaryRecord = new Object();
+              beneficiaryRecord.id = trElement.attr('beneficiary-id');
+              beneficiaryRecord.beneficiary_changed_status = GetDecision(trElement);
+              beneficiaryRecord.beneficiary_changed_comment = trElement.find('td:nth-child(7) textarea').val();
+              beneficiaryRecord.beneficiary_changed_status_initial = trElement.find('td:nth-child(8)').html();
+              beneficiaryRecord.beneficiary_changed_comment_initial = trElement.find('td:nth-child(9)').html();
+
+              beneficiaryRecord.beneficiary_changed_id_type= trElement.find('td:nth-child(10)').html();
+              beneficiaryRecord.beneficiary_changed_id_number= trElement.find('td:nth-child(11)').html();
+              beneficiaryRecord.beneficiary_changed_first_name= trElement.find('td:nth-child(12)').html();
+              beneficiaryRecord.beneficiary_changed_father_name= trElement.find('td:nth-child(13)').html();
+              beneficiaryRecord.beneficiary_changed_last_name= trElement.find('td:nth-child(14)').html();
+              beneficiaryRecord.beneficiary_changed_mother_full_name= trElement.find('td:nth-child(15)').html();
+              beneficiaryRecord.beneficiary_changed_birthday_year= trElement.find('td:nth-child(16)').html();
+              beneficiaryRecord.beneficiary_changed_birthday_month= trElement.find('td:nth-child(17)').html();
+              beneficiaryRecord.beneficiary_changed_birthday_day= trElement.find('td:nth-child(18)').html();
+              beneficiaryRecord.beneficiary_changed_phone= trElement.find('td:nth-child(19)').html();
+              beneficiaryRecord.beneficiary_changed_relation_to_householdhead= trElement.find('td:nth-child(20)').html();
+              beneficiaryRecord.beneficiary_changed_gender= trElement.find('td:nth-child(21)').html();
+              beneficiaryData.push(beneficiaryRecord);
+
+          }
+       );
+
+       console.log(beneficiaryData);
+
+       return beneficiaryData;
+    }
+
+       function CreateComplaintsData()
+        {
+           complaintData = [];
+
+           $("#complaints-table tbody tr")
+           .each
+           (
+              function(i, obj)
+              {
+                 trElement = $(obj);
+
+                 complaintRecord = new Object();
+
+                 complaintRecord.id = trElement.attr('complaint-id');
+
+                 complaintRecord.complaint_status = GetDecision(trElement);
+
+                 complaintRecord.complaint_solution = trElement.find('td:nth-child(7) textarea').val();
+
+                 complaintRecord.complaint_status_initial = trElement.find('td:nth-child(8)').html();
+
+                 complaintRecord.complaint_solution_initial = trElement.find('td:nth-child(9)').html();
+
+                 complaintData.push(complaintRecord);
+
+              }
+           );
+
+           console.log(complaintData);
+
+           return complaintData;
+        }
+
+
+
+     function CreateStudentData()
+    {
+       studentData = [];
+
+       $("#students-table tbody tr")
+       .each
+       (
+          function(i, obj)
+          {
+              trElement = $(obj);
+              studentRecord = new Object();
+              studentRecord.id = trElement.attr('student-id');
+              studentRecord.school_changed_status = GetDecision(trElement);
+              studentRecord.school_changed_comment = trElement.find('td:nth-child(6) textarea').val();
+              studentRecord.school_changed_status_initial = trElement.find('td:nth-child(7)').html();
+              studentRecord.school_changed_comment_initial = trElement.find('td:nth-child(8)').html();
+              studentRecord.school_changed_to_verify = trElement.find('td:nth-child(9)').html();
+
+
+              studentData.push(studentRecord);
+
+          }
+       );
+
+       console.log(studentData);
+
+       return studentData;
+    }
+
+
+        function GetDecision(trElement)
+        {
+            return trElement.find('input[name^=state-d-]:checked').val();
+        }
+
+
+         function SaveStudents()
+       {
+           var studentData = CreateStudentData();
+
+           var isSuccessfull = true;
+
+           studentData.forEach
+           (
+              function(entry)
+              {
+                  if
+                  (
+                      entry.school_changed_status != entry.school_changed_status_initial ||
+                      entry.school_changed_comment != entry.school_changed_comment_initial
+                  )
+                  {
+                     isSuccessfull = isSuccessfull && SaveStudent(entry);
+
+
+                  }
+              }
+           );
+
+           if(isSuccessfull)
+           {
+               CloseComplaintCategory();
+           }
+       }
+
+      function SaveStudent(entry) {
+
+          var studentRecord = new Object();
+
+          studentRecord.school_changed_status = entry.school_changed_status;
+          studentRecord.school_changed_comment = entry.school_changed_comment;
+          studentRecord.school_changed_update_owner = user_id;
+
+          if (entry.school_changed_status.toLowerCase()=='accepted' && entry.school_changed_status_initial.toLowerCase() != 'accepted')
+          {
+              studentRecord.school = entry.school_changed_to_verify;
+          }
+
+          return SaveRecord(studentRecord,student_url,entry.id);
+      }
+
+         function SaveBeneficiaries()
+       {
+           var beneficiaryData = CreateBeneficiaryData();
+
+           var isSuccessfull = true;
+
+           beneficiaryData.forEach
+           (
+              function(entry)
+              {
+                  if
+                  (
+                      entry.beneficiary_changed_status != entry.beneficiary_changed_status_initial ||
+                      entry.beneficiary_changed_comment != entry.beneficiary_changed_comment_initial
+                  )
+                  {
+                     isSuccessfull = isSuccessfull && SaveBeneficiary(entry);
+                     //isSuccessfull = isSuccessfull && SaveBeneficiary(entry);
+                  }
+              }
+           );
+
+           if(isSuccessfull)
+           {
+               CloseComplaintCategory();
+           }
+       }
+
+
+       function SaveComplaints()
+       {
+           var complaintsData = CreateComplaintsData();
+
+           var isSuccessfull = true;
+
+           complaintsData.forEach
+           (
+              function(entry)
+              {
+                  if
+                  (
+                      entry.complaint_status != entry.complaint_status_initial ||
+                      entry.complaint_solution != entry.complaint_solution_initial
+                  )
+                  {
+                     isSuccessfull = isSuccessfull && SaveComplaint(entry);
+                  }
+              }
+           );
+
+           if(isSuccessfull)
+           {
+               CloseComplaintCategory();
+           }
+       }
+
+
+      function SaveComplaint(entry) {
+
+          var complaintRecord = new Object();
+          complaintRecord.complaint_status = entry.complaint_status;
+          complaintRecord.complaint_solution = entry.complaint_solution;
+          complaintRecord.complaint_update_owner = user_id;
+
+
+          var isSuccessfull = false;
+
+          $.ajax
+          (
+              {
+                  type: "PATCH",
+                  url: complaint_url + entry.id + "/",
+                  data: complaintRecord,
+                  cache: false,
+                  async: false,
+                  headers: getHeader(),
+                  dataType: 'json',
+                  success: function (response) {
+                      isSuccessfull = true;
+                  },
+                  error: function (response) {
+                      console.log(response);
+                  },
+                  async: false
+              }
+          );
+
+          return isSuccessfull;
+      }
+
+      function SaveBeneficiary(entry) {
+          var beneficiaryRecord = new Object();
+          beneficiaryRecord.id_type = entry.beneficiary_changed_id_type;
+          beneficiaryRecord.id_number = entry.beneficiary_changed_id_number;
+{#          beneficiaryRecord.beneficiary_changed_verify = false;#}
+          beneficiaryRecord.first_name = entry.beneficiary_changed_first_name;
+          beneficiaryRecord.last_name = entry.beneficiary_changed_last_name;
+          beneficiaryRecord.father_name = entry.beneficiary_changed_father_name;
+          beneficiaryRecord.mother_fullname = entry.beneficiary_changed_mother_full_name;
+          beneficiaryRecord.birthday_month = entry.beneficiary_changed_birthday_month;
+          beneficiaryRecord.birthday_year = entry.beneficiary_changed_birthday_year;
+          beneficiaryRecord.birthday_day = entry.beneficiary_changed_birthday_day;
+          beneficiaryRecord.primary_phone = entry.beneficiary_changed_phone;
+          beneficiaryRecord.relation_to_householdhead = entry.beneficiary_changed_relation_to_householdhead;
+          beneficiaryRecord.sex = entry.beneficiary_changed_gender;
+          beneficiaryRecord.beneficiary_changed_status = entry.beneficiary_changed_status;
+          beneficiaryRecord.beneficiary_changed_comment = entry.beneficiary_changed_comment;
+          beneficiaryRecord.beneficiary_changed_update_owner = user_id;
+
+{#                             if (entry.school_changed_status.toLowerCase()=='accepted' && entry.school_changed_status_initial.toLowerCase() != 'accepted')#}
+{#          {#}
+{#              studentRecord.school = entry.school_changed_to_verify;#}
+{#          }#}
+          return SaveRecord(beneficiaryRecord,adult_url,entry.id);
+
+
+
+
+      }
+
+      function SaveRecord(record,url,id) {
+
+
+          var isSuccessfull = false;
+
+          $.ajax
+          (
+              {
+                  type: "PATCH",
+                  url: url + id + "/",
+                  data: record,
+                  cache: false,
+                  async: false,
+                  headers: getHeader(),
+                  dataType: 'json',
+                  success: function (response) {
+                      isSuccessfull = true;
+                  },
+                  error: function (response) {
+                      console.log(response);
+                  },
+                  async: false
+              }
+          );
+
+          return isSuccessfull;
+      }
+
+
+      function InitialiseSave()
+      {
+          $(document).on
+          (
+             'click',
+             '#SaveButton',
+             function()
+             {
+                 if ( currentCategory.CategoryID ==100)
+                 {
+                     SaveStudents();
+                 }
+                 else if ( currentCategory.CategoryID ==200)
+                 {
+                     SaveBeneficiaries();
+                 }
+                 else {
+                     SaveComplaints();
+                 }
+             }
+           );
+      }
+
+      function InitialiseClose()
+      {
+        $(document).on
+          (
+             'click',
+             '#CloseButton',
+             function()
+             {
+                 CloseComplaintCategory();
+             }
+           );
+      }
+
+      function CloseComplaintCategory()
+      {
+         $("#editComplaintForm").hide();
+         $("#hhList").show();
+
+         currentCategory = new Object();
+      }
+
+
+
+
+      function formatDate_save(date) {
+          var d = new Date(date),
+              month = '' + (d.getMonth() + 1),
+              day = '' + d.getDate(),
+              year = d.getFullYear();
+          if (month.length < 2) month = '0' + month;
+          if (day.length < 2) day = '0' + day;
+          return [year, month, day].join('-');
+      }
+
+      function FormatDate(dateString)
+        {
+           var date;
+
+           if(isDate(dateString, "yyyy-MM-ddTHH:mm:ssZ") )
+           {
+              date = new Date(getDateFromFormat(dateString, "yyyy-MM-ddTHH:mm:ssZ"));
+           }
+           else
+           {
+              date = new Date(dateString);
+           }
+
+           var result =
+           (
+              date.getDate().toString() + '/' +
+              (date.getMonth() + 1).toString() + '/' +
+              date.getFullYear().toString()
+           );
+
+           return result;
+        }
+
+        function FormatJSONDate(dateString)
+        {
+           var date;
+
+           if(isDate(dateString, "dd/MM/yyyy") )
+           {
+              date = new Date(getDateFromFormat(dateString, "d/MM/yyyy"));
+           }
+           else if(isDate(dateString, "d/MM/yyyy") )
+           {
+              date = new Date(getDateFromFormat(dateString, "d/MM/yyyy"));
+           }
+           else if(isDate(dateString, "dd/M/yyyy") )
+           {
+              date = new Date(getDateFromFormat(dateString, "dd/M/yyyy"));
+           }
+           else
+           {
+              date = new Date(dateString);
+           }
+
+           return date;
+        }
+
+    </script>
+
+{% endblock %}
+
+
