@@ -44,6 +44,9 @@
 {#                              <li class="nav-item">#}
 {#                                <a class="nav-link {% if request|is_current_page:"alp_registrations" %}active{% endif %}" href="{% url 'alp:alp_registrations' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "ALP Registrations" %}</a>#}
 {#                              </li>#}
+                              <li class="nav-item">
+                                <a class="nav-link {% if request|is_current_page:"alp_data_collecting" %}active{% endif %}" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "ALP Registrations" %}</a>
+                              </li>
                         {% endif %}
                         {% if request.user|has_group:"ALP_MEHE" %}
                   <li class="nav-item">
