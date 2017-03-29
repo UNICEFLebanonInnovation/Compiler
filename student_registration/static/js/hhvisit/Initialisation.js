@@ -30,7 +30,7 @@ var  visit_status = null;
                {
                   block = $(this);
 
-                  var visitID = block.attr('visitID')
+                  var visitID = block.attr('visitid')
 
                   $("#hhList").hide();
 

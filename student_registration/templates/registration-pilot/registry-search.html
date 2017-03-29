@@ -1209,7 +1209,8 @@
                         var child = children[childIndex];
                         var childFullName = child.first_name+' '+child.father_name+' '+ child.last_name;
 {#                        var schoolName = child.school_name;#}
-                        var child_school = childFullName + ' - ' + child.school_name;
+                        var child_school = childFullName
+                            //+ ' - ' + child.school_name;
                         option.value = child.student_id;
                         option.appendChild(document.createTextNode(child_school));
                         df.appendChild(option);

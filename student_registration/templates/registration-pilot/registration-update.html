@@ -436,7 +436,7 @@
                                     <label class="text" style="width: 200px;">{% trans "Complaint Type: " %}</label>
                                     <select id="bank_complaint" >
                                         {% for itm  in bank_complaint_types %}
-                                            <option value="{{ itm.id }}">{{ itm.name }}</option>
+                                            <option value="{{ itm.id }}" {% if forloop.first %}checked{% endif %}>{{ itm.name }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
