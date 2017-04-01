@@ -1208,7 +1208,6 @@
                         var option = document.createElement('option');
                         var child = children[childIndex];
                         var childFullName = child.first_name+' '+child.father_name+' '+ child.last_name;
-{#                        var schoolName = child.school_name;#}
                         var child_school = childFullName + ' - ' + child.school_name;
                         option.value = child.student_id;
                         option.appendChild(document.createTextNode(child_school));
@@ -1298,7 +1297,7 @@
          complaintData.complaint_bank_service_requested =$("#complaint_bank_service_requested").val();
          complaintData.complaint_solution ='';
          complaintData.complaint_Other_type_specify =$("#complaint_Other_type_specify").val();
-         if($("#changeOption").val() == "schoolRefusedEntrance")
+         if($("#changeOption").val() == "schoolRefusedEntrance"  && hh_Complaint)
           {
               complaintData.complaint_student_refused_entrance =$("#student_refused_entrance").val();
           }
@@ -1354,8 +1353,8 @@
           notfoundData.primary_phone_answered = $("#nf_primary_phone_answered").val();
           notfoundData.secondary_phone = $("#nf_secondary_phone").val();
           notfoundData.secondary_phone_answered = $("#nf_secondary_phone_answered").val();
-          notfoundData.number_children_five_to_nine = $("#nf_primary_phone").val();
-          notfoundData.number_children_ten_to_seventeen = $("#nf_primary_phone").val();
+          notfoundData.number_children_five_to_nine = $("#number_children_five_to_nine").val();
+          notfoundData.number_children_ten_to_seventeen = $("#number_children_ten_to_seventeen").val();
 
 
          var isSuccessfull = false;
