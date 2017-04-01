@@ -202,18 +202,47 @@ class ChildVisit(TimeStampedModel):
 
     @property
     def child_school(self):
-        schoolid = Registration.objects.filter(student_id=self.student_id).values('school_id').first()['school_id']
+
+        studentRecordRecord = Registration.objects.filter(student_id=self.student_id).values('school_id').first()
+
+        schoolid = None
+
+        if studentRecordRecord is not None:
+            schoolid = studentRecordRecord['school_id']
+
         if not (schoolid is None):
-            return School.objects.filter(id=schoolid).values('name').first()['name']
+            classRoomRecord = School.objects.filter(id=schoolid).values('name').first()
+
+            classRoomName = '';
+
+            if classRoomRecord is not None:
+                classRoomName = classRoomRecord['name']
+
+            return classRoomName
         else:
             return ''
         return
 
     @property
     def child_classroom(self):
-        classroomid = Registration.objects.filter(student_id=self.student_id).values('classroom_id').first()['classroom_id']
+
+        studentRecordRecord = Registration.objects.filter(student_id=self.student_id).values('classroom_id').first()
+        classroomid = None
+
+        if studentRecordRecord is not None:
+            classroomid = studentRecordRecord['classroom_id']
+
+
         if not (classroomid is None):
-            return ClassRoom.objects.filter(id=classroomid).values('name').first()['name']
+
+            classRoomRecord = ClassRoom.objects.filter(id=classroomid).values('name').first()
+
+            classRoomName = ''
+
+            if classRoomRecord is not None:
+                classRoomName = classRoomRecord['name']
+
+            return classRoomName
         else:
             return ''
 
