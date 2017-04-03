@@ -46,6 +46,7 @@
 }
 input.required, select.required {
     border: 1px solid #ac2925;
+    background-color: #ac2925;
 }
 [class^="icon-"], [class*=" icon-"] {
     display: inline-block;
