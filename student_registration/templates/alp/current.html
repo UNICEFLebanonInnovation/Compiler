@@ -434,7 +434,7 @@
             $("#search_old_student").autocomplete({
               source: function( request, response ) {
                 $.ajax( {
-                  url: "http://127.0.0.1:8181/api/outreach/",
+                  url: synchro_path,
                   dataType: "json",
                   data: {
                     term: request.term
