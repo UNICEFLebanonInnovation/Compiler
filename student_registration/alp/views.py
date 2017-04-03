@@ -58,6 +58,7 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
             return self.queryset
         terms = self.request.GET.get('term', 0)
         if self.request.user.school_id and terms:
+            # todo
             qs = self.queryset.filter(school_id=self.request.user.school_id, alp_round__lt=4)
             for term in terms.split():
                 qs = qs.filter(
@@ -70,6 +71,7 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         if self.request.GET.get('id', 0):
             return self.queryset.filter(id=self.request.GET.get('id', 0))
         if self.request.user.school_id:
+            # todo
             return self.queryset.filter(school_id=self.request.user.school_id, alp_round=4)
 
     def delete(self, request, *args, **kwargs):
@@ -470,7 +472,6 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
             _('School number'),
             _('District'),
             _('Governorate'),
-            _('Not enrolled in this school')
         ]
 
         content = []
@@ -514,7 +515,6 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
                 line.school.number,
                 line.school.location.name,
                 line.school.location.parent.name,
-                line.not_enrolled_in_this_school,
             ]
             data.append(content)
 
