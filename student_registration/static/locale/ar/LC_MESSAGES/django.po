@@ -1190,7 +1190,7 @@ msgid "ALP Registrations"
 msgstr "تسجيل التلاميذ"
 
 msgid "Search an old student"
-msgstr "ابحث عن تلميذ سابق"
+msgstr "ابحث عن تلميذ كان مسجل لديك في الدورات الماضية"
 
 msgid "Last year situation"
 msgstr "وضع التلميذ في السنة الماضية"
@@ -1218,3 +1218,9 @@ msgstr "نتيجة امتحان تحديد المستوى "
 
 msgid "Post-test result"
 msgstr "نتيجة امتحان آخر الدورة"
+
+msgid "Select Level if applicable"
+msgstr "مستوى التلميذ اذا كان مسجل لديك"
+
+msgid "Select Section if applicable"
+msgstr "شعبة التلميذ اذا كان مسجل لديك"
