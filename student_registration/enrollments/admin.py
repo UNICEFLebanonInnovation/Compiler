@@ -49,6 +49,7 @@ class EnrollmentResource(resources.ModelResource):
             'student__sex',
             'governorate',
             'district',
+            'school__number',
             'school__name',
             'section__name',
             'classroom__name',
