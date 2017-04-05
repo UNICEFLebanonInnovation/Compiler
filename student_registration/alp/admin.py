@@ -61,6 +61,7 @@ class OutreachResource(resources.ModelResource):
             'student__nationality__name',
             'governorate',
             'district',
+            'school__number',
             'school__name',
             'level__name',
             'exam_result_arabic',
