@@ -22,7 +22,9 @@
         .category-row-class:hover {
            background-color: gainsboro !IMPORTANT;
         }
-
+        #complaints-table tr td{
+            vertical-align: middle;
+        }
 
     </style>
 
@@ -81,7 +83,7 @@
                                 </thead>
                                 <tbody>
                                 {% for complaint in complaints %}
-                                    <tr class="row-class category-row-class" complaintID="{{ complaint.ID }}" complaint_type="{{ complaint.complaint_type }}">
+                                    <tr class="row-class category-row-class" complaintID="{{ complaint.ID }}" complaint_type="{{ complaint.complaint_type }}"complaint_sub_type="{{ complaint.Name }}">
                                         <td>{{ complaint.complaint_type }}</td>
                                         <td>{{ complaint.Name }}</td>
                                         <td>{{ complaint.Statistics }}</td>
@@ -98,6 +100,12 @@
                                     <td>{{ beneficiary_changed_verify.complaint_type }}</td>
                                     <td>{{ beneficiary_changed_verify.Name }}</td>
                                     <td>{{ beneficiary_changed_verify.Statistics }}</td>
+                                    <td></td>
+                                </tr>
+                                <tr class="row-class category-row-class" complaintID="{{ 300 }}">
+                                    <td>{{ cards_duplicate.complaint_type }}</td>
+                                    <td>{{ cards_duplicate.Name }}</td>
+                                    <td>{{ cards_duplicate.Statistics }}</td>
                                     <td></td>
                                 </tr>
                                 <tr class="row-class" style="font-weight:bold;" >
@@ -180,6 +188,7 @@
         var complaints_grid_url = host+'/registrations/complaints-grid';
         var adult_url = host+'/api/registrations-adult-id/';
         var beneficiaries_grid_url = host+'/registrations/changebeneficiary-grid';
+        var two_cards_grid_url = host+'/registrations/twocards-grid';
 
 
         var student_url = host+'/api/registrations-child/';
@@ -211,9 +220,10 @@
              {
                 block = $(this);
                 complaintID = block.attr('complaintID');
-                 complaint_type = block.attr('complaint_type');
+                complaint_type = block.attr('complaint_type');
+                complaint_sub_type = block.attr('complaint_sub_type');
 
-                LoadData(complaintID , complaint_type );
+                LoadData(complaintID , complaint_type , complaint_sub_type );
 
                  hideForms();
 
@@ -235,10 +245,11 @@
     var currentCategory = new Object();
 
 
-      function LoadData(complaintCategoryID , complaint_type)
+      function LoadData(complaintCategoryID , complaint_type , complaint_sub_type)
       {
           currentCategory.CategoryID = complaintCategoryID;
           currentCategory.Type = complaint_type;
+          currentCategory.ComplaintSubType = complaint_sub_type;
 
 
           if(complaintCategoryID==200)
@@ -249,9 +260,13 @@
           {
               LoadPartialView(student_grid_url);
           }
+          else if(complaintCategoryID==300)
+          {
+              LoadPartialView(two_cards_grid_url);
+          }
           else
           {
-              LoadPartialView(complaints_grid_url+"?CategoryID="+complaintCategoryID+"&ComplaintType="+complaint_type);
+              LoadPartialView(complaints_grid_url+"?CategoryID="+complaintCategoryID+"&ComplaintType="+complaint_type+"&ComplaintSubType="+complaint_sub_type);
           }
       }
 

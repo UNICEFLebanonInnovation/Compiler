@@ -468,17 +468,35 @@ class ComplaintCategoryListSearchView(LoginRequiredMixin, TemplateView):
         beneficiaries = RegisteringAdult.objects
         if not self.request.user.is_superuser:
             beneficiaries = beneficiaries.filter(school__location__parent_id=self.request.user.governante_id)
-
-        beneficiaries = beneficiaries.filter(beneficiary_changed_verify=True).order_by('id')
+        # beneficiaries = beneficiaries.filter(beneficiary_changed_verify=True).order_by('id')
+        beneficiaries = beneficiaries.filter(beneficiary_changed_father_name__isnull= False).order_by('id')
 
         for beneficiary in beneficiaries:
             beneficiary_changed_verify.Statistics += 1
         complaintStatisticsTotal.Statistics += beneficiary_changed_verify.Statistics
 
+        cards = []
+        cards_duplicate = []
+
+        cards_duplicate = ComplaintStatistics()
+        cards_duplicate.complaint_type = 'Update'
+        cards_duplicate.Name = 'Two Cards'
+        cards_duplicate.Statistics = 0
+
+        cards = RegisteringAdult.objects
+        if not self.request.user.is_superuser:
+            cards = cards.filter(school__location__parent_id=self.request.user.governante_id)
+        cards = cards.filter(duplicate_card_first_card_case_number__isnull=False).order_by('id')
+
+        for card in cards:
+            cards_duplicate.Statistics += 1
+        complaintStatisticsTotal.Statistics += cards_duplicate.Statistics
+
         return {
             'complaints': complaintStatistics,
             'school_changed_to_verify': school_changed_to_verify,
             'beneficiary_changed_verify':beneficiary_changed_verify,
+            'cards_duplicate':cards_duplicate,
             'total': complaintStatisticsTotal
         }
 
@@ -516,13 +534,30 @@ class ChangeBeneficiaryGridView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
 
-        beneficiarRecords = RegisteringAdult.objects.filter(beneficiary_changed_verify=True)
+        # beneficiarRecords = RegisteringAdult.objects.filter(beneficiary_changed_verify=True)
+
+        beneficiarRecords = RegisteringAdult.objects.filter(beneficiary_changed_father_name__isnull= False).order_by('id')
 
         if not self.request.user.is_superuser:
             beneficiarRecords = beneficiarRecords.filter(school__location__parent_id=self.request.user.governante_id)
 
         return {
             'beneficiaries': beneficiarRecords,
+        }
+
+class ChangeTwoCardsGridView(LoginRequiredMixin, TemplateView):
+
+    template_name = 'registration-pilot/twocards-grid.html'
+
+    def get_context_data(self, **kwargs):
+
+        beneficiaryRecords = RegisteringAdult.objects.filter(duplicate_card_first_card_case_number__isnull= False).order_by('id')
+
+        if not self.request.user.is_superuser:
+            beneficiaryRecords = beneficiaryRecords.filter(school__location__parent_id=self.request.user.governante_id)
+
+        return {
+            'beneficiaries': beneficiaryRecords,
         }
 
 
