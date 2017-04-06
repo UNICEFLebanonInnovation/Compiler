@@ -197,11 +197,14 @@ class RegisteringAdult(Person):
         blank=False, null=True,
         related_name='+',
     )
+    beneficiary_changed_date_requested = models.DateField(blank=True, null=True)
     household_suspended = models.BooleanField(default=False)
+    household_suspended_date = models.DateField(blank=True, null=True)
     duplicate_card_first_card_case_number = models.CharField(max_length=50, blank=True, null=True)
     duplicate_card_first_card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
     duplicate_card_second_card_case_number = models.CharField(max_length=50, blank=True, null=True)
     duplicate_card_secondcard_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
+    duplicate_card_date = models.DateField(blank=True, null=True)
     no_logner_eligible = models.BooleanField(default=False)
     no_logner_eligible_reason = models.ForeignKey(
         NotEligibleReason,
@@ -210,6 +213,8 @@ class RegisteringAdult(Person):
     )
     no_logner_eligible_specify = models.CharField(max_length=50, blank=True, null=True)
     no_logner_eligible_comment = models.CharField(max_length=50, blank=True, null=True)
+    no_logner_eligible_date = models.DateField(blank=True, null=True)
+    phone_update_date = models.DateField(blank=True, null=True)
     update_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
