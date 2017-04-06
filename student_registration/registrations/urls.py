@@ -42,6 +42,11 @@ urlpatterns = [
         name='changebeneficiary_grid'
     ),
     url(
+        regex=r'^twocards-grid/$',
+        view=views.ChangeTwoCardsGridView.as_view(),
+        name='twocards_grid'
+    ),
+    url(
         regex=r'^students-grid/$',
         view=views.SchoolApprovalListView.as_view(),
         name='students_grid'
