@@ -7,13 +7,11 @@ width="100%">
     <thead>
         <tr>
             <th style = "display:none">>ID</th>
-            <th >HH Name</th>
-            <th >First Card Case Number</th>
-            <th >First Card Last 4 digits</th>
-            <th >Second Card Case Number</th>
-            <th >Second Card Last 4 digits</th>
-            <th >Approve/Reject</th>
-            <th >Comments</th>
+            <th >HH Rep Name</th>
+            <th >Case# (Card1)</th>
+            <th >Case# (Card2)</th>
+            <th >Case# (Min Ila)</th>
+            <th >Phone #</th>
         </tr>
     </thead>
     <tbody>
@@ -21,31 +19,10 @@ width="100%">
             <tr class="row-class" beneficiary-id="{{ beneficiary.id }}" >
                 <td>{{ beneficiary.first_name }} {{ beneficiary.father_name }} {{ beneficiary.last_name }}</td>
                 <td>{{ beneficiary.duplicate_card_first_card_case_number }}</td>
-                <td>{{ beneficiary.duplicate_card_first_card_last_four_digits }}</td>
                 <td>{{ beneficiary.duplicate_card_second_card_case_number }}</td>
-                <td>{{ beneficiary.duplicate_card_secondcard_last_four_digits }}</td>
-{#                <td>#}
-{#                    <div class="switch-toggle switch-3 switch-candy" style = "width:220px">#}
-{##}
-{#                        <input id="on-{{ beneficiary.id }}" name="state-d-{{ beneficiary.id }}" type="radio"#}
-{#                               {% if beneficiary.beneficiary_changed_status == 'accepted' %}checked{% endif %} value = "accepted">#}
-{#                        <label for="on-{{ beneficiary.id }}" onclick="">Accept</label> </input>#}
-{##}
-{#                        <input id="na-{{ beneficiary.id }}" name="state-d-{{ beneficiary.id }}" type="radio"#}
-{#                               {% if beneficiary.beneficiary_changed_status == 'open' %}checked{% endif %} value = "open">#}
-{#                            <label for="na-{{ beneficiary.id }}" onclick="">-</label> </input>#}
-{##}
-{#                        <input id="off-{{ beneficiary.id }}" name="state-d-{{ beneficiary.id }}" type="radio"#}
-{#                               {% if beneficiary.beneficiary_changed_status == 'rejected' %}checked{% endif %} value = "rejected">#}
-{#                        <label for="off-{{ beneficiary.id }}" onclick="">Reject</label> </input>#}
-{##}
-{#                        <a></a>#}
-{#                    </div>#}
-{##}
-{#                </td>#}
-{#                <td>#}
-{#                    <textarea>{{ beneficiary.beneficiary_changed_comment  }}</textarea>#}
-{#                </td>#}
+                <td>{{ beneficiary.id_number}}</td>
+                <td>{{ beneficiary.number}}</td>
+                <td>{{ beneficiary.primary_phone}}</td>
             </tr>
         {% endfor %}
     </tbody>

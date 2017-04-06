@@ -65,7 +65,7 @@ width="100%">
 
                         <input id="on-{{ complaint.id }}" name="state-d-{{ complaint.id }}" type="radio"
                                {% if complaint.complaint_status == 'accepted' %}checked{% endif %} value = "accepted">
-                        <label for="on-{{ complaint.id }}" onclick="">Accept</label> </input>
+                        <label for="on-{{ complaint.id }}" onclick="">Resolved</label> </input>
 
                         <input id="na-{{ complaint.id }}" name="state-d-{{ complaint.id }}" type="radio"
                                {% if complaint.complaint_status == 'open' %}checked{% endif %} value = "open">
@@ -73,7 +73,7 @@ width="100%">
 
                         <input id="off-{{ complaint.id }}" name="state-d-{{ complaint.id }}" type="radio"
                                {% if complaint.complaint_status == 'rejected' %}checked{% endif %} value = "rejected">
-                        <label for="off-{{ complaint.id }}" onclick="">Reject</label> </input>
+                        <label for="off-{{ complaint.id }}" onclick="">Escalate</label> </input>
 
                         <a></a>
                     </div>
