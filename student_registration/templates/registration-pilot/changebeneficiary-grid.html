@@ -9,8 +9,9 @@ width="100%">
             <th style = "display:none">>ID</th>
             <th >Old beneficiary</th>
             <th >New beneficiary</th>
-            <th >ID</th>
+            <th >New beneficiary Individual ID</th>
             <th >Relation to HH</th>
+            <th >New Beneficiary Requested Change</th>
             <th >Reason</th>
             <th >Date</th>
             <th >Approve/Reject</th>
@@ -24,6 +25,7 @@ width="100%">
                 <td>{{ beneficiary.beneficiary_changed_first_name }} {{ beneficiary.beneficiary_changed_father_name }} {{ beneficiary.beneficiary_changed_last_name }}</td>
                 <td>{{ beneficiary.beneficiary_changed_id_number }}</td>
                 <td>{{ beneficiary.beneficiary_changed_relation_to_householdhead }}</td>
+                <td>{{ beneficiary.beneficiary_changed_same_as_caller }}</td>
                 <td>{{ beneficiary.beneficiary_changed_reason }} {{ beneficiary.beneficiary_specify_reason }}</td>
                 <td>{{ beneficiary.modified }}</td>
                 <td>
