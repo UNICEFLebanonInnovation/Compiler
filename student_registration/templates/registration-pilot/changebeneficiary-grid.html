@@ -12,6 +12,7 @@ width="100%">
             <th >ID</th>
             <th >Relation to HH</th>
             <th >Reason</th>
+            <th >Date</th>
             <th >Approve/Reject</th>
             <th >Comments</th>
         </tr>
@@ -24,6 +25,7 @@ width="100%">
                 <td>{{ beneficiary.beneficiary_changed_id_number }}</td>
                 <td>{{ beneficiary.beneficiary_changed_relation_to_householdhead }}</td>
                 <td>{{ beneficiary.beneficiary_changed_reason }} {{ beneficiary.beneficiary_specify_reason }}</td>
+                <td>{{ beneficiary.modified }}</td>
                 <td>
 
                     <div class="switch-toggle switch-3 switch-candy" style = "width:220px">
