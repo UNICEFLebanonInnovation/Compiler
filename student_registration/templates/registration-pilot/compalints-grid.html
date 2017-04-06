@@ -7,17 +7,18 @@ width="100%">
     <thead>
         <tr>
             <th style = "display:none">>ID</th>
-            <th>Case #</th>
+            <th>Case # / Individual ID</th>
             <th>HH Name</th>
             <th {% if ComplaintSubType != 'Other' %}style = "display:none;"{% endif %}>Other-Specify</th>
             <th {% if ComplaintType != 'School Related' %}style = "display:none;"{% endif %}>Student</th>
             <th>Date of Complaint</th>
             <th {% if ComplaintType != 'Card Distribution' %}style = "display:none;"{% endif %}>Phone #</th>
+            <th {% if ComplaintType != 'School Related' %}style = "display:none;"{% endif %}>Phone #</th>
             <th {% if ComplaintType != 'Bank' %}style = "display:none;"{% endif %}>Date/Time of incident</th>
             <th {% if ComplaintType != 'Bank' %}style = "display:none;"{% endif %}>Phone number from which call was placed</th>
             <th {% if ComplaintType != 'Bank' %}style = "display:none;"{% endif %}>Service requested #</th>
             <th {% if ComplaintType == 'Card' %}style = "display:none;"{% endif %}>Comment</th>
-            <th>Approve/Reject</th>
+            <th>Resolved/Escalate</th>
             <th>Comments</th>
         </tr>
     </thead>
@@ -46,6 +47,9 @@ width="100%">
                     {{ complaint.complaint_student_refused_entrance.last_name }}</td>
                 <td>{{ complaint.created }}</td>
                 <td  {% if ComplaintType != 'Card Distribution' %}style = "display:none;"{% endif %}>
+                    {{ complaint.complaint_adult.primary_phone }}
+                </td>
+                <td  {% if ComplaintType != 'School Related' %}style = "display:none;"{% endif %}>
                     {{ complaint.complaint_adult.primary_phone }}
                 </td>
                 <td {% if ComplaintType != 'Bank' %}style = "display:none;"{% endif %}>

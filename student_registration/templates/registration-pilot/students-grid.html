@@ -28,7 +28,7 @@ width="100%">
 
                         <input id="on-{{ student.id }}" name="state-d-{{ student.id }}" type="radio"
                                {% if student.school_changed_status == 'accepted' %}checked{% endif %} value = "accepted">
-                        <label for="on-{{ student.id }}" onclick="">Accept</label> </input>
+                        <label for="on-{{ student.id }}" onclick="">Approve</label> </input>
 
                         <input id="na-{{ student.id }}" name="state-d-{{ student.id }}" type="radio"
                                {% if student.school_changed_status == 'open' %}checked{% endif %} value = "open">
