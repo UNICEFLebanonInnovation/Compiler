@@ -316,22 +316,22 @@
               beneficiaryRecord = new Object();
               beneficiaryRecord.id = trElement.attr('beneficiary-id');
               beneficiaryRecord.beneficiary_changed_status = GetDecision(trElement);
-              beneficiaryRecord.beneficiary_changed_comment = trElement.find('td:nth-child(7) textarea').val();
-              beneficiaryRecord.beneficiary_changed_status_initial = trElement.find('td:nth-child(8)').html();
-              beneficiaryRecord.beneficiary_changed_comment_initial = trElement.find('td:nth-child(9)').html();
+              beneficiaryRecord.beneficiary_changed_comment = trElement.find('td:nth-child(9) textarea').val();
+              beneficiaryRecord.beneficiary_changed_status_initial = trElement.find('td:nth-child(10)').html();
+              beneficiaryRecord.beneficiary_changed_comment_initial = trElement.find('td:nth-child(11)').html();
 
-              beneficiaryRecord.beneficiary_changed_id_type= trElement.find('td:nth-child(10)').html();
-              beneficiaryRecord.beneficiary_changed_id_number= trElement.find('td:nth-child(11)').html();
-              beneficiaryRecord.beneficiary_changed_first_name= trElement.find('td:nth-child(12)').html();
-              beneficiaryRecord.beneficiary_changed_father_name= trElement.find('td:nth-child(13)').html();
-              beneficiaryRecord.beneficiary_changed_last_name= trElement.find('td:nth-child(14)').html();
-              beneficiaryRecord.beneficiary_changed_mother_full_name= trElement.find('td:nth-child(15)').html();
-              beneficiaryRecord.beneficiary_changed_birthday_year= trElement.find('td:nth-child(16)').html();
-              beneficiaryRecord.beneficiary_changed_birthday_month= trElement.find('td:nth-child(17)').html();
-              beneficiaryRecord.beneficiary_changed_birthday_day= trElement.find('td:nth-child(18)').html();
-              beneficiaryRecord.beneficiary_changed_phone= trElement.find('td:nth-child(19)').html();
-              beneficiaryRecord.beneficiary_changed_relation_to_householdhead= trElement.find('td:nth-child(20)').html();
-              beneficiaryRecord.beneficiary_changed_gender= trElement.find('td:nth-child(21)').html();
+              beneficiaryRecord.beneficiary_changed_id_type= trElement.find('td:nth-child(12)').html();
+              beneficiaryRecord.beneficiary_changed_id_number= trElement.find('td:nth-child(13)').html();
+              beneficiaryRecord.beneficiary_changed_first_name= trElement.find('td:nth-child(14)').html();
+              beneficiaryRecord.beneficiary_changed_father_name= trElement.find('td:nth-child(15)').html();
+              beneficiaryRecord.beneficiary_changed_last_name= trElement.find('td:nth-child(16)').html();
+              beneficiaryRecord.beneficiary_changed_mother_full_name= trElement.find('td:nth-child(17)').html();
+              beneficiaryRecord.beneficiary_changed_birthday_year= trElement.find('td:nth-child(18)').html();
+              beneficiaryRecord.beneficiary_changed_birthday_month= trElement.find('td:nth-child(19)').html();
+              beneficiaryRecord.beneficiary_changed_birthday_day= trElement.find('td:nth-child(20)').html();
+              beneficiaryRecord.beneficiary_changed_phone= trElement.find('td:nth-child(21)').html();
+              beneficiaryRecord.beneficiary_changed_relation_to_householdhead= trElement.find('td:nth-child(22)').html();
+              beneficiaryRecord.beneficiary_changed_gender= trElement.find('td:nth-child(23)').html();
               beneficiaryData.push(beneficiaryRecord);
 
           }
