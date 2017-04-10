@@ -359,11 +359,11 @@
 
                  complaintRecord.complaint_status = GetDecision(trElement);
 
-                 complaintRecord.complaint_solution = trElement.find('td:nth-child(7) textarea').val();
+                 complaintRecord.complaint_solution = trElement.find('td:nth-child(14) textarea').val();
 
-                 complaintRecord.complaint_status_initial = trElement.find('td:nth-child(8)').html();
+                 complaintRecord.complaint_status_initial = trElement.find('td:nth-child(15)').html();
 
-                 complaintRecord.complaint_solution_initial = trElement.find('td:nth-child(9)').html();
+                 complaintRecord.complaint_solution_initial = trElement.find('td:nth-child(16)').html();
 
                  complaintData.push(complaintRecord);
 
