@@ -51,4 +51,9 @@ urlpatterns = [
         view=views.SchoolApprovalListView.as_view(),
         name='students_grid'
     ),
+    url(
+        regex=r'^data-collecting/export/$',
+        view=views.ComplaintsExportViewSet.as_view(),
+        name='complaint_data_export'
+    ),
 ]
