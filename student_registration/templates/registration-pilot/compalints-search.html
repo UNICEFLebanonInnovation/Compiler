@@ -144,19 +144,22 @@
             <button class="btn btn-primary" type="button" id="SaveButton" style="float:right; " >
               {% trans "Save" %}
             </button>
+             <a class="btn btn-primary"
+                id="complaint-export"
+                href="{% url "registrations:complaint_data_export" %}"
+                target="_blank"
+{#                style="float:right; "#}
+                {% if ComplaintType == 'Not Found' %}style = "display:none;"{% endif %}
+             >
+                 {% trans "Export" %}
+             </a>
          </div>
 
          <div id = "ComplaintsGrid">
 
-
          </div>
 
      </div>
-
-{#    <div id = "hhNotFoundForm" style ="display:none">#}
-{#       {% include 'registration-pilot/household-not-found.html' %}#}
-{#     </div>#}
-
 
 {% endblock %}
 
