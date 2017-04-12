@@ -75,7 +75,7 @@
                                        width="100%">
                                 <thead>
                                     <tr id="thead-line-1">
-                                        <th>{% trans "Category" %}</th>
+                                        <th style = "display:none;">{% trans "Category" %}</th>
                                         <th>{% trans "Type" %}</th>
                                         <th>{% trans "Number" %}</th>
                                         <th>{% trans "Urgent" %}</th>
@@ -84,33 +84,32 @@
                                 <tbody>
                                 {% for complaint in complaints %}
                                     <tr class="row-class category-row-class" complaintID="{{ complaint.ID }}" complaint_type="{{ complaint.complaint_type }}"complaint_sub_type="{{ complaint.Name }}">
-                                        <td>{{ complaint.complaint_type }}</td>
+                                        <td style = "display:none;">{{ complaint.complaint_type }}</td>
                                         <td>{{ complaint.Name }}</td>
                                         <td>{{ complaint.Statistics }}</td>
                                         <td></td>
                                     </tr>
                                 {% endfor %}
                                 <tr class="row-class category-row-class" complaintID="{{ 100 }}">
-                                    <td>{{ school_changed_to_verify.complaint_type }}</td>
+                                    <td style = "display:none;">{{ school_changed_to_verify.complaint_type }}</td>
                                     <td>{{ school_changed_to_verify.Name }}</td>
                                     <td>{{ school_changed_to_verify.Statistics }}</td>
                                     <td></td>
                                 </tr>
                                 <tr class="row-class category-row-class" complaintID="{{ 200 }}">
-                                    <td>{{ beneficiary_changed_verify.complaint_type }}</td>
+                                    <td style = "display:none;">{{ beneficiary_changed_verify.complaint_type }}</td>
                                     <td>{{ beneficiary_changed_verify.Name }}</td>
                                     <td>{{ beneficiary_changed_verify.Statistics }}</td>
                                     <td></td>
                                 </tr>
                                 <tr class="row-class category-row-class" complaintID="{{ 300 }}">
-                                    <td>{{ cards_duplicate.complaint_type }}</td>
+                                    <td style = "display:none;">{{ cards_duplicate.complaint_type }}</td>
                                     <td>{{ cards_duplicate.Name }}</td>
                                     <td>{{ cards_duplicate.Statistics }}</td>
                                     <td></td>
                                 </tr>
                                 <tr class="row-class" style="font-weight:bold;" >
                                         <td>{{ total.Name }}</td>
-                                        <td></td>
                                         <td>{{ total.Statistics }}</td>
                                         <td></td>
                                     </tr>
@@ -127,9 +126,10 @@
 
      <div id = "editComplaintForm" style ="display:none">
          <div class="panel-heading">
+             <br/>
              <h3 class="panel-title">
                  <ol class="breadcrumb">
-                     <li><a>{% trans "Updates and Complaints" %}</a></li>
+                     <li><a id="complaint_type_name">{% trans "Updates and Complaints" %}</a></li>
                  </ol>
              </h3>
              <div class="actions pull-right">
@@ -225,7 +225,7 @@
                 complaintID = block.attr('complaintID');
                 complaint_type = block.attr('complaint_type');
                 complaint_sub_type = block.attr('complaint_sub_type');
-
+                document.getElementById("complaint_type_name").innerHTML = complaint_sub_type;
                 LoadData(complaintID , complaint_type , complaint_sub_type );
 
                  hideForms();
