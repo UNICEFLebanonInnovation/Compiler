@@ -1224,3 +1224,129 @@ msgstr "مستوى التلميذ اذا كان مسجل لديك"
 
 msgid "Select Section if applicable"
 msgstr "شعبة التلميذ اذا كان مسجل لديك"
+
+msgid "Bullying by other children"
+msgstr "تنمير من قبل الأطفال الآخرين"
+
+msgid "Do not feel welcome"
+msgstr "لا يشعرون بأنهم مرحب بهم"
+
+msgid "Engagement/Marriage"
+msgstr "خطوبة / الزواج"
+
+msgid "Lack of Appropriate Clothing/Shoes"
+msgstr "عدم ملائمة الملابس / الأحذية"
+
+msgid "Learning Difficulties"
+msgstr "صعوبات التعلم"
+
+msgid "Medical and Health"
+msgstr "الطبية والصحية"
+
+msgid "Money is not enough"
+msgstr "المال لا يكفي"
+
+msgid "Need to Work"
+msgstr "بحاجة إلى العمل"
+
+msgid "Other"
+msgstr "آخر"
+
+msgid "Parents do not think education is worthwhile investment"
+msgstr "الآباء لا تعتقد ان التعليم هو استثمار جدي"
+
+msgid "Poor Quality of Teaching"
+msgstr "جودة منخفضة التدريس"
+
+msgid "School Director refused"
+msgstr "رفض مدير المدرسة"
+
+msgid "School Staff are abusive or bullying"
+msgstr " الأساتذة أو العاملين فالمدرسة مسيئين"
+
+msgid "eacher is Absent"
+msgstr "المعلم غائب"
+
+msgid "Transportation"
+msgstr "وسائل النقل"
+
+msgid "Weather Conditions"
+msgstr "احوال الطقس"
+
+msgid "Other (specify)"
+msgstr"أخرى (حدد)"
+
+msgid "Cannot afford uniform"
+msgstr "لا يستطيع شراء مريول المدرسة"
+
+msgid "Clean/New"
+msgstr "نظيفة / جديدة"
+
+msgid "Other (specify)"
+msgstr "أخرى (حدد)"
+
+msgid "Weather-appropriate"
+msgstr "مناسبة للطقس"
+
+msgid "Content is too difficult"
+msgstr "محتوى صعب جدا"
+
+msgid "curriculum too different from syrian"
+msgstr "مناهج مختلفة جدا عن سوريا"
+
+msgid "Difficultly concentrating"
+msgstr "صعوبة في التركيز"
+
+msgid "Language is different"
+msgstr "لغة مختلفة"
+
+msgid "Ongoing"
+msgstr "جاري التنفيذ"
+
+msgid "Temporary (due to temporary circumstances, like loss of breadwinner)"
+msgstr "مؤقت (بسبب ظروف مؤقتة، مثل فقدان العائل)"
+
+msgid "Reason"
+msgstr "السبب"
+
+msgid "Both"
+msgstr "كلاهما"
+
+msgid "Physically"
+msgstr "جسديا"
+
+msgid "Verbally"
+msgstr "شفهيا"
+
+msgid "1 - 2 days"
+msgstr "1-2 يوما"
+
+msgid "Always"
+msgstr "دائما"
+
+msgid "Several days"
+msgstr "عدة أيام"
+
+msgid "Not affordable/too expensive"
+msgstr "لا المتناول / مكلفة للغاية"
+
+msgid "Not available locally"
+msgstr "غير متوفرة محليا"
+
+msgid "Not reliable/no regular schedule"
+msgstr "لا يمكن الاعتماد عليها / لا يوجد جدول زمني منتظم"
+
+msgid "Not safe"
+msgstr "غير آمن"
+
+msgid "Other (specify)"
+msgstr "أخرى (حدد)"
+
+msgid "Threats from bus drivers"
+msgstr "تهديدات من سائقي الحافلات"
+
+msgid "Intermittent (eg. snow, rain, wind)"
+msgstr "متقطع (على سبيل المثال. الثلج والمطر والرياح)"
+
+msgid "Ongoing (e.g. cold weather)"
+msgstr " مستمر (الطقس البارد على سبيل المثال)"
