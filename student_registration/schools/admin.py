@@ -118,13 +118,12 @@ class ClassRoomResource(resources.ModelResource):
             'id',
             'name',
         )
-        export_order = ('id',)
+        export_order = fields
 
 
 class ClassRoomAdmin(ImportExportModelAdmin):
     resource_class = ClassRoomResource
     fields = (
-        'id',
         'name',
     )
     list_display = fields

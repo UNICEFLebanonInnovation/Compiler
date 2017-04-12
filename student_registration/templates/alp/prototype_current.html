@@ -52,7 +52,7 @@
         </td>
         <td>
             <select name="registered_in_level" id="registered_in_level" class="registration-field" itemscope="$$itemscope_id$$">
-                <option value="">{% trans "Current Level if applicable" %}</option>
+                <option value="">{% trans "Select Level if applicable" %}</option>
                 {% for item in informal_educations %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
@@ -61,7 +61,7 @@
         </td>
         <td>
             <select name="section" id="section" class="registration-field" itemscope="$$itemscope_id$$">
-                <option value="">{% trans "Current Section if applicable" %}</option>
+                <option value="">{% trans "Select Section if applicable" %}</option>
                 {% for item in sections %}
                     <option value="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
