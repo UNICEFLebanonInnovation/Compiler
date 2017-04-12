@@ -61,7 +61,7 @@
                                     <li><b>{{ school }}</b></li>
                                     <li><b>{{ location }}</b></li>
                                     <li><b>{{ location_parent }}</b></li>
-                                    <li><input type="text" id="search_old_student" size="300" style="width: 200px;" placeholder="{% trans "Search an old student" %}" /></li>
+                                    <li><input type="text" id="search_old_student" size="300" style="width: 400px;" placeholder="{% trans "Search an old student" %}" /></li>
                               </ol>
                           </div>
                           <div class="panel-heading" style="position: absolute; top:50px;" id="header">
@@ -296,7 +296,7 @@
 
             $(document).on('click', '#filter_cancel', function(){
                 filter_on = false;
-                incremental_id = 1;
+                incremental_id = 0;
                 offset = 0;
                 limit = 100;
                 build_datatable();
@@ -332,6 +332,7 @@
                         $('#load_more_data').hide();
                         $(".loader").show();
                         build_datatable();
+                        $(".loader").hide();
                     }else{
                         $(".loader").hide();
                     }
@@ -342,7 +343,6 @@
                 var item = create_item_store_default_keys();
                 add_to_store(item);
                 scrollToBottom();
-                //$('#filter_cancel').trigger('click');
             });
 
             $(document).on('click', '#add_defined_lines', function(){
@@ -355,7 +355,6 @@
                             add_to_store(item);
                         }
                         scrollToBottom();
-                        $('#filter_cancel').trigger('click');
                     }
                 });
             });
@@ -402,6 +401,13 @@
                 flag_record_to_update(parseInt($(this).attr('itemscope')), 'registrations');
             });
 
+            $(document).on('change', '#student_id_type', function(){
+                if($(this).val() == 6) {
+                    var itemscope = $(this).attr('itemscope');
+                    $('#line-'+itemscope).find('#student_id_number').val('000000');
+                }
+            });
+
             $(document).on('click', '#registration-synchro', function(){
                 synchro_result = true;
                 $('.alert').hide();
@@ -434,7 +440,7 @@
             $("#search_old_student").autocomplete({
               source: function( request, response ) {
                 $.ajax( {
-                  url: "http://127.0.0.1:8181/api/outreach/",
+                  url: synchro_path,
                   dataType: "json",
                   data: {
                     term: request.term
@@ -574,7 +580,7 @@
                 var result = request.result;
                 $(result).each(function(i, item){
                     rows = item.id;
-                    if(item.deleted == false && i >= offset && i < limit){
+                    if(item.deleted == false && i >= offset && i < limit && $('#line-'+item.id).length == 0){
                         if(item.owner == user_id){
                             add_table_newline(item.id, prototype, table);
                         }else{
