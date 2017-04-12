@@ -12,6 +12,8 @@ width="100%">
             <th >Case# (Card2)</th>
             <th >Case# (Min Ila)</th>
             <th >Phone #</th>
+            <th >Resolve/Pending</th>
+            <th >Comments</th>
         </tr>
     </thead>
     <tbody>
@@ -21,7 +23,6 @@ width="100%">
                 <td>{{ beneficiary.duplicate_card_first_card_case_number }}</td>
                 <td>{{ beneficiary.duplicate_card_second_card_case_number }}</td>
                 <td>{{ beneficiary.id_number}}</td>
-{#                <td>{{ beneficiary.number}}</td>#}
                 <td>{{ beneficiary.primary_phone}}</td>
             </tr>
         {% endfor %}
