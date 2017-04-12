@@ -597,3 +597,43 @@ class AdultChangelListView(LoginRequiredMixin, TemplateView):
             'locations': locations,
             'selectedLocation': int(location)
         }
+
+
+class ComplaintsExportViewSet(LoginRequiredMixin, ListView):
+    model = Complaint
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.model.objects.all()
+        queryset = queryset.order_by('id')
+
+        data = tablib.Dataset()
+
+        data.headers = [
+            _('ID'),
+            _('Individual ID'),
+            _('HH Rep Name'),
+            _('Other-Specify'),
+            _('Student'),
+            _('Date of Complaint'),
+            _('Phone'),
+            _('Date/Time of incident'),
+            _('Phone number from which call was placed'),
+            _('Service Requested'),
+        ]
+
+        content = []
+        for line in queryset:
+            # if not line.student or not line.school:
+            # continue
+            content = [
+                line.id,
+            ]
+            data.append(content)
+
+        file_format = base_formats.XLS()
+        response = HttpResponse(
+            file_format.export_data(data),
+            content_type='application/application/ms-excel',
+        )
+        response['Content-Disposition'] = 'attachment; filename=complaint_list.xls'
+        return response
