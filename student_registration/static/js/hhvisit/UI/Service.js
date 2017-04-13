@@ -18,12 +18,36 @@
 
            var deleteServiceCell = "<td><button class=\"btn btn-danger delete-service-row\" type=\"button\" ><i class=\"icon-trash icon-white\"></i></button></td>";
 
+           var dateCell = "<td>"+FormatDate((new Date()).toString())+"</td>";
+
            editForm.find("[name=childServices] tbody").append
            (
-              "<tr>"+serviceIDCell+serviceTypeCell+serviceProvideCell+serviceProvideFollowUpCell+deleteServiceCell+"</tr>"
+              "<tr>"+serviceIDCell+serviceTypeCell+serviceProvideCell+serviceProvideFollowUpCell+dateCell+deleteServiceCell+"</tr>"
            );
 
            updateDropDownValue(editForm.find("[name=childServices] tr:last-child td:nth-child(2) select"), entry.service_type_id );
+        }
+
+        function AddReadonlyServiceRow(editForm, entry)
+        {
+            alert('test');
+           var serviceIDCell = "<td style = \"display:none\">"+(entry.id!=null?entry.id:'')+"</td>";
+
+           var serviceTypeCell = "<td>"+entry.id+"</td>";
+
+           var serviceProvideCell = "<td>"+entry.service_provider+"</td>";
+
+           var serviceProvideFollowUpCell = "<td>"+(entry.service_provider_followup?"Yes":"No")+"</td>";
+
+           var deleteServiceCell = "<td></td>";
+
+           var dateCell = "<td>"+FormatDate(entry.service_date)+"</td>";
+
+           editForm.find("[name=childServices] tbody").append
+           (
+              "<tr>"+serviceIDCell+serviceTypeCell+serviceProvideCell+serviceProvideFollowUpCell+dateCell+deleteServiceCell+"</tr>"
+           );
+
         }
 
         function InitialiseServiceDeleting(editForm)

@@ -262,6 +262,7 @@ class ChildService(models.Model):
     service_provider = models.CharField(max_length=255, blank=True, null=True)
 
     service_provider_followup = models.BooleanField(blank=True, default=False)
+    service_date = models.DateTimeField(blank=False, null=True)
 
     class Meta:
         ordering = ['id']
@@ -288,6 +289,7 @@ class ChildReason(models.Model):
         related_name='+',
     )
     specific_reason_other_specify = models.CharField(max_length=255, blank=True, null=True)
+    reason_date = models.DateTimeField(blank=False, null=True)
 
     class Meta:
         ordering = ['id']
