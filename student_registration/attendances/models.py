@@ -118,3 +118,29 @@ class Absentee(TimeStampedModel):
     def student_number(self):
         return self.student.number
 
+
+class AttendanceSyncLog(models.Model):
+
+    school = models.ForeignKey(School)
+    school_type = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    total_records = models.IntegerField(default=0)
+    total_processed = models.IntegerField(default=0)
+    successful = models.BooleanField(default=False)
+    exception_message = models.TextField(blank=True, null=True)
+    response_message = models.TextField(blank=True, null=True)
+    processed_date = models.DateTimeField(auto_now=True)
+    processed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+    )
+
+    def __unicode__(self):
+        return self.processed_date
+
+    class Meta:
+        ordering = ['processed_date']
