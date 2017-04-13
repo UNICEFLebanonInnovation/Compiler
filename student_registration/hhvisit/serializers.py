@@ -77,7 +77,8 @@ class ChildServiceSerializer(serializers.ModelSerializer):
             'service_type',
             'service_provider',
             'service_provider_followup',
-            'child_visit_id'
+            'child_visit_id',
+            'service_date'
         )
 
 
@@ -98,7 +99,8 @@ class ChildReasonSerializer(serializers.ModelSerializer):
             'specific_reason_id',
             'specific_reason',
             'specific_reason_other_specify',
-            'child_visit_id'
+            'child_visit_id',
+            'reason_date'
         )
 
 
