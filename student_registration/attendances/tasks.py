@@ -94,7 +94,7 @@ def set_app_attendances(school_number=None, school_type=None):
     """
     from student_registration.alp.models import Outreach, ALPRound
     from student_registration.enrollments.models import Enrollment
-    from student_registration.attendances.models import Attendance
+    from student_registration.attendances.models import Attendance, AttendanceSyncLog
     from student_registration.schools.models import School, ClassRoom, Section, EducationLevel
 
     docs = []
@@ -180,7 +180,18 @@ def set_app_attendances(school_number=None, school_type=None):
 
     response = set_docs(docs)
     logger.info(response)
+
+    log = AttendanceSyncLog(
+        school=school_number,
+        school_type=school_type,
+        response_message=response.text,
+        total_records=registrations.count()
+    )
+    log.save()
+
     if response.status_code in [requests.codes.ok, requests.codes.created]:
+        log.successful = True
+        log.save()
         return response.text
 
 
