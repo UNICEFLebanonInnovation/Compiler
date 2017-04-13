@@ -519,7 +519,7 @@ class ComplaintsGridView(LoginRequiredMixin, TemplateView):
 
         CategoryID = self.request.GET.get('CategoryID', 0)
         ComplaintType = self.request.GET.get('ComplaintType', '')
-
+        # ComplaintSubType = self.request.GET.get('ComplaintSubType', '')
         complaintRecords = Complaint.objects.filter(complaint_category=CategoryID)
 
         return {
