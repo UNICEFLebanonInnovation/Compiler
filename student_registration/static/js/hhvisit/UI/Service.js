@@ -30,10 +30,9 @@
 
         function AddReadonlyServiceRow(editForm, entry)
         {
-            alert('test');
            var serviceIDCell = "<td style = \"display:none\">"+(entry.id!=null?entry.id:'')+"</td>";
 
-           var serviceTypeCell = "<td>"+entry.id+"</td>";
+           var serviceTypeCell = "<td>"+entry.service_type+"</td>";
 
            var serviceProvideCell = "<td>"+entry.service_provider+"</td>";
 
