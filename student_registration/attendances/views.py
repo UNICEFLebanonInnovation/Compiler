@@ -16,7 +16,8 @@ from import_export.formats import base_formats
 from student_registration.schools.models import (
     School,
     Grade,
-    Section
+    Section,
+    ClassRoom
 )
 from student_registration.locations.models import Location
 from student_registration.registrations.models import Registration
@@ -99,34 +100,23 @@ class AttendanceView(LoginRequiredMixin, ListView):
     template_name = 'attendances/index.html'
 
     def get_context_data(self, **kwargs):
-        selected_school = 0
         school = 0
-        queryset = []
-        data = []
+        location = 0
+        location_parent = 0
 
-        if self.request.user.is_superuser:
-            self.template_name = 'attendances/list.html'
-            queryset = self.model.objects.order_by('attendance_date')\
-                                    .values_list('attendance_date', 'classroom_id', 'validation_status')\
-                                    .distinct('attendance_date', 'classroom_id', 'validation_status')
+        # if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
         if self.request.user.school:
-            selected_school = self.request.user.school.id
             school = self.request.user.school
-
-        for item in queryset:
-            data.append({
-                "attendance_date": item[0].strftime('%Y-%m-%d'),
-                "classroom": item[1],
-                "validated": item[2],
-            })
+        if school and school.location:
+            location = school.location
+        if location and location.parent:
+            location_parent = location.parent
 
         return {
-            'days': json.dumps(data),
             'school': school,
-            'selected_school': selected_school,
-            'locations': Location.objects.all(),
-            'schools': School.objects.all(),
-            'grades': Grade.objects.all(),
+            'location': location,
+            'location_parent': location_parent,
+            'classrooms': ClassRoom.objects.all(),
             'sections': Section.objects.all()
         }
 
