@@ -44,7 +44,7 @@ width="100%">
                     {{ complaint.household_not_found.father_name }}
                     {{ complaint.household_not_found.last_name }}
                 </td>
-                <td {% if ComplaintSubType != 'Other' %}style = "display:none;"{% endif %}>
+                <td {% if  != 'Other' %}style = "display:none;"{% endif %}>
                     {{ complaint.complaint_Other_type_specify }}
                 </td>
                 <td {% if ComplaintType != 'School Related' %}style = "display:none;"{% endif %}>
