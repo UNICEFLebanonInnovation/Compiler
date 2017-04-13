@@ -86,8 +86,10 @@ class ChildReasonSerializer(serializers.ModelSerializer):
 
     main_reason_id = serializers.IntegerField(allow_null=True, required=False)
     main_reason = serializers.CharField(source='main_reason.name', read_only=True)
+    main_reason_arabic = serializers.CharField(source='main_reason.name_arabic', read_only=True)
     specific_reason_id = serializers.IntegerField(allow_null=True, required=False)
     specific_reason = serializers.CharField(source='specific_reason.name', read_only=True)
+    specific_reason_arabic = serializers.CharField(source='specific_reason.name_arabic', read_only=True)
     child_visit_id = serializers.IntegerField()
 
     class Meta:
@@ -96,11 +98,13 @@ class ChildReasonSerializer(serializers.ModelSerializer):
             'id',
             'main_reason_id',
             'main_reason',
+            'main_reason_arabic',
             'specific_reason_id',
             'specific_reason',
+            'specific_reason_arabic',
             'specific_reason_other_specify',
             'child_visit_id',
-            'reason_date'
+            'reason_date',
         )
 
 

@@ -33,6 +33,7 @@ class ServiceType(models.Model):
 
 class MainReason(models.Model):
     name = models.CharField(max_length=64L, unique=True)
+    name_arabic = models.CharField(max_length=64L, null=True)
 
     class Meta:
         ordering = ['name']
@@ -44,6 +45,7 @@ class MainReason(models.Model):
 
 class SpecificReason(models.Model):
     name = models.CharField(max_length=254L)
+    name_arabic = models.CharField(max_length=64L , null=True)
     main_reason = models.ForeignKey(MainReason, verbose_name='Main Reason')
 
     class Meta:
