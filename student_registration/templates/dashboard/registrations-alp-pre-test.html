@@ -41,7 +41,7 @@
             </div>
 
          </div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
+        <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="x_panel">
           <div class="x_title">
             <h2>{% trans '% Students By Age Range' %}</h2>
@@ -109,7 +109,7 @@
             </div>
           </div>
 
-    <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="x_panel">
           <div class="x_title">
             <h2>{% trans 'Students By Nationality' %}</h2>
@@ -415,14 +415,14 @@
                 }
               }
             },
-            restore: {
-              show: true,
-              title: "Restore"
-            },
-            saveAsImage: {
-              show: true,
-              title: "Save Image"
-            }
+{#            restore: {#}
+{#              show: true,#}
+{#              title: "Restore"#}
+{#            },#}
+{#            saveAsImage: {#}
+{#              show: true,#}
+{#              title: "Save Image"#}
+{#            }#}
           }
         },
         calculable: true,
@@ -454,7 +454,7 @@
           y: 'bottom',
           data: [
                   {% for range,numberofchildren in age_range.items %}
-                        '{{ range }}',
+                        '{{ range }} - {{ numberofchildren|percentage:6235 }}%',
                     {% endfor %}
           ]
         },
@@ -473,14 +473,14 @@
                 }
               }
             },
-            restore: {
-              show: true,
-              title: "Restore"
-            },
-            saveAsImage: {
-              show: true,
-              title: "Save Image"
-            }
+{#            restore: {#}
+{#              show: true,#}
+{#              title: "Restore"#}
+{#            },#}
+{#            saveAsImage: {#}
+{#              show: true,#}
+{#              title: "Save Image"#}
+{#            }#}
           }
         },
         calculable: true,
@@ -493,7 +493,7 @@
                   {% for range,numberofchildren in age_range.items %}
                         {
                     value: {{ numberofchildren }},
-                    name: '{{ range }}'
+                    name: '{{ range }} - {{ numberofchildren|percentage:6235 }}%'
                   },
                     {% endfor %}
               ]
@@ -511,10 +511,10 @@
         toolbox: {
           show: true,
           feature: {
-            saveAsImage: {
-              show: true,
-              title: "Save Image"
-            }
+{#            saveAsImage: {#}
+{#              show: true,#}
+{#              title: "Save Image"#}
+{#            }#}
           }
         },
         calculable: false,
@@ -524,10 +524,7 @@
                   {% for range,numberofchildren in age_range.items %}
                     '{{ range }}',
                   {% endfor %}
-                ],
-                nameTextStyle: {
-                    fontSize: '5',
-                }
+                ]
         }],
         yAxis: [{
             type: 'value',
@@ -538,9 +535,9 @@
                 margin: 7,
                 formatter: '{value}',    // Template formatter!
                 textStyle: {
-                    fontSize: 10,
+                    fontSize: 10
                 }
-            },
+            }
         }],
          series: [
         {
@@ -565,8 +562,11 @@
                 }
             },
             data: [
-                    {% for range,numberofchildren in age_range.items %}
-                        {{ numberofchildren }},
+                  {% for range,numberofchildren in age_range.items %}
+                        {
+                    value: {{ numberofchildren }},
+                    name: '{{ range }}'
+                  },
                     {% endfor %}
                 ]
         }
@@ -583,10 +583,10 @@
         toolbox: {
           show: true,
           feature: {
-            saveAsImage: {
-              show: true,
-              title: "Save Image"
-            }
+{#            saveAsImage: {#}
+{#              show: true,#}
+{#              title: "Save Image"#}
+{#            }#}
           }
         },
         calculable: false,
@@ -656,10 +656,10 @@
           toolbox: {
           show: true,
           feature: {
-            saveAsImage: {
-              show: true,
-              title: "Save Image"
-            }
+{#            saveAsImage: {#}
+{#              show: true,#}
+{#              title: "Save Image"#}
+{#            }#}
           }
         },
 
