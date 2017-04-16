@@ -5,6 +5,7 @@
 
 {% block extra_head %}
 
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
@@ -101,6 +102,7 @@
                                 <li>{{ location }}</li>
                                 <li>{{ location_parent }}</li>
                                 <li>{% trans "Total students" %} <span class="badge ttl_students">{{ total }}</span></li>
+                                <li><input type="text" id="search_moved_student" size="300" style="width: 300px;" placeholder="{% trans "Search moved student" %}" /></li>
                             </ol>
                         </div>
                           <div class="panel-body">
@@ -186,6 +188,7 @@
         var db = null;
     </script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
@@ -219,10 +222,12 @@
         {% endif %}
         var host = protocol+'{{ request.get_host }}';
         var synchro_path = host+'/api/enrollments/';
+        var moved_student_path = host+'/api/logging-student-move/';
         var arabic_fields = "#student_address, #student_mother_fullname, #student_first_name, #student_father_name, #student_last_name";
 
         $(document).ready(function(){
 
+            $('#search_moved_student').val('');
             createStores();
             bootbox.addLocale(language, {
                 OK : '{% trans "Ok" %}',
@@ -457,6 +462,44 @@
                     $('#alert-connection').show();
                 }
             });
+
+
+            $("#search_moved_student").autocomplete({
+              source: function( request, response ) {
+                $.ajax( {
+                  url: moved_student_path,
+                  dataType: "json",
+                  data: {
+                    term: request.term
+                  },
+                  success: function( data ) {
+                    response( data);
+                  }
+                } );
+              },
+              minLength: 3,
+              select: function( event, ui ) {
+                  $("#search_moved_student").val('');
+                  get_registration(ui.item);
+{#                  add_external_record(ui.item);#}
+                  return false;
+              }
+            }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
+                 var that = this;
+                 $.each( items, function( index, item ) {
+                     that._renderItemData( ul, item );
+                });
+                $( ul ).find( "li:odd" ).addClass( "odd" );
+            };
+
+            $("#search_moved_student").autocomplete( "instance" )._renderItem = function( ul, item ) {
+                  return $( "<li>" )
+                    .append( "<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_age + ") "
+                                   + "<br>" + '{% trans "Current situation" %}: '+ item.school_name + " / " + item.classroom_name + " / " + item.section_name
+                                   + "</div>" )
+                    .appendTo( ul );
+            };
+
         });
 
         function init_quicksearch()
@@ -626,6 +669,57 @@
         {
 {#            push_data();#}
             patch_data();
+        }
+
+        function get_registration(item)
+        {
+            $.ajax({
+                type: "GET",
+                url: synchro_path+item.enrolment_id+"/?moved=true",
+                cache: false,
+                async: false,
+                headers: getHeader(),
+                dataType: 'json',
+                success: function (response) {
+                    add_external_record(response);
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+            });
+        }
+
+        function add_external_record(item)
+        {
+            var store = getStoreByName('registrations');
+            var request = store.index('original_id').get(parseInt(item.original_id));
+            request.onsuccess = function() {
+                if(request.result === undefined) {
+                    item.synchronized = false;
+                    item.deleted = false;
+                    item.to_update = false;
+                    item.student_nationality = item.student_nationality_id;
+                    item.student_mother_nationality = item.student_mother_nationality_id;
+                    item.student_id_type = item.student_id_type_id;
+                    item.school = school_id;
+
+                    item.classroom = item.next_level;
+{#                    item.last_education_level = item.last_education_level_id;#}
+{#                    item.last_informal_edu_level = item.last_informal_edu_level_id;#}
+{#                    item.last_informal_edu_round = item.last_informal_edu_round_id;#}
+{#                    item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;#}
+
+                    var itemid = item.id;
+                    var data = item;
+                    data.id = rows;
+                    add_to_store(data);
+                    add_fill_line_data(data);
+                }else{
+                    bootbox.alert("{% trans 'This student already added to the list' %}", function(result) {
+                        return true;
+                    });
+                }
+            };
         }
 
         function push_data()

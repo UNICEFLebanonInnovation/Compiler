@@ -157,3 +157,14 @@ class ALPReferMatrix(models.Model):
 
     def __unicode__(self):
         return str(self.id)
+
+
+class EducationYear(models.Model):
+    name = models.CharField(max_length=100L, unique=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Education Year"
+
+    def __unicode__(self):
+        return self.name
