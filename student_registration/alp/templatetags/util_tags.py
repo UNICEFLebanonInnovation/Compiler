@@ -102,5 +102,5 @@ def multiply(value, arg):
 @register.filter(name='percentage')
 def percentage(number, total):
     if number:
-        return round((number*100)/total)
+        return round((number*100.0)/total, 2)
     return 0
