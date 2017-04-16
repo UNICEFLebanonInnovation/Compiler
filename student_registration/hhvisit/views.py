@@ -183,7 +183,11 @@ class HouseholdVisitListView(LoginRequiredMixin, TemplateView):
             specificreasons = SpecificReason.objects.order_by('name')
             servicetypes = ServiceType.objects.order_by('name')
             # location = self.request.GET.get("location", 0)
-            data = self.model.objects.filter(Q(household_visit_team__first_enumerator = self.request.user.id) | Q(household_visit_team__second_enumerator = self.request.user.id)).order_by('id')
+            data = self.model.objects.filter(
+                Q(household_visit_team__first_enumerator=self.request.user.id)
+                | Q(household_visit_team__second_enumerator = self.request.user.id)
+                | Q(registering_adult__school__location__parent_id=self.request.user.governante_id)
+            ).order_by('-visit_status', 'id')
             return {
                 'visits': data,
                 # 'locations': locations,
@@ -219,7 +223,8 @@ class HouseholdVisitListSupervisorView(LoginRequiredMixin, TemplateView):
         locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
         location = self.request.GET.get("location", 0)
         if location:
-            data = self.model.objects.filter(registering_adult__school__location_id=location).order_by('id')
+            data = self.model.objects.filter(registering_adult__school__location_id=location).order_by('-visit_status'
+                                                                                                       , 'id')
 
         # get all teams
         teams = HouseholdVisitTeam.objects.all()

@@ -7,7 +7,7 @@ from . import views
 urlpatterns = [
 
     # url(
-    #     regex=r'^data-collecting/$',
+    #     regex=r'^data-collecting-tmp/$',
     #     view=views.OutreachView.as_view(),
     #     name='alp_data_collecting'
     # ),
