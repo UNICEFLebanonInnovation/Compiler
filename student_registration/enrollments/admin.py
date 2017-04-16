@@ -7,7 +7,7 @@ from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import *
 
-from .models import Enrollment, StudentMove
+from .models import Enrollment, StudentMove, LoggingStudentMove
 from .forms import EnrollmentForm
 from student_registration.students.models import Student
 from student_registration.schools.models import (
@@ -253,6 +253,36 @@ class StudentMoveAdmin(ImportExportModelAdmin):
     )
 
 
+class LoggingStudentMoveResource(resources.ModelResource):
+
+    class Meta:
+        model = LoggingStudentMove
+        fields = ()
+        export_order = fields
+
+
+class LoggingStudentMoveAdmin(ImportExportModelAdmin):
+    resource_class = LoggingStudentMoveResource
+    fields = ()
+
+    list_display = (
+        'student',
+        # 'enrolment__clasroom',
+        'school_from',
+        'school_to',
+    )
+
+    list_filter = (
+        'school_from',
+        'school_to',
+    )
+
+    search_fields = (
+
+    )
+
+
 admin.site.register(Enrollment, EnrollmentAdmin)
 admin.site.register(Dropout, DropoutAdmin)
 admin.site.register(StudentMove, StudentMoveAdmin)
+admin.site.register(LoggingStudentMove, LoggingStudentMoveAdmin)

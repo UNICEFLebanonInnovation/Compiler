@@ -17,6 +17,7 @@ from .models import (
     ClassRoom,
     PartnerOrganization,
     ALPReferMatrix,
+    EducationYear,
 )
 
 
@@ -169,6 +170,7 @@ admin.site.register(Section, SectionAdmin)
 admin.site.register(ClassRoom, ClassRoomAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
 admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
+admin.site.register(EducationYear)
 
 
 

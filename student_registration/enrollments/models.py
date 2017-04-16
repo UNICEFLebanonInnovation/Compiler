@@ -281,3 +281,41 @@ class StudentMove(models.Model):
 
     def __unicode__(self):
         return str(self.id)
+
+
+class LoggingStudentMove(models.Model):
+
+    student = models.ForeignKey(
+        Student,
+        blank=False,
+        null=False,
+        related_name='+',
+        verbose_name='Student',
+    )
+    enrolment = models.ForeignKey(
+        Enrollment,
+        blank=False,
+        null=False,
+        related_name='+',
+        verbose_name='Enrollment',
+    )
+    school_from = models.ForeignKey(
+        School,
+        blank=False,
+        null=False,
+        related_name='+',
+        verbose_name='From school',
+    )
+    school_to = models.ForeignKey(
+        School,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name='To school',
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Student moves logs"
+
+    def __unicode__(self):
+        return str(self.id)

@@ -1,11 +1,46 @@
 
 from rest_framework import serializers
-from .models import Enrollment
+from .models import Enrollment, LoggingStudentMove
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
     IDType,
     Nationality
 )
+
+
+class LoggingStudentMoveSerializer(serializers.ModelSerializer):
+
+    enrolment_id = serializers.IntegerField(source='enrolment.id', read_only=True)
+    student_id = serializers.IntegerField(source='student.id', read_only=True)
+    student_first_name = serializers.CharField(source='student.first_name')
+    student_father_name = serializers.CharField(source='student.father_name')
+    student_last_name = serializers.CharField(source='student.last_name')
+    student_full_name = serializers.CharField(source='student.full_name')
+    student_mother_fullname = serializers.CharField(source='student.mother_fullname')
+    student_sex = serializers.CharField(source='student.sex')
+    student_age = serializers.CharField(source='student.calc_age', read_only=True)
+    school_name = serializers.CharField(source='enrolment.school.name', read_only=True)
+    school_number = serializers.CharField(source='enrolment.school.number', read_only=True)
+    section_name = serializers.CharField(source='enrolment.section.name', read_only=True)
+    classroom_name = serializers.CharField(source='enrolment.classroom.name', read_only=True)
+
+    class Meta:
+        model = LoggingStudentMove
+        fields = (
+            'enrolment_id',
+            'student_id',
+            'student_first_name',
+            'student_father_name',
+            'student_last_name',
+            'student_full_name',
+            'student_mother_fullname',
+            'student_sex',
+            'student_age',
+            'school_name',
+            'school_number',
+            'section_name',
+            'classroom_name',
+        )
 
 
 class EnrollmentSerializer(serializers.ModelSerializer):
