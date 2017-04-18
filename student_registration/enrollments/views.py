@@ -269,6 +269,10 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
         instance.save()
 
     def partial_update(self, request, *args, **kwargs):
+        if request.POST.get('moved', 0):
+            moved = LoggingStudentMove.objects.get(id=request.POST.get('moved', 0))
+            moved.school_to_id = request.POST.get('school')
+            moved.save()
         self.serializer_class = EnrollmentSerializer
         return super(EnrollmentViewSet, self).partial_update(request)
 

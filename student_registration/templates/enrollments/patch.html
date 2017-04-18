@@ -481,7 +481,6 @@
               select: function( event, ui ) {
                   $("#search_moved_student").val('');
                   get_registration(ui.item);
-{#                  add_external_record(ui.item);#}
                   return false;
               }
             }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
@@ -681,7 +680,7 @@
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response) {
-                    add_external_record(response);
+                    add_external_record(response, item.id);
                 },
                 error: function(response) {
                     console.log(response);
@@ -689,10 +688,10 @@
             });
         }
 
-        function add_external_record(item)
+        function add_external_record(item, moved_id)
         {
             var store = getStoreByName('registrations');
-            var request = store.index('original_id').get(parseInt(item.original_id));
+            var request = store.index('original_id').get(parseInt(item.id));
             request.onsuccess = function() {
                 if(request.result === undefined) {
                     item.synchronized = false;
@@ -710,14 +709,13 @@
                     item.last_informal_edu_round = item.last_informal_edu_round_id;
                     item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
 
-                    var itemid = item.id;
                     var data = item;
-                    data.id = rows;
                     add_to_store(data);
                     add_fill_line_data(data);
 
-                    update_or_create_item(parseInt(item.original_id), 'school', item.school, 'registrations-p');
-                    flag_record_to_update(parseInt(item.original_id), 'registrations-p');
+                    update_or_create_item(parseInt(item.id), 'school', item.school, 'registrations-p');
+                    update_or_create_item(parseInt(item.id), 'moved', moved_id, 'registrations-p');
+                    flag_record_to_update(parseInt(item.id), 'registrations-p');
 
                 }else{
                     bootbox.alert("{% trans 'This student already added to the list' %}", function(result) {
