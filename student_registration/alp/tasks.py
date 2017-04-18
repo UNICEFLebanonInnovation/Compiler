@@ -138,6 +138,7 @@ def assign_round_to_deleted(round_id):
     print "End assignment"
 
 
+@app.task
 def fix_round_assignment(update):
     from student_registration.alp.models import Outreach
 
@@ -157,3 +158,15 @@ def fix_round_assignment(update):
         print total, " records assigned"
 
     print "End assignment"
+
+
+@app.task
+def move_student_to_school(school_from, school_to):
+    from .models import Outreach
+
+    if not school_from or not school_to:
+        return False
+    print "from school: ", school_from, " to school: ", school_to
+    registrations = Outreach.objects.filter(school_id=school_from)
+    print len(registrations)
+    registrations.update(school_id=school_to)
