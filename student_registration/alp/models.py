@@ -31,7 +31,7 @@ class ALPRound(models.Model):
     current_post_test = models.BooleanField(blank=True, default=False)
 
     class Meta:
-        ordering = ['id']
+        ordering = ['name']
         verbose_name = "ALP Round"
 
     def __unicode__(self):
