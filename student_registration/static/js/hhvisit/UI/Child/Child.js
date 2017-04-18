@@ -141,7 +141,7 @@
               (
                  function(entry)
                  {
-                    AddServiceRow(editForm, entry);
+                    AddReadonlyServiceRow(editForm, entry);
                  }
               );
 
@@ -151,7 +151,7 @@
               (
                  function(entry)
                  {
-                    AddReasonRow(editForm, entry);
+                    AddReadonlyReasonRow(editForm, entry);
                  }
               );
 
@@ -211,7 +211,6 @@
                    editForm.find("[name='otherReason']").prop( "disabled", true );;
                 }
            }
-
 
            function getDropDownValueText(dropDownElement, value)
            {
