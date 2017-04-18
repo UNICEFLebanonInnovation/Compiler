@@ -6,13 +6,16 @@
            editForm.find("[name=childReasons] tbody tr")
            .each
            (
-              function(i, obj)
-              {
-                 trElement = $(obj);
+              function(i, obj) {
+                  trElement = $(obj);
 
-                 reasonsValid = reasonsValid && ValidateReason(trElement);
-                 rowCount +=1;
+                  var childReasonRecordID = trElement.find('td:nth-child(1)').html();
 
+                  if (childReasonRecordID == '')
+                  {
+                      reasonsValid = reasonsValid && ValidateReason(trElement);
+                      rowCount += 1;
+                  }
               }
            );
            if(reasonsValid && rowCount>0)
