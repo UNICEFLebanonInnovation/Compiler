@@ -10,14 +10,15 @@ from student_registration.students.models import (
 
 class LoggingStudentMoveSerializer(serializers.ModelSerializer):
 
+    id = serializers.IntegerField(read_only=True)
     enrolment_id = serializers.IntegerField(source='enrolment.id', read_only=True)
     student_id = serializers.IntegerField(source='student.id', read_only=True)
-    student_first_name = serializers.CharField(source='student.first_name')
-    student_father_name = serializers.CharField(source='student.father_name')
-    student_last_name = serializers.CharField(source='student.last_name')
-    student_full_name = serializers.CharField(source='student.full_name')
-    student_mother_fullname = serializers.CharField(source='student.mother_fullname')
-    student_sex = serializers.CharField(source='student.sex')
+    student_first_name = serializers.CharField(source='student.first_name', read_only=True)
+    student_father_name = serializers.CharField(source='student.father_name', read_only=True)
+    student_last_name = serializers.CharField(source='student.last_name', read_only=True)
+    student_full_name = serializers.CharField(source='student.full_name', read_only=True)
+    student_mother_fullname = serializers.CharField(source='student.mother_fullname', read_only=True)
+    student_sex = serializers.CharField(source='student.sex', read_only=True)
     student_age = serializers.CharField(source='student.calc_age', read_only=True)
     school_name = serializers.CharField(source='enrolment.school.name', read_only=True)
     school_number = serializers.CharField(source='enrolment.school.number', read_only=True)
@@ -27,6 +28,7 @@ class LoggingStudentMoveSerializer(serializers.ModelSerializer):
     class Meta:
         model = LoggingStudentMove
         fields = (
+            'id',
             'enrolment_id',
             'student_id',
             'student_first_name',
