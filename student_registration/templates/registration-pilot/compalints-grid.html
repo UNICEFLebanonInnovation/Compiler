@@ -17,6 +17,7 @@ width="100%">
             <th {% if ComplaintType != 'Bank' %}style = "display:none;"{% endif %}>Phone number from which call was placed</th>
             <th {% if ComplaintType != 'Bank' %}style = "display:none;"{% endif %}>Service requested #</th>
             <th {% if ComplaintType == 'Card' %}style = "display:none;"{% endif %}>Comment</th>
+            <th {% if ComplaintType != 'Payment' %}style = "display:none;"{% endif %}>Enumerator</th>
             <th>Resolved/Escalate</th>
             <th>Comments</th>
         </tr>
@@ -61,6 +62,9 @@ width="100%">
                 </td>
                 <td {% if ComplaintType == 'Card' %}style = "display:none;"{% endif %}>
                     {{ complaint.complaint_note }}
+                </td>
+                <td {% if ComplaintType != 'Payment' %}style = "display:none;"{% endif %}>
+                    {{ complaint.owner.first_name }} {{ complaint.owner.last_name }}
                 </td>
                 <td>
                     <div class="switch-toggle switch-3 switch-candy" style = "width:220px">
