@@ -402,7 +402,7 @@ class OutreachAdmin(ImportExportModelAdmin):
         return total
 
     def re_enrolled(self, obj):
-        return len(obj.student.alp_enrollment.all())
+        return obj.student.alp_enrollment.count()
 
 
 class CurrentOutreach(Outreach):
@@ -635,10 +635,9 @@ class ReEnrolledAdmin(OutreachAdmin):
             alp_round__isnull=False,
             registered_in_level__isnull=False,
         )
-        print qs.count()
 
         for obj in qs:
-            if len(obj.student.alp_enrollment.all()) > 1:
+            if obj.student.alp_enrollment.count() > 1:
                 result.append(obj.student_id)
         return qs.filter(student_id__in=result)
 
