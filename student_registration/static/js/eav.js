@@ -162,7 +162,8 @@ function add_column_to_store(column)
 
 function add_table_newline(itemid, prototype, table)
 {
-    incremental_id = incremental_id + 1;
+    var total_records = $('#registrations-table').find('tr.registration-line').length;
+    incremental_id = total_records + 1;
     var line_html =  prototype.find('tbody').html().replace(/\$\$itemscope_id\$\$/g, itemid);
     table.find('tbody').append(line_html);
 

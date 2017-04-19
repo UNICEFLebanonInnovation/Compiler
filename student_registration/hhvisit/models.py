@@ -33,6 +33,8 @@ class ServiceType(models.Model):
 
 class MainReason(models.Model):
     name = models.CharField(max_length=64L, unique=True)
+    name_arabic = models.CharField(max_length=64L, null=True)
+    name_main = models.CharField(max_length=64L, null=True)
 
     class Meta:
         ordering = ['name']
@@ -44,6 +46,8 @@ class MainReason(models.Model):
 
 class SpecificReason(models.Model):
     name = models.CharField(max_length=254L)
+    name_arabic = models.CharField(max_length=64L , null=True)
+    name_main = models.CharField(max_length=64L, null=True)
     main_reason = models.ForeignKey(MainReason, verbose_name='Main Reason')
 
     class Meta:
@@ -202,18 +206,47 @@ class ChildVisit(TimeStampedModel):
 
     @property
     def child_school(self):
-        schoolid = Registration.objects.filter(student_id=self.student_id).values('school_id').first()['school_id']
+
+        studentRecordRecord = Registration.objects.filter(student_id=self.student_id).values('school_id').first()
+
+        schoolid = None
+
+        if studentRecordRecord is not None:
+            schoolid = studentRecordRecord['school_id']
+
         if not (schoolid is None):
-            return School.objects.filter(id=schoolid).values('name').first()['name']
+            classRoomRecord = School.objects.filter(id=schoolid).values('name').first()
+
+            classRoomName = '';
+
+            if classRoomRecord is not None:
+                classRoomName = classRoomRecord['name']
+
+            return classRoomName
         else:
             return ''
         return
 
     @property
     def child_classroom(self):
-        classroomid = Registration.objects.filter(student_id=self.student_id).values('classroom_id').first()['classroom_id']
+
+        studentRecordRecord = Registration.objects.filter(student_id=self.student_id).values('classroom_id').first()
+        classroomid = None
+
+        if studentRecordRecord is not None:
+            classroomid = studentRecordRecord['classroom_id']
+
+
         if not (classroomid is None):
-            return ClassRoom.objects.filter(id=classroomid).values('name').first()['name']
+
+            classRoomRecord = ClassRoom.objects.filter(id=classroomid).values('name').first()
+
+            classRoomName = ''
+
+            if classRoomRecord is not None:
+                classRoomName = classRoomRecord['name']
+
+            return classRoomName
         else:
             return ''
 
@@ -233,6 +266,7 @@ class ChildService(models.Model):
     service_provider = models.CharField(max_length=255, blank=True, null=True)
 
     service_provider_followup = models.BooleanField(blank=True, default=False)
+    service_date = models.DateTimeField(blank=False, null=True)
 
     class Meta:
         ordering = ['id']
@@ -259,6 +293,7 @@ class ChildReason(models.Model):
         related_name='+',
     )
     specific_reason_other_specify = models.CharField(max_length=255, blank=True, null=True)
+    reason_date = models.DateTimeField(blank=False, null=True)
 
     class Meta:
         ordering = ['id']
