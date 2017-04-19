@@ -33,6 +33,8 @@ class ServiceType(models.Model):
 
 class MainReason(models.Model):
     name = models.CharField(max_length=64L, unique=True)
+    name_arabic = models.CharField(max_length=64L, null=True)
+    name_main = models.CharField(max_length=64L, null=True)
 
     class Meta:
         ordering = ['name']
@@ -44,6 +46,8 @@ class MainReason(models.Model):
 
 class SpecificReason(models.Model):
     name = models.CharField(max_length=254L)
+    name_arabic = models.CharField(max_length=64L , null=True)
+    name_main = models.CharField(max_length=64L, null=True)
     main_reason = models.ForeignKey(MainReason, verbose_name='Main Reason')
 
     class Meta:
@@ -262,6 +266,7 @@ class ChildService(models.Model):
     service_provider = models.CharField(max_length=255, blank=True, null=True)
 
     service_provider_followup = models.BooleanField(blank=True, default=False)
+    service_date = models.DateTimeField(blank=False, null=True)
 
     class Meta:
         ordering = ['id']
@@ -288,6 +293,7 @@ class ChildReason(models.Model):
         related_name='+',
     )
     specific_reason_other_specify = models.CharField(max_length=255, blank=True, null=True)
+    reason_date = models.DateTimeField(blank=False, null=True)
 
     class Meta:
         ordering = ['id']
