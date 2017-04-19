@@ -31,7 +31,7 @@ class ALPRound(models.Model):
     current_post_test = models.BooleanField(blank=True, default=False)
 
     class Meta:
-        ordering = ['id']
+        ordering = ['name']
         verbose_name = "ALP Round"
 
     def __unicode__(self):
@@ -80,7 +80,7 @@ class Outreach(TimeStampedModel):
     school = models.ForeignKey(
         School,
         blank=True, null=True,
-        related_name='+',
+        related_name='alp_school',
     )
     location = models.ForeignKey(
         Location,
