@@ -196,6 +196,7 @@
         var checking_id_number_url = host+'/api/registrations-adult-id/';
         var childURL = host+'/api/registrations-child/';
         var complaintURL = host+'/api/registrations-complaint/';
+        var missingchildURL = host+'/api/registrations-missingchild/';
         var notfoundURL = host+'/api/registrations-notfound/';
         var arabic_fields = "#first_name, #father_name, #last_name, #mother_full_name";
         var months = [
@@ -206,6 +207,7 @@
 
         var hhID = null;
         var nfID = null;
+        var mcID = null;
         var notFoundRecord = null;
 
         $(document).ready
@@ -215,8 +217,10 @@
                InitialiseDays('days', 1,31);
                InitialiseDays('complait_days', 1,31);
                InitialiseDays('nf_days', 1,31);
+               InitialiseDays('st_days', 1,31);
                InitialiseDays('years',1930,2000);
                InitialiseDays('nf_years',1930,2000);
+               InitialiseDays('st_years',1930,2000);
                InitialiseDays('complait_years',2017,2100);
                InitialiseDays('complait_hours',1,12);
                InitialiseDays('complait_minutes',1,60);
@@ -432,7 +436,11 @@
                   $("#twoCardsFields").show();
                   $("#ComplaintHistory").show();
                 }
-
+                else if (selectedOption == 'missingChild' ) {
+                  $("#missingChildFields").show();
+                  $("#ComplaintFields").show();
+                  $("#ComplaintHistory").show();
+                }
                 else if (selectedOption == 'notEligible' ) {
                   $("#notEligibleFields").show();
                   $("#ComplaintHistory").show();
@@ -462,6 +470,7 @@
             $("#ComplaintHistory").hide();
             $("#complaint_Other_type").hide();
             $("#notEligibleFields").hide();
+            $("#missingChildFields").hide();
           }
 
               function loadAjaxCall(regId , data)
@@ -622,6 +631,20 @@
                          $("#complaint_Other_type_specify").val('');
 
 
+                         $("#st_idType").val('');
+                         $("#st_id_number").val('');
+                         $("#st_first_name").val('');
+                         $("#st_father_name").val('');
+                         $("#st_last_name").val('');
+                         $("#st_mother_full_name").val('');
+                         $("#st_gender").val('');
+                         $("#st_days").val('');
+                         $("#st_months").val('');
+                         $("#st_years").val('');
+                         $("#studentSchool").val('');
+                         $("#confirm_child_registered_second_shift").val('');
+
+
 
                          $("#schools-table tbody").empty();
                          $("#children-table tbody").empty();
@@ -707,8 +730,6 @@
 
                  }
                );
-
-
            }
 
 
@@ -820,6 +841,32 @@
         hhID = null;
       }
 
+      function CloseMissingStudent()
+      {
+          mcID = null;
+          $("#st_idType").val('');
+          $("#st_id_number").val('');
+          $("#st_first_name").val('');
+          $("#st_father_name").val('');
+          $("#st_last_name").val('');
+          $("#st_mother_full_name").val('');
+          $("#st_gender").val('');
+          $("#st_days").val('');
+          $("#st_months").val('');
+          $("#st_years").val('');
+          $("#studentSchool").val('');
+          $("#confirm_child_registered_second_shift").val('');
+          $("#st_idType_error").hide();
+          $("#st_id_number_error").hide();
+          $("#st_dob_error").hide();
+          $("#st_first_name_error").hide();
+          $("#st_father_name_error").hide();
+          $("#st_last_name_error").hide();
+          $("#st_mother_full_name_error").hide();
+          $("#st_gender_error").hide();
+          $("#st_school_error").hide();
+      }
+
        function CloseHouseholdNotFound()
       {
           $("#hhNotFoundForm").hide();
@@ -907,6 +954,12 @@
                    {
                       SaveHousehold();
                       SaveComplaint(true);
+                   }
+                   else if($("#changeOption").val() == "missingChild" && ValidateComplaint())
+                   {
+                      SaveMissingChild();
+                      SaveComplaint(true);
+                      CloseMissingStudent();
                    }
                    else if
                    (
@@ -1256,6 +1309,11 @@
               {
                    complaint_category_id = $("#other_complaint").val();
               }
+              else if($("#changeOption").val() == "missingChild")
+              {
+                  complaint_category_id = $("#missingChild_complaint").val();
+                  complaintData.missing_child =mcID;
+              }
               note = $("#complaint").val();
               complaintData.complaint_adult = complaint_hh_id;
           }
@@ -1330,6 +1388,56 @@
 
          return isSuccessfull;
       }
+
+        function SaveMissingChild()
+      {
+
+         var missingChildData = new Object();
+         var confirm_child_registered_second_shift= GetBooleanSelection($("#radioBtn"));
+
+          missingChildData.id_type = $("#st_idType").val();
+          missingChildData.id_number = $("#st_id_number").val();
+          missingChildData.first_name = $("#st_first_name").val();
+          missingChildData.father_name = $("#st_father_name").val();
+          missingChildData.last_name = $("#st_last_name").val();
+          missingChildData.mother_fullname = $("#st_mother_full_name").val()
+          missingChildData.sex = $("#st_gender").val();
+          missingChildData.birthday_day = $("#st_days").val();
+          missingChildData.birthday_month = $("#st_months").val();
+          missingChildData.birthday_year = $("#st_years").val();
+          missingChildData.relation_to_householdhead = $("#studentSchool").val();
+          missingChildData.address = confirm_child_registered_second_shift ;
+
+         var isSuccessfull = false;
+
+         $.ajax
+         (
+            {
+              type: "PUT",
+              url: missingchildURL,
+              data: missingChildData,
+              cache: false,
+              async: false,
+              headers: getHeader(),
+              dataType: 'json',
+              success: function (response)
+              {
+                  isSuccessfull = true;
+                  mcID = response.id
+                  console.log(response);
+              },
+              error: function (response)
+              {
+                  console.log(response);
+              },
+              async: false
+           }
+         );
+
+         return isSuccessfull;
+      }
+
+
 
       function SaveNotFound()
       {

@@ -58,7 +58,8 @@ class ComplaintCategory(models.Model):
         ('reinstate', _('REINSTATE BENEFICIARY')),
         ('remove', _('reinstate beneficiary')),
         ('bank', _('BANK')),
-        ('other', _('OTHER'))
+        ('other', _('OTHER')),
+        ('student', _('Missing Student'))
     )
     name = models.CharField(max_length=200, unique=True)
     complaint_type = models.CharField(max_length=50, blank=True, null=True, choices=TYPE)
@@ -266,6 +267,17 @@ class HouseholdNotFound(Person):
     def __unicode__(self):
         return self.id
 
+class MissingChild(Person):
+
+
+    confirm_child_registered_second_shift = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.id
+
 
 class Complaint(TimeStampedModel):
     """
@@ -292,6 +304,11 @@ class Complaint(TimeStampedModel):
         blank=True, null=True,
         related_name='HHNotFound',
     )
+    missing_child = models.ForeignKey(
+        MissingChild,
+        blank=True, null=True,
+        related_name='MissingChild',
+    )
     complaint_note = models.TextField(blank=True, null=True)
     complaint_status = models.CharField(max_length=20, blank=True, null=True, choices=STATUS)
     complaint_solution = models.TextField(blank=True, null=True)
@@ -300,6 +317,7 @@ class Complaint(TimeStampedModel):
     complaint_bank_phone_used = models.CharField(max_length=50, blank=True, null=True)
     complaint_bank_service_requested = models.TextField(blank=True, null=True)
     complaint_Other_type_specify = models.TextField(blank=True, null=True)
+    complaint_urgent = models.BooleanField(blank=True, default=False)
     complaint_student_refused_entrance = models.ForeignKey(
         Student,
         blank=True, null=True,
