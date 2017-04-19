@@ -955,7 +955,7 @@
                       SaveHousehold();
                       SaveComplaint(true);
                    }
-                   else if($("#changeOption").val() == "missingChild" && ValidateComplaint())
+                   else if($("#changeOption").val() == "missingChild" && ValidateComplaint() && ValidateMissingChild())
                    {
                       SaveMissingChild();
                       SaveComplaint(true);
