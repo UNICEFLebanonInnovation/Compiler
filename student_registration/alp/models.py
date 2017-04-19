@@ -80,7 +80,7 @@ class Outreach(TimeStampedModel):
     school = models.ForeignKey(
         School,
         blank=True, null=True,
-        related_name='+',
+        related_name='alp_school',
     )
     location = models.ForeignKey(
         Location,
