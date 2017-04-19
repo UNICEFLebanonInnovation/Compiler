@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.db import models
 from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin
 
 from import_export.admin import ExportMixin
 from import_export import resources, fields, widgets
@@ -12,7 +13,8 @@ from .models import (
     School,
     Attendance,
     BySchoolByDay,
-    Absentee
+    Absentee,
+    AttendanceSyncLog,
 )
 
 
@@ -295,5 +297,29 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
                 enrollment.save()
 
 
+class AttendanceSyncLogResource(resources.ModelResource):
+    class Meta:
+        model = AttendanceSyncLog
+
+
+class AttendanceSyncLogAdmin(ImportExportModelAdmin):
+    resource_class = AttendanceSyncLogResource
+    list_display = (
+        'school',
+        'school_type',
+        'total_records',
+        'successful',
+        'response_message',
+        'processed_date',
+        'processed_by'
+    )
+    list_filter = (
+        'school',
+        'school_type',
+        'successful',
+    )
+
+
 admin.site.register(BySchoolByDay, BySchoolByDayAdmin)
 admin.site.register(Absentee, AbsenteeAdmin)
+admin.site.register(AttendanceSyncLog, AttendanceSyncLogAdmin)

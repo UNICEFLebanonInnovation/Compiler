@@ -70,9 +70,11 @@ class ComplaintCategory(models.Model):
     def __unicode__(self):
         return self.name
 
-    @property
-    def complaint_count(self):
-        return int(self.complaints.all().count())
+    def complaint_count(self, user):
+        records = self.complaints
+        if not user.is_superuser:
+            records = records.filter(complaint_adult__school__location__parent_id=user.governante_id)
+        return int(records.all().count())
 
 
 class NotEligibleReason(models.Model):
@@ -111,6 +113,11 @@ class RegisteringAdult(Person):
     GENDER = Choices(
             ('Male', _('Male')),
             ('Female', _('Female')),
+    )
+    CHANGESTATUS = Choices(
+        ('open', _('Open')),
+        ('accepted', _('Accepted')),
+        ('rejected', _('Rejected')),
     )
     individual_id_number = models.CharField(max_length=45L, blank=True, null=True)
     principal_applicant_living_in_house = models.BooleanField(blank=True, default=True)
@@ -183,11 +190,21 @@ class RegisteringAdult(Person):
         related_name='+',
     )
     beneficiary_specify_reason = models.CharField(max_length=100, blank=True, null=True)
+    beneficiary_changed_status = models.CharField(max_length=20, blank=True, null=True, choices=CHANGESTATUS)
+    beneficiary_changed_comment = models.CharField(max_length=200, blank=True, null=True)
+    beneficiary_changed_update_owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+    beneficiary_changed_date_requested = models.DateField(blank=True, null=True)
     household_suspended = models.BooleanField(default=False)
+    household_suspended_date = models.DateField(blank=True, null=True)
     duplicate_card_first_card_case_number = models.CharField(max_length=50, blank=True, null=True)
     duplicate_card_first_card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
     duplicate_card_second_card_case_number = models.CharField(max_length=50, blank=True, null=True)
     duplicate_card_secondcard_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
+    duplicate_card_date = models.DateField(blank=True, null=True)
     no_logner_eligible = models.BooleanField(default=False)
     no_logner_eligible_reason = models.ForeignKey(
         NotEligibleReason,
@@ -196,6 +213,8 @@ class RegisteringAdult(Person):
     )
     no_logner_eligible_specify = models.CharField(max_length=50, blank=True, null=True)
     no_logner_eligible_comment = models.CharField(max_length=50, blank=True, null=True)
+    no_logner_eligible_date = models.DateField(blank=True, null=True)
+    phone_update_date = models.DateField(blank=True, null=True)
     update_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
@@ -254,8 +273,9 @@ class Complaint(TimeStampedModel):
     """
 
     STATUS = Choices(
-            ('open', _('Open')),
-            ('resolved', _('Resolved')),
+        ('open', _('Open')),
+        ('accepted', _('Accepted')),
+        ('rejected', _('Rejected')),
     )
     complaint_adult = models.ForeignKey(
         RegisteringAdult,
@@ -285,8 +305,12 @@ class Complaint(TimeStampedModel):
         blank=True, null=True,
         related_name='complaints',
     )
-
     owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+    complaint_update_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
@@ -407,6 +431,12 @@ class Registration(TimeStampedModel):
         ('no', _('No'))
     )
 
+    SCHOOL_CHANGE_STATUS = Choices(
+        ('open', _('Open')),
+        ('accepted', _('Accepted')),
+        ('rejected', _('Rejected')),
+    )
+
     YEARS = ((str(x), x) for x in range(2016, 2051))
 
     EDUCATION_YEARS = ((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
@@ -452,6 +482,19 @@ class Registration(TimeStampedModel):
     )
     school_changed_to_verify = models.ForeignKey(
         School,
+        blank=False, null=True,
+        related_name='+',
+    )
+    school_changed_status = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=SCHOOL_CHANGE_STATUS
+    )
+
+    school_changed_comment = models.CharField(max_length=200, blank=True, null=True)
+    school_changed_update_owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
     )

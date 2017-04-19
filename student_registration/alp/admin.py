@@ -39,6 +39,8 @@ class OutreachResource(resources.ModelResource):
     exam_total = fields.Field(column_name='Total pre test')
     post_exam_total = fields.Field(column_name='Total post test')
     referred_to = fields.Field(column_name='Referred to level')
+    passed_pre = fields.Field(column_name='Passed the Pre-test')
+    passed_post = fields.Field(column_name='Passed the Post-test')
 
     class Meta:
         model = Outreach
@@ -59,6 +61,7 @@ class OutreachResource(resources.ModelResource):
             'student__nationality__name',
             'governorate',
             'district',
+            'school__number',
             'school__name',
             'level__name',
             'exam_result_arabic',
@@ -66,6 +69,7 @@ class OutreachResource(resources.ModelResource):
             'exam_result_math',
             'exam_result_science',
             'exam_total',
+            'passed_pre',
             'exam_corrector_arabic',
             'exam_corrector_language',
             'exam_corrector_math',
@@ -83,6 +87,7 @@ class OutreachResource(resources.ModelResource):
             'post_exam_corrector_math',
             'post_exam_corrector_science',
             'referred_to',
+            'passed_post',
             'owner__username',
         )
         export_order = fields
@@ -112,6 +117,18 @@ class OutreachResource(resources.ModelResource):
                 return obj.refer_to_level.name
 
         return ''
+
+    def dehydrate_passed_pre(self, obj):
+        if obj.assigned_to_level:
+            if obj.exam_total >= 40:
+                return 'Yes'
+        return 'No'
+
+    def dehydrate_passed_post(self, obj):
+        if obj.refer_to_level:
+            if obj.post_exam_total >= 40:
+                return 'Yes'
+        return 'No'
 
 
 class PreTestTotalFilter(admin.SimpleListFilter):
@@ -318,6 +335,7 @@ class OutreachAdmin(ImportExportModelAdmin):
         'registered_in_level',
         'section',
         'not_enrolled_in_this_school',
+        're_enrolled',
         'created',
         'modified',
     )
@@ -382,6 +400,9 @@ class OutreachAdmin(ImportExportModelAdmin):
                 str(obj.registered_in_level.note)
             )
         return total
+
+    def re_enrolled(self, obj):
+        return obj.student.alp_enrollment.count()
 
 
 class CurrentOutreach(Outreach):
@@ -487,6 +508,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         'total',
         'assigned_to_level',
         'registered_in_level',
+        're_enrolled',
         'section',
         'created',
         'modified',
@@ -569,9 +591,61 @@ class PostTestAdmin(OutreachAdmin):
         )
 
 
+class ReEnrolled(Outreach):
+    class Meta:
+        proxy = True
+
+
+class ReEnrolledAdmin(OutreachAdmin):
+
+    list_display = (
+        'student',
+        'student_age',
+        'student_sex',
+        'school',
+        'caza',
+        'governorate',
+        'level',
+        'total',
+        'assigned_to_level',
+        'registered_in_level',
+        'section',
+        're_enrolled',
+        'created',
+        'modified',
+    )
+    list_filter = (
+        'school',
+        'school__location',
+        GovernorateFilter,
+        'level',
+        'assigned_to_level',
+        'registered_in_level',
+        'refer_to_level',
+        'section',
+        'student__sex',
+        'created',
+        'modified',
+    )
+
+    def get_queryset(self, request):
+        result = []
+        qs = super(ReEnrolledAdmin, self).get_queryset(request)
+        qs = qs.filter(
+            alp_round__isnull=False,
+            registered_in_level__isnull=False,
+        )
+
+        for obj in qs:
+            if obj.student.alp_enrollment.count() > 1:
+                result.append(obj.student_id)
+        return qs.filter(student_id__in=result)
+
+
 admin.site.register(Outreach, OutreachAdmin)
 admin.site.register(CurrentOutreach, CurrentOutreachAdmin)
 admin.site.register(PreTest, PreTestAdmin)
 admin.site.register(CurrentRound, CurrentRoundAdmin)
 admin.site.register(PostTest, PostTestAdmin)
+admin.site.register(ReEnrolled, ReEnrolledAdmin)
 admin.site.register(ALPRound)

@@ -31,7 +31,7 @@ class ALPRound(models.Model):
     current_post_test = models.BooleanField(blank=True, default=False)
 
     class Meta:
-        ordering = ['id']
+        ordering = ['name']
         verbose_name = "ALP Round"
 
     def __unicode__(self):
@@ -80,7 +80,7 @@ class Outreach(TimeStampedModel):
     school = models.ForeignKey(
         School,
         blank=True, null=True,
-        related_name='+',
+        related_name='alp_school',
     )
     location = models.ForeignKey(
         Location,
@@ -374,6 +374,20 @@ class Outreach(TimeStampedModel):
         if self.level:
             return "{}/{}".format(self.exam_total, self.level.note)
         return 0
+
+    @property
+    def posttest_total(self):
+        if self.level:
+            return "{}/{}".format(self.post_exam_total, '80')
+        return 0
+
+    @property
+    def next_level(self):
+        if self.registered_in_level and not self.refer_to_level:
+            return self.registered_in_level_id
+        if self.refer_to_level and self.post_exam_total >= 40:
+            return self.registered_in_level_id + 1
+        return ''
 
     @property
     def post_exam_total(self):

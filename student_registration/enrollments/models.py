@@ -115,7 +115,7 @@ class Enrollment(TimeStampedModel):
     school = models.ForeignKey(
         School,
         blank=False, null=True,
-        related_name='+',
+        related_name='ndshift_school',
     )
     section = models.ForeignKey(
         Section,
