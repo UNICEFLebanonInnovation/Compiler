@@ -519,12 +519,19 @@ class ComplaintsGridView(LoginRequiredMixin, TemplateView):
 
         CategoryID = self.request.GET.get('CategoryID', 0)
         ComplaintType = self.request.GET.get('ComplaintType', '')
+        ComplaintSubType = self.request.GET.get('ComplaintSubType', '')
 
-        complaintRecords = Complaint.objects.filter(complaint_category=CategoryID)
+        complaint_records = Complaint.objects
+
+        if not self.request.user.is_superuser:
+            complaint_records = complaint_records.filter(complaint_adult__school__location__parent_id=self.request.user.governante_id)
+
+        complaint_records = complaint_records.filter(complaint_category=CategoryID, complaint_category__name=ComplaintSubType)
 
         return {
-            'complaints': complaintRecords,
-            'ComplaintType': ComplaintType
+            'complaints': complaint_records,
+            'ComplaintType': ComplaintType,
+            'ComplaintSubType': ComplaintSubType
         }
 
 
