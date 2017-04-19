@@ -28,6 +28,7 @@ class EnrollmentResource(resources.ModelResource):
         attribute='school',
         widget=ForeignKeyWidget(School, 'location_name')
     )
+    student_age = fields.Field(column_name='Student age')
 
     class Meta:
         model = Enrollment
@@ -41,9 +42,14 @@ class EnrollmentResource(resources.ModelResource):
             'student__father_name',
             'student__last_name',
             'student__mother_fullname',
-            'student__age',
+            'student__birthday_year',
+            'student__birthday_month',
+            'student__birthday_day',
+            'student_age',
+            'student__sex',
             'governorate',
             'district',
+            'school__number',
             'school__name',
             'section__name',
             'classroom__name',
@@ -59,6 +65,9 @@ class EnrollmentResource(resources.ModelResource):
             'last_informal_edu_final_result__name',
         )
         export_order = fields
+
+    def dehydrate_student_age(self, obj):
+        return obj.student_age
 
 
 class GovernorateFilter(admin.SimpleListFilter):

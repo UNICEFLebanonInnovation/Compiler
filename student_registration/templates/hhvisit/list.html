@@ -83,19 +83,21 @@
                                         <th>{% trans "Secondary Phone Number" %}</th>
                                         <th>{% trans "Status- Completed, Pending" %}</th>
                                         <th>{% trans "Attempt Number" %}</th>
+                                         <th>{% trans "Team Assigned" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for visit in visits %}
                                         <tr class="row-class" visitID="{{ visit.id }}">
-                                          <td>{{ visit.registering_adult.school.location.name }}</td>
-                                          <td>{{ visit.registering_adult.address }}</td>
-                                          <td>{{ visit.registering_adult }}</td>
-                                          <td>{{ visit.child_visit_count }}</td>
-                                          <td>{{ visit.registering_adult.primary_phone }}</td>
-                                          <td>{{ visit.registering_adult.secondary_phone }}</td>
-                                          <td>{{ visit.visit_status }}</td>
-                                          <td>{{ visit.visit_attempt_count }}</td>
+                                            <td>{{ visit.registering_adult.school.location.name }}</td>
+                                            <td>{{ visit.registering_adult.address }}</td>
+                                            <td>{{ visit.registering_adult }}</td>
+                                            <td>{{ visit.child_visit_count }}</td>
+                                            <td>{{ visit.registering_adult.primary_phone }}</td>
+                                            <td>{{ visit.registering_adult.secondary_phone }}</td>
+                                            <td>{{ visit.visit_status }}</td>
+                                            <td>{{ visit.visit_attempt_count }}</td>
+                                            <td>{{ visit.household_visit_team.team_name}}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
