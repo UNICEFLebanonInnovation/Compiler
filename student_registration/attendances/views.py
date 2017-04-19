@@ -7,6 +7,7 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.generics import ListAPIView
+from rest_framework.decorators import detail_route, list_route
 from datetime import datetime
 import tablib
 import json
@@ -22,13 +23,14 @@ from student_registration.locations.models import Location
 from student_registration.registrations.models import Registration
 from .models import Attendance, Absentee
 from .serializers import AttendanceSerializer, AbsenteeSerializer
+from student_registration.attendances.tasks import set_app_attendances
 
 
 class AttendanceViewSet(mixins.RetrieveModelMixin,
-                      mixins.ListModelMixin,
-                      mixins.CreateModelMixin,
-                      mixins.UpdateModelMixin,
-                      viewsets.GenericViewSet):
+                        mixins.ListModelMixin,
+                        mixins.CreateModelMixin,
+                        mixins.UpdateModelMixin,
+                        viewsets.GenericViewSet):
 
     model = Attendance
     queryset = Attendance.objects.all()
@@ -56,6 +58,12 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
 
     def update(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+    @list_route(methods=['get'], url_path='push-by-school/(?P<school>\d+)')
+    def push_by_school(self, request, *args, **kwargs):
+        school = School.objects.get(id=kwargs.get('school', False))
+        set_app_attendances.delay(school_number=school.number)
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
