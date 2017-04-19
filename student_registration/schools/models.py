@@ -161,9 +161,10 @@ class ALPReferMatrix(models.Model):
 
 class EducationYear(models.Model):
     name = models.CharField(max_length=100L, unique=True)
+    current_year = models.BooleanField(blank=True, default=False)
 
     class Meta:
-        ordering = ['id']
+        ordering = ['name']
         verbose_name = "Education Year"
 
     def __unicode__(self):
