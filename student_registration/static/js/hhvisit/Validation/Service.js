@@ -5,12 +5,14 @@
            editForm.find("[name=childServices] tbody tr")
            .each
            (
-              function(i, obj)
-              {
-                 trElement = $(obj);
+              function(i, obj) {
+                  trElement = $(obj);
 
-                 servicesValid = servicesValid && ValidateService(trElement);
+                  var childServiceRecordID = trElement.find('td:nth-child(1)').html();
 
+                  if (childServiceRecordID == '') {
+                      servicesValid = servicesValid && ValidateService(trElement);
+                  }
               }
            );
 

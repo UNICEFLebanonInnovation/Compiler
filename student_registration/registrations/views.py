@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-
 from django.http import Http404
 from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -63,7 +62,8 @@ from .serializers import (
     ClassAssignmentSerializer,
     WaitingListSerializer,
     ComplaintSerializer,
-    HouseholdNotFoundSerializer
+    HouseholdNotFoundSerializer,
+    ComplaintCategorySerializer
 )
 from .utils import get_unhcr_principal_applicant
 
@@ -249,6 +249,19 @@ class RegisteringComplaintViewSet(mixins.RetrieveModelMixin,
     def put(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
+
+class RegisteringComplaintCategoryViewSet(mixins.RetrieveModelMixin,
+                                  mixins.ListModelMixin,
+                                  mixins.CreateModelMixin,
+                                  mixins.UpdateModelMixin,
+                                  viewsets.GenericViewSet):
+
+    model = ComplaintCategory
+    queryset = ComplaintCategory.objects.all()
+    serializer_class = ComplaintCategorySerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
 class RegisteringNotFoundViewSet(mixins.RetrieveModelMixin,
                                   mixins.ListModelMixin,
                                   mixins.CreateModelMixin,
@@ -322,19 +335,19 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
 
             locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
             payment_complaint_types = \
-                ComplaintCategory.objects.all().filter(complaint_type='PAYMENT').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='Payment').order_by('name')
             card_distribution_cmplaint_types= \
-                ComplaintCategory.objects.all().filter(complaint_type='CARD DISTRIBUTION').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='Card Distribution').order_by('name')
             card_complaint_types = \
-                ComplaintCategory.objects.all().filter(complaint_type='CARD').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='Card').order_by('name')
             school_complaint_types = \
-                ComplaintCategory.objects.all().filter(complaint_type='SCHOOL-RELATED').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='School Related').order_by('name')
             other_complaint_types = \
-                ComplaintCategory.objects.all().filter(complaint_type='OTHER').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='Other').order_by('name')
             bank_complaint_types = \
-                ComplaintCategory.objects.all().filter(complaint_type='BANK').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='Bank').order_by('name')
             reinstate_beneficiary_complaint_types = \
-                ComplaintCategory.objects.all().filter(complaint_type='REINSTATE BENEFICIARY').order_by('name')
+                ComplaintCategory.objects.all().filter(complaint_type='Reinstate Beneficiary').order_by('name')
             not_found_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='Not Found').order_by('name')
             months = Person.MONTHS
@@ -403,24 +416,170 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'not_eligible_reason': not_eligible_reason
             }
 
+class ComplaintCategoryListSearchView(LoginRequiredMixin, TemplateView):
+
+    model = ComplaintCategory
+    template_name = 'registration-pilot/compalints-search.html'
+
+    def get_context_data(self, **kwargs):
+
+        data = []
+
+        data = self.model.objects.order_by('complaint_type')
+        complaintStatistics = []
+        complaintStatisticsTotal = ComplaintStatistics()
+        complaintStatisticsTotal.Name = 'TOTAL'
+        complaintStatisticsTotal.Statistics = 0
+
+        for record in data:
+            complaintStatisticsRecord = ComplaintStatistics()
+            complaintStatisticsRecord.ID = record.id
+            complaintStatisticsRecord.Name = record.name
+            complaintStatisticsRecord.complaint_type = record.complaint_type
+            complaintStatisticsRecord.Statistics = record.complaint_count(self.request.user)
+            complaintStatistics.append(complaintStatisticsRecord)
+            complaintStatisticsTotal.Statistics += complaintStatisticsRecord.Statistics
+
+        students=[]
+        school_changed_to_verify = []
+
+        school_changed_to_verify = ComplaintStatistics()
+        school_changed_to_verify.complaint_type = 'Update'
+        school_changed_to_verify.Name = 'Change of school'
+        school_changed_to_verify.Statistics = 0
+
+        students = Registration.objects
+        if not self.request.user.is_superuser:
+            students = students.filter(school__location__parent_id=self.request.user.governante_id)
+
+        students = students.filter(school_changed_to_verify__isnull=False).order_by('id')
+        for student in students:
+            school_changed_to_verify.Statistics += 1
+        complaintStatisticsTotal.Statistics += school_changed_to_verify.Statistics
+
+        beneficiaries=[]
+        beneficiary_changed_verify = []
+
+        beneficiary_changed_verify = ComplaintStatistics()
+        beneficiary_changed_verify.complaint_type = 'Update'
+        beneficiary_changed_verify.Name = 'Change of benefeciary'
+        beneficiary_changed_verify.Statistics = 0
+
+        beneficiaries = RegisteringAdult.objects
+        if not self.request.user.is_superuser:
+            beneficiaries = beneficiaries.filter(school__location__parent_id=self.request.user.governante_id)
+        # beneficiaries = beneficiaries.filter(beneficiary_changed_verify=True).order_by('id')
+        beneficiaries = beneficiaries.filter(beneficiary_changed_father_name__isnull= False).order_by('id')
+
+        for beneficiary in beneficiaries:
+            beneficiary_changed_verify.Statistics += 1
+        complaintStatisticsTotal.Statistics += beneficiary_changed_verify.Statistics
+
+        cards = []
+        cards_duplicate = []
+
+        cards_duplicate = ComplaintStatistics()
+        cards_duplicate.complaint_type = 'Update'
+        cards_duplicate.Name = 'Two Cards'
+        cards_duplicate.Statistics = 0
+
+        cards = RegisteringAdult.objects
+        if not self.request.user.is_superuser:
+            cards = cards.filter(school__location__parent_id=self.request.user.governante_id)
+        cards = cards.filter(duplicate_card_first_card_case_number__isnull=False).order_by('id')
+
+        for card in cards:
+            cards_duplicate.Statistics += 1
+        complaintStatisticsTotal.Statistics += cards_duplicate.Statistics
+
+        return {
+            'complaints': complaintStatistics,
+            'school_changed_to_verify': school_changed_to_verify,
+            'beneficiary_changed_verify':beneficiary_changed_verify,
+            'cards_duplicate':cards_duplicate,
+            'total': complaintStatisticsTotal
+        }
+
+class ComplaintStatistics:
+
+    def __init__(self, *args, **kwargs):
+
+        self.ID = None
+        self.Name = ''
+        self.complaint_type = ''
+        self.Statistics = 0
+
+
+class ComplaintsGridView(LoginRequiredMixin, TemplateView):
+
+    model = Complaint
+    template_name = 'registration-pilot/compalints-grid.html'
+
+    def get_context_data(self, **kwargs):
+
+        CategoryID = self.request.GET.get('CategoryID', 0)
+        ComplaintType = self.request.GET.get('ComplaintType', '')
+        ComplaintSubType = self.request.GET.get('ComplaintSubType', '')
+
+        complaint_records = Complaint.objects
+
+        if not self.request.user.is_superuser:
+            complaint_records = complaint_records.filter(complaint_adult__school__location__parent_id=self.request.user.governante_id)
+
+        complaint_records = complaint_records.filter(complaint_category=CategoryID, complaint_category__name=ComplaintSubType)
+
+        return {
+            'complaints': complaint_records,
+            'ComplaintType': ComplaintType,
+            'ComplaintSubType': ComplaintSubType
+        }
+
+
+class ChangeBeneficiaryGridView(LoginRequiredMixin, TemplateView):
+
+    template_name = 'registration-pilot/changebeneficiary-grid.html'
+
+    def get_context_data(self, **kwargs):
+
+        # beneficiarRecords = RegisteringAdult.objects.filter(beneficiary_changed_verify=True)
+
+        beneficiarRecords = RegisteringAdult.objects.filter(beneficiary_changed_father_name__isnull= False).order_by('id')
+
+        if not self.request.user.is_superuser:
+            beneficiarRecords = beneficiarRecords.filter(school__location__parent_id=self.request.user.governante_id)
+
+        return {
+            'beneficiaries': beneficiarRecords,
+        }
+
+class ChangeTwoCardsGridView(LoginRequiredMixin, TemplateView):
+
+    template_name = 'registration-pilot/twocards-grid.html'
+
+    def get_context_data(self, **kwargs):
+
+        beneficiaryRecords = RegisteringAdult.objects.filter(duplicate_card_first_card_case_number__isnull= False).order_by('id')
+
+        if not self.request.user.is_superuser:
+            beneficiaryRecords = beneficiaryRecords.filter(school__location__parent_id=self.request.user.governante_id)
+
+        return {
+            'beneficiaries': beneficiaryRecords,
+        }
+
+
 
 class SchoolApprovalListView(LoginRequiredMixin, TemplateView):
 
-    model = Registration
-    template_name = 'registration-pilot/list_school_modification.html'
+    template_name = 'registration-pilot/students-grid.html'
 
     def get_context_data(self, **kwargs):
-        data = []
-        locations = Location.objects.all().filter(pilot_in_use=True).order_by('name')
-        location = self.request.GET.get("location", 0)
-        if location:
-            data = self.model.objects.filter(school__location_id=location,school_changed_to_verify__isnull=False).order_by('id')
+        student_records = Registration.objects.filter(school_changed_to_verify__isnull=False)
 
+        if not self.request.user.is_superuser:
+            student_records = student_records.filter(school__location__parent_id=self.request.user.governante_id)
         return {
-            'registrations': data,
-            'locations': locations,
-            'selectedLocation': int(location),
-            'Modification_form': SchoolModificationForm
+            'students': student_records,
         }
 
 
@@ -445,3 +604,43 @@ class AdultChangelListView(LoginRequiredMixin, TemplateView):
             'locations': locations,
             'selectedLocation': int(location)
         }
+
+
+class ComplaintsExportViewSet(LoginRequiredMixin, ListView):
+    model = Complaint
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.model.objects.all()
+        queryset = queryset.order_by('id')
+
+        data = tablib.Dataset()
+
+        data.headers = [
+            _('ID'),
+            _('Individual ID'),
+            _('HH Rep Name'),
+            _('Other-Specify'),
+            _('Student'),
+            _('Date of Complaint'),
+            _('Phone'),
+            _('Date/Time of incident'),
+            _('Phone number from which call was placed'),
+            _('Service Requested'),
+        ]
+
+        content = []
+        for line in queryset:
+            # if not line.student or not line.school:
+            # continue
+            content = [
+                line.id,
+            ]
+            data.append(content)
+
+        file_format = base_formats.XLS()
+        response = HttpResponse(
+            file_format.export_data(data),
+            content_type='application/application/ms-excel',
+        )
+        response['Content-Disposition'] = 'attachment; filename=complaint_list.xls'
+        return response
