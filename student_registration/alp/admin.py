@@ -335,6 +335,7 @@ class OutreachAdmin(ImportExportModelAdmin):
         'registered_in_level',
         'section',
         'not_enrolled_in_this_school',
+        're_enrolled',
         'created',
         'modified',
     )
@@ -399,6 +400,9 @@ class OutreachAdmin(ImportExportModelAdmin):
                 str(obj.registered_in_level.note)
             )
         return total
+
+    def re_enrolled(self, obj):
+        return obj.student.alp_enrollment.count()
 
 
 class CurrentOutreach(Outreach):
@@ -504,6 +508,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         'total',
         'assigned_to_level',
         'registered_in_level',
+        're_enrolled',
         'section',
         'created',
         'modified',
@@ -586,9 +591,61 @@ class PostTestAdmin(OutreachAdmin):
         )
 
 
+class ReEnrolled(Outreach):
+    class Meta:
+        proxy = True
+
+
+class ReEnrolledAdmin(OutreachAdmin):
+
+    list_display = (
+        'student',
+        'student_age',
+        'student_sex',
+        'school',
+        'caza',
+        'governorate',
+        'level',
+        'total',
+        'assigned_to_level',
+        'registered_in_level',
+        'section',
+        're_enrolled',
+        'created',
+        'modified',
+    )
+    list_filter = (
+        'school',
+        'school__location',
+        GovernorateFilter,
+        'level',
+        'assigned_to_level',
+        'registered_in_level',
+        'refer_to_level',
+        'section',
+        'student__sex',
+        'created',
+        'modified',
+    )
+
+    def get_queryset(self, request):
+        result = []
+        qs = super(ReEnrolledAdmin, self).get_queryset(request)
+        qs = qs.filter(
+            alp_round__isnull=False,
+            registered_in_level__isnull=False,
+        )
+
+        for obj in qs:
+            if obj.student.alp_enrollment.count() > 1:
+                result.append(obj.student_id)
+        return qs.filter(student_id__in=result)
+
+
 admin.site.register(Outreach, OutreachAdmin)
 admin.site.register(CurrentOutreach, CurrentOutreachAdmin)
 admin.site.register(PreTest, PreTestAdmin)
 admin.site.register(CurrentRound, CurrentRoundAdmin)
 admin.site.register(PostTest, PostTestAdmin)
+admin.site.register(ReEnrolled, ReEnrolledAdmin)
 admin.site.register(ALPRound)
