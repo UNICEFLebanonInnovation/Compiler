@@ -228,7 +228,6 @@ function ValidateMissingChild()
 {
     var result = true;
 
-
     var id_type = $("#st_idType").val();
     var isIdTypeValid = true;
     if(id_type==null)
@@ -240,48 +239,42 @@ function ValidateMissingChild()
     {
         $("#st_idType_error").hide();
     }
+
     var id_number = $("#st_id_number").val();
     var isNumberValid =  ValidateMissingChildID(id_number,id_type);
 
-
     var isDOBValid = true;
-    if($("#nf_days").val() && $("#nf_months").val() && $("#nf_years").val())
+    if($("#st_days").val() && $("#st_months").val() && $("#st_years").val())
     {
 
-        $("#nf_dob_error").hide();
+        $("#st_dob_error").hide();
     }
     else
     {
         isDOBValid = false;
-        $("#nf_dob_error").show();
+        $("#st_dob_error").show();
     }
 
-
-
     var isGenderValid = true;
-    if($("#nf_gender").val()==null)
+    if($("#st_gender").val()==null)
     {
-        isRelation_to_householdheadValid= false;
-        $("#nf_gender_error").show();
+        $("#st_gender_error").show();
     }
     else
     {
-        $("nf_#gender_error").hide();
+        $("#st_gender_error").hide();
     }
-
-
-
 
     result = result && isIdTypeValid;
     result = result && isNumberValid;
     result = result && isDOBValid;
     result = result && isGenderValid;
 
-    result = validateTextBoxRequired('nf_first_name','',result);
-    result = validateTextBoxRequired('nf_father_name','nf_father_name_error',result);
-    result = validateTextBoxRequired('nf_last_name','nf_last_name_error',result);
-    result = validateTextBoxRequired('nf_mother_full_name','nf_mother_full_name_error',result);;
-    result = validateTextBoxRequired('nf_complaint','nf_complaint_error',result);
+    result = validateTextBoxRequired('st_first_name','st_first_name_error',result);
+    result = validateTextBoxRequired('st_father_name','st_father_name_error',result);
+    result = validateTextBoxRequired('st_last_name','st_last_name_error',result);
+    result = validateTextBoxRequired('st_mother_full_name','st_mother_full_name_error',result);
+
     return result;
 }
 

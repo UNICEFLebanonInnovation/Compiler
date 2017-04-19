@@ -449,6 +449,8 @@ class ComplaintCategoryListSearchView(LoginRequiredMixin, TemplateView):
         complaintStatisticsTotal = ComplaintStatistics()
         complaintStatisticsTotal.Name = 'TOTAL'
         complaintStatisticsTotal.Statistics = 0
+        complaintStatisticsTotal.statistics_urgent = 0
+
 
         for record in data:
             complaintStatisticsRecord = ComplaintStatistics()
@@ -456,8 +458,10 @@ class ComplaintCategoryListSearchView(LoginRequiredMixin, TemplateView):
             complaintStatisticsRecord.Name = record.name
             complaintStatisticsRecord.complaint_type = record.complaint_type
             complaintStatisticsRecord.Statistics = record.complaint_count(self.request.user)
+            complaintStatisticsRecord.statistics_urgent = record.complaint_urgent_count(self.request.user)
             complaintStatistics.append(complaintStatisticsRecord)
             complaintStatisticsTotal.Statistics += complaintStatisticsRecord.Statistics
+            complaintStatisticsTotal.statistics_urgent += complaintStatisticsRecord.statistics_urgent
 
         students=[]
         school_changed_to_verify = []
@@ -514,7 +518,7 @@ class ComplaintCategoryListSearchView(LoginRequiredMixin, TemplateView):
         return {
             'complaints': complaintStatistics,
             'school_changed_to_verify': school_changed_to_verify,
-            'beneficiary_changed_verify':beneficiary_changed_verify,
+            'beneficiary_changed_verify': beneficiary_changed_verify,
             'cards_duplicate':cards_duplicate,
             'total': complaintStatisticsTotal
         }
@@ -527,6 +531,7 @@ class ComplaintStatistics:
         self.Name = ''
         self.complaint_type = ''
         self.Statistics = 0
+        self.statistics_urgent = 0
 
 
 class ComplaintsGridView(LoginRequiredMixin, TemplateView):
