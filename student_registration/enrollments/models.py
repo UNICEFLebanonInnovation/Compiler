@@ -15,6 +15,7 @@ from student_registration.schools.models import (
     ClassRoom,
     Section,
     Grade,
+    EducationYear,
 )
 from student_registration.locations.models import Location
 from student_registration.alp.models import ALPRound
@@ -137,6 +138,11 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         choices=YEARS
+    )
+    education_year = models.ForeignKey(
+        EducationYear,
+        blank=True, null=True,
+        related_name='+',
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
