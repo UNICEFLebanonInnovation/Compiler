@@ -87,7 +87,7 @@
                                         <td style = "display:none;">{{ complaint.complaint_type }}</td>
                                         <td>{{ complaint.Name }}</td>
                                         <td>{{ complaint.Statistics }}</td>
-                                        <td></td>
+                                        <td>{{ complaint.statistics_urgent }}</td>
                                     </tr>
                                 {% endfor %}
                                 <tr class="row-class category-row-class" complaintID="{{ 100 }}">
@@ -111,7 +111,7 @@
                                 <tr class="row-class" style="font-weight:bold;" >
                                         <td>{{ total.Name }}</td>
                                         <td>{{ total.Statistics }}</td>
-                                        <td></td>
+                                        <td>{{ total.statistics_urgent }}</td>
                                     </tr>
                                 </tbody>
                             </table>
