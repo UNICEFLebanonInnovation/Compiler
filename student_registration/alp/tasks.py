@@ -168,5 +168,5 @@ def move_student_to_school(school_from, school_to):
         return False
     print "from school: ", school_from, " to school: ", school_to
     registrations = Outreach.objects.filter(school_id=school_from)
-    print len(registrations)
+    print registrations.count()
     registrations.update(school_id=school_to)
