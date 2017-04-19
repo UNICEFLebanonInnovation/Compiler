@@ -60,6 +60,10 @@
                                     <i class="icon-synch-sign icon-white"></i>&nbsp;
                                         {% trans "synchronize" %}
                                   </button>
+                                  <button class="btn btn-info" id="attendance-push">
+                                    <i class="icon-synch-sign icon-white"></i>&nbsp;
+                                        {% trans "push to tablet" %}
+                                  </button>
                                   <button class="btn btn-info" id="registration-download">
                                     <i class="icon-synch-sign icon-white"></i>&nbsp;
                                         {% trans "download data" %}
@@ -443,6 +447,30 @@
                 }else{
                     $('#alert-connection').show();
                 }
+            });
+
+            $(document).on('click', '#attendance-push', function(){
+
+                var url = host+'/api/attendances/push-by-school/'+school_id+'/';
+
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    cache: false,
+                    async: false,
+                    headers: getHeader(),
+                    dataType: 'json',
+                    success: function (response, result, jqXHR) {
+                        console.log(response);
+                        if(jqXHR.status == 201){
+
+                        }
+                    },
+                    error: function (response) {
+                        console.log(response);
+                    }
+                });
+
             });
 
             $(document).on('click', '#registration-download', function(){
