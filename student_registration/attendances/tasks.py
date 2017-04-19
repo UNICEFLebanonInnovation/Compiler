@@ -181,15 +181,14 @@ def set_app_attendances(school_number=None, school_type=None):
     response = set_docs(docs)
     logger.info(response)
 
-    log = AttendanceSyncLog(
-        school=school_number,
-        school_type=school_type,
-        response_message=response.text,
+    log = AttendanceSyncLog.objects.create(
+        school_id=school.id,
+        school_type=school_type if school_type else '2nd shift',
+        response_message=response.text if response else '',
         total_records=registrations.count()
     )
-    log.save()
 
-    if response.status_code in [requests.codes.ok, requests.codes.created]:
+    if response and response.status_code in [requests.codes.ok, requests.codes.created]:
         log.successful = True
         log.save()
         return response.text
