@@ -19,6 +19,7 @@ from .models import (
     ALPReferMatrix,
     EducationYear,
 )
+from student_registration.locations.models import Location
 
 
 class SchoolResource(resources.ModelResource):
@@ -47,12 +48,88 @@ class SchoolResource(resources.ModelResource):
             return school.location.parent.name
         return ''
 
+class GovernorateFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Governorate'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'governorate'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l.id, l.name) for l in Location.objects.filter(type_id=1))
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(location__parent_id=self.value())
+        return queryset
+
+
+class SchoolTypeFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'School type'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'school_type'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('alp', 'ALP'),
+            ('2ndshift', '2nd shift')
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if not self.value():
+            return queryset
+        if self.value() == 'alp':
+            return queryset.filter(
+                alp_school__isnull=False,
+            ).distinct()
+        if self.value() == '2ndshift':
+            return queryset.filter(ndshift_school__isnull=False).distinct()
+
 
 class SchoolAdmin(ImportExportModelAdmin):
     resource_class = SchoolResource
-    list_display = ('name', 'number', 'location', )
-    search_fields = ('name', 'number', )
-    list_filter = ('location', )
+    list_display = (
+        'name',
+        'number',
+        'location',
+    )
+    search_fields = (
+        'name',
+        'number',
+    )
+    list_filter = (
+        SchoolTypeFilter,
+        GovernorateFilter,
+        'location',
+    )
 
 
 class EducationLevelResource(resources.ModelResource):
