@@ -140,7 +140,7 @@ class AttendanceSyncLog(models.Model):
     )
 
     def __unicode__(self):
-        return self.processed_date
+        return str(self.processed_date)
 
     class Meta:
         ordering = ['processed_date']
