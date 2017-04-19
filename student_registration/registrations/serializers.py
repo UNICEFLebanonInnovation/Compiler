@@ -1,6 +1,16 @@
 
 from rest_framework import serializers
-from .models import Registration, RegisteringAdult, WaitingList, Complaint, Payment , HouseholdNotFound, ComplaintCategory
+from .models import (
+    Registration,
+    RegisteringAdult,
+    WaitingList,
+    Complaint,
+    Payment,
+    HouseholdNotFound,
+    ComplaintCategory,
+    MissingChild
+)
+
 from student_registration.students.serializers import StudentSerializer
 
 
@@ -135,6 +145,7 @@ class ComplaintSerializer(serializers.ModelSerializer):
         fields = (
             'complaint_id',
             'complaint_adult',
+            'missing_child',
             'complaint_type',
             'complaint_Other_type_specify',
             'complaint_category',
@@ -167,6 +178,8 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'not_found_primary_phone',
             'owner'
         )
+
+
 class HouseholdNotFoundSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
@@ -207,6 +220,7 @@ class HouseholdNotFoundSerializer(serializers.ModelSerializer):
             'number_children_five_to_nine',
             'number_children_ten_to_seventeen'
         )
+
 
 class ComplaintHouseholdNotFoundSerializer(serializers.ModelSerializer):
 
@@ -267,6 +281,85 @@ class ComplaintHouseholdNotFoundSerializer(serializers.ModelSerializer):
             'secondary_phone_answered',
             'number_children_five_to_nine',
             'number_children_ten_to_seventeen'
+        )
+
+
+class MissingChildSerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField(read_only=True)
+
+    def create(self, validated_data):
+
+        try:
+            instance = MissingChild.objects.create(**validated_data)
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'Missing child instance': ex.message})
+
+        return instance
+
+    class Meta:
+        model = MissingChild
+        fields = (
+            'id',
+            'id_type',
+            'id_number',
+            'first_name',
+            'father_name',
+            'last_name',
+            'mother_fullname',
+            'sex',
+            'nationality',
+            'birthday_day',
+            'birthday_month',
+            'birthday_year',
+        )
+
+
+class ComplaintMissingChildSerializer(serializers.ModelSerializer):
+
+    complaint_id = serializers.IntegerField(source='id', read_only=True)
+    complaint_type = serializers.CharField(source='complaint_category.complaint_type', read_only=True)
+    complaint_category_name = serializers.CharField(source='complaint_category.name', read_only=True)
+    missing_child_id = serializers.IntegerField(source='missing_child.id', read_only=True)
+    id_type = serializers.IntegerField(source='missing_child.id_type', read_only=True)
+    id_number = serializers.IntegerField(source='missing_child.id_number', read_only=True)
+    first_name = serializers.CharField(source='missing_child.first_name')
+    father_name = serializers.CharField(source='missing_child.father_name')
+    last_name = serializers.CharField(source='missing_child.last_name')
+    mother_fullname = serializers.CharField(source='missing_child.mother_fullname')
+    sex = serializers.CharField(source='missing_child.sex')
+    nationality = serializers.CharField(source='missing_child.nationality', read_only=True)
+    birthday_year = serializers.CharField(source='missing_child.birthday_year')
+    birthday_month = serializers.CharField(source='missing_child.birthday_month')
+    birthday_day = serializers.CharField(source='missing_child.birthday_day')
+
+    class Meta:
+        model = Complaint
+        fields = (
+            'complaint_id',
+            'complaint_type',
+            'complaint_category',
+            'complaint_category_name',
+            'complaint_note',
+            'complaint_solution',
+            'created',
+            'modified',
+            'complaint_status',
+            'complaint_resolution_date',
+            'missing_child_id',
+            'id_type',
+            'id_number',
+            'first_name',
+            'father_name',
+            'last_name',
+            'mother_fullname',
+            'sex',
+            'nationality',
+            'birthday_day',
+            'birthday_month',
+            'birthday_year'
         )
 
 

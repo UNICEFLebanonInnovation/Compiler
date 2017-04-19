@@ -53,7 +53,8 @@ from .models import (
     ComplaintCategory,
     Complaint,
     HouseholdNotFound,
-    NotEligibleReason
+    NotEligibleReason,
+    MissingChild
 )
 from .serializers import (
     RegistrationSerializer,
@@ -63,7 +64,8 @@ from .serializers import (
     WaitingListSerializer,
     ComplaintSerializer,
     HouseholdNotFoundSerializer,
-    ComplaintCategorySerializer
+    ComplaintCategorySerializer,
+    MissingChildSerializer
 )
 from .utils import get_unhcr_principal_applicant
 
@@ -276,6 +278,20 @@ class RegisteringNotFoundViewSet(mixins.RetrieveModelMixin,
         return self.create(request, *args, **kwargs)
 
 
+class MissingChildViewSet(mixins.RetrieveModelMixin,
+                                  mixins.ListModelMixin,
+                                  mixins.CreateModelMixin,
+                                  mixins.UpdateModelMixin,
+                                  viewsets.GenericViewSet):
+    model = MissingChild
+    queryset = MissingChild.objects.all()
+    serializer_class = MissingChildSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def put(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
 class RegisteringPilotView(LoginRequiredMixin, FormView):
     template_name = 'registration-pilot/registry.html'
     model = RegisteringAdult
@@ -350,6 +366,8 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 ComplaintCategory.objects.all().filter(complaint_type='Reinstate Beneficiary').order_by('name')
             not_found_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='Not Found').order_by('name')
+            missingChild_complaint_types = \
+                ComplaintCategory.objects.all().filter(complaint_type='Missing Student').order_by('name')
             months = Person.MONTHS
             location = self.request.GET.get("location", 0)
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
@@ -413,6 +431,7 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'bank_complaint_types': bank_complaint_types,
                 'reinstate_beneficiary_complaint_types': reinstate_beneficiary_complaint_types,
                 'not_found_complaint_types': not_found_complaint_types,
+                'missingChild_complaint_types': missingChild_complaint_types,
                 'not_eligible_reason': not_eligible_reason
             }
 
