@@ -205,6 +205,86 @@ function ValidateNotFoundID(id_number , id_type)
     return isNumberValid;
 }
 
+function ValidateMissingChildID(id_number , id_type)
+{
+
+    var isNumberValid = true;
+    if(id_type == 1)
+    {
+        isNumberValid= validate_individual_UNHCRNumber(id_number);
+        if (!isNumberValid)
+        {
+            $("#st_id_number_error").show();
+        }
+        else
+        {
+            $("#st_id_number_error").hide();
+        }
+    }
+    return isNumberValid;
+}
+
+function ValidateMissingChild()
+{
+    var result = true;
+
+
+    var id_type = $("#st_idType").val();
+    var isIdTypeValid = true;
+    if(id_type==null)
+    {
+        isIdTypeValid= false;
+        $("#st_idType_error").show();
+    }
+    else
+    {
+        $("#st_idType_error").hide();
+    }
+    var id_number = $("#st_id_number").val();
+    var isNumberValid =  ValidateMissingChildID(id_number,id_type);
+
+
+    var isDOBValid = true;
+    if($("#nf_days").val() && $("#nf_months").val() && $("#nf_years").val())
+    {
+
+        $("#nf_dob_error").hide();
+    }
+    else
+    {
+        isDOBValid = false;
+        $("#nf_dob_error").show();
+    }
+
+
+
+    var isGenderValid = true;
+    if($("#nf_gender").val()==null)
+    {
+        isRelation_to_householdheadValid= false;
+        $("#nf_gender_error").show();
+    }
+    else
+    {
+        $("nf_#gender_error").hide();
+    }
+
+
+
+
+    result = result && isIdTypeValid;
+    result = result && isNumberValid;
+    result = result && isDOBValid;
+    result = result && isGenderValid;
+
+    result = validateTextBoxRequired('nf_first_name','',result);
+    result = validateTextBoxRequired('nf_father_name','nf_father_name_error',result);
+    result = validateTextBoxRequired('nf_last_name','nf_last_name_error',result);
+    result = validateTextBoxRequired('nf_mother_full_name','nf_mother_full_name_error',result);;
+    result = validateTextBoxRequired('nf_complaint','nf_complaint_error',result);
+    return result;
+}
+
 
 function ValidateHouseHoldUpdate()
 {
