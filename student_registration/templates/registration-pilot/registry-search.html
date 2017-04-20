@@ -750,7 +750,6 @@
                  }
                );
 
-               alert(householdRecord.location_id);
                FilterStudentLocationSchools($("#missingChildFields"),householdRecord.location_id);
            }
 
@@ -818,9 +817,16 @@
                     "<td>"+''+"</td>":
                     "<td>"+FormatDate(entry.complaint_resolution_date)+"</td>";
 
-                var ReplyCell = "<td>"+entry.complaint_solution+"</td>";
-                var statusCell = "<td>"+entry.complaint_status+"</td>";
 
+                var ReplyCell = "<td>"+entry.complaint_solution+"</td>";
+                var status = entry.complaint_status;
+
+                if (entry.complaint_status=='rejected')
+                {
+                    status = 'in progress';
+                }
+
+                var statusCell = "<td>"+status+"</td>";
 
                 $("#complaints-table tbody").append
                 (
@@ -989,7 +995,6 @@
                    }
                    else if($("#changeOption").val() == "missingChild" && ValidateComplaint() && ValidateMissingChild())
                    {
-                       alert("missing ch");
 
                       SaveMissingChild();
                       SaveComplaint(true);
