@@ -176,7 +176,8 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'not_found_last_name',
             'not_found_id_number',
             'not_found_primary_phone',
-            'owner'
+            'owner',
+            'complaint_urgent'
         )
 
 
@@ -314,6 +315,7 @@ class MissingChildSerializer(serializers.ModelSerializer):
             'birthday_day',
             'birthday_month',
             'birthday_year',
+            'confirm_child_registered_second_shift'
         )
 
 
@@ -359,7 +361,8 @@ class ComplaintMissingChildSerializer(serializers.ModelSerializer):
             'nationality',
             'birthday_day',
             'birthday_month',
-            'birthday_year'
+            'birthday_year',
+            'complaint_urgent'
         )
 
 
@@ -464,6 +467,7 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
     payments = PaymentSerializer(many=True, read_only=True)
     no_logner_eligible_reason_name = serializers.CharField(source='no_logner_eligible_reason.name', read_only=True)
     beneficiary_changed_id_type_id = serializers.CharField(source='beneficiary_changed_id_type.id', read_only=True)
+    location_id = serializers.CharField(source='school.location_id', read_only=True)
 
     def create(self, validated_data):
 
@@ -546,7 +550,8 @@ class RegisteringAdultSerializer(serializers.ModelSerializer):
             'no_logner_eligible_specify',
             'no_logner_eligible_comment',
             'complaints',
-            'payments'
+            'payments',
+            'location_id'
         )
 
 class ClassAssignmentSerializer(serializers.ModelSerializer):
