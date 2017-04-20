@@ -229,6 +229,7 @@
                InitialiseSave();
                InitialiseClose();
                InitialiseChildDropdown();
+               InitialiseToggleRadioButtons();
 
               $(document).on
               (
@@ -509,6 +510,20 @@
       });
 
 
+      function InitialiseToggleRadioButtons()
+      {
+        $(document).on('click', '.toggleRadioBtn a', function(){
+            var sel = $(this).data('title');
+            var tog = $(this).data('toggle');
+            $('#'+tog).prop('value', sel);
+            $('#'+tog+'_'+sel).trigger('click');
+
+            $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
+            $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
+        });
+      }
+
+
       var householdRecord = null;
 
 
@@ -605,7 +620,7 @@
                          $("#mother_full_name").val(household.beneficiary_changed_mother_full_name);
                          $("#beneficiary_phone").val(household.beneficiary_changed_phone);
                          $("#beneficiary_phone_confirm").val('');
-                         ChangeBooleanSelection($("#radioBtn"), household.beneficiary_changed_phone)
+                         ChangeBooleanSelection($("#radioBtn"), household.beneficiary_changed_same_as_caller)
                          updateDropDownValue($("#idType"),household.beneficiary_changed_id_type);
                          updateDropDownValue($("#gender"),household.beneficiary_changed_gender);
                          updateDropDownValue($("#days"),household.beneficiary_changed_birthday_day);
@@ -644,7 +659,9 @@
                          $("#st_months").val('');
                          $("#st_years").val('');
                          $("#studentSchool").val('');
-                         $("#confirm_child_registered_second_shift").val('');
+
+                         ChangeBooleanSelection($("#radioBtn_missingchild"), false);
+                         ChangeBooleanSelection($("#radioBtn_urgent"), false);
 
 
 
@@ -732,13 +749,26 @@
 
                  }
                );
+
+               alert(householdRecord.location_id);
+               FilterStudentLocationSchools($("#missingChildFields"),householdRecord.location_id);
            }
 
 
            function FilterLocationSchools(editForm, locationID)
            {
-              editForm.find("[name=childSchool] option[location-id!="+locationID+"]").hide();
-              editForm.find("[name=childSchool] option[location-id="+locationID+"],[value='']").show();
+               FilterLocationSchoolsName(editForm, locationID,"childSchool");
+           }
+
+           function FilterStudentLocationSchools(editForm, locationID)
+           {
+               FilterLocationSchoolsName(editForm, locationID,"studentSchool");
+           }
+
+           function FilterLocationSchoolsName(editForm, locationID, dropDownName)
+           {
+              editForm.find("[name="+dropDownName+"] option[location-id!="+locationID+"]").hide();
+              editForm.find("[name="+dropDownName+"] option[location-id="+locationID+"],[value='']").show();
            }
 
           function AddChildAgeRow(entry)
@@ -959,6 +989,8 @@
                    }
                    else if($("#changeOption").val() == "missingChild" && ValidateComplaint() && ValidateMissingChild())
                    {
+                       alert("missing ch");
+
                       SaveMissingChild();
                       SaveComplaint(true);
                       CloseMissingStudent();
@@ -1281,6 +1313,8 @@
           var note ;
           var complaintData = new Object();
 
+         var urgent= GetBooleanSelection($("#radioBtn_urgent"));
+
           if (hh_Complaint)
           {
               if($("#changeOption").val() == "payment" )
@@ -1328,6 +1362,7 @@
 
          complaintData.complaint_category = complaint_category_id;
          complaintData.complaint_note = note;
+         complaintData.complaint_urgent= urgent;
 
          complaintData.complaint_status = 'open';
 
@@ -1363,6 +1398,8 @@
           }
          var isSuccessfull = false;
 
+         console.log(complaintData);
+
          $.ajax
          (
             {
@@ -1395,7 +1432,7 @@
       {
 
          var missingChildData = new Object();
-         var confirm_child_registered_second_shift= GetBooleanSelection($("#radioBtn"));
+         var confirm_child_registered_second_shift= GetBooleanSelection($("#radioBtn_missingchild"));
 
           missingChildData.id_type = $("#st_idType").val();
           missingChildData.id_number = $("#st_id_number").val();
@@ -1407,8 +1444,12 @@
           missingChildData.birthday_day = $("#st_days").val();
           missingChildData.birthday_month = $("#st_months").val();
           missingChildData.birthday_year = $("#st_years").val();
-          missingChildData.relation_to_householdhead = $("#studentSchool").val();
-          missingChildData.address = confirm_child_registered_second_shift ;
+          //missingChildData.relation_to_householdhead = $("#studentSchool").val();
+          missingChildData.confirm_child_registered_second_shift = confirm_child_registered_second_shift;
+
+          //alert(missingChildData.confirm_child_registered_second_shift );
+
+          console.log(missingChildData);
 
          var isSuccessfull = false;
 

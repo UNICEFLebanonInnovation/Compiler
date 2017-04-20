@@ -459,6 +459,7 @@ class ComplaintCategoryListSearchView(LoginRequiredMixin, TemplateView):
             complaintStatisticsRecord.complaint_type = record.complaint_type
             complaintStatisticsRecord.Statistics = record.complaint_count(self.request.user)
             complaintStatisticsRecord.statistics_urgent = record.complaint_urgent_count(self.request.user)
+
             complaintStatistics.append(complaintStatisticsRecord)
             complaintStatisticsTotal.Statistics += complaintStatisticsRecord.Statistics
             complaintStatisticsTotal.statistics_urgent += complaintStatisticsRecord.statistics_urgent
