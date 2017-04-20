@@ -78,9 +78,13 @@ class ComplaintCategory(models.Model):
         return int(records.all().count())
 
     def complaint_urgent_count(self, user):
+
         records = self.complaints.filter(complaint_urgent=True)
+
         if not user.is_superuser:
+
             records = records.filter(complaint_adult__school__location__parent_id=user.governante_id)
+
         return int(records.all().count())
 
 
