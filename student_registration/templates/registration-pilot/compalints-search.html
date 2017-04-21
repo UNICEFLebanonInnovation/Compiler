@@ -83,14 +83,14 @@
                                 </thead>
                                 <tbody>
                                 {% for complaint in complaints %}
-                                    <tr class="row-class category-row-class" complaintID="{{ complaint.ID }}" complaint_type="{{ complaint.complaint_type }}"complaint_sub_type="{{ complaint.Name }}">
+                                    <tr class="row-class category-row-class" complaintID="{{ complaint.ID }}" complaint_type="{{ complaint.complaint_type }}" complaint_sub_type="{{ complaint.Name }}">
                                         <td style = "display:none;">{{ complaint.complaint_type }}</td>
                                         <td>{{ complaint.Name }}</td>
                                         <td>{{ complaint.Statistics }}</td>
                                         <td>{{ complaint.statistics_urgent }}</td>
                                     </tr>
                                 {% endfor %}
-                                <tr class="row-class category-row-class" complaintID="{{ 100 }}">
+                                <tr class="row-class category-row-class" complaintID="{{ 100 }}" complaint_sub_type = "stt">
                                     <td style = "display:none;">{{ school_changed_to_verify.complaint_type }}</td>
                                     <td>{{ school_changed_to_verify.Name }}</td>
                                     <td>{{ school_changed_to_verify.Statistics }}</td>
@@ -146,10 +146,11 @@
             </button>
              <a class="btn btn-primary"
                 id="complaint-export"
-                href="{% url "registrations:complaint_data_export" %}"
+                href=""
                 target="_blank"
 {#                style="float:right; "#}
                 {% if ComplaintType == 'Not Found' %}style = "display:none;"{% endif %}
+                onclick="ExportExcel();"
              >
                  {% trans "Export" %}
              </a>
@@ -198,6 +199,8 @@
         var student_grid_url = host+'/registrations/students-grid';
 
         var user_id = {{ request.user.id }};
+
+        var export_url  = host+'/registrations/data-collecting/export/';
 
 
 
@@ -713,6 +716,14 @@
            }
 
            return date;
+        }
+
+        function ExportExcel()
+        {
+            var current_export_url= export_url+"?CategoryID="+currentCategory.CategoryID+"&ComplaintType="+currentCategory.Type+"&ComplaintSubType="+currentCategory.ComplaintSubType;
+
+            window.open(current_export_url);
+
         }
 
     </script>
