@@ -90,19 +90,19 @@
                                         <td>{{ complaint.statistics_urgent }}</td>
                                     </tr>
                                 {% endfor %}
-                                <tr class="row-class category-row-class" complaintID="{{ 100 }}" complaint_sub_type = "stt">
+                                <tr class="row-class category-row-class" complaintID="{{ 100 }}" complaint_sub_type = "Change of school">
                                     <td style = "display:none;">{{ school_changed_to_verify.complaint_type }}</td>
                                     <td>{{ school_changed_to_verify.Name }}</td>
                                     <td>{{ school_changed_to_verify.Statistics }}</td>
                                     <td></td>
                                 </tr>
-                                <tr class="row-class category-row-class" complaintID="{{ 200 }}">
+                                <tr class="row-class category-row-class" complaintID="{{ 200 }}" complaint_sub_type = "Change of benefeciary">
                                     <td style = "display:none;">{{ beneficiary_changed_verify.complaint_type }}</td>
                                     <td>{{ beneficiary_changed_verify.Name }}</td>
                                     <td>{{ beneficiary_changed_verify.Statistics }}</td>
                                     <td></td>
                                 </tr>
-                                <tr class="row-class category-row-class" complaintID="{{ 300 }}">
+                                <tr class="row-class category-row-class" complaintID="{{ 300 }}" complaint_sub_type = "Two Cards">
                                     <td style = "display:none;">{{ cards_duplicate.complaint_type }}</td>
                                     <td>{{ cards_duplicate.Name }}</td>
                                     <td>{{ cards_duplicate.Statistics }}</td>
@@ -144,16 +144,17 @@
             <button class="btn btn-primary" type="button" id="SaveButton" style="float:right; " >
               {% trans "Save" %}
             </button>
-             <a class="btn btn-primary"
-                id="complaint-export"
-                href=""
-                target="_blank"
-{#                style="float:right; "#}
-                {% if ComplaintType == 'Not Found' %}style = "display:none;"{% endif %}
-                onclick="ExportExcel();"
-             >
-                 {% trans "Export" %}
-             </a>
+
+             {% if request.user.is_superuser%}
+                 <a
+                         class="btn btn-primary"
+                         id="complaint-export"
+                         href="" target="_blank"
+                         onclick="ExportExcel();"
+                 >
+                     {% trans "Export" %}
+                 </a>
+             {% endif %}
          </div>
 
          <div id = "ComplaintsGrid">
@@ -235,7 +236,16 @@
 
                  $("#editComplaintForm").show();
 
-
+                 var ComplaintType= currentCategory.Type ;
+                 alert (ComplaintType);
+                 if (ComplaintType=='Not Found')
+                 {
+                 $("#complaint-export").hide();
+                 }
+                 else
+                 {
+                 $("#complaint-export").show();
+                 }
              }
            );
 
@@ -366,11 +376,11 @@
 
                  complaintRecord.complaint_status = GetDecision(trElement);
 
-                 complaintRecord.complaint_solution = trElement.find('td:nth-child(15) textarea').val();
+                 complaintRecord.complaint_solution = trElement.find('td:nth-child(16) textarea').val();
 
-                 complaintRecord.complaint_status_initial = trElement.find('td:nth-child(16)').html();
+                 complaintRecord.complaint_status_initial = trElement.find('td:nth-child(17)').html();
 
-                 complaintRecord.complaint_solution_initial = trElement.find('td:nth-child(17)').html();
+                 complaintRecord.complaint_solution_initial = trElement.find('td:nth-child(18)').html();
 
                  complaintData.push(complaintRecord);
 
@@ -527,6 +537,7 @@
           var complaintRecord = new Object();
           complaintRecord.complaint_status = entry.complaint_status;
           complaintRecord.complaint_solution = entry.complaint_solution;
+          complaintRecord.complaint_resolution_date = formatDate_save(Date());
           complaintRecord.complaint_update_owner = user_id;
 
 
