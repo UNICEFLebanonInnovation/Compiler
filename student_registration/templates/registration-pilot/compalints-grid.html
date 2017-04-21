@@ -1,3 +1,4 @@
+{% load dateformat %}
 <table id="complaints-table" class="table table-striped table-bordered cell-border"
 data-height="500"
 data-pagination="true"
@@ -52,7 +53,7 @@ width="100%">
                     {{ complaint.complaint_adult.primary_phone }}
                 </td>
                 <td {% if ComplaintType != 'Bank' %}style = "display:none;"{% endif %}>
-                    {{ complaint.complaint_bank_date_of_incident }}
+                    {%  format_time complaint.complaint_bank_date_of_incident '%d-%m-%Y' %}
                 </td>
                 <td {% if ComplaintType != 'Bank' %}style = "display:none;"{% endif %}>
                     {{ complaint.complaint_bank_phone_used }}
