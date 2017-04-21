@@ -13,6 +13,8 @@ import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
+from datetime import datetime
+from django.utils import formats
 from django.core.urlresolvers import reverse
 from datetime import datetime
 from student_registration.alp.templatetags.util_tags import has_group
@@ -645,46 +647,46 @@ class ComplaintsExportViewSet(LoginRequiredMixin, ListView):
 
         data = tablib.Dataset()
 
-
-
-        # data.headers = [
-        #     _('ID'),
-        #     # _('Individual ID'),
-        #     # _('HH Rep Name'),
-        #     # _('Other-Specify'),
-        #     # _('Student'),
-        #     # _('Date of Complaint'),
-        #     # _('Phone'),
-        #     # _('Date/Time of incident'),
-        #     # _('Phone number from which call was placed'),
-        #     # _('Service Requested'),
-        # ]
-
         headerFields = []
 
         headerFields.append(_('ID'))
         headerFields.append(_('ID  Case'))
+        headerFields.append(_('HH Rep Name'))
 
         if ComplaintSubType == 'Other Card Issues':
             headerFields.append(_('Other-Specify'))
 
-        # headerFields.append(_('Student Date of Complaint'))
-        # headerFields.append(_(' Phone #'))
-        # headerFields.append(_('Date/Time of incident'))
-        # headerFields.append(_('Phone number from which call was placed'))
-        # headerFields.append(_('Service requested'))
-        # headerFields.append(_('Comment'))
-        # headerFields.append(_('Enumerator '))
-        # headerFields.append(_(' Comments'))
+        if ComplaintType == 'School Related':
+            headerFields.append(_('Student'))
+
+        headerFields.append(_('Date of Complaint'))
+
+        if ComplaintType != 'Not Found':
+            headerFields.append(_(' Phone #'))
+
+        if ComplaintType == 'Bank':
+            headerFields.append(_(' Date/Time of incident'))
+            headerFields.append(_(' Phone number from which call was placed'))
+            headerFields.append(_('Service requested'))
+
+        if ComplaintType != 'Card':
+                headerFields.append(_('Complaint Comment'))
+
+        if ComplaintType == 'Missing Student':
+            headerFields.append(_('Student'))
+
+        if ComplaintType == 'Payment':
+            headerFields.append(_('Enumerator '))
+
+        headerFields.append(_(' Solution Comments'))
 
         data.headers = headerFields
 
 
         complaint_records = Complaint.objects.filter(complaint_status='rejected')
 
-        if not self.request.user.is_superuser:
-            complaint_records = complaint_records.filter(complaint_adult__school__location__parent_id=self.request.user.governante_id)
-
+        # if not self.request.user.is_superuser:
+        #     complaint_records = complaint_records.filter(complaint_adult__school__location__parent_id=self.request.user.governante_id)
 
         complaint_records = complaint_records.filter(complaint_category=CategoryID, complaint_category__name=ComplaintSubType)
 
@@ -695,12 +697,66 @@ class ComplaintsExportViewSet(LoginRequiredMixin, ListView):
             # continue
             content = []
 
-            #content.append(line.id)
             content.append(line.id)
-            content.append(line.complaint_adult.id_number)
+
+            if ComplaintType != 'Not Found':
+                content.append(line.complaint_adult.id_number)
+                content.append(
+                    line.complaint_adult.first_name
+                    + ' '
+                    + line.complaint_adult.father_name
+                    + ' '
+                    + line.complaint_adult.last_name
+                )
+            else:
+                content.append(line.household_not_found.id_number)
+                content.append(
+                    line.household_not_found.first_name
+                    + ' '
+                    + line.household_not_found.father_name
+                    + ' '
+                    + line.household_not_found.last_name
+                )
+
+            date_created = line.created
+            formatted_datetime_created = formats.date_format(date_created, "SHORT_DATETIME_FORMAT")
+            content.append(formatted_datetime_created)
+
             if ComplaintSubType == 'Other Card Issues':
                 content.append(line.complaint_Other_type_specify)
 
+            if ComplaintType == 'School Related':
+                content.append(
+                    line.complaint_student_refused_entrance.first_name
+                    + ' '
+                    + line.complaint_student_refused_entrance.father_name
+                    + ' '
+                    + line.complaint_student_refused_entrance.last_name
+                )
+
+            if ComplaintType != 'Not Found':
+                content.append(line.complaint_adult.primary_phone)
+
+            if ComplaintType == 'Bank':
+                date_bank = line.complaint_bank_date_of_incident
+                formatted_datetime_bank = formats.date_format(date_bank, "SHORT_DATETIME_FORMAT")
+                content.append(formatted_datetime_bank)
+                content.append(line.complaint_bank_phone_used)
+                content.append(line.complaint_bank_service_requested)
+
+            if ComplaintType != 'Card':
+                content.append(line.complaint_note)
+
+            if ComplaintType == 'Missing Student':
+                content.append(line.missing_child.first_name
+                               + ' ' + line.missing_child.father_name
+                               + ' ' + line.missing_child.last_name)
+
+            if ComplaintType == 'Payment':
+                content.append(line.owner.first_name
+                               + ' ' + line.owner.father_name)
+
+            content.append(line.complaint_solution)
             data.append(content)
 
         file_format = base_formats.XLS()
