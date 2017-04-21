@@ -635,31 +635,72 @@ class ComplaintsExportViewSet(LoginRequiredMixin, ListView):
     model = Complaint
 
     def get(self, request, *args, **kwargs):
+
+        CategoryID = self.request.GET.get('CategoryID', 0)
+        ComplaintType = self.request.GET.get('ComplaintType', '')
+        ComplaintSubType = self.request.GET.get('ComplaintSubType', '')
+
         queryset = self.model.objects.all()
         queryset = queryset.order_by('id')
 
         data = tablib.Dataset()
 
-        data.headers = [
-            _('ID'),
-            _('Individual ID'),
-            _('HH Rep Name'),
-            _('Other-Specify'),
-            _('Student'),
-            _('Date of Complaint'),
-            _('Phone'),
-            _('Date/Time of incident'),
-            _('Phone number from which call was placed'),
-            _('Service Requested'),
-        ]
+
+
+        # data.headers = [
+        #     _('ID'),
+        #     # _('Individual ID'),
+        #     # _('HH Rep Name'),
+        #     # _('Other-Specify'),
+        #     # _('Student'),
+        #     # _('Date of Complaint'),
+        #     # _('Phone'),
+        #     # _('Date/Time of incident'),
+        #     # _('Phone number from which call was placed'),
+        #     # _('Service Requested'),
+        # ]
+
+        headerFields = []
+
+        headerFields.append(_('ID'))
+        headerFields.append(_('ID  Case'))
+
+        if ComplaintSubType == 'Other Card Issues':
+            headerFields.append(_('Other-Specify'))
+
+        # headerFields.append(_('Student Date of Complaint'))
+        # headerFields.append(_(' Phone #'))
+        # headerFields.append(_('Date/Time of incident'))
+        # headerFields.append(_('Phone number from which call was placed'))
+        # headerFields.append(_('Service requested'))
+        # headerFields.append(_('Comment'))
+        # headerFields.append(_('Enumerator '))
+        # headerFields.append(_(' Comments'))
+
+        data.headers = headerFields
+
+
+        complaint_records = Complaint.objects.filter(complaint_status='rejected')
+
+        if not self.request.user.is_superuser:
+            complaint_records = complaint_records.filter(complaint_adult__school__location__parent_id=self.request.user.governante_id)
+
+
+        complaint_records = complaint_records.filter(complaint_category=CategoryID, complaint_category__name=ComplaintSubType)
+
 
         content = []
-        for line in queryset:
+        for line in complaint_records:
             # if not line.student or not line.school:
             # continue
-            content = [
-                line.id,
-            ]
+            content = []
+
+            #content.append(line.id)
+            content.append(line.id)
+            content.append(line.complaint_adult.id_number)
+            if ComplaintSubType == 'Other Card Issues':
+                content.append(line.complaint_Other_type_specify)
+
             data.append(content)
 
         file_format = base_formats.XLS()
