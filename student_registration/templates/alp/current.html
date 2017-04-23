@@ -282,11 +282,8 @@
                 $(".loader").show();
                 var classroom = $('#filter_class').val();
                 var section = $('#filter_section').val();
-                var assigned_level = $('#filter_assignedlevel').val();
 
-                if(assigned_level != 0) {
-                    filterByAssignedLevel(assigned_level);
-                }else if((classroom != 0 && section != 0) || classroom != 0){
+                if(classroom != 0) {
                     filterByClass(classroom, section);
                 }else{
                     filter_on = false;
@@ -540,10 +537,14 @@
         function filterByClass(classroom, section)
         {
             var store = getStoreByName('registrations');
+            console.log(classroom);
+            console.log(section);
             if(section != 0) {
                 var index = store.index("registered_in_levelAndSection");
-                var request = index.getAll([parseInt(classroom), parseInt(section)]);
+                var request = index.getAll([classroom, parseInt(section)]);
+                console.log(request);
             }else{
+                console.log('ko');
                 var index = store.index("registered_in_level");
                 var request = index.getAll(parseInt(classroom));
             }
