@@ -41,6 +41,7 @@ class OutreachResource(resources.ModelResource):
     referred_to = fields.Field(column_name='Referred to level')
     passed_pre = fields.Field(column_name='Passed the Pre-test')
     passed_post = fields.Field(column_name='Passed the Post-test')
+    re_enrolled = fields.Field(column_name='Re-enrolled')
 
     class Meta:
         model = Outreach
@@ -87,6 +88,7 @@ class OutreachResource(resources.ModelResource):
             'post_exam_corrector_math',
             'post_exam_corrector_science',
             'referred_to',
+            're_enrolled',
             'passed_post',
             'owner__username',
         )
@@ -129,6 +131,9 @@ class OutreachResource(resources.ModelResource):
             if obj.post_exam_total >= 40:
                 return 'Yes'
         return 'No'
+
+    def dehydrate_re_enrolled(self, obj):
+        return obj.student.alp_enrollment.count()
 
 
 class PreTestTotalFilter(admin.SimpleListFilter):
