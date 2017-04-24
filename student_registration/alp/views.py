@@ -525,3 +525,46 @@ class OutreachExportViewSet(LoginRequiredMixin, ListView):
         )
         response['Content-Disposition'] = 'attachment; filename=outreach_list.xls'
         return response
+
+
+class ExportBySchoolView(LoginRequiredMixin, ListView):
+
+    model = Outreach
+    queryset = Outreach.objects.all()
+
+    def get(self, request, *args, **kwargs):
+
+        alp_round = ALPRound.objects.get(current_pre_test=True)
+
+        schools = self.queryset.filter(alp_round=alp_round, registered_in_level__isnull=False).values_list(
+                        'school', 'school__number', 'school__name', 'school__location__name',
+                        'school__location__parent__name').distinct().order_by('school__number')
+
+        data = tablib.Dataset()
+        data.headers = [
+            _('CERD'),
+            _('School name'),
+            _('# Students'),
+            _('District'),
+            _('Governorate'),
+        ]
+
+        content = []
+        for school in schools:
+            nbr = self.model.objects.filter(school=school[0], alp_round=alp_round, registered_in_level__isnull=False).count()
+            content = [
+                school[1],
+                school[2],
+                nbr,
+                school[3],
+                school[4]
+            ]
+            data.append(content)
+
+        file_format = base_formats.XLS()
+        response = HttpResponse(
+            file_format.export_data(data),
+            content_type='application/vnd.ms-excel',
+        )
+        response['Content-Disposition'] = 'attachment; filename=student_by_school.xls'
+        return response
