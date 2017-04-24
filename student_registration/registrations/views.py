@@ -13,6 +13,8 @@ import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
+from datetime import datetime
+from django.utils import formats
 from django.core.urlresolvers import reverse
 from datetime import datetime
 from student_registration.alp.templatetags.util_tags import has_group
@@ -53,7 +55,8 @@ from .models import (
     ComplaintCategory,
     Complaint,
     HouseholdNotFound,
-    NotEligibleReason
+    NotEligibleReason,
+    MissingChild
 )
 from .serializers import (
     RegistrationSerializer,
@@ -63,7 +66,8 @@ from .serializers import (
     WaitingListSerializer,
     ComplaintSerializer,
     HouseholdNotFoundSerializer,
-    ComplaintCategorySerializer
+    ComplaintCategorySerializer,
+    MissingChildSerializer
 )
 from .utils import get_unhcr_principal_applicant
 
@@ -276,6 +280,20 @@ class RegisteringNotFoundViewSet(mixins.RetrieveModelMixin,
         return self.create(request, *args, **kwargs)
 
 
+class MissingChildViewSet(mixins.RetrieveModelMixin,
+                                  mixins.ListModelMixin,
+                                  mixins.CreateModelMixin,
+                                  mixins.UpdateModelMixin,
+                                  viewsets.GenericViewSet):
+    model = MissingChild
+    queryset = MissingChild.objects.all()
+    serializer_class = MissingChildSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def put(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
 class RegisteringPilotView(LoginRequiredMixin, FormView):
     template_name = 'registration-pilot/registry.html'
     model = RegisteringAdult
@@ -350,6 +368,8 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 ComplaintCategory.objects.all().filter(complaint_type='Reinstate Beneficiary').order_by('name')
             not_found_complaint_types = \
                 ComplaintCategory.objects.all().filter(complaint_type='Not Found').order_by('name')
+            missingChild_complaint_types = \
+                ComplaintCategory.objects.all().filter(complaint_type='Missing Student').order_by('name')
             months = Person.MONTHS
             location = self.request.GET.get("location", 0)
             phoneAnsweredby = RegisteringAdult.PHONE_ANSWEREDBY
@@ -413,6 +433,7 @@ class RegisteringAdultListSearchView(LoginRequiredMixin, TemplateView):
                 'bank_complaint_types': bank_complaint_types,
                 'reinstate_beneficiary_complaint_types': reinstate_beneficiary_complaint_types,
                 'not_found_complaint_types': not_found_complaint_types,
+                'missingChild_complaint_types': missingChild_complaint_types,
                 'not_eligible_reason': not_eligible_reason
             }
 
@@ -430,6 +451,8 @@ class ComplaintCategoryListSearchView(LoginRequiredMixin, TemplateView):
         complaintStatisticsTotal = ComplaintStatistics()
         complaintStatisticsTotal.Name = 'TOTAL'
         complaintStatisticsTotal.Statistics = 0
+        complaintStatisticsTotal.statistics_urgent = 0
+
 
         for record in data:
             complaintStatisticsRecord = ComplaintStatistics()
@@ -437,8 +460,11 @@ class ComplaintCategoryListSearchView(LoginRequiredMixin, TemplateView):
             complaintStatisticsRecord.Name = record.name
             complaintStatisticsRecord.complaint_type = record.complaint_type
             complaintStatisticsRecord.Statistics = record.complaint_count(self.request.user)
+            complaintStatisticsRecord.statistics_urgent = record.complaint_urgent_count(self.request.user)
+
             complaintStatistics.append(complaintStatisticsRecord)
             complaintStatisticsTotal.Statistics += complaintStatisticsRecord.Statistics
+            complaintStatisticsTotal.statistics_urgent += complaintStatisticsRecord.statistics_urgent
 
         students=[]
         school_changed_to_verify = []
@@ -495,7 +521,7 @@ class ComplaintCategoryListSearchView(LoginRequiredMixin, TemplateView):
         return {
             'complaints': complaintStatistics,
             'school_changed_to_verify': school_changed_to_verify,
-            'beneficiary_changed_verify':beneficiary_changed_verify,
+            'beneficiary_changed_verify': beneficiary_changed_verify,
             'cards_duplicate':cards_duplicate,
             'total': complaintStatisticsTotal
         }
@@ -508,6 +534,7 @@ class ComplaintStatistics:
         self.Name = ''
         self.complaint_type = ''
         self.Statistics = 0
+        self.statistics_urgent = 0
 
 
 class ComplaintsGridView(LoginRequiredMixin, TemplateView):
@@ -610,31 +637,126 @@ class ComplaintsExportViewSet(LoginRequiredMixin, ListView):
     model = Complaint
 
     def get(self, request, *args, **kwargs):
+
+        CategoryID = self.request.GET.get('CategoryID', 0)
+        ComplaintType = self.request.GET.get('ComplaintType', '')
+        ComplaintSubType = self.request.GET.get('ComplaintSubType', '')
+
         queryset = self.model.objects.all()
         queryset = queryset.order_by('id')
 
         data = tablib.Dataset()
 
-        data.headers = [
-            _('ID'),
-            _('Individual ID'),
-            _('HH Rep Name'),
-            _('Other-Specify'),
-            _('Student'),
-            _('Date of Complaint'),
-            _('Phone'),
-            _('Date/Time of incident'),
-            _('Phone number from which call was placed'),
-            _('Service Requested'),
-        ]
+        headerFields = []
+
+        headerFields.append(_('ID'))
+        headerFields.append(_('ID  Case'))
+        headerFields.append(_('HH Rep Name'))
+
+        if ComplaintSubType == 'Other Card Issues':
+            headerFields.append(_('Other-Specify'))
+
+        if ComplaintType == 'School Related':
+            headerFields.append(_('Student'))
+
+        headerFields.append(_('Date of Complaint'))
+
+        if ComplaintType != 'Not Found':
+            headerFields.append(_(' Phone #'))
+
+        if ComplaintType == 'Bank':
+            headerFields.append(_(' Date/Time of incident'))
+            headerFields.append(_(' Phone number from which call was placed'))
+            headerFields.append(_('Service requested'))
+
+        if ComplaintType != 'Card':
+                headerFields.append(_('Complaint Comment'))
+
+        if ComplaintType == 'Missing Student':
+            headerFields.append(_('Student'))
+
+        if ComplaintType == 'Payment':
+            headerFields.append(_('Enumerator '))
+
+        headerFields.append(_(' Solution Comments'))
+
+        data.headers = headerFields
+
+
+        complaint_records = Complaint.objects.filter(complaint_status='rejected')
+
+        # if not self.request.user.is_superuser:
+        #     complaint_records = complaint_records.filter(complaint_adult__school__location__parent_id=self.request.user.governante_id)
+
+        complaint_records = complaint_records.filter(complaint_category=CategoryID, complaint_category__name=ComplaintSubType)
+
 
         content = []
-        for line in queryset:
+        for line in complaint_records:
             # if not line.student or not line.school:
             # continue
-            content = [
-                line.id,
-            ]
+            content = []
+
+            content.append(line.id)
+
+            if ComplaintType != 'Not Found':
+                content.append(line.complaint_adult.id_number)
+                content.append(
+                    line.complaint_adult.first_name
+                    + ' '
+                    + line.complaint_adult.father_name
+                    + ' '
+                    + line.complaint_adult.last_name
+                )
+            else:
+                content.append(line.household_not_found.id_number)
+                content.append(
+                    line.household_not_found.first_name
+                    + ' '
+                    + line.household_not_found.father_name
+                    + ' '
+                    + line.household_not_found.last_name
+                )
+
+            date_created = line.created
+            formatted_datetime_created = formats.date_format(date_created, "SHORT_DATETIME_FORMAT")
+            content.append(formatted_datetime_created)
+
+            if ComplaintSubType == 'Other Card Issues':
+                content.append(line.complaint_Other_type_specify)
+
+            if ComplaintType == 'School Related':
+                content.append(
+                    line.complaint_student_refused_entrance.first_name
+                    + ' '
+                    + line.complaint_student_refused_entrance.father_name
+                    + ' '
+                    + line.complaint_student_refused_entrance.last_name
+                )
+
+            if ComplaintType != 'Not Found':
+                content.append(line.complaint_adult.primary_phone)
+
+            if ComplaintType == 'Bank':
+                date_bank = line.complaint_bank_date_of_incident
+                formatted_datetime_bank = formats.date_format(date_bank, "SHORT_DATETIME_FORMAT")
+                content.append(formatted_datetime_bank)
+                content.append(line.complaint_bank_phone_used)
+                content.append(line.complaint_bank_service_requested)
+
+            if ComplaintType != 'Card':
+                content.append(line.complaint_note)
+
+            if ComplaintType == 'Missing Student':
+                content.append(line.missing_child.first_name
+                               + ' ' + line.missing_child.father_name
+                               + ' ' + line.missing_child.last_name)
+
+            if ComplaintType == 'Payment':
+                content.append(line.owner.first_name
+                               + ' ' + line.owner.father_name)
+
+            content.append(line.complaint_solution)
             data.append(content)
 
         file_format = base_formats.XLS()
