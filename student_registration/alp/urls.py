@@ -35,7 +35,11 @@ urlpatterns = [
         view=views.PreTestView.as_view(),
         name='alp_pre_test'
     ),
-
+    url(
+        regex=r'^alp-export-by-school/$',
+        view=views.ExportBySchoolView.as_view(),
+        name='alp_export_by_school'
+    ),
     url(
         regex=r'^data-view/$',
         view=views.OutreachStaffView.as_view(),
