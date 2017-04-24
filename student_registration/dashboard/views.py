@@ -493,7 +493,13 @@ class RegistrationsALPPreTestView(LoginRequiredMixin,
         governorates = Location.objects.exclude(parent__isnull=False)
 
         alp_round = ALPRound.objects.get(current_pre_test=True)
-        self.queryset = self.queryset.filter(alp_round=alp_round, level__isnull=False)
+        not_schools = User.objects.filter(groups__name__in=['PARTNER', 'CERD'])
+        self.queryset = self.queryset.filter(
+            alp_round=alp_round,
+            owner__in=not_schools,
+            level__isnull=False,
+            assigned_to_level__isnull=False,
+        )
 
         students_per_gov = {}
         schools_per_gov = {}
