@@ -488,10 +488,13 @@ class PreTestAdmin(OutreachAdmin):
 
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_pre_test=True)
+        not_schools = User.objects.filter(groups__name__in=['PARTNER', 'CERD'])
         qs = super(PreTestAdmin, self).get_queryset(request)
         return qs.filter(
             alp_round=alp_round,
+            owner__in=not_schools,
             level__isnull=False,
+            assigned_to_level__isnull=False,
         )
 
 
