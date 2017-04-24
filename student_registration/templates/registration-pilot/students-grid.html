@@ -7,10 +7,12 @@ width="100%">
     <thead>
         <tr>
             <th style = "display:none">>ID</th>
+            <th >HH ID #</th>
             <th >Student Name</th>
-            <th >ID</th>
+            <th >Student ID</th>
             <th >Old School</th>
             <th >New School</th>
+            <th >Phone</th>
             <th >Approve/Reject</th>
             <th >Comments</th>
         </tr>
@@ -18,10 +20,12 @@ width="100%">
     <tbody>
         {% for student in students %}
             <tr class="row-class" student-id="{{ student.id }}" >
+                <td>{{ student.registering_adult.id_number }}</td>
                 <td>{{ student.student.first_name }} {{ student.student.father_name }} {{ student.student.last_name }}</td>
                 <td>{{ student.student.id_number }}</td>
                 <td>{{ student.school.name}}</td>
                 <td>{{ student.school_changed_to_verify.name }}</td>
+                <td>{{ student.registering_adult.primary_phone }}</td>
                 <td>
 
                     <div class="switch-toggle switch-3 switch-candy" style = "width:220px">
