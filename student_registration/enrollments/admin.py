@@ -198,6 +198,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'modified',
     )
     list_filter = (
+        'education_year',
         'school__number',
         'school',
         'school__location',
