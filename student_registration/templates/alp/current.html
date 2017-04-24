@@ -177,6 +177,10 @@
                                 <i class="icon-plus-sign icon-white"></i>&nbsp;
                                     {% trans "Add defined number of lines" %}
                               </button>
+                              <button class="btn btn-success" id="load_data">
+                                <i class="icon-plus-sign icon-white"></i>&nbsp;
+                                    {% trans "Load more data" %}
+                              </button>
                         </div>
                      </div>
                 </div>
@@ -333,6 +337,25 @@
                     }else{
                         $(".loader").hide();
                     }
+                }
+            });
+
+            $(document).on('click', '#load_data', function(){
+                if(filter_on == true){
+                    return false;
+                }
+                var total_records = $('#registrations-table').find('tr.registration-line').length;
+                console.log(total_records);
+                console.log(total);
+                if(total_records < total) {
+                    offset = limit;
+                    limit = limit + 100;
+                    $('#load_more_data').hide();
+                    $(".loader").show();
+                    build_datatable();
+                    $(".loader").hide();
+                }else{
+                    $(".loader").hide();
                 }
             });
 
