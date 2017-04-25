@@ -224,7 +224,8 @@ class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
             return self.queryset
         terms = self.request.GET.get('term', 0)
         if terms:
-            qs = self.queryset
+            school = self.request.user.school_id
+            qs = self.queryset.exclude(school_from=school)
             for term in terms.split():
                 qs = qs.filter(
                     Q(student__first_name__contains=term) |
@@ -234,6 +235,16 @@ class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
                 )
             return qs
         return self.queryset
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('moved', 0):
+            enrollment = Enrollment.objects.get(id=request.POST.get('moved', 0))
+            moved = LoggingStudentMove.objects.get_or_create(
+                enrolment_id=enrollment.id,
+                student_id=enrollment.student_id,
+                school_from_id=enrollment.school_id
+            )
+        return JsonResponse({'status': status.HTTP_200_OK})
 
 
 class EnrollmentViewSet(mixins.RetrieveModelMixin,

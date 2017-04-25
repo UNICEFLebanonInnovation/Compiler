@@ -16,7 +16,7 @@ class LoggingStudentMoveSerializer(serializers.ModelSerializer):
     student_first_name = serializers.CharField(source='student.first_name', read_only=True)
     student_father_name = serializers.CharField(source='student.father_name', read_only=True)
     student_last_name = serializers.CharField(source='student.last_name', read_only=True)
-    student_full_name = serializers.CharField(source='student.full_name', read_only=True)
+    student_full_name = serializers.CharField(source='student', read_only=True)
     student_mother_fullname = serializers.CharField(source='student.mother_fullname', read_only=True)
     student_sex = serializers.CharField(source='student.sex', read_only=True)
     student_age = serializers.CharField(source='student.calc_age', read_only=True)
@@ -130,6 +130,8 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             student.save()
 
         try:
+            if 'school' in validated_data:
+                instance.school = validated_data['school']
             if 'registered_in_unhcr' in validated_data:
                 instance.registered_in_unhcr = validated_data['registered_in_unhcr']
             if 'participated_in_alp' in validated_data:
