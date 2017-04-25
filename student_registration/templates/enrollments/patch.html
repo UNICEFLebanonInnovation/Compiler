@@ -400,6 +400,18 @@
                 });
             });
 
+            $(document).on('click', '.moved-registration-row', function(){
+                var item = $(this);
+                bootbox.confirm(
+                    "{% trans 'are you sure you want to tag this student as moved?' %}" +
+                    "<br/>" +
+                    "{% trans 'this student will disappear automatically once he get registered by another school' %}", function(result) {
+                    if(result == true){
+                        moved_student(item.attr('itemscope'));
+                    }
+                });
+            });
+
             $(document).on('change', '.student_birthday', function(){
                 if($(this).val()) {
                     var option = $(this).find('option:selected');
@@ -521,8 +533,8 @@
 
             $("#search_moved_student").autocomplete( "instance" )._renderItem = function( ul, item ) {
                   return $( "<li>" )
-                    .append( "<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_age + ") "
-                                   + "<br>" + '{% trans "Current situation" %}: '+ item.school_name + " / " + item.classroom_name + " / " + item.section_name
+                    .append( "<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_sex + " - " + item.student_age + ") "
+                                   + "<br>" + '{% trans "Current situation" %}: '+ item.school_name + " - " + item.school_number + " / " + item.classroom_name + " / " + item.section_name
                                    + "</div>" )
                     .appendTo( ul );
             };
@@ -698,6 +710,27 @@
             patch_data();
         }
 
+        function moved_student(item)
+        {
+            data = {moved: item};
+
+            $.ajax({
+                type: "POST",
+                url: moved_student_path,
+                data: data,
+                cache: false,
+                async: false,
+                headers: getHeader(),
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+            });
+        }
+
         function get_registration(item)
         {
             $.ajax({
@@ -741,7 +774,7 @@
                     add_to_store(data);
                     add_fill_line_data(data);
 
-                    update_or_create_item(parseInt(item.id), 'school', item.school, 'registrations-p');
+                    update_or_create_item(parseInt(item.id), 'school', school_id, 'registrations-p');
                     update_or_create_item(parseInt(item.id), 'moved', moved_id, 'registrations-p');
                     flag_record_to_update(parseInt(item.id), 'registrations-p');
 
