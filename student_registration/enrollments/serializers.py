@@ -85,6 +85,8 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     last_informal_edu_round_id = serializers.CharField(source='last_informal_edu_round.id', read_only=True)
     last_informal_edu_final_result_id = serializers.CharField(source='last_informal_edu_final_result.id', read_only=True)
 
+    moved = serializers.CharField(read_only=True)
+
     def create(self, validated_data):
 
         student_data = validated_data.pop('student', None)
@@ -222,5 +224,6 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'last_informal_edu_level_id',
             'last_informal_edu_round_id',
             'last_informal_edu_final_result_id',
+            'moved',
         )
 

@@ -234,6 +234,7 @@ class Enrollment(TimeStampedModel):
     )
     deleted = models.BooleanField(blank=True, default=False)
     dropout_status = models.BooleanField(blank=True, default=False)
+    moved = models.BooleanField(blank=True, default=False)
 
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
