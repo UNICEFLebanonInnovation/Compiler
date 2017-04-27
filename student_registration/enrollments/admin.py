@@ -9,7 +9,7 @@ from import_export.widgets import *
 import datetime
 
 from .models import Enrollment, StudentMove, LoggingStudentMove
-from .forms import EnrollmentForm
+from .forms import EnrollmentForm, LoggingStudentMoveForm
 from student_registration.students.models import Student
 from student_registration.schools.models import (
     School,
@@ -330,12 +330,15 @@ class LoggingStudentMoveResource(resources.ModelResource):
 
 class LoggingStudentMoveAdmin(ImportExportModelAdmin):
     resource_class = LoggingStudentMoveResource
-    fields = ()
+    form = LoggingStudentMoveForm
+    fields = (
+    )
 
     list_display = (
         'student',
-        # 'enrolment__clasroom',
         'school_from',
+        'classroom',
+        'section',
         'school_to',
     )
 
@@ -347,6 +350,16 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
     search_fields = (
 
     )
+
+    def classroom(self, obj):
+        if obj.enrolment and obj.enrolment.classroom:
+            return obj.enrolment.classroom.name
+        return ''
+
+    def section(self, obj):
+        if obj.enrolment and obj.enrolment.section:
+            return obj.enrolment.section.name
+        return ''
 
 
 admin.site.register(Enrollment, EnrollmentAdmin)
