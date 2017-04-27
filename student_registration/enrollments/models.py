@@ -284,7 +284,8 @@ class StudentMove(models.Model):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Student move"
+        verbose_name = "Auto search student moves"
+        verbose_name_plural = "Auto search student moves"
 
     def __unicode__(self):
         return str(self.id)
@@ -323,6 +324,7 @@ class LoggingStudentMove(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "Student moves logs"
+        verbose_name_plural = "Student moves logs"
 
     def __unicode__(self):
         return str(self.id)
