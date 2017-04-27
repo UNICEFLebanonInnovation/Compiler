@@ -637,17 +637,22 @@ class ReEnrolledAdmin(OutreachAdmin):
     )
 
     def get_queryset(self, request):
-        result = []
+        # result = []
         qs = super(ReEnrolledAdmin, self).get_queryset(request)
+        alp_round = ALPRound.objects.filter(current_round=True)
         qs = qs.filter(
-            alp_round__isnull=False,
+            alp_round=alp_round,
             registered_in_level__isnull=False,
-        )
+        ).extra(where={
+                'alp_outreach.student_id IN (Select distinct s.id from students_student s, alp_outreach e where s.id=e.student_id group by s.id having count(*) > 1)'
+            }).distinct()
 
-        for obj in qs:
-            if obj.student.alp_enrollment.count() > 1:
-                result.append(obj.student_id)
-        return qs.filter(student_id__in=result)
+        return qs
+
+        # for obj in qs:
+        #     if obj.student.alp_enrollment.count() > 1:
+        #         result.append(obj.student_id)
+        # return qs.filter(student_id__in=result)
 
 
 admin.site.register(Outreach, OutreachAdmin)
