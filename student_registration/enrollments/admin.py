@@ -185,6 +185,8 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_informal_edu_round',
         'last_informal_edu_final_result',
         'deleted',
+        'moved',
+        'dropout_status',
     )
     list_display = (
         'student',
