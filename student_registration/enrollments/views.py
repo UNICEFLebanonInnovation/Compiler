@@ -239,7 +239,9 @@ class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
     def post(self, request, *args, **kwargs):
         if request.POST.get('moved', 0):
             enrollment = Enrollment.objects.get(id=request.POST.get('moved', 0))
-            moved = LoggingStudentMove.objects.get_or_create(
+            enrollment.moved = True
+            enrollment.save()
+            LoggingStudentMove.objects.get_or_create(
                 enrolment_id=enrollment.id,
                 student_id=enrollment.student_id,
                 school_from_id=enrollment.school_id
@@ -284,6 +286,9 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
             moved = LoggingStudentMove.objects.get(id=request.POST.get('moved', 0))
             moved.school_to_id = request.POST.get('school')
             moved.save()
+            enrollment = moved.enrolment
+            enrollment.moved = False
+            enrollment.save()
         self.serializer_class = EnrollmentSerializer
         return super(EnrollmentViewSet, self).partial_update(request)
 
