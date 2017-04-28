@@ -20,5 +20,20 @@ class OutreachForm(forms.ModelForm):
     class Meta:
         model = Outreach
         fields = '__all__'
+        exclude = (
+            'partner',
+            'location',
+            'preferred_language',
+            'last_class_level',
+            'average_distance',
+            'exam_year',
+            'exam_month',
+            'exam_day',
+            'grade',
+            'classroom',
+            'alp_year',
+            'exam_school',
+            'registered_in_school',
+        )
 
 
