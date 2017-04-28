@@ -323,6 +323,86 @@ class RegisteredInSectionFilter(admin.SimpleListFilter):
         return queryset
 
 
+class OldNewFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Old or New?'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'old_new'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('old', 'Old'),
+            ('new', 'New')
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value() and self.value() == 'new':
+            return queryset.extra(where={
+                'alp_outreach.student_id IN (Select distinct s.id from students_student s, alp_outreach e where s.id=e.student_id group by s.id having count(*) = 1)'
+        }).distinct()
+        if self.value() and self.value() == 'old':
+            return queryset.extra(where={
+                'alp_outreach.student_id IN (Select distinct s.id from students_student s, alp_outreach e where s.id=e.student_id group by s.id having count(*) > 1)'
+            }).distinct()
+        return queryset
+
+
+class PassedTestFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Passed a test'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'passed_test'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('pre', 'Pre-test'),
+            ('post', 'Post-test')
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value() and self.value() == 'pre':
+            not_schools = User.objects.filter(groups__name__in=['PARTNER', 'CERD'])
+            return queryset.filter(
+                owner__in=not_schools,
+                level__isnull=False,
+                assigned_to_level__isnull=False,
+            )
+        if self.value() and self.value() == 'post':
+            return queryset.filter(
+                registered_in_level__isnull=False,
+                refer_to_level__isnull=False
+            )
+        return queryset
+
+
 class OutreachAdmin(ImportExportModelAdmin):
     resource_class = OutreachResource
     form = OutreachForm
@@ -525,6 +605,8 @@ class CurrentRoundAdmin(OutreachAdmin):
         'school',
         'school__location',
         GovernorateFilter,
+        OldNewFilter,
+        PassedTestFilter,
         'level',
         'assigned_to_level',
         'registered_in_level',
@@ -599,60 +681,102 @@ class PostTestAdmin(OutreachAdmin):
         )
 
 
-class ReEnrolled(Outreach):
-    class Meta:
-        proxy = True
-
-
-class ReEnrolledAdmin(OutreachAdmin):
-
-    list_display = (
-        'student',
-        'student_age',
-        'student_sex',
-        'school',
-        'caza',
-        'governorate',
-        'level',
-        'total',
-        'assigned_to_level',
-        'registered_in_level',
-        'section',
-        're_enrolled',
-        'created',
-        'modified',
-    )
-    list_filter = (
-        'school',
-        'school__location',
-        GovernorateFilter,
-        'level',
-        'assigned_to_level',
-        'registered_in_level',
-        'refer_to_level',
-        'section',
-        'student__sex',
-        'created',
-        'modified',
-    )
-
-    def get_queryset(self, request):
-        # result = []
-        qs = super(ReEnrolledAdmin, self).get_queryset(request)
-        alp_round = ALPRound.objects.filter(current_round=True)
-        qs = qs.filter(
-            alp_round=alp_round,
-            registered_in_level__isnull=False,
-        ).extra(where={
-                'alp_outreach.student_id IN (Select distinct s.id from students_student s, alp_outreach e where s.id=e.student_id group by s.id having count(*) > 1)'
-            }).distinct()
-
-        return qs
-
-        # for obj in qs:
-        #     if obj.student.alp_enrollment.count() > 1:
-        #         result.append(obj.student_id)
-        # return qs.filter(student_id__in=result)
+# class ReEnrolled(Outreach):
+#     class Meta:
+#         proxy = True
+#
+#
+# class ReEnrolledAdmin(OutreachAdmin):
+#
+#     list_display = (
+#         'student',
+#         'student_age',
+#         'student_sex',
+#         'school',
+#         'caza',
+#         'governorate',
+#         'level',
+#         'total',
+#         'assigned_to_level',
+#         'registered_in_level',
+#         'section',
+#         'created',
+#         'modified',
+#     )
+#     list_filter = (
+#         'school',
+#         'school__location',
+#         GovernorateFilter,
+#         'level',
+#         'assigned_to_level',
+#         'registered_in_level',
+#         'refer_to_level',
+#         'section',
+#         'student__sex',
+#         'created',
+#         'modified',
+#     )
+#
+#     def get_queryset(self, request):
+#         qs = super(ReEnrolledAdmin, self).get_queryset(request)
+#         alp_round = ALPRound.objects.filter(current_round=True)
+#         qs = qs.filter(
+#             alp_round=alp_round,
+#             registered_in_level__isnull=False,
+#         ).extra(where={
+#                 'alp_outreach.student_id IN (Select distinct s.id from students_student s, alp_outreach e where s.id=e.student_id group by s.id having count(*) > 1)'
+#             }).distinct()
+#
+#         return qs
+#
+#
+# class NewEnrolled(Outreach):
+#     class Meta:
+#         proxy = True
+#
+#
+# class NewEnrolledAdmin(OutreachAdmin):
+#
+#     list_display = (
+#         'student',
+#         'student_age',
+#         'student_sex',
+#         'school',
+#         'caza',
+#         'governorate',
+#         'level',
+#         'total',
+#         'assigned_to_level',
+#         'registered_in_level',
+#         'section',
+#         'created',
+#         'modified',
+#     )
+#     list_filter = (
+#         'school',
+#         'school__location',
+#         GovernorateFilter,
+#         'level',
+#         'assigned_to_level',
+#         'registered_in_level',
+#         'refer_to_level',
+#         'section',
+#         'student__sex',
+#         'created',
+#         'modified',
+#     )
+#
+#     def get_queryset(self, request):
+#         qs = super(NewEnrolledAdmin, self).get_queryset(request)
+#         alp_round = ALPRound.objects.filter(current_round=True)
+#         qs = qs.filter(
+#             alp_round=alp_round,
+#             registered_in_level__isnull=False,
+#         ).extra(where={
+#                 'alp_outreach.student_id IN (Select distinct s.id from students_student s, alp_outreach e where s.id=e.student_id group by s.id having count(*) = 1)'
+#         }).distinct()
+#
+#         return qs
 
 
 admin.site.register(Outreach, OutreachAdmin)
@@ -660,5 +784,6 @@ admin.site.register(CurrentOutreach, CurrentOutreachAdmin)
 admin.site.register(PreTest, PreTestAdmin)
 admin.site.register(CurrentRound, CurrentRoundAdmin)
 admin.site.register(PostTest, PostTestAdmin)
-admin.site.register(ReEnrolled, ReEnrolledAdmin)
+# admin.site.register(ReEnrolled, ReEnrolledAdmin)
+# admin.site.register(NewEnrolled, NewEnrolledAdmin)
 admin.site.register(ALPRound)
