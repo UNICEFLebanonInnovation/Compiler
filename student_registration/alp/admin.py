@@ -361,6 +361,54 @@ class OldNewFilter(admin.SimpleListFilter):
         return queryset
 
 
+class ReferredToFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Referred to'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'referred_to'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('alp', 'ALP'),
+            ('alp1', 'Passed ALP level'),
+            ('alp2', 'Repeat ALP level'),
+            ('formal', 'Formal')
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value() and self.value() == 'alp':
+            return queryset.filter(
+                refer_to_level_id__in=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+            )
+        if self.value() and self.value() == 'alp1':
+            return queryset.filter(
+                refer_to_level_id__in=[2, 3, 4, 5, 6, 7, 8, 9]
+            )
+        if self.value() and self.value() == 'alp2':
+            return queryset.filter(
+                refer_to_level_id__in=[18, 19, 20, 21, 22, 23, 24, 25, 26]
+            )
+        if self.value() and self.value() == 'formal':
+            return queryset.filter(
+                refer_to_level_id__in=[1, 10, 11, 12, 13, 14, 15, 16, 17]
+            )
+        return queryset
+
+
 class PassedTestFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
@@ -607,6 +655,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         GovernorateFilter,
         OldNewFilter,
         PassedTestFilter,
+        ReferredToFilter,
         'level',
         'assigned_to_level',
         'registered_in_level',
