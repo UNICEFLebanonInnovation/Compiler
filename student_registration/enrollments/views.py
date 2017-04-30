@@ -224,8 +224,7 @@ class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
             return self.queryset
         terms = self.request.GET.get('term', 0)
         if terms:
-            school = self.request.user.school_id
-            qs = self.queryset.exclude(school_from=school)
+            qs = self.queryset
             for term in terms.split():
                 qs = qs.filter(
                     Q(student__first_name__contains=term) |
