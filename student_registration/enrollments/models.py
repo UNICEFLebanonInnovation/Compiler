@@ -291,7 +291,7 @@ class StudentMove(models.Model):
         return str(self.id)
 
 
-class LoggingStudentMove(models.Model):
+class LoggingStudentMove(TimeStampedModel):
 
     student = models.ForeignKey(
         Student,
