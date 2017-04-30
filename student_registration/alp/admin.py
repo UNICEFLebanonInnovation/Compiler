@@ -666,7 +666,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         'modified',
     )
 
-    actions = ('push_attendances',)
+    # actions = ('push_attendances',)
 
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_round=True)
@@ -676,10 +676,10 @@ class CurrentRoundAdmin(OutreachAdmin):
             registered_in_level__isnull=False,
         )
 
-    def push_attendances(self, request, queryset):
-        if 'school__id__exact' in request.GET:
-            school = School.objects.get(id=request.GET['school__id__exact'])
-            set_app_attendances.delay(school_number=school.number, school_type='alp')
+    # def push_attendances(self, request, queryset):
+    #     if 'school__id__exact' in request.GET:
+    #         school = School.objects.get(id=request.GET['school__id__exact'])
+    #         set_app_attendances.delay(school_number=school.number, school_type='alp')
 
 
 class PostTest(Outreach):
