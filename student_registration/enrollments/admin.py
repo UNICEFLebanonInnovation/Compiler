@@ -335,11 +335,13 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
     )
 
     list_display = (
+        'registered',
         'student',
         'school_from',
         'classroom',
         'section',
         'school_to',
+        'registered_in_new_school',
     )
 
     list_filter = (
@@ -350,6 +352,16 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
     search_fields = (
 
     )
+
+    def registered(self, obj):
+        if obj.enrolment:
+            return str(obj.enrolment.created)
+        return ''
+
+    def registered_in_new_school(self, obj):
+        if obj.school_to:
+            return str(obj.modified)
+        return ''
 
     def classroom(self, obj):
         if obj.enrolment and obj.enrolment.classroom:
