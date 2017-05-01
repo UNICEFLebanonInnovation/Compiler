@@ -48,6 +48,7 @@ class OutreachResource(resources.ModelResource):
         fields = (
             'id',
             'student__id',
+            'student__id_type',
             'student__id_number',
             'student__number',
             'student__first_name',
@@ -60,6 +61,9 @@ class OutreachResource(resources.ModelResource):
             'student_age',
             'student__sex',
             'student__nationality__name',
+            'student__phone_prefix',
+            'student__phone',
+            'student__address',
             'governorate',
             'district',
             'school__number',
