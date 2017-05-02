@@ -639,7 +639,9 @@ class CurrentRoundAdmin(OutreachAdmin):
 
     list_display = (
         'student',
+        'student_mother_fullname',
         'student_age',
+        'student_birthday',
         'student_sex',
         'school',
         'caza',
@@ -650,6 +652,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         'registered_in_level',
         're_enrolled',
         'section',
+        'owner',
         'created',
         'modified',
     )
@@ -669,6 +672,16 @@ class CurrentRoundAdmin(OutreachAdmin):
         'created',
         'modified',
     )
+
+    def student_mother_fullname(self, obj):
+        if obj.student:
+            return obj.student.mother_fullname
+        return ''
+
+    def student_birthday(self, obj):
+        if obj.student:
+            return obj.student.birthday
+        return ''
 
     # actions = ('push_attendances',)
 
