@@ -119,6 +119,10 @@ class EnrollmentSerializer(serializers.ModelSerializer):
                 instance.last_education_level = validated_data['last_education_level']
             if 'last_education_year' in validated_data:
                 instance.last_education_year = validated_data['last_education_year']
+            if 'exam_grade' in validated_data:
+                instance.exam_grade = validated_data['exam_grade']
+            if 'exam_result' in validated_data:
+                instance.exam_result = validated_data['exam_result']
 
             instance.save()
 
@@ -183,5 +187,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'last_informal_edu_level_id',
             'last_informal_edu_round_id',
             'last_informal_edu_final_result_id',
+            'exam_grade',
+            'exam_result',
         )
 

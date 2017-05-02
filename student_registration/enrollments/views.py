@@ -279,6 +279,8 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             _('School shift'),
             _('School'),
             _('Last education level'),
+            _('Result'),
+            _('Grade'),
             _('Current Section'),
             _('Current Class'),
             _('Phone prefix'),
@@ -319,6 +321,9 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 _(line.last_school_shift) if line.last_school_shift else '',
                 _(line.last_school_type) if line.last_school_type else '',
                 line.last_education_level.name if line.last_education_level else '',
+
+                _(line.exam_result) if line.exam_result else '',
+                line.exam_grade,
 
                 line.section.name if line.section else '',
                 line.classroom.name if line.classroom else '',
