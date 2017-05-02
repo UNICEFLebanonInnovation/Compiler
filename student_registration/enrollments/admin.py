@@ -37,6 +37,7 @@ class EnrollmentResource(resources.ModelResource):
         fields = (
             'id',
             'student__id',
+            'student__id_type',
             'student__id_number',
             'student__number',
             'student__first_name',
@@ -48,6 +49,10 @@ class EnrollmentResource(resources.ModelResource):
             'student__birthday_day',
             'student_age',
             'student__sex',
+            'student__nationality__name',
+            'student__phone_prefix',
+            'student__phone',
+            'student__address',
             'governorate',
             'district',
             'school__number',
@@ -235,7 +240,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'owner__username',
     )
 
-    actions = ('push_attendances',)
+    # actions = ('push_attendances',)
 
     def get_queryset(self, request):
         qs = super(EnrollmentAdmin, self).get_queryset(request)
@@ -251,10 +256,10 @@ class EnrollmentAdmin(ImportExportModelAdmin):
             return obj.school.location.parent.name
         return ''
 
-    def push_attendances(self, request, queryset):
-        if 'school__id__exact' in request.GET:
-            school = School.objects.get(id=request.GET['school__id__exact'])
-            set_app_attendances.delay(school_number=school.number)
+    # def push_attendances(self, request, queryset):
+    #     if 'school__id__exact' in request.GET:
+    #         school = School.objects.get(id=request.GET['school__id__exact'])
+    #         set_app_attendances.delay(school_number=school.number)
 
 
 class Dropout(Enrollment):
