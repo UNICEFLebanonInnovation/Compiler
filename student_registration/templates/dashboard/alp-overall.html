@@ -58,7 +58,7 @@
                         <thead>
                             <tr>
                                 <th rowspan="2"></th>
-                                <th rowspan="2">ALP 2016 Round 3</th>
+                                <th rowspan="2">ALP round: {{ alp_round.name }}</th>
                                 <th colspan="2">Male</th>
                                 <th colspan="2">Female</th>
                                 <th colspan="2">Total</th>
@@ -101,6 +101,26 @@
                                 <td>{{ enrolled_females }}</td>
                                 <td>{{ enrolled_females|percentage:enrolled }}</td>
                                 <td>{{ enrolled }}</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>Children re-enrolled</td>
+                                <td>{{ old_enrolled_males }}</td>
+                                <td>{{ old_enrolled_males|percentage:old_enrolled }}</td>
+                                <td>{{ old_enrolled_females }}</td>
+                                <td>{{ old_enrolled_females|percentage:old_enrolled }}</td>
+                                <td>{{ old_enrolled }}</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>Children new enrolled</td>
+                                <td>{{ new_enrolled_males }}</td>
+                                <td>{{ new_enrolled_males|percentage:new_enrolled }}</td>
+                                <td>{{ new_enrolled_females }}</td>
+                                <td>{{ new_enrolled_females|percentage:new_enrolled }}</td>
+                                <td>{{ new_enrolled }}</td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
