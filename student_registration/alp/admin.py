@@ -48,6 +48,7 @@ class OutreachResource(resources.ModelResource):
         fields = (
             'id',
             'student__id',
+            'student__id_type',
             'student__id_number',
             'student__number',
             'student__first_name',
@@ -60,6 +61,9 @@ class OutreachResource(resources.ModelResource):
             'student_age',
             'student__sex',
             'student__nationality__name',
+            'student__phone_prefix',
+            'student__phone',
+            'student__address',
             'governorate',
             'district',
             'school__number',
@@ -666,7 +670,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         'modified',
     )
 
-    actions = ('push_attendances',)
+    # actions = ('push_attendances',)
 
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_round=True)
@@ -676,10 +680,10 @@ class CurrentRoundAdmin(OutreachAdmin):
             registered_in_level__isnull=False,
         )
 
-    def push_attendances(self, request, queryset):
-        if 'school__id__exact' in request.GET:
-            school = School.objects.get(id=request.GET['school__id__exact'])
-            set_app_attendances.delay(school_number=school.number, school_type='alp')
+    # def push_attendances(self, request, queryset):
+    #     if 'school__id__exact' in request.GET:
+    #         school = School.objects.get(id=request.GET['school__id__exact'])
+    #         set_app_attendances.delay(school_number=school.number, school_type='alp')
 
 
 class PostTest(Outreach):
