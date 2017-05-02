@@ -394,6 +394,8 @@ class ReferredToFilter(admin.SimpleListFilter):
         provided in the query string and retrievable via
         `self.value()`.
         """
+        post_test_round = ALPRound.objects.get(current_post_test=True)
+        queryset = queryset.filter(alp_round=post_test_round)
         if self.value() and self.value() == 'alp':
             return queryset.filter(
                 refer_to_level_id__in=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
@@ -441,14 +443,18 @@ class PassedTestFilter(admin.SimpleListFilter):
         `self.value()`.
         """
         if self.value() and self.value() == 'pre':
+            pre_test_round = ALPRound.objects.get(current_pre_test=True)
             not_schools = User.objects.filter(groups__name__in=['PARTNER', 'CERD'])
             return queryset.filter(
+                alp_round=pre_test_round,
                 owner__in=not_schools,
                 level__isnull=False,
                 assigned_to_level__isnull=False,
             )
         if self.value() and self.value() == 'post':
+            post_test_round = ALPRound.objects.get(current_post_test=True)
             return queryset.filter(
+                alp_round=post_test_round,
                 registered_in_level__isnull=False,
                 refer_to_level__isnull=False
             )
@@ -639,7 +645,9 @@ class CurrentRoundAdmin(OutreachAdmin):
 
     list_display = (
         'student',
+        'student_mother_fullname',
         'student_age',
+        'student_birthday',
         'student_sex',
         'school',
         'caza',
@@ -650,6 +658,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         'registered_in_level',
         're_enrolled',
         'section',
+        'owner',
         'created',
         'modified',
     )
@@ -669,6 +678,16 @@ class CurrentRoundAdmin(OutreachAdmin):
         'created',
         'modified',
     )
+
+    def student_mother_fullname(self, obj):
+        if obj.student:
+            return obj.student.mother_fullname
+        return ''
+
+    def student_birthday(self, obj):
+        if obj.student:
+            return obj.student.birthday
+        return ''
 
     # actions = ('push_attendances',)
 
