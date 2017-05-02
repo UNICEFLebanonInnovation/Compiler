@@ -149,6 +149,18 @@
             </select>
         </td>
         <td>
+            <input type="text" name="exam_grade" id="exam_grade" class="registration-field registration-field-p"
+                   placeholder="{% trans "Exam Grade" %}" itemscope="$$itemscope_id$$" maxlength="2" size="10" />
+        </td>
+        <td>
+            <select name="exam_result" id="exam_result" class="registration-field registration-field-p" itemscope="$$itemscope_id$$">
+                <option value="">{% trans "Exam Result" %}</option>
+                {% for key, item in education_results %}
+                    <option value="{{ key }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
             <select name="last_education_level" id="last_education_level" class="registration-field registration-field-p" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "Last education level" %}</option>
                 {% for item in education_levels %}
