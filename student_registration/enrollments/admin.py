@@ -37,6 +37,7 @@ class EnrollmentResource(resources.ModelResource):
         fields = (
             'id',
             'student__id',
+            'student__id_type',
             'student__id_number',
             'student__number',
             'student__first_name',
@@ -48,6 +49,10 @@ class EnrollmentResource(resources.ModelResource):
             'student__birthday_day',
             'student_age',
             'student__sex',
+            'student__nationality__name',
+            'student__phone_prefix',
+            'student__phone',
+            'student__address',
             'governorate',
             'district',
             'school__number',
