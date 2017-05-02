@@ -215,7 +215,7 @@ class SchoolFilter(admin.SimpleListFilter):
         human-readable name for the option that will appear
         in the right sidebar.
         """
-        return ((l.id, l.name) for l in School.objects.filter())
+        return ((l.id, l) for l in School.objects.filter())
 
     def queryset(self, request, queryset):
         """
