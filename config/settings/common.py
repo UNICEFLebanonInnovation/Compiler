@@ -278,7 +278,11 @@ AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 INSTALLED_APPS += ('student_registration.taskapp.celery.CeleryConfig', 'django.contrib.humanize',)
 # if you are not using the django database broker (e.g. rabbitmq, redis, memcached), you can remove the next line.
 # INSTALLED_APPS += ('kombu.transport.django',)
-BROKER_URL = env('CELERY_BROKER_URL', default='django://')
+CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='django://')
+if CELERY_BROKER_URL == 'django://':
+    CELERY_RESULT_BACKEND = 'redis://'
+else:
+    CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
 COUCHBASE_URL = env('COUCHBASE_URL', default='NO_URL')
 COUCHBASE_USER = env('COUCHBASE_USER', default='NO_USER')
