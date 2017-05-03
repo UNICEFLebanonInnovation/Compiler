@@ -41,7 +41,13 @@
          <div class="col-md-8 col-sm-6 col-xs-12">
             <div class="x_panel">
               <div class="x_title">
-                <h2>{% trans 'ALP overall' %}</h2>
+                <h2>{% trans 'ALP overall' %}
+                    <select name="alp_round" id="alp_round">
+                        {% for round in alp_rounds %}
+                            <option value="{{ round.id }}" {% if round.id == alp_round.id %}selected="selected"{% endif %}>{{ round }}</option>
+                        {% endfor %}
+                    </select>
+                </h2>
                 <ul class="nav navbar-right panel_toolbox">
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
                 </ul>
@@ -57,7 +63,6 @@
                            width="100%">
                         <thead>
                             <tr>
-                                <th rowspan="2"></th>
                                 <th rowspan="2">ALP round: {{ alp_round.name }}</th>
                                 <th colspan="2">Male</th>
                                 <th colspan="2">Female</th>
@@ -74,7 +79,6 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>1</td>
                                 <td>Children outreached</td>
                                 <td>{{ outreached_males }}</td>
                                 <td>{{ outreached_males|percentage:outreached }}</td>
@@ -84,7 +88,6 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td>2</td>
                                 <td>Children who sat for placement test</td>
                                 <td>{{ pretested_males }}</td>
                                 <td>{{ pretested_males|percentage:pretested }}</td>
@@ -94,7 +97,6 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td>3</td>
                                 <td>Children enrolled</td>
                                 <td>{{ enrolled_males }}</td>
                                 <td>{{ enrolled_males|percentage:enrolled }}</td>
@@ -104,7 +106,6 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td></td>
                                 <td>Children re-enrolled</td>
                                 <td>{{ old_enrolled_males }}</td>
                                 <td>{{ old_enrolled_males|percentage:old_enrolled }}</td>
@@ -114,8 +115,7 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td></td>
-                                <td>Children new enrolled</td>
+                                <td>Children enrolled for the first time</td>
                                 <td>{{ new_enrolled_males }}</td>
                                 <td>{{ new_enrolled_males|percentage:new_enrolled }}</td>
                                 <td>{{ new_enrolled_females }}</td>
@@ -124,7 +124,15 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>Children enrolled for the first time with pre-test</td>
+                                <td>{{ new_enrolled_test_males }}</td>
+                                <td>{{ new_enrolled_test_males|percentage:new_enrolled_test }}</td>
+                                <td>{{ new_enrolled_test_females }}</td>
+                                <td>{{ new_enrolled_test_females|percentage:new_enrolled_test }}</td>
+                                <td>{{ new_enrolled_test }}</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
                                 <td><strong>Post test results</strong></td>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
@@ -134,7 +142,6 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td>4</td>
                                 <td>Children who sat for post test</td>
                                 <td>{{ posttested_males }}</td>
                                 <td>{{ posttested_males|percentage:posttested }}</td>
@@ -144,7 +151,6 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td>5</td>
                                 <td>Children who passed ALP level</td>
                                 <td>{{ passed_level_males }}</td>
                                 <td>{{ passed_level_males|percentage:passed_level }}</td>
@@ -154,7 +160,6 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td>6</td>
                                 <td>Children referred to ALP following level</td>
                                 <td>{{ referred_to_following_males }}</td>
                                 <td>{{ referred_to_following_males|percentage:referred_to_following }}</td>
@@ -164,7 +169,6 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td>7</td>
                                 <td>Children repeat ALP level</td>
                                 <td>{{ repeated_level_males }}</td>
                                 <td>{{ repeated_level_males|percentage:repeated_level }}</td>
@@ -174,33 +178,12 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td>8</td>
                                 <td>Children referred to formal</td>
                                 <td>{{ referred_to_formal_males }}</td>
                                 <td>{{ referred_to_formal_males|percentage:referred_to_formal }}</td>
                                 <td>{{ referred_to_formal_females }}</td>
                                 <td>{{ referred_to_formal_females|percentage:referred_to_formal }}</td>
                                 <td>{{ referred_to_formal }}</td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>9</td>
-                                <td>Total number of public schools</td>
-                                <td>1283</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>10</td>
-                                <td>Total number of ALP public schools </td>
-                                <td>40</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
                                 <td>&nbsp;</td>
                             </tr>
                         </tbody>
@@ -220,7 +203,21 @@
     <script type="text/javascript" src="{% static 'js/echarts/dist/echarts.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/custom.min.js' %}"></script>
 
-    <script>
+    <script type="text/javascript">
+
+    var protocol = 'http://';
+    {% if request.is_secure %}
+        protocol = 'https://';
+    {% endif %}
+
+    var host = protocol+'{{ request.get_host }}';
+    var path = host + '{% url 'dashboard:alp-overall' %}';
+
+    $(document).ready(function(){
+        $(document).on('change', '#alp_round', function () {
+            window.location = path + '?alp_round='+$(this).val();
+        });
+    });
 
      var theme = {
           color: [
