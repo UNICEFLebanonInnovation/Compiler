@@ -203,6 +203,8 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'governorate',
         'classroom',
         'section',
+        'exam_grade',
+        'exam_result',
         'created',
         'modified',
     )
