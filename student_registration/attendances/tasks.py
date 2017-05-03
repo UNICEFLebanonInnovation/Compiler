@@ -143,6 +143,9 @@ def set_app_attendances(school_number=None, school_type=None):
 
         # build dictionary of currently enrolled students for this school, class, section
         total_enrolled = enrollment_model.objects.filter(**reg)
+        if school_type == 'alp':
+            total_enrolled = total_enrolled.filter(alp_round=alp_round)
+
         logger.info('{} students in class {}'.format(total_enrolled.count(), doc_id))
         for enrolled in total_enrolled:
             student = {
