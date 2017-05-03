@@ -329,8 +329,15 @@ class RegistrationsALPOverallView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
 
-        alp_round = ALPRound.objects.get(current_round=True)
-        post_test_round = ALPRound.objects.get(current_post_test=True)
+        round_id = self.request.GET.get('alp_round', 0)
+        if round_id:
+            alp_round = ALPRound.objects.get(id=round_id)
+            post_test_round = alp_round
+        else:
+            alp_round = ALPRound.objects.get(current_round=True)
+            post_test_round = ALPRound.objects.get(current_post_test=True)
+
+        alp_rounds = ALPRound.objects.all()
         enrolled = self.queryset.filter(registered_in_level__isnull=False, alp_round=alp_round)
 
         partners = User.objects.filter(groups__name__in=['PARTNER'])
@@ -388,6 +395,15 @@ class RegistrationsALPOverallView(LoginRequiredMixin,
                 'alp_outreach.student_id IN (Select distinct s.id from students_student s, alp_outreach e where s.id=e.student_id group by s.id having count(*) = 1)'
         }).distinct()
 
+        new_enrolled_test = self.queryset.filter(
+            alp_round=alp_round,
+            owner__in=not_schools,
+            level__isnull=False,
+            assigned_to_level__isnull=False,
+        ).extra(where={
+                'alp_outreach.student_id IN (Select distinct s.id from students_student s, alp_outreach e where s.id=e.student_id group by s.id having count(*) = 1)'
+        }).distinct()
+
         return {
                 'enrolled': enrolled.count(),
                 'enrolled_males': enrolled.filter(student__sex='Male').count(),
@@ -419,7 +435,11 @@ class RegistrationsALPOverallView(LoginRequiredMixin,
                 'new_enrolled': new_enrolled.count(),
                 'new_enrolled_males': new_enrolled.filter(student__sex='Male').count(),
                 'new_enrolled_females': new_enrolled.filter(student__sex='Female').count(),
+                'new_enrolled_test': new_enrolled_test.count(),
+                'new_enrolled_test_males': new_enrolled_test.filter(student__sex='Male').count(),
+                'new_enrolled_test_females': new_enrolled_test.filter(student__sex='Female').count(),
                 'alp_round': alp_round,
+                'alp_rounds': alp_rounds,
         }
 
 
