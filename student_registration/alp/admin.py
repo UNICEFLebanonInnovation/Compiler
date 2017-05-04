@@ -230,6 +230,35 @@ class PostTestTotalFilter(admin.SimpleListFilter):
         return queryset
 
 
+class OwnerFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'owner'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'owner'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l.id, l.username) for l in User.objects.filter(groups__name__in=['PARTNER', 'SCHOOL', 'DIRECTOR', 'ALP_SCHOOL', 'ALP_DIRECTOR', 'CERD']))
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(owner_id=self.value())
+        return queryset
+
+
 class GovernorateFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
@@ -479,6 +508,7 @@ class OutreachAdmin(ImportExportModelAdmin):
         'section',
         'not_enrolled_in_this_school',
         're_enrolled',
+        'owner',
         'created',
         'modified',
     )
@@ -496,6 +526,7 @@ class OutreachAdmin(ImportExportModelAdmin):
         'not_enrolled_in_this_school',
         RegisteredInLevelFilter,
         RegisteredInSectionFilter,
+        OwnerFilter,
         'created',
         'modified',
     )
@@ -564,6 +595,7 @@ class CurrentOutreachAdmin(OutreachAdmin):
         'student_age',
         'student_sex',
         'student_nationality',
+        'owner',
         'created',
         'modified',
     )
@@ -574,6 +606,7 @@ class CurrentOutreachAdmin(OutreachAdmin):
         GovernorateFilter,
         'student__sex',
         'student__nationality',
+        OwnerFilter,
         'created',
         'modified',
     )
@@ -605,6 +638,7 @@ class PreTestAdmin(OutreachAdmin):
         'level',
         'total',
         'assigned_to_level',
+        'owner',
         'created',
         'modified',
     )
@@ -620,6 +654,7 @@ class PreTestAdmin(OutreachAdmin):
         'exam_corrector_math',
         'exam_corrector_science',
         PreTestTotalFilter,
+        OwnerFilter,
         'created',
         'modified',
     )
@@ -675,6 +710,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         'refer_to_level',
         'section',
         'student__sex',
+        OwnerFilter,
         'created',
         'modified',
     )
@@ -691,11 +727,13 @@ class CurrentRoundAdmin(OutreachAdmin):
 
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_round=True)
+        print alp_round
         qs = super(CurrentRoundAdmin, self).get_queryset(request)
-        return qs.filter(
-            alp_round=alp_round,
-            registered_in_level__isnull=False,
-        )
+        return qs
+        # return qs.filter(
+        #     alp_round=alp_round,
+        #     registered_in_level__isnull=False,
+        # )
 
 
 class PostTest(Outreach):
@@ -717,6 +755,7 @@ class PostTestAdmin(OutreachAdmin):
         # 'refer_to_level',
         'referred_to',
         'section',
+        'owner',
         'created',
         'modified',
     )
@@ -733,6 +772,7 @@ class PostTestAdmin(OutreachAdmin):
         'post_exam_corrector_math',
         'post_exam_corrector_science',
         PostTestTotalFilter,
+        OwnerFilter,
         'created',
         'modified',
     )
@@ -767,6 +807,4 @@ admin.site.register(CurrentOutreach, CurrentOutreachAdmin)
 admin.site.register(PreTest, PreTestAdmin)
 admin.site.register(CurrentRound, CurrentRoundAdmin)
 admin.site.register(PostTest, PostTestAdmin)
-# admin.site.register(ReEnrolled, ReEnrolledAdmin)
-# admin.site.register(NewEnrolled, NewEnrolledAdmin)
 admin.site.register(ALPRound)
