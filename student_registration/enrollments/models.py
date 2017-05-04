@@ -229,6 +229,19 @@ class Enrollment(TimeStampedModel):
     deleted = models.BooleanField(blank=True, default=False)
     dropout_status = models.BooleanField(blank=True, default=False)
 
+    exam_grade = models.FloatField(
+        blank=True,
+        null=True,
+        default=0,
+    )
+
+    exam_result = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=RESULT
+    )
+
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
 
