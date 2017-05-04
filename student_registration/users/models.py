@@ -63,6 +63,6 @@ class User(AbstractUser):
         """
         if self.pk is None:
             self.set_password(self.password)
-        elif "pbkdf2_sha256$24000$" not in self.password:
+        elif self.password and not self.password.startswith("pbkdf2_"):
             self.set_password(self.password)
         super(AbstractUser, self).save(**kwargs)
