@@ -132,13 +132,22 @@ class SchoolAdmin(ImportExportModelAdmin):
         'location',
     )
 
-    actions = ('push_attendances_2ndshift', 'push_attendances_alp',)
+    actions = ('push_attendances_2ndshift', 'push_attendances_2ndshift_delay',
+               'push_attendances_alp', 'push_attendances_alp_delay',)
 
     def push_attendances_2ndshift(self, request, queryset):
+        for school in queryset:
+            set_app_attendances(school_number=school.number)
+
+    def push_attendances_2ndshift_delay(self, request, queryset):
         for school in queryset:
             set_app_attendances.delay(school_number=school.number)
 
     def push_attendances_alp(self, request, queryset):
+        for school in queryset:
+            set_app_attendances(school_number=school.number, school_type='alp')
+
+    def push_attendances_alp_delay(self, request, queryset):
         for school in queryset:
             set_app_attendances.delay(school_number=school.number, school_type='alp')
 
