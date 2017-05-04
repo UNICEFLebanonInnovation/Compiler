@@ -98,6 +98,7 @@ def set_app_attendances(school_number=None, school_type=None):
     from student_registration.schools.models import School, ClassRoom, Section, EducationLevel
 
     docs = []
+    unified_docs = []
     enrollment_model = Outreach if school_type == 'alp' else Enrollment
 
     registrations = enrollment_model.objects.all()
@@ -142,6 +143,9 @@ def set_app_attendances(school_number=None, school_type=None):
 
         # build dictionary of currently enrolled students for this school, class, section
         total_enrolled = enrollment_model.objects.filter(**reg)
+        if school_type == 'alp':
+            total_enrolled = total_enrolled.filter(alp_round=alp_round)
+
         logger.info('{} students in class {}'.format(total_enrolled.count(), doc_id))
         for enrolled in total_enrolled:
             student = {
@@ -151,6 +155,11 @@ def set_app_attendances(school_number=None, school_type=None):
                 "status": enrolled.student.status
             }
             students.append(student)
+
+        if doc_id in unified_docs:
+            continue
+        else:
+            unified_docs.append(doc_id)
 
         # combine into a single doc representing students and attendance for a single school, class, section
         doc = {
@@ -181,6 +190,7 @@ def set_app_attendances(school_number=None, school_type=None):
     response = set_docs(docs)
     logger.info(response)
 
+    school = School.objects.get(number=school_number)
     log = AttendanceSyncLog.objects.create(
         school_id=school.id,
         school_type=school_type if school_type else '2nd shift',
