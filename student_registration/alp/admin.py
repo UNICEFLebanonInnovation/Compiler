@@ -729,11 +729,10 @@ class CurrentRoundAdmin(OutreachAdmin):
         alp_round = ALPRound.objects.filter(current_round=True)
         print alp_round
         qs = super(CurrentRoundAdmin, self).get_queryset(request)
-        return qs
-        # return qs.filter(
-        #     alp_round=alp_round,
-        #     registered_in_level__isnull=False,
-        # )
+        return qs.filter(
+            alp_round=alp_round,
+            registered_in_level__isnull=False,
+        )
 
 
 class PostTest(Outreach):
