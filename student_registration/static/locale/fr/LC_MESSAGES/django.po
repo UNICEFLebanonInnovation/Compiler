@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-23 14:53+0300\n"
+"POT-Creation-Date: 2017-04-19 15:35+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,1225 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: student_registration/alp/models.py:56
+#: student_registration/enrollments/models.py:56
+#: student_registration/registrations/models.py:425
+msgid "Graduated"
+msgstr ""
+
+#: student_registration/alp/models.py:57
+#: student_registration/enrollments/models.py:57
+#: student_registration/registrations/models.py:426
+msgid "Failed"
+msgstr ""
+
+#: student_registration/alp/models.py:61
+#: student_registration/enrollments/models.py:61
+#: student_registration/registrations/forms.py:19
+#: student_registration/registrations/models.py:430
+#: student_registration/students/forms.py:15
+#: student_registration/templates/alp/list.html:154
+#: student_registration/templates/alp/list.html:162
+#: student_registration/templates/alp/prototype-view.html:179
+#: student_registration/templates/alp/prototype-view.html:187
+#: student_registration/templates/alp/prototype-view_new.html:181
+#: student_registration/templates/alp/prototype-view_new.html:189
+#: student_registration/templates/alp/prototype.html:123
+#: student_registration/templates/alp/prototype.html:172
+#: student_registration/templates/alp/prototype_current.html:126
+#: student_registration/templates/alp/prototype_current.html:175
+#: student_registration/templates/alp/prototype_new.html:208
+#: student_registration/templates/alp/prototype_new.html:252
+#: student_registration/templates/enrollments/list.html:124
+#: student_registration/templates/enrollments/list.html:136
+#: student_registration/templates/enrollments/prototype.html:108
+#: student_registration/templates/enrollments/prototype.html:200
+#: student_registration/templates/enrollments/prototype_patch.html:108
+#: student_registration/templates/enrollments/prototype_patch.html:200
+#: student_registration/templates/hhvisit/child-visit-information.html:16
+#: student_registration/templates/hhvisit/child-visit-information.html:21
+#: student_registration/templates/registration-pilot/add_child.html:64
+#: student_registration/templates/registration-pilot/add_child.html:74
+#: student_registration/templates/registration-pilot/add_child.html:118
+#: student_registration/templates/registration-pilot/add_child.html:128
+#: student_registration/templates/registration-pilot/class-assignment.html:141
+#: student_registration/templates/registration-pilot/list_school_modification.html:133
+#: student_registration/templates/registration-pilot/registration-update.html:232
+#: student_registration/templates/registration-pilot/registry.html:117
+#: student_registration/templates/registration-pilot/registry.html:227
+#: student_registration/templates/registration-pilot/registry.html:237
+#: student_registration/templates/registration-pilot/registry.html:247
+#: student_registration/templates/registrations/list.html:116
+#: student_registration/templates/registrations/list.html:127
+#: student_registration/templates/registrations/prototype.html:106
+#: student_registration/templates/registrations/prototype.html:170
+msgid "Yes"
+msgstr ""
+
+#: student_registration/alp/models.py:62
+#: student_registration/enrollments/models.py:48
+#: student_registration/enrollments/models.py:62
+#: student_registration/registrations/forms.py:19
+#: student_registration/registrations/models.py:417
+#: student_registration/registrations/models.py:431
+#: student_registration/students/forms.py:15
+#: student_registration/templates/alp/list.html:154
+#: student_registration/templates/alp/list.html:162
+#: student_registration/templates/alp/prototype-view.html:179
+#: student_registration/templates/alp/prototype-view.html:187
+#: student_registration/templates/alp/prototype-view_new.html:181
+#: student_registration/templates/alp/prototype-view_new.html:189
+#: student_registration/templates/alp/prototype.html:124
+#: student_registration/templates/alp/prototype.html:173
+#: student_registration/templates/alp/prototype_current.html:127
+#: student_registration/templates/alp/prototype_current.html:176
+#: student_registration/templates/alp/prototype_new.html:209
+#: student_registration/templates/alp/prototype_new.html:253
+#: student_registration/templates/enrollments/list.html:124
+#: student_registration/templates/enrollments/list.html:136
+#: student_registration/templates/enrollments/prototype.html:109
+#: student_registration/templates/enrollments/prototype.html:201
+#: student_registration/templates/enrollments/prototype_patch.html:109
+#: student_registration/templates/enrollments/prototype_patch.html:201
+#: student_registration/templates/hhvisit/child-visit-information.html:17
+#: student_registration/templates/hhvisit/child-visit-information.html:22
+#: student_registration/templates/registration-pilot/add_child.html:65
+#: student_registration/templates/registration-pilot/add_child.html:75
+#: student_registration/templates/registration-pilot/add_child.html:119
+#: student_registration/templates/registration-pilot/add_child.html:129
+#: student_registration/templates/registration-pilot/class-assignment.html:142
+#: student_registration/templates/registration-pilot/list_school_modification.html:134
+#: student_registration/templates/registration-pilot/registration-update.html:233
+#: student_registration/templates/registration-pilot/registry.html:118
+#: student_registration/templates/registration-pilot/registry.html:228
+#: student_registration/templates/registration-pilot/registry.html:238
+#: student_registration/templates/registration-pilot/registry.html:248
+#: student_registration/templates/registrations/list.html:116
+#: student_registration/templates/registrations/list.html:127
+#: student_registration/templates/registrations/prototype.html:107
+#: student_registration/templates/registrations/prototype.html:171
+msgid "No"
+msgstr ""
+
+#: student_registration/alp/views.py:439
+#: student_registration/enrollments/tasks.py:40
+#: student_registration/enrollments/views.py:272
+#: student_registration/templates/alp/current.html:164
+#: student_registration/templates/alp/index.html:128
+#: student_registration/templates/alp/list.html:121
+#: student_registration/templates/alp/outreach.html:108
+#: student_registration/templates/alp/pre_test.html:133
+#: student_registration/templates/alp/prototype.html:193
+#: student_registration/templates/alp/prototype_current.html:196
+#: student_registration/templates/alp/prototype_new.html:273
+#: student_registration/templates/enrollments/edit.html:136
+#: student_registration/templates/enrollments/index.html:111
+#: student_registration/templates/enrollments/list.html:104
+#: student_registration/templates/enrollments/patch.html:159
+#: student_registration/templates/enrollments/prototype.html:221
+#: student_registration/templates/enrollments/prototype_patch.html:221
+msgid "ALP result"
+msgstr ""
+
+#: student_registration/alp/views.py:440
+#: student_registration/enrollments/tasks.py:41
+#: student_registration/enrollments/views.py:273
+#: student_registration/templates/alp/current.html:162
+#: student_registration/templates/alp/index.html:126
+#: student_registration/templates/alp/list.html:119
+#: student_registration/templates/alp/outreach.html:106
+#: student_registration/templates/alp/pre_test.html:131
+#: student_registration/templates/alp/prototype.html:177
+#: student_registration/templates/alp/prototype_current.html:180
+#: student_registration/templates/alp/prototype_new.html:257
+#: student_registration/templates/enrollments/edit.html:135
+#: student_registration/templates/enrollments/index.html:110
+#: student_registration/templates/enrollments/list.html:103
+#: student_registration/templates/enrollments/patch.html:158
+#: student_registration/templates/enrollments/prototype.html:213
+#: student_registration/templates/enrollments/prototype_patch.html:213
+msgid "ALP round"
+msgstr ""
+
+#: student_registration/alp/views.py:441
+#: student_registration/enrollments/tasks.py:42
+#: student_registration/enrollments/views.py:274
+#: student_registration/templates/alp/current.html:163
+#: student_registration/templates/alp/index.html:127
+#: student_registration/templates/alp/list.html:120
+#: student_registration/templates/alp/outreach.html:107
+#: student_registration/templates/alp/pre_test.html:132
+#: student_registration/templates/alp/prototype.html:185
+#: student_registration/templates/alp/prototype_current.html:188
+#: student_registration/templates/alp/prototype_new.html:265
+#: student_registration/templates/enrollments/edit.html:134
+#: student_registration/templates/enrollments/index.html:109
+#: student_registration/templates/enrollments/list.html:102
+#: student_registration/templates/enrollments/patch.html:157
+#: student_registration/templates/enrollments/prototype.html:205
+#: student_registration/templates/enrollments/prototype_patch.html:205
+msgid "ALP level"
+msgstr ""
+
+#: student_registration/alp/views.py:442
+#: student_registration/templates/alp/current.html:161
+#: student_registration/templates/alp/index.html:125
+#: student_registration/templates/alp/list.html:118
+#: student_registration/templates/alp/outreach.html:105
+#: student_registration/templates/alp/pre_test.html:130
+#: student_registration/templates/registrations/index.html:133
+#: student_registration/templates/registrations/list.html:92
+msgid "Is the child participated in an ALP program"
+msgstr ""
+
+#: student_registration/alp/views.py:444
+#: student_registration/enrollments/tasks.py:45
+#: student_registration/enrollments/views.py:277
+#: student_registration/templates/alp/current.html:160
+#: student_registration/templates/alp/index.html:124
+#: student_registration/templates/alp/list.html:117
+#: student_registration/templates/alp/outreach.html:104
+#: student_registration/templates/alp/pre_test.html:129
+#: student_registration/templates/alp/prototype.html:165
+#: student_registration/templates/alp/prototype_current.html:168
+#: student_registration/templates/alp/prototype_new.html:245
+#: student_registration/templates/enrollments/edit.html:131
+#: student_registration/templates/enrollments/index.html:106
+#: student_registration/templates/enrollments/list.html:99
+#: student_registration/templates/enrollments/patch.html:154
+#: student_registration/templates/enrollments/prototype.html:185
+#: student_registration/templates/enrollments/prototype_patch.html:185
+msgid "Education year"
+msgstr ""
+
+#: student_registration/alp/views.py:445
+#: student_registration/enrollments/tasks.py:47
+#: student_registration/enrollments/views.py:281
+#: student_registration/templates/alp/current.html:159
+#: student_registration/templates/alp/index.html:123
+#: student_registration/templates/alp/list.html:116
+#: student_registration/templates/alp/outreach.html:103
+#: student_registration/templates/alp/pre_test.html:128
+#: student_registration/templates/alp/prototype.html:157
+#: student_registration/templates/alp/prototype_current.html:160
+#: student_registration/templates/alp/prototype_new.html:237
+#: student_registration/templates/enrollments/edit.html:127
+#: student_registration/templates/enrollments/index.html:102
+#: student_registration/templates/enrollments/list.html:97
+#: student_registration/templates/enrollments/patch.html:150
+#: student_registration/templates/enrollments/prototype.html:153
+#: student_registration/templates/enrollments/prototype_patch.html:153
+#: student_registration/templates/registrations/index.html:130
+#: student_registration/templates/registrations/list.html:89
+msgid "Last education level"
+msgstr ""
+
+#: student_registration/alp/views.py:447
+#: student_registration/enrollments/tasks.py:50
+#: student_registration/enrollments/views.py:284
+#: student_registration/templates/registrations/list.html:86
+msgid "Phone prefix"
+msgstr ""
+
+#: student_registration/alp/views.py:448
+#: student_registration/enrollments/tasks.py:51
+#: student_registration/enrollments/views.py:285
+#: student_registration/templates/registrations/list.html:85
+#: student_registration/users/models.py:26
+msgid "Phone number"
+msgstr ""
+
+#: student_registration/alp/views.py:449
+#: student_registration/enrollments/tasks.py:52
+#: student_registration/enrollments/views.py:286
+#: student_registration/templates/alp/current.html:144
+#: student_registration/templates/alp/index.html:108
+#: student_registration/templates/alp/list.html:98
+#: student_registration/templates/alp/outreach.html:93
+#: student_registration/templates/alp/pre_test.html:109
+#: student_registration/templates/alp/prototype.html:142
+#: student_registration/templates/alp/prototype_current.html:145
+#: student_registration/templates/alp/prototype_new.html:225
+#: student_registration/templates/enrollments/edit.html:115
+#: student_registration/templates/enrollments/index.html:90
+#: student_registration/templates/enrollments/list.html:85
+#: student_registration/templates/enrollments/patch.html:138
+#: student_registration/templates/enrollments/prototype.html:125
+#: student_registration/templates/enrollments/prototype_patch.html:125
+#: student_registration/templates/registrations/index.html:114
+#: student_registration/templates/registrations/list.html:84
+msgid "Student living address"
+msgstr ""
+
+#: student_registration/alp/views.py:451
+#: student_registration/enrollments/tasks.py:53
+#: student_registration/enrollments/views.py:287
+#: student_registration/templates/alp/current.html:143
+#: student_registration/templates/alp/index.html:105
+#: student_registration/templates/alp/list.html:95
+#: student_registration/templates/alp/outreach.html:90
+#: student_registration/templates/alp/pre_test.html:108
+#: student_registration/templates/alp/prototype.html:137
+#: student_registration/templates/alp/prototype_current.html:140
+#: student_registration/templates/alp/prototype_new.html:221
+#: student_registration/templates/enrollments/edit.html:114
+#: student_registration/templates/enrollments/index.html:89
+#: student_registration/templates/enrollments/list.html:82
+#: student_registration/templates/enrollments/patch.html:137
+#: student_registration/templates/enrollments/prototype.html:121
+#: student_registration/templates/enrollments/prototype_patch.html:121
+#: student_registration/templates/registrations/index.html:111
+#: student_registration/templates/registrations/list.html:81
+msgid "Student ID Number"
+msgstr ""
+
+#: student_registration/alp/views.py:452
+#: student_registration/enrollments/tasks.py:54
+#: student_registration/enrollments/views.py:288
+#: student_registration/templates/alp/current.html:142
+#: student_registration/templates/alp/index.html:104
+#: student_registration/templates/alp/list.html:94
+#: student_registration/templates/alp/outreach.html:89
+#: student_registration/templates/alp/pre_test.html:107
+#: student_registration/templates/alp/prototype.html:128
+#: student_registration/templates/alp/prototype_current.html:131
+#: student_registration/templates/alp/prototype_new.html:213
+#: student_registration/templates/enrollments/edit.html:113
+#: student_registration/templates/enrollments/index.html:88
+#: student_registration/templates/enrollments/list.html:81
+#: student_registration/templates/enrollments/patch.html:136
+#: student_registration/templates/enrollments/prototype.html:113
+#: student_registration/templates/enrollments/prototype_patch.html:113
+#: student_registration/templates/registrations/index.html:108
+#: student_registration/templates/registrations/list.html:80
+msgid "Student ID Type"
+msgstr ""
+
+#: student_registration/alp/views.py:453
+#: student_registration/enrollments/tasks.py:55
+#: student_registration/enrollments/views.py:289
+#: student_registration/templates/alp/current.html:141
+#: student_registration/templates/alp/index.html:103
+#: student_registration/templates/alp/list.html:93
+#: student_registration/templates/alp/outreach.html:88
+#: student_registration/templates/alp/pre_test.html:106
+#: student_registration/templates/enrollments/edit.html:112
+#: student_registration/templates/enrollments/index.html:87
+#: student_registration/templates/enrollments/list.html:80
+#: student_registration/templates/enrollments/patch.html:135
+#: student_registration/templates/registrations/index.html:107
+#: student_registration/templates/registrations/list.html:79
+msgid "Registered in UNHCR"
+msgstr ""
+
+#: student_registration/alp/views.py:455
+#: student_registration/enrollments/tasks.py:56
+#: student_registration/enrollments/views.py:290
+#: student_registration/templates/alp/current.html:140
+#: student_registration/templates/alp/index.html:102
+#: student_registration/templates/alp/list.html:92
+#: student_registration/templates/alp/outreach.html:87
+#: student_registration/templates/alp/pre_test.html:105
+#: student_registration/templates/alp/prototype.html:115
+#: student_registration/templates/alp/prototype_current.html:118
+#: student_registration/templates/alp/prototype_new.html:201
+#: student_registration/templates/enrollments/edit.html:111
+#: student_registration/templates/enrollments/index.html:86
+#: student_registration/templates/enrollments/list.html:79
+#: student_registration/templates/enrollments/patch.html:134
+#: student_registration/templates/enrollments/prototype.html:101
+#: student_registration/templates/enrollments/prototype_patch.html:101
+#: student_registration/templates/registrations/index.html:106
+#: student_registration/templates/registrations/list.html:78
+msgid "Mother nationality"
+msgstr ""
+
+#: student_registration/alp/views.py:456
+#: student_registration/attendances/views.py:84
+#: student_registration/attendances/views.py:153
+#: student_registration/enrollments/tasks.py:57
+#: student_registration/enrollments/views.py:291
+#: student_registration/templates/alp/current.html:139
+#: student_registration/templates/alp/index.html:101
+#: student_registration/templates/alp/list.html:91
+#: student_registration/templates/alp/outreach.html:86
+#: student_registration/templates/alp/pre_test.html:104
+#: student_registration/templates/alp/prototype.html:110
+#: student_registration/templates/alp/prototype_current.html:113
+#: student_registration/templates/alp/prototype_new.html:197
+#: student_registration/templates/enrollments/edit.html:110
+#: student_registration/templates/enrollments/index.html:85
+#: student_registration/templates/enrollments/list.html:78
+#: student_registration/templates/enrollments/patch.html:133
+#: student_registration/templates/enrollments/prototype.html:97
+#: student_registration/templates/enrollments/prototype_patch.html:97
+#: student_registration/templates/registrations/index.html:105
+#: student_registration/templates/registrations/list.html:77
+msgid "Mother fullname"
+msgstr ""
+
+#: student_registration/alp/views.py:458
+#: student_registration/enrollments/tasks.py:48
+#: student_registration/enrollments/views.py:282
+#: student_registration/templates/alp/current.html:98
+#: student_registration/templates/alp/current.html:155
+#: student_registration/templates/alp/index.html:119
+#: student_registration/templates/alp/list.html:115
+#: student_registration/templates/alp/prototype-view.html:165
+#: student_registration/templates/alp/prototype-view_new.html:166
+#: student_registration/templates/alp/prototype_new.html:152
+#: student_registration/templates/enrollments/edit.html:119
+#: student_registration/templates/enrollments/index.html:94
+#: student_registration/templates/enrollments/list.html:89
+#: student_registration/templates/enrollments/patch.html:142
+#: student_registration/templates/enrollments/prototype.html:145
+#: student_registration/templates/enrollments/prototype_patch.html:145
+#: student_registration/templates/registrations/index.html:120
+#: student_registration/templates/registrations/list.html:88
+msgid "Current Section"
+msgstr ""
+
+#: student_registration/alp/views.py:459
+#: student_registration/templates/alp/current.html:92
+#: student_registration/templates/alp/current.html:154
+#: student_registration/templates/alp/index.html:118
+#: student_registration/templates/alp/list.html:114
+#: student_registration/templates/alp/prototype-view.html:157
+#: student_registration/templates/alp/prototype-view_new.html:158
+#: student_registration/templates/alp/prototype_new.html:144
+msgid "Current Level"
+msgstr ""
+
+#: student_registration/alp/views.py:461
+#: student_registration/templates/alp/current.html:153
+#: student_registration/templates/alp/index.html:117
+msgid "Post-test result"
+msgstr ""
+
+#: student_registration/alp/views.py:462
+#: student_registration/templates/alp/current.html:152
+#: student_registration/templates/alp/index.html:116
+#: student_registration/templates/alp/list.html:89
+#: student_registration/templates/alp/pre_test.html:100
+#: student_registration/templates/alp/prototype_current.html:45
+#: student_registration/templates/alp/prototype_new.html:136
+msgid "Assigned to level"
+msgstr ""
+
+#: student_registration/alp/views.py:463
+#: student_registration/templates/alp/current.html:151
+#: student_registration/templates/alp/index.html:115
+msgid "Pre-test result"
+msgstr ""
+
+#: student_registration/alp/views.py:465
+#: student_registration/enrollments/tasks.py:58
+#: student_registration/enrollments/views.py:292
+#: student_registration/templates/alp/current.html:138
+#: student_registration/templates/alp/index.html:100
+#: student_registration/templates/alp/list.html:86
+#: student_registration/templates/alp/outreach.html:85
+#: student_registration/templates/alp/pre_test.html:103
+#: student_registration/templates/alp/prototype.html:101
+#: student_registration/templates/alp/prototype_current.html:104
+#: student_registration/templates/alp/prototype_new.html:189
+#: student_registration/templates/enrollments/edit.html:109
+#: student_registration/templates/enrollments/index.html:84
+#: student_registration/templates/enrollments/list.html:77
+#: student_registration/templates/enrollments/patch.html:132
+#: student_registration/templates/enrollments/prototype.html:89
+#: student_registration/templates/enrollments/prototype_patch.html:89
+#: student_registration/templates/registrations/index.html:104
+#: student_registration/templates/registrations/list.html:76
+msgid "Student nationality"
+msgstr ""
+
+#: student_registration/alp/views.py:466
+#: student_registration/enrollments/tasks.py:59
+#: student_registration/enrollments/views.py:293
+#: student_registration/templates/alp/current.html:137
+#: student_registration/templates/alp/index.html:99
+#: student_registration/templates/alp/list.html:85
+#: student_registration/templates/alp/outreach.html:84
+#: student_registration/templates/alp/pre_test.html:102
+#: student_registration/templates/enrollments/edit.html:108
+#: student_registration/templates/enrollments/index.html:83
+#: student_registration/templates/enrollments/list.html:76
+#: student_registration/templates/enrollments/patch.html:131
+#: student_registration/templates/registrations/index.html:103
+#: student_registration/templates/registrations/list.html:75
+msgid "Student age"
+msgstr ""
+
+#: student_registration/alp/views.py:467
+#: student_registration/enrollments/tasks.py:60
+#: student_registration/enrollments/views.py:294
+#: student_registration/templates/alp/current.html:136
+#: student_registration/templates/alp/index.html:98
+#: student_registration/templates/alp/list.html:84
+#: student_registration/templates/alp/outreach.html:83
+#: student_registration/templates/alp/pre_test.html:101
+#: student_registration/templates/enrollments/edit.html:107
+#: student_registration/templates/enrollments/index.html:82
+#: student_registration/templates/enrollments/list.html:75
+#: student_registration/templates/enrollments/patch.html:130
+#: student_registration/templates/registrations/index.html:102
+#: student_registration/templates/registrations/list.html:74
+msgid "Student birthday"
+msgstr ""
+
+#: student_registration/alp/views.py:468
+#: student_registration/enrollments/tasks.py:64
+#: student_registration/enrollments/views.py:298
+#: student_registration/templates/alp/current.html:134
+#: student_registration/templates/alp/index.html:96
+#: student_registration/templates/alp/list.html:83
+#: student_registration/templates/alp/outreach.html:82
+#: student_registration/templates/alp/post_test.html:88
+#: student_registration/templates/alp/pre_test.html:97
+#: student_registration/templates/alp/prototype.html:37
+#: student_registration/templates/alp/prototype_current.html:32
+#: student_registration/templates/alp/prototype_new.html:55
+#: student_registration/templates/enrollments/edit.html:106
+#: student_registration/templates/enrollments/index.html:81
+#: student_registration/templates/enrollments/list.html:74
+#: student_registration/templates/enrollments/patch.html:129
+#: student_registration/templates/enrollments/prototype.html:53
+#: student_registration/templates/enrollments/prototype_patch.html:53
+#: student_registration/templates/registrations/index.html:101
+#: student_registration/templates/registrations/list.html:73
+msgid "Sex"
+msgstr ""
+
+#: student_registration/alp/views.py:469
+#: student_registration/attendances/views.py:84
+#: student_registration/attendances/views.py:153
+#: student_registration/enrollments/tasks.py:65
+#: student_registration/enrollments/views.py:299
+#: student_registration/templates/attendances/index.html:89
+#: student_registration/templates/attendances/list.html:80
+#: student_registration/templates/registration-pilot/class-assignment.html:73
+msgid "Student fullname"
+msgstr ""
+
+#: student_registration/alp/views.py:471
+#: student_registration/enrollments/tasks.py:46
+#: student_registration/enrollments/tasks.py:66
+#: student_registration/enrollments/views.py:280
+#: student_registration/enrollments/views.py:300
+#: student_registration/templates/alp/list.html:78
+#: student_registration/templates/alp/outreach.html:78
+#: student_registration/templates/alp/post_test.html:84
+#: student_registration/templates/alp/pre_test.html:93
+#: student_registration/templates/alp/prototype_new.html:31
+#: student_registration/templates/enrollments/edit.html:102
+#: student_registration/templates/enrollments/edit.html:130
+#: student_registration/templates/enrollments/index.html:77
+#: student_registration/templates/enrollments/index.html:105
+#: student_registration/templates/enrollments/list.html:70
+#: student_registration/templates/enrollments/list.html:98
+#: student_registration/templates/enrollments/patch.html:153
+#: student_registration/templates/enrollments/prototype.html:177
+#: student_registration/templates/enrollments/prototype_patch.html:177
+#: student_registration/templates/registration-pilot/add_child.html:6
+#: student_registration/templates/registration-pilot/add_child.html:98
+#: student_registration/templates/registration-pilot/class-assignment.html:42
+#: student_registration/templates/registration-pilot/list_school_modification.html:79
+#: student_registration/templates/registration-pilot/registry.html:272
+#: student_registration/templates/registration-pilot/registry.html:299
+#: student_registration/templates/registration-pilot/waitinglist.html:38
+#: student_registration/templates/registrations/index.html:97
+#: student_registration/templates/registrations/list.html:68
+msgid "School"
+msgstr ""
+
+#: student_registration/alp/views.py:472
+#: student_registration/enrollments/tasks.py:67
+#: student_registration/enrollments/views.py:301
+#: student_registration/templates/alp/list.html:77
+#: student_registration/templates/alp/outreach.html:77
+#: student_registration/templates/alp/post_test.html:83
+#: student_registration/templates/alp/pre_test.html:92
+#: student_registration/templates/enrollments/edit.html:101
+#: student_registration/templates/enrollments/index.html:76
+#: student_registration/templates/enrollments/list.html:69
+#: student_registration/templates/registrations/index.html:96
+#: student_registration/templates/registrations/list.html:67
+msgid "School number"
+msgstr ""
+
+#: student_registration/alp/views.py:473
+#: student_registration/enrollments/tasks.py:68
+#: student_registration/enrollments/views.py:302
+#: student_registration/enrollments/views.py:378
+#: student_registration/templates/alp/list.html:76
+#: student_registration/templates/alp/outreach.html:75
+#: student_registration/templates/alp/post_test.html:81
+#: student_registration/templates/alp/pre_test.html:90
+#: student_registration/templates/enrollments/edit.html:100
+#: student_registration/templates/enrollments/index.html:75
+#: student_registration/templates/enrollments/list.html:68
+#: student_registration/templates/registrations/index.html:95
+#: student_registration/templates/registrations/list.html:66
+msgid "District"
+msgstr ""
+
+#: student_registration/alp/views.py:474
+#: student_registration/enrollments/tasks.py:69
+#: student_registration/enrollments/views.py:303
+#: student_registration/enrollments/views.py:379
+#: student_registration/templates/alp/list.html:75
+#: student_registration/templates/alp/outreach.html:76
+#: student_registration/templates/alp/post_test.html:82
+#: student_registration/templates/alp/pre_test.html:91
+#: student_registration/templates/enrollments/edit.html:99
+#: student_registration/templates/enrollments/index.html:74
+#: student_registration/templates/enrollments/list.html:67
+#: student_registration/templates/registrations/index.html:94
+#: student_registration/templates/registrations/list.html:65
+msgid "Governorate"
+msgstr ""
+
+#: student_registration/attendances/models.py:21
+msgid "Sick"
+msgstr ""
+
+#: student_registration/attendances/models.py:22
+msgid "No reason"
+msgstr ""
+
+#: student_registration/attendances/models.py:23
+msgid "No transport"
+msgstr ""
+
+#: student_registration/attendances/models.py:24
+#: student_registration/registrations/models.py:387
+msgid "Other"
+msgstr ""
+
+#: student_registration/attendances/views.py:84
+#: student_registration/attendances/views.py:153
+#: student_registration/templates/alp/list.html:79
+#: student_registration/templates/registrations/list.html:69
+msgid "Student number"
+msgstr ""
+
+#: student_registration/eav/fields.py:55
+msgid ""
+"Must be all lower case, start with a letter, and contain only letters, "
+"numbers, or underscores."
+msgstr ""
+
+#: student_registration/eav/fields.py:89
+msgid "You cannot change the datatype of an attribute that is already in use."
+msgstr ""
+
+#: student_registration/eav/forms.py:109
+#, python-format
+msgid "The %s could not be saved because the datadidn't validate."
+msgstr ""
+
+#: student_registration/eav/models.py:80
+msgid "value"
+msgstr ""
+
+#: student_registration/eav/models.py:96 student_registration/eav/models.py:176
+msgid "name"
+msgstr ""
+
+#: student_registration/eav/models.py:98
+msgid "enum group"
+msgstr ""
+
+#: student_registration/eav/models.py:167
+msgid "Text"
+msgstr ""
+
+#: student_registration/eav/models.py:168
+msgid "Float"
+msgstr ""
+
+#: student_registration/eav/models.py:169
+msgid "Integer"
+msgstr ""
+
+#: student_registration/eav/models.py:170
+msgid "Date"
+msgstr ""
+
+#: student_registration/eav/models.py:171
+msgid "True / False"
+msgstr ""
+
+#: student_registration/eav/models.py:172
+msgid "Django Object"
+msgstr ""
+
+#: student_registration/eav/models.py:173
+msgid "Multiple Choice"
+msgstr ""
+
+#: student_registration/eav/models.py:177
+msgid "User-friendly attribute name"
+msgstr ""
+
+#: student_registration/eav/models.py:179
+msgid "site"
+msgstr ""
+
+#: student_registration/eav/models.py:182
+msgid "slug"
+msgstr ""
+
+#: student_registration/eav/models.py:183
+msgid "Short unique attribute label"
+msgstr ""
+
+#: student_registration/eav/models.py:185
+msgid "description"
+msgstr ""
+
+#: student_registration/eav/models.py:187
+msgid "Short description"
+msgstr ""
+
+#: student_registration/eav/models.py:189
+msgid "choice group"
+msgstr ""
+
+#: student_registration/eav/models.py:192
+msgid "type"
+msgstr ""
+
+#: student_registration/eav/models.py:198
+msgid "data type"
+msgstr ""
+
+#: student_registration/eav/models.py:201
+#: student_registration/eav/models.py:365
+msgid "created"
+msgstr ""
+
+#: student_registration/eav/models.py:204
+#: student_registration/eav/models.py:366
+msgid "modified"
+msgstr ""
+
+#: student_registration/eav/models.py:206
+msgid "required"
+msgstr ""
+
+#: student_registration/eav/models.py:208
+msgid "shared"
+msgstr ""
+
+#: student_registration/eav/models.py:251
+#, python-format
+msgid "%(enum)s is not a valid choice for %(attr)s"
+msgstr ""
+
+#: student_registration/eav/models.py:273
+msgid "You must set the choice group for multiple choiceattributes"
+msgstr ""
+
+#: student_registration/eav/models.py:278
+msgid "You can only assign a choice group to multiple choice attributes"
+msgstr ""
+
+#: student_registration/eav/models.py:369
+msgid "attribute"
+msgstr ""
+
+#: student_registration/eav/models.py:386
+msgid "%(choice)s is not a valid choice for %s(attribute)"
+msgstr ""
+
+#: student_registration/eav/models.py:439
+#, python-format
+msgid "%(obj)s has no EAV attribute named '%(attr)s'"
+msgstr ""
+
+#: student_registration/eav/models.py:496
+#, python-format
+msgid "%(attr)s EAV field cannot be blank"
+msgstr ""
+
+#: student_registration/eav/models.py:503
+#, python-format
+msgid "%(attr)s EAV field %(err)s"
+msgstr ""
+
+#: student_registration/eav/validators.py:48
+msgid "Must be str or unicode"
+msgstr ""
+
+#: student_registration/eav/validators.py:58
+msgid "Must be a float"
+msgstr ""
+
+#: student_registration/eav/validators.py:68
+msgid "Must be an integer"
+msgstr ""
+
+#: student_registration/eav/validators.py:77
+msgid "Must be a date or datetime"
+msgstr ""
+
+#: student_registration/eav/validators.py:85
+msgid "Must be a boolean"
+msgstr ""
+
+#: student_registration/eav/validators.py:94
+msgid "Must be a django model object instance"
+msgstr ""
+
+#: student_registration/eav/validators.py:96
+msgid "Model has not been saved yet"
+msgstr ""
+
+#: student_registration/eav/validators.py:106
+msgid "Must be an EnumValue model object instance"
+msgstr ""
+
+#: student_registration/eav/validators.py:108
+msgid "EnumValue has not been saved yet"
+msgstr ""
+
+#: student_registration/enrollments/models.py:40
+#: student_registration/registrations/models.py:409
+msgid "Son/Daughter"
+msgstr ""
+
+#: student_registration/enrollments/models.py:41
+#: student_registration/registrations/models.py:410
+msgid "Grandchild"
+msgstr ""
+
+#: student_registration/enrollments/models.py:42
+#: student_registration/registrations/models.py:411
+msgid "Niece/Nephew"
+msgstr ""
+
+#: student_registration/enrollments/models.py:43
+#: student_registration/registrations/models.py:104
+#: student_registration/registrations/models.py:241
+#: student_registration/registrations/models.py:412
+msgid "Other Relative"
+msgstr ""
+
+#: student_registration/enrollments/models.py:44
+#: student_registration/registrations/models.py:105
+#: student_registration/registrations/models.py:242
+#: student_registration/registrations/models.py:413
+msgid "Other non-Relative"
+msgstr ""
+
+#: student_registration/enrollments/models.py:49
+#: student_registration/registrations/models.py:418
+msgid "Yes - in 2nd shift"
+msgstr ""
+
+#: student_registration/enrollments/models.py:50
+#: student_registration/registrations/models.py:419
+msgid "Yes - in 1st shift"
+msgstr ""
+
+#: student_registration/enrollments/models.py:51
+#: student_registration/registrations/models.py:420
+msgid "Yes - in private school"
+msgstr ""
+
+#: student_registration/enrollments/models.py:52
+#: student_registration/registrations/models.py:421
+msgid "Yes - in another type of school"
+msgstr ""
+
+#: student_registration/enrollments/models.py:66
+msgid "School out of the country"
+msgstr ""
+
+#: student_registration/enrollments/models.py:67
+msgid "Public school in the country"
+msgstr ""
+
+#: student_registration/enrollments/models.py:68
+msgid "Private school in the country"
+msgstr ""
+
+#: student_registration/enrollments/models.py:72
+msgid "First shift"
+msgstr ""
+
+#: student_registration/enrollments/models.py:73
+msgid "Second shift"
+msgstr ""
+
+#: student_registration/enrollments/tasks.py:43
+#: student_registration/enrollments/views.py:275
+#: student_registration/templates/enrollments/edit.html:133
+#: student_registration/templates/enrollments/index.html:108
+#: student_registration/templates/enrollments/list.html:101
+#: student_registration/templates/enrollments/patch.html:156
+msgid "Is the child participated in an ALP/2016-2 program"
+msgstr ""
+
+#: student_registration/enrollments/tasks.py:44
+#: student_registration/enrollments/views.py:276
+#: student_registration/templates/enrollments/edit.html:132
+#: student_registration/templates/enrollments/index.html:107
+#: student_registration/templates/enrollments/list.html:100
+#: student_registration/templates/enrollments/patch.html:155
+#: student_registration/templates/enrollments/prototype.html:193
+#: student_registration/templates/enrollments/prototype_patch.html:193
+msgid "Result"
+msgstr ""
+
+#: student_registration/enrollments/tasks.py:49
+#: student_registration/enrollments/views.py:283
+#: student_registration/templates/enrollments/edit.html:118
+#: student_registration/templates/enrollments/index.html:93
+#: student_registration/templates/enrollments/list.html:88
+#: student_registration/templates/enrollments/patch.html:141
+#: student_registration/templates/enrollments/prototype.html:137
+#: student_registration/templates/enrollments/prototype_patch.html:137
+#: student_registration/templates/registrations/index.html:117
+#: student_registration/templates/registrations/list.html:87
+msgid "Current Class"
+msgstr ""
+
+#: student_registration/enrollments/tasks.py:61
+#: student_registration/enrollments/views.py:295
+#: student_registration/templates/alp/current.html:156
+#: student_registration/templates/alp/index.html:120
+#: student_registration/templates/alp/outreach.html:100
+#: student_registration/templates/alp/pre_test.html:125
+#: student_registration/templates/alp/prototype.html:70
+#: student_registration/templates/alp/prototype_current.html:73
+#: student_registration/templates/alp/prototype_new.html:161
+#: student_registration/templates/enrollments/edit.html:124
+#: student_registration/templates/enrollments/index.html:99
+#: student_registration/templates/enrollments/list.html:94
+#: student_registration/templates/enrollments/patch.html:147
+#: student_registration/templates/enrollments/prototype.html:61
+#: student_registration/templates/enrollments/prototype_patch.html:61
+#: student_registration/templates/registrations/index.html:127
+msgid "year"
+msgstr ""
+
+#: student_registration/enrollments/tasks.py:62
+#: student_registration/enrollments/views.py:296
+#: student_registration/templates/alp/current.html:157
+#: student_registration/templates/alp/index.html:121
+#: student_registration/templates/alp/outreach.html:101
+#: student_registration/templates/alp/pre_test.html:126
+#: student_registration/templates/alp/prototype.html:79
+#: student_registration/templates/alp/prototype_current.html:82
+#: student_registration/templates/alp/prototype_new.html:169
+#: student_registration/templates/enrollments/edit.html:125
+#: student_registration/templates/enrollments/index.html:100
+#: student_registration/templates/enrollments/list.html:95
+#: student_registration/templates/enrollments/patch.html:148
+#: student_registration/templates/enrollments/prototype.html:69
+#: student_registration/templates/enrollments/prototype_patch.html:69
+#: student_registration/templates/registrations/index.html:128
+msgid "month"
+msgstr ""
+
+#: student_registration/enrollments/tasks.py:63
+#: student_registration/enrollments/views.py:297
+#: student_registration/templates/alp/current.html:158
+#: student_registration/templates/alp/index.html:122
+#: student_registration/templates/alp/outreach.html:102
+#: student_registration/templates/alp/pre_test.html:127
+#: student_registration/templates/alp/prototype.html:88
+#: student_registration/templates/alp/prototype_current.html:91
+#: student_registration/templates/alp/prototype_new.html:177
+#: student_registration/templates/enrollments/edit.html:126
+#: student_registration/templates/enrollments/index.html:101
+#: student_registration/templates/enrollments/list.html:96
+#: student_registration/templates/enrollments/patch.html:149
+#: student_registration/templates/enrollments/prototype.html:77
+#: student_registration/templates/enrollments/prototype_patch.html:77
+#: student_registration/templates/registrations/index.html:129
+msgid "day"
+msgstr ""
+
+#: student_registration/enrollments/views.py:278
+#: student_registration/templates/enrollments/edit.html:128
+#: student_registration/templates/enrollments/index.html:103
+#: student_registration/templates/enrollments/patch.html:151
+#: student_registration/templates/enrollments/prototype.html:161
+#: student_registration/templates/enrollments/prototype_patch.html:161
+msgid "School type"
+msgstr ""
+
+#: student_registration/enrollments/views.py:279
+#: student_registration/templates/enrollments/edit.html:129
+#: student_registration/templates/enrollments/index.html:104
+#: student_registration/templates/enrollments/patch.html:152
+#: student_registration/templates/enrollments/prototype.html:169
+#: student_registration/templates/enrollments/prototype_patch.html:169
+msgid "School shift"
+msgstr ""
+
+#: student_registration/enrollments/views.py:375
+msgid "CERD"
+msgstr ""
+
+#: student_registration/enrollments/views.py:376
+msgid "School name"
+msgstr ""
+
+#: student_registration/enrollments/views.py:377
+msgid "# Students"
+msgstr ""
+
+#: student_registration/hhvisit/models.py:94
+#: student_registration/hhvisit/models.py:156
+#: student_registration/registrations/models.py:97
+msgid "Pending"
+msgstr ""
+
+#: student_registration/hhvisit/models.py:95
+#: student_registration/hhvisit/models.py:157
+msgid "Completed"
+msgstr ""
+
+#: student_registration/hhvisit/models.py:160
+msgid "5-10"
+msgstr ""
+
+#: student_registration/hhvisit/models.py:161
+msgid "10-20"
+msgstr ""
+
+#: student_registration/hhvisit/models.py:162
+msgid "20++"
+msgstr ""
+
+#: student_registration/hhvisit/models.py:163
+msgid "Never Attended"
+msgstr ""
+
+#: student_registration/hhvisit/models.py:164
+msgid "Frequently Absent"
+msgstr ""
+
+#: student_registration/registrations/forms.py:51
+#: student_registration/registrations/forms.py:112
+msgid "Enter household first name"
+msgstr ""
+
+#: student_registration/registrations/forms.py:53
+#: student_registration/registrations/forms.py:114
+msgid "Enter household father's name"
+msgstr ""
+
+#: student_registration/registrations/forms.py:55
+#: student_registration/registrations/forms.py:116
+msgid "Enter household last name"
+msgstr ""
+
+#: student_registration/registrations/forms.py:57
+#: student_registration/registrations/forms.py:118
+msgid "Enter household mother full name"
+msgstr ""
+
+#: student_registration/registrations/forms.py:59
+msgid "Enter household age"
+msgstr ""
+
+#: student_registration/registrations/models.py:54
+msgid "CARD DISTRIBUTION"
+msgstr ""
+
+#: student_registration/registrations/models.py:55
+msgid "CARD"
+msgstr ""
+
+#: student_registration/registrations/models.py:56
+msgid "PAYMENT"
+msgstr ""
+
+#: student_registration/registrations/models.py:57
+msgid "SCHOOL-RELATED"
+msgstr ""
+
+#: student_registration/registrations/models.py:58
+msgid "REINSTATE BENEFICIARY"
+msgstr ""
+
+#: student_registration/registrations/models.py:59
+msgid "reinstate beneficiary"
+msgstr ""
+
+#: student_registration/registrations/models.py:60
+msgid "BANK"
+msgstr ""
+
+#: student_registration/registrations/models.py:61
+msgid "OTHER"
+msgstr ""
+
+#: student_registration/registrations/models.py:101
+#: student_registration/registrations/models.py:238
+msgid "I am the household head"
+msgstr ""
+
+#: student_registration/registrations/models.py:102
+#: student_registration/registrations/models.py:239
+msgid "Spouse"
+msgstr ""
+
+#: student_registration/registrations/models.py:103
+#: student_registration/registrations/models.py:240
+msgid "Father/Mother"
+msgstr ""
+
+#: student_registration/registrations/models.py:109
+#: student_registration/registrations/models.py:246
+msgid "Me personally"
+msgstr ""
+
+#: student_registration/registrations/models.py:110
+#: student_registration/registrations/models.py:247
+msgid "Someone who always relays the message to me"
+msgstr ""
+
+#: student_registration/registrations/models.py:111
+#: student_registration/registrations/models.py:248
+msgid "Someone who may not relay the message to me"
+msgstr ""
+
+#: student_registration/registrations/models.py:114
+#: student_registration/registrations/models.py:251
+#: student_registration/students/models.py:67
+#: student_registration/students/models.py:83
+msgid "Male"
+msgstr ""
+
+#: student_registration/registrations/models.py:115
+#: student_registration/registrations/models.py:252
+#: student_registration/students/models.py:68
+#: student_registration/students/models.py:84
+msgid "Female"
+msgstr ""
+
+#: student_registration/registrations/models.py:118
+#: student_registration/registrations/models.py:276
+#: student_registration/registrations/models.py:435
+msgid "Open"
+msgstr ""
+
+#: student_registration/registrations/models.py:119
+#: student_registration/registrations/models.py:277
+#: student_registration/registrations/models.py:436
+msgid "Accepted"
+msgstr ""
+
+#: student_registration/registrations/models.py:120
+#: student_registration/registrations/models.py:278
+#: student_registration/registrations/models.py:437
+msgid "Rejected"
+msgstr ""
+
+#: student_registration/registrations/models.py:385
+msgid "first"
+msgstr ""
+
+#: student_registration/registrations/models.py:386
+msgid "second"
+msgstr ""
+
+#: student_registration/registrations/views.py:619
+msgid "ID"
+msgstr ""
+
+#: student_registration/registrations/views.py:620
+msgid "Individual ID"
+msgstr ""
+
+#: student_registration/registrations/views.py:621
+msgid "HH Rep Name"
+msgstr ""
+
+#: student_registration/registrations/views.py:622
+msgid "Other-Specify"
+msgstr ""
+
+#: student_registration/registrations/views.py:623
+#: student_registration/templates/registration-pilot/list_school_modification.html:76
+msgid "Student"
+msgstr ""
+
+#: student_registration/registrations/views.py:624
+msgid "Date of Complaint"
+msgstr ""
+
+#: student_registration/registrations/views.py:625
+msgid "Phone"
+msgstr ""
+
+#: student_registration/registrations/views.py:626
+msgid "Date/Time of incident"
+msgstr ""
+
+#: student_registration/registrations/views.py:627
+msgid "Phone number from which call was placed"
+msgstr ""
+
+#: student_registration/registrations/views.py:628
+msgid "Service Requested"
+msgstr ""
+
+#: student_registration/students/models.py:52
+msgid "January"
+msgstr ""
+
+#: student_registration/students/models.py:53
+msgid "February"
+msgstr ""
+
+#: student_registration/students/models.py:54
+msgid "March"
+msgstr ""
+
+#: student_registration/students/models.py:55
+msgid "April"
+msgstr ""
+
+#: student_registration/students/models.py:56
+msgid "May"
+msgstr ""
+
+#: student_registration/students/models.py:57
+msgid "June"
+msgstr ""
+
+#: student_registration/students/models.py:58
+msgid "July"
+msgstr ""
+
+#: student_registration/students/models.py:59
+msgid "August"
+msgstr ""
+
+#: student_registration/students/models.py:60
+msgid "September"
+msgstr ""
+
+#: student_registration/students/models.py:61
+msgid "October"
+msgstr ""
+
+#: student_registration/students/models.py:62
+msgid "November"
+msgstr ""
+
+#: student_registration/students/models.py:63
+msgid "December"
+msgstr ""
 
 #: student_registration/templates/account/email.html:6
 msgid "Account"
@@ -31,6 +1250,7 @@ msgid "The following e-mail addresses are associated with your account:"
 msgstr ""
 
 #: student_registration/templates/account/email.html:28
+#: student_registration/templates/registration-pilot/list_school_modification.html:80
 msgid "Verified"
 msgstr ""
 
@@ -91,6 +1311,17 @@ msgid ""
 msgstr ""
 
 #: student_registration/templates/account/email_confirm.html:23
+#: student_registration/templates/alp/current.html:244
+#: student_registration/templates/alp/index.html:199
+#: student_registration/templates/alp/outreach.html:183
+#: student_registration/templates/alp/pre_test.html:203
+#: student_registration/templates/enrollments/edit.html:219
+#: student_registration/templates/enrollments/index.html:191
+#: student_registration/templates/enrollments/patch.html:234
+#: student_registration/templates/registration-pilot/registry.html:370
+#: student_registration/templates/registration-pilot/registry.html:518
+#: student_registration/templates/registration-pilot/waitinglist.html:118
+#: student_registration/templates/registrations/index.html:223
 msgid "Confirm"
 msgstr ""
 
@@ -125,10 +1356,6 @@ msgstr ""
 
 #: student_registration/templates/account/login.html:27
 msgid "or"
-msgstr ""
-
-#: student_registration/templates/account/login.html:42
-msgid "Forgot Password?"
 msgstr ""
 
 #: student_registration/templates/account/logout.html:5
@@ -211,7 +1438,6 @@ msgstr ""
 
 #: student_registration/templates/account/signup.html:13
 #: student_registration/templates/account/signup.html:23
-#: student_registration/templates/base.html:71
 msgid "Sign Up"
 msgstr ""
 
@@ -266,18 +1492,2247 @@ msgid ""
 "mail address</a>."
 msgstr ""
 
-#: student_registration/templates/base.html:64
-msgid "My Profile"
+#: student_registration/templates/alp/current.html:51
+#: student_registration/templates/alp/index.html:47
+#: student_registration/templates/alp/outreach.html:35
+#: student_registration/templates/alp/post_test.html:33
+#: student_registration/templates/alp/pre_test.html:38
+#: student_registration/templates/enrollments/edit.html:46
+#: student_registration/templates/enrollments/index.html:25
+#: student_registration/templates/enrollments/patch.html:47
+#: student_registration/templates/registrations/index.html:26
+msgid "Well done"
 msgstr ""
 
-#: student_registration/templates/base.html:67
+#: student_registration/templates/alp/current.html:51
+#: student_registration/templates/alp/index.html:47
+#: student_registration/templates/alp/outreach.html:35
+#: student_registration/templates/alp/post_test.html:33
+#: student_registration/templates/alp/pre_test.html:38
+#: student_registration/templates/enrollments/edit.html:46
+#: student_registration/templates/enrollments/index.html:25
+#: student_registration/templates/enrollments/patch.html:47
+#: student_registration/templates/registrations/index.html:26
+msgid "Synchronization success"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:52
+#: student_registration/templates/alp/index.html:48
+#: student_registration/templates/alp/outreach.html:36
+#: student_registration/templates/alp/post_test.html:34
+#: student_registration/templates/alp/pre_test.html:39
+#: student_registration/templates/enrollments/edit.html:47
+#: student_registration/templates/enrollments/index.html:26
+#: student_registration/templates/enrollments/patch.html:48
+#: student_registration/templates/registrations/index.html:27
+msgid "Warning"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:52
+#: student_registration/templates/alp/index.html:48
+#: student_registration/templates/alp/outreach.html:36
+#: student_registration/templates/alp/post_test.html:34
+#: student_registration/templates/alp/pre_test.html:39
+#: student_registration/templates/enrollments/edit.html:47
+#: student_registration/templates/enrollments/index.html:26
+#: student_registration/templates/enrollments/patch.html:48
+#: student_registration/templates/registrations/index.html:27
+msgid "Please check fill required field"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:53
+#: student_registration/templates/enrollments/edit.html:48
+#: student_registration/templates/enrollments/index.html:27
+#: student_registration/templates/enrollments/patch.html:49
+#: student_registration/templates/registrations/index.html:28
+msgid "Please check your internet connectivity"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:60
+#: student_registration/templates/alp/index.html:56
+#: student_registration/templates/header.html:45
+msgid "ALP Registrations"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:64
+msgid "Search an old student"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:72
+#: student_registration/templates/alp/index.html:66
+#: student_registration/templates/alp/outreach.html:49
+#: student_registration/templates/alp/post_test.html:47
+#: student_registration/templates/alp/pre_test.html:52
+#: student_registration/templates/enrollments/edit.html:59
+#: student_registration/templates/enrollments/index.html:38
+#: student_registration/templates/enrollments/patch.html:60
+#: student_registration/templates/registrations/index.html:37
+msgid "synchronize"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:76
+#: student_registration/templates/enrollments/edit.html:63
+#: student_registration/templates/enrollments/patch.html:68
+msgid "download data"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:80
+#: student_registration/templates/alp/index.html:72
+#: student_registration/templates/alp/list.html:55
+#: student_registration/templates/alp/outreach.html:55
+#: student_registration/templates/alp/pre_test.html:68
+#: student_registration/templates/enrollments/edit.html:75
+#: student_registration/templates/enrollments/index.html:50
+#: student_registration/templates/enrollments/list.html:44
+#: student_registration/templates/enrollments/patch.html:72
+#: student_registration/templates/registration-pilot/compalints-search.html:154
+#: student_registration/templates/registrations/index.html:45
+#: student_registration/templates/registrations/list.html:43
+msgid "Export"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:84
+msgid "Filter by"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:104
+#: student_registration/templates/enrollments/patch.html:89
+msgid "Filter data"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:107
+#: student_registration/templates/alp/post_test.html:61
+#: student_registration/templates/alp/pre_test.html:64
+#: student_registration/templates/enrollments/edit.html:78
+#: student_registration/templates/enrollments/index.html:53
+#: student_registration/templates/enrollments/patch.html:93
+#: student_registration/templates/registrations/index.html:74
+msgid "Rest filter"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:131
+#: student_registration/templates/alp/index.html:93
+#: student_registration/templates/alp/list.html:80
+#: student_registration/templates/alp/outreach.html:79
+#: student_registration/templates/alp/post_test.html:85
+#: student_registration/templates/alp/pre_test.html:94
+#: student_registration/templates/alp/prototype.html:22
+#: student_registration/templates/alp/prototype_current.html:17
+#: student_registration/templates/alp/prototype_new.html:43
+#: student_registration/templates/enrollments/edit.html:103
+#: student_registration/templates/enrollments/index.html:78
+#: student_registration/templates/enrollments/list.html:71
+#: student_registration/templates/enrollments/patch.html:126
+#: student_registration/templates/enrollments/prototype.html:41
+#: student_registration/templates/enrollments/prototype_patch.html:41
+#: student_registration/templates/registrations/index.html:98
+#: student_registration/templates/registrations/list.html:70
+msgid "Student first name"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:132
+#: student_registration/templates/alp/index.html:94
+#: student_registration/templates/alp/list.html:81
+#: student_registration/templates/alp/outreach.html:80
+#: student_registration/templates/alp/post_test.html:86
+#: student_registration/templates/alp/pre_test.html:95
+#: student_registration/templates/alp/prototype.html:27
+#: student_registration/templates/alp/prototype_current.html:22
+#: student_registration/templates/alp/prototype_new.html:47
+#: student_registration/templates/enrollments/edit.html:104
+#: student_registration/templates/enrollments/index.html:79
+#: student_registration/templates/enrollments/list.html:72
+#: student_registration/templates/enrollments/patch.html:127
+#: student_registration/templates/enrollments/prototype.html:45
+#: student_registration/templates/enrollments/prototype_patch.html:45
+#: student_registration/templates/registrations/index.html:99
+#: student_registration/templates/registrations/list.html:71
+msgid "Student father name"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:133
+#: student_registration/templates/alp/index.html:95
+#: student_registration/templates/alp/list.html:82
+#: student_registration/templates/alp/outreach.html:81
+#: student_registration/templates/alp/post_test.html:87
+#: student_registration/templates/alp/pre_test.html:96
+#: student_registration/templates/alp/prototype.html:32
+#: student_registration/templates/alp/prototype_current.html:27
+#: student_registration/templates/alp/prototype_new.html:51
+#: student_registration/templates/enrollments/edit.html:105
+#: student_registration/templates/enrollments/index.html:80
+#: student_registration/templates/enrollments/list.html:73
+#: student_registration/templates/enrollments/patch.html:128
+#: student_registration/templates/enrollments/prototype.html:49
+#: student_registration/templates/enrollments/prototype_patch.html:49
+#: student_registration/templates/registrations/index.html:100
+#: student_registration/templates/registrations/list.html:72
+msgid "Student last name"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:135
+#: student_registration/templates/alp/index.html:97
+#: student_registration/templates/alp/list.html:90
+msgid "Student actual status"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:145
+#: student_registration/templates/alp/index.html:109
+#: student_registration/templates/alp/list.html:99
+#: student_registration/templates/alp/outreach.html:94
+#: student_registration/templates/alp/pre_test.html:110
+#: student_registration/templates/alp/prototype.html:147
+#: student_registration/templates/alp/prototype_current.html:150
+#: student_registration/templates/alp/prototype_new.html:229
+#: student_registration/templates/enrollments/edit.html:116
+#: student_registration/templates/enrollments/index.html:91
+#: student_registration/templates/enrollments/list.html:86
+#: student_registration/templates/enrollments/patch.html:139
+#: student_registration/templates/enrollments/prototype.html:129
+#: student_registration/templates/enrollments/prototype_patch.html:129
+#: student_registration/templates/registrations/index.html:115
+msgid "Phone number (6 digits)"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:146
+#: student_registration/templates/alp/index.html:110
+#: student_registration/templates/alp/list.html:100
+#: student_registration/templates/alp/outreach.html:95
+#: student_registration/templates/alp/pre_test.html:111
+#: student_registration/templates/alp/prototype.html:152
+#: student_registration/templates/alp/prototype_current.html:155
+#: student_registration/templates/alp/prototype_new.html:233
+#: student_registration/templates/enrollments/edit.html:117
+#: student_registration/templates/enrollments/index.html:92
+#: student_registration/templates/enrollments/list.html:87
+#: student_registration/templates/enrollments/patch.html:140
+#: student_registration/templates/enrollments/prototype.html:133
+#: student_registration/templates/enrollments/prototype_patch.html:133
+#: student_registration/templates/registrations/index.html:116
+msgid "Phone prefix (2 digits)"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:147
+#: student_registration/templates/alp/index.html:111
+#: student_registration/templates/alp/list.html:101
+#: student_registration/templates/alp/outreach.html:96
+#: student_registration/templates/alp/pre_test.html:112
+#: student_registration/templates/enrollments/edit.html:120
+#: student_registration/templates/enrollments/index.html:95
+#: student_registration/templates/enrollments/list.html:90
+#: student_registration/templates/enrollments/patch.html:143
+#: student_registration/templates/registrations/index.html:123
+msgid "Last student education"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:148
+#: student_registration/templates/alp/index.html:112
+#: student_registration/templates/alp/list.html:102
+#: student_registration/templates/alp/outreach.html:97
+#: student_registration/templates/alp/pre_test.html:113
+#: student_registration/templates/enrollments/edit.html:121
+#: student_registration/templates/enrollments/index.html:96
+#: student_registration/templates/enrollments/list.html:91
+#: student_registration/templates/enrollments/patch.html:144
+#: student_registration/templates/registrations/index.html:124
+msgid "Last student informal education"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:174
+#: student_registration/templates/alp/index.html:138
+#: student_registration/templates/alp/outreach.html:118
+#: student_registration/templates/alp/pre_test.html:146
+#: student_registration/templates/enrollments/index.html:121
+#: student_registration/templates/registrations/index.html:146
+msgid "Add empty line"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:178
+#: student_registration/templates/alp/index.html:142
+#: student_registration/templates/alp/outreach.html:122
+#: student_registration/templates/enrollments/index.html:125
+#: student_registration/templates/registrations/index.html:150
+msgid "Add defined number of lines"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:242
+#: student_registration/templates/alp/index.html:197
+#: student_registration/templates/alp/outreach.html:181
+#: student_registration/templates/alp/pre_test.html:201
+#: student_registration/templates/enrollments/edit.html:217
+#: student_registration/templates/enrollments/index.html:189
+#: student_registration/templates/enrollments/patch.html:232
+#: student_registration/templates/registration-pilot/registry.html:516
+#: student_registration/templates/registration-pilot/waitinglist.html:116
+#: student_registration/templates/registrations/index.html:221
+msgid "Ok"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:243
+#: student_registration/templates/alp/index.html:198
+#: student_registration/templates/alp/outreach.html:182
+#: student_registration/templates/alp/pre_test.html:202
+#: student_registration/templates/enrollments/edit.html:218
+#: student_registration/templates/enrollments/index.html:190
+#: student_registration/templates/enrollments/patch.html:233
+#: student_registration/templates/hhvisit/household-visit.html:147
+#: student_registration/templates/hhvisit/household-visit.html:161
+#: student_registration/templates/hhvisit/initialisation.html:62
+#: student_registration/templates/registration-pilot/compalints-search.html:142
+#: student_registration/templates/registration-pilot/household-not-found.html:182
+#: student_registration/templates/registration-pilot/household-not-found.html:190
+#: student_registration/templates/registration-pilot/registration-update.html:558
+#: student_registration/templates/registration-pilot/registration-update.html:572
+#: student_registration/templates/registration-pilot/registry.html:517
+#: student_registration/templates/registration-pilot/registry.html:844
+#: student_registration/templates/registration-pilot/registry.html:916
+#: student_registration/templates/registration-pilot/registry.html:1016
+#: student_registration/templates/registration-pilot/registry.html:1080
+#: student_registration/templates/registration-pilot/waitinglist.html:89
+#: student_registration/templates/registration-pilot/waitinglist.html:117
+#: student_registration/templates/registrations/index.html:222
+msgid "Cancel"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:349
+#: student_registration/templates/alp/index.html:257
+#: student_registration/templates/alp/outreach.html:247
+#: student_registration/templates/enrollments/edit.html:311
+#: student_registration/templates/enrollments/edit.html:346
+#: student_registration/templates/enrollments/index.html:284
+#: student_registration/templates/enrollments/index.html:322
+#: student_registration/templates/enrollments/patch.html:332
+#: student_registration/templates/enrollments/patch.html:367
+#: student_registration/templates/registrations/index.html:294
+#: student_registration/templates/registrations/index.html:332
+msgid "Please enter the number of lines"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:364
+#: student_registration/templates/alp/index.html:273
+#: student_registration/templates/alp/outreach.html:263
+#: student_registration/templates/alp/pre_test.html:290
+#: student_registration/templates/enrollments/edit.html:369
+#: student_registration/templates/enrollments/index.html:348
+#: student_registration/templates/enrollments/patch.html:390
+#: student_registration/templates/registrations/index.html:358
+msgid "are you sure you want to delete this row?"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:470
+msgid "Last year situation"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:471
+msgid "Referred to level"
+msgstr ""
+
+#: student_registration/templates/alp/current.html:836
+msgid "This student already added to the list"
+msgstr ""
+
+#: student_registration/templates/alp/index.html:49
+#: student_registration/templates/alp/outreach.html:37
+#: student_registration/templates/alp/post_test.html:35
+#: student_registration/templates/alp/pre_test.html:40
+msgid "Please check you internet connectivity"
+msgstr ""
+
+#: student_registration/templates/alp/index.html:106
+#: student_registration/templates/alp/list.html:96
+#: student_registration/templates/alp/outreach.html:91
+#: student_registration/templates/enrollments/list.html:83
+#: student_registration/templates/registrations/index.html:112
+#: student_registration/templates/registrations/list.html:82
+msgid "ID Number tooltip"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:30
+#: student_registration/templates/alp/outreach.html:45
+#: student_registration/templates/alp/pre_test.html:48
+#: student_registration/templates/header.html:40
+#: student_registration/templates/header.html:53
+msgid "ALP data collecting"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:33
+#: student_registration/templates/hhvisit/list_supervisor.html:51
+#: student_registration/templates/registration-pilot/list_school_modification.html:51
+msgid "Display by Location"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:41
+#: student_registration/templates/enrollments/list.html:32
+#: student_registration/templates/registrations/list.html:32
+msgid "Display by School"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:87
+#: student_registration/templates/alp/post_test.html:90
+#: student_registration/templates/alp/pre_test.html:98
+#: student_registration/templates/alp/prototype-view.html:39
+#: student_registration/templates/alp/prototype-view_new.html:39
+#: student_registration/templates/alp/prototype_new.html:64
+#: student_registration/templates/alp/prototype_new.html:123
+msgid "Registered in level"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:88
+#: student_registration/templates/alp/post_test.html:92
+#: student_registration/templates/alp/pre_test.html:99
+msgid "Student notes"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:105
+#: student_registration/templates/alp/post_test.html:96
+#: student_registration/templates/alp/pre_test.html:116
+#: student_registration/templates/alp/prototype-view.html:68
+#: student_registration/templates/alp/prototype-view_new.html:68
+#: student_registration/templates/alp/prototype-view_new.html:126
+#: student_registration/templates/alp/prototype_new.html:72
+#: student_registration/templates/alp/prototype_new.html:97
+msgid "Arabic language"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:106
+#: student_registration/templates/alp/post_test.html:101
+#: student_registration/templates/alp/pre_test.html:121
+msgid "Arabic language corrector"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:107
+#: student_registration/templates/alp/post_test.html:97
+#: student_registration/templates/alp/pre_test.html:117
+#: student_registration/templates/alp/prototype-view.html:76
+#: student_registration/templates/alp/prototype-view_new.html:72
+#: student_registration/templates/alp/prototype-view_new.html:130
+#: student_registration/templates/alp/prototype_new.html:77
+#: student_registration/templates/alp/prototype_new.html:101
+msgid "Foreign language"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:108
+#: student_registration/templates/alp/post_test.html:102
+#: student_registration/templates/alp/pre_test.html:122
+msgid "Foreign language corrector"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:109
+#: student_registration/templates/alp/post_test.html:98
+#: student_registration/templates/alp/pre_test.html:118
+#: student_registration/templates/alp/prototype-view.html:84
+#: student_registration/templates/alp/prototype-view_new.html:76
+#: student_registration/templates/alp/prototype-view_new.html:134
+#: student_registration/templates/alp/prototype_new.html:82
+#: student_registration/templates/alp/prototype_new.html:105
+msgid "Math"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:110
+#: student_registration/templates/alp/post_test.html:103
+#: student_registration/templates/alp/pre_test.html:123
+msgid "Math corrector"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:111
+#: student_registration/templates/alp/post_test.html:99
+#: student_registration/templates/alp/pre_test.html:119
+#: student_registration/templates/alp/prototype-view.html:92
+#: student_registration/templates/alp/prototype-view_new.html:80
+#: student_registration/templates/alp/prototype-view_new.html:138
+#: student_registration/templates/alp/prototype_new.html:87
+#: student_registration/templates/alp/prototype_new.html:109
+msgid "Science"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:112
+#: student_registration/templates/alp/post_test.html:104
+#: student_registration/templates/alp/pre_test.html:124
+msgid "Science corrector"
+msgstr ""
+
+#: student_registration/templates/alp/list.html:113
+#: student_registration/templates/alp/post_test.html:100
+#: student_registration/templates/alp/pre_test.html:120
+#: student_registration/templates/attendances/index.html:237
+#: student_registration/templates/attendances/list.html:184
+msgid "Total"
+msgstr ""
+
+#: student_registration/templates/alp/post_test.html:43
+#: student_registration/templates/header.html:32
+msgid "ALP Post Test"
+msgstr ""
+
+#: student_registration/templates/alp/post_test.html:52
+#: student_registration/templates/alp/pre_test.html:57
+msgid "Filter by School"
+msgstr ""
+
+#: student_registration/templates/alp/post_test.html:59
+#: student_registration/templates/alp/pre_test.html:62
+msgid "Search a student"
+msgstr ""
+
+#: student_registration/templates/alp/post_test.html:89
+#: student_registration/templates/registration-pilot/add_child.html:36
+#: student_registration/templates/registration-pilot/class-assignment.html:74
+#: student_registration/templates/registration-pilot/registry.html:172
+#: student_registration/templates/registration-pilot/registry.html:277
+msgid "Age"
+msgstr ""
+
+#: student_registration/templates/alp/post_test.html:91
+msgid "Registered in section"
+msgstr ""
+
+#: student_registration/templates/alp/post_test.html:93
+msgid "Refer to level"
+msgstr ""
+
+#: student_registration/templates/alp/prototype.html:13
+#: student_registration/templates/alp/prototype_new.html:13
+#: student_registration/templates/enrollments/prototype.html:14
+#: student_registration/templates/registrations/prototype.html:14
+msgid "Delete"
+msgstr ""
+
+#: student_registration/templates/alp/prototype.html:52
+#: student_registration/templates/alp/prototype_current.html:55
+msgid "Select Level if applicable"
+msgstr ""
+
+#: student_registration/templates/alp/prototype.html:61
+#: student_registration/templates/alp/prototype_current.html:64
+msgid "Select Section if applicable"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:43
+#: student_registration/templates/header.html:73
+msgid "Attendance"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:50
+#: student_registration/templates/attendances/list.html:46
+#: student_registration/templates/registration-pilot/add_child.html:84
+#: student_registration/templates/registration-pilot/add_child.html:138
+msgid "Select a Location"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:58
+#: student_registration/templates/attendances/list.html:54
+#: student_registration/templates/registration-pilot/add_child.html:88
+#: student_registration/templates/registration-pilot/add_child.html:142
+msgid "Select a School"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:77
+#: student_registration/templates/attendances/list.html:68
+msgid "Other classes"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:90
+msgid "All Present"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:90
+msgid "All Absent"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:98
+#: student_registration/templates/hhvisit/household-visit.html:150
+#: student_registration/templates/hhvisit/household-visit.html:167
+#: student_registration/templates/hhvisit/initialisation.html:61
+#: student_registration/templates/registration-pilot/compalints-search.html:145
+#: student_registration/templates/registration-pilot/household-not-found.html:185
+#: student_registration/templates/registration-pilot/household-not-found.html:196
+#: student_registration/templates/registration-pilot/registration-update.html:561
+#: student_registration/templates/registration-pilot/registration-update.html:578
+#: student_registration/templates/registration-pilot/registry.html:799
+#: student_registration/templates/registration-pilot/registry.html:877
+#: student_registration/templates/registration-pilot/registry.html:948
+#: student_registration/templates/registration-pilot/registry.html:1035
+msgid "Save"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:103
+msgid "Validate All"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:205
+#: student_registration/templates/attendances/list.html:162
+msgid "Are you sure to validate all Attendances"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:238
+msgid "Total present"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:239
+msgid "Total absent"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:394
+#: student_registration/templates/attendances/list.html:350
+msgid "Present"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:394
+#: student_registration/templates/attendances/list.html:350
+msgid "Absent"
+msgstr ""
+
+#: student_registration/templates/attendances/index.html:466
+msgid "Synchronization done"
+msgstr ""
+
+#: student_registration/templates/attendances/list.html:43
+msgid "Attendances"
+msgstr ""
+
+#: student_registration/templates/base.app.html:56
+#: student_registration/templates/header.html:11
+msgid "Pilot"
+msgstr ""
+
+#: student_registration/templates/base.app.html:66
+#: student_registration/templates/header.html:25
+msgid "Admin"
+msgstr ""
+
+#: student_registration/templates/base.app.html:71
+#: student_registration/templates/enrollments/edit.html:55
+#: student_registration/templates/enrollments/index.html:34
+#: student_registration/templates/enrollments/list.html:29
+#: student_registration/templates/header.html:68
+#: student_registration/templates/header.html:88
+#: student_registration/templates/registrations/index.html:34
+#: student_registration/templates/registrations/list.html:29
+msgid "Registration"
+msgstr ""
+
+#: student_registration/templates/base.app.html:74
+#: student_registration/templates/header.html:91
+#: student_registration/templates/registration-pilot/waitinglist.html:33
+msgid "Waiting List"
+msgstr ""
+
+#: student_registration/templates/base.app.html:88
+#: student_registration/templates/header.html:144
 msgid "Logout"
 msgstr ""
 
-#: student_registration/templates/base.html:74
+#: student_registration/templates/base.app.html:92
+#: student_registration/templates/header.html:148
+msgid "English"
+msgstr ""
+
+#: student_registration/templates/base.app.html:97
+#: student_registration/templates/header.html:153
+msgid "Arabic"
+msgstr ""
+
+#: student_registration/templates/base.app.html:106
+#: student_registration/templates/header.html:162
 msgid "Log In"
 msgstr "Se Connecter"
 
-#: student_registration/users/models.py:16
-msgid "Name of User"
+#: student_registration/templates/dashboard/alp-overall.html:18
+#: student_registration/templates/dashboard/registrations-alp.html:17
+msgid "Registrations ALP"
+msgstr ""
+
+#: student_registration/templates/dashboard/alp-overall.html:24
+#: student_registration/templates/dashboard/registrations-2ndshift.html:23
+#: student_registration/templates/dashboard/registrations-alp-outreach.html:23
+#: student_registration/templates/dashboard/registrations-alp-post-test.html:23
+#: student_registration/templates/dashboard/registrations-alp-pre-test.html:23
+#: student_registration/templates/dashboard/registrations-alp.html:23
+#: student_registration/templates/dashboard/registrations-pilot.html:23
+msgid "Total Students"
+msgstr ""
+
+#: student_registration/templates/dashboard/alp-overall.html:29
+#: student_registration/templates/dashboard/registrations-2ndshift.html:28
+#: student_registration/templates/dashboard/registrations-alp-outreach.html:28
+#: student_registration/templates/dashboard/registrations-alp-post-test.html:28
+#: student_registration/templates/dashboard/registrations-alp-pre-test.html:28
+#: student_registration/templates/dashboard/registrations-alp.html:28
+#: student_registration/templates/dashboard/registrations-pilot.html:28
+msgid "Total Males"
+msgstr ""
+
+#: student_registration/templates/dashboard/alp-overall.html:34
+#: student_registration/templates/dashboard/registrations-2ndshift.html:33
+#: student_registration/templates/dashboard/registrations-alp-outreach.html:33
+#: student_registration/templates/dashboard/registrations-alp-post-test.html:33
+#: student_registration/templates/dashboard/registrations-alp-pre-test.html:33
+#: student_registration/templates/dashboard/registrations-alp.html:33
+#: student_registration/templates/dashboard/registrations-pilot.html:33
+msgid "Total Females"
+msgstr ""
+
+#: student_registration/templates/dashboard/alp-overall.html:44
+msgid "ALP overall"
+msgstr ""
+
+#: student_registration/templates/dashboard/attendance.html:17
+msgid "Attendance Dashboard"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:17
+msgid "Registrations 2nd Shift"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:38
+#: student_registration/templates/dashboard/registrations-alp-outreach.html:38
+#: student_registration/templates/dashboard/registrations-alp-post-test.html:38
+#: student_registration/templates/dashboard/registrations-alp-pre-test.html:38
+#: student_registration/templates/dashboard/registrations-alp.html:38
+#: student_registration/templates/dashboard/registrations-pilot.html:43
+msgid "Total Schools"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:48
+#: student_registration/templates/dashboard/registrations-alp-outreach.html:64
+#: student_registration/templates/dashboard/registrations-alp-post-test.html:64
+#: student_registration/templates/dashboard/registrations-alp-pre-test.html:64
+#: student_registration/templates/dashboard/registrations-alp.html:64
+msgid "Students By Age Range"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:64
+msgid "Students By Age/Akkar"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:80
+msgid "Students By Age/Baalbak"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:96
+msgid "Students By Age/Beirut"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:112
+msgid "Students By Age/Bekaa"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:128
+msgid "Students By Age/Mont-Leb"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:144
+msgid "Students By Age/Nabatiyeh"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:160
+msgid "Students By Age/North"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:177
+msgid "Students By Age/South"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:194
+#: student_registration/templates/dashboard/registrations-alp-outreach.html:47
+#: student_registration/templates/dashboard/registrations-alp-post-test.html:47
+#: student_registration/templates/dashboard/registrations-alp-pre-test.html:47
+#: student_registration/templates/dashboard/registrations-alp.html:47
+#, python-format
+msgid "%% Students By Age Range"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:214
+#: student_registration/templates/dashboard/registrations-alp-outreach.html:81
+#: student_registration/templates/dashboard/registrations-alp-post-test.html:81
+#: student_registration/templates/dashboard/registrations-alp-pre-test.html:81
+#: student_registration/templates/dashboard/registrations-alp.html:81
+msgid "Students By ID Type"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:232
+#: student_registration/templates/dashboard/registrations-alp-outreach.html:99
+#: student_registration/templates/dashboard/registrations-alp-post-test.html:99
+#: student_registration/templates/dashboard/registrations-alp-pre-test.html:99
+#: student_registration/templates/dashboard/registrations-alp.html:99
+msgid "Students By Governorate"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:248
+#: student_registration/templates/dashboard/registrations-alp-outreach.html:115
+#: student_registration/templates/dashboard/registrations-alp-post-test.html:115
+#: student_registration/templates/dashboard/registrations-alp-pre-test.html:115
+#: student_registration/templates/dashboard/registrations-alp.html:115
+msgid "Students By Nationality"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:266
+#: student_registration/templates/dashboard/registrations-alp-outreach.html:133
+#: student_registration/templates/dashboard/registrations-alp-post-test.html:133
+#: student_registration/templates/dashboard/registrations-alp-pre-test.html:133
+#: student_registration/templates/dashboard/registrations-alp.html:133
+msgid "Schools By Governorate"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-2ndshift.html:282
+#: student_registration/templates/dashboard/registrations-alp-outreach.html:149
+#: student_registration/templates/dashboard/registrations-alp-post-test.html:149
+#: student_registration/templates/dashboard/registrations-alp-pre-test.html:149
+#: student_registration/templates/dashboard/registrations-alp.html:149
+msgid "Students By School"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-alp-outreach.html:17
+msgid "Registrations ALP Outreach"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-alp-post-test.html:17
+msgid "Registrations ALP Post-test"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-alp-pre-test.html:17
+msgid "Registrations ALP Pre-test"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-pilot.html:17
+msgid "Registrations PILOT"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-pilot.html:38
+msgid "Not Enrolled Last Year"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-pilot.html:48
+msgid "Total Households"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-pilot.html:57
+#, python-format
+msgid "%% Children By Age Range"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-pilot.html:74
+msgid "Children By Age Range"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-pilot.html:91
+msgid "Households By ID Type"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-pilot.html:109
+msgid "Children By Governate"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-pilot.html:124
+msgid "Households By Nationality"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-pilot.html:141
+msgid "Households By Governate"
+msgstr ""
+
+#: student_registration/templates/dashboard/registrations-pilot.html:157
+msgid "Schools By Governate"
+msgstr ""
+
+#: student_registration/templates/enrollments/edit.html:68
+#: student_registration/templates/enrollments/index.html:43
+#: student_registration/templates/enrollments/patch.html:77
+#: student_registration/templates/registrations/index.html:56
+msgid "Filter by Class"
+msgstr ""
+
+#: student_registration/templates/enrollments/index.html:199
+#: student_registration/templates/registrations/index.html:231
+msgid "This column contains there following data:"
+msgstr ""
+
+#: student_registration/templates/enrollments/index.html:203
+#: student_registration/templates/registrations/index.html:235
+msgid "are you sure you want to delete this column?"
+msgstr ""
+
+#: student_registration/templates/enrollments/index.html:421
+#: student_registration/templates/registrations/index.html:427
+msgid "Please enter extra column name"
+msgstr ""
+
+#: student_registration/templates/enrollments/patch.html:56
+msgid "Editing students data"
+msgstr ""
+
+#: student_registration/templates/enrollments/patch.html:64
+msgid "push to tablet"
+msgstr ""
+
+#: student_registration/templates/enrollments/patch.html:83
+#: student_registration/templates/registrations/index.html:50
+msgid "Filter by Section"
+msgstr ""
+
+#: student_registration/templates/enrollments/patch.html:107
+msgid "Total students"
+msgstr ""
+
+#: student_registration/templates/header.html:11
+#: student_registration/templates/header.html:13
+msgid "Compiler"
+msgstr ""
+
+#: student_registration/templates/header.html:35
+msgid "ALP Pre Test"
+msgstr ""
+
+#: student_registration/templates/header.html:63
+msgid "Registration editing"
+msgstr ""
+
+#: student_registration/templates/header.html:78
+#: student_registration/templates/registration-pilot/compalints-search.html:132
+#: student_registration/templates/registration-pilot/registration-update.html:71
+msgid "Updates and Complaints"
+msgstr ""
+
+#: student_registration/templates/header.html:83
+#: student_registration/templates/registration-pilot/compalints-search.html:61
+msgid "Updates and Complaints Approval Layer"
+msgstr ""
+
+#: student_registration/templates/header.html:94
+#: student_registration/templates/registration-pilot/class-assignment.html:39
+msgid "Class Assignments"
+msgstr ""
+
+#: student_registration/templates/header.html:99
+msgid "Modify School"
+msgstr ""
+
+#: student_registration/templates/header.html:106
+msgid "Dashboard"
+msgstr ""
+
+#: student_registration/templates/header.html:109
+msgid "PILOT"
+msgstr ""
+
+#: student_registration/templates/header.html:111
+msgid "2nd Shift"
+msgstr ""
+
+#: student_registration/templates/header.html:113
+msgid "ALP"
+msgstr ""
+
+#: student_registration/templates/header.html:125
+#: student_registration/templates/hhvisit/list.html:61
+msgid "Household Visit"
+msgstr ""
+
+#: student_registration/templates/header.html:130
+#: student_registration/templates/hhvisit/list_supervisor.html:48
+msgid "Household Visit Assignment"
+msgstr ""
+
+#: student_registration/templates/header.html:141
+msgid "Change password"
+msgstr ""
+
+#: student_registration/templates/hhvisit/child-visit-information.html:7
+msgid "Child Name  "
+msgstr ""
+
+#: student_registration/templates/hhvisit/child-visit-information.html:10
+msgid "Child Absence Days  "
+msgstr ""
+
+#: student_registration/templates/hhvisit/child-visit-information.html:13
+msgid "Is the child now enrolled in a different school?"
+msgstr ""
+
+#: student_registration/templates/hhvisit/child-visit-information.html:19
+msgid "Child no longer living in Pilot Area?"
+msgstr ""
+
+#: student_registration/templates/hhvisit/child-visit-information.html:48
+msgid "Reason is invalid"
+msgstr ""
+
+#: student_registration/templates/hhvisit/child-visit-information.html:74
+msgid "Service is invalid"
+msgstr ""
+
+#: student_registration/templates/hhvisit/child-visit-information.html:79
+msgid "Service Type"
+msgstr ""
+
+#: student_registration/templates/hhvisit/child-visit-information.html:92
+msgid "Main Reason"
+msgstr ""
+
+#: student_registration/templates/hhvisit/child-visit-information.html:103
+msgid "Specific Reason"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:14
+msgid "Household visit success"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:15
+#: student_registration/templates/hhvisit/household-visit.html:21
+#: student_registration/templates/registration-pilot/household-not-found.html:15
+#: student_registration/templates/registration-pilot/registration-update.html:15
+#: student_registration/templates/registration-pilot/registry.html:20
+#: student_registration/templates/registration-pilot/registry.html:26
+#: student_registration/templates/registration-pilot/waitinglist.html:18
+#: student_registration/templates/registration-pilot/waitinglist.html:24
+msgid "Please click"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:16
+#: student_registration/templates/hhvisit/household-visit.html:22
+#: student_registration/templates/registration-pilot/registry.html:21
+#: student_registration/templates/registration-pilot/registry.html:27
+#: student_registration/templates/registration-pilot/waitinglist.html:19
+#: student_registration/templates/registration-pilot/waitinglist.html:25
+msgid "here"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:17
+#: student_registration/templates/hhvisit/household-visit.html:23
+msgid "To start a new household visit"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:20
+msgid "Household visit cancelled"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:49
+msgid "Household Specific Information"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:51
+msgid "Name of Household Rep"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:53
+msgid "Household Rep ID Number"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:56
+msgid "Times visited"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:58
+msgid "Household Found"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:61
+msgid "Note is required"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:83
+msgid "Reasons for Absence and Referral"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:111
+msgid "Comments"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:153
+#: student_registration/templates/hhvisit/household-visit.html:172
+#: student_registration/templates/registration-pilot/registration-update.html:564
+#: student_registration/templates/registration-pilot/registration-update.html:583
+#: student_registration/templates/registration-pilot/registry.html:444
+#: student_registration/templates/registration-pilot/registry.html:456
+msgid "previous"
+msgstr ""
+
+#: student_registration/templates/hhvisit/household-visit.html:156
+#: student_registration/templates/hhvisit/household-visit.html:175
+#: student_registration/templates/registration-pilot/registration-update.html:567
+#: student_registration/templates/registration-pilot/registration-update.html:586
+#: student_registration/templates/registration-pilot/registry.html:447
+#: student_registration/templates/registration-pilot/registry.html:459
+msgid "next"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list.html:50
+#: student_registration/templates/hhvisit/list_supervisor.html:37
+#: student_registration/templates/registration-pilot/class-assignment.html:28
+#: student_registration/templates/registration-pilot/compalints-search.html:50
+#: student_registration/templates/registration-pilot/list_school_modification.html:37
+#: student_registration/templates/registration-pilot/registry-search.html:56
+msgid "Success"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list.html:50
+#: student_registration/templates/hhvisit/list_supervisor.html:37
+#: student_registration/templates/registration-pilot/class-assignment.html:28
+#: student_registration/templates/registration-pilot/compalints-search.html:50
+#: student_registration/templates/registration-pilot/list_school_modification.html:37
+#: student_registration/templates/registration-pilot/registry-search.html:56
+msgid "Your change is successfully Saved"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list.html:53
+#: student_registration/templates/hhvisit/list_supervisor.html:40
+#: student_registration/templates/registration-pilot/class-assignment.html:31
+#: student_registration/templates/registration-pilot/compalints-search.html:53
+#: student_registration/templates/registration-pilot/list_school_modification.html:40
+#: student_registration/templates/registration-pilot/registry-search.html:59
+msgid "Oops"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list.html:53
+#: student_registration/templates/hhvisit/list_supervisor.html:40
+#: student_registration/templates/registration-pilot/class-assignment.html:31
+#: student_registration/templates/registration-pilot/compalints-search.html:53
+#: student_registration/templates/registration-pilot/list_school_modification.html:40
+#: student_registration/templates/registration-pilot/registry-search.html:59
+msgid "Error saving changes, please contact system administrators"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list.html:78
+#: student_registration/templates/hhvisit/list_supervisor.html:76
+#: student_registration/templates/registration-pilot/registry-search.html:130
+msgid "HH District"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list.html:79
+#: student_registration/templates/hhvisit/list_supervisor.html:77
+msgid "HH Address"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list.html:80
+#: student_registration/templates/hhvisit/list_supervisor.html:78
+msgid "HH Representative Name"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list.html:81
+#: student_registration/templates/hhvisit/list_supervisor.html:79
+msgid "# of Children Absent"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list.html:82
+#: student_registration/templates/hhvisit/list_supervisor.html:80
+#: student_registration/templates/registration-pilot/list_school_modification.html:77
+#: student_registration/templates/registration-pilot/registry.html:391
+#: student_registration/templates/registration-pilot/waitinglist.html:68
+msgid "Primary Phone Number"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list.html:83
+#: student_registration/templates/hhvisit/list_supervisor.html:81
+#: student_registration/templates/registration-pilot/list_school_modification.html:78
+#: student_registration/templates/registration-pilot/registry.html:402
+#: student_registration/templates/registration-pilot/waitinglist.html:73
+msgid "Secondary Phone Number"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list.html:84
+#: student_registration/templates/hhvisit/list_supervisor.html:82
+msgid "Status- Completed, Pending"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list.html:85
+#: student_registration/templates/hhvisit/list_supervisor.html:83
+msgid "Attempt Number"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list.html:86
+msgid "Team Assigned"
+msgstr ""
+
+#: student_registration/templates/hhvisit/list_supervisor.html:84
+msgid "Team"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:10
+#: student_registration/templates/registration-pilot/add_child.html:102
+msgid "Child's ID Number"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:12
+#: student_registration/templates/registration-pilot/add_child.html:18
+#: student_registration/templates/registration-pilot/add_child.html:23
+#: student_registration/templates/registration-pilot/add_child.html:28
+#: student_registration/templates/registration-pilot/add_child.html:33
+#: student_registration/templates/registration-pilot/add_child.html:38
+#: student_registration/templates/registration-pilot/add_child.html:46
+#: student_registration/templates/registration-pilot/add_child.html:51
+#: student_registration/templates/registration-pilot/add_child.html:56
+#: student_registration/templates/registration-pilot/add_child.html:104
+#: student_registration/templates/registration-pilot/add_child.html:110
+#: student_registration/templates/registration-pilot/registry.html:60
+#: student_registration/templates/registration-pilot/registry.html:98
+#: student_registration/templates/registration-pilot/registry.html:103
+#: student_registration/templates/registration-pilot/registry.html:129
+#: student_registration/templates/registration-pilot/registry.html:139
+#: student_registration/templates/registration-pilot/registry.html:154
+#: student_registration/templates/registration-pilot/registry.html:159
+#: student_registration/templates/registration-pilot/registry.html:164
+#: student_registration/templates/registration-pilot/registry.html:169
+#: student_registration/templates/registration-pilot/registry.html:174
+#: student_registration/templates/registration-pilot/registry.html:181
+#: student_registration/templates/registration-pilot/registry.html:186
+#: student_registration/templates/registration-pilot/registry.html:191
+#: student_registration/templates/registration-pilot/registry.html:388
+#: student_registration/templates/registration-pilot/registry.html:393
+#: student_registration/templates/registration-pilot/registry.html:399
+#: student_registration/templates/registration-pilot/waitinglist.html:40
+#: student_registration/templates/registration-pilot/waitinglist.html:45
+#: student_registration/templates/registration-pilot/waitinglist.html:50
+#: student_registration/templates/registration-pilot/waitinglist.html:55
+#: student_registration/templates/registration-pilot/waitinglist.html:65
+#: student_registration/templates/registration-pilot/waitinglist.html:70
+#: student_registration/templates/registration-pilot/waitinglist.html:79
+#: student_registration/templates/registration-pilot/waitinglist.html:84
+msgid "This field is required"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:13
+#: student_registration/templates/registration-pilot/add_child.html:105
+#: student_registration/templates/registration-pilot/registry.html:130
+#: student_registration/templates/registration-pilot/waitinglist.html:60
+msgid "The UNHCR ID is not valid"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:16
+#: student_registration/templates/registration-pilot/registry.html:152
+#: student_registration/templates/registration-pilot/waitinglist.html:43
+msgid "First Name"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:21
+#: student_registration/templates/registration-pilot/registry.html:157
+#: student_registration/templates/registration-pilot/waitinglist.html:48
+msgid "Father's Name"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:26
+#: student_registration/templates/registration-pilot/registry.html:162
+#: student_registration/templates/registration-pilot/waitinglist.html:53
+msgid "Last Name"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:31
+#: student_registration/templates/registration-pilot/registry.html:167
+#: student_registration/templates/registration-pilot/registry.html:275
+msgid "Mother's Full name"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:39
+#: student_registration/templates/registration-pilot/registry.html:547
+#: student_registration/templates/registration-pilot/registry.html:1301
+msgid "The child is not within the eligible age for the Pilot."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:42
+#: student_registration/templates/registration-pilot/registry.html:177
+msgid "Date of birth"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:49
+#: student_registration/templates/registration-pilot/registry.html:184
+msgid "Gender"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:54
+#: student_registration/templates/registration-pilot/add_child.html:108
+#: student_registration/templates/registration-pilot/registry.html:278
+#: student_registration/templates/registration-pilot/registry.html:301
+msgid "Relationship to Household representative"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:59
+msgid "Have the child been out of formal public school for more than 2 years?"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:69
+#: student_registration/templates/registration-pilot/add_child.html:123
+msgid "Child registered in UNHCR or Family Book?"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:79
+#: student_registration/templates/registration-pilot/add_child.html:133
+#: student_registration/templates/registration-pilot/registry.html:279
+#: student_registration/templates/registration-pilot/registry.html:302
+msgid "Was this child enrolled in any school last year"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/add_child.html:113
+msgid "Have the child been out of school for more than 2 years?"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/class-assignment.html:75
+msgid "Class"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/class-assignment.html:76
+msgid "Section"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/class-assignment.html:77
+msgid "Enrolled in this school"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/compalints-search.html:78
+msgid "Category"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/compalints-search.html:79
+msgid "Type"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/compalints-search.html:80
+msgid "Number"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/compalints-search.html:81
+msgid "Urgent"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:14
+msgid "Household not found cancelled"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:36
+msgid "Household not found"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:38
+msgid ""
+"Please inform the household they can't be added this year, but we will "
+"collect their information to investigate what happened."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:41
+msgid "Household ID Type: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:47
+msgid "Household ID Type is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:50
+msgid "Household Case Number: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:52
+msgid "Invalid Case format."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:55
+msgid "Household First Name (Arabic): "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:57
+msgid "Household First Name is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:60
+msgid "Household Father Name (Arabic): "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:62
+msgid "Household Father Name is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:65
+msgid "Household Last Name (Arabic): "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:67
+msgid "Household Last Name is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:70
+msgid "Household Mother Full  Name (Arabic): "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:72
+msgid "Household Mother Full Name is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:75
+msgid "Household Gender: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:81
+msgid "Household Gender is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:84
+msgid "Household DOB"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:93
+msgid "Household DOB is not valid"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:96
+#: student_registration/templates/registration-pilot/registration-update.html:209
+msgid "Realtionship to household head: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:102
+#: student_registration/templates/registration-pilot/registration-update.html:215
+msgid "Relationship to household head is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:105
+msgid "Household Primary Phone Number: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:107
+#: student_registration/templates/registration-pilot/household-not-found.html:112
+#: student_registration/templates/registration-pilot/household-not-found.html:127
+#: student_registration/templates/registration-pilot/household-not-found.html:132
+#: student_registration/templates/registration-pilot/registration-update.html:102
+#: student_registration/templates/registration-pilot/registration-update.html:107
+#: student_registration/templates/registration-pilot/registration-update.html:126
+#: student_registration/templates/registration-pilot/registration-update.html:131
+#: student_registration/templates/registration-pilot/registration-update.html:220
+#: student_registration/templates/registration-pilot/registration-update.html:225
+#: student_registration/templates/registration-pilot/registration-update.html:383
+#: student_registration/templates/registration-pilot/registration-update.html:388
+#: student_registration/templates/registration-pilot/registry.html:394
+#: student_registration/templates/registration-pilot/registry.html:404
+msgid "The phone number must be 8 digits"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:110
+#: student_registration/templates/registration-pilot/household-not-found.html:130
+#: student_registration/templates/registration-pilot/registration-update.html:105
+#: student_registration/templates/registration-pilot/registration-update.html:129
+#: student_registration/templates/registration-pilot/registration-update.html:223
+#: student_registration/templates/registration-pilot/registration-update.html:386
+msgid "Confirm Phone Number: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:113
+#: student_registration/templates/registration-pilot/household-not-found.html:133
+#: student_registration/templates/registration-pilot/registration-update.html:108
+#: student_registration/templates/registration-pilot/registration-update.html:132
+#: student_registration/templates/registration-pilot/registration-update.html:226
+#: student_registration/templates/registration-pilot/registration-update.html:389
+msgid "Phone mismatch"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:116
+#: student_registration/templates/registration-pilot/registration-update.html:111
+msgid "Phone Number is normally answered by: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:122
+#: student_registration/templates/registration-pilot/household-not-found.html:142
+#: student_registration/templates/registration-pilot/registration-update.html:117
+#: student_registration/templates/registration-pilot/registration-update.html:141
+msgid "Phone Number is normally answered by is missing"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:125
+#: student_registration/templates/registration-pilot/registration-update.html:124
+msgid "Secondary Phone Number: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:136
+#: student_registration/templates/registration-pilot/registration-update.html:135
+msgid "Phone number is normally answered by: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:146
+msgid "Number of children 5 to 9: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:151
+msgid "Number of children 10 to 17: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:155
+msgid "Number of children is missing"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:165
+msgid "Type: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:173
+#: student_registration/templates/registration-pilot/registration-update.html:306
+#: student_registration/templates/registration-pilot/registration-update.html:514
+msgid "Comment: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/household-not-found.html:175
+#: student_registration/templates/registration-pilot/registration-update.html:516
+msgid "Comment is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/list_school_modification.html:48
+msgid "Student Change School"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:14
+msgid "Household update cancelled"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:40
+msgid "Please note that this household is currently suspended "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:42
+msgid "Verify Caller Identity"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:45
+msgid ""
+"The information the caller provided for you to locate them in the database "
+"cannot be used to verify their identify"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:48
+msgid "Caller must answer 2 of the following questions correctly."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:51
+msgid "- Name of person that registered children: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:54
+msgid "- ID Number: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:57
+msgid "- DOB of person that registered children "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:60
+msgid "- Last 4 digits on ATM Card: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:63
+msgid "- Primary phone: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:66
+msgid "- Secondary phone: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:73
+msgid "Please select: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:97
+msgid "Current Primary phone: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:100
+msgid "Primary Phone Number: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:121
+msgid "Current Secondary phone: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:146
+msgid "Current Address: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:148
+msgid "New Address: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:150
+msgid "Address field is required!"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:154
+msgid "New Beneficiary ID Type: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:160
+msgid "New Beneficiary ID Type is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:163
+msgid "New Beneficiary Individual ID Number: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:165
+msgid "Invalid ID format."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:168
+msgid "New Beneficiary First Name (Arabic): "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:170
+msgid "Beneficiary First Name is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:173
+msgid "New Beneficiary Father Name (Arabic): "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:175
+msgid "Beneficiary Father Name is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:178
+msgid "New Beneficiary Last Name (Arabic): "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:180
+msgid "Beneficiary Last Name is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:183
+msgid "New Beneficiary Mother Full  Name (Arabic): "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:185
+msgid "Beneficiary Mother Full Name is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:188
+msgid "New Beneficiary Gender: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:194
+msgid "Gender is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:197
+msgid "New Beneficiary DOB"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:206
+msgid "DOB is not valid"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:218
+msgid "New Beneficiary Phone Number: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:230
+msgid "Is the new beneficiary the same as person calling? "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:237
+#: student_registration/templates/registration-pilot/registration-update.html:294
+msgid "Reason: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:243
+msgid "Reason is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:246
+#: student_registration/templates/registration-pilot/registration-update.html:302
+#: student_registration/templates/registration-pilot/registration-update.html:520
+msgid "Specify: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:312
+msgid "Household Status:  "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:314
+msgid "Payment History: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:335
+msgid "Children in Household: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:355
+#: student_registration/templates/registration-pilot/registration-update.html:370
+#: student_registration/templates/registration-pilot/registration-update.html:394
+#: student_registration/templates/registration-pilot/registration-update.html:404
+#: student_registration/templates/registration-pilot/registration-update.html:414
+#: student_registration/templates/registration-pilot/registration-update.html:427
+#: student_registration/templates/registration-pilot/registration-update.html:436
+msgid "Complaint Type: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:364
+msgid "Card Status: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:367
+msgid "Date of distribution: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:378
+msgid "Current phone: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:381
+msgid "Phone Number: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:421
+msgid ""
+"Please select the child that has been refused re-entry by the School Director"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:422
+msgid "Student: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:444
+msgid "Date of incident: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:452
+msgid "Date is not valid"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:455
+msgid "Time of incident: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:464
+msgid "Phone number from which call was placed: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:466
+msgid "Phone is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:469
+msgid "Service requested "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:471
+msgid "Service requested is missing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:476
+msgid "Case Number on First Card: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:478
+#: student_registration/templates/registration-pilot/registration-update.html:483
+#: student_registration/templates/registration-pilot/registration-update.html:495
+#: student_registration/templates/registration-pilot/registration-update.html:501
+msgid "Case number is incorrect"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:481
+msgid "Confirm Case Number on First Card: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:484
+#: student_registration/templates/registration-pilot/registration-update.html:502
+msgid "Case mismatch"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:487
+msgid "Last four digits of the  First Card: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:489
+#: student_registration/templates/registration-pilot/registration-update.html:496
+#: student_registration/templates/registration-pilot/registration-update.html:507
+msgid "last 4 digits is incorrect"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:493
+msgid "Case Number on Second Card: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:499
+msgid "Confirm Case Number on Second Card: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:505
+msgid "Last four digits of the  Second Card: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registration-update.html:524
+msgid "Complaint History: "
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry-search.html:67
+msgid "Household Update"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry-search.html:107
+msgid "Select District"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry-search.html:131
+msgid "Household Representative/PA Name"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry-search.html:132
+#: student_registration/templates/registration-pilot/registry.html:255
+msgid "ID Number"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry-search.html:133
+msgid "Primary Phone"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry-search.html:134
+msgid "Secondary Phone"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:19
+#: student_registration/templates/registration-pilot/waitinglist.html:17
+msgid "Application submission success"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:22
+#: student_registration/templates/registration-pilot/registry.html:28
+#: student_registration/templates/registration-pilot/waitinglist.html:20
+#: student_registration/templates/registration-pilot/waitinglist.html:26
+msgid "to start a new application"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:25
+#: student_registration/templates/registration-pilot/waitinglist.html:23
+msgid "Application registration cancelled"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:56
+msgid "Registration Household"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:58
+msgid "Select School"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:67
+msgid "Welcome to the Registration Desk of the Min Ila Pilot"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:69
+msgid ""
+"The Min Ila Pilot will provide children enrolled in 2nd shift with a cash "
+"transfer. Each child aged 5 to 9 will receive USD 20 per month. Each child "
+"aged 10 and above will receive USD 65 per month."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:70
+msgid ""
+"This cash is intended to help children regularly attend 2nd shift school in "
+"order that their future opportunities are improved."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:75
+msgid ""
+"If a student stops attending school, you will receive an SMS reminder of the "
+"purpose of this cash."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:76
+msgid ""
+"If the student does not return to school, you will receive a household visit "
+"to help us understand why the student cannot attend and to offer you more "
+"services to help the student attend school."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:81
+msgid ""
+"This desk is to Register for the Min Ila Pilot, not to enroll in school. "
+"Children must already be enrolled in school in order to Register for the "
+"Pilot."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:82
+msgid ""
+"If your child does not enroll in school he/she will be removed from the Min "
+"Ila Pilot."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:83
+msgid ""
+"If your child is not already enrolled in school, please go and do so now, "
+"then return to Register for the Pilot"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:88
+msgid ""
+"If your address or phone number changes, you must inform us by calling "
+"81-313940. If your household cannot be found after 2 months you will stop "
+"receiving benefits."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:89
+msgid ""
+"Please take a leaflet now so you have this important phone number with you."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:94
+msgid "Register New Household"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:96
+msgid "Nationality"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:101
+msgid "ID Type"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:107
+msgid ""
+"NOTE: Your household will receive a visit to confirm this child belongs to "
+"your household."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:112
+msgid "Is the principal applicant still with your household?"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:126
+#: student_registration/templates/registration-pilot/waitinglist.html:58
+msgid "UNHCR Household Registration Number"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:127
+msgid "Household ID Number"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:137
+msgid "UNHCR Individual Registration Number of the Household Representative"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:140
+msgid "The ID is not valid"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:141
+msgid ""
+"NOTE: If the Household Representative is not listed on the UNHCR "
+"Certificate, it cannot be used to regiter for the Pilot. Another form of ID "
+"must be used."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:145
+msgid ""
+"NOTE: in order to register with other ID, the ID Holder must be present AND "
+"must be 18 years of age or older."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:189
+msgid "Relationship to Household head"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:198
+msgid ""
+"You will receive your payments on an ATM Card. If you do not already have a "
+"Burgundy ATM Card, you will be provided with one. UNICEF will send you an "
+"SMS to tell you the date, time and place you can collect the Burgundy ATM "
+"Card."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:199
+msgid ""
+"Note: It is very important that you provide us a working phone number so we "
+"can send you the details of where and when to collect your ATM Card"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:204
+msgid "Collect existing ATM case number"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:205
+msgid "Please copy case number directly from card"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:208
+msgid "Blue Card Case Number"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:212
+msgid "White Card Case Number"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:220
+msgid "Register Children in Pilot"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:222
+msgid "Do you have any children enrolled in other 2nd shift schools?"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:232
+msgid ""
+"Have you already completed the registration process for this pilot in other "
+"school?"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:242
+msgid ""
+"You would have been required to present your ID when completing the Pilot "
+"Registration Process in the other school. Do you have the ID Number that was "
+"presented during your previous Pilot Registration?"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:252
+msgid ""
+"To ensure that your household receives complete payment you must provide the "
+"ID Number under which your other registration took place. You can either "
+"come back tomorrow, or you can call the hotline to do this. It is important "
+"that you do this in order to not delay your payment"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:258
+msgid "Edit File"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:262
+msgid ""
+"You must confirm that the child belongs to this household by checking the "
+"UNHCR Certificate or Family Book. If the household has neither, inform them "
+"that a Pilot Officer will visit their household to confirm the child lives "
+"with them"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:274
+msgid "Full Name"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:287
+#: student_registration/templates/registration-pilot/registry.html:310
+#: student_registration/templates/registration-pilot/registry.html:795
+#: student_registration/templates/registration-pilot/registry.html:873
+#: student_registration/templates/registration-pilot/registry.html:944
+#: student_registration/templates/registration-pilot/registry.html:1031
+msgid "Add Child"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:300
+msgid "Child's UNHCR Individual Number"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:319
+#: student_registration/templates/registration-pilot/registry.html:378
+msgid "Contact Information"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:321
+msgid ""
+"Officers of the Min Ila Cash Pilot must be able to reach you by phone and "
+"household visit in order for your household to benefit from the pilot. Your "
+"information will only be provided to officers of the pilot who will be "
+"trained to handle your information carefully and will only visit you if your "
+"child drops out of school."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:324
+#: student_registration/templates/registration-pilot/registry.html:383
+msgid ""
+"If you change your phone number or address, please inform the program by "
+"calling 81-313940, or you will be removed after we are unable to locate you."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:327
+msgid "This number is on the leaflet provided to you."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:333
+#: student_registration/templates/registration-pilot/registry.html:343
+msgid "Declaration and Consent"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:335
+msgid ""
+"Every month your household will receive a cash amount intended to help the "
+"children you have registered in the pilot to attend school. Each child 5 to "
+"9 years old will get USD 20 and each child aged 10 and above will receive "
+"USD 65. If your child stops attending school you will receive an SMS to "
+"remind you of the purpose of the cash after 10 days. After 20 days you will "
+"receive a household visit from Min Ila Pilot officers to help guide you to "
+"additional support to keep your children in school."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:338
+msgid ""
+"If Pilot Officers are unable to locate you by household visit after 3 "
+"attempts within a 2 month time period, you will stop receiving payments."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:345
+msgid ""
+"Please indicate that you understand the above as it has been read to you and "
+"that you consent to be contacted by telephone and by household visit by "
+"officers of the program by signing below. Those knowingly providing false "
+"information or committing fraud against the program will be removed from the "
+"pilot."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:348
+msgid ""
+"By signing this agreement you also consent to allow us to share the data "
+"collected today with UNHCR and WFP in order to help ensure that you are "
+"paid. Some data will also be shared with the Ministry of Education and "
+"Higher Education (MEHE). We will ensure that your data is handled carefully "
+"and confidentially. If you have any questions please ask them before signing."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:354
+msgid "Signature of Household Representative"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:356
+msgid "Signature is empty"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:367
+msgid "Clear"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:380
+msgid ""
+"To benefit from the cash pilot, you must provide us with an address where "
+"carefully selected, trained officers who work for the pilot can visit your "
+"household and a phone number where we can reach you. These officers will be "
+"trained to handle your information carefully and will only visit you if a "
+"child you have registered drops out of school."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:386
+msgid "Address"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:397
+#: student_registration/templates/registration-pilot/registry.html:407
+msgid "Phone Number are normally answered by"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:412
+msgid "Submit this application"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:440
+#: student_registration/templates/registration-pilot/registry.html:452
+msgid "Cancel registration"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:563
+msgid "Are you sure you want to submit this application?"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:716
+msgid ""
+"Please let the household know that we are currently not able to provide "
+"payments to those without ID. However, please offer them the option to "
+"complete data collection so that we can try to include them later once we "
+"develop a solution for them."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:774
+msgid "Are you sure you want to delete this child?"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:1106
+msgid ""
+"Currently ATM Cards can only be issued for those over the age of 18. We are "
+"working on a solution for this. You can continue the Registration Process so "
+"we have your information in case a solution is found. However, until then "
+"you will not receive payments."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:1111
+#: student_registration/templates/registration-pilot/waitinglist.html:137
+msgid "Are you sure you want to cancel this registration?"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/registry.html:1142
+msgid ""
+"Are all the children enrolled in the 2nd shift schools have been registered?"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/waitinglist.html:35
+msgid ""
+"As this school is full we are unable to register you in the Min Ila Pilot. "
+"We will collect your basic information and contact you if 2nd shift is "
+"opened in another school nearby. UNICEF will send you an SMS to inform you "
+"of the school name and location if this happens. You should then go to that "
+"school to enroll and to register in the Min Ila Pilot. We regret that we "
+"cannot register you in the pilot until that time."
+msgstr ""
+
+#: student_registration/templates/registration-pilot/waitinglist.html:63
+msgid "Number of children to be enrolled in this school"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/waitinglist.html:77
+msgid "Village of Residence"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/waitinglist.html:82
+msgid "District/Caza of Residence"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/waitinglist.html:88
+msgid "Submit"
+msgstr ""
+
+#: student_registration/templates/registration-pilot/waitinglist.html:149
+msgid "Are you sure you want to add those children to the waiting list?"
+msgstr ""
+
+#: student_registration/templates/registrations/index.html:62
+msgid "Filter by ID Type"
+msgstr ""
+
+#: student_registration/templates/registrations/index.html:68
+msgid "Filter by Nationality"
+msgstr ""
+
+#: student_registration/templates/registrations/index.html:131
+#: student_registration/templates/registrations/list.html:90
+msgid "Last education year"
+msgstr ""
+
+#: student_registration/templates/registrations/index.html:132
+#: student_registration/templates/registrations/list.html:91
+msgid "Last year result"
+msgstr ""
+
+#: student_registration/templates/registrations/index.html:134
+#: student_registration/templates/registrations/list.html:93
+msgid "Last informal education level"
+msgstr ""
+
+#: student_registration/templates/registrations/index.html:135
+#: student_registration/templates/registrations/list.html:94
+msgid "Last informal education year"
+msgstr ""
+
+#: student_registration/templates/registrations/index.html:136
+#: student_registration/templates/registrations/list.html:95
+msgid "Last informal education result"
+msgstr ""
+
+#: student_registration/templates/registrations/index.html:137
+#: student_registration/templates/registrations/list.html:96
+msgid "Last informal education final result"
+msgstr ""
+
+#: student_registration/templates/registrations/index.html:154
+msgid "duplicate last line with selected option"
+msgstr ""
+
+#: student_registration/templates/registrations/index.html:158
+msgid "duplicate defined number of lines with selected option"
+msgstr ""
+
+#: student_registration/users/models.py:22
+msgid "Partner"
+msgstr ""
+
+#: student_registration/users/views.py:157
+#: student_registration/users/views.py:186
+msgid "Password change"
+msgstr ""
+
+#: student_registration/users/views.py:174
+#: student_registration/users/views.py:209
+msgid "Password change successful"
 msgstr ""
