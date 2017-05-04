@@ -19,6 +19,7 @@ from .models import (
     ALPReferMatrix,
 )
 from student_registration.locations.models import Location
+from student_registration.attendances.tasks import set_app_attendances
 
 
 class SchoolResource(resources.ModelResource):
@@ -46,6 +47,7 @@ class SchoolResource(resources.ModelResource):
         if school.location and school.location.parent:
             return school.location.parent.name
         return ''
+
 
 class GovernorateFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
@@ -129,6 +131,25 @@ class SchoolAdmin(ImportExportModelAdmin):
         GovernorateFilter,
         'location',
     )
+
+    actions = ('push_attendances_2ndshift', 'push_attendances_2ndshift_delay',
+               'push_attendances_alp', 'push_attendances_alp_delay',)
+
+    def push_attendances_2ndshift(self, request, queryset):
+        for school in queryset:
+            set_app_attendances(school_number=school.number)
+
+    def push_attendances_2ndshift_delay(self, request, queryset):
+        for school in queryset:
+            set_app_attendances.delay(school_number=school.number)
+
+    def push_attendances_alp(self, request, queryset):
+        for school in queryset:
+            set_app_attendances(school_number=school.number, school_type='alp')
+
+    def push_attendances_alp_delay(self, request, queryset):
+        for school in queryset:
+            set_app_attendances.delay(school_number=school.number, school_type='alp')
 
 
 class EducationLevelResource(resources.ModelResource):

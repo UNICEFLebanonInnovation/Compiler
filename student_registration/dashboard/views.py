@@ -329,7 +329,15 @@ class RegistrationsALPOverallView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
 
-        alp_round = ALPRound.objects.get(current_round=True)
+        round_id = self.request.GET.get('alp_round', 0)
+        if round_id:
+            alp_round = ALPRound.objects.get(id=round_id)
+            post_test_round = alp_round
+        else:
+            alp_round = ALPRound.objects.get(current_round=True)
+            post_test_round = ALPRound.objects.get(current_post_test=True)
+
+        alp_rounds = ALPRound.objects.all()
         enrolled = self.queryset.filter(registered_in_level__isnull=False, alp_round=alp_round)
 
         partners = User.objects.filter(groups__name__in=['PARTNER'])
@@ -344,34 +352,57 @@ class RegistrationsALPOverallView(LoginRequiredMixin,
         )
 
         posttested = self.queryset.filter(
-            alp_round=alp_round,
+            alp_round=post_test_round,
             registered_in_level__isnull=False,
             refer_to_level__isnull=False
         )
 
         referred_to_formal = self.queryset.filter(
-            alp_round=alp_round,
+            alp_round=post_test_round,
             registered_in_level__isnull=False,
-            refer_to_level_id__in=[10, 11, 12, 13, 14, 15, 16, 17]
+            refer_to_level_id__in=[1, 10, 11, 12, 13, 14, 15, 16, 17]
         )
 
         referred_to_following = self.queryset.filter(
-            alp_round=alp_round,
+            alp_round=post_test_round,
             registered_in_level__isnull=False,
             refer_to_level_id__in=[2, 3, 4, 5, 6, 7, 8, 9]
         )
 
         repeated_level = self.queryset.filter(
-            alp_round=alp_round,
+            alp_round=post_test_round,
             registered_in_level__isnull=False,
             refer_to_level_id__in=[18, 19, 20, 21, 22, 23, 24, 25, 26]
         )
 
         passed_level = self.queryset.filter(
-            alp_round=alp_round,
+            alp_round=post_test_round,
             registered_in_level__isnull=False,
             refer_to_level_id__in=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
         )
+
+        old_enrolled = self.queryset.filter(
+            alp_round=alp_round,
+            registered_in_level__isnull=False,
+        ).extra(where={
+                'alp_outreach.student_id IN (Select distinct s.id from students_student s, alp_outreach e where s.id=e.student_id group by s.id having count(*) > 1)'
+            }).distinct()
+
+        new_enrolled = self.queryset.filter(
+            alp_round=alp_round,
+            registered_in_level__isnull=False,
+        ).extra(where={
+                'alp_outreach.student_id IN (Select distinct s.id from students_student s, alp_outreach e where s.id=e.student_id group by s.id having count(*) = 1)'
+        }).distinct()
+
+        new_enrolled_test = self.queryset.filter(
+            alp_round=alp_round,
+            owner__in=not_schools,
+            level__isnull=False,
+            assigned_to_level__isnull=False,
+        ).extra(where={
+                'alp_outreach.student_id IN (Select distinct s.id from students_student s, alp_outreach e where s.id=e.student_id group by s.id having count(*) = 1)'
+        }).distinct()
 
         return {
                 'enrolled': enrolled.count(),
@@ -398,6 +429,17 @@ class RegistrationsALPOverallView(LoginRequiredMixin,
                 'passed_level': passed_level.count(),
                 'passed_level_males': passed_level.filter(student__sex='Male').count(),
                 'passed_level_females': passed_level.filter(student__sex='Female').count(),
+                'old_enrolled': old_enrolled.count(),
+                'old_enrolled_males': old_enrolled.filter(student__sex='Male').count(),
+                'old_enrolled_females': old_enrolled.filter(student__sex='Female').count(),
+                'new_enrolled': new_enrolled.count(),
+                'new_enrolled_males': new_enrolled.filter(student__sex='Male').count(),
+                'new_enrolled_females': new_enrolled.filter(student__sex='Female').count(),
+                'new_enrolled_test': new_enrolled_test.count(),
+                'new_enrolled_test_males': new_enrolled_test.filter(student__sex='Male').count(),
+                'new_enrolled_test_females': new_enrolled_test.filter(student__sex='Female').count(),
+                'alp_round': alp_round,
+                'alp_rounds': alp_rounds,
         }
 
 
@@ -493,7 +535,13 @@ class RegistrationsALPPreTestView(LoginRequiredMixin,
         governorates = Location.objects.exclude(parent__isnull=False)
 
         alp_round = ALPRound.objects.get(current_pre_test=True)
-        self.queryset = self.queryset.filter(alp_round=alp_round, level__isnull=False)
+        not_schools = User.objects.filter(groups__name__in=['PARTNER', 'CERD'])
+        self.queryset = self.queryset.filter(
+            alp_round=alp_round,
+            owner__in=not_schools,
+            level__isnull=False,
+            assigned_to_level__isnull=False,
+        )
 
         students_per_gov = {}
         schools_per_gov = {}
