@@ -10,6 +10,7 @@ import tablib
 import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
+from django.db.models import Q
 from import_export.formats import base_formats
 from django.core.urlresolvers import reverse
 from datetime import datetime
@@ -37,10 +38,11 @@ from student_registration.eav.models import (
 )
 from student_registration.locations.models import Location
 from student_registration.alp.models import ALPRound
-from .models import Enrollment
-from .serializers import EnrollmentSerializer
+from .models import Enrollment, LoggingStudentMove
+from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
 
 
+# todo to delete
 class EnrollmentStaffView(LoginRequiredMixin, TemplateView):
     """
     Provides the Enrollment page with lookup types in the context
@@ -208,6 +210,44 @@ class EnrollmentPatchView(LoginRequiredMixin, TemplateView):
 ####################### API VIEWS #############################
 
 
+class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
+                                mixins.ListModelMixin,
+                                viewsets.GenericViewSet):
+
+    model = LoggingStudentMove
+    queryset = LoggingStudentMove.objects.all()
+    serializer_class = LoggingStudentMoveSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.request.method in ["PATCH", "POST", "PUT"]:
+            return self.queryset
+        terms = self.request.GET.get('term', 0)
+        if terms:
+            qs = self.queryset
+            for term in terms.split():
+                qs = qs.filter(
+                    Q(student__first_name__contains=term) |
+                    Q(student__father_name__contains=term) |
+                    Q(student__last_name__contains=term) |
+                    Q(student__id_number__contains=term)
+                )
+            return qs
+        return self.queryset
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('moved', 0):
+            enrollment = Enrollment.objects.get(id=request.POST.get('moved', 0))
+            enrollment.moved = True
+            enrollment.save()
+            LoggingStudentMove.objects.get_or_create(
+                enrolment_id=enrollment.id,
+                student_id=enrollment.student_id,
+                school_from_id=enrollment.school_id
+            )
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+
 class EnrollmentViewSet(mixins.RetrieveModelMixin,
                         mixins.ListModelMixin,
                         mixins.CreateModelMixin,
@@ -222,6 +262,8 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+        if self.request.GET.get('moved', 0):
+            return self.queryset
         if self.request.method in ["PATCH", "POST", "PUT"]:
             return self.queryset
         if self.request.user.school_id:
@@ -239,6 +281,13 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
         instance.save()
 
     def partial_update(self, request, *args, **kwargs):
+        if request.POST.get('moved', 0):
+            moved = LoggingStudentMove.objects.get(id=request.POST.get('moved', 0))
+            moved.school_to_id = request.POST.get('school')
+            moved.save()
+            enrollment = moved.enrolment
+            enrollment.moved = False
+            enrollment.save()
         self.serializer_class = EnrollmentSerializer
         return super(EnrollmentViewSet, self).partial_update(request)
 
