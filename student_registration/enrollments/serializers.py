@@ -1,11 +1,48 @@
 
 from rest_framework import serializers
-from .models import Enrollment
+from .models import Enrollment, LoggingStudentMove
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
     IDType,
     Nationality
 )
+
+
+class LoggingStudentMoveSerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField(read_only=True)
+    enrolment_id = serializers.IntegerField(source='enrolment.id', read_only=True)
+    student_id = serializers.IntegerField(source='student.id', read_only=True)
+    student_first_name = serializers.CharField(source='student.first_name', read_only=True)
+    student_father_name = serializers.CharField(source='student.father_name', read_only=True)
+    student_last_name = serializers.CharField(source='student.last_name', read_only=True)
+    student_full_name = serializers.CharField(source='student', read_only=True)
+    student_mother_fullname = serializers.CharField(source='student.mother_fullname', read_only=True)
+    student_sex = serializers.CharField(source='student.sex', read_only=True)
+    student_age = serializers.CharField(source='student.calc_age', read_only=True)
+    school_name = serializers.CharField(source='enrolment.school.name', read_only=True)
+    school_number = serializers.CharField(source='enrolment.school.number', read_only=True)
+    section_name = serializers.CharField(source='enrolment.section.name', read_only=True)
+    classroom_name = serializers.CharField(source='enrolment.classroom.name', read_only=True)
+
+    class Meta:
+        model = LoggingStudentMove
+        fields = (
+            'id',
+            'enrolment_id',
+            'student_id',
+            'student_first_name',
+            'student_father_name',
+            'student_last_name',
+            'student_full_name',
+            'student_mother_fullname',
+            'student_sex',
+            'student_age',
+            'school_name',
+            'school_number',
+            'section_name',
+            'classroom_name',
+        )
 
 
 class EnrollmentSerializer(serializers.ModelSerializer):
@@ -47,6 +84,8 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     last_informal_edu_level_id = serializers.CharField(source='last_informal_edu_level.id', read_only=True)
     last_informal_edu_round_id = serializers.CharField(source='last_informal_edu_round.id', read_only=True)
     last_informal_edu_final_result_id = serializers.CharField(source='last_informal_edu_final_result.id', read_only=True)
+
+    moved = serializers.CharField(read_only=True)
 
     def create(self, validated_data):
 
@@ -93,6 +132,8 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             student.save()
 
         try:
+            if 'school' in validated_data:
+                instance.school = validated_data['school']
             if 'registered_in_unhcr' in validated_data:
                 instance.registered_in_unhcr = validated_data['registered_in_unhcr']
             if 'participated_in_alp' in validated_data:
@@ -183,5 +224,6 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'last_informal_edu_level_id',
             'last_informal_edu_round_id',
             'last_informal_edu_final_result_id',
+            'moved',
         )
 
