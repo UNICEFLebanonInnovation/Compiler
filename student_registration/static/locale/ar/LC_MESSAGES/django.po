@@ -1274,16 +1274,13 @@ msgid "Weather Conditions"
 msgstr "احوال الطقس"
 
 msgid "Other (specify)"
-msgstr"أخرى (حدد)"
+msgstr "أخرى (حدد)"
 
 msgid "Cannot afford uniform"
 msgstr "لا يستطيع شراء مريول المدرسة"
 
 msgid "Clean/New"
 msgstr "نظيفة / جديدة"
-
-msgid "Other (specify)"
-msgstr "أخرى (حدد)"
 
 msgid "Weather-appropriate"
 msgstr "مناسبة للطقس"
@@ -1339,9 +1336,6 @@ msgstr "لا يمكن الاعتماد عليها / لا يوجد جدول زم�
 msgid "Not safe"
 msgstr "غير آمن"
 
-msgid "Other (specify)"
-msgstr "أخرى (حدد)"
-
 msgid "Threats from bus drivers"
 msgstr "تهديدات من سائقي الحافلات"
 
@@ -1350,3 +1344,21 @@ msgstr "متقطع (على سبيل المثال. الثلج والمطر وال
 
 msgid "Ongoing (e.g. cold weather)"
 msgstr " مستمر (الطقس البارد على سبيل المثال)"
+
+msgid "push to tablet"
+msgstr "ارسل البيانات الى اللوحة الالكترونية"
+
+msgid "Search moved student"
+msgstr "ابحث عن تلميذ منتقل من مدرسة اخرى"
+
+msgid "Moved"
+msgstr "انتقل"
+
+msgid "Current situation"
+msgstr "الوضع الحالي"
+
+msgid "are you sure you want to tag this student as moved?"
+msgstr "هل انت متأكد ان هذا التلميذ انتقل الى مدرسة اخرى؟"
+
+msgid "this student will disappear automatically once he get registered by another school"
+msgstr "هذا التلميذ سوف يتخفي تلقائيا من القائمة بمجرد تسجيله في مدرسة اخرى"

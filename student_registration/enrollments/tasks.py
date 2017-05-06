@@ -28,6 +28,17 @@ def assign_section(section):
 
 
 @app.task
+def assign_education_year(year):
+    from student_registration.enrollments.models import Enrollment
+    registrations = Enrollment.objects.filter(education_year__isnull=True)
+
+    print registrations.count(), " registrations found"
+    print "Start assignment"
+    registrations.update(education_year_id=year)
+    print "End assignment"
+
+
+@app.task
 def generate_2ndshift_report(school=0, location=0, email=None, user=None):
     from student_registration.enrollments.models import Enrollment
 
