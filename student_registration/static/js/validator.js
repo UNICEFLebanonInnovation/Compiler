@@ -39,6 +39,10 @@ function validateSection0()
     if(selectedOption == 1) {
         valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
         valid = validateUNCHRFormat(valid,'id_id_number');
+
+        valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
+        valid = validateUNCHRFormat(valid,'id_id_number');
+        
         var principalHouseHoldAvailable = $("#id_individual_id_number").is(":visible");
         if(principalHouseHoldAvailable== true) {
         valid = validateTextBoxRequired('id_individual_id_number','individual_id_number_error',valid);
