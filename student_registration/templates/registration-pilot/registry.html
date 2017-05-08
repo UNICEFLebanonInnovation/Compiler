@@ -128,9 +128,16 @@
                         <span>{{ form.id_number }}</span>
                         <span class="error" id="id_number_UNHCR_Other_error">{% trans "This field is required" %}</span>
                         <span class="error" id="id_number_UNHCR_Other_format_error">{% trans "The UNHCR ID is not valid" %}</span>
-{#                        <button class="btn btn-primary" type="button" id="getUNHCRDatatButton" style="display: none">#}
-{#                            {% trans "UNHCR Data" %}#}
-{#                        </button>#}
+                        <button class="btn btn-primary" type="button" id="getUNHCRDatatButton" style="display: none">
+                            {% trans "UNHCR Data" %}
+                        </button>
+                    </div>
+
+                     <div class="line" id="Household_confirm_block"style="display:none">
+                        <label class="text" id="HouseholdRegistrationNumber_confirm" style = "display:none">{% trans "Confirm UNHCR Household Registration Number" %}<span class="asterisque">*</span></label>
+                        <label class="text" id="HouseholdOtherID_confirm" style="display: none;">{% trans "Confirm Household ID Number" %}<span class="asterisque">*</span></label>
+                        <input id="id_number_confirm" maxlength="45" name="id_number_confirm" type="text">
+                        <span class="error" id="id_number_UNHCR_Other_confirm_error">{% trans "The UNHCR ID is not valid" %}</span>
                     </div>
 
                     <div class="line" id="Individual_block"style="display:none">
@@ -537,6 +544,13 @@
             checkIsNumber($(this));
         });
 
+        $('#id_id_number').bind("cut copy paste",function(e) {
+            e.preventDefault();
+        });
+        $('#id_number_confirm').bind("cut copy paste",function(e) {
+            e.preventDefault();
+        });
+
         $(document).on('change', '.bootbox-body #id_enrolled_last_year_location', function(){
             console.log($(this).val());
             filterSchoolsByLocation(parseInt($(this).val()));
@@ -692,27 +706,36 @@
                $("#HouseholdUNHCR").show();
                $("#HouseholdUNHCRNote").show();
                $("#Household_block").show();
+               $("#Household_confirm_block").show();
                $("#HouseholdRegistrationNumber").show();
+               $("#HouseholdRegistrationNumber_confirm").show();
 {#               $("#getUNHCRDatatButton").show();#}
            }else if (selectedOption == 2 )  {
                $("#Household_block").show();
+               $("#Household_confirm_block").show();
                $("#HouseholdOtherID").show();
+               $("#HouseholdOtherID_confirm").show();
                $("#HouseholdOtherID_Note").show();
                $("#HouseholdInformation").show();
                $("#HouseholdRegistrationNumber").hide();
+               $("#HouseholdRegistrationNumber_confirm").hide();
                $("#IndividualRegistrationNumber").hide();
            }else if ( selectedOption == 3 || selectedOption == 4|| selectedOption == 5)  {
                $("#Household_block").show();
+               $("#Household_confirm_block").show();
                $("#HouseholdOtherID").show();
+               $("#HouseholdOtherID_confirm").show();
                $("#HouseholdOtherID_Note").show();
                $("#HouseholdInformation").show();
                $("#household_visit_note").show();
                $("#HouseholdRegistrationNumber").hide();
+               $("#HouseholdRegistrationNumber_confirm").hide();
                $("#IndividualRegistrationNumber").hide();
 
            }else if (selectedOption == 6) {
                $("#HouseholdInformation").show();
                $("#Household_block").hide();
+               $("#Household_confirm_block").hide();
                bootbox.alert("{% trans 'Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them.' %}", function() {});
            }
         });
@@ -1261,9 +1284,11 @@
         $("#HouseholdUNHCR").hide();
         $("#HouseholdUNHCRNote").hide();
         $("#HouseholdOtherID").hide();
+        $("#HouseholdOtherID_confirm").hide();
         $("#HouseholdOtherID_Note").hide();
         $("#HouseholdInformation").hide();
         $("#HouseholdRegistrationNumber").hide();
+        $("#HouseholdRegistrationNumber_confirm").hide();
         $("#IndividualRegistrationNumber").hide();
         $("#household_visit_note").hide();
         $("#getUNHCRDatatButton").hide();
