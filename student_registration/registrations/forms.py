@@ -44,6 +44,8 @@ class RegisteringAdultForm(forms.ModelForm):
                                       required=False)
     csc_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 12, 'placeholder': ''})),
                                       required=False)
+    red_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 12, 'placeholder': ''})),
+                                      required=False)
     primary_phone = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': '70123456'})),
                                     required=False)
     secondary_phone = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': '70123456'})),

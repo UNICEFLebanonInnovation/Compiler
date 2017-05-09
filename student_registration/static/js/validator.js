@@ -38,11 +38,31 @@ function validateSection0()
 
     if(selectedOption == 1) {
         valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
-        valid = validateUNCHRFormat(valid,'id_id_number');
+        if(valid)
+        {
+            valid = validateUNCHRFormat(valid,'id_id_number' , 'id_number_UNHCR_Other_format_error');
+        }
 
-        valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
-        valid = validateUNCHRFormat(valid,'id_id_number');
-        
+        valid = validateTextBoxRequired('id_id_number_duplicate','id_number_UNHCR_confirm_error',valid);
+        if(valid)
+        {
+            valid = validateUNCHRFormat(valid,'id_id_number_duplicate', 'id_number_UNHCR_confirm_format_error');
+        }
+
+        if(valid)
+        {
+            valid = $('#id_id_number').val() == $('#id_id_number_duplicate').val();
+
+            if (valid)
+            {
+                $('#id_number_UNHCR_Other_confirm_error').hide();
+            }
+            else
+            {
+                $('#id_number_UNHCR_Other_confirm_error').show();
+            }
+
+        }
         var principalHouseHoldAvailable = $("#id_individual_id_number").is(":visible");
         if(principalHouseHoldAvailable== true) {
         valid = validateTextBoxRequired('id_individual_id_number','individual_id_number_error',valid);
@@ -107,9 +127,9 @@ function validateSection13()
     return valid;
 }
 
-function validateUNCHRFormat(isValid, id)
+function validateUNCHRFormat(isValid, id , error)
 {
-    return validateCondition('id_number_UNHCR_Other_format_error', isValid, validateUNHCRNumber(id));
+    return validateCondition(error, isValid, validateUNHCRNumber(id));
 }
 function validateRepIndividualUNCHRFormat(isValid, id)
 {
