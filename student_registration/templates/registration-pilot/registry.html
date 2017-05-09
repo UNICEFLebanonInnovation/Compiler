@@ -136,8 +136,10 @@
                      <div class="line" id="Household_confirm_block"style="display:none">
                         <label class="text" id="HouseholdRegistrationNumber_confirm" style = "display:none">{% trans "Confirm UNHCR Household Registration Number" %}<span class="asterisque">*</span></label>
                         <label class="text" id="HouseholdOtherID_confirm" style="display: none;">{% trans "Confirm Household ID Number" %}<span class="asterisque">*</span></label>
-                        <input id="id_number_confirm" maxlength="45" name="id_number_confirm" type="text">
-                        <span class="error" id="id_number_UNHCR_Other_confirm_error">{% trans "The UNHCR ID is not valid" %}</span>
+                       <span>{{ form.id_number_duplicate }}</span>
+                        <span class="error" id="id_number_UNHCR_confirm_error">{% trans "This field is required" %}</span>
+                        <span class="error" id="id_number_UNHCR_confirm_format_error">{% trans "The UNHCR ID is not valid" %}</span>
+                         <span class="error" id="id_number_UNHCR_Other_confirm_error">{% trans "The UNHCR ID do not match" %}</span>
                     </div>
 
                     <div class="line" id="Individual_block"style="display:none">
@@ -211,13 +213,17 @@
                     <h3 class="panel-title">{% trans "Collect existing ATM case number" %}</h3>
                     <label class="text">{% trans "Please copy case number directly from card" %}</label>
 
+{#                    <div class="line">#}
+{#                        <label class="text">{% trans "Blue Card Case Number" %}</label>#}
+{#                        {{ form.wfp_case_number }}#}
+{#                    </div>#}
+{#                    <div class="line">#}
+{#                        <label class="text">{% trans "White Card Case Number" %}</label>#}
+{#                        {{ form.csc_case_number }}#}
+{#                    </div>#}
                     <div class="line">
-                        <label class="text">{% trans "Blue Card Case Number" %}</label>
-                        {{ form.wfp_case_number }}
-                    </div>
-                    <div class="line">
-                        <label class="text">{% trans "White Card Case Number" %}</label>
-                        {{ form.csc_case_number }}
+                        <label class="text">{% trans "Red Card Case Number" %}</label>
+                        {{ form.red_case_number }}
                     </div>
                 </li>
 
@@ -544,12 +550,6 @@
             checkIsNumber($(this));
         });
 
-        $('#id_id_number').bind("cut copy paste",function(e) {
-            e.preventDefault();
-        });
-        $('#id_number_confirm').bind("cut copy paste",function(e) {
-            e.preventDefault();
-        });
 
         $(document).on('change', '.bootbox-body #id_enrolled_last_year_location', function(){
             console.log($(this).val());
@@ -567,6 +567,13 @@
 
         $(document).on('change', '.bootbox-body #id_birthday_day, .bootbox-body #id_birthday_month, .bootbox-body #id_birthday_year', function () {
             calculate_child_dob();
+        });
+
+        $('#id_id_number').bind("cut copy paste",function(e) {
+            e.preventDefault();
+        });
+        $('#id_number_duplicate').bind("cut copy paste",function(e) {
+            e.preventDefault();
         });
 
         $('#registration_save').click(function(e){
