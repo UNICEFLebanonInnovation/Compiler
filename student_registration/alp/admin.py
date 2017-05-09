@@ -95,6 +95,8 @@ class OutreachResource(resources.ModelResource):
             're_enrolled',
             'passed_post',
             'owner__username',
+            'created',
+            'modified',
         )
         export_order = fields
 
@@ -668,7 +670,9 @@ class PreTestAdmin(OutreachAdmin):
             owner__in=not_schools,
             level__isnull=False,
             assigned_to_level__isnull=False,
-        )
+        ).extra(where={
+            '(alp_outreach.exam_corrector_arabic > 0 OR alp_outreach.exam_corrector_language > 0 OR alp_outreach.exam_corrector_math > 0 OR alp_outreach.exam_corrector_science > 0)'
+        })
 
 
 class CurrentRound(Outreach):
