@@ -4,6 +4,7 @@ from django.utils.safestring import mark_safe
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import resolve
+import datetime
 
 register = template.Library()
 
@@ -104,3 +105,22 @@ def percentage(number, total):
     if number:
         return round((number*100.0)/total, 2)
     return 0
+
+
+@register.assignment_tag
+def enrollment_by_gov_by_grade(registrations, gov, level):
+    if not gov:
+        return registrations.filter(classroom=level).count()
+    elif not level:
+        return registrations.filter(school__location__parent_id=gov).count()
+    return registrations.filter(school__location__parent_id=gov, classroom=level).count()
+
+
+@register.assignment_tag
+def enrollment_by_gov_by_age(registrations, gov, age):
+    now = datetime.datetime.now()
+    if not gov:
+        return registrations.filter(student__birthday_year=(now.year - age)).count()
+    elif not age:
+        return registrations.filter(school__location__parent_id=gov).count()
+    return registrations.filter(school__location__parent_id=gov, student__birthday_year=(now.year - age)).count()
