@@ -333,6 +333,7 @@ SUIT_CONFIG = {
         {'label': 'Dashboard', 'icon': 'icon-home', 'models': [
             {'url': '/dashboard/registrations-pilot/', 'label': 'PILOT'},
             {'url': '/dashboard/registrations-2ndshift/', 'label': '2nd Shift'},
+            {'url': '/dashboard/2ndshift-overall/', 'label': '2nd Shift Overall'},
             {'url': '/dashboard/alp-overall/', 'label': 'ALP Overall'},
             {'url': '/dashboard/registrations-alp/', 'label': 'ALP Current round'},
             {'url': '/dashboard/registrations-alp-outreach/', 'label': 'ALP Outreach'},

@@ -243,6 +243,41 @@ class Registrations2ndShiftView(LoginRequiredMixin,
         }
 
 
+
+class Registrations2ndShiftOverallView(LoginRequiredMixin,
+                                       GroupRequiredMixin,
+                                       TemplateView):
+    """
+    Provides the registration page with lookup types in the context
+    """
+    model = Enrollment
+    queryset = Enrollment.objects.all()
+    template_name = 'dashboard/2ndshift-overall.html'
+
+    group_required = [u"MEHE"]
+
+    def handle_no_permission(self, request):
+        # return HttpResponseRedirect(reverse("403.html"))
+        # return HttpResponseForbidden(reverse("404.html"))
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+
+        # children by governate || get the governettes and get the number of children for each, and put them in a dictionary
+        # Also schools by governate
+        governorates = Location.objects.exclude(parent__isnull=False)
+        education_levels = ClassRoom.objects.all()
+
+        return {
+                'registrations': self.queryset.count(),
+                'males': self.queryset.filter(student__sex='Male').count(),
+                'females': self.queryset.filter(student__sex='Female').count(),
+                'education_levels': education_levels,
+                'governorates': governorates,
+                'enrollments': self.queryset,
+        }
+
+
 class RegistrationsALPView(LoginRequiredMixin,
                            GroupRequiredMixin,
                            TemplateView):
