@@ -26,6 +26,11 @@ urlpatterns = [
         name='alp-overall'
     ),
     url(
+        regex=r'^2ndshift-overall/$',
+        view=views.Registrations2ndShiftOverallView.as_view(),
+        name='alp-overall'
+    ),
+    url(
         regex=r'^registrations-alp-outreach/$',
         view=views.RegistrationsALPOutreachView.as_view(),
         name='registrations-alp-outreach'
