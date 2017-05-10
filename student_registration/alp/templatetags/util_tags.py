@@ -124,3 +124,22 @@ def enrollment_by_gov_by_age(registrations, gov, age):
     elif not age:
         return registrations.filter(school__location__parent_id=gov).count()
     return registrations.filter(school__location__parent_id=gov, student__birthday_year=(now.year - age)).count()
+
+
+@register.assignment_tag
+def alp_by_gov_by_grade(registrations, gov, level):
+    if not gov:
+        return registrations.filter(registered_in_level=level).count()
+    elif not level:
+        return registrations.filter(school__location__parent_id=gov).count()
+    return registrations.filter(school__location__parent_id=gov, registered_in_level=level).count()
+
+
+@register.assignment_tag
+def alp_by_gov_by_age(registrations, gov, age):
+    now = datetime.datetime.now()
+    if not gov:
+        return registrations.filter(student__birthday_year=(now.year - age)).count()
+    elif not age:
+        return registrations.filter(school__location__parent_id=gov).count()
+    return registrations.filter(school__location__parent_id=gov, student__birthday_year=(now.year - age)).count()

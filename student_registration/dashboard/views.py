@@ -293,6 +293,8 @@ class RegistrationsALPView(LoginRequiredMixin,
         age_range['10-12'] = self.queryset.filter(student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
         age_range['13+'] = self.queryset.filter(student__birthday_year__lte=(now.year - 13)).count()
 
+        education_levels = EducationLevel.objects.all()
+
         # get HHs by ID Type
         students_by_idtype = {}
         id_types = IDType.objects.all()
@@ -316,6 +318,9 @@ class RegistrationsALPView(LoginRequiredMixin,
                 'students_by_idtype': students_by_idtype,
                 'students_by_nationality': students_by_nationality,
                 'schools_per_gov': schools_per_gov,
+                'enrollments': self.queryset,
+                'governorates': governorates,
+                'education_levels': education_levels,
         }
 
 
