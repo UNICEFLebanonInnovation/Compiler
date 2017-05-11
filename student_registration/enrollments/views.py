@@ -417,13 +417,14 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
 
         schools = self.queryset.values_list(
                         'school', 'school__number', 'school__name', 'school__location__name',
-                        'school__location__parent__name').distinct().order_by('school__number')
+                        'school__location__parent__name', 'school__number_students_2nd_shift', ).distinct().order_by('school__number')
 
         data = tablib.Dataset()
         data.headers = [
             _('CERD'),
             _('School name'),
-            _('# Students'),
+            _('# Students registered in the Compiler'),
+            _('# Students reported by the Director'),
             _('District'),
             _('Governorate'),
         ]
@@ -435,6 +436,7 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
                 school[1],
                 school[2],
                 nbr,
+                school[5],
                 school[3],
                 school[4]
             ]
