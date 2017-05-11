@@ -128,18 +128,10 @@
                         <span>{{ form.id_number }}</span>
                         <span class="error" id="id_number_UNHCR_Other_error">{% trans "This field is required" %}</span>
                         <span class="error" id="id_number_UNHCR_Other_format_error">{% trans "The UNHCR ID is not valid" %}</span>
+                        <span class="error" id="id_number_national_id_format_error">{% trans "The National ID is not valid" %}</span>
                         <button class="btn btn-primary" type="button" id="getUNHCRDatatButton" style="display: none">
                             {% trans "UNHCR Data" %}
                         </button>
-                    </div>
-
-                     <div class="line" id="Household_confirm_block"style="display:none">
-                        <label class="text" id="HouseholdRegistrationNumber_confirm" style = "display:none">{% trans "Confirm UNHCR Household Registration Number" %}<span class="asterisque">*</span></label>
-                        <label class="text" id="HouseholdOtherID_confirm" style="display: none;">{% trans "Confirm Household ID Number" %}<span class="asterisque">*</span></label>
-                       <span>{{ form.id_number_duplicate }}</span>
-                        <span class="error" id="id_number_UNHCR_confirm_error">{% trans "This field is required" %}</span>
-                        <span class="error" id="id_number_UNHCR_confirm_format_error">{% trans "The UNHCR ID is not valid" %}</span>
-                         <span class="error" id="id_number_UNHCR_Other_confirm_error">{% trans "The UNHCR ID do not match" %}</span>
                     </div>
 
                     <div class="line" id="Individual_block"style="display:none">
@@ -201,14 +193,25 @@
                         </div>
                     </div>
                 </li>
+               {# 7 Confirm ID#}
+                <li class="framebox">
+                     <div class="line">
+                        <label class="text" id="HouseholdRegistrationNumber_confirm" style = "display:none">{% trans "Confirm UNHCR Household Registration Number" %}<span class="asterisque">*</span></label>
+                        <label class="text" id="HouseholdOtherID_confirm" style="display: none;">{% trans "Confirm Household ID Number" %}<span class="asterisque">*</span></label>
+                       <span>{{ form.id_number_duplicate }}</span>
+                        <span class="error" id="id_number_UNHCR_confirm_error">{% trans "This field is required" %}</span>
+                        <span class="error" id="id_number_UNHCR_confirm_format_error">{% trans "The ID is not valid" %}</span>
+                         <span class="error" id="id_number_UNHCR_Other_confirm_error">{% trans "The ID provided do not match" %}</span>
+                    </div>
+                </li>
 
-                {# 7 Slide card introduction part 1 #}
+                {# 8 Slide card introduction part 1 #}
                 <li class="framebox">
                     <p>{% trans "You will receive your payments on an ATM Card. If you do not already have a Burgundy ATM Card, you will be provided with one. UNICEF will send you an SMS to tell you the date, time and place you can collect the Burgundy ATM Card." %}</p>
                     <p>{% trans "Note: It is very important that you provide us a working phone number so we can send you the details of where and when to collect your ATM Card" %}</p>
                 </li>
 
-                {# 8 Slide card introduction part 2 #}
+                {# 9 Slide card introduction part 2 #}
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Collect existing ATM case number" %}</h3>
                     <label class="text">{% trans "Please copy case number directly from card" %}</label>
@@ -228,7 +231,7 @@
                 </li>
 
 
-                {# 9 Registre Child #}
+                {# 10 Registre Child #}
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Register Children in Pilot" %}</h3>
                     <div class="line">
@@ -327,7 +330,7 @@
 
                 </li>
 
-                {# 10 Contact information #}
+                {# 11 Contact information #}
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Contact Information" %}</h3>
                     <p>
@@ -341,7 +344,7 @@
                     </p>
                 </li>
 
-                {# 11 Declaration #}
+                {# 12 Declaration #}
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Declaration and Consent" %}</h3>
                     <p>
@@ -351,7 +354,7 @@
                         {% trans "If Pilot Officers are unable to locate you by household visit after 3 attempts within a 2 month time period, you will stop receiving payments." %}
                     </p>
                     </li>
-             {# 12 Declaration #}
+             {# 13 Declaration #}
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Declaration and Consent" %}</h3>
                     <p>
@@ -362,7 +365,7 @@
                     </p>
                 </li>
 
-                {# 13 Signature #}
+                {# 14 Signature #}
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Signature of Household Representative" %}</h3>
                         <div class="alert alert-error" role="alert" id="alert-signature-error" style="display: none;">
@@ -386,7 +389,7 @@
                       </div>
                 </li>
 
-                {# 14 Contact information #}
+                {# 15 Contact information #}
                 <li class="framebox">
                     <h3 class="panel-title">{% trans "Contact Information" %}</h3>
                     <p>
@@ -444,6 +447,7 @@
             <li>12</li>
             <li>13</li>
             <li>14</li>
+            <li>15</li>
         </ul>
 
         <div class="controls center">
@@ -517,7 +521,8 @@
         var validation_mapping = new Array();
         validation_mapping['0'] = function() { return validateSection0() };
         validation_mapping['5'] = function() { return validateSection5() };
-        validation_mapping['13'] = function() { return validateSection13() };
+        validation_mapping['6'] = function() { return validateSection6() };
+        validation_mapping['14'] = function() { return validateSection14() };
 
 
     $(document).ready(function() {
@@ -577,7 +582,7 @@
         });
 
         $('#registration_save').click(function(e){
-            var sectionCheck = validateSection13();
+            var sectionCheck = validateSection14();
             if(sectionCheck)
             {
 
@@ -713,13 +718,11 @@
                $("#HouseholdUNHCR").show();
                $("#HouseholdUNHCRNote").show();
                $("#Household_block").show();
-               $("#Household_confirm_block").show();
                $("#HouseholdRegistrationNumber").show();
                $("#HouseholdRegistrationNumber_confirm").show();
 {#               $("#getUNHCRDatatButton").show();#}
            }else if (selectedOption == 2 )  {
                $("#Household_block").show();
-               $("#Household_confirm_block").show();
                $("#HouseholdOtherID").show();
                $("#HouseholdOtherID_confirm").show();
                $("#HouseholdOtherID_Note").show();
@@ -729,7 +732,6 @@
                $("#IndividualRegistrationNumber").hide();
            }else if ( selectedOption == 3 || selectedOption == 4|| selectedOption == 5)  {
                $("#Household_block").show();
-               $("#Household_confirm_block").show();
                $("#HouseholdOtherID").show();
                $("#HouseholdOtherID_confirm").show();
                $("#HouseholdOtherID_Note").show();
@@ -742,7 +744,6 @@
            }else if (selectedOption == 6) {
                $("#HouseholdInformation").show();
                $("#Household_block").hide();
-               $("#Household_confirm_block").hide();
                bootbox.alert("{% trans 'Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them.' %}", function() {});
            }
         });
@@ -1160,7 +1161,7 @@
 
                 if(sectionCheck)
                 {
-                    if(onePerFrameSly.rel.activeItem == 8)
+                    if(onePerFrameSly.rel.activeItem == 9)
                     {
                        var rowCount = $("#no_id_table td").closest("tr").length;
                         if(rowCount >0)
