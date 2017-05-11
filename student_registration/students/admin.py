@@ -135,9 +135,9 @@ class RegisteredInFilter(admin.SimpleListFilter):
         if self.value() and self.value() == 'pilot':
             return queryset.filter(student_registration__isnull=False)
         if self.value() and self.value() == 'alp':
-            return queryset.filter(alp_enrollment__isnull=False)
+            return queryset.filter(alp_enrollment__isnull=False, alp_enrollment__deleted=False)
         if self.value() and self.value() == '2ndshift':
-            return queryset.filter(student_enrollment__isnull=False)
+            return queryset.filter(student_enrollment__isnull=False, student_enrollment__deleted=False)
         return queryset
 
 
