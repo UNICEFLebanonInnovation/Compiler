@@ -185,6 +185,7 @@ class RegisteringAdultViewSet(mixins.RetrieveModelMixin,
                     adult.secondary_phone_answered = ''
                     adult.wfp_case_number = ''
                     adult.csc_case_number = ''
+                    adult.red_case_number = ''
                     adult.card_last_four_digits = ''
                     adult.save()
                     return adult
