@@ -243,7 +243,6 @@ class Registrations2ndShiftView(LoginRequiredMixin,
         }
 
 
-
 class Registrations2ndShiftOverallView(LoginRequiredMixin,
                                        GroupRequiredMixin,
                                        TemplateView):
@@ -263,10 +262,18 @@ class Registrations2ndShiftOverallView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
 
-        # children by governate || get the governettes and get the number of children for each, and put them in a dictionary
-        # Also schools by governate
+        now = datetime.datetime.now()
         governorates = Location.objects.exclude(parent__isnull=False)
         education_levels = ClassRoom.objects.all()
+        level_by_age = {}
+
+        # for level in education_levels:
+        #     ages = (str(x) for x in range(1, 20))
+        #     for age in ages:
+        #         by_age = self.queryset.filter(student__birthday_year=(now.year - int(age)))
+        #         level_by_age['0-' + str(age)] = by_age.count()
+        #         level_by_age[str(level.id) + '-' + str(age)] = by_age.filter(classroom_id=level.id).count()
+        #     level_by_age[str(level.id) + '-0'] = self.queryset.filter(classroom_id=level.id).count()
 
         return {
                 'registrations': self.queryset.count(),
@@ -275,6 +282,7 @@ class Registrations2ndShiftOverallView(LoginRequiredMixin,
                 'education_levels': education_levels,
                 'governorates': governorates,
                 'enrollments': self.queryset,
+                'level_by_age': level_by_age
         }
 
 

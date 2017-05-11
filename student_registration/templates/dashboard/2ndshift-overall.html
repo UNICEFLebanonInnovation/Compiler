@@ -136,37 +136,37 @@
                                 <th>Total</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {% for gov in governorates %}
-                                {% get_range_int 1 20 as ages1 %}
-                            <tr>
-                                <td><strong>{{ gov.name }}</strong></td>
-                                {% for age in ages1 %}
-                                    <td>
-                                        {% enrollment_by_gov_by_age enrollments gov.id age as number %}
-                                        {{ number }}
-                                    </td>
-                                {% endfor %}
-                                <td>
-                                    {% enrollment_by_gov_by_age enrollments gov.id 0 as number %}
-                                    {{ number }}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            <tr>
-                                <td><strong>Total</strong></td>
-                                {% get_range_int 1 20 as ages2 %}
-                                {% for age in ages2 %}
-                                    <td>
-                                        {% enrollment_by_gov_by_age enrollments 0 age as number %}
-                                        {{ number }}
-                                    </td>
-                                {% endfor %}
-                                <td>
-                                    {{ registrations }}
-                                </td>
-                            </tr>
-                        </tbody>
+{#                        <tbody>#}
+{#                            {% for gov in governorates %}#}
+{#                                {% get_range_int 1 20 as ages1 %}#}
+{#                            <tr>#}
+{#                                <td><strong>{{ gov.name }}</strong></td>#}
+{#                                {% for age in ages1 %}#}
+{#                                    <td>#}
+{#                                        {% enrollment_by_gov_by_age enrollments gov.id age as number %}#}
+{#                                        {{ number }}#}
+{#                                    </td>#}
+{#                                {% endfor %}#}
+{#                                <td>#}
+{#                                    {% enrollment_by_gov_by_age enrollments gov.id 0 as number %}#}
+{#                                    {{ number }}#}
+{#                                </td>#}
+{#                            </tr>#}
+{#                            {% endfor %}#}
+{#                            <tr>#}
+{#                                <td><strong>Total</strong></td>#}
+{#                                {% get_range_int 1 20 as ages2 %}#}
+{#                                {% for age in ages2 %}#}
+{#                                    <td>#}
+{#                                        {% enrollment_by_gov_by_age enrollments 0 age as number %}#}
+{#                                        {{ number }}#}
+{#                                    </td>#}
+{#                                {% endfor %}#}
+{#                                <td>#}
+{#                                    {{ registrations }}#}
+{#                                </td>#}
+{#                            </tr>#}
+{#                        </tbody>#}
                     </table>
                 </div>
               </div>
