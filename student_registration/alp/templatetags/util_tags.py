@@ -153,3 +153,14 @@ def enrollment_by_grade_by_age(registrations, level, age):
     elif not level:
         return registrations.filter(student__birthday_year=(now.year - age)).count()
     return registrations.filter(classroom=level, student__birthday_year=(now.year - age)).count()
+
+
+@register.assignment_tag
+def get_item_by_key(dictionary, level, age):
+    key = str(level)+'-'+str(age)
+    return dictionary.get(key)
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
