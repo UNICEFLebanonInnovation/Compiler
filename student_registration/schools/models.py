@@ -22,6 +22,7 @@ class School(models.Model):
         blank=False, null=True,
         related_name='+',
     )
+    in_use = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['number']
