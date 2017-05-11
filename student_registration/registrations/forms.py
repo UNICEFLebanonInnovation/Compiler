@@ -10,6 +10,7 @@ from student_registration.registrations.models import (
 from student_registration.schools.models import School
 from student_registration.locations.models import Location
 from student_registration.students.models import Nationality
+from student_registration.students.models import IDType
 
 
 class RegisteringAdultForm(forms.ModelForm):
@@ -23,9 +24,14 @@ class RegisteringAdultForm(forms.ModelForm):
                      required=False, to_field_name='id'
                 )
     nationality = forms.ModelChoiceField(
-                     queryset=Nationality.objects.exclude(id=5), widget=forms.Select,
+                     queryset=Nationality.objects.filter(id=1), widget=forms.Select,
                      required=False, to_field_name='id'
                 )
+    id_type = forms.ModelChoiceField(
+        queryset=IDType.objects.filter(inuse=True), widget=forms.Select,
+        required=False, to_field_name='id'
+    )
+
     principal_applicant_living_in_house = forms.TypedChoiceField(
         choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
     )
@@ -43,6 +49,8 @@ class RegisteringAdultForm(forms.ModelForm):
     wfp_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 12, 'placeholder': ''})),
                                       required=False)
     csc_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 12, 'placeholder': ''})),
+                                      required=False)
+    red_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 12, 'placeholder': ''})),
                                       required=False)
     primary_phone = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': '70123456'})),
                                     required=False)

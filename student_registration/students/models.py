@@ -109,6 +109,7 @@ class Person(TimeStampedModel):
     phone = models.CharField(max_length=64L, blank=True, null=True)
     phone_prefix = models.CharField(max_length=10L, blank=True, null=True)
     id_number = models.CharField(max_length=45L, blank=True, null=True)
+    id_number_duplicate = models.CharField(max_length=45L, blank=True, null=True)
     id_type = models.ForeignKey(
         IDType,
         blank=True, null=True,
