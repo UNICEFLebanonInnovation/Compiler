@@ -139,6 +139,7 @@ class RegisteringAdult(Person):
     relation_to_householdhead = models.CharField(max_length=50, blank=True, null=True, choices=RELATION_TYPE)
     wfp_case_number = models.CharField(max_length=50, blank=True, null=True)
     csc_case_number = models.CharField(max_length=50, blank=True, null=True)
+    red_case_number = models.CharField(max_length=50, blank=True, null=True)
     card_issue_requested = models.BooleanField(default=False)
     card_number = models.CharField(max_length=50, blank=True, null=True)
     card_status = models.CharField(max_length=50, blank=True, null=True)
