@@ -9,14 +9,13 @@ from student_registration.locations.models import Location
 
 class School(models.Model):
 
-    # SCHOOL_TYPE = Choices(
-    #     ('2ndshift', '2nd Shift'),
-    #     ('alp', 'ALP')
-    # )
-
     name = models.CharField(max_length=555L)
     number = models.CharField(max_length=45L, unique=True)
-    # types = models.SelectMultipleField(blank=True, choices=SCHOOL_TYPE)
+    is_2nd_shift = models.BooleanField(blank=True, default=False)
+    number_students_2nd_shift = models.IntegerField(blank=True, null=True)
+    is_alp = models.BooleanField(blank=True, default=False)
+    number_students_alp = models.IntegerField(blank=True, null=True)
+
     location = models.ForeignKey(
         Location,
         blank=False, null=True,
