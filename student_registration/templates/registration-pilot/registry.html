@@ -148,7 +148,7 @@
 
 
 
-                    <div id="HouseholdInformation" style="display:none">
+                    <div id="HouseholdInformation">
                         <div class="line">
                             <label class="text">{% trans "First Name" %}<span class="asterisque">*</span></label>
                             {{ form.first_name }}
@@ -227,6 +227,9 @@
                     <div class="line">
                         <label class="text">{% trans "Red Card Case Number" %}</label>
                         {{ form.red_case_number }}
+                         <span class="error" id="id_red_case_number_format_error">{% trans "The red card case number provided is not valid" %}</span>
+                        <img src="{% static 'images/red_card.JPG' %}" style="float: left; width: 300px;  margin-right: 10px; margin-top: 20px;" />
+
                     </div>
                 </li>
 
@@ -522,6 +525,7 @@
         validation_mapping['0'] = function() { return validateSection0() };
         validation_mapping['5'] = function() { return validateSection5() };
         validation_mapping['6'] = function() { return validateSection6() };
+        validation_mapping['8'] = function() { return validateSection8() };
         validation_mapping['14'] = function() { return validateSection14() };
 
 
@@ -726,7 +730,7 @@
                $("#HouseholdOtherID").show();
                $("#HouseholdOtherID_confirm").show();
                $("#HouseholdOtherID_Note").show();
-               $("#HouseholdInformation").show();
+{#               $("#HouseholdInformation").show();#}
                $("#HouseholdRegistrationNumber").hide();
                $("#HouseholdRegistrationNumber_confirm").hide();
                $("#IndividualRegistrationNumber").hide();
@@ -735,14 +739,15 @@
                $("#HouseholdOtherID").show();
                $("#HouseholdOtherID_confirm").show();
                $("#HouseholdOtherID_Note").show();
-               $("#HouseholdInformation").show();
-               $("#household_visit_note").show();
+{#               $("#HouseholdInformation").show();#}
+               $
+               ("#household_visit_note").show();
                $("#HouseholdRegistrationNumber").hide();
                $("#HouseholdRegistrationNumber_confirm").hide();
                $("#IndividualRegistrationNumber").hide();
 
            }else if (selectedOption == 6) {
-               $("#HouseholdInformation").show();
+{#               $("#HouseholdInformation").show();#}
                $("#Household_block").hide();
                bootbox.alert("{% trans 'Please let the household know that we are currently not able to provide payments to those without ID. However, please offer them the option to complete data collection so that we can try to include them later once we develop a solution for them.' %}", function() {});
            }
@@ -1138,6 +1143,9 @@
             }
         });
 
+        $("#id_age").attr('disabled', true);
+        $("input[name='age']").attr('disabled', true);
+
         $("#cancelButton").click(function() {
             bootbox.confirm("{% trans 'Are you sure you want to cancel this registration?' %}", function(result) {
                 if(result == true) {
@@ -1294,7 +1302,7 @@
         $("#HouseholdOtherID").hide();
         $("#HouseholdOtherID_confirm").hide();
         $("#HouseholdOtherID_Note").hide();
-        $("#HouseholdInformation").hide();
+{#        $("#HouseholdInformation").hide();#}
         $("#HouseholdRegistrationNumber").hide();
         $("#HouseholdRegistrationNumber_confirm").hide();
         $("#IndividualRegistrationNumber").hide();
@@ -1329,6 +1337,7 @@
 
             $('.bootbox-body').find("#id_age").val(age);
             $('.bootbox-body').find("#id_age").trigger('blur');
+
 
             if(age < 5 || age > 17) {
                <!--bootbox.alert("{% trans 'The child is not within the eligible age for the Pilot.' %}", function() {});-->
