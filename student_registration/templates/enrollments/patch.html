@@ -64,10 +64,12 @@
                                     <i class="icon-synch-sign icon-white"></i>&nbsp;
                                         {% trans "synchronize" %}
                                   </button>
-{#                                  <button class="btn btn-info" id="attendance-push">#}
-{#                                    <i class="icon-synch-sign icon-white"></i>&nbsp;#}
-{#                                        {% trans "push to tablet" %}#}
-{#                                  </button>#}
+                                    {% if request.user|has_group:'PUSH_TO_TABLET' %}
+                                      <button class="btn btn-info" id="attendance-push">
+                                        <i class="icon-synch-sign icon-white"></i>&nbsp;
+                                            {% trans "push to tablet" %}
+                                      </button>
+                                    {% endif %}
                                   <button class="btn btn-info" id="registration-download">
                                     <i class="icon-synch-sign icon-white"></i>&nbsp;
                                         {% trans "download data" %}
