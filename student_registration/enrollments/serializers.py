@@ -110,24 +110,38 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
         if student_data:
             student = instance.student
-            student.first_name = student_data['first_name']
-            student.father_name = student_data['father_name']
-            student.last_name = student_data['last_name']
-            student.mother_fullname = student_data['mother_fullname']
+            if 'first_name' in student_data:
+                student.first_name = student_data['first_name']
+            if 'father_name' in student_data:
+                student.father_name = student_data['father_name']
+            if 'last_name' in student_data:
+                student.last_name = student_data['last_name']
+            if 'mother_fullname' in student_data:
+                student.mother_fullname = student_data['mother_fullname']
 
-            student.birthday_year = student_data['birthday_year']
-            student.birthday_month = student_data['birthday_month']
-            student.birthday_day = student_data['birthday_day']
+            if 'birthday_year' in student_data:
+                student.birthday_year = student_data['birthday_year']
+            if 'birthday_month' in student_data:
+                student.birthday_month = student_data['birthday_month']
+            if 'birthday_day' in student_data:
+                student.birthday_day = student_data['birthday_day']
 
-            student.sex = student_data['sex']
-            student.phone = student_data['phone']
-            student.phone_prefix = student_data['phone_prefix']
-            student.address = student_data['address']
-            student.nationality = Nationality.objects.get(id=student_data['nationality'])
-            student.mother_nationality = Nationality.objects.get(id=student_data['mother_nationality'])
-
-            student.id_type = IDType.objects.get(id=student_data['id_type'])
-            student.id_number = student_data['id_number']
+            if 'sex' in student_data:
+                student.sex = student_data['sex']
+            if 'phone' in student_data:
+                student.phone = student_data['phone']
+            if 'phone_prefix' in student_data:
+                student.phone_prefix = student_data['phone_prefix']
+            if 'address' in student_data:
+                student.address = student_data['address']
+            if 'nationality' in student_data:
+                student.nationality_id = student_data['nationality']
+            if 'mother_nationality' in student_data:
+                student.mother_nationality_id = student_data['mother_nationality']
+            if 'id_type' in student_data:
+                student.id_type_id = student_data['id_type']
+            if 'id_number' in student_data:
+                student.id_number = student_data['id_number']
 
             student.save()
 
