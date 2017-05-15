@@ -35,7 +35,11 @@
         }
     </style>
 
-    {% include 'enrollments/prototype_patch.html' %}
+    {% if request.user|has_group:'ENROL_EDIT' %}
+        {% include 'enrollments/prototype_edit.html' %}
+    {% else %}
+        {% include 'enrollments/prototype_patch.html' %}
+    {% endif %}
 
          <section class="main-content-wrapper">
             <section id="main-content">
@@ -89,7 +93,6 @@
                                     <button class="btn btn-success" id="filter_go">
                                         {% trans "Filter data" %}
                                     </button>
-{#                                    <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />#}
                                     <button class="btn btn-warning" id="filter_cancel">
                                         {% trans "Rest filter" %}
                                     </button>
@@ -119,12 +122,8 @@
                                        width="100%" style="margin-bottom: 100px; margin-top: 75px;">
                                 <thead>
                                     <tr id="thead-line-1">
-{#                                        <th rowspan="2">&nbsp;</th>#}
+                                        <th rowspan="2">&nbsp;</th>
                                         <th rowspan="2">#</th>
-{#                                        <th rowspan="2"><label>{% trans "Governorate" %}</label></th>#}
-{#                                        <th rowspan="2"><label>{% trans "District" %}</label></th>#}
-{#                                        <th rowspan="2"><label>{% trans "School number" %}</label></th>#}
-{#                                        <th rowspan="2"><label>{% trans "School" %}</label></th>#}
                                         <th rowspan="2"><label>{% trans "Student first name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>

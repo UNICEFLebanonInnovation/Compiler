@@ -59,10 +59,10 @@
                       <li class="nav-item">
                         <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "Registration" %}</a>
                       </li>
-                    {% elif request.user|has_group:"ENROL_EDIT" %}
-                      <li class="nav-item">
-                        <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment_edit' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "Registration editing" %}</a>
-                      </li>
+{#                    {% elif request.user|has_group:"ENROL_EDIT" %}#}
+{#                      <li class="nav-item">#}
+{#                        <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment_edit' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "Registration editing" %}</a>#}
+{#                      </li>#}
                     {% else %}
                       <li class="nav-item">
                         <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment_patch' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "Registration editing" %}</a>
