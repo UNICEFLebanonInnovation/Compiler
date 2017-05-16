@@ -8,14 +8,14 @@ urlpatterns = [
 
     url(
         regex=r'^enrollment/$',
-        view=views.EnrollmentPatchView.as_view(),
+        view=views.EnrollmentView.as_view(),
         name='enrollment'
     ),
-    url(
-        regex=r'^enrollment-edit/$',
-        view=views.EnrollmentPatchView.as_view(),
-        name='enrollment_edit'
-    ),
+    # url(
+    #     regex=r'^enrollment-edit/$',
+    #     view=views.EnrollmentEditView.as_view(),
+    #     name='enrollment_edit'
+    # ),
     url(
         regex=r'^enrollment-patch/$',
         view=views.EnrollmentPatchView.as_view(),
