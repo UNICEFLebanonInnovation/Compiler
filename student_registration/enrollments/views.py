@@ -6,6 +6,7 @@ from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
+from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 import tablib
 import json
 from rest_framework import status
@@ -72,12 +73,16 @@ class EnrollmentStaffView(LoginRequiredMixin, TemplateView):
         }
 
 
-class EnrollmentView(LoginRequiredMixin, TemplateView):
+class EnrollmentView(LoginRequiredMixin,
+                     GroupRequiredMixin,
+                     TemplateView):
     """
     Provides the enrollment page with lookup types in the context
     """
     model = Enrollment
     template_name = 'enrollments/index.html'
+
+    group_required = [u"ENROL_CREATE"]
 
     def get_context_data(self, **kwargs):
 
@@ -116,12 +121,16 @@ class EnrollmentView(LoginRequiredMixin, TemplateView):
         }
 
 
-class EnrollmentEditView(LoginRequiredMixin, TemplateView):
+class EnrollmentEditView(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         TemplateView):
     """
     Provides the enrollment page with lookup types in the context
     """
     model = Enrollment
     template_name = 'enrollments/edit.html'
+
+    group_required = [u"ENROL_EDIT"]
 
     def get_context_data(self, **kwargs):
 
@@ -129,16 +138,19 @@ class EnrollmentEditView(LoginRequiredMixin, TemplateView):
         school = 0
         location = 0
         location_parent = 0
+        total = 0
         if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
             school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
+            total = self.model.objects.filter(school_id=school_id).count()
         if school and school.location:
             location = school.location
         if location and location.parent:
             location_parent = location.parent
 
         return {
+            'total': total,
             'schools': School.objects.all(),
             'school_shifts': Enrollment.SCHOOL_SHIFT,
             'school_types': Enrollment.SCHOOL_TYPE,
