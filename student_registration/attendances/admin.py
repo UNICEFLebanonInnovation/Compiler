@@ -4,6 +4,7 @@ from __future__ import absolute_import, unicode_literals
 from django.db import models
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
+from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 
 from import_export.admin import ExportMixin
 from import_export import resources, fields, widgets
@@ -194,19 +195,23 @@ class BySchoolByDayAdmin(ExportMixin, admin.ModelAdmin):
         'validation_status',
     )
     list_filter = (
-        # 'school__location',
-        # 'school',
+        ('attendance_date', DateRangeFilter),
         LocationFilter,
         GovernorateFilter,
         SchoolFilter,
         SchoolTypeFilter,
-        'attendance_date',
+        # 'attendance_date',
         'validation_date',
         'validation_status',
         'highest_attendance_rate',
     )
     date_hierarchy = 'attendance_date'
     ordering = ('-attendance_date',)
+
+    class Media:
+        css = {
+            "all": ("css/admin.css",)
+        }
 
     def district(self, obj):
         if obj.school and obj.school.location:
