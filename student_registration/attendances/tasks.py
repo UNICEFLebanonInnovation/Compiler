@@ -99,6 +99,7 @@ def set_app_attendances(school_number=None, school_type=None):
 
     docs = []
     unified_docs = []
+    total = 0
     enrollment_model = Outreach if school_type == 'alp' else Enrollment
 
     registrations = enrollment_model.objects.all()
@@ -146,7 +147,8 @@ def set_app_attendances(school_number=None, school_type=None):
         if school_type == 'alp':
             total_enrolled = total_enrolled.filter(alp_round=alp_round)
 
-        logger.info('{} students in class {}'.format(total_enrolled.count(), doc_id))
+        total = total_enrolled.count()
+        logger.info('{} students in class {}'.format(total, doc_id))
         for enrolled in total_enrolled:
             student = {
                 "student_id": str(enrolled.student.id),
@@ -195,7 +197,7 @@ def set_app_attendances(school_number=None, school_type=None):
         school_id=school.id,
         school_type=school_type if school_type else '2nd shift',
         response_message=response.text if response else '',
-        total_records=registrations.count()
+        total_records=total
     )
 
     if response and response.status_code in [requests.codes.ok, requests.codes.created]:

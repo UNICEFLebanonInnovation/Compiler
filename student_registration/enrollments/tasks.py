@@ -28,12 +28,24 @@ def assign_section(section):
 
 
 @app.task
+def assign_education_year(year):
+    from student_registration.enrollments.models import Enrollment
+    registrations = Enrollment.objects.filter(education_year__isnull=True)
+
+    print registrations.count(), " registrations found"
+    print "Start assignment"
+    registrations.update(education_year_id=year)
+    print "End assignment"
+
+
+@app.task
 def generate_2ndshift_report(school=0, location=0, email=None, user=None):
     from student_registration.enrollments.models import Enrollment
 
     offset = 120000
     limit = 180000
-    queryset = Enrollment.objects.all()[offset:limit]
+    # queryset = Enrollment.objects.all()[offset:limit]
+    queryset = Enrollment.objects.all()
 
     data = tablib.Dataset()
     data.headers = [
@@ -114,8 +126,8 @@ def generate_2ndshift_report(school=0, location=0, email=None, user=None):
         ]
         data.append(content)
 
-    file_format = base_formats.XLS()
-    file_object = open("enrolment_data_120000_180000.xls", "w")
+    file_format = base_formats.XLSX()
+    file_object = open("enrolment_data.xlsx", "w")
     file_object.write(file_format.export_data(data))
     file_object.close()
 

@@ -52,13 +52,14 @@ from student_registration.winterization.views import (
     BeneficiaryViewSet
 )
 from student_registration.users.views import LoginRedirectView, PasswordChangeView, PasswordChangeDoneView
-from student_registration.enrollments.views import EnrollmentViewSet
+from student_registration.enrollments.views import EnrollmentViewSet, LoggingStudentMoveViewSet
 from student_registration.students.views import StudentAutocomplete
 from .views import acme_view
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
 api.register(r'enrollments', EnrollmentViewSet, base_name='enrollments')
+api.register(r'logging-student-move', LoggingStudentMoveViewSet, base_name='logging_student_move')
 api.register(r'registrations-adult', RegisteringAdultViewSet, base_name='registrations_adult')
 api.register(r'registrations-adult-id', RegisteringAdultIDViewSet, base_name='registrations_adult_id')
 api.register(r'registrations-child', RegisteringChildViewSet, base_name='registrations_child')
