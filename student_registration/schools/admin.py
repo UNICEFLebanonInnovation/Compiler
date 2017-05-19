@@ -17,6 +17,7 @@ from .models import (
     ClassRoom,
     PartnerOrganization,
     ALPReferMatrix,
+    EducationYear,
 )
 from student_registration.locations.models import Location
 from student_registration.attendances.tasks import set_app_attendances
@@ -96,7 +97,8 @@ class SchoolTypeFilter(admin.SimpleListFilter):
         """
         return (
             ('alp', 'ALP'),
-            ('2ndshift', '2nd shift')
+            ('2ndshift', '2nd shift'),
+            ('both', 'ALP & 2nd shift'),
         )
 
     def queryset(self, request, queryset):
@@ -108,11 +110,11 @@ class SchoolTypeFilter(admin.SimpleListFilter):
         if not self.value():
             return queryset
         if self.value() == 'alp':
-            return queryset.filter(
-                alp_school__isnull=False,
-            ).distinct()
+            return queryset.filter(is_alp=True)
         if self.value() == '2ndshift':
-            return queryset.filter(ndshift_school__isnull=False).distinct()
+            return queryset.filter(is_2nd_shift=True)
+        if self.value() == 'both':
+            return queryset.filter(is_alp=True, is_2nd_shift=True)
 
 
 class SchoolAdmin(ImportExportModelAdmin):
@@ -121,6 +123,10 @@ class SchoolAdmin(ImportExportModelAdmin):
         'name',
         'number',
         'location',
+        'is_2nd_shift',
+        'number_students_2nd_shift',
+        'is_alp',
+        'number_students_alp',
     )
     search_fields = (
         'name',
@@ -267,6 +273,7 @@ admin.site.register(Section, SectionAdmin)
 admin.site.register(ClassRoom, ClassRoomAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
 admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
+admin.site.register(EducationYear)
 
 
 
