@@ -8,8 +8,8 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import *
 import datetime
 
-from .models import Enrollment, StudentMove
-from .forms import EnrollmentForm
+from .models import Enrollment, StudentMove, LoggingStudentMove
+from .forms import EnrollmentForm, LoggingStudentMoveForm
 from student_registration.students.models import Student
 from student_registration.schools.models import (
     School,
@@ -190,6 +190,8 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_informal_edu_round',
         'last_informal_edu_final_result',
         'deleted',
+        'moved',
+        'dropout_status',
     )
     list_display = (
         'student',
@@ -203,6 +205,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'modified',
     )
     list_filter = (
+        'education_year',
         'school__number',
         'school',
         'school__location',
@@ -315,6 +318,61 @@ class StudentMoveAdmin(ImportExportModelAdmin):
     )
 
 
+class LoggingStudentMoveResource(resources.ModelResource):
+
+    class Meta:
+        model = LoggingStudentMove
+        fields = ()
+        export_order = fields
+
+
+class LoggingStudentMoveAdmin(ImportExportModelAdmin):
+    resource_class = LoggingStudentMoveResource
+    form = LoggingStudentMoveForm
+    fields = (
+    )
+
+    list_display = (
+        'registered',
+        'student',
+        'school_from',
+        'classroom',
+        'section',
+        'school_to',
+        'registered_in_new_school',
+    )
+
+    list_filter = (
+        'school_from',
+        'school_to',
+    )
+
+    search_fields = (
+
+    )
+
+    def registered(self, obj):
+        if obj.enrolment:
+            return str(obj.enrolment.created)
+        return ''
+
+    def registered_in_new_school(self, obj):
+        if obj.school_to:
+            return str(obj.modified)
+        return ''
+
+    def classroom(self, obj):
+        if obj.enrolment and obj.enrolment.classroom:
+            return obj.enrolment.classroom.name
+        return ''
+
+    def section(self, obj):
+        if obj.enrolment and obj.enrolment.section:
+            return obj.enrolment.section.name
+        return ''
+
+
 admin.site.register(Enrollment, EnrollmentAdmin)
 admin.site.register(Dropout, DropoutAdmin)
 admin.site.register(StudentMove, StudentMoveAdmin)
+admin.site.register(LoggingStudentMove, LoggingStudentMoveAdmin)

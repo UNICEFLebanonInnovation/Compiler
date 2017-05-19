@@ -15,7 +15,13 @@ from .models import (
     IDType,
 )
 from .forms import StudentEnrollmentForm
-from student_registration.schools.models import School
+from student_registration.schools.models import (
+    School,
+    ClassRoom,
+    EducationLevel,
+    EducationYear,
+    Section,
+)
 from student_registration.locations.models import Location
 from student_registration.enrollments.models import Enrollment
 from student_registration.alp.models import Outreach, ALPRound
@@ -129,9 +135,9 @@ class RegisteredInFilter(admin.SimpleListFilter):
         if self.value() and self.value() == 'pilot':
             return queryset.filter(student_registration__isnull=False)
         if self.value() and self.value() == 'alp':
-            return queryset.filter(alp_enrollment__isnull=False)
+            return queryset.filter(alp_enrollment__isnull=False, alp_enrollment__deleted=False)
         if self.value() and self.value() == '2ndshift':
-            return queryset.filter(student_enrollment__isnull=False)
+            return queryset.filter(student_enrollment__isnull=False, student_enrollment__deleted=False)
         return queryset
 
 
@@ -228,6 +234,125 @@ class SchoolFilter(admin.SimpleListFilter):
                 return queryset.filter(alp_enrollment__school_id=self.value())
             elif request.GET.get('registered_in', None) == '2ndshift':
                 return queryset.filter(student_enrollment__school_id=self.value())
+        return queryset
+
+
+class EducationYearFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Education Year'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'education_year'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l.id, l.name) for l in EducationYear.objects.filter())
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(student_enrollment__education_year_id=self.value())
+        return queryset
+
+
+class FormalEducationLevelFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Formal Education Level'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'education_level'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l.id, l.name) for l in ClassRoom.objects.filter())
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(student_enrollment__classroom_id=self.value())
+        return queryset
+
+
+class ALPLevelFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'ALP Level'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'alp_level'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l.id, l.name) for l in EducationLevel.objects.filter())
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(alp_enrollment__registered_in_level_id=self.value())
+        return queryset
+
+
+class SectionFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Section'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'section'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l.id, l.name) for l in Section.objects.filter())
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            if request.GET.get('registered_in', None) == 'alp':
+                return queryset.filter(alp_enrollment__section_id=self.value())
+            elif request.GET.get('registered_in', None) == '2ndshift':
+                return queryset.filter(student_enrollment__section_id=self.value())
         return queryset
 
 
@@ -392,7 +517,11 @@ class StudentAdmin(ImportExportModelAdmin):
         'mother_nationality',
         RegisteredInFilter,
         ALPRoundFilter,
+        EducationYearFilter,
         SchoolFilter,
+        FormalEducationLevelFilter,
+        ALPLevelFilter,
+        SectionFilter,
         DistrictFilter,
         GovernorateFilter,
     )
