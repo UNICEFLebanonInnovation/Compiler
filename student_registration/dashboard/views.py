@@ -12,6 +12,8 @@ from student_registration.locations.models import (
 )
 from student_registration.schools.models import (
     School,
+    EducationLevel,
+    ClassRoom,
 )
 from student_registration.students.models import (
     Student,
@@ -202,13 +204,15 @@ class Registrations2ndShiftView(LoginRequiredMixin,
         age_range_8['10-12'] = self.queryset.filter(school__location__parent_id=8, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
         age_range_8['13+'] = self.queryset.filter(school__location__parent_id=8, student__birthday_year__lte=(now.year - 13)).count()
 
-        # get HHs by ID Type
+        education_levels = ClassRoom.objects.all()
+
+        # get by ID Type
         students_by_idtype = {}
         id_types = IDType.objects.all()
         for type in id_types:
             students_by_idtype[type] = self.queryset.filter(student__id_type=type).count()
 
-        # get HHs by Nationality
+        # get by Nationality
         students_by_nationality = {}
         nationalities = Nationality.objects.all()
         for nationality in nationalities:
@@ -233,6 +237,52 @@ class Registrations2ndShiftView(LoginRequiredMixin,
                 'students_by_idtype': students_by_idtype,
                 'students_by_nationality': students_by_nationality,
                 'schools_per_gov': schools_per_gov,
+                'education_levels': education_levels,
+                'governorates': governorates,
+                'enrollments': self.queryset,
+        }
+
+
+class Registrations2ndShiftOverallView(LoginRequiredMixin,
+                                       GroupRequiredMixin,
+                                       TemplateView):
+    """
+    Provides the registration page with lookup types in the context
+    """
+    model = Enrollment
+    queryset = Enrollment.objects.all()
+    template_name = 'dashboard/2ndshift-overall.html'
+
+    group_required = [u"MEHE"]
+
+    def handle_no_permission(self, request):
+        # return HttpResponseRedirect(reverse("403.html"))
+        # return HttpResponseForbidden(reverse("404.html"))
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+
+        now = datetime.datetime.now()
+        governorates = Location.objects.exclude(parent__isnull=False)
+        education_levels = ClassRoom.objects.all()
+        level_by_age = {}
+
+        # for level in education_levels:
+        #     ages = (str(x) for x in range(1, 20))
+        #     for age in ages:
+        #         by_age = self.queryset.filter(student__birthday_year=(now.year - int(age)))
+        #         level_by_age['0-' + str(age)] = by_age.count()
+        #         level_by_age[str(level.id) + '-' + str(age)] = by_age.filter(classroom_id=level.id).count()
+        #     level_by_age[str(level.id) + '-0'] = self.queryset.filter(classroom_id=level.id).count()
+
+        return {
+                'registrations': self.queryset.count(),
+                'males': self.queryset.filter(student__sex='Male').count(),
+                'females': self.queryset.filter(student__sex='Female').count(),
+                'education_levels': education_levels,
+                'governorates': governorates,
+                'enrollments': self.queryset,
+                'level_by_age': level_by_age
         }
 
 
@@ -286,6 +336,8 @@ class RegistrationsALPView(LoginRequiredMixin,
         age_range['10-12'] = self.queryset.filter(student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
         age_range['13+'] = self.queryset.filter(student__birthday_year__lte=(now.year - 13)).count()
 
+        education_levels = EducationLevel.objects.all()
+
         # get HHs by ID Type
         students_by_idtype = {}
         id_types = IDType.objects.all()
@@ -309,6 +361,9 @@ class RegistrationsALPView(LoginRequiredMixin,
                 'students_by_idtype': students_by_idtype,
                 'students_by_nationality': students_by_nationality,
                 'schools_per_gov': schools_per_gov,
+                'enrollments': self.queryset,
+                'governorates': governorates,
+                'education_levels': education_levels,
         }
 
 
@@ -378,7 +433,7 @@ class RegistrationsALPOverallView(LoginRequiredMixin,
         passed_level = self.queryset.filter(
             alp_round=post_test_round,
             registered_in_level__isnull=False,
-            refer_to_level_id__in=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+            refer_to_level_id__in=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
         )
 
         old_enrolled = self.queryset.filter(
