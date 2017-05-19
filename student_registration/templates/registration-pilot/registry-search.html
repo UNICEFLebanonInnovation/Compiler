@@ -1100,7 +1100,12 @@
           }
           else if($("#changeOption").val() == "cardStatus")
           {
-              houseHoldData.primary_phone = $("#card_phone").val();
+              var selected_option = $("#card_distribution_complaint").val();
+
+              if(selected_option == 12)
+              {
+                houseHoldData.primary_phone = $("#card_phone").val();
+              }
           }
           else if($("#changeOption").val() == "notEligible")
           {
