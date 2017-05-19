@@ -212,6 +212,7 @@ class RegisteringAdult(Person):
     beneficiary_changed_date_requested = models.DateField(blank=True, null=True)
     household_suspended = models.BooleanField(default=False)
     household_suspended_date = models.DateField(blank=True, null=True)
+    household_suspended_reason = models.CharField(max_length=200, blank=True, null=True)
     duplicate_card_first_card_case_number = models.CharField(max_length=50, blank=True, null=True)
     duplicate_card_first_card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
     duplicate_card_second_card_case_number = models.CharField(max_length=50, blank=True, null=True)
