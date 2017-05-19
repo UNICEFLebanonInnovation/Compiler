@@ -57,5 +57,6 @@ django-suit==0.2.21
 django-autocomplete-light==3.2.1
 django-helpdesk==0.1.18
 mongoengine==0.11.0
+django-admin-view-permission==0.8
 
 # Your custom requirements go here
