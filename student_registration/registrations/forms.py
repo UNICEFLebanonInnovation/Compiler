@@ -23,16 +23,10 @@ class RegisteringAdultForm(forms.ModelForm):
                      queryset=School.objects.all(), widget=forms.Select,
                      required=False, to_field_name='id'
                 )
-
-    nationality = forms.ModelChoiceField(
-                     queryset=Nationality.objects.filter(id=1), widget=forms.Select,
-                     required=False, to_field_name='id'
-                )
     id_type = forms.ModelChoiceField(
         queryset=IDType.objects.filter(inuse=True), widget=forms.Select,
         required=False, to_field_name='id'
     )
-
     principal_applicant_living_in_house = forms.TypedChoiceField(
         choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
     )
