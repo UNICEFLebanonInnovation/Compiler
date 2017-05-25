@@ -37,7 +37,15 @@
             <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                          <div class="panel-heading" style="position: absolute; top:0px;" id="header">
+                          <div class="panel-heading">
+                              <ol class="breadcrumb">
+                                    <li><b>{% trans "ALP Registrations" %}</b></li>
+                                    <li><b>{{ school }}</b></li>
+                                    <li><b>{{ location }}</b></li>
+                                    <li><b>{{ location_parent }}</b></li>
+                              </ol>
+                          </div>
+                          <div class="panel-heading" style="position: absolute; top:50px;" id="header">
                                 <ol class="breadcrumb">
                                     <li><a>
                                         <h3 class="panel-title">{% trans "ALP Post Test" %}</h3></a></li>
@@ -78,10 +86,6 @@
                                 <thead>
                                     <tr id="thead-line-1">
                                         <th rowspan="2">&nbsp;</th>
-                                        <th rowspan="2"><label>{% trans "District" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Governorate" %}</label></th>
-                                        <th rowspan="2"><label class="col-60">{% trans "School number" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "School" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student first name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
