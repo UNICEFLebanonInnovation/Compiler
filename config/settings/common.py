@@ -40,7 +40,6 @@ DJANGO_APPS = (
 
     # Admin
     'suit',
-    'admin_view_permission',
     'django.contrib.admin',
     'markdown_deux',  # Required for Knowledgebase item formatting
     'bootstrapform',  # Required for nicer formatting of forms with the default templates
@@ -389,6 +388,3 @@ HELPDESK_STAFF_ONLY_TICKET_CC = True
 ABSENCE_URL = env('ABSENCE_URL', default='NO URL for absentees set in the environment')
 ABSENCE_TOKEN = env('ABSENCE_TOKEN', default='No token for absentees URL set')
 
-ADMIN_VIEW_PERMISSION_MODELS = [
-    'auth.User',
-]
