@@ -219,6 +219,45 @@ class EnrollmentPatchView(LoginRequiredMixin, TemplateView):
         }
 
 
+class EnrollmentGradingView(LoginRequiredMixin, TemplateView):
+
+        model = Enrollment
+        template_name = 'enrollments/grading.html'
+
+        def get_context_data(self, **kwargs):
+
+            school_id = 0
+            school = 0
+            location = 0
+            location_parent = 0
+            total = 0
+            level = int(self.request.GET.get('level', 0))
+            data = []
+            if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
+                school_id = self.request.user.school_id
+            if school_id:
+                school = School.objects.get(id=school_id)
+                total = self.model.objects.filter(school_id=school_id).count()
+            if school and school.location:
+                location = school.location
+            if location and location.parent:
+                location_parent = location.parent
+            if school_id and level:
+                data = self.model.objects.filter(school=school_id, classroom=level).order_by('student')
+
+            return {
+                'data': data,
+                'level': level,
+                'total': total,
+                'school': school,
+                'location': location,
+                'results': self.model.RESULT,
+                'location_parent': location_parent,
+                'classrooms': ClassRoom.objects.all(),
+                'sections': Section.objects.all(),
+            }
+
+
 ####################### API VIEWS #############################
 
 
