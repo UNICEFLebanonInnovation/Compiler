@@ -387,3 +387,4 @@ HELPDESK_STAFF_ONLY_TICKET_CC = True
 
 ABSENCE_URL = env('ABSENCE_URL', default='NO URL for absentees set in the environment')
 ABSENCE_TOKEN = env('ABSENCE_TOKEN', default='No token for absentees URL set')
+
