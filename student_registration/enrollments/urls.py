@@ -22,6 +22,11 @@ urlpatterns = [
         name='enrollment_patch'
     ),
     url(
+        regex=r'^enrollment-grading/$',
+        view=views.EnrollmentGradingView.as_view(),
+        name='enrollment_grading'
+    ),
+    url(
         regex=r'^enrollment-view/$',
         view=views.EnrollmentStaffView.as_view(),
         name='enrollment_view'
