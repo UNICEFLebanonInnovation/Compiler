@@ -174,6 +174,30 @@ class EnrollmentSerializer(serializers.ModelSerializer):
                 instance.last_education_level = validated_data['last_education_level']
             if 'last_education_year' in validated_data:
                 instance.last_education_year = validated_data['last_education_year']
+            if 'exam_result_arabic' in validated_data:
+                instance.exam_result_arabic = validated_data['exam_result_arabic']
+            if 'exam_result_language' in validated_data:
+                instance.exam_result_language = validated_data['exam_result_language']
+            if 'exam_result_education' in validated_data:
+                instance.exam_result_education = validated_data['exam_result_education']
+            if 'exam_result_geo' in validated_data:
+                instance.exam_result_geo = validated_data['exam_result_geo']
+            if 'exam_result_history' in validated_data:
+                instance.exam_result_history = validated_data['exam_result_history']
+            if 'exam_result_math' in validated_data:
+                instance.exam_result_math = validated_data['exam_result_math']
+            if 'exam_result_science' in validated_data:
+                instance.exam_result_science = validated_data['exam_result_science']
+            if 'exam_result_physic' in validated_data:
+                instance.exam_result_physic = validated_data['exam_result_physic']
+            if 'exam_result_chemistry' in validated_data:
+                instance.exam_result_chemistry = validated_data['exam_result_chemistry']
+            if 'exam_result_bio' in validated_data:
+                instance.exam_result_bio = validated_data['exam_result_bio']
+            if 'exam_total' in validated_data:
+                instance.exam_total = validated_data['exam_total']
+            if 'exam_result' in validated_data:
+                instance.exam_result = validated_data['exam_result']
 
             instance.save()
 
@@ -239,5 +263,17 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'last_informal_edu_round_id',
             'last_informal_edu_final_result_id',
             'moved',
+            'exam_result_arabic',
+            'exam_result_language',
+            'exam_result_education',
+            'exam_result_geo',
+            'exam_result_history',
+            'exam_result_math',
+            'exam_result_science',
+            'exam_result_physic',
+            'exam_result_chemistry',
+            'exam_result_bio',
+            'exam_total',
+            'exam_result',
         )
 
