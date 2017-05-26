@@ -17,6 +17,10 @@
         .outreach-field:focus {
             background-color: yellow;
         }
+        .field-warning {
+            background-color: red;
+            color: #fff;
+        }
     </style>
 {% endblock %}
 
@@ -230,7 +234,10 @@
             $(document).on('blur', '.exam-corrector', function(){
                 if(parseInt($(this).val()) < 11){
                     $(this).focus();
-                    alert('Enter the exam corrector');
+                    $(this).addClass('field-warning');
+{#                    alert('Enter the exam corrector');#}
+                }else{
+                    $(this).removeClass('field-warning');
                 }
             });
 
