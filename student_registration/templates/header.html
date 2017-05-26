@@ -67,9 +67,9 @@
                       <li class="nav-item">
                         <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment_patch' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "Registration editing" %}</a>
                       </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="{% url 'enrollments:enrollment_grading' %}?ln={{ LANGUAGE_CODE }}">{% trans "Edit grading" %}</a>
-                      </li>
+{#                      <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'enrollments:enrollment_grading' %}?ln={{ LANGUAGE_CODE }}">{% trans "Edit grading" %}</a>#}
+{#                      </li>#}
                     {% endif %}
                 {% endif %}
                 {% if request.user|has_group:"PMU" %}
