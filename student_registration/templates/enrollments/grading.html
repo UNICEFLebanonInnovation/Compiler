@@ -58,6 +58,10 @@
                                     <i class="icon-synch-sign icon-white"></i>&nbsp;
                                         {% trans "synchronize" %}
                                   </button>
+                                    <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">
+                                        <i class="icon-export-sign icon-white"></i>&nbsp;
+                                            {% trans "Export" %}
+                                    </a>
                                 </li>
                                 <li>
                                     <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />
@@ -178,9 +182,9 @@
             $('#search').val('');
             createStores();
 
-            $('input#search').quicksearch('table tbody tr', {
-                selector: 'span'
-            });
+{#            $('input#search').quicksearch('table tbody tr', {#}
+{#                selector: 'span'#}
+{#            });#}
 
             $("#filter_class").change(function(){
                 var selected_class = $(this).val();
@@ -214,6 +218,7 @@
             $(document).on('click', '#registration-synchro', function(){
                 synchro_result = true;
                 $('.alert').hide();
+                synchronize_data(true);
                 if(navigator.onLine) {
                     $(".loader").show();
                     synchronize_data(true);
