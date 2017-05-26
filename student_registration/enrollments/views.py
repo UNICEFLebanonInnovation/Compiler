@@ -369,6 +369,18 @@ class ExportViewSet(LoginRequiredMixin, ListView):
 
         data = tablib.Dataset()
         data.headers = [
+            _('Student status'),
+            _('Final Grade'),
+            _('Biology'),
+            _('Chemistry'),
+            _('Physic'),
+            _('Science'),
+            _('Math'),
+            _('History'),
+            _('Geography'),
+            _('Education'),
+            _('Foreign language'),
+            _('Arabic'),
             _('ALP result'),
             _('ALP round'),
             _('ALP level'),
@@ -400,7 +412,8 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             _('School'),
             _('School number'),
             _('District'),
-            _('Governorate')
+            _('Governorate'),
+            'id'
         ]
 
         content = []
@@ -408,6 +421,20 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             if not line.student or not line.school:
                 continue
             content = [
+
+                line.exam_result,
+                line.exam_total,
+                line.exam_result_bio,
+                line.exam_result_chemistry,
+                line.exam_result_physic,
+                line.exam_result_science,
+                line.exam_result_math,
+                line.exam_result_history,
+                line.exam_result_geo,
+                line.exam_result_education,
+                line.exam_result_language,
+                line.exam_result_arabic,
+
                 line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
                 line.last_informal_edu_round.name if line.last_informal_edu_round else '',
                 line.last_informal_edu_level.name if line.last_informal_edu_level else '',
@@ -447,6 +474,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 line.school.number,
                 line.school.location.name,
                 line.school.location.parent.name,
+                line.id
             ]
             data.append(content)
 
