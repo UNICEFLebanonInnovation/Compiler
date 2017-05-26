@@ -18,7 +18,7 @@
             background-color: yellow;
         }
         .field-warning {
-            background-color: red;
+            background-color: red !important;
             color: #fff;
         }
     </style>
@@ -233,9 +233,7 @@
 
             $(document).on('blur', '.exam-corrector', function(){
                 if(parseInt($(this).val()) < 11){
-                    $(this).focus();
                     $(this).addClass('field-warning');
-{#                    alert('Enter the exam corrector');#}
                 }else{
                     $(this).removeClass('field-warning');
                 }
