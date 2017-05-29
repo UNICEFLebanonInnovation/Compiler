@@ -145,6 +145,8 @@ class OutreachSerializer(serializers.ModelSerializer):
                 instance.last_education_year = validated_data['last_education_year']
             if 'level' in validated_data:
                 instance.level = validated_data['level']
+            if 'modified_by' in validated_data:
+                instance.modified_by_id = validated_data['modified_by']
 
             instance.save()
 
@@ -194,6 +196,7 @@ class OutreachSerializer(serializers.ModelSerializer):
             'last_education_level',
             'last_education_year',
             'owner',
+            'modified_by',
             'governorate_name',
             'location',
             'student_nationality_id',
@@ -243,6 +246,7 @@ class OutreachExamSerializer(serializers.ModelSerializer):
             'post_exam_corrector_math',
             'post_exam_corrector_science',
             'refer_to_level',
+            'modified_by',
         )
 
 
@@ -319,6 +323,8 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
                 instance.exam_corrector_math = validated_data['exam_corrector_math']
             if 'exam_corrector_science' in validated_data:
                 instance.exam_corrector_science = validated_data['exam_corrector_science']
+            if 'modified_by' in validated_data:
+                instance.modified_by_id = validated_data['modified_by']
 
             instance.save()
 
@@ -353,6 +359,7 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'student_address',
             'school',
             'owner',
+            'modified_by',
             'location',
             'governorate_name',
             'school_number',

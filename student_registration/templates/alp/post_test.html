@@ -95,6 +95,8 @@
                                         <th rowspan="2"><label>{% trans "Registered in section" %}</label></th>
                                         <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label class="col-100">{% trans "Refer to level" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Created by" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Modified by" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
@@ -277,6 +279,7 @@
         {
             var itemid = item.id;
             var data = item;
+            data.modified_by = user_id;
             delete data.id;
 
             if(data.post_exam_result_arabic) {
