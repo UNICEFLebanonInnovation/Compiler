@@ -371,6 +371,15 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         data.headers = [
             _('Student status'),
             _('Final Grade'),
+
+            _('Linguistic field/Arabic'),
+            _('Sociology field'),
+            _('Physical field'),
+            _('Artistic field'),
+            _('Linguistic field/Foreign language'),
+            _('Scientific domain/Mathematics'),
+            _('Scientific domain/Sciences'),
+
             _('Biology'),
             _('Chemistry'),
             _('Physic'),
@@ -381,6 +390,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             _('Education'),
             _('Foreign language'),
             _('Arabic'),
+
             _('ALP result'),
             _('ALP round'),
             _('ALP level'),
@@ -424,6 +434,15 @@ class ExportViewSet(LoginRequiredMixin, ListView):
 
                 line.exam_result,
                 line.exam_total,
+
+                line.exam_result_linguistic_ar,
+                line.exam_result_sociology,
+                line.exam_result_physical,
+                line.exam_result_artistic,
+                line.exam_result_linguistic_en,
+                line.exam_result_mathematics,
+                line.exam_result_sciences,
+
                 line.exam_result_bio,
                 line.exam_result_chemistry,
                 line.exam_result_physic,
