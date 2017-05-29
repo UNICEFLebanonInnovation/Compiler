@@ -71,12 +71,12 @@
                                             <option value="{{ item.id }}" {% if level == item.id %}selected="selected"{% endif %}>{{ item.name }}</option>
                                         {% endfor %}
                                     </select>
-                                    <select name="section" id="filter_section" class="col-200">
-                                        <option value="0">{% trans "Filter by Section" %}</option>
-                                        {% for item in sections %}
-                                            <option value="{{ item.id }}">{{ item.name }}</option>
-                                        {% endfor %}
-                                    </select>
+{#                                    <select name="section" id="filter_section" class="col-200">#}
+{#                                        <option value="0">{% trans "Filter by Section" %}</option>#}
+{#                                        {% for item in sections %}#}
+{#                                            <option value="{{ item.id }}">{{ item.name }}</option>#}
+{#                                        {% endfor %}#}
+{#                                    </select>#}
                                 </li>
                             </ol>
                             <div class="actions pull-right">
@@ -110,23 +110,37 @@
                                         <th><label>{% trans "Student birthday" %}</label></th>
                                         <th><label>{% trans "Current Level" %}</label></th>
                                         <th><label>{% trans "Current Section" %}</label></th>
-                                        <th><label class="col-100">{% trans "Arabic" %}</label></th>
-                                        <th><label class="col-100">{% trans "Foreign language" %}</label></th>
-                                        <th><label class="col-140">{% trans "Education" %}</label></th>
-                                        <th><label class="col-140">{% trans "Geography" %}</label></th>
-                                        <th><label class="col-100">{% trans "History" %}</label></th>
-                                        <th><label class="col-100">{% trans "Math" %}</label></th>
-                                        <th><label class="col-100">{% trans "Science" %}</label></th>
-                                        <th><label class="col-100">{% trans "Physic" %}</label></th>
-                                        <th><label class="col-100">{% trans "Chemistry" %}</label></th>
-                                        <th><label class="col-100">{% trans "Biology" %}</label></th>
+                                        {% if level == 1 %}
+                                            <th><label class="col-140">{% trans "Linguistic field/Arabic" %}</label></th>
+                                            <th><label class="col-140">{% trans "Sociology field" %}</label></th>
+                                            <th><label class="col-200">{% trans "Physical field" %}</label></th>
+                                            <th><label class="col-140">{% trans "Artistic field" %}</label></th>
+                                            <th><label class="col-200">{% trans "Linguistic field/Foreign language" %}</label></th>
+                                            <th><label class="col-200">{% trans "Scientific domain/Mathematics" %}</label></th>
+                                            <th><label class="col-200">{% trans "Scientific domain/Sciences" %}</label></th>
+                                        {% else %}
+                                            <th><label class="col-100">{% trans "Arabic" %}</label></th>
+                                            <th><label class="col-100">{% trans "Foreign language" %}</label></th>
+                                            <th><label class="col-140">{% trans "Education" %}</label></th>
+                                            <th><label class="col-140">{% trans "Geography" %}</label></th>
+                                            <th><label class="col-100">{% trans "History" %}</label></th>
+                                            <th><label class="col-100">{% trans "Math" %}</label></th>
+                                            <th><label class="col-100">{% trans "Science" %}</label></th>
+                                            <th><label class="col-100">{% trans "Physic" %}</label></th>
+                                            <th><label class="col-100">{% trans "Chemistry" %}</label></th>
+                                            <th><label class="col-140">{% trans "Biology" %}</label></th>
+                                        {% endif %}
                                         <th><label class="col-140">{% trans "Final Grade" %}</label></th>
                                         <th><label class="col-100">{% trans "Student status" %}</label></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 {% for line in data %}
-                                    {% include 'enrollments/prototype_grade.html' with student=line.student level=line.classroom_id %}
+                                    {% if level == 1 %}
+                                        {% include 'enrollments/prototype_grade_ece.html' with student=line.student level=level %}
+                                    {% else %}
+                                        {% include 'enrollments/prototype_grade.html' with student=line.student level=level %}
+                                    {% endif %}
                                 {% endfor %}
                                 </tbody>
                             </table>
