@@ -95,6 +95,8 @@
                                         <th rowspan="2"><label>{% trans "Registered in section" %}</label></th>
                                         <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label class="col-100">{% trans "Refer to level" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Created by" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Modified by" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
@@ -148,6 +150,7 @@
         var table = $('#outreaches-table');
         var selectedSchool = '{{ selectedSchool }}';
         var filterSchools = true;
+        var synchronized_data = true;
         var protocol = 'http://';
         {% if request.is_secure %}
             protocol = 'https://';
@@ -176,11 +179,15 @@
             $("#filter_school").change(function(){
                 var selected_school = $(this).val();
                // reload the page with the school id passed in post
-                url = '{% url "alp:alp_post_test" %}';
+                var url = '{% url "alp:alp_post_test" %}';
                 if(selected_school){
                     url = url+'?school='+selected_school;
                 }
-                window.location.href = url;
+                if(synchronized_data == false){
+                    alert('Please synchronize you data before leaving this page');
+                }else{
+                    window.location.href = url;
+                }
             });
 
             $(document).on('click', '#filter_cancel', function(){
@@ -234,14 +241,10 @@
                 }
             });
 
-            $(document).on('blur', '.outreach-field-p', function(){
+            $(document).on('blur change', '.outreach-field-p', function(){
                 update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
                 flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches-p');
-            });
-
-            $(document).on('change', '.outreach-field-p', function(){
-                update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
-                flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches-p');
+                synchronized_data = false;
             });
 
             $(document).on('click', '#outreach-synchro', function(){
@@ -250,6 +253,7 @@
                 if(navigator.onLine) {
                     $(".loader").show();
                     synchronize_data(true);
+                    synchronized_data = true;
                 }else{
                     $('#alert-connection').show();
                 }
@@ -277,6 +281,7 @@
         {
             var itemid = item.id;
             var data = item;
+            data.modified_by = user_id;
             delete data.id;
 
             if(data.post_exam_result_arabic) {
