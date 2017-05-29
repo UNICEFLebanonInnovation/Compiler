@@ -95,6 +95,7 @@ class OutreachResource(resources.ModelResource):
             're_enrolled',
             'passed_post',
             'owner__username',
+            'modified_by__username',
             'created',
             'modified',
         )
@@ -511,6 +512,7 @@ class OutreachAdmin(ImportExportModelAdmin):
         'not_enrolled_in_this_school',
         're_enrolled',
         'owner',
+        'modified_by',
         'created',
         'modified',
     )
@@ -542,7 +544,8 @@ class OutreachAdmin(ImportExportModelAdmin):
         'student__id_number',
         'school__location__name',
         'level__name',
-        'owner__username'
+        'owner__username',
+        'modified_by__username',
     )
 
     def get_queryset(self, request):
@@ -598,6 +601,7 @@ class CurrentOutreachAdmin(OutreachAdmin):
         'student_sex',
         'student_nationality',
         'owner',
+        'modified_by',
         'created',
         'modified',
     )
@@ -641,6 +645,7 @@ class PreTestAdmin(OutreachAdmin):
         'total',
         'assigned_to_level',
         'owner',
+        'modified_by',
         'created',
         'modified',
     )
@@ -698,6 +703,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         're_enrolled',
         'section',
         'owner',
+        'modified_by',
         'created',
         'modified',
     )
@@ -759,6 +765,7 @@ class PostTestAdmin(OutreachAdmin):
         'referred_to',
         'section',
         'owner',
+        'modified_by',
         'created',
         'modified',
     )
