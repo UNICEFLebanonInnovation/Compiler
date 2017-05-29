@@ -8,26 +8,8 @@
 
     <tr id="line-{{ line.id }}" class="outreach-line-p" itemscope="{{ line.id }}">
         <td>
-            {% if role == "ALP_SCHOOL" %}
-                <input type="checkbox" name="not_enrolled_in_this_school" id="not_enrolled_in_this_school" {% if line.not_enrolled_in_this_school %}checked="checked"{% endif %} value="1" class="outreach-field-p" itemscope="{{ line.id }}" />
-            {% endif %}
-            {% if role == "CERD" and alp_phase == 'pre_test' %}
-{#                <input type="checkbox" name="exam_not_exist_in_school" id="exam_not_exist_in_school" {% if line.exam_not_exist_in_school %}checked="checked"{% endif %} value="1" class="outreach-field-p" itemscope="{{ line.id }}" />#}
-            {% endif %}
             &nbsp;<input type="hidden" name="id" value="{{ line.id }}" class="outreach-field-id" />
             <span class="student_fullname" style="display: none;">{{ line.student_fullname }}</span>
-        </td>
-        <td>{% if location %}
-                {{ location.name }}
-                <input type="hidden" name="location" value="{{ location.id }}" id="location" class="" />
-            {% endif %}
-        </td>
-        <td>{% if location_parent %}{{ location_parent.name }}{% endif %}</td>
-        <td>{% if school %}{{ school.number }}{% endif %}</td>
-        <td>{% if school %}
-            {{ school.name }}
-            <input type="hidden" name="school" value="{{ school.id }}" id="school" class="" />
-        {% endif %}
         </td>
         <td>{% if student %}{{ student.first_name }}{% endif %}</td>
         <td>{% if student %}{{ student.father_name }}{% endif %}</td>
@@ -175,20 +157,6 @@
         <td>{% if student %}{{ student.birthday_month }}{% endif %}</td>
         <td>{% if student %}{{ student.birthday_day }}{% endif %}</td>
         <td>{% if student %}{{ student.calc_age }}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if student %}{{ student.nationality_name }}{% endif %}{% endif %}</td>
         <td>{% if student %}{{ student.mother_fullname }}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if student %}{{ student.mother_nationality }}{% endif %}{% endif %}</td>
-        <td>{% if line.registered_in_unhcr %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if student and student.id_type %}{{ student.id_type.name }}{% endif %}{% endif %}</td>
-        <td>{% if student %}{{ student.id_number }}{% endif %}</td>
-        <td>{% if student %}{{ student.address }}{% endif %}</td>
-        <td>{% if student %}{{ student.phone }}{% endif %}</td>
-        <td>{% if student %}{{ student.phone_prefix }}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if line.last_education_level %}{{ line.last_education_level.name }}{% endif %}{% endif %}</td>
-        <td>{{ line.last_education_year }}</td>
-        <td>{% if line.participated_in_alp %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if line.last_informal_edu_round %}{{ line.last_informal_edu_round.name }}{% endif %}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if line.last_informal_edu_level %}{{ line.last_informal_edu_level.name }}{% endif %}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if line.last_informal_edu_final_result %}{{ line.last_informal_edu_final_result.name }}{% endif %}{% endif %}</td>
     {% endif %}
     </tr>
