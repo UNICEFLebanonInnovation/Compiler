@@ -4,6 +4,7 @@ from __future__ import absolute_import, unicode_literals
 from django.db import models
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
+from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 
 from import_export.admin import ExportMixin
 from import_export import resources, fields, widgets
@@ -110,6 +111,42 @@ class LocationFilter(admin.SimpleListFilter):
         return queryset
 
 
+class SchoolTypeFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'School type'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'school_type'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('alp', 'ALP'),
+            ('2ndshift', '2nd-shift')
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if not self.value():
+            return queryset
+        if self.value() == 'alp':
+            return queryset.filter(school__is_alp=True)
+        if self.value() == '2ndshift':
+            return queryset.filter(school__is_2nd_shift=True)
+        return queryset
+
+
 class BySchoolResource(resources.ModelResource):
     governorate = fields.Field(
         column_name='governorate',
@@ -158,18 +195,23 @@ class BySchoolByDayAdmin(ExportMixin, admin.ModelAdmin):
         'validation_status',
     )
     list_filter = (
-        # 'school__location',
-        # 'school',
+        ('attendance_date', DateRangeFilter),
         LocationFilter,
         GovernorateFilter,
         SchoolFilter,
-        'attendance_date',
+        SchoolTypeFilter,
+        # 'attendance_date',
         'validation_date',
         'validation_status',
         'highest_attendance_rate',
     )
     date_hierarchy = 'attendance_date'
     ordering = ('-attendance_date',)
+
+    class Media:
+        css = {
+            "all": ("css/admin.css",)
+        }
 
     def district(self, obj):
         if obj.school and obj.school.location:
@@ -243,6 +285,7 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         # 'school__location',
         # 'school',
         SchoolFilter,
+        SchoolTypeFilter,
         LocationFilter,
         GovernorateFilter,
         'last_attendance_date',
@@ -300,6 +343,17 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
 class AttendanceSyncLogResource(resources.ModelResource):
     class Meta:
         model = AttendanceSyncLog
+        fields = (
+            'school__number',
+            'school__name',
+            'school_type',
+            'total_records',
+            'successful',
+            'response_message',
+            'processed_date',
+            'processed_by'
+        )
+        export_order = fields
 
 
 class AttendanceSyncLogAdmin(ImportExportModelAdmin):
@@ -315,6 +369,7 @@ class AttendanceSyncLogAdmin(ImportExportModelAdmin):
     )
     list_filter = (
         'school',
+        SchoolTypeFilter,
         'school_type',
         'successful',
     )
