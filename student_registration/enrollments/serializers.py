@@ -194,6 +194,21 @@ class EnrollmentSerializer(serializers.ModelSerializer):
                 instance.exam_result_chemistry = validated_data['exam_result_chemistry']
             if 'exam_result_bio' in validated_data:
                 instance.exam_result_bio = validated_data['exam_result_bio']
+            if 'exam_result_linguistic_ar' in validated_data:
+                instance.exam_result_linguistic_ar = validated_data['exam_result_linguistic_ar']
+            if 'exam_result_linguistic_en' in validated_data:
+                instance.exam_result_linguistic_en = validated_data['exam_result_linguistic_en']
+            if 'exam_result_sociology' in validated_data:
+                instance.exam_result_sociology = validated_data['exam_result_sociology']
+            if 'exam_result_physical' in validated_data:
+                instance.exam_result_physical = validated_data['exam_result_physical']
+            if 'exam_result_artistic' in validated_data:
+                instance.exam_result_artistic = validated_data['exam_result_artistic']
+            if 'exam_result_mathematics' in validated_data:
+                instance.exam_result_mathematics = validated_data['exam_result_mathematics']
+            if 'exam_result_sciences' in validated_data:
+                instance.exam_result_sciences = validated_data['exam_result_sciences']
+
             if 'exam_total' in validated_data:
                 instance.exam_total = validated_data['exam_total']
             if 'exam_result' in validated_data:
@@ -273,6 +288,13 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'exam_result_physic',
             'exam_result_chemistry',
             'exam_result_bio',
+            'exam_result_linguistic_ar',
+            'exam_result_linguistic_en',
+            'exam_result_sociology',
+            'exam_result_physical',
+            'exam_result_artistic',
+            'exam_result_mathematics',
+            'exam_result_sciences',
             'exam_total',
             'exam_result',
         )
