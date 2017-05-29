@@ -1386,3 +1386,27 @@ msgstr "العلامة النهائية"
 
 msgid "Student status"
 msgstr "وضع التلميذ"
+
+msgid "Linguistic field"
+msgstr "المجال اللغوي"
+
+msgid "Sociology field"
+msgstr "المجال الاجتماعي"
+
+msgid "Physical field"
+msgstr "مجال الرياضة البدنية والجسدية"
+
+msgid "Artistic field"
+msgstr "المجال الفني"
+
+msgid "Scientific domain/Mathematics"
+msgstr "المجال العلمي/رياضيات"
+
+msgid "Scientific domain/Sciences"
+msgstr "المجال العلمي/علوم"
+
+msgid "Linguistic field/Arabic"
+msgstr "المجال اللغوي/عربي"
+
+msgid "Linguistic field/Foreign language"
+msgstr "المجال الغوي/لغة اجنبية"
