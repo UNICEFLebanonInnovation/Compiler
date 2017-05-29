@@ -219,6 +219,45 @@ class EnrollmentPatchView(LoginRequiredMixin, TemplateView):
         }
 
 
+class EnrollmentGradingView(LoginRequiredMixin, TemplateView):
+
+        model = Enrollment
+        template_name = 'enrollments/grading.html'
+
+        def get_context_data(self, **kwargs):
+
+            school_id = 0
+            school = 0
+            location = 0
+            location_parent = 0
+            total = 0
+            level = int(self.request.GET.get('level', 0))
+            data = []
+            if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
+                school_id = self.request.user.school_id
+            if school_id:
+                school = School.objects.get(id=school_id)
+                total = self.model.objects.filter(school_id=school_id).count()
+            if school and school.location:
+                location = school.location
+            if location and location.parent:
+                location_parent = location.parent
+            if school_id and level:
+                data = self.model.objects.filter(school=school_id, classroom=level).order_by('student')
+
+            return {
+                'data': data,
+                'level': level,
+                'total': total,
+                'school': school,
+                'location': location,
+                'results': self.model.RESULT,
+                'location_parent': location_parent,
+                'classrooms': ClassRoom.objects.all(),
+                'sections': Section.objects.all(),
+            }
+
+
 ####################### API VIEWS #############################
 
 
@@ -330,6 +369,28 @@ class ExportViewSet(LoginRequiredMixin, ListView):
 
         data = tablib.Dataset()
         data.headers = [
+            _('Student status'),
+            _('Final Grade'),
+
+            _('Linguistic field/Arabic'),
+            _('Sociology field'),
+            _('Physical field'),
+            _('Artistic field'),
+            _('Linguistic field/Foreign language'),
+            _('Scientific domain/Mathematics'),
+            _('Scientific domain/Sciences'),
+
+            _('Biology'),
+            _('Chemistry'),
+            _('Physic'),
+            _('Science'),
+            _('Math'),
+            _('History'),
+            _('Geography'),
+            _('Education'),
+            _('Foreign language'),
+            _('Arabic'),
+
             _('ALP result'),
             _('ALP round'),
             _('ALP level'),
@@ -361,7 +422,8 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             _('School'),
             _('School number'),
             _('District'),
-            _('Governorate')
+            _('Governorate'),
+            'id'
         ]
 
         content = []
@@ -369,6 +431,29 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             if not line.student or not line.school:
                 continue
             content = [
+
+                line.exam_result,
+                line.exam_total,
+
+                line.exam_result_linguistic_ar,
+                line.exam_result_sociology,
+                line.exam_result_physical,
+                line.exam_result_artistic,
+                line.exam_result_linguistic_en,
+                line.exam_result_mathematics,
+                line.exam_result_sciences,
+
+                line.exam_result_bio,
+                line.exam_result_chemistry,
+                line.exam_result_physic,
+                line.exam_result_science,
+                line.exam_result_math,
+                line.exam_result_history,
+                line.exam_result_geo,
+                line.exam_result_education,
+                line.exam_result_language,
+                line.exam_result_arabic,
+
                 line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
                 line.last_informal_edu_round.name if line.last_informal_edu_round else '',
                 line.last_informal_edu_level.name if line.last_informal_edu_level else '',
@@ -408,6 +493,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 line.school.number,
                 line.school.location.name,
                 line.school.location.parent.name,
+                line.id
             ]
             data.append(content)
 

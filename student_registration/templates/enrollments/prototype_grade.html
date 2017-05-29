@@ -1,0 +1,256 @@
+{% load staticfiles i18n %}
+{% load util_tags %}
+
+{% get_range_int 0 21 as notes2_1 %}
+{% get_range_int 0 21 as notes2_2 %}
+{% get_range_int 0 21 as notes2_3 %}
+{% get_range_int 0 21 as notes2_4 %}
+{% get_range_int 0 21 as notes2_5 %}
+{% get_range_int 0 21 as notes2_6 %}
+{% get_range_int 0 21 as notes2_7 %}
+{% get_range_int 0 21 as notes2_8 %}
+{% get_range_int 0 21 as notes2_9 %}
+{% get_range_int 0 61 as notes3_1 %}
+{% get_range_int 0 61 as notes3_2 %}
+{% get_range_int 0 41 as notes3_3 %}
+{% get_range_int 0 41 as notes3_4 %}
+
+    <tr id="line-{{ line.id }}" class="registration-line-p" itemscope="{{ line.id }}">
+        <td class="synchro-status">
+            &nbsp;<input type="hidden" name="id" value="{{ line.id }}" class="registration-field-id" />
+            <span class="student_fullname" style="display: none;">{% if student %}{{ student }}{% endif %}</span>
+        </td>
+        <td>{% if student %}{{ student.first_name }}{% endif %}</td>
+        <td>{% if student %}{{ student.father_name }}{% endif %}</td>
+        <td>{% if student %}{{ student.last_name }}{% endif %}</td>
+        <td>{% if student %}{% trans student.sex %}{% endif %}</td>
+        <td>{% if student %}{% trans student.birthday %}{% endif %}</td>
+        <td>{{ line.classroom }}</td>
+        <td>{{ line.section }}</td>
+{#            Arabic #}
+        <td>
+            <select name="exam_result_arabic" id="exam_result_arabic" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Arabic" %}</option>
+                {% if level == 2 or level == 3 or level == 4 %}
+                    <option value="أ" {% if line.exam_result_arabic == 'أ' %}selected="selected"{% endif %}>أ</option>
+                    <option value="ب" {% if line.exam_result_arabic == 'ب' %}selected="selected"{% endif %}>ب</option>
+                    <option value="ج" {% if line.exam_result_arabic == 'ج' %}selected="selected"{% endif %}>ج</option>
+                    <option value="د" {% if line.exam_result_arabic == 'د' %}selected="selected"{% endif %}>د</option>
+                    <option value="ه" {% if line.exam_result_arabic == 'ه' %}selected="selected"{% endif %}>ه</option>
+                    <option value="و" {% if line.exam_result_arabic == 'و' %}selected="selected"{% endif %}>و</option>
+                {% elif level == 5 or level == 6 or level == 7 %}
+                    {% for key in notes2_1 %}
+                        <option value="{{ key }}" {% if line.exam_result_arabic == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+                {% elif level == 8 or level == 9 or level == 10 %}
+                    {% for key in notes3_1 %}
+                        <option value="{{ key }}" {% if line.exam_result_arabic == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+            {% if level == 5 or level == 6 or level == 7 %}
+                <span class="note-indicator-value">/20</span>
+            {% elif level == 8 or level == 8 or level == 10 %}
+                <span class="note-indicator-value">/60</span>
+            {% endif %}
+        </td>
+{#        Language #}
+        <td>
+            <select name="exam_result_language" id="exam_result_language" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Foreign language" %}</option>
+                {% if level == 2 or level == 3 or level == 4 %}
+                    <option value="أ" {% if line.exam_result_language == 'أ' %}selected="selected"{% endif %}>أ</option>
+                    <option value="ب" {% if line.exam_result_language == 'ب' %}selected="selected"{% endif %}>ب</option>
+                    <option value="ج" {% if line.exam_result_language == 'ج' %}selected="selected"{% endif %}>ج</option>
+                    <option value="د" {% if line.exam_result_language == 'د' %}selected="selected"{% endif %}>د</option>
+                    <option value="ه" {% if line.exam_result_language == 'ه' %}selected="selected"{% endif %}>ه</option>
+                    <option value="و" {% if line.exam_result_language == 'و' %}selected="selected"{% endif %}>و</option>
+                {% elif level == 5 or level == 6 or level == 7 %}
+                    {% for key in notes2_2 %}
+                        <option value="{{ key }}" {% if line.exam_result_language == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+                {% elif level == 8 or level == 9 or level == 10 %}
+                    {% for key in notes3_3 %}
+                        <option value="{{ key }}" {% if line.exam_result_language == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+            {% if level == 5 or level == 6 or level == 7 %}
+                <span class="note-indicator-value">/20</span>
+            {% elif level == 8 or level == 9 or level == 10 %}
+                <span class="note-indicator-value">/40</span>
+            {% endif %}
+        </td>
+{#        Education #}
+        <td>
+            <select name="exam_result_education" id="exam_result_education" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Education" %}</option>
+                {% if level == 2 or level == 3 or level == 4 %}
+                    <option value="أ" {% if line.exam_result_education == 'أ' %}selected="selected"{% endif %}>أ</option>
+                    <option value="ب" {% if line.exam_result_education == 'ب' %}selected="selected"{% endif %}>ب</option>
+                    <option value="ج" {% if line.exam_result_education == 'ج' %}selected="selected"{% endif %}>ج</option>
+                    <option value="د" {% if line.exam_result_education == 'د' %}selected="selected"{% endif %}>د</option>
+                    <option value="ه" {% if line.exam_result_education == 'ه' %}selected="selected"{% endif %}>ه</option>
+                    <option value="و" {% if line.exam_result_education == 'و' %}selected="selected"{% endif %}>و</option>
+                {% elif level == 5 or level == 6 or level == 7 %}
+                    {% for key in notes2_3 %}
+                        <option value="{{ key }}" {% if line.exam_result_education == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+                {% elif level == 8 or level == 9 or level == 10 %}
+                    {% for key in notes2_1 %}
+                        <option value="{{ key }}" {% if line.exam_result_education == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+            {% if level == 5 or level == 6 or level == 7 %}
+                <span class="note-indicator-value">/20</span>
+            {% elif level == 8 or level == 9 or level == 10 %}
+                <span class="note-indicator-value">/20</span>
+            {% endif %}
+        </td>
+{#        Geography #}
+        <td>
+            <select name="exam_result_geo" id="exam_result_geo" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Geography" %}</option>
+                {% if level == 2 or level == 3 or level == 4 %}
+                    <option value="أ" {% if line.exam_result_geo == 'أ' %}selected="selected"{% endif %}>أ</option>
+                    <option value="ب" {% if line.exam_result_geo == 'ب' %}selected="selected"{% endif %}>ب</option>
+                    <option value="ج" {% if line.exam_result_geo == 'ج' %}selected="selected"{% endif %}>ج</option>
+                    <option value="د" {% if line.exam_result_geo == 'د' %}selected="selected"{% endif %}>د</option>
+                    <option value="ه" {% if line.exam_result_geo == 'ه' %}selected="selected"{% endif %}>ه</option>
+                    <option value="و" {% if line.exam_result_geo == 'و' %}selected="selected"{% endif %}>و</option>
+                {% elif level == 5 or level == 6 or level == 7 %}
+                    {% for key in notes2_4 %}
+                        <option value="{{ key }}" {% if line.exam_result_geo == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+                {% elif level == 8 or level == 9 or level == 10 %}
+                    {% for key in notes2_2 %}
+                        <option value="{{ key }}" {% if line.exam_result_geo == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+            {% if level == 5 or level == 6 or level == 7 %}
+                <span class="note-indicator-value">/20</span>
+            {% elif level == 8 or level == 9 or level == 10 %}
+                <span class="note-indicator-value">/20</span>
+            {% endif %}
+        </td>
+{#        History #}
+        <td>
+        {% if level == 8 or level == 9 or level == 10 %}
+            <select name="exam_result_history" id="exam_result_history" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "History" %}</option>
+                    {% for key in notes2_3 %}
+                        <option value="{{ key }}" {% if line.exam_result_history == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+            </select>
+            <span class="note-indicator-value">/20</span>
+        {% endif %}
+        </td>
+{#        Math #}
+        <td>
+            <select name="exam_result_math" id="exam_result_math" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Math" %}</option>
+                {% if level == 2 or level == 3 or level == 4 %}
+                    <option value="أ" {% if line.exam_result_math == 'أ' %}selected="selected"{% endif %}>أ</option>
+                    <option value="ب" {% if line.exam_result_math == 'ب' %}selected="selected"{% endif %}>ب</option>
+                    <option value="ج" {% if line.exam_result_math == 'ج' %}selected="selected"{% endif %}>ج</option>
+                    <option value="د" {% if line.exam_result_math == 'د' %}selected="selected"{% endif %}>د</option>
+                    <option value="ه" {% if line.exam_result_math == 'ه' %}selected="selected"{% endif %}>ه</option>
+                    <option value="و" {% if line.exam_result_math == 'و' %}selected="selected"{% endif %}>و</option>
+                {% elif level == 5 or level == 6 or level == 7 %}
+                    {% for key in notes2_5 %}
+                        <option value="{{ key }}" {% if line.exam_result_math == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+                {% elif level == 8 or level == 9 or level == 10 %}
+                    {% for key in notes3_2 %}
+                        <option value="{{ key }}" {% if line.exam_result_math == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+            {% if level == 5 or level == 6 or level == 7 %}
+                <span class="note-indicator-value">/20</span>
+            {% elif level == 8 or level == 9 or level == 10 %}
+                <span class="note-indicator-value">/60</span>
+            {% endif %}
+        </td>
+{#        Science #}
+        <td>
+        {% if level == 2 or level == 3 or level == 4 or level == 5 or level == 6 or level == 7 %}
+            <select name="exam_result_science" id="exam_result_science" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Science" %}</option>
+                {% if level == 2 or level == 3 or level == 4 %}
+                    <option value="أ" {% if line.exam_result_science == 'أ' %}selected="selected"{% endif %}>أ</option>
+                    <option value="ب" {% if line.exam_result_science == 'ب' %}selected="selected"{% endif %}>ب</option>
+                    <option value="ج" {% if line.exam_result_science == 'ج' %}selected="selected"{% endif %}>ج</option>
+                    <option value="د" {% if line.exam_result_science == 'د' %}selected="selected"{% endif %}>د</option>
+                    <option value="ه" {% if line.exam_result_science == 'ه' %}selected="selected"{% endif %}>ه</option>
+                    <option value="و" {% if line.exam_result_science == 'و' %}selected="selected"{% endif %}>و</option>
+                {% elif level == 5 or level == 6 or level == 7 %}
+                    {% for key in notes2_6 %}
+                        <option value="{{ key }}" {% if line.exam_result_science == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+            {% if level == 5 or level == 6 or level == 7 %}
+                <span class="note-indicator-value">/20</span>
+            {% endif %}
+        {% endif %}
+        </td>
+{#        Physic #}
+        <td>
+        {% if level == 8 or level == 9 or level == 10 %}
+            <select name="exam_result_physic" id="exam_result_physic" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Physic" %}</option>
+                    {% for key in notes2_4 %}
+                        <option value="{{ key }}" {% if line.exam_result_physic == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+            </select>
+            <span class="note-in±dicator-value">/20</span>
+        {% endif %}
+        </td>
+{#        Chemistry #}
+        <td>
+        {% if level == 8 or level == 9 or level == 10 %}
+            <select name="exam_result_chemistry" id="exam_result_chemistry" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Chemistry" %}</option>
+                    {% for key in notes2_5 %}
+                        <option value="{{ key }}" {% if line.exam_result_chemistry == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+            </select>
+            <span class="note-indicator-value">/20</span>
+        {% endif %}
+        </td>
+{#        Biology #}
+        <td>
+        {% if level == 8 or level == 9 or level == 10 %}
+            <select name="exam_result_bio" id="exam_result_bio" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Biology" %}</option>
+                    {% for key in notes2_6 %}
+                        <option value="{{ key }}" {% if line.exam_result_bio == key %}selected="selected"{% endif %}>{{ key }}</option>
+                    {% endfor %}
+            </select>
+            <span class="note-indicator-value">/20</span>
+        {% endif %}
+        </td>
+        <td>
+            {% if level == 5 or level == 6 or level == 8 or level == 9 or level == 10 or level == 10 %}
+                <input name="exam_total" id="exam_total" class="registration-field-p col-100" itemscope="{{ line.id }}"
+                       value="{% if line.exam_total %}{{ line.exam_total }}{% endif %}" placeholder="{% trans "Final Grade" %}"/>
+            {% endif %}
+            {% if level == 5 or level == 6 or level == 7 %}
+                <span class="note-indicator-value">/120</span>
+            {% endif %}
+            {% if level == 8 or level == 9 or level == 10 %}
+                <span class="note-indicator-value">/280</span>
+            {% endif %}
+        </td>
+        <td>
+            <select class="registration-filed-p" name="exam_result" id="exam_result">
+                <option value="0">{% trans "Student status" %}</option>
+                {% for key, item in results %}
+                    <option value="{{ key }}" {% if line.exam_result == key %}selected="selected"{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
