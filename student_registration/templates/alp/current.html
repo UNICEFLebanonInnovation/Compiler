@@ -519,6 +519,7 @@
                 synchronized: false,
                 deleted: false,
                 owner: user_id,
+                modified_by: user_id,
                 original_id: 0,
                 alp_round: alp_round,
                 to_update: true,
@@ -720,6 +721,7 @@
         function update_data_into_server(item)
         {
             var data = item;
+            data.modified_by = user_id;
 
             $.ajax({
                 type: "PUT",
@@ -754,6 +756,7 @@
         {
             var itemid = item.id;
             var data = item;
+            data.modified_by = user_id;
             delete data.id;
 
             $.ajax({
