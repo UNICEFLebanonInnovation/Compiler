@@ -20,6 +20,10 @@
         tr.warning {
             border: 3px solid #90111A;
         }
+        .field-warning {
+            background-color: red !important;
+            color: #fff;
+        }
     </style>
 {% endblock %}
 
@@ -353,10 +357,11 @@
                 item.find('#exam_total').trigger('blur');
             });
 
-            $(document).on('blur', '.exam-corrector', function(){
+            $(document).on('blur, change', '.exam-corrector', function(){
                 if(parseInt($(this).val()) < 11){
-                    $(this).focus();
-                    alert('Enter the exam corrector');
+                    $(this).addClass('field-warning');
+                }else{
+                    $(this).removeClass('field-warning');
                 }
             });
 
