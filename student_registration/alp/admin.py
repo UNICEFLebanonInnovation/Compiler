@@ -95,6 +95,7 @@ class OutreachResource(resources.ModelResource):
             're_enrolled',
             'passed_post',
             'owner__username',
+            'modified_by__username',
             'created',
             'modified',
         )
@@ -258,6 +259,35 @@ class OwnerFilter(admin.SimpleListFilter):
         """
         if self.value():
             return queryset.filter(owner_id=self.value())
+        return queryset
+
+
+class ModifiedByFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Modified by'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'modified_by'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l.id, l.username) for l in User.objects.filter(groups__name__in=['PARTNER', 'SCHOOL', 'DIRECTOR', 'ALP_SCHOOL', 'ALP_DIRECTOR', 'CERD']))
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(modified_by_id=self.value())
         return queryset
 
 
@@ -511,6 +541,7 @@ class OutreachAdmin(ImportExportModelAdmin):
         'not_enrolled_in_this_school',
         're_enrolled',
         'owner',
+        'modified_by',
         'created',
         'modified',
     )
@@ -529,6 +560,7 @@ class OutreachAdmin(ImportExportModelAdmin):
         RegisteredInLevelFilter,
         RegisteredInSectionFilter,
         OwnerFilter,
+        ModifiedByFilter,
         'created',
         'modified',
     )
@@ -542,7 +574,8 @@ class OutreachAdmin(ImportExportModelAdmin):
         'student__id_number',
         'school__location__name',
         'level__name',
-        'owner__username'
+        'owner__username',
+        'modified_by__username',
     )
 
     def get_queryset(self, request):
@@ -598,6 +631,7 @@ class CurrentOutreachAdmin(OutreachAdmin):
         'student_sex',
         'student_nationality',
         'owner',
+        'modified_by',
         'created',
         'modified',
     )
@@ -609,6 +643,7 @@ class CurrentOutreachAdmin(OutreachAdmin):
         'student__sex',
         'student__nationality',
         OwnerFilter,
+        ModifiedByFilter,
         'created',
         'modified',
     )
@@ -641,6 +676,7 @@ class PreTestAdmin(OutreachAdmin):
         'total',
         'assigned_to_level',
         'owner',
+        'modified_by',
         'created',
         'modified',
     )
@@ -657,6 +693,7 @@ class PreTestAdmin(OutreachAdmin):
         'exam_corrector_science',
         PreTestTotalFilter,
         OwnerFilter,
+        ModifiedByFilter,
         'created',
         'modified',
     )
@@ -698,6 +735,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         're_enrolled',
         'section',
         'owner',
+        'modified_by',
         'created',
         'modified',
     )
@@ -715,6 +753,7 @@ class CurrentRoundAdmin(OutreachAdmin):
         'section',
         'student__sex',
         OwnerFilter,
+        ModifiedByFilter,
         'created',
         'modified',
     )
@@ -759,6 +798,7 @@ class PostTestAdmin(OutreachAdmin):
         'referred_to',
         'section',
         'owner',
+        'modified_by',
         'created',
         'modified',
     )
@@ -776,6 +816,7 @@ class PostTestAdmin(OutreachAdmin):
         'post_exam_corrector_science',
         PostTestTotalFilter,
         OwnerFilter,
+        ModifiedByFilter,
         'created',
         'modified',
     )
