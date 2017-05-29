@@ -103,6 +103,8 @@
                                         <th colspan="3" style="text-align: center;"><label>{% trans "Student birthday" %}</label></th>
                                         <th rowspan="2"><label class="col-60">{% trans "Student age" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Mother fullname" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Created by" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Modified by" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Arabic language" %}</label></th>
@@ -171,6 +173,7 @@
         var table = $('#outreaches-table');
         var selectedSchool = '{{ school_id }}';
         var filterSchools = true;
+        var synchronized_data = true;
         var protocol = 'http://';
         {% if request.is_secure %}
             protocol = 'https://';
@@ -242,7 +245,11 @@
                 if(selected_school){
                     url = url+'?school='+selected_school;
                 }
-                window.location.href = url;
+                if(synchronized_data == false){
+                    alert('Please synchronize you data before leaving this page');
+                }else{
+                    window.location.href = url;
+                }
             });
 
             $(document).on('click', '#filter_cancel', function(){
@@ -386,18 +393,10 @@
                 flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches');
             });
 
-            $(document).on('blur', '.outreach-field-p', function(){
+            $(document).on('blur change', '.outreach-field-p', function(){
                 update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
                 flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches-p');
-            });
-            $(document).on('change', '.outreach-field-p', function(){
-                update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
-                flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches-p');
-            });
-
-            $(document).on('change', '.outreach-field-check', function(){
-                update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'outreaches');
-                flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches');
+                synchronized_data = false;
             });
 
             $(document).on('click', '#outreach-synchro', function(){
@@ -406,6 +405,7 @@
                 if(navigator.onLine) {
                     $(".loader").show();
                     synchronize_data(true);
+                    synchronized_data = true;
                 }else{
                     $('#alert-connection').show();
                 }
@@ -420,6 +420,7 @@
                 synchronized: false,
                 deleted: false,
                 owner: user_id,
+                modified_by: user_id,
                 original_id: 0,
                 to_update: true,
                 alp_round: alp_round,
@@ -588,6 +589,7 @@
         function update_data_into_server(item)
         {
             var data = item;
+            data.modified_by = user_id;
 
             $.ajax({
                 type: "PUT",
@@ -619,6 +621,7 @@
         {
             var itemid = item.id;
             var data = item;
+            data.modified_by = user_id;
             delete data.id;
 
             if(data.exam_result_arabic) {
