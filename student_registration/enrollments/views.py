@@ -232,7 +232,8 @@ class EnrollmentGradingView(LoginRequiredMixin, TemplateView):
             location_parent = 0
             total = 0
             level = int(self.request.GET.get('level', 0))
-            data = []
+            section = int(self.request.GET.get('section', 0))
+            queryset = []
             if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
                 school_id = self.request.user.school_id
             if school_id:
@@ -243,11 +244,14 @@ class EnrollmentGradingView(LoginRequiredMixin, TemplateView):
             if location and location.parent:
                 location_parent = location.parent
             if school_id and level:
-                data = self.model.objects.filter(school=school_id, classroom=level).order_by('student')
+                queryset = self.model.objects.filter(school=school_id, classroom=level).order_by('student__first_name')
+                if section:
+                    queryset = queryset.filter(section=section)
 
             return {
-                'data': data,
+                'data': queryset,
                 'level': level,
+                'section': section,
                 'total': total,
                 'school': school,
                 'location': location,
