@@ -1120,6 +1120,21 @@ msgstr "رياضيات"
 msgid "Science"
 msgstr "علوم"
 
+msgid "Education"
+msgstr "تربية"
+
+msgid "Geography"
+msgstr "جغرافيا"
+
+msgid "Physic"
+msgstr "فيزياء"
+
+msgid "Chemistry"
+msgstr "كيمياء"
+
+msgid "Biology"
+msgstr "علوم الحياة"
+
 msgid "Registered in school"
 msgstr "المدرسة المسجل بها التلميذ"
 
@@ -1362,3 +1377,36 @@ msgstr "هل انت متأكد ان هذا التلميذ انتقل الى مد
 
 msgid "this student will disappear automatically once he get registered by another school"
 msgstr "هذا التلميذ سوف يتخفي تلقائيا من القائمة بمجرد تسجيله في مدرسة اخرى"
+
+msgid "Edit grading"
+msgstr "تعديل العلامات"
+
+msgid "Final Grade"
+msgstr "العلامة النهائية"
+
+msgid "Student status"
+msgstr "وضع التلميذ"
+
+msgid "Linguistic field"
+msgstr "المجال اللغوي"
+
+msgid "Sociology field"
+msgstr "المجال الاجتماعي"
+
+msgid "Physical field"
+msgstr "مجال الرياضة البدنية والجسدية"
+
+msgid "Artistic field"
+msgstr "المجال الفني"
+
+msgid "Scientific domain/Mathematics"
+msgstr "المجال العلمي/رياضيات"
+
+msgid "Scientific domain/Sciences"
+msgstr "المجال العلمي/علوم"
+
+msgid "Linguistic field/Arabic"
+msgstr "المجال اللغوي/عربي"
+
+msgid "Linguistic field/Foreign language"
+msgstr "المجال الغوي/لغة اجنبية"
