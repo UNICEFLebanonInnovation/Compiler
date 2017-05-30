@@ -45,22 +45,22 @@
                    itemscope="{{ line.id }}" id="exam_total" value="{{ line.exam_total }}" disabled="disabled" size="3" />
             <span class="note-indicator-total">{% if level %}/{{ level.note|multiply:4 }}{% endif %}</span>
         </td>
-        <td>
-            <input name="exam_corrector_arabic" id="exam_corrector_arabic" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                   style="width: 70px;" placeholder="{% trans "Arabic language" %}" value="{{ line.exam_corrector_arabic }}" />
-        </td>
-        <td>
-            <input name="exam_corrector_language" id="exam_corrector_language" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                   style="width: 70px;" placeholder="{% trans "Foreign language" %}" value="{{ line.exam_corrector_language }}" />
-        </td>
-        <td>
-            <input name="exam_corrector_math" id="exam_corrector_math" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                   style="width: 70px;" placeholder="{% trans "Math" %}" value="{{ line.exam_corrector_math }}" />
-        </td>
-        <td>
-            <input name="exam_corrector_science" id="exam_corrector_science" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                   style="width: 70px;" placeholder="{% trans "Science" %}" value="{{ line.exam_corrector_science }}" />
-        </td>
+{#        <td>#}
+{#            <input name="exam_corrector_arabic" id="exam_corrector_arabic" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                   style="width: 70px;" placeholder="{% trans "Arabic language" %}" value="{{ line.exam_corrector_arabic }}" />#}
+{#        </td>#}
+{#        <td>#}
+{#            <input name="exam_corrector_language" id="exam_corrector_language" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                   style="width: 70px;" placeholder="{% trans "Foreign language" %}" value="{{ line.exam_corrector_language }}" />#}
+{#        </td>#}
+{#        <td>#}
+{#            <input name="exam_corrector_math" id="exam_corrector_math" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                   style="width: 70px;" placeholder="{% trans "Math" %}" value="{{ line.exam_corrector_math }}" />#}
+{#        </td>#}
+{#        <td>#}
+{#            <input name="exam_corrector_science" id="exam_corrector_science" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                   style="width: 70px;" placeholder="{% trans "Science" %}" value="{{ line.exam_corrector_science }}" />#}
+{#        </td>#}
         <td>
             <select name="assigned_to_level" id="assigned_to_level" class="outreach-field-p" itemscope="{{ line.id }}">
                 <option value="">-------</option>
@@ -103,22 +103,22 @@
                        itemscope="{{ line.id }}" id="post_exam_total" value="{{ line.post_exam_total_ }}" disabled="disabled" size="3" />
 {#                <span class="note-indicator-total">{% if level %}/{{ level.note|multiply:4 }}{% endif %}</span>#}
             </td>
-            <td>
-                <input name="post_exam_corrector_arabic" id="post_exam_corrector_arabic" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                       style="width: 70px;" placeholder="{% trans "Arabic language" %}" value="{{ line.post_exam_corrector_arabic }}" />
-            </td>
-            <td>
-                <input name="post_exam_corrector_language" id="post_exam_corrector_language" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                       style="width: 70px;" placeholder="{% trans "Foreign language" %}" value="{{ line.post_exam_corrector_language }}" />
-            </td>
-            <td>
-                <input name="post_exam_corrector_math" id="post_exam_corrector_math" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                       style="width: 70px;" placeholder="{% trans "Math" %}" value="{{ line.post_exam_corrector_math }}" />
-            </td>
-            <td>
-                <input name="post_exam_corrector_science" id="post_exam_corrector_science" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                       style="width: 70px;" placeholder="{% trans "Science" %}" value="{{ line.post_exam_corrector_science }}" />
-            </td>
+{#            <td>#}
+{#                <input name="post_exam_corrector_arabic" id="post_exam_corrector_arabic" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                       style="width: 70px;" placeholder="{% trans "Arabic language" %}" value="{{ line.post_exam_corrector_arabic }}" />#}
+{#            </td>#}
+{#            <td>#}
+{#                <input name="post_exam_corrector_language" id="post_exam_corrector_language" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                       style="width: 70px;" placeholder="{% trans "Foreign language" %}" value="{{ line.post_exam_corrector_language }}" />#}
+{#            </td>#}
+{#            <td>#}
+{#                <input name="post_exam_corrector_math" id="post_exam_corrector_math" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                       style="width: 70px;" placeholder="{% trans "Math" %}" value="{{ line.post_exam_corrector_math }}" />#}
+{#            </td>#}
+{#            <td>#}
+{#                <input name="post_exam_corrector_science" id="post_exam_corrector_science" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                       style="width: 70px;" placeholder="{% trans "Science" %}" value="{{ line.post_exam_corrector_science }}" />#}
+{#            </td>#}
             <td>
                 {% if line.refer_to_level %}{{ line.refer_to_level.name }}{% endif %}
             </td>
