@@ -228,10 +228,10 @@ class OutreachExamSerializer(serializers.ModelSerializer):
             'exam_result_math',
             'exam_result_science',
             'level',
-            'exam_corrector_arabic',
-            'exam_corrector_language',
-            'exam_corrector_math',
-            'exam_corrector_science',
+            # 'exam_corrector_arabic',
+            # 'exam_corrector_language',
+            # 'exam_corrector_math',
+            # 'exam_corrector_science',
             'registered_in_level',
             'section',
             'assigned_to_level',
@@ -241,10 +241,10 @@ class OutreachExamSerializer(serializers.ModelSerializer):
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',
-            'post_exam_corrector_arabic',
-            'post_exam_corrector_language',
-            'post_exam_corrector_math',
-            'post_exam_corrector_science',
+            # 'post_exam_corrector_arabic',
+            # 'post_exam_corrector_language',
+            # 'post_exam_corrector_math',
+            # 'post_exam_corrector_science',
             'refer_to_level',
             'modified_by',
         )
@@ -315,14 +315,14 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             if 'exam_result_science' in validated_data:
                 instance.exam_result_science = validated_data['exam_result_science']
 
-            if 'exam_corrector_arabic' in validated_data:
-                instance.exam_corrector_arabic = validated_data['exam_corrector_arabic']
-            if 'exam_corrector_language' in validated_data:
-                instance.exam_corrector_language = validated_data['exam_corrector_language']
-            if 'exam_corrector_math' in validated_data:
-                instance.exam_corrector_math = validated_data['exam_corrector_math']
-            if 'exam_corrector_science' in validated_data:
-                instance.exam_corrector_science = validated_data['exam_corrector_science']
+            # if 'exam_corrector_arabic' in validated_data:
+            #     instance.exam_corrector_arabic = validated_data['exam_corrector_arabic']
+            # if 'exam_corrector_language' in validated_data:
+            #     instance.exam_corrector_language = validated_data['exam_corrector_language']
+            # if 'exam_corrector_math' in validated_data:
+            #     instance.exam_corrector_math = validated_data['exam_corrector_math']
+            # if 'exam_corrector_science' in validated_data:
+            #     instance.exam_corrector_science = validated_data['exam_corrector_science']
             if 'modified_by' in validated_data:
                 instance.modified_by_id = validated_data['modified_by']
 
@@ -368,10 +368,10 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'exam_result_math',
             'exam_result_science',
             'level',
-            'exam_corrector_arabic',
-            'exam_corrector_language',
-            'exam_corrector_math',
-            'exam_corrector_science',
+            # 'exam_corrector_arabic',
+            # 'exam_corrector_language',
+            # 'exam_corrector_math',
+            # 'exam_corrector_science',
             'registered_in_level',
             'assigned_to_level',
             'not_enrolled_in_this_school',
@@ -380,10 +380,10 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',
-            'post_exam_corrector_arabic',
-            'post_exam_corrector_language',
-            'post_exam_corrector_math',
-            'post_exam_corrector_science',
+            # 'post_exam_corrector_arabic',
+            # 'post_exam_corrector_language',
+            # 'post_exam_corrector_math',
+            # 'post_exam_corrector_science',
             'refer_to_level',
             'alp_round',
         )
