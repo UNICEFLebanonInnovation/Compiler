@@ -1,0 +1,105 @@
+{% load staticfiles i18n %}
+{% load util_tags %}
+
+{% get_range_int 0 7 as notes1 %}
+{% get_range_int 0 7 as notes2 %}
+{% get_range_int 0 7 as notes3 %}
+{% get_range_int 0 7 as notes4 %}
+{% get_range_int 0 7 as notes5 %}
+{% get_range_int 0 7 as notes6 %}
+{% get_range_int 0 7 as notes7 %}
+{% get_range_int 0 7 as notes8 %}
+
+    <tr id="line-{{ line.id }}" class="registration-line-p" itemscope="{{ line.id }}">
+        <td class="synchro-status">
+            &nbsp;<input type="hidden" name="id" value="{{ line.id }}" class="registration-field-id" />
+            <span class="student_fullname" style="display: none;">{% if student %}{{ student }}{% endif %}</span>
+        </td>
+        <td>{% if student %}{{ student.first_name }}{% endif %}</td>
+        <td>{% if student %}{{ student.father_name }}{% endif %}</td>
+        <td>{% if student %}{{ student.last_name }}{% endif %}</td>
+        <td>{% if student %}{% trans student.sex %}{% endif %}</td>
+        <td>{% if student %}{% trans student.birthday %}{% endif %}</td>
+        <td>{{ line.classroom }}</td>
+        <td>{{ line.section }}</td>
+        <td>
+            <select name="exam_result_linguistic_ar" id="exam_result_linguistic_ar" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Linguistic field/Arabic" %}</option>
+                {% for key in notes1 %}
+                <option value="{{ key }}" {% if line.exam_result_linguistic_ar == key %}selected="selected"{% endif %}>{{ key }}</option>
+                {% endfor %}
+            </select>
+            <span class="note-indicator-value">/6</span>
+        </td>
+        <td>
+            <select name="exam_result_sociology" id="exam_result_sociology" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Sociology field" %}</option>
+                {% for key in notes2 %}
+                <option value="{{ key }}" {% if line.exam_result_sociology == key %}selected="selected"{% endif %}>{{ key }}</option>
+                {% endfor %}
+            </select>
+            <span class="note-indicator-value">/6</span>
+        </td>
+        <td>
+            <select name="exam_result_physical" id="exam_result_physical" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Physical field" %}</option>
+                {% for key in notes3 %}
+                <option value="{{ key }}" {% if line.exam_result_physical == key %}selected="selected"{% endif %}>{{ key }}</option>
+                {% endfor %}
+            </select>
+            <span class="note-indicator-value">/6</span>
+        </td>
+        <td>
+            <select name="exam_result_artistic" id="exam_result_artistic" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Artistic field" %}</option>
+                {% for key in notes4 %}
+                <option value="{{ key }}" {% if line.exam_result_artistic == key %}selected="selected"{% endif %}>{{ key }}</option>
+                {% endfor %}
+            </select>
+            <span class="note-indicator-value">/6</span>
+        </td>
+        <td>
+            <select name="exam_result_linguistic_en" id="exam_result_linguistic_en" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Linguistic field/Foreign language" %}</option>
+                {% for key in notes8 %}
+                <option value="{{ key }}" {% if line.exam_result_linguistic_en == key %}selected="selected"{% endif %}>{{ key }}</option>
+                {% endfor %}
+            </select>
+            <span class="note-indicator-value">/6</span>
+        </td>
+        <td>
+            <select name="exam_result_mathematics" id="exam_result_mathematics" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Scientific domain/Mathematics" %}</option>
+                {% for key in notes5 %}
+                <option value="{{ key }}" {% if line.exam_result_mathematics == key %}selected="selected"{% endif %}>{{ key }}</option>
+                {% endfor %}
+            </select>
+            <span class="note-indicator-value">/6</span>
+        </td>
+        <td>
+            <select name="exam_result_sciences" id="exam_result_sciences" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Scientific domain/Sciences" %}</option>
+                {% for key in notes6 %}
+                <option value="{{ key }}" {% if line.exam_result_sciences == key %}selected="selected"{% endif %}>{{ key }}</option>
+                {% endfor %}
+            </select>
+            <span class="note-indicator-value">/6</span>
+        </td>
+        <td>
+            <select name="exam_total" id="exam_total" class="registration-field-p exam-note" itemscope="{{ line.id }}">
+                <option value="">{% trans "Final Grade" %}</option>
+                {% for key in notes7 %}
+                <option value="{{ key }}" {% if line.exam_total == key %}selected="selected"{% endif %}>{{ key }}</option>
+                {% endfor %}
+            </select>
+            <span class="note-indicator-value">/6</span>
+        </td>
+        <td>
+            <select class="registration-filed-p" name="exam_result" id="exam_result">
+                <option value="">{% trans "Student status" %}</option>
+                {% for key, item in results %}
+                    <option value="{{ key }}" {% if line.exam_result == key %}selected="selected"{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
