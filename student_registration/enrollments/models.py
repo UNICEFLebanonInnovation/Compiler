@@ -122,6 +122,7 @@ class Enrollment(TimeStampedModel):
         Section,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('Current Section')
     )
     grade = models.ForeignKey(
         Grade,
@@ -131,7 +132,8 @@ class Enrollment(TimeStampedModel):
     classroom = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        verbose_name=_('Current Class')
     )
     year = models.CharField(
         max_length=4,
@@ -232,6 +234,147 @@ class Enrollment(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
+
+    exam_result_arabic = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        verbose_name=_('Arabic')
+    )
+
+    exam_result_language = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        verbose_name=_('Foreign language')
+    )
+
+    exam_result_education = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        verbose_name=_('Education')
+    )
+
+    exam_result_geo = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        verbose_name=_('Geography')
+    )
+
+    exam_result_history = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        verbose_name=_('History')
+    )
+
+    exam_result_math = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        verbose_name=_('Math')
+    )
+
+    exam_result_science = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        verbose_name=_('Science')
+    )
+
+    exam_result_physic = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        verbose_name=_('Physic')
+    )
+
+    exam_result_chemistry = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        verbose_name=_('Chemistry')
+    )
+
+    exam_result_bio = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        verbose_name=_('Biology')
+    )
+
+    exam_result_linguistic_ar = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Linguistic field/Arabic')
+    )
+    exam_result_linguistic_en = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Linguistic field/Foreign language')
+    )
+
+    exam_result_sociology = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Sociology field')
+    )
+
+    exam_result_physical = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Physical field')
+    )
+
+    exam_result_artistic = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Artistic field')
+    )
+
+    exam_result_mathematics = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Scientific domain/Mathematics')
+    )
+
+    exam_result_sciences = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Scientific domain/Sciences')
+    )
+
+    exam_total = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        verbose_name=_('Final Grade')
+    )
+
+    exam_result = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=RESULT,
+        verbose_name=_('Student status')
+    )
+
     deleted = models.BooleanField(blank=True, default=False)
     dropout_status = models.BooleanField(blank=True, default=False)
     moved = models.BooleanField(blank=True, default=False)
