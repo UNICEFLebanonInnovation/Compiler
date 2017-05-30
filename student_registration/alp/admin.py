@@ -75,10 +75,10 @@ class OutreachResource(resources.ModelResource):
             'exam_result_science',
             'exam_total',
             'passed_pre',
-            'exam_corrector_arabic',
-            'exam_corrector_language',
-            'exam_corrector_math',
-            'exam_corrector_science',
+            # 'exam_corrector_arabic',
+            # 'exam_corrector_language',
+            # 'exam_corrector_math',
+            # 'exam_corrector_science',
             'assigned_to_level__name',
             'registered_in_level__name',
             'section__name',
@@ -87,10 +87,10 @@ class OutreachResource(resources.ModelResource):
             'post_exam_result_math',
             'post_exam_result_science',
             'post_exam_total',
-            'post_exam_corrector_arabic',
-            'post_exam_corrector_language',
-            'post_exam_corrector_math',
-            'post_exam_corrector_science',
+            # 'post_exam_corrector_arabic',
+            # 'post_exam_corrector_language',
+            # 'post_exam_corrector_math',
+            # 'post_exam_corrector_science',
             'referred_to',
             're_enrolled',
             'passed_post',
@@ -687,10 +687,10 @@ class PreTestAdmin(OutreachAdmin):
         'level',
         'assigned_to_level',
         'student__sex',
-        'exam_corrector_arabic',
-        'exam_corrector_language',
-        'exam_corrector_math',
-        'exam_corrector_science',
+        # 'exam_corrector_arabic',
+        # 'exam_corrector_language',
+        # 'exam_corrector_math',
+        # 'exam_corrector_science',
         PreTestTotalFilter,
         OwnerFilter,
         ModifiedByFilter,
@@ -707,9 +707,10 @@ class PreTestAdmin(OutreachAdmin):
             owner__in=not_schools,
             level__isnull=False,
             assigned_to_level__isnull=False,
-        ).extra(where={
-            '(alp_outreach.exam_corrector_arabic > 0 OR alp_outreach.exam_corrector_language > 0 OR alp_outreach.exam_corrector_math > 0 OR alp_outreach.exam_corrector_science > 0)'
-        })
+        )
+        # .extra(where={
+        #     '(alp_outreach.exam_corrector_arabic > 0 OR alp_outreach.exam_corrector_language > 0 OR alp_outreach.exam_corrector_math > 0 OR alp_outreach.exam_corrector_science > 0)'
+        # })
 
 
 class CurrentRound(Outreach):
@@ -810,10 +811,10 @@ class PostTestAdmin(OutreachAdmin):
         'refer_to_level',
         'section',
         'student__sex',
-        'post_exam_corrector_arabic',
-        'post_exam_corrector_language',
-        'post_exam_corrector_math',
-        'post_exam_corrector_science',
+        # 'post_exam_corrector_arabic',
+        # 'post_exam_corrector_language',
+        # 'post_exam_corrector_math',
+        # 'post_exam_corrector_science',
         PostTestTotalFilter,
         OwnerFilter,
         ModifiedByFilter,

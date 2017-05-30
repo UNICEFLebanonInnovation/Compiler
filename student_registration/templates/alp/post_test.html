@@ -97,7 +97,7 @@
                                         <th rowspan="2"><label>{% trans "Age" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Registered in level" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Registered in section" %}</label></th>
-                                        <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
+                                        <th colspan="5" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label class="col-100">{% trans "Refer to level" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Created by" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Modified by" %}</label></th>
@@ -108,10 +108,10 @@
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Math" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Total" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Arabic language corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Foreign language corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>
+{#                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Arabic language corrector" %}</label></th>#}
+{#                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Foreign language corrector" %}</label></th>#}
+{#                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>#}
+{#                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>#}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -176,9 +176,9 @@
                 $('body, html').scrollLeft(400);
             });
 
-            $(document).on('blur', '#post_exam_corrector_science', function(){
-                $('body, html').scrollLeft(800);
-            });
+{#            $(document).on('blur', '#post_exam_corrector_science', function(){#}
+{#                $('body, html').scrollLeft(800);#}
+{#            });#}
 
             $("#filter_school").change(function(){
                 var selected_school = $(this).val();
@@ -238,13 +238,13 @@
                 item.find('#poat_exam_total').trigger('blur');
             });
 
-            $(document).on('blur', '.exam-corrector', function(){
-                if(parseInt($(this).val()) < 11){
-                    $(this).addClass('field-warning');
-                }else{
-                    $(this).removeClass('field-warning');
-                }
-            });
+{#            $(document).on('blur', '.exam-corrector', function(){#}
+{#                if(parseInt($(this).val()) < 11){#}
+{#                    $(this).addClass('field-warning');#}
+{#                }else{#}
+{#                    $(this).removeClass('field-warning');#}
+{#                }#}
+{#            });#}
 
             $(document).on('blur change', '.outreach-field-p', function(){
                 update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
