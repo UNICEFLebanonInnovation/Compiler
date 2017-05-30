@@ -71,12 +71,12 @@
                                             <option value="{{ item.id }}" {% if level == item.id %}selected="selected"{% endif %}>{{ item.name }}</option>
                                         {% endfor %}
                                     </select>
-{#                                    <select name="section" id="filter_section" class="col-200">#}
-{#                                        <option value="0">{% trans "Filter by Section" %}</option>#}
-{#                                        {% for item in sections %}#}
-{#                                            <option value="{{ item.id }}">{{ item.name }}</option>#}
-{#                                        {% endfor %}#}
-{#                                    </select>#}
+                                    <select name="section" id="filter_section" class="col-200">
+                                        <option value="0">{% trans "Filter by Section" %}</option>
+                                        {% for item in sections %}
+                                            <option value="{{ item.id }}" {% if section == item.id %}selected="selected"{% endif %}>{{ item.name }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </li>
                             </ol>
                             <div class="actions pull-right">
@@ -208,6 +208,18 @@
                     url = url+'?level='+selected_class;
                 }
                 window.location.href = url;
+            });
+
+            $("#filter_section").change(function(){
+                var selected_class = $("#filter_class").val();
+                var selected_section = $(this).val();
+               // reload the page with the school id passed in post
+                var url = '{% url "enrollments:enrollment_grading" %}';
+                if(parseInt(selected_class) && parseInt(selected_section)){
+                    url = url+'?level='+selected_class;
+                    url = url+'&section='+selected_section;
+                    window.location.href = url;
+                }
             });
 
             $(document).on('click', 'tbody tr', function(){
