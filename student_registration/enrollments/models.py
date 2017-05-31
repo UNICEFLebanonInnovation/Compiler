@@ -361,7 +361,7 @@ class Enrollment(TimeStampedModel):
     )
 
     exam_total = models.CharField(
-        max_length=4,
+        max_length=20,
         blank=True,
         null=True,
         verbose_name=_('Final Grade')
