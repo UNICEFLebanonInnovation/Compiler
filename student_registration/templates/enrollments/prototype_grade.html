@@ -248,7 +248,7 @@
             {% endif %}
         </td>
         <td>
-            <select class="registration-filed-p" name="exam_result" id="exam_result">
+            <select class="registration-field-p" name="exam_result" id="exam_result" itemscope="{{ line.id }}">
                 <option value="0">{% trans "Student status" %}</option>
                 {% for key, item in results %}
                     <option value="{{ key }}" {% if line.exam_result == key %}selected="selected"{% endif %}>{{ item }}</option>
