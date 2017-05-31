@@ -244,7 +244,6 @@
             $(document).on('click', '#registration-synchro', function(){
                 synchro_result = true;
                 $('.alert').hide();
-                synchronize_data(true);
                 if(navigator.onLine) {
                     $(".loader").show();
                     synchronize_data(true);
