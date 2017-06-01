@@ -24,6 +24,15 @@
             background-color: red !important;
             color: #fff;
         }
+        .synchro-status.success {
+            background-color: #1ABB9C !important;
+        }
+        .synchro-status.failed {
+            background-color: #ac2925 !important;
+        }
+        span.required {
+            color: red;
+        }
     </style>
 {% endblock %}
 
@@ -650,11 +659,17 @@
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
+                    $('#line-'+itemid).removeClass('warning');
+                    $('#line-'+itemid).find('.synchro-status').removeClass('failed');
+
+                    $('#line-'+itemid).find('.synchro-status').addClass('success');
+                    $('#line-'+itemid).find('.outreach-field-p').removeClass('required');
                     update_item_store(parseInt(itemid), 'to_update', false, 'outreaches-p');
                 },
                 error: function (response) {
                     console.log(response);
                     $('#line-'+itemid).addClass('warning');
+                    $('#line-'+itemid).find('.synchro-status').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+itemid).find('#'+field_name).addClass('required');
