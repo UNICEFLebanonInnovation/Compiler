@@ -25,7 +25,7 @@ def assign_alp_level():
             if 40 < total <= 80:
                 notes = [record.exam_result_arabic, record.exam_result_language, record.exam_result_math, record.exam_result_science]
                 if sum(i < 10 for i in notes) >= 2:
-                    to_level = 13
+                    to_level = 12
                     print level.id, total, to_level
                     record.assigned_to_level_id = to_level
                     record.save()
