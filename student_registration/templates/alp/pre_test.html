@@ -740,50 +740,79 @@
             var level = parseInt(item.find('#level').val());
             var total = parseInt(item.find('#exam_total').val());
             var assigned_level = item.find('#assigned_to_level');
+            var exam_notes = item.find('.exam-note');
             var to_level = 0;
 
+            if(total > 40 && total <= 80) {
+                var count = 0;
+                exam_notes.each(function(i, note){
+                    if(parseInt($(note).val()) < 10){
+                        count = count + 1;
+                    }
+                });
+
+                if(count >= 2) {
+                    to_level = 13;
+                    assigned_level.val(to_level);
+                    assigned_level.trigger('blur');
+                    return true;
+                }
+            }
+
             if(level == 1 || level == 2 || level == 3){
-                if(total < 40){
-                    to_level = 1;
-                }else if(total >= 40 && total < 80){
+                if(total <= 5){
+                    to_level = 10;
+                }else if(total > 5 && total <= 20){
+                    to_level = 11;
+                }else if(total > 20 && total <= 40){
+                    to_level = 12;
+                }else if(total > 40 && total <= 80){
                     to_level = 2;
-                }else if(total >= 80 && total <= 120){
+                }else if(total > 80 && total <= 120){
                     to_level = 3;
                 }
             }
             if(level == 4 || level == 5 || level == 6){
-                if(total < 20) {
-                    to_level = 1;
-                }else if(total >= 20 && total < 40){
+                if(total <= 5){
+                    to_level = 10;
+                }else if(total > 5 && total <= 20){
+                    to_level = 11;
+                }else if(total > 20 && total <= 40){
+                    to_level = 12;
+                }else if(total > 40 && total <= 80){
                     to_level = 2;
-                }else if(total >= 40 && total < 60){
+                }else if(total > 80 && total <= 120){
                     to_level = 3;
-                }else if(total >= 60 && total < 100){
+                }else if(total > 120 && total <= 160){
                     to_level = 4;
-                }else if(total >= 100 && total < 140){
+                }else if(total > 160 && total <= 200){
                     to_level = 5;
-                }else if(total >= 140 && total <= 180){
+                }else if(total > 200 && total <= 240){
                     to_level = 6;
                 }
             }
             if(level == 7 || level == 8 || level == 9){
-                if(total < 20) {
-                    to_level = 1;
-                }else if(total >= 20 && total < 40){
+                if(total <= 5){
+                    to_level = 10;
+                }else if(total > 5 && total <= 20){
+                    to_level = 11;
+                }else if(total > 20 && total <= 40){
+                    to_level = 12;
+                }else if(total > 40 && total <= 80){
                     to_level = 2;
-                }else if(total >= 40 && total < 60){
+                }else if(total > 80 && total <= 120){
                     to_level = 3;
-                }else if(total >= 60 && total < 80){
+                }else if(total > 120 && total <= 160){
                     to_level = 4;
-                }else if(total >= 80 && total < 100){
+                }else if(total > 160 && total <= 200){
                     to_level = 5;
-                }else if(total >= 100 && total < 120){
+                }else if(total > 200 && total <= 240){
                     to_level = 6;
-                }else if(total >= 120 && total < 160){
+                }else if(total > 240 && total <= 280){
                     to_level = 7;
-                }else if(total >= 160 && total < 200){
+                }else if(total > 280 && total <= 320){
                     to_level = 8;
-                }else if(total >= 200 && total <= 240){
+                }else if(total > 320 && total <= 360){
                     to_level = 9;
                 }
             }
