@@ -6,9 +6,10 @@ from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import *
+import datetime
 
-from .models import Enrollment, StudentMove
-from .forms import EnrollmentForm
+from .models import Enrollment, StudentMove, LoggingStudentMove
+from .forms import EnrollmentForm, LoggingStudentMoveForm
 from student_registration.students.models import Student
 from student_registration.schools.models import (
     School,
@@ -36,6 +37,7 @@ class EnrollmentResource(resources.ModelResource):
         fields = (
             'id',
             'student__id',
+            'student__id_type',
             'student__id_number',
             'student__number',
             'student__first_name',
@@ -47,6 +49,10 @@ class EnrollmentResource(resources.ModelResource):
             'student__birthday_day',
             'student_age',
             'student__sex',
+            'student__nationality__name',
+            'student__phone_prefix',
+            'student__phone',
+            'student__address',
             'governorate',
             'district',
             'school__number',
@@ -63,6 +69,25 @@ class EnrollmentResource(resources.ModelResource):
             'last_informal_edu_round__name',
             'last_informal_edu_level__name',
             'last_informal_edu_final_result__name',
+            'exam_result_arabic',
+            'exam_result_language',
+            'exam_result_education',
+            'exam_result_geo',
+            'exam_result_history',
+            'exam_result_math',
+            'exam_result_science',
+            'exam_result_physic',
+            'exam_result_chemistry',
+            'exam_result_bio',
+            'exam_result_linguistic_ar',
+            'exam_result_sociology',
+            'exam_result_physical',
+            'exam_result_artistic',
+            'exam_result_linguistic_en',
+            'exam_result_mathematics',
+            'exam_result_sciences',
+            'exam_total',
+            'exam_result',
         )
         export_order = fields
 
@@ -99,6 +124,67 @@ class GovernorateFilter(admin.SimpleListFilter):
         return queryset
 
 
+class FromAgeFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'From Age'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'from_age'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l, l) for l in range(0, 100))
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            now = datetime.datetime.now()
+            return queryset.filter(student__birthday_year__lte=(now.year - int(self.value())))
+
+        return queryset
+
+
+class ToAgeFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'To Age'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'to_age'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l, l) for l in range(0, 100))
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            now = datetime.datetime.now()
+            return queryset.filter(student__birthday_year__gte=(now.year - int(self.value())))
+        return queryset
+
+
 class EnrollmentAdmin(ImportExportModelAdmin):
     resource_class = EnrollmentResource
     form = EnrollmentForm
@@ -122,7 +208,28 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_informal_edu_level',
         'last_informal_edu_round',
         'last_informal_edu_final_result',
+        'exam_result_arabic',
+        'exam_result_language',
+        'exam_result_education',
+        'exam_result_geo',
+        'exam_result_history',
+        'exam_result_math',
+        'exam_result_science',
+        'exam_result_physic',
+        'exam_result_chemistry',
+        'exam_result_bio',
+        'exam_result_linguistic_ar',
+        'exam_result_sociology',
+        'exam_result_physical',
+        'exam_result_artistic',
+        'exam_result_linguistic_en',
+        'exam_result_mathematics',
+        'exam_result_sciences',
+        'exam_total',
+        'exam_result',
         'deleted',
+        'moved',
+        'dropout_status',
     )
     list_display = (
         'student',
@@ -136,6 +243,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'modified',
     )
     list_filter = (
+        'education_year',
         'school__number',
         'school',
         'school__location',
@@ -155,6 +263,8 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_informal_edu_round',
         'last_informal_edu_level',
         'last_informal_edu_final_result',
+        FromAgeFilter,
+        ToAgeFilter,
         'created',
         'modified',
     )
@@ -171,8 +281,6 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'owner__username',
     )
 
-    actions = ('push_attendances',)
-
     def get_queryset(self, request):
         qs = super(EnrollmentAdmin, self).get_queryset(request)
         return qs.exclude(deleted=True)
@@ -186,11 +294,6 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         if obj.school and obj.school.location and obj.school.location.parent:
             return obj.school.location.parent.name
         return ''
-
-    def push_attendances(self, request, queryset):
-        if 'school__id__exact' in request.GET:
-            school = School.objects.get(id=request.GET['school__id__exact'])
-            set_app_attendances.delay(school_number=school.number)
 
 
 class Dropout(Enrollment):
@@ -253,6 +356,61 @@ class StudentMoveAdmin(ImportExportModelAdmin):
     )
 
 
+class LoggingStudentMoveResource(resources.ModelResource):
+
+    class Meta:
+        model = LoggingStudentMove
+        fields = ()
+        export_order = fields
+
+
+class LoggingStudentMoveAdmin(ImportExportModelAdmin):
+    resource_class = LoggingStudentMoveResource
+    form = LoggingStudentMoveForm
+    fields = (
+    )
+
+    list_display = (
+        'registered',
+        'student',
+        'school_from',
+        'classroom',
+        'section',
+        'school_to',
+        'registered_in_new_school',
+    )
+
+    list_filter = (
+        'school_from',
+        'school_to',
+    )
+
+    search_fields = (
+
+    )
+
+    def registered(self, obj):
+        if obj.enrolment:
+            return str(obj.enrolment.created)
+        return ''
+
+    def registered_in_new_school(self, obj):
+        if obj.school_to:
+            return str(obj.modified)
+        return ''
+
+    def classroom(self, obj):
+        if obj.enrolment and obj.enrolment.classroom:
+            return obj.enrolment.classroom.name
+        return ''
+
+    def section(self, obj):
+        if obj.enrolment and obj.enrolment.section:
+            return obj.enrolment.section.name
+        return ''
+
+
 admin.site.register(Enrollment, EnrollmentAdmin)
 admin.site.register(Dropout, DropoutAdmin)
 admin.site.register(StudentMove, StudentMoveAdmin)
+admin.site.register(LoggingStudentMove, LoggingStudentMoveAdmin)

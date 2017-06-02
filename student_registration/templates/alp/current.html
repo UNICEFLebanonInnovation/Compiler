@@ -177,6 +177,10 @@
                                 <i class="icon-plus-sign icon-white"></i>&nbsp;
                                     {% trans "Add defined number of lines" %}
                               </button>
+                              <button class="btn btn-success" id="load_data">
+                                <i class="icon-plus-sign icon-white"></i>&nbsp;
+                                    {% trans "Load more data" %}
+                              </button>
                         </div>
                      </div>
                 </div>
@@ -282,11 +286,8 @@
                 $(".loader").show();
                 var classroom = $('#filter_class').val();
                 var section = $('#filter_section').val();
-                var assigned_level = $('#filter_assignedlevel').val();
 
-                if(assigned_level != 0) {
-                    filterByAssignedLevel(assigned_level);
-                }else if((classroom != 0 && section != 0) || classroom != 0){
+                if(classroom != 0) {
                     filterByClass(classroom, section);
                 }else{
                     filter_on = false;
@@ -336,6 +337,25 @@
                     }else{
                         $(".loader").hide();
                     }
+                }
+            });
+
+            $(document).on('click', '#load_data', function(){
+                if(filter_on == true){
+                    return false;
+                }
+                var total_records = $('#registrations-table').find('tr.registration-line').length;
+                console.log(total_records);
+                console.log(total);
+                if(total_records < total) {
+                    offset = limit;
+                    limit = limit + 100;
+                    $('#load_more_data').hide();
+                    $(".loader").show();
+                    build_datatable();
+                    $(".loader").hide();
+                }else{
+                    $(".loader").hide();
                 }
             });
 
@@ -499,6 +519,7 @@
                 synchronized: false,
                 deleted: false,
                 owner: user_id,
+                modified_by: user_id,
                 original_id: 0,
                 alp_round: alp_round,
                 to_update: true,
@@ -540,10 +561,14 @@
         function filterByClass(classroom, section)
         {
             var store = getStoreByName('registrations');
+            console.log(classroom);
+            console.log(section);
             if(section != 0) {
                 var index = store.index("registered_in_levelAndSection");
-                var request = index.getAll([parseInt(classroom), parseInt(section)]);
+                var request = index.getAll([classroom, parseInt(section)]);
+                console.log(request);
             }else{
+                console.log('ko');
                 var index = store.index("registered_in_level");
                 var request = index.getAll(parseInt(classroom));
             }
@@ -696,6 +721,7 @@
         function update_data_into_server(item)
         {
             var data = item;
+            data.modified_by = user_id;
 
             $.ajax({
                 type: "PUT",
@@ -730,6 +756,7 @@
         {
             var itemid = item.id;
             var data = item;
+            data.modified_by = user_id;
             delete data.id;
 
             $.ajax({

@@ -7,27 +7,9 @@
 {% get_range_int 11 60 as notes4 %}
 
     <tr id="line-{{ line.id }}" class="outreach-line-p" itemscope="{{ line.id }}">
-        <td>
-            {% if role == "ALP_SCHOOL" %}
-                <input type="checkbox" name="not_enrolled_in_this_school" id="not_enrolled_in_this_school" {% if line.not_enrolled_in_this_school %}checked="checked"{% endif %} value="1" class="outreach-field-p" itemscope="{{ line.id }}" />
-            {% endif %}
-            {% if role == "CERD" and alp_phase == 'pre_test' %}
-{#                <input type="checkbox" name="exam_not_exist_in_school" id="exam_not_exist_in_school" {% if line.exam_not_exist_in_school %}checked="checked"{% endif %} value="1" class="outreach-field-p" itemscope="{{ line.id }}" />#}
-            {% endif %}
+        <td class="synchro-status">
             &nbsp;<input type="hidden" name="id" value="{{ line.id }}" class="outreach-field-id" />
             <span class="student_fullname" style="display: none;">{{ line.student_fullname }}</span>
-        </td>
-        <td>{% if location %}
-                {{ location.name }}
-                <input type="hidden" name="location" value="{{ location.id }}" id="location" class="" />
-            {% endif %}
-        </td>
-        <td>{% if location_parent %}{{ location_parent.name }}{% endif %}</td>
-        <td>{% if school %}{{ school.number }}{% endif %}</td>
-        <td>{% if school %}
-            {{ school.name }}
-            <input type="hidden" name="school" value="{{ school.id }}" id="school" class="" />
-        {% endif %}
         </td>
         <td>{% if student %}{{ student.first_name }}{% endif %}</td>
         <td>{% if student %}{{ student.father_name }}{% endif %}</td>
@@ -63,22 +45,22 @@
                    itemscope="{{ line.id }}" id="exam_total" value="{{ line.exam_total }}" disabled="disabled" size="3" />
             <span class="note-indicator-total">{% if level %}/{{ level.note|multiply:4 }}{% endif %}</span>
         </td>
-        <td>
-            <input name="exam_corrector_arabic" id="exam_corrector_arabic" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                   style="width: 70px;" placeholder="{% trans "Arabic language" %}" value="{{ line.exam_corrector_arabic }}" />
-        </td>
-        <td>
-            <input name="exam_corrector_language" id="exam_corrector_language" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                   style="width: 70px;" placeholder="{% trans "Foreign language" %}" value="{{ line.exam_corrector_language }}" />
-        </td>
-        <td>
-            <input name="exam_corrector_math" id="exam_corrector_math" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                   style="width: 70px;" placeholder="{% trans "Math" %}" value="{{ line.exam_corrector_math }}" />
-        </td>
-        <td>
-            <input name="exam_corrector_science" id="exam_corrector_science" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                   style="width: 70px;" placeholder="{% trans "Science" %}" value="{{ line.exam_corrector_science }}" />
-        </td>
+{#        <td>#}
+{#            <input name="exam_corrector_arabic" id="exam_corrector_arabic" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                   style="width: 70px;" placeholder="{% trans "Arabic language" %}" value="{{ line.exam_corrector_arabic }}" />#}
+{#        </td>#}
+{#        <td>#}
+{#            <input name="exam_corrector_language" id="exam_corrector_language" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                   style="width: 70px;" placeholder="{% trans "Foreign language" %}" value="{{ line.exam_corrector_language }}" />#}
+{#        </td>#}
+{#        <td>#}
+{#            <input name="exam_corrector_math" id="exam_corrector_math" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                   style="width: 70px;" placeholder="{% trans "Math" %}" value="{{ line.exam_corrector_math }}" />#}
+{#        </td>#}
+{#        <td>#}
+{#            <input name="exam_corrector_science" id="exam_corrector_science" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                   style="width: 70px;" placeholder="{% trans "Science" %}" value="{{ line.exam_corrector_science }}" />#}
+{#        </td>#}
         <td>
             <select name="assigned_to_level" id="assigned_to_level" class="outreach-field-p" itemscope="{{ line.id }}">
                 <option value="">-------</option>
@@ -121,22 +103,22 @@
                        itemscope="{{ line.id }}" id="post_exam_total" value="{{ line.post_exam_total_ }}" disabled="disabled" size="3" />
 {#                <span class="note-indicator-total">{% if level %}/{{ level.note|multiply:4 }}{% endif %}</span>#}
             </td>
-            <td>
-                <input name="post_exam_corrector_arabic" id="post_exam_corrector_arabic" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                       style="width: 70px;" placeholder="{% trans "Arabic language" %}" value="{{ line.post_exam_corrector_arabic }}" />
-            </td>
-            <td>
-                <input name="post_exam_corrector_language" id="post_exam_corrector_language" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                       style="width: 70px;" placeholder="{% trans "Foreign language" %}" value="{{ line.post_exam_corrector_language }}" />
-            </td>
-            <td>
-                <input name="post_exam_corrector_math" id="post_exam_corrector_math" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                       style="width: 70px;" placeholder="{% trans "Math" %}" value="{{ line.post_exam_corrector_math }}" />
-            </td>
-            <td>
-                <input name="post_exam_corrector_science" id="post_exam_corrector_science" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"
-                       style="width: 70px;" placeholder="{% trans "Science" %}" value="{{ line.post_exam_corrector_science }}" />
-            </td>
+{#            <td>#}
+{#                <input name="post_exam_corrector_arabic" id="post_exam_corrector_arabic" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                       style="width: 70px;" placeholder="{% trans "Arabic language" %}" value="{{ line.post_exam_corrector_arabic }}" />#}
+{#            </td>#}
+{#            <td>#}
+{#                <input name="post_exam_corrector_language" id="post_exam_corrector_language" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                       style="width: 70px;" placeholder="{% trans "Foreign language" %}" value="{{ line.post_exam_corrector_language }}" />#}
+{#            </td>#}
+{#            <td>#}
+{#                <input name="post_exam_corrector_math" id="post_exam_corrector_math" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                       style="width: 70px;" placeholder="{% trans "Math" %}" value="{{ line.post_exam_corrector_math }}" />#}
+{#            </td>#}
+{#            <td>#}
+{#                <input name="post_exam_corrector_science" id="post_exam_corrector_science" class="outreach-field-p exam-corrector" itemscope="{{ line.id }}"#}
+{#                       style="width: 70px;" placeholder="{% trans "Science" %}" value="{{ line.post_exam_corrector_science }}" />#}
+{#            </td>#}
             <td>
                 {% if line.refer_to_level %}{{ line.refer_to_level.name }}{% endif %}
             </td>
@@ -175,20 +157,8 @@
         <td>{% if student %}{{ student.birthday_month }}{% endif %}</td>
         <td>{% if student %}{{ student.birthday_day }}{% endif %}</td>
         <td>{% if student %}{{ student.calc_age }}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if student %}{{ student.nationality_name }}{% endif %}{% endif %}</td>
         <td>{% if student %}{{ student.mother_fullname }}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if student %}{{ student.mother_nationality }}{% endif %}{% endif %}</td>
-        <td>{% if line.registered_in_unhcr %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if student and student.id_type %}{{ student.id_type.name }}{% endif %}{% endif %}</td>
-        <td>{% if student %}{{ student.id_number }}{% endif %}</td>
-        <td>{% if student %}{{ student.address }}{% endif %}</td>
-        <td>{% if student %}{{ student.phone }}{% endif %}</td>
-        <td>{% if student %}{{ student.phone_prefix }}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if line.last_education_level %}{{ line.last_education_level.name }}{% endif %}{% endif %}</td>
-        <td>{{ line.last_education_year }}</td>
-        <td>{% if line.participated_in_alp %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if line.last_informal_edu_round %}{{ line.last_informal_edu_round.name }}{% endif %}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if line.last_informal_edu_level %}{{ line.last_informal_edu_level.name }}{% endif %}{% endif %}</td>
-        <td>{% if not role == "CERD" %}{% if line.last_informal_edu_final_result %}{{ line.last_informal_edu_final_result.name }}{% endif %}{% endif %}</td>
     {% endif %}
+        <td>{{ line.owner }}</td>
+        <td>{{ line.modified_by }}</td>
     </tr>

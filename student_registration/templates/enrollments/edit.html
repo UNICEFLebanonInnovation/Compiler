@@ -5,6 +5,8 @@
 
 {% block extra_head %}
 
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
 
@@ -13,10 +15,10 @@
 {% block content-full-page %}
 
     <style>
-        .incremental_number.success {
+        .synchro-status.success {
             background-color: #1ABB9C !important;
         }
-        .incremental_number.failed {
+        .synchro-status.failed {
             background-color: #ac2925 !important;
         }
         tr.highlighted {
@@ -33,7 +35,7 @@
         }
     </style>
 
-    {% include 'enrollments/prototype.html' %}
+    {% include 'enrollments/prototype_edit.html' %}
 
          <section class="main-content-wrapper">
             <section id="main-content">
@@ -50,30 +52,43 @@
             <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                          <div class="panel-heading" style="position: absolute; top:0px;" id="header">
+                          <div class="panel-heading" style="position: absolute; top:50px;" id="header">
                             <ol class="breadcrumb">
-                                <li><h3 class="panel-title">{% trans "Registration" %}</h3></li>
+                                <li><h3 class="panel-title">{% trans "Editing students data" %}</h3></li>
                                 <li>
                                   <button class="btn btn-info" id="registration-synchro">
                                     <i class="icon-synch-sign icon-white"></i>&nbsp;
                                         {% trans "synchronize" %}
                                   </button>
+{#                                  <button class="btn btn-info" id="attendance-push">#}
+{#                                    <i class="icon-synch-sign icon-white"></i>&nbsp;#}
+{#                                        {% trans "push to tablet" %}#}
+{#                                  </button>#}
                                   <button class="btn btn-info" id="registration-download">
                                     <i class="icon-synch-sign icon-white"></i>&nbsp;
                                         {% trans "download data" %}
                                   </button>
-                                </li>
-                                <li>
-                                    <select name="classroom" id="filter_class" class="col-200">
-                                        <option value="">{% trans "Filter by Class" %}</option>
-                                        {% for item in classrooms %}
-                                            <option value="{{ item.id }}">{{ item.name }}</option>
-                                        {% endfor %}
-                                    </select>
                                     <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">
                                         <i class="icon-export-sign icon-white"></i>&nbsp;
                                             {% trans "Export" %}
                                     </a>
+                                </li>
+                                <li>
+                                    <select name="classroom" id="filter_class" class="col-200">
+                                        <option value="0">{% trans "Filter by Class" %}</option>
+                                        {% for item in classrooms %}
+                                            <option value="{{ item.id }}">{{ item.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <select name="section" id="filter_section" class="col-200">
+                                        <option value="0">{% trans "Filter by Section" %}</option>
+                                        {% for item in sections %}
+                                            <option value="{{ item.id }}">{{ item.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button class="btn btn-success" id="filter_go">
+                                        {% trans "Filter data" %}
+                                    </button>
                                     <button class="btn btn-warning" id="filter_cancel">
                                         {% trans "Rest filter" %}
                                     </button>
@@ -84,6 +99,14 @@
                                 <i class="fa fa-times"></i>
                             </div>
                           </div>
+                          <div class="panel-heading">
+                            <ol class="breadcrumb">
+                                <li>{{ school }}</li>
+                                <li>{{ location }}</li>
+                                <li>{{ location_parent }}</li>
+                                <li>{% trans "Total students" %} <span class="badge ttl_students">{{ total }}</span></li>
+                            </ol>
+                        </div>
                           <div class="panel-body">
                               <div class="loader"></div>
                                 <table id="registrations-table" class="table table-striped table-bordered cell-border"
@@ -96,10 +119,6 @@
                                     <tr id="thead-line-1">
                                         <th rowspan="2">&nbsp;</th>
                                         <th rowspan="2">#</th>
-                                        <th rowspan="2"><label>{% trans "Governorate" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "District" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "School number" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "School" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student first name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
@@ -167,6 +186,7 @@
         var db = null;
     </script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
@@ -185,12 +205,11 @@
         var user_username = '{{ request.user.username }}';
         var user_email = '{{ request.user.email }}';
         var user_token = '{{ user_token }}';
-        var columns = 0;
         var rows = 1;
-        var entity_ct = 20;
         var limit = 100;
         var offset = 0;
-        var total = 0;
+        var total = {{ total }};
+        var filter_on = false;
         var synchro_result = true;
         var prototype = $('#registration_prototype');
         var table = $('#registrations-table');
@@ -201,14 +220,6 @@
         var host = protocol+'{{ request.get_host }}';
         var synchro_path = host+'/api/enrollments/';
         var arabic_fields = "#student_address, #student_mother_fullname, #student_first_name, #student_father_name, #student_last_name";
-
-        window.addEventListener("offline", function(e) {
-          $('#registration-synchro').hide();
-        }, false);
-
-        window.addEventListener("online", function(e) {
-          $('#registration-synchro').show();
-        }, false);
 
         $(document).ready(function(){
 
@@ -240,6 +251,9 @@
                 }
 
                 if($(window).scrollTop() == $(document).height() - $(window).height()){
+                    if(filter_on == true){
+                        return false;
+                    }
                     var total_records = $('#registrations-table').find('tr.registration-line').length;
                     if(total_records < total) {
                         offset = limit;
@@ -247,6 +261,8 @@
                         $('#load_more_data').hide();
                         $(".loader").show();
                         build_datatable();
+                    }else{
+                        $(".loader").hide();
                     }
                 }
             });
@@ -277,28 +293,29 @@
                 }
             });
 
-            $(document).on('change', '#filter_section, #filter_class, #filter_id_type, #filter_nationality', function(){
-                if($(this).val()){
-                    var value = $(this).val();
-                    var name = $(this).attr('name');
-                    $('.registration-line').hide();
-                    $('.registration-line').each(function(i, item){
-                        var select = $(this).find('#'+name);
-                        if($(select).val() == value){
-                            $(this).show();
-                        }
-                    });
+            $(document).on('click', '#filter_go', function(){
+                filter_on = true;
+                $(".loader").show();
+                var classroom = $('#filter_class').val();
+                var section = $('#filter_section').val();
+
+                if((classroom != 0 && section != 0) || classroom != 0){
+                    filterByClass(classroom, section);
                 }else{
-                    $('.registration-line').show();
+                    filter_on = false;
+                    $(".loader").hide();
                 }
             });
 
             $(document).on('click', '#filter_cancel', function(){
-                $('.registration-line').show();
-                $('#filter_section').val('');
+                filter_on = false;
+                incremental_id = 1;
+                offset = 0;
+                limit = 100;
+                build_datatable();
                 $('#filter_class').val('');
-                $('#filter_id_type').val('');
-                $('#filter_nationality').val('');
+                $('#filter_section').val('');
+                $('#input#search').val('');
             });
 
             $(document).on('click', '#add_datatable_line', function(){
@@ -374,29 +391,6 @@
                 });
             });
 
-            $(document).on('change', '.registration-location', function(){
-                if($(this).val()){
-                    var option = $(this).find('option:selected');
-                    var itemblock = '.governorate_name_'+$(this).attr('itemscope');
-                    update_item_store(parseInt($(this).attr('itemscope')), 'governorate_name', option.attr('data-parent'), 'registrations');
-                    $(itemblock).val(option.attr('data-parent'));
-
-                    var school = $('#line-'+$(this).attr('itemscope')).find('.registration-school');
-                    school.find('option').hide();
-                    school.find('option[value=""]').show();
-                    school.find('option[data-parent='+$(this).val()+']').show();
-                }
-            });
-
-            $(document).on('change', '.registration-school', function(){
-                if($(this).val()){
-                    var option = $(this).find('option:selected');
-                    update_item_store(parseInt($(this).attr('itemscope')), 'school_number', option.attr('itemcontent'), 'registrations');
-                    var itemblock = '.school_number_'+$(this).attr('itemscope');
-                    $(itemblock).val(option.attr('itemcontent'));
-                }
-            });
-
             $(document).on('change', '.student_birthday', function(){
                 if($(this).val()) {
                     var option = $(this).find('option:selected');
@@ -421,6 +415,20 @@
                 flag_record_to_update(parseInt($(this).attr('itemscope')), 'registrations');
             });
 
+            $(document).on('blur', '.registration-field-p', function(){
+                if($(this).attr('data-value')){
+                    update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'registrations-p');
+                }else{
+                    update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'registrations-p');
+                }
+                flag_record_to_update(parseInt($(this).attr('itemscope')), 'registrations-p');
+            });
+
+            $(document).on('change', '.registration-field-check-p', function(){
+                update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'registrations-p');
+                flag_record_to_update(parseInt($(this).attr('itemscope')), 'registrations-p');
+            });
+
             $(document).on('click', '#registration-synchro', function(){
                 synchro_result = true;
                 $('.alert').hide();
@@ -433,9 +441,12 @@
             });
 
             $(document).on('click', '#registration-download', function(){
-                incremental_id = 0;
-                $('.alert').hide();
                 if(navigator.onLine) {
+                    incremental_id = 0;
+                    offset = 0;
+                    limit = 100;
+                    $('#registrations-table').find('.registration-line').remove();
+                    $('.alert').hide();
                      $(".loader").show();
                     load_base_data();
                     setTimeout(function(){
@@ -562,14 +573,41 @@
             });
         }
 
-        function synchronize_data()
+        function filterByClass(classroom, section)
         {
-            push_data();
+            var store = getStoreByName('registrations');
+            if(section != 0) {
+                var index = store.index("classroomAndSection");
+                var request = index.getAll([parseInt(classroom), parseInt(section)]);
+            }else{
+                var index = store.index("classroom");
+                var request = index.getAll(parseInt(classroom));
+            }
+
+            request.onsuccess = function() {
+                var result = request.result;
+                reBuildTable(result);
+            }
         }
 
-        function flag_record_to_update(itemid, store_name)
+        function reBuildTable(data)
         {
-            update_item_store(itemid, 'toupdate', true, store_name);
+            incremental_id = 0;
+            $('#registrations-table').find('.registration-line').remove();
+            $(data).each(function(i, item){
+                if(item.deleted == false){
+                    $(".loader").show();
+                    add_table_newline(item.id, prototype, table);
+                    add_fill_line_data(item);
+                    $(".loader").hide();
+                }
+            });
+        }
+
+        function synchronize_data()
+        {
+{#            push_data();#}
+            patch_data();
         }
 
         function push_data()
@@ -582,8 +620,24 @@
                     $(".loader").show();
                     if(item.deleted == true){
                         delete_data_from_server(synchro_path, item.original_id, item.id, 'registrations');
-                    }else if(item.toupdate == true){
+                    }else if(item.to_update == true){
                         update_data_into_server(item);
+                    }
+                    $(".loader").hide();
+                });
+            };
+        }
+
+        function patch_data()
+        {
+            var store = getStoreByName('registrations-p');
+            var request = store.getAll();
+            request.onsuccess = function() {
+                var result = request.result;
+                $(result).each(function(i, item){
+                    $(".loader").show();
+                    if(item.to_update == true){
+                        patch_data_into_server(item);
                     }
                     $(".loader").hide();
                 });
@@ -604,28 +658,30 @@
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
                     if(jqXHR.status == 201){
-                        $('#line-'+item.id).find('.incremental_number').removeClass('failed');
-                        $('#line-'+item.id).find('.incremental_number').addClass('success');
+                        $('#line-'+item.id).removeClass('warning');
+                        $('#line-'+item.id).find('.synchro-status').removeClass('failed');
+                        $('#line-'+item.id).find('.synchro-status').addClass('success');
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
                         item.synchronized = true;
                         item.original_id = response.id;
 
                         update_item_store(parseInt(item.id), 'synchronized', true, 'registrations');
                         update_item_store(parseInt(item.id), 'original_id', response.id, 'registrations');
-                        update_item_store(parseInt(item.id), 'toupdate', false, 'registrations');
+                        update_item_store(parseInt(item.id), 'to_update', false, 'registrations');
                         synchro_result = true;
                     }
                 },
                 error: function (response) {
-                    $('#line-'+item.id).find('.incremental_number').removeClass('success');
-                    $('#line-'+item.id).find('.incremental_number').addClass('failed');
+                    console.log(response);
+                    $('#line-'+item.id).addClass('warning');
+                    $('#line-'+item.id).find('.synchro-status').removeClass('success');
+                    $('#line-'+item.id).find('.synchro-status').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
                     $('#line-'+item.id).find('.registration-field').removeClass('required');
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+item.id).find('#'+field_name).addClass('required');
                     });
                     synchro_result = false;
-                    console.log(response);
                 }
             });
         }
@@ -644,23 +700,59 @@
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
                     if(jqXHR.status == 200){
-                        $('#line-'+item.id).find('.incremental_number').removeClass('failed');
-                        $('#line-'+item.id).find('.incremental_number').addClass('success');
+                        $('#line-'+item.id).removeClass('warning');
+                        $('#line-'+item.id).find('.synchro-status').removeClass('failed');
+                        $('#line-'+item.id).find('.synchro-status').addClass('success');
                         $('#line-'+item.id).find('.registration-field').removeClass('required');
                         update_item_store(parseInt(item.id), 'synchronized', true, 'registrations');
-                        update_item_store(parseInt(item.id), 'toupdate', false, 'registrations');
+                        update_item_store(parseInt(item.id), 'to_update', false, 'registrations');
                         synchro_result = true;
                     }
                 },
                 error: function (response) {
-                    $('#line-'+item.id).find('.incremental_number').removeClass('success');
-                    $('#line-'+item.id).find('.incremental_number').addClass('failed');
+                    console.log(response);
+                    $('#line-'+item.id).addClass('warning');
+                    $('#line-'+item.id).find('.synchro-status').removeClass('success');
+                    $('#line-'+item.id).find('.synchro-status').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
                     $('#line-'+item.id).find('.registration-field').removeClass('required');
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+item.id).find('#'+field_name).addClass('required');
                     });
+                    synchro_result = false;
+                }
+            });
+        }
+
+        function patch_data_into_server(item)
+        {
+            var itemid = item.id;
+            var data = item;
+            delete data.id;
+
+            $.ajax({
+                type: "PATCH",
+                url: synchro_path+itemid+'/',
+                data: data,
+                cache: false,
+                headers: getHeader(),
+                dataType: 'json',
+                success: function (response, result, jqXHR) {
+                    $('#line-'+itemid).removeClass('warning');
+                    $('#line-'+itemid).find('.synchro-status').removeClass('failed');
+                    $('#line-'+itemid).find('.synchro-status').addClass('success');
+                    $('#line-'+itemid).find('.registration-field').removeClass('required');
+                    update_item_store(parseInt(itemid), 'to_update', false, 'registrations-p');
+                },
+                error: function (response) {
                     console.log(response);
+                    $('#line-'+itemid).addClass('warning');
+                    $('#line-'+itemid).find('.synchro-status').removeClass('success');
+                    $('#line-'+itemid).find('.synchro-status').addClass('failed');
+                    var required_fields = JSON.parse(response.responseText);
+                    $.each(required_fields, function(field_name, field_msg){
+                        $('#line-'+itemid).find('#'+field_name).addClass('required');
+                    });
                     synchro_result = false;
                 }
             });
@@ -681,24 +773,27 @@
                     if(response.data) {
                         data = response.data;
                     }
-                    total = data.length;
                     $(data).each(function(i, item){
                         var request = store.index('original_id').get(parseInt(item.original_id));
                         request.onsuccess = function() {
+                            item.synchronized = true;
+                            item.deleted = false;
+                            item.to_update = false;
+                            item.student_nationality = item.student_nationality_id;
+                            item.student_mother_nationality = item.student_mother_nationality_id;
+                            item.student_id_type = item.student_id_type_id;
+
+                            item.last_education_level = item.last_education_level_id;
+                            item.last_informal_edu_level = item.last_informal_edu_level_id;
+                            item.last_informal_edu_round = item.last_informal_edu_round_id;
+                            item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
+                            item.last_school = item.last_school_id;
+
                             if(request.result === undefined) {
-                                item.synchronized = true;
-                                item.deleted = false;
-                                item.toupdate = false;
-                                item.student_nationality = item.student_nationality_id;
-                                item.student_mother_nationality = item.student_mother_nationality_id;
-                                item.student_id_type = item.student_id_type_id;
-
-                                item.last_education_level = item.last_education_level_id;
-                                item.last_informal_edu_level = item.last_informal_edu_level_id;
-                                item.last_informal_edu_round = item.last_informal_edu_round_id;
-                                item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
-                                item.last_school = item.last_school_id;
-
+                                store.put(item);
+                            }else{
+                                var result = request.result;
+                                result = item;
                                 store.put(item);
                             }
                         };
@@ -717,7 +812,7 @@
 
         function createStores()
         {
-            var request = indexedDB.open("compile_bd_edit", 3);
+            var request = indexedDB.open("registrations_edit_2", 3);
 
             request.onupgradeneeded = function() {
                 // The database did not previously exist, so create object stores and indexes.
@@ -733,16 +828,11 @@
                 if(flag){
                     var store = db.createObjectStore("registrations", {keyPath: "id", autoIncrement:true});
                     store.createIndex('original_id', 'original_id');
+                    store.createIndex('classroom', 'classroom');
+                    store.createIndex('section', 'section');
+                    store.createIndex('classroomAndSection', ['classroom', 'section']);
 
-                    var store1 = db.createObjectStore("eav-shared-columns", {keyPath: "id", autoIncrement:true});
-                    store1.createIndex('name', 'name');
-                    var store2 = db.createObjectStore("eav-columns", {keyPath: "id", autoIncrement:true});
-                    store2.createIndex('name', 'name');
-                    var store3 = db.createObjectStore("eav-columns-values", {keyPath: "id", autoIncrement:true});
-                    store3.createIndex('name', 'name');
-                    store3.createIndex('entity', 'entity');
-                    store3.createIndex('column', 'column');
-                    store3.createIndex('attribute', 'attribute');
+                    db.createObjectStore("registrations-p", {keyPath: "id", autoIncrement:true});
 
                     var profile_store = db.createObjectStore("user", {keyPath: "id"});
                     profile_store.put({id: user_id, username: user_username, email: user_email});

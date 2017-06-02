@@ -83,26 +83,26 @@
                                 </thead>
                                 <tbody>
                                 {% for complaint in complaints %}
-                                    <tr class="row-class category-row-class" complaintID="{{ complaint.ID }}" complaint_type="{{ complaint.complaint_type }}"complaint_sub_type="{{ complaint.Name }}">
+                                    <tr class="row-class category-row-class" complaintID="{{ complaint.ID }}" complaint_type="{{ complaint.complaint_type }}" complaint_sub_type="{{ complaint.Name }}">
                                         <td style = "display:none;">{{ complaint.complaint_type }}</td>
                                         <td>{{ complaint.Name }}</td>
                                         <td>{{ complaint.Statistics }}</td>
-                                        <td></td>
+                                        <td>{{ complaint.statistics_urgent }}</td>
                                     </tr>
                                 {% endfor %}
-                                <tr class="row-class category-row-class" complaintID="{{ 100 }}">
+                                <tr class="row-class category-row-class" complaintID="{{ 100 }}" complaint_sub_type = "Change of school">
                                     <td style = "display:none;">{{ school_changed_to_verify.complaint_type }}</td>
                                     <td>{{ school_changed_to_verify.Name }}</td>
                                     <td>{{ school_changed_to_verify.Statistics }}</td>
                                     <td></td>
                                 </tr>
-                                <tr class="row-class category-row-class" complaintID="{{ 200 }}">
+                                <tr class="row-class category-row-class" complaintID="{{ 200 }}" complaint_sub_type = "Change of benefeciary">
                                     <td style = "display:none;">{{ beneficiary_changed_verify.complaint_type }}</td>
                                     <td>{{ beneficiary_changed_verify.Name }}</td>
                                     <td>{{ beneficiary_changed_verify.Statistics }}</td>
                                     <td></td>
                                 </tr>
-                                <tr class="row-class category-row-class" complaintID="{{ 300 }}">
+                                <tr class="row-class category-row-class" complaintID="{{ 300 }}" complaint_sub_type = "Two Cards">
                                     <td style = "display:none;">{{ cards_duplicate.complaint_type }}</td>
                                     <td>{{ cards_duplicate.Name }}</td>
                                     <td>{{ cards_duplicate.Statistics }}</td>
@@ -111,7 +111,7 @@
                                 <tr class="row-class" style="font-weight:bold;" >
                                         <td>{{ total.Name }}</td>
                                         <td>{{ total.Statistics }}</td>
-                                        <td></td>
+                                        <td>{{ total.statistics_urgent }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -144,15 +144,17 @@
             <button class="btn btn-primary" type="button" id="SaveButton" style="float:right; " >
               {% trans "Save" %}
             </button>
-             <a class="btn btn-primary"
-                id="complaint-export"
-                href="{% url "registrations:complaint_data_export" %}"
-                target="_blank"
-{#                style="float:right; "#}
-                {% if ComplaintType == 'Not Found' %}style = "display:none;"{% endif %}
-             >
-                 {% trans "Export" %}
-             </a>
+
+             {% if request.user.is_superuser%}
+                 <a
+                         class="btn btn-primary"
+                         id="complaint-export"
+                         href="" target="_blank"
+                         onclick="ExportExcel();"
+                 >
+                     {% trans "Export" %}
+                 </a>
+             {% endif %}
          </div>
 
          <div id = "ComplaintsGrid">
@@ -199,6 +201,8 @@
 
         var user_id = {{ request.user.id }};
 
+        var export_url  = host+'/registrations/data-collecting/export/';
+
 
 
         $(document).ready
@@ -232,7 +236,15 @@
 
                  $("#editComplaintForm").show();
 
-
+                 var ComplaintType= currentCategory.Type ;
+                 if (ComplaintType=='Not Found')
+                 {
+                 $("#complaint-export").hide();
+                 }
+                 else
+                 {
+                 $("#complaint-export").show();
+                 }
              }
            );
 
@@ -347,6 +359,7 @@
 
        function CreateComplaintsData()
         {
+
            complaintData = [];
 
            $("#complaints-table tbody tr")
@@ -362,11 +375,11 @@
 
                  complaintRecord.complaint_status = GetDecision(trElement);
 
-                 complaintRecord.complaint_solution = trElement.find('td:nth-child(14) textarea').val();
+                 complaintRecord.complaint_solution = trElement.find('td:nth-child(16) textarea').val();
 
-                 complaintRecord.complaint_status_initial = trElement.find('td:nth-child(15)').html();
+                 complaintRecord.complaint_status_initial = trElement.find('td:nth-child(17)').html();
 
-                 complaintRecord.complaint_solution_initial = trElement.find('td:nth-child(16)').html();
+                 complaintRecord.complaint_solution_initial = trElement.find('td:nth-child(18)').html();
 
                  complaintData.push(complaintRecord);
 
@@ -523,6 +536,7 @@
           var complaintRecord = new Object();
           complaintRecord.complaint_status = entry.complaint_status;
           complaintRecord.complaint_solution = entry.complaint_solution;
+          complaintRecord.complaint_resolution_date = formatDate_save(Date());
           complaintRecord.complaint_update_owner = user_id;
 
 
@@ -712,6 +726,14 @@
            }
 
            return date;
+        }
+
+        function ExportExcel()
+        {
+            var current_export_url= export_url+"?CategoryID="+currentCategory.CategoryID+"&ComplaintType="+currentCategory.Type+"&ComplaintSubType="+currentCategory.ComplaintSubType;
+
+            window.open(current_export_url);
+
         }
 
     </script>

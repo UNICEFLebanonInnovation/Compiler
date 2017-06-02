@@ -300,27 +300,25 @@
 
                  childServiceRecordID= trElement.find('td:nth-child(1)').html();
 
-                 if(childServiceRecordID != '')
+                 if(childServiceRecordID == '')
                  {
-                     childServiceRecord.id = trElement.find('td:nth-child(1)').html();
+                     childServiceRecord.id = null;
+
+                     dropDownElement = trElement.find('td:nth-child(2) select');
+
+                     childServiceRecord.service_type_id = dropDownElement.val();
+                     childServiceRecord.service_type = dropDownElement.find('option[value="' + childServiceRecord.service_type_id + '"]').text().trim();
+
+                     childServiceRecord.service_provider = trElement.find('td:nth-child(3) input').val();
+
+                     childServiceRecord.service_provider_followup = trElement.find('td:nth-child(4) input').is(':checked')
+
+                     childServiceRecord.child_visit_id = childVisitID;
+
+                     childServiceRecord.service_date = FormatJSONDate((trElement.find('td:nth-child(5)').html()));
+
+                     childServiceData.push(childServiceRecord);
                  }
-                 else
-                 {
-                      childServiceRecord.id = null;
-                 }
-
-                 dropDownElement = trElement.find('td:nth-child(2) select');
-
-                 childServiceRecord.service_type_id = dropDownElement.val();
-                 childServiceRecord.service_type = dropDownElement.find('option[value="'+childServiceRecord.service_type_id+'"]').text().trim();
-
-                 childServiceRecord.service_provider = trElement.find('td:nth-child(3) input').val();
-
-                 childServiceRecord.service_provider_followup = trElement.find('td:nth-child(4) input').is(':checked')
-
-                 childServiceRecord.child_visit_id = childVisitID;
-
-                 childServiceData.push(childServiceRecord);
 
               }
            );
@@ -343,30 +341,28 @@
 
                       childReasonRecordID= trElement.find('td:nth-child(1)').html();
 
-                      if(childReasonRecordID != '')
+                      if(childReasonRecordID == '')
                       {
-                          childReasonRecord.id = trElement.find('td:nth-child(1)').html();
+                          childReasonRecord.id = null;
+
+                          dropDownElementMain = trElement.find('td:nth-child(2) select');
+                          childReasonRecord.main_reason_id = dropDownElementMain.val();
+                          childReasonRecord.main_reason = dropDownElementMain.find('option[value="' + childReasonRecord.main_reason_id + '"]').text().trim();
+
+                          dropDownElementSub = trElement.find('td:nth-child(3) select');
+
+                          childReasonRecord.specific_reason_id = dropDownElementSub.val();
+                          childReasonRecord.specific_reason = dropDownElementSub.find('option[value="' + childReasonRecord.specific_reason_id + '"]').text().trim();
+
+                          childReasonRecord.specific_reason_other_specify = trElement.find('td:nth-child(4) input').val();
+
+                          childReasonRecord.child_visit_id = childVisitID;
+
+                          childReasonRecord.reason_date = FormatJSONDate((trElement.find('td:nth-child(5)').html()));
+
+                          childReasonData.push(childReasonRecord);
+
                       }
-                      else
-                      {
-                           childReasonRecord.id = null;
-                      }
-
-                      dropDownElementMain = trElement.find('td:nth-child(2) select');
-                      childReasonRecord.main_reason_id = dropDownElementMain.val();
-                      childReasonRecord.main_reason = dropDownElementMain.find('option[value="'+childReasonRecord.main_reason_id+'"]').text().trim();
-
-                      dropDownElementSub = trElement.find('td:nth-child(3) select');
-
-                      childReasonRecord.specific_reason_id = dropDownElementSub.val();
-                      childReasonRecord.specific_reason = dropDownElementSub.find('option[value="'+childReasonRecord.specific_reason_id+'"]').text().trim();
-
-                      childReasonRecord.specific_reason_other_specify = trElement.find('td:nth-child(4) input').val();
-
-                      childReasonRecord.child_visit_id = childVisitID;
-
-                      childReasonData.push(childReasonRecord);
-
 
 
 

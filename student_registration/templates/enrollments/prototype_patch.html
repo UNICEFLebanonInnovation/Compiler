@@ -14,28 +14,15 @@
 {#                {% trans "Delete" %}#}
 {#            </button>#}
 {#        </td>#}
+        <td>
+            <button class="btn btn-danger moved-registration-row" itemscope="$$itemscope_id$$">
+                {% trans "Moved" %}
+            </button>
+        </td>
         <td class="synchro-status">
             <input type="hidden" name="id" value="$$itemscope_id$$" class="registration-field-id" />
             <span class="badge incremental_number" itemscope="$$itemscope_id$$" style="font-weight: bold;"></span>
         </td>
-{#        <td>#}
-{#            <input type="text" name="governorate_name" class="registration-field" readonly="readonly" disabled="disabled"#}
-{#                   itemscope="$$itemscope_id$$" id="governorate_name" value="{% if location_parent %}{{ location_parent.name }}{% endif %}" style="width: 50px;"/>#}
-{#        </td>#}
-{#        <td>#}
-{#            <input type="text" name="location" class="registration-field" readonly="readonly" disabled="disabled"#}
-{#                   itemscope="$$itemscope_id$$" id="location" value="{% if location %}{{ location.name }}{% endif %}" style="width: 50px;"/>#}
-{#        </td>#}
-{#        <td>#}
-{#            <input type="text" name="school_number" class="registration-field" readonly="readonly" disabled="disabled"#}
-{#                   itemscope="$$itemscope_id$$" id="school_number" value="{% if school %}{{ school.number }}{% endif %}" style="width: 50px;"/>#}
-{#        </td>#}
-{#        <td>#}
-{#            <input type="hidden" name="school" class="registration-field" readonly="readonly" disabled="disabled"#}
-{#                   itemscope="$$itemscope_id$$" id="school" value="{% if school %}{{ school.id }}{% endif %}"/>#}
-{#            <input type="text" name="school_name" class="registration-field" readonly="readonly"#}
-{#                   itemscope="$$itemscope_id$$" id="school_name" value="{% if school %}{{ school.name }}{% endif %}" style="width: 100px;"/>#}
-{#        </td>#}
         <td>
             <input type="text" name="student_first_name" id="student_first_name" class="registration-field" readonly="readonly" disabled="disabled"
                    placeholder="{% trans "Student first name" %}" itemscope="$$itemscope_id$$" />
@@ -197,8 +184,8 @@
             </select>
         </td>
         <td>
-            <label><input type="radio" name="participated_in_alp_$$itemscope_id$$" data-name="participated_in_alp" value="1" data-value="yes" id="participated_in_alp_1" class="registration-field registration-field-check registration-field-p egistration-field-check-p" itemscope="$$itemscope_id$$" itemref="" />{% trans "Yes" %}</label>
-            <label><input type="radio" name="participated_in_alp_$$itemscope_id$$" data-name="participated_in_alp" value="0" data-value="no" id="participated_in_alp_0" class="registration-field registration-field-check registration-field-p egistration-field-check-p" itemscope="$$itemscope_id$$" itemref="alp_details" />{% trans "No" %}</label>
+            <label><input type="radio" name="participated_in_alp_$$itemscope_id$$" data-name="participated_in_alp" value="1" data-value="yes" id="participated_in_alp_1" class="registration-field registration-field-check registration-field-p registration-field-check-p" itemscope="$$itemscope_id$$" itemref="" />{% trans "Yes" %}</label>
+            <label><input type="radio" name="participated_in_alp_$$itemscope_id$$" data-name="participated_in_alp" value="0" data-value="no" id="participated_in_alp_0" class="registration-field registration-field-check registration-field-p registration-field-check-p" itemscope="$$itemscope_id$$" itemref="alp_details" />{% trans "No" %}</label>
         </td>
         <td>
             <select name="last_informal_edu_level" id="last_informal_edu_level" class="registration-field alp_details registration-field-p" itemscope="$$itemscope_id$$">

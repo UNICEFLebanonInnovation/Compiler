@@ -88,6 +88,7 @@
                                   <option value="schoolRefusedEntrance">School Director Refused Re-entry</option>
                                   <option value="reinstateBeneficiary">Reinstate Beneficiary</option>
                                   <option value="twoCards">Two Red Cards</option>
+                                  <option value="missingChild">Missing student</option>
                                   <option value="otherComplaint">Other</option>
                               </optgroup>
                           </select>
@@ -506,10 +507,100 @@
                                     <input id="secondcard_last_four_digits" maxlength="45" type="text">
                                     <span class="error" id="second_card_last_four_digits_error">{% trans "last 4 digits is incorrect" %}</span>
                                 </div>
-
-
                             </div>
+
+                            <div class="line" id = "missingChildFields" style="display:none">
+                                <div class="line" id = "missingChildSelect" style="display:none">
+                                    <label class="text" style="width: 200px;">{% trans "Complaint Type: " %}</label>
+                                    <select id="missingChild_complaint" >
+                                        {% for itm  in missingChild_complaint_types %}
+                                            <option value="{{ itm.id }}" {% if forloop.first %}checked{% endif %}>{{ itm.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="line">
+                                    <label class="text" style="width: 200px;">{% trans "Student ID Type: " %}</label>
+                                    <select id="st_idType" >
+                                        {% for itm in idType %}
+                                            <option value="{{ itm.id }}">{{ itm.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="error" id="st_idType_error">{% trans "Student ID Type is missing." %}</span>
+                                </div>
+                                <div  class="line">
+                                     <label class="text" style="width: 200px;">{% trans "Student ID Number: " %}</label>
+                                     <input id="st_id_number" maxlength="45" type="text">
+                                     <span class="error" id="st_id_number_error">{% trans "Invalid ID format." %}</span>
+                                </div>
+                                <div class="line">
+                                    <label class="text" style="width: 200px;">{% trans "Student First Name (Arabic): " %}</label>
+                                    <input id="st_first_name" maxlength="45" type="text">
+                                    <span class="error" id="st_first_name_error">{% trans "Student First Name is missing." %}</span>
+                                </div>
+                                <div class="line">
+                                    <label class="text" style="width: 200px;">{% trans "Student Father Name (Arabic): " %}</label>
+                                    <input id="st_father_name" maxlength="45" type="text">
+                                    <span class="error" id="st_father_name_error">{% trans "Student Father Name is missing." %}</span>
+                                </div>
+                                <div class="line">
+                                    <label class="text" style="width: 200px;">{% trans "Student Last Name (Arabic): " %}</label>
+                                    <input id="st_last_name" maxlength="45" type="text">
+                                    <span class="error" id="st_last_name_error">{% trans "Student Last Name is missing." %}</span>
+                                </div>
+                                <div class="line">
+                                    <label class="text" style="width: 200px;">{% trans "Student Mother Full  Name (Arabic): " %}</label>
+                                    <input id="st_mother_full_name" maxlength="45" type="text">
+                                    <span class="error" id="st_mother_full_name_error">{% trans "Student Mother Full Name is missing." %}</span>
+                                </div>
+                                <div class="line">
+                                    <label class="text" style="width: 200px;">{% trans "Student Gender: " %}</label>
+                                    <select id="st_gender" >
+                                        {% for value, text in gender %}
+                                            <option value="{{ value }}">{{ text }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="error" id="st_gender_error">{% trans "Student Gender is missing." %}</span>
+                                </div>
+                                <div class="line field-select-small-size">
+                                    <label class="text" style="width: 200px;">{% trans "Student DOB" %}</label>
+                                    <select id="st_days" ></select>
+                                    <select id="st_months" >
+                                        {% for value, text in months %}
+                                            <option value="{{ value }}">{{ text }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <select id="st_years" >
+                                    </select>
+                                    <span class="error" id="st_dob_error">{% trans "Student DOB is not valid" %}</span>
+                                </div>
+                                <div>
+                                    <label class="text" style="width: 200px;">{% trans "Student School" %}</label>
+                                    <select name = "studentSchool">
+                                        {% for school in schools %}
+                                            <option value="{{ school.id }}" location-id = "{{ school.location_id }}" >
+                                                {{ school.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="error" id="st_school_error">{% trans "Student school is not valid" %}</span>
+                                </div>
+                                <div class="line">
+                                    <label class="text" style="width: 480px;">{% trans "Does the Household confirm that the child is registered in the 2nd shift? " %}</label>
+                                    <div id="radioBtn_missingchild" class="toggleRadioBtn btn-group confirm_child_registered_second_shift_block">
+                                        <a class="btn btn-primary btn-sm notActive" data-toggle="confirm_child_registered_second_shift" data-title="1">{% trans "Yes" %}</a>
+                                        <a class="btn btn-primary btn-sm active" data-toggle="confirm_child_registered_second_shift" data-title="0">{% trans "No" %}</a>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="line" id = "ComplaintFields" style="display:none">
+                                 <div class="line">
+                                    <label class="text" style="width: 200px;">{% trans "Urgent" %}</label>
+                                    <div id="radioBtn_urgent" class="toggleRadioBtn btn-group complaint_urgent_block">
+                                        <a class="btn btn-primary btn-sm notActive" data-toggle="complaint_urgent" data-title="1">{% trans "Yes" %}</a>
+                                        <a class="btn btn-primary btn-sm active" data-toggle="complaint_urgent" data-title="0">{% trans "No" %}</a>
+                                    </div>
+                                </div>
 
                                 <label class="text" style="width: 200px;">{% trans "Comment: " %}</label>
                                 <textarea cols="38" id="complaint" name="complaint" rows="1"></textarea>
@@ -536,7 +627,7 @@
                                         <th>Details</th>
                                         <th>Complaint Status</th>
                                         <th>Comments</th>
-                                        <th>Date of Resolution</th>
+                                        <th>Last Update</th>
                                     </tr>
                                     </thead>
                                     <tbody>
