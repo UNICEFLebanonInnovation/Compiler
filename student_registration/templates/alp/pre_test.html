@@ -20,6 +20,19 @@
         tr.warning {
             border: 3px solid #90111A;
         }
+        .field-warning {
+            background-color: red !important;
+            color: #fff;
+        }
+        .synchro-status.success {
+            background-color: #1ABB9C !important;
+        }
+        .synchro-status.failed {
+            background-color: #ac2925 !important;
+        }
+        span.required {
+            color: red;
+        }
     </style>
 {% endblock %}
 
@@ -42,7 +55,15 @@
             <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                          <div class="panel-heading" style="position: absolute; top:0px;" id="header">
+                          <div class="panel-heading">
+                              <ol class="breadcrumb">
+                                    <li><b>{% trans "ALP Pre-test" %}</b></li>
+                                    <li><b>{{ school }}</b></li>
+                                    <li><b>{{ location }}</b></li>
+                                    <li><b>{{ location_parent }}</b></li>
+                              </ol>
+                          </div>
+                          <div class="panel-heading" style="position: absolute; top:50px;" id="header">
                                 <ol class="breadcrumb">
                                     <li><a>
                                         <h3 class="panel-title">{% trans "ALP data collecting" %}</h3></a></li>
@@ -56,7 +77,7 @@
                                         <select name="school" id="filter_school" style="width: 210px;">
                                             <option value="">{% trans "Filter by School" %}</option>
                                             {% for item in schools %}
-                                                <option value="{{ item.id }}" {% if selectedSchool == item.id %}selected="selected"{% endif %}>{{ item }} {% if item.location %}{{ item.location.name }}{% endif %}</option>
+                                                <option value="{{ item.id }}" {% if school_id == item.id %}selected="selected"{% endif %}>{{ item }} {% if item.location %}{{ item.location.name }}{% endif %}</option>
                                             {% endfor %}
                                         </select>
                                         <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />
@@ -84,53 +105,33 @@
                                        width="100%" style="margin-bottom: 100px; margin-top: 75px;">
                                 <thead>
                                     <tr id="thead-line-1">
-                                        <th rowspan="2">&nbsp
-{#                                            <label class="col-100">{% trans "Exam not received from this school" %}</label>#}
-                                        </th>
-                                        <th rowspan="2"><label>{% trans "District" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Governorate" %}</label></th>
-                                        <th rowspan="2"><label class="col-60">{% trans "School number" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "School" %}</label></th>
+                                        <th rowspan="2">&nbsp;</th>
                                         <th rowspan="2"><label>{% trans "Student first name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Sex" %}</label></th>
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Registered in level" %}</label></th>
-                                        <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
+                                        <th colspan="5" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label>{% trans "Assigned to level" %}</label></th>
                                         <th colspan="3" style="text-align: center;"><label>{% trans "Student birthday" %}</label></th>
                                         <th rowspan="2"><label class="col-60">{% trans "Student age" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Student nationality" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Mother fullname" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Mother nationality" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Registered in UNHCR" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Student ID Type" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Student ID Number" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Student living address" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Phone number (6 digits)" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Phone prefix (2 digits)" %}</label></th>
-                                        <th colspan="2" style="text-align: center; background-color: #67b168;"><label>{% trans "Last student education" %}</label></th>
-                                        <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Created by" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Modified by" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
-                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Arabic language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Foreign language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Math" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Science" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Total" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Arabic language corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Foreign language corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Math corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Science corrector" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Math" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Total" %}</label></th>
+{#                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Arabic language corrector" %}</label></th>#}
+{#                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Foreign language corrector" %}</label></th>#}
+{#                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Math corrector" %}</label></th>#}
+{#                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Science corrector" %}</label></th>#}
                                         <th><label>{% trans "year" %}</label></th>
                                         <th><label>{% trans "month" %}</label></th>
                                         <th><label>{% trans "day" %}</label></th>
-                                        <th style="background-color: #67b168;"><label class="col-100">{% trans "Last education level" %}</label></th>
-                                        <th style="background-color: #67b168;"><label>{% trans "Education year" %}</label></th>
-                                        <th style="background-color: #ec971f;"><label class="col-150">{% trans "Is the child participated in an ALP program" %}</label></th>
-                                        <th style="background-color: #ec971f;"><label>{% trans "ALP round" %}</label></th>
-                                        <th style="background-color: #ec971f;"><label>{% trans "ALP level" %}</label></th>
-                                        <th style="background-color: #ec971f;"><label>{% trans "ALP result" %}</label></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -178,12 +179,14 @@
         var user_email = '{{ request.user.email }}';
         var user_token = '{{ user_token }}';
         var alp_round = '{{ alp_round }}';
+        var school = '{{ school_id }}';
         var rows = 1;
         var synchro_result = true;
         var prototype = $('#outreach_prototype');
         var table = $('#outreaches-table');
-        var selectedSchool = '{{ selectedSchool }}';
+        var selectedSchool = '{{ school_id }}';
         var filterSchools = true;
+        var synchronized_data = true;
         var protocol = 'http://';
         {% if request.is_secure %}
             protocol = 'https://';
@@ -212,9 +215,9 @@
                 $('body, html').scrollLeft(400);
             });
 
-            $(document).on('blur', '#exam_corrector_science', function(){
-                $('body, html').scrollLeft(800);
-            });
+{#            $(document).on('blur', '#exam_corrector_science', function(){#}
+{#                $('body, html').scrollLeft(800);#}
+{#            });#}
 
             $(document).on('blur', arabic_fields, function(){
                 checkArabicOnly($(this));
@@ -255,7 +258,11 @@
                 if(selected_school){
                     url = url+'?school='+selected_school;
                 }
-                window.location.href = url;
+                if(synchronized_data == false){
+                    alert('Please synchronize you data before leaving this page');
+                }else{
+                    window.location.href = url;
+                }
             });
 
             $(document).on('click', '#filter_cancel', function(){
@@ -359,12 +366,13 @@
                 item.find('#exam_total').trigger('blur');
             });
 
-            $(document).on('blur', '.exam-corrector', function(){
-                if(parseInt($(this).val()) < 11){
-                    $(this).focus();
-                    alert('Enter the exam corrector');
-                }
-            });
+{#            $(document).on('blur, change', '.exam-corrector', function(){#}
+{#                if(parseInt($(this).val()) < 11){#}
+{#                    $(this).addClass('field-warning');#}
+{#                }else{#}
+{#                    $(this).removeClass('field-warning');#}
+{#                }#}
+{#            });#}
 
             $(document).on('blur', '#exam_total, #level', function(){
                 calc_assigned_level($(this).parent().parent());
@@ -399,18 +407,10 @@
                 flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches');
             });
 
-            $(document).on('blur', '.outreach-field-p', function(){
+            $(document).on('blur change', '.outreach-field-p', function(){
                 update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
                 flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches-p');
-            });
-            $(document).on('change', '.outreach-field-p', function(){
-                update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
-                flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches-p');
-            });
-
-            $(document).on('change', '.outreach-field-check', function(){
-                update_item_store(parseInt($(this).attr('itemscope')), $(this).attr('data-name'), $(this).attr('data-value'), 'outreaches');
-                flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches');
+                synchronized_data = false;
             });
 
             $(document).on('click', '#outreach-synchro', function(){
@@ -419,6 +419,7 @@
                 if(navigator.onLine) {
                     $(".loader").show();
                     synchronize_data(true);
+                    synchronized_data = true;
                 }else{
                     $('#alert-connection').show();
                 }
@@ -428,7 +429,17 @@
 
         function create_item_store_default_keys()
         {
-            var item = {id: rows, synchronized: false, deleted: false, owner: user_id, original_id: 0, to_update: true, alp_round: alp_round};
+            var item = {
+                id: rows,
+                synchronized: false,
+                deleted: false,
+                owner: user_id,
+                modified_by: user_id,
+                original_id: 0,
+                to_update: true,
+                alp_round: alp_round,
+                school: school,
+            };
             var fields = $('#outreach_prototype').find('.outreach-field');
             $(fields).each(function(i, field){
                 if($(field).attr('data-name')) {
@@ -592,6 +603,7 @@
         function update_data_into_server(item)
         {
             var data = item;
+            data.modified_by = user_id;
 
             $.ajax({
                 type: "PUT",
@@ -623,6 +635,7 @@
         {
             var itemid = item.id;
             var data = item;
+            data.modified_by = user_id;
             delete data.id;
 
             if(data.exam_result_arabic) {
@@ -646,11 +659,17 @@
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
+                    $('#line-'+itemid).removeClass('warning');
+                    $('#line-'+itemid).find('.synchro-status').removeClass('failed');
+
+                    $('#line-'+itemid).find('.synchro-status').addClass('success');
+                    $('#line-'+itemid).find('.outreach-field-p').removeClass('required');
                     update_item_store(parseInt(itemid), 'to_update', false, 'outreaches-p');
                 },
                 error: function (response) {
                     console.log(response);
                     $('#line-'+itemid).addClass('warning');
+                    $('#line-'+itemid).find('.synchro-status').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+itemid).find('#'+field_name).addClass('required');
@@ -736,50 +755,79 @@
             var level = parseInt(item.find('#level').val());
             var total = parseInt(item.find('#exam_total').val());
             var assigned_level = item.find('#assigned_to_level');
+            var exam_notes = item.find('.exam-note');
             var to_level = 0;
 
+            if(total > 40 && total <= 80) {
+                var count = 0;
+                exam_notes.each(function(i, note){
+                    if(parseInt($(note).val()) < 10){
+                        count = count + 1;
+                    }
+                });
+
+                if(count >= 2) {
+                    to_level = 12;
+                    assigned_level.val(to_level);
+                    assigned_level.trigger('blur');
+                    return true;
+                }
+            }
+
             if(level == 1 || level == 2 || level == 3){
-                if(total < 40){
-                    to_level = 1;
-                }else if(total >= 40 && total < 80){
+                if(total <= 5){
+                    to_level = 10;
+                }else if(total > 5 && total <= 20){
+                    to_level = 11;
+                }else if(total > 20 && total <= 40){
+                    to_level = 12;
+                }else if(total > 40 && total <= 80){
                     to_level = 2;
-                }else if(total >= 80 && total <= 120){
+                }else if(total > 80 && total <= 120){
                     to_level = 3;
                 }
             }
             if(level == 4 || level == 5 || level == 6){
-                if(total < 20) {
-                    to_level = 1;
-                }else if(total >= 20 && total < 40){
+                if(total <= 5){
+                    to_level = 10;
+                }else if(total > 5 && total <= 20){
+                    to_level = 11;
+                }else if(total > 20 && total <= 40){
+                    to_level = 12;
+                }else if(total > 40 && total <= 80){
                     to_level = 2;
-                }else if(total >= 40 && total < 60){
+                }else if(total > 80 && total <= 120){
                     to_level = 3;
-                }else if(total >= 60 && total < 100){
+                }else if(total > 120 && total <= 160){
                     to_level = 4;
-                }else if(total >= 100 && total < 140){
+                }else if(total > 160 && total <= 200){
                     to_level = 5;
-                }else if(total >= 140 && total <= 180){
+                }else if(total > 200 && total <= 240){
                     to_level = 6;
                 }
             }
             if(level == 7 || level == 8 || level == 9){
-                if(total < 20) {
-                    to_level = 1;
-                }else if(total >= 20 && total < 40){
+                if(total <= 5){
+                    to_level = 10;
+                }else if(total > 5 && total <= 20){
+                    to_level = 11;
+                }else if(total > 20 && total <= 40){
+                    to_level = 12;
+                }else if(total > 40 && total <= 80){
                     to_level = 2;
-                }else if(total >= 40 && total < 60){
+                }else if(total > 80 && total <= 120){
                     to_level = 3;
-                }else if(total >= 60 && total < 80){
+                }else if(total > 120 && total <= 160){
                     to_level = 4;
-                }else if(total >= 80 && total < 100){
+                }else if(total > 160 && total <= 200){
                     to_level = 5;
-                }else if(total >= 100 && total < 120){
+                }else if(total > 200 && total <= 240){
                     to_level = 6;
-                }else if(total >= 120 && total < 160){
+                }else if(total > 240 && total <= 280){
                     to_level = 7;
-                }else if(total >= 160 && total < 200){
+                }else if(total > 280 && total <= 320){
                     to_level = 8;
-                }else if(total >= 200 && total <= 240){
+                }else if(total > 320 && total <= 360){
                     to_level = 9;
                 }
             }

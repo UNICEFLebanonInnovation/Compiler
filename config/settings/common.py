@@ -44,6 +44,7 @@ DJANGO_APPS = (
     'markdown_deux',  # Required for Knowledgebase item formatting
     'bootstrapform',  # Required for nicer formatting of forms with the default templates
     'helpdesk',  # This is us!
+    'rangefilter',
 )
 THIRD_PARTY_APPS = (
     'crispy_forms',  # Form layouts
@@ -278,7 +279,11 @@ AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 INSTALLED_APPS += ('student_registration.taskapp.celery.CeleryConfig', 'django.contrib.humanize',)
 # if you are not using the django database broker (e.g. rabbitmq, redis, memcached), you can remove the next line.
 # INSTALLED_APPS += ('kombu.transport.django',)
-BROKER_URL = env('CELERY_BROKER_URL', default='django://')
+CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='django://')
+if CELERY_BROKER_URL == 'django://':
+    CELERY_RESULT_BACKEND = 'redis://'
+else:
+    CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
 COUCHBASE_URL = env('COUCHBASE_URL', default='NO_URL')
 COUCHBASE_USER = env('COUCHBASE_USER', default='NO_USER')
@@ -329,6 +334,7 @@ SUIT_CONFIG = {
         {'label': 'Dashboard', 'icon': 'icon-home', 'models': [
             {'url': '/dashboard/registrations-pilot/', 'label': 'PILOT'},
             {'url': '/dashboard/registrations-2ndshift/', 'label': '2nd Shift'},
+            {'url': '/dashboard/2ndshift-overall/', 'label': '2nd Shift Overall'},
             {'url': '/dashboard/alp-overall/', 'label': 'ALP Overall'},
             {'url': '/dashboard/registrations-alp/', 'label': 'ALP Current round'},
             {'url': '/dashboard/registrations-alp-outreach/', 'label': 'ALP Outreach'},
@@ -337,11 +343,37 @@ SUIT_CONFIG = {
         ]},
         {'app': 'auth', 'label': 'Groups', 'icon': 'icon-user'},
         {'app': 'users', 'label': 'Users', 'icon': 'icon-user'},
-        {'app': 'alp', 'label': 'ALP', 'icon': 'icon-th-list'},
-        {'app': 'enrollments', 'label': '2nd Shift', 'icon': 'icon-th-list'},
+        {'label': 'ALP', 'icon': 'icon-th-list', 'models': (
+            'alp.CurrentRound',
+            'alp.CurrentOutreach',
+            'alp.PreTest',
+            'alp.PostTest',
+            'alp.outreach',
+            'alp.ALPRound',
+        )},
+        {'label': '2nd Shift', 'icon': 'icon-th-list', 'models': (
+            'enrollments.enrollment',
+            'enrollments.dropout',
+            'enrollments.LoggingStudentMove',
+            'enrollments.StudentMove',
+        )},
         {'app': 'registrations', 'label': 'Pilot', 'icon': 'icon-th-list'},
-        {'app': 'students', 'label': 'Students', 'icon': 'icon-th-list'},
-        {'app': 'schools', 'label': 'Schools', 'icon': 'icon-th-list'},
+        {'label': 'Students', 'icon': 'icon-th-list', 'models': (
+            'students.Student',
+            'students.Nationality',
+            'students.IDType',
+            'students.Language',
+            'students.StudentMatching',
+        )},
+        {'label': 'Schools', 'icon': 'icon-th-list', 'models': (
+            'schools.School',
+            'schools.EducationLevel',
+            'schools.ClassLevel',
+            'schools.ALPReferMatrix',
+            'schools.ClassRoom',
+            'schools.EducationYear',
+            'schools.Section',
+        )},
         {'app': 'hhvisit', 'label': 'House Hold Visit', 'icon': 'icon-th-list'},
         {'app': 'attendances', 'label': 'Attendances', 'icon': 'icon-th-list'},
         {'app': 'winterization', 'label': 'Winterization', 'icon': 'icon-th-list'},
@@ -356,3 +388,4 @@ HELPDESK_STAFF_ONLY_TICKET_CC = True
 
 ABSENCE_URL = env('ABSENCE_URL', default='NO URL for absentees set in the environment')
 ABSENCE_TOKEN = env('ABSENCE_TOKEN', default='No token for absentees URL set')
+
