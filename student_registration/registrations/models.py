@@ -58,7 +58,8 @@ class ComplaintCategory(models.Model):
         ('reinstate', _('REINSTATE BENEFICIARY')),
         ('remove', _('reinstate beneficiary')),
         ('bank', _('BANK')),
-        ('other', _('OTHER'))
+        ('other', _('OTHER')),
+        ('student', _('Missing Student'))
     )
     name = models.CharField(max_length=200, unique=True)
     complaint_type = models.CharField(max_length=50, blank=True, null=True, choices=TYPE)
@@ -74,6 +75,16 @@ class ComplaintCategory(models.Model):
         records = self.complaints
         if not user.is_superuser:
             records = records.filter(complaint_adult__school__location__parent_id=user.governante_id)
+        return int(records.all().count())
+
+    def complaint_urgent_count(self, user):
+
+        records = self.complaints.filter(complaint_urgent=True)
+
+        if not user.is_superuser:
+
+            records = records.filter(complaint_adult__school__location__parent_id=user.governante_id)
+
         return int(records.all().count())
 
 
@@ -128,6 +139,7 @@ class RegisteringAdult(Person):
     relation_to_householdhead = models.CharField(max_length=50, blank=True, null=True, choices=RELATION_TYPE)
     wfp_case_number = models.CharField(max_length=50, blank=True, null=True)
     csc_case_number = models.CharField(max_length=50, blank=True, null=True)
+    red_case_number = models.CharField(max_length=50, blank=True, null=True)
     card_issue_requested = models.BooleanField(default=False)
     card_number = models.CharField(max_length=50, blank=True, null=True)
     card_status = models.CharField(max_length=50, blank=True, null=True)
@@ -200,6 +212,7 @@ class RegisteringAdult(Person):
     beneficiary_changed_date_requested = models.DateField(blank=True, null=True)
     household_suspended = models.BooleanField(default=False)
     household_suspended_date = models.DateField(blank=True, null=True)
+    household_suspended_reason = models.CharField(max_length=200, blank=True, null=True)
     duplicate_card_first_card_case_number = models.CharField(max_length=50, blank=True, null=True)
     duplicate_card_first_card_last_four_digits = models.CharField(max_length=4, blank=True, null=True)
     duplicate_card_second_card_case_number = models.CharField(max_length=50, blank=True, null=True)
@@ -266,6 +279,17 @@ class HouseholdNotFound(Person):
     def __unicode__(self):
         return self.id
 
+class MissingChild(Person):
+
+
+    confirm_child_registered_second_shift = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.id
+
 
 class Complaint(TimeStampedModel):
     """
@@ -292,6 +316,11 @@ class Complaint(TimeStampedModel):
         blank=True, null=True,
         related_name='HHNotFound',
     )
+    missing_child = models.ForeignKey(
+        MissingChild,
+        blank=True, null=True,
+        related_name='MissingChild',
+    )
     complaint_note = models.TextField(blank=True, null=True)
     complaint_status = models.CharField(max_length=20, blank=True, null=True, choices=STATUS)
     complaint_solution = models.TextField(blank=True, null=True)
@@ -300,6 +329,7 @@ class Complaint(TimeStampedModel):
     complaint_bank_phone_used = models.CharField(max_length=50, blank=True, null=True)
     complaint_bank_service_requested = models.TextField(blank=True, null=True)
     complaint_Other_type_specify = models.TextField(blank=True, null=True)
+    complaint_urgent = models.BooleanField(blank=True, default=False)
     complaint_student_refused_entrance = models.ForeignKey(
         Student,
         blank=True, null=True,

@@ -4,6 +4,7 @@ from django.utils.safestring import mark_safe
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import resolve
+import datetime
 
 register = template.Library()
 
@@ -104,3 +105,62 @@ def percentage(number, total):
     if number:
         return round((number*100.0)/total, 2)
     return 0
+
+
+@register.assignment_tag
+def enrollment_by_gov_by_grade(registrations, gov, level):
+    if not gov:
+        return registrations.filter(classroom=level).count()
+    elif not level:
+        return registrations.filter(school__location__parent_id=gov).count()
+    return registrations.filter(school__location__parent_id=gov, classroom=level).count()
+
+
+@register.assignment_tag
+def enrollment_by_gov_by_age(registrations, gov, age):
+    now = datetime.datetime.now()
+    if not gov:
+        return registrations.filter(student__birthday_year=(now.year - age)).count()
+    elif not age:
+        return registrations.filter(school__location__parent_id=gov).count()
+    return registrations.filter(school__location__parent_id=gov, student__birthday_year=(now.year - age)).count()
+
+
+@register.assignment_tag
+def alp_by_gov_by_grade(registrations, gov, level):
+    if not gov:
+        return registrations.filter(registered_in_level=level).count()
+    elif not level:
+        return registrations.filter(school__location__parent_id=gov).count()
+    return registrations.filter(school__location__parent_id=gov, registered_in_level=level).count()
+
+
+@register.assignment_tag
+def alp_by_gov_by_age(registrations, gov, age):
+    now = datetime.datetime.now()
+    if not gov:
+        return registrations.filter(student__birthday_year=(now.year - age)).count()
+    elif not age:
+        return registrations.filter(school__location__parent_id=gov).count()
+    return registrations.filter(school__location__parent_id=gov, student__birthday_year=(now.year - age)).count()
+
+
+@register.assignment_tag
+def enrollment_by_grade_by_age(registrations, level, age):
+    now = datetime.datetime.now()
+    if not age:
+        return registrations.filter(classroom=level).count()
+    elif not level:
+        return registrations.filter(student__birthday_year=(now.year - age)).count()
+    return registrations.filter(classroom=level, student__birthday_year=(now.year - age)).count()
+
+
+@register.assignment_tag
+def get_item_by_key(dictionary, level, age):
+    key = str(level)+'-'+str(age)
+    return dictionary.get(key)
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)

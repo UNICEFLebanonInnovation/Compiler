@@ -10,7 +10,6 @@ from student_registration.taskapp.celery import app
 @app.task
 def assign_alp_level():
     from student_registration.alp.models import Outreach, ALPRound
-    from student_registration.schools.models import EducationLevel
     alp_round = ALPRound.objects.get(current_pre_test=True)
 
     records = Outreach.objects.filter(alp_round=alp_round)
@@ -20,54 +19,75 @@ def assign_alp_level():
             to_level = 0
             if not level:
                 continue
+
+            total = record.exam_total
+
+            if 40 < total <= 80:
+                notes = [record.exam_result_arabic, record.exam_result_language, record.exam_result_math, record.exam_result_science]
+                if sum(i < 10 for i in notes) >= 2:
+                    to_level = 12
+                    print level.id, total, to_level
+                    record.assigned_to_level_id = to_level
+                    record.save()
+                    continue
+
             if level.id == 1 or level.id == 2 or level.id == 3:
-                total = record.exam_total
-                if total <= 40:
-                    to_level = 1
-                elif total > 40 and total <= 80:
+                if total <= 5:
+                    to_level = 10
+                elif 5 < total <= 20:
+                    to_level = 11
+                elif 20 < total <= 40:
+                    to_level = 12
+                elif 40 < total <= 80:
                     to_level = 2
-                elif total > 80 and total <= 120:
+                elif 80 < total <= 120:
                     to_level = 3
 
             if level.id == 4 or level.id == 5 or level == 6:
-                total = record.exam_total
-                if total <= 20:
-                    to_level = 1
-                elif total > 20 and total <= 40:
+                if total <= 5:
+                    to_level = 10
+                elif 5 < total <= 20:
+                    to_level = 11
+                elif 20 < total <= 40:
+                    to_level = 12
+                elif 40 < total <= 80:
                     to_level = 2
-                elif total > 40 and total <= 60:
+                elif 80 < total <= 120:
                     to_level = 3
-                elif total > 60 and total <= 100:
+                elif 120 < total <= 160:
                     to_level = 4
-                elif total > 100 and total <= 140:
+                elif 160 < total <= 200:
                     to_level = 5
-                elif total > 140 and total <= 180:
+                elif 200 < total <= 240:
                     to_level = 6
 
             if level.id == 7 or level.id == 8 or level.id == 9:
-                total = record.exam_total
-                if total <= 20:
-                    to_level = 1
-                elif total > 20 and total <= 40:
+                if total <= 5:
+                    to_level = 10
+                elif 5 < total <= 20:
+                    to_level = 11
+                elif 20 < total <= 40:
+                    to_level = 12
+                elif 40 < total <= 80:
                     to_level = 2
-                elif total > 40 and total <= 60:
+                elif 80 < total <= 120:
                     to_level = 3
-                elif total > 60 and total <= 80:
+                elif 120 < total <= 160:
                     to_level = 4
-                elif total > 80 and total <= 100:
+                elif 160 < total <= 200:
                     to_level = 5
-                elif total > 100 and total <= 120:
+                elif 200 < total <= 240:
                     to_level = 6
-                elif total > 120 and total <= 160:
+                elif 240 < total <= 280:
                     to_level = 7
-                elif total > 160 and total <= 200:
+                elif 280 < total <= 320:
                     to_level = 8
-                elif total > 200 and total <= 240:
+                elif 320 < total <= 360:
                     to_level = 9
 
             if to_level:
                 print level.id, total, to_level
-                record.assigned_to_level = EducationLevel.objects.get(id=to_level)
+                record.assigned_to_level_id = to_level
                 record.save()
         except Exception as ex:
             print ex.message
@@ -138,6 +158,7 @@ def assign_round_to_deleted(round_id):
     print "End assignment"
 
 
+@app.task
 def fix_round_assignment(update):
     from student_registration.alp.models import Outreach
 
@@ -157,3 +178,15 @@ def fix_round_assignment(update):
         print total, " records assigned"
 
     print "End assignment"
+
+
+@app.task
+def move_student_to_school(school_from, school_to):
+    from .models import Outreach
+
+    if not school_from or not school_to:
+        return False
+    print "from school: ", school_from, " to school: ", school_to
+    registrations = Outreach.objects.filter(school_id=school_from)
+    print registrations.count()
+    registrations.update(school_id=school_to)

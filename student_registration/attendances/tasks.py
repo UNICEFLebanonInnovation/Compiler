@@ -94,10 +94,12 @@ def set_app_attendances(school_number=None, school_type=None):
     """
     from student_registration.alp.models import Outreach, ALPRound
     from student_registration.enrollments.models import Enrollment
-    from student_registration.attendances.models import Attendance
+    from student_registration.attendances.models import Attendance, AttendanceSyncLog
     from student_registration.schools.models import School, ClassRoom, Section, EducationLevel
 
     docs = []
+    unified_docs = []
+    total = 0
     enrollment_model = Outreach if school_type == 'alp' else Enrollment
 
     registrations = enrollment_model.objects.all()
@@ -142,7 +144,11 @@ def set_app_attendances(school_number=None, school_type=None):
 
         # build dictionary of currently enrolled students for this school, class, section
         total_enrolled = enrollment_model.objects.filter(**reg)
-        logger.info('{} students in class {}'.format(total_enrolled.count(), doc_id))
+        if school_type == 'alp':
+            total_enrolled = total_enrolled.filter(alp_round=alp_round)
+
+        total = total_enrolled.count()
+        logger.info('{} students in class {}'.format(total, doc_id))
         for enrolled in total_enrolled:
             student = {
                 "student_id": str(enrolled.student.id),
@@ -151,6 +157,11 @@ def set_app_attendances(school_number=None, school_type=None):
                 "status": enrolled.student.status
             }
             students.append(student)
+
+        if doc_id in unified_docs:
+            continue
+        else:
+            unified_docs.append(doc_id)
 
         # combine into a single doc representing students and attendance for a single school, class, section
         doc = {
@@ -180,7 +191,18 @@ def set_app_attendances(school_number=None, school_type=None):
 
     response = set_docs(docs)
     logger.info(response)
-    if response.status_code in [requests.codes.ok, requests.codes.created]:
+
+    school = School.objects.get(number=school_number)
+    log = AttendanceSyncLog.objects.create(
+        school_id=school.id,
+        school_type=school_type if school_type else '2nd shift',
+        response_message=response.text if response else '',
+        total_records=total
+    )
+
+    if response and response.status_code in [requests.codes.ok, requests.codes.created]:
+        log.successful = True
+        log.save()
         return response.text
 
 

@@ -5,6 +5,7 @@
 
 {% block extra_head %}
 
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
@@ -34,7 +35,11 @@
         }
     </style>
 
-    {% include 'enrollments/prototype_patch.html' %}
+    {% if request.user|has_group:'ENROL_EDIT' %}
+        {% include 'enrollments/prototype_edit.html' %}
+    {% else %}
+        {% include 'enrollments/prototype_patch.html' %}
+    {% endif %}
 
          <section class="main-content-wrapper">
             <section id="main-content">
@@ -59,6 +64,12 @@
                                     <i class="icon-synch-sign icon-white"></i>&nbsp;
                                         {% trans "synchronize" %}
                                   </button>
+                                    {% if request.user|has_group:'PUSH_TO_TABLET' %}
+                                      <button class="btn btn-info" id="attendance-push">
+                                        <i class="icon-synch-sign icon-white"></i>&nbsp;
+                                            {% trans "push to tablet" %}
+                                      </button>
+                                    {% endif %}
                                   <button class="btn btn-info" id="registration-download">
                                     <i class="icon-synch-sign icon-white"></i>&nbsp;
                                         {% trans "download data" %}
@@ -84,7 +95,6 @@
                                     <button class="btn btn-success" id="filter_go">
                                         {% trans "Filter data" %}
                                     </button>
-{#                                    <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />#}
                                     <button class="btn btn-warning" id="filter_cancel">
                                         {% trans "Rest filter" %}
                                     </button>
@@ -101,6 +111,7 @@
                                 <li>{{ location }}</li>
                                 <li>{{ location_parent }}</li>
                                 <li>{% trans "Total students" %} <span class="badge ttl_students">{{ total }}</span></li>
+                                <li><input type="text" id="search_moved_student" size="300" style="width: 300px;" placeholder="{% trans "Search moved student" %}" /></li>
                             </ol>
                         </div>
                           <div class="panel-body">
@@ -113,12 +124,8 @@
                                        width="100%" style="margin-bottom: 100px; margin-top: 75px;">
                                 <thead>
                                     <tr id="thead-line-1">
-{#                                        <th rowspan="2">&nbsp;</th>#}
+                                        <th rowspan="2">&nbsp;</th>
                                         <th rowspan="2">#</th>
-{#                                        <th rowspan="2"><label>{% trans "Governorate" %}</label></th>#}
-{#                                        <th rowspan="2"><label>{% trans "District" %}</label></th>#}
-{#                                        <th rowspan="2"><label>{% trans "School number" %}</label></th>#}
-{#                                        <th rowspan="2"><label>{% trans "School" %}</label></th>#}
                                         <th rowspan="2"><label>{% trans "Student first name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
@@ -186,6 +193,7 @@
         var db = null;
     </script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
@@ -219,10 +227,12 @@
         {% endif %}
         var host = protocol+'{{ request.get_host }}';
         var synchro_path = host+'/api/enrollments/';
+        var moved_student_path = host+'/api/logging-student-move/';
         var arabic_fields = "#student_address, #student_mother_fullname, #student_first_name, #student_father_name, #student_last_name";
 
         $(document).ready(function(){
 
+            $('#search_moved_student').val('');
             createStores();
             bootbox.addLocale(language, {
                 OK : '{% trans "Ok" %}',
@@ -391,6 +401,19 @@
                 });
             });
 
+            $(document).on('click', '.moved-registration-row', function(){
+                var item = $(this);
+                bootbox.confirm(
+                    "{% trans 'are you sure you want to tag this student as moved?' %}", function(result) {
+                    if(result == true){
+                        moved_student(item.attr('itemscope'));
+                        update_item_store(parseInt(item.attr('itemscope')), 'moved', true, 'registrations');
+                        item.parents('tr').remove();
+                        incremental_id = incremental_id - 1;
+                    }
+                });
+            });
+
             $(document).on('change', '.student_birthday', function(){
                 if($(this).val()) {
                     var option = $(this).find('option:selected');
@@ -440,6 +463,30 @@
                 }
             });
 
+            $(document).on('click', '#attendance-push', function(){
+
+                var url = host+'/api/attendances/push-by-school/'+school_id+'/';
+
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    cache: false,
+                    async: false,
+                    headers: getHeader(),
+                    dataType: 'json',
+                    success: function (response, result, jqXHR) {
+                        console.log(response);
+                        if(jqXHR.status == 201){
+
+                        }
+                    },
+                    error: function (response) {
+                        console.log(response);
+                    }
+                });
+
+            });
+
             $(document).on('click', '#registration-download', function(){
                 if(navigator.onLine) {
                     incremental_id = 0;
@@ -457,6 +504,43 @@
                     $('#alert-connection').show();
                 }
             });
+
+
+            $("#search_moved_student").autocomplete({
+              source: function( request, response ) {
+                $.ajax( {
+                  url: moved_student_path,
+                  dataType: "json",
+                  data: {
+                    term: request.term
+                  },
+                  success: function( data ) {
+                    response( data);
+                  }
+                } );
+              },
+              minLength: 3,
+              select: function( event, ui ) {
+                  $("#search_moved_student").val('');
+                  get_registration(ui.item);
+                  return false;
+              }
+            }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
+                 var that = this;
+                 $.each( items, function( index, item ) {
+                     that._renderItemData( ul, item );
+                });
+                $( ul ).find( "li:odd" ).addClass( "odd" );
+            };
+
+            $("#search_moved_student").autocomplete( "instance" )._renderItem = function( ul, item ) {
+                  return $( "<li>" )
+                    .append( "<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_sex + " - " + item.student_age + ") "
+                                   + "<br>" + '{% trans "Current situation" %}: '+ item.school_name + " - " + item.school_number + " / " + item.classroom_name + " / " + item.section_name
+                                   + "</div>" )
+                    .appendTo( ul );
+            };
+
         });
 
         function init_quicksearch()
@@ -555,7 +639,7 @@
                 var result = request.result;
                 $(result).each(function(i, item){
                     rows = item.id;
-                    if(item.deleted == false &&  i >= offset && i < limit){
+                    if(item.deleted == false && (item.moved == false || item.moved == 'False') &&  i >= offset && i < limit){
                         $(".loader").show();
                         add_table_newline(item.id, prototype, table);
                         add_fill_line_data(item);
@@ -613,7 +697,7 @@
             incremental_id = 0;
             $('#registrations-table').find('.registration-line').remove();
             $(data).each(function(i, item){
-                if(item.deleted == false){
+                if(item.deleted == false && (item.moved == false || item.moved == 'False')){
                     $(".loader").show();
                     add_table_newline(item.id, prototype, table);
                     add_fill_line_data(item);
@@ -626,6 +710,84 @@
         {
 {#            push_data();#}
             patch_data();
+        }
+
+        function moved_student(item)
+        {
+            data = {moved: item};
+
+            $.ajax({
+                type: "POST",
+                url: moved_student_path,
+                data: data,
+                cache: false,
+                async: false,
+                headers: getHeader(),
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+            });
+        }
+
+        function get_registration(item)
+        {
+            $.ajax({
+                type: "GET",
+                url: synchro_path+item.enrolment_id+"/?moved=true",
+                cache: false,
+                async: false,
+                headers: getHeader(),
+                dataType: 'json',
+                success: function (response) {
+                    add_external_record(response, item.id);
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+            });
+        }
+
+        function add_external_record(item, moved_id)
+        {
+            var store = getStoreByName('registrations');
+            var request = store.index('original_id').get(parseInt(item.id));
+            request.onsuccess = function() {
+                if(request.result === undefined) {
+                    item.synchronized = false;
+                    item.deleted = false;
+                    item.to_update = false;
+                    item.moved = false;
+                    item.student_nationality = item.student_nationality_id;
+                    item.student_mother_nationality = item.student_mother_nationality_id;
+                    item.student_id_type = item.student_id_type_id;
+                    item.school = school_id;
+
+                    item.classroom = item.next_level;
+                    item.last_school = item.last_school_id;
+                    item.last_education_level = item.last_education_level_id;
+                    item.last_informal_edu_level = item.last_informal_edu_level_id;
+                    item.last_informal_edu_round = item.last_informal_edu_round_id;
+                    item.last_informal_edu_final_result = item.last_informal_edu_final_result_id;
+
+                    var data = item;
+                    add_to_store(data);
+                    add_fill_line_data(data);
+
+                    update_or_create_item(parseInt(item.id), 'school', school_id, 'registrations-p');
+                    update_or_create_item(parseInt(item.id), 'moved', moved_id, 'registrations-p');
+                    flag_record_to_update(parseInt(item.id), 'registrations-p');
+                    incremental_id = incremental_id + 1;
+
+                }else{
+                    bootbox.alert("{% trans 'This student already added to the list' %}", function(result) {
+                        return true;
+                    });
+                }
+            };
         }
 
         function push_data()

@@ -17,7 +17,10 @@ from .models import (
     ClassRoom,
     PartnerOrganization,
     ALPReferMatrix,
+    EducationYear,
 )
+from student_registration.locations.models import Location
+from student_registration.attendances.tasks import set_app_attendances
 
 
 class SchoolResource(resources.ModelResource):
@@ -47,11 +50,112 @@ class SchoolResource(resources.ModelResource):
         return ''
 
 
+class GovernorateFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Governorate'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'governorate'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l.id, l.name) for l in Location.objects.filter(type_id=1))
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(location__parent_id=self.value())
+        return queryset
+
+
+class SchoolTypeFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'School type'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'school_type'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('alp', 'ALP'),
+            ('2ndshift', '2nd shift'),
+            ('both', 'ALP & 2nd shift'),
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if not self.value():
+            return queryset
+        if self.value() == 'alp':
+            return queryset.filter(is_alp=True)
+        if self.value() == '2ndshift':
+            return queryset.filter(is_2nd_shift=True)
+        if self.value() == 'both':
+            return queryset.filter(is_alp=True, is_2nd_shift=True)
+
+
 class SchoolAdmin(ImportExportModelAdmin):
     resource_class = SchoolResource
-    list_display = ('name', 'number', 'location', )
-    search_fields = ('name', 'number', )
-    list_filter = ('location', )
+    list_display = (
+        'name',
+        'number',
+        'location',
+        'is_2nd_shift',
+        'number_students_2nd_shift',
+        'is_alp',
+        'number_students_alp',
+    )
+    search_fields = (
+        'name',
+        'number',
+    )
+    list_filter = (
+        SchoolTypeFilter,
+        GovernorateFilter,
+        'location',
+    )
+
+    actions = ('push_attendances_2ndshift', 'push_attendances_2ndshift_delay',
+               'push_attendances_alp', 'push_attendances_alp_delay',)
+
+    def push_attendances_2ndshift(self, request, queryset):
+        for school in queryset:
+            set_app_attendances(school_number=school.number)
+
+    def push_attendances_2ndshift_delay(self, request, queryset):
+        for school in queryset:
+            set_app_attendances.delay(school_number=school.number)
+
+    def push_attendances_alp(self, request, queryset):
+        for school in queryset:
+            set_app_attendances(school_number=school.number, school_type='alp')
+
+    def push_attendances_alp_delay(self, request, queryset):
+        for school in queryset:
+            set_app_attendances.delay(school_number=school.number, school_type='alp')
 
 
 class EducationLevelResource(resources.ModelResource):
@@ -169,6 +273,7 @@ admin.site.register(Section, SectionAdmin)
 admin.site.register(ClassRoom, ClassRoomAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
 admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
+admin.site.register(EducationYear)
 
 
 
