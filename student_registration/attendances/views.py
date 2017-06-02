@@ -25,6 +25,10 @@ from student_registration.registrations.models import Registration
 from .models import Attendance, Absentee
 from .serializers import AttendanceSerializer, AbsenteeSerializer
 from student_registration.attendances.tasks import set_app_attendances
+from student_registration.enrollments.models import (
+    Enrollment,
+    EducationYear,
+)
 
 
 class AttendanceViewSet(mixins.RetrieveModelMixin,
@@ -105,12 +109,13 @@ class AttendanceReportViewSet(mixins.ListModelMixin,
 
 class AttendanceView(LoginRequiredMixin, ListView):
     model = Attendance
-    template_name = 'attendances/index.html'
+    template_name = 'attendances/school.html'
 
     def get_context_data(self, **kwargs):
         school = 0
         location = 0
         location_parent = 0
+        levels_by_sections = []
 
         # if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
         if self.request.user.school:
@@ -120,7 +125,26 @@ class AttendanceView(LoginRequiredMixin, ListView):
         if location and location.parent:
             location_parent = location.parent
 
+        education_year = EducationYear.objects.get(current_year=True)
+        registrations = Enrollment.objects.filter(school_id=school, education_year=education_year)
+        registrations = registrations.filter(
+            classroom__isnull=False,
+            section__isnull=False
+        ).distinct().values(
+            'classroom__name',
+            'section__name'
+        )
+
+        for registry in registrations:
+            levels_by_sections.append({
+                'level': registry['classroom__name'],
+                'section': registry['section__name'],
+                'total_attend': 0,
+                'total_absent': 0,
+            })
+
         return {
+            'total': registrations.count(),
             'school': school,
             'location': location,
             'location_parent': location_parent,
