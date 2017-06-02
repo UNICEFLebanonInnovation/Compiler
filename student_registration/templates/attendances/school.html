@@ -1,0 +1,189 @@
+{% extends "base.online.html" %}
+
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+{% block extra_head %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-switch.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-button-group.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
+    <style>
+        .row-class {
+            border: 1px solid;
+            border-radius: 8px;
+            margin: 15px 0px;
+            cursor: pointer;
+        }
+        .btn-attendance-day.active {
+            background-color: #2aabd2;
+            color: snow;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+
+         <section class="main-content-wrapper">
+            <section id="main-content">
+                 <div class="row">
+                    <div class="col-md-12">
+                        </br>
+                    </div>
+                </div>
+            <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                          <div class="panel-heading" id="header">
+                            <ol class="breadcrumb">
+                                <li><h3 class="panel-title">{% trans "Attendance" %}</h3></li>
+                                <li>
+                                    <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">
+                                        <i class="icon-export-sign icon-white"></i>&nbsp;
+                                            {% trans "Export" %}
+                                    </a>
+                                </li>
+                            </ol>
+                            <div class="actions pull-right">
+                                <i class="fa fa-chevron-down"></i>
+                                <i class="fa fa-times"></i>
+                            </div>
+                          </div>
+                          <div class="panel-heading">
+                            <ol class="breadcrumb">
+                                <li>{{ school }}</li>
+                                <li>{{ location }}</li>
+                                <li>{{ location_parent }}</li>
+                                <li>{% trans "Total students" %} <span class="badge ttl_students">{{ total }}</span></li>
+                            </ol>
+                          </div>
+                     </div>
+                </div>
+            </div>
+            </section>
+
+            <div class="container-main" id="classes-list"></div>
+            <div id="attendance-sheet" class="row">
+                <div class="row-class">
+                    <div class="icon-Male"></div>
+                    <div></div>
+                    <div><input type="checkbox" name="status" checked="checked" class="toggle-status" /></div>
+                </div>
+                {% for row in levels_by_sections %}
+                <div class="">
+                    <div><span class="icon-male"></span></div>
+                    <div></div>
+                    <div><input type="checkbox" name="status" checked="checked" class="toggle-status" /></div>
+                </div>
+                {% endfor %}
+
+            </div>
+              <a class="btn btn-info" id="attendance-validate-all" href="#" style="display: none;">
+                <i class="icon-validation-sign icon-white"></i>&nbsp;
+                    {% trans "Validate All" %}
+              </a>
+         </section>
+
+{% endblock %}
+
+{% block extra_js %}
+    {% get_user_token request.user.id as user_token %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap-switch.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
+    <script type="text/javascript">
+        var oTable = null;
+        var db = null;
+        var language  = '{{ LANGUAGE_CODE }}';
+        var user_id = {{ request.user.id }};
+        var user_username = '{{ request.user.username }}';
+        var user_email = '{{ request.user.email }}';
+        var user_token = '{{ user_token }}';
+        var selected_school = {{ school.id }};
+        var rows = 1;
+
+        var protocol = 'http://';
+        {% if request.is_secure %}
+            protocol = 'https://';
+        {% endif %}
+        var host = '{{ request.get_host }}';
+        var synchro_path = protocol+host+'/api/attendances/';
+
+        $(document).ready(function(){
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $(document).on('click', '.row-class', function(){
+                $('.row-class').hide();
+                $(this).show();
+                $('#other-classes').show();
+                display_attendance_sheet($(this).attr('itemid'));
+            });
+
+            $("[class='toggle-status']").bootstrapSwitch();
+            $("[class='toggle-status']").on('switchChange.bootstrapSwitch', function(event, state) {
+                $("[class='status-checkbox']").bootstrapSwitch('state', state);
+            });
+        });
+
+        function display_attendance_days(selected)
+        {
+            var container = $('#attendance-days');
+            container.empty();
+            var days = new Array();
+            var store = getStoreByName('classroomsAttendances');
+            var request = store.getAll();
+            request.onsuccess = function(){
+                var result = request.result;
+                $(result).each(function(i, item){
+                    if(days[item.attendance_date] == undefined){
+                        days[item.attendance_date] = item.attendance_date;
+                        var day = $('<button>').attr('type', 'button')
+                                .addClass('btn')
+                                .addClass('btn-default')
+                                .addClass('btn-attendance-day')
+                                .attr('itemid', item.attendance_date)
+                                .text(item.attendance_date);
+                        if(selected == item.attendance_date){
+                            day.addClass('active');
+                        }
+                        container.append(day);
+                    }
+                });
+            };
+        }
+
+        function create_attendance_row(item)
+        {
+            var status = '';
+            if(item.status){
+                status = 'checked';
+            }
+            var tr = $('<tr>');
+{#            var sex_icon = $('<span>').addClass('icon-'+item.sex); //tmp#}
+            var sex_icon = $('<span>').addClass('icon-'+item.student_sex);
+            var col1 = $('<td>').append(sex_icon).append(item.student_full_name);
+            var check_input = $('<input class="status-checkbox" type="checkbox" '+status+' data-on-text="{% trans 'Present' %}" data-off-text="{% trans 'Absent' %}">');
+            var col2 = $('<td>').html(check_input);
+
+            tr.append(col1);
+            tr.append(col2);
+            $('#attendance-table').find('tbody').append(tr);
+            check_input.bootstrapSwitch();
+            check_input.on('switchChange.bootstrapSwitch', function(event, state) {
+                setAttendance(item.classroom, item.student_id, state);
+            });
+        }
+
+    </script>
+
+{% endblock %}
