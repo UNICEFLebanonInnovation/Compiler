@@ -36,35 +36,123 @@ function validateSection0()
     valid = validateTextBoxRequired('id_nationality','nationality_error',valid);
     valid = validateTextBoxRequired('id_id_type','id_type_error',valid);
 
-    if(selectedOption == 1) {
+    if(selectedOption == 1)
+    {
         valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
-        valid = validateUNCHRFormat(valid,'id_id_number');
-        var principalHouseHoldAvailable = $("#id_individual_id_number").is(":visible");
-        if(principalHouseHoldAvailable== true) {
+        if(valid)
+        {
+            valid = validateUNCHRFormat(valid,'id_id_number' , 'id_number_UNHCR_Other_format_error');
+        }
+    }
+    var principalHouseHoldAvailable = $("#id_individual_id_number").is(":visible");
+    if(principalHouseHoldAvailable== true)
+    {
         valid = validateTextBoxRequired('id_individual_id_number','individual_id_number_error',valid);
         valid = validateRepIndividualUNCHRFormat(valid,'id_individual_id_number');
-        }
-    }else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5) {
+    }
+    else if (selectedOption == 2 || selectedOption == 3 || selectedOption == 4|| selectedOption == 5) {
         valid = validateTextBoxRequired('id_id_number','id_number_UNHCR_Other_error',valid);
-        valid = validateTextBoxRequired('id_first_name','first_name_error',valid);
-        valid = validateTextBoxRequired('id_father_name','father_name_error',valid);
-        valid = validateTextBoxRequired('id_last_name','last_name_error',valid);
-        valid = validateTextBoxRequired('id_mother_fullname','mother_fullname_error',valid);
-        valid = validateTextBoxRequired('id_age','age_error',valid);
-        valid = validate_Household_age( 'dob_error',valid);
-        valid = validateTextBoxRequired('id_sex','gender_error',valid);
-        valid = validateTextBoxRequired('id_relation_to_householdhead','relationship_householdhead_error',valid);
-    }else if (selectedOption == 6) {
-        valid = validateTextBoxRequired('id_first_name','first_name_error',valid);
-        valid = validateTextBoxRequired('id_father_name','father_name_error',valid);
-        valid = validateTextBoxRequired('id_last_name','last_name_error',valid);
-        valid = validateTextBoxRequired('id_mother_fullname','mother_fullname_error',valid);
-        valid = validateTextBoxRequired('id_age','age_error',valid);
-        valid = validate_Household_age( 'dob_error',valid);
-        valid = validateTextBoxRequired('id_sex','gender_error',valid);
-        valid = validateTextBoxRequired('id_relation_to_householdhead','relationship_householdhead_error',valid);
+        if(valid && selectedOption == 3)
+        {
+            valid = validateNationalFormat(valid,'id_id_number','id_number_national_id_format_error');
+        }
+        // valid = validateTextBoxRequired('id_first_name','first_name_error',valid);
+        // valid = validateTextBoxRequired('id_father_name','father_name_error',valid);
+        // valid = validateTextBoxRequired('id_last_name','last_name_error',valid);
+        // valid = validateTextBoxRequired('id_mother_fullname','mother_fullname_error',valid);
+        // valid = validateTextBoxRequired('id_age','age_error',valid);
+        // valid = validate_Household_age( 'dob_error',valid);
+        // valid = validateTextBoxRequired('id_sex','gender_error',valid);
+        // valid = validateTextBoxRequired('id_relation_to_householdhead','relationship_householdhead_error',valid);
+    }
+    // else if (selectedOption == 6) {
+    //     valid = validateTextBoxRequired('id_first_name','first_name_error',valid);
+    //     valid = validateTextBoxRequired('id_father_name','father_name_error',valid);
+    //     valid = validateTextBoxRequired('id_last_name','last_name_error',valid);
+    //     valid = validateTextBoxRequired('id_mother_fullname','mother_fullname_error',valid);
+    //     valid = validateTextBoxRequired('id_age','age_error',valid);
+    //     valid = validate_Household_age( 'dob_error',valid);
+    //     valid = validateTextBoxRequired('id_sex','gender_error',valid);
+    //     valid = validateTextBoxRequired('id_relation_to_householdhead','relationship_householdhead_error',valid);
+    // }
+    valid = validateTextBoxRequired('id_first_name','first_name_error',valid);
+    valid = validateTextBoxRequired('id_father_name','father_name_error',valid);
+    valid = validateTextBoxRequired('id_last_name','last_name_error',valid);
+    valid = validateTextBoxRequired('id_mother_fullname','mother_fullname_error',valid);
+    valid = validateTextBoxRequired('id_age','age_error',valid);
+    valid = validate_Household_age( 'dob_error',valid);
+    valid = validateTextBoxRequired('id_sex','gender_error',valid);
+    valid = validateTextBoxRequired('id_relation_to_householdhead','relationship_householdhead_error',valid);
+
+    return valid;
+}
+
+function validateSection6()
+{
+    var valid = true ;
+    var selectedOption = $("#id_id_type").val();
+    if(selectedOption == 1)
+    {
+        valid = validateTextBoxRequired('id_id_number_duplicate','id_number_UNHCR_confirm_error',valid);
+        if(valid)
+        {
+            valid = validateUNCHRFormat(valid,'id_id_number_duplicate', 'id_number_UNHCR_confirm_format_error');
+        }
+        if(valid)
+        {
+            valid = $('#id_id_number').val() == $('#id_id_number_duplicate').val();
+            if (valid)
+            {
+                $('#id_number_UNHCR_Other_confirm_error').hide();
+            }
+            else
+            {
+                $('#id_number_UNHCR_Other_confirm_error').show();
+            }
+
+        }
+    }
+    else if(selectedOption == 3)
+    {
+        valid = validateTextBoxRequired('id_id_number_duplicate','id_number_UNHCR_confirm_error',valid);
+        if(valid)
+        {
+            valid = validateNationalFormat(valid,'id_id_number_duplicate','id_number_UNHCR_confirm_format_error');
+        }
+        if(valid)
+        {
+            valid = $('#id_id_number').val() == $('#id_id_number_duplicate').val();
+            if (valid)
+            {
+                $('#id_number_UNHCR_Other_confirm_error').hide();
+            }
+            else
+            {
+                $('#id_number_UNHCR_Other_confirm_error').show();
+            }
+        }
+    }
+    return valid;
+}
+
+function validateSection8()
+{
+    var valid = true ;
+    var val = $("#id_red_case_number").val();
+    if(val != "")
+    {
+        valid = validateRedCardCaseFormat(val);
+
     }
 
+    if (valid)
+    {
+        $('#id_red_case_number_format_error').hide();
+    }
+    else
+    {
+        $('#id_red_case_number_format_error').show();
+    }
     return valid;
 }
 
@@ -80,7 +168,7 @@ function validate_Household_age(errorID, isValid)
     return valid;
 }
 
-function validateSection13()
+function validateSection14()
 {
     var valid = true ;
         valid = validateTextBoxRequired('id_address','address_error',valid);
@@ -103,14 +191,19 @@ function validateSection13()
     return valid;
 }
 
-function validateUNCHRFormat(isValid, id)
+function validateUNCHRFormat(isValid, id , error)
 {
-    return validateCondition('id_number_UNHCR_Other_format_error', isValid, validateUNHCRNumber(id));
+    return validateCondition(error, isValid, validateUNHCRNumber(id));
 }
 function validateRepIndividualUNCHRFormat(isValid, id)
 {
     var val = $('#'+id).val();
     return validateCondition('individual_id_number_format_error', isValid, validate_individual_UNHCRNumber(val));
+}
+function validateNationalFormat(isValid, id, error)
+{
+    var val = $('#'+id).val();
+    return validateCondition(error, isValid, validate_national_id(val));
 }
 
 function validateChildIndividualUNCHRFormat(form,id, errorID, isValid)
@@ -166,7 +259,30 @@ function validateUNHCRNumber(id)
 }
 function validate_individual_UNHCRNumber(val)
 {
-    return /^[0-9]{3}-[0-9]{8}$/i.test(val);
+
+    var validrecorded =  /^LEB-[0-9]{8}$/i.test(val);
+    var validregistered = /^[0-9]{3}-[0-9]{8}$/i.test(val);
+
+
+    return validrecorded || validregistered;
+}
+function validate_national_id(val)
+{
+    return /^[0-9]{11}$/i.test(val);
+}
+
+function validateRedCardCaseFormat(val)
+{
+    var valid= /^[0-9]{16}$/i.test(val);
+
+    if (valid)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
 
 function validateTextBoxRequired(id, errorID, isValid)

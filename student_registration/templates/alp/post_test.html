@@ -17,6 +17,19 @@
         .outreach-field:focus {
             background-color: yellow;
         }
+        .field-warning {
+            background-color: red !important;
+            color: #fff;
+        }
+        .synchro-status.success {
+            background-color: #1ABB9C !important;
+        }
+        .synchro-status.failed {
+            background-color: #ac2925 !important;
+        }
+        span.required {
+            color: red;
+        }
     </style>
 {% endblock %}
 
@@ -37,7 +50,15 @@
             <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                          <div class="panel-heading" style="position: absolute; top:0px;" id="header">
+                          <div class="panel-heading">
+                              <ol class="breadcrumb">
+                                    <li><b>{% trans "ALP Registrations" %}</b></li>
+                                    <li><b>{{ school }}</b></li>
+                                    <li><b>{{ location }}</b></li>
+                                    <li><b>{{ location_parent }}</b></li>
+                              </ol>
+                          </div>
+                          <div class="panel-heading" style="position: absolute; top:50px;" id="header">
                                 <ol class="breadcrumb">
                                     <li><a>
                                         <h3 class="panel-title">{% trans "ALP Post Test" %}</h3></a></li>
@@ -78,10 +99,6 @@
                                 <thead>
                                     <tr id="thead-line-1">
                                         <th rowspan="2">&nbsp;</th>
-                                        <th rowspan="2"><label>{% trans "District" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Governorate" %}</label></th>
-                                        <th rowspan="2"><label class="col-60">{% trans "School number" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "School" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student first name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
@@ -89,8 +106,10 @@
                                         <th rowspan="2"><label>{% trans "Age" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Registered in level" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Registered in section" %}</label></th>
-                                        <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
+                                        <th colspan="5" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label class="col-100">{% trans "Refer to level" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Created by" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Modified by" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
@@ -98,10 +117,10 @@
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Math" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Total" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Arabic language corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Foreign language corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>
+{#                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Arabic language corrector" %}</label></th>#}
+{#                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Foreign language corrector" %}</label></th>#}
+{#                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>#}
+{#                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>#}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -144,6 +163,7 @@
         var table = $('#outreaches-table');
         var selectedSchool = '{{ selectedSchool }}';
         var filterSchools = true;
+        var synchronized_data = true;
         var protocol = 'http://';
         {% if request.is_secure %}
             protocol = 'https://';
@@ -165,18 +185,22 @@
                 $('body, html').scrollLeft(400);
             });
 
-            $(document).on('blur', '#post_exam_corrector_science', function(){
-                $('body, html').scrollLeft(800);
-            });
+{#            $(document).on('blur', '#post_exam_corrector_science', function(){#}
+{#                $('body, html').scrollLeft(800);#}
+{#            });#}
 
             $("#filter_school").change(function(){
                 var selected_school = $(this).val();
                // reload the page with the school id passed in post
-                url = '{% url "alp:alp_post_test" %}';
+                var url = '{% url "alp:alp_post_test" %}';
                 if(selected_school){
                     url = url+'?school='+selected_school;
                 }
-                window.location.href = url;
+                if(synchronized_data == false){
+                    alert('Please synchronize you data before leaving this page');
+                }else{
+                    window.location.href = url;
+                }
             });
 
             $(document).on('click', '#filter_cancel', function(){
@@ -223,21 +247,10 @@
                 item.find('#poat_exam_total').trigger('blur');
             });
 
-            $(document).on('blur', '.exam-corrector', function(){
-                if(parseInt($(this).val()) < 11){
-                    $(this).focus();
-                    alert('Enter the exam corrector');
-                }
-            });
-
-            $(document).on('blur', '.outreach-field-p', function(){
+            $(document).on('blur change', '.outreach-field-p', function(){
                 update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
                 flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches-p');
-            });
-
-            $(document).on('change', '.outreach-field-p', function(){
-                update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
-                flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches-p');
+                synchronized_data = false;
             });
 
             $(document).on('click', '#outreach-synchro', function(){
@@ -246,6 +259,7 @@
                 if(navigator.onLine) {
                     $(".loader").show();
                     synchronize_data(true);
+                    synchronized_data = true;
                 }else{
                     $('#alert-connection').show();
                 }
@@ -273,6 +287,7 @@
         {
             var itemid = item.id;
             var data = item;
+            data.modified_by = user_id;
             delete data.id;
 
             if(data.post_exam_result_arabic) {
@@ -296,15 +311,21 @@
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
-                      update_item_store(parseInt(itemid), 'to_update', false, 'outreaches-p');
+                    $('#line-'+itemid).removeClass('warning');
+                    $('#line-'+itemid).find('.synchro-status').removeClass('failed');
+
+                    $('#line-'+itemid).find('.synchro-status').addClass('success');
+                    $('#line-'+itemid).find('.outreach-field-p').removeClass('required');
+                    update_item_store(parseInt(itemid), 'to_update', false, 'outreaches-p');
                 },
                 error: function (response) {
+                    console.log(response);
+                    $('#line-'+itemid).addClass('warning');
+                    $('#line-'+itemid).find('.synchro-status').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
-                    $('#line-'+itemid).find('.outreach-field-p').removeClass('required');
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+itemid).find('#'+field_name).addClass('required');
                     });
-                    console.log(response);
                 }
             });
         }

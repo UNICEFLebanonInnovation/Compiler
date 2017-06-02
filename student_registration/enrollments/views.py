@@ -6,10 +6,12 @@ from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
+from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 import tablib
 import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
+from django.db.models import Q
 from import_export.formats import base_formats
 from django.core.urlresolvers import reverse
 from datetime import datetime
@@ -37,10 +39,11 @@ from student_registration.eav.models import (
 )
 from student_registration.locations.models import Location
 from student_registration.alp.models import ALPRound
-from .models import Enrollment
-from .serializers import EnrollmentSerializer
+from .models import Enrollment, LoggingStudentMove
+from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
 
 
+# todo to delete
 class EnrollmentStaffView(LoginRequiredMixin, TemplateView):
     """
     Provides the Enrollment page with lookup types in the context
@@ -70,12 +73,16 @@ class EnrollmentStaffView(LoginRequiredMixin, TemplateView):
         }
 
 
-class EnrollmentView(LoginRequiredMixin, TemplateView):
+class EnrollmentView(LoginRequiredMixin,
+                     GroupRequiredMixin,
+                     TemplateView):
     """
     Provides the enrollment page with lookup types in the context
     """
     model = Enrollment
     template_name = 'enrollments/index.html'
+
+    group_required = [u"ENROL_CREATE"]
 
     def get_context_data(self, **kwargs):
 
@@ -114,12 +121,16 @@ class EnrollmentView(LoginRequiredMixin, TemplateView):
         }
 
 
-class EnrollmentEditView(LoginRequiredMixin, TemplateView):
+class EnrollmentEditView(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         TemplateView):
     """
     Provides the enrollment page with lookup types in the context
     """
     model = Enrollment
     template_name = 'enrollments/edit.html'
+
+    group_required = [u"ENROL_EDIT"]
 
     def get_context_data(self, **kwargs):
 
@@ -127,16 +138,19 @@ class EnrollmentEditView(LoginRequiredMixin, TemplateView):
         school = 0
         location = 0
         location_parent = 0
+        total = 0
         if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
             school_id = self.request.user.school_id
         if school_id:
             school = School.objects.get(id=school_id)
+            total = self.model.objects.filter(school_id=school_id).count()
         if school and school.location:
             location = school.location
         if location and location.parent:
             location_parent = location.parent
 
         return {
+            'total': total,
             'schools': School.objects.all(),
             'school_shifts': Enrollment.SCHOOL_SHIFT,
             'school_types': Enrollment.SCHOOL_TYPE,
@@ -205,7 +219,88 @@ class EnrollmentPatchView(LoginRequiredMixin, TemplateView):
         }
 
 
+class EnrollmentGradingView(LoginRequiredMixin, TemplateView):
+
+        model = Enrollment
+        template_name = 'enrollments/grading.html'
+
+        def get_context_data(self, **kwargs):
+
+            school_id = 0
+            school = 0
+            location = 0
+            location_parent = 0
+            total = 0
+            level = int(self.request.GET.get('level', 0))
+            section = int(self.request.GET.get('section', 0))
+            queryset = []
+            if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
+                school_id = self.request.user.school_id
+            if school_id:
+                school = School.objects.get(id=school_id)
+                total = self.model.objects.filter(school_id=school_id).count()
+            if school and school.location:
+                location = school.location
+            if location and location.parent:
+                location_parent = location.parent
+            if school_id and level:
+                queryset = self.model.objects.filter(school=school_id, classroom=level).order_by('student__first_name')
+                if section:
+                    queryset = queryset.filter(section=section)
+
+            return {
+                'data': queryset,
+                'level': level,
+                'section': section,
+                'total': total,
+                'school': school,
+                'location': location,
+                'results': self.model.RESULT,
+                'location_parent': location_parent,
+                'classrooms': ClassRoom.objects.all(),
+                'sections': Section.objects.all(),
+            }
+
+
 ####################### API VIEWS #############################
+
+
+class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
+                                mixins.ListModelMixin,
+                                viewsets.GenericViewSet):
+
+    model = LoggingStudentMove
+    queryset = LoggingStudentMove.objects.all()
+    serializer_class = LoggingStudentMoveSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.request.method in ["PATCH", "POST", "PUT"]:
+            return self.queryset
+        terms = self.request.GET.get('term', 0)
+        if terms:
+            qs = self.queryset
+            for term in terms.split():
+                qs = qs.filter(
+                    Q(student__first_name__contains=term) |
+                    Q(student__father_name__contains=term) |
+                    Q(student__last_name__contains=term) |
+                    Q(student__id_number__contains=term)
+                )
+            return qs
+        return self.queryset
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('moved', 0):
+            enrollment = Enrollment.objects.get(id=request.POST.get('moved', 0))
+            enrollment.moved = True
+            enrollment.save()
+            LoggingStudentMove.objects.get_or_create(
+                enrolment_id=enrollment.id,
+                student_id=enrollment.student_id,
+                school_from_id=enrollment.school_id
+            )
+        return JsonResponse({'status': status.HTTP_200_OK})
 
 
 class EnrollmentViewSet(mixins.RetrieveModelMixin,
@@ -222,6 +317,8 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+        if self.request.GET.get('moved', 0):
+            return self.queryset
         if self.request.method in ["PATCH", "POST", "PUT"]:
             return self.queryset
         if self.request.user.school_id:
@@ -239,6 +336,13 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
         instance.save()
 
     def partial_update(self, request, *args, **kwargs):
+        if request.POST.get('moved', 0):
+            moved = LoggingStudentMove.objects.get(id=request.POST.get('moved', 0))
+            moved.school_to_id = request.POST.get('school')
+            moved.save()
+            enrollment = moved.enrolment
+            enrollment.moved = False
+            enrollment.save()
         self.serializer_class = EnrollmentSerializer
         return super(EnrollmentViewSet, self).partial_update(request)
 
@@ -269,6 +373,28 @@ class ExportViewSet(LoginRequiredMixin, ListView):
 
         data = tablib.Dataset()
         data.headers = [
+            _('Student status'),
+            _('Final Grade'),
+
+            _('Linguistic field/Arabic'),
+            _('Sociology field'),
+            _('Physical field'),
+            _('Artistic field'),
+            _('Linguistic field/Foreign language'),
+            _('Scientific domain/Mathematics'),
+            _('Scientific domain/Sciences'),
+
+            _('Biology'),
+            _('Chemistry'),
+            _('Physic'),
+            _('Science'),
+            _('Math'),
+            _('History'),
+            _('Geography'),
+            _('Education'),
+            _('Foreign language'),
+            _('Arabic'),
+
             _('ALP result'),
             _('ALP round'),
             _('ALP level'),
@@ -300,7 +426,8 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             _('School'),
             _('School number'),
             _('District'),
-            _('Governorate')
+            _('Governorate'),
+            'id'
         ]
 
         content = []
@@ -308,6 +435,29 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             if not line.student or not line.school:
                 continue
             content = [
+
+                line.exam_result,
+                line.exam_total,
+
+                line.exam_result_linguistic_ar,
+                line.exam_result_sociology,
+                line.exam_result_physical,
+                line.exam_result_artistic,
+                line.exam_result_linguistic_en,
+                line.exam_result_mathematics,
+                line.exam_result_sciences,
+
+                line.exam_result_bio,
+                line.exam_result_chemistry,
+                line.exam_result_physic,
+                line.exam_result_science,
+                line.exam_result_math,
+                line.exam_result_history,
+                line.exam_result_geo,
+                line.exam_result_education,
+                line.exam_result_language,
+                line.exam_result_arabic,
+
                 line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
                 line.last_informal_edu_round.name if line.last_informal_edu_round else '',
                 line.last_informal_edu_level.name if line.last_informal_edu_level else '',
@@ -347,6 +497,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 line.school.number,
                 line.school.location.name,
                 line.school.location.parent.name,
+                line.id
             ]
             data.append(content)
 
@@ -368,13 +519,14 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
 
         schools = self.queryset.values_list(
                         'school', 'school__number', 'school__name', 'school__location__name',
-                        'school__location__parent__name').distinct().order_by('school__number')
+                        'school__location__parent__name', 'school__number_students_2nd_shift', ).distinct().order_by('school__number')
 
         data = tablib.Dataset()
         data.headers = [
             _('CERD'),
             _('School name'),
-            _('# Students'),
+            _('# Students registered in the Compiler'),
+            _('# Students reported by the Director'),
             _('District'),
             _('Governorate'),
         ]
@@ -386,6 +538,7 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
                 school[1],
                 school[2],
                 nbr,
+                school[5],
                 school[3],
                 school[4]
             ]

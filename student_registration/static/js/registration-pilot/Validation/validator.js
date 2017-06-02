@@ -205,6 +205,79 @@ function ValidateNotFoundID(id_number , id_type)
     return isNumberValid;
 }
 
+function ValidateMissingChildID(id_number , id_type)
+{
+
+    var isNumberValid = true;
+    if(id_type == 1)
+    {
+        isNumberValid= validate_individual_UNHCRNumber(id_number);
+        if (!isNumberValid)
+        {
+            $("#st_id_number_error").show();
+        }
+        else
+        {
+            $("#st_id_number_error").hide();
+        }
+    }
+    return isNumberValid;
+}
+
+function ValidateMissingChild()
+{
+    var result = true;
+
+    var id_type = $("#st_idType").val();
+    var isIdTypeValid = true;
+    if(id_type==null)
+    {
+        isIdTypeValid= false;
+        $("#st_idType_error").show();
+    }
+    else
+    {
+        $("#st_idType_error").hide();
+    }
+
+    var id_number = $("#st_id_number").val();
+    var isNumberValid =  ValidateMissingChildID(id_number,id_type);
+
+    var isDOBValid = true;
+    if($("#st_days").val() && $("#st_months").val() && $("#st_years").val())
+    {
+
+        $("#st_dob_error").hide();
+    }
+    else
+    {
+        isDOBValid = false;
+        $("#st_dob_error").show();
+    }
+
+    var isGenderValid = true;
+    if($("#st_gender").val()==null)
+    {
+        $("#st_gender_error").show();
+    }
+    else
+    {
+        $("#st_gender_error").hide();
+    }
+
+    result = result && isIdTypeValid;
+    result = result && isNumberValid;
+    result = result && isDOBValid;
+    result = result && isGenderValid;
+
+    result = validateTextBoxRequired('st_first_name','st_first_name_error',result);
+    result = validateTextBoxRequired('st_father_name','st_father_name_error',result);
+    result = validateTextBoxRequired('st_last_name','st_last_name_error',result);
+    result = validateTextBoxRequired('st_mother_full_name','st_mother_full_name_error',result);
+
+    return result;
+}
+
 
 function ValidateHouseHoldUpdate()
 {

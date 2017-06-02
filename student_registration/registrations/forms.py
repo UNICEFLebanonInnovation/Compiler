@@ -10,6 +10,7 @@ from student_registration.registrations.models import (
 from student_registration.schools.models import School
 from student_registration.locations.models import Location
 from student_registration.students.models import Nationality
+from student_registration.students.models import IDType
 
 
 class RegisteringAdultForm(forms.ModelForm):
@@ -22,10 +23,10 @@ class RegisteringAdultForm(forms.ModelForm):
                      queryset=School.objects.all(), widget=forms.Select,
                      required=False, to_field_name='id'
                 )
-    nationality = forms.ModelChoiceField(
-                     queryset=Nationality.objects.exclude(id=5), widget=forms.Select,
-                     required=False, to_field_name='id'
-                )
+    id_type = forms.ModelChoiceField(
+        queryset=IDType.objects.filter(inuse=True), widget=forms.Select,
+        required=False, to_field_name='id'
+    )
     principal_applicant_living_in_house = forms.TypedChoiceField(
         choices=YESNO_CHOICES, widget=forms.RadioSelect, coerce=int, required=False
     )
@@ -44,11 +45,13 @@ class RegisteringAdultForm(forms.ModelForm):
                                       required=False)
     csc_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 12, 'placeholder': ''})),
                                       required=False)
+    red_case_number = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 20, 'placeholder': ''})),
+                                      required=False)
     primary_phone = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': '70123456'})),
                                     required=False)
     secondary_phone = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': '70123456'})),
                                       required=False)
-    first_name = forms.CharField(widget=forms.TextInput(attrs=({ 'placeholder': _('Enter household first name')})),
+    first_name = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _('Enter household first name')})),
                                  required=False)
     father_name = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _("Enter household father's name")})),
                                   required=False)
@@ -56,8 +59,6 @@ class RegisteringAdultForm(forms.ModelForm):
                                 required=False)
     mother_fullname = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _('Enter household mother full name')})),
                                       required=False)
-    age = forms.CharField(widget=forms.TextInput(attrs=({'placeholder': _('Enter household age')})),
-                          required=False)
     previously_registered_number = forms.CharField(widget=forms.TextInput,
                                                    required=False)
 
@@ -65,10 +66,12 @@ class RegisteringAdultForm(forms.ModelForm):
         location = args[0]['location']
         locations = args[0]['locations']
         super(RegisteringAdultForm, self).__init__(*args, **kwargs)
-        if len(locations):
-            self.fields['school'].queryset = School.objects.filter(location_id__in=locations)
-        else:
-            self.fields['school'].queryset = School.objects.filter(location_id=location)
+        self.fields['school'].queryset = School.objects.filter(in_use=True)
+        # if len(locations):
+        #     self.fields['school'].queryset = School.objects.filter(location_id__in=locations)
+        # else:
+        #     self.fields['school'].queryset = School.objects.filter(location_id=location)
+
 
     class Meta:
         model = RegisteringAdult
@@ -76,6 +79,11 @@ class RegisteringAdultForm(forms.ModelForm):
 
 
 class RegisteringChildForm(forms.ModelForm):
+
+    # birthday_year = forms.ModelChoiceField(
+    #                  queryset=Person.birthday_year.objects.filter(id=1), widget=forms.Select,
+    #                  required=False, to_field_name='id'
+    #             )
 
     def __init__(self, *args, **kwargs):
         super(RegisteringChildForm, self).__init__(*args, **kwargs)
