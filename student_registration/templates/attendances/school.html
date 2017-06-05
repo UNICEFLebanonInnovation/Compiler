@@ -60,6 +60,12 @@
                                 <li>{% trans "Total students" %} <span class="badge ttl_students">{{ total }}</span></li>
                             </ol>
                           </div>
+                          <div class="panel-heading">
+                            <ol class="breadcrumb">
+                                <li>{{ level.name }}</li>
+                                <li>{{ section.name }}</li>
+                            </ol>
+                          </div>
                      </div>
                 </div>
             </div>
@@ -67,18 +73,30 @@
 
             <div class="container-main" id="classes-list"></div>
             <div id="attendance-sheet" class="row">
-                <div class="row-class">
-                    <div class="icon-Male"></div>
-                    <div></div>
-                    <div><input type="checkbox" name="status" checked="checked" class="toggle-status" /></div>
-                </div>
+{#                <div class="row-class">#}
+{#                    <div class="icon-Male"></div>#}
+{#                    <div></div>#}
+{#                    <div><input type="checkbox" name="status" checked="checked" class="toggle-status" /></div>#}
+{#                </div>#}
+            {% if not level %}
                 {% for row in levels_by_sections %}
-                <div class="">
-                    <div><span class="icon-male"></span></div>
-                    <div></div>
-                    <div><input type="checkbox" name="status" checked="checked" class="toggle-status" /></div>
+                <div class="row row-class" itemid="{{ row.level }}" itemref="{{ row.section }}">
+                    <div class="col-sm-4 text-left">
+                        <div>{{ row.level_name }}</div>
+                        <div>{{ row.section_name }}</div>
+                    </div>
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-3">
+                        <div class="text-right">{% trans "Total Attended" %}: <span class="badge">0</span></div>
+                        <div class="text-right">{% trans "Total absentees" %}: <span class="badge">0</span></div>
+                    </div>
                 </div>
                 {% endfor %}
+            {% else %}
+
+
+
+            {% endif %}
 
             </div>
               <a class="btn btn-info" id="attendance-validate-all" href="#" style="display: none;">
@@ -123,10 +141,9 @@
             $('[data-toggle="tooltip"]').tooltip();
 
             $(document).on('click', '.row-class', function(){
-                $('.row-class').hide();
-                $(this).show();
-                $('#other-classes').show();
-                display_attendance_sheet($(this).attr('itemid'));
+                var itemid = $(this).attr('itemid');
+                var itemref = $(this).attr('itemref');
+                window.location = '{% url "attendances:attendance" %}' + '?level='+itemid + '&section='+itemref;
             });
 
             $("[class='toggle-status']").bootstrapSwitch();
@@ -134,55 +151,6 @@
                 $("[class='status-checkbox']").bootstrapSwitch('state', state);
             });
         });
-
-        function display_attendance_days(selected)
-        {
-            var container = $('#attendance-days');
-            container.empty();
-            var days = new Array();
-            var store = getStoreByName('classroomsAttendances');
-            var request = store.getAll();
-            request.onsuccess = function(){
-                var result = request.result;
-                $(result).each(function(i, item){
-                    if(days[item.attendance_date] == undefined){
-                        days[item.attendance_date] = item.attendance_date;
-                        var day = $('<button>').attr('type', 'button')
-                                .addClass('btn')
-                                .addClass('btn-default')
-                                .addClass('btn-attendance-day')
-                                .attr('itemid', item.attendance_date)
-                                .text(item.attendance_date);
-                        if(selected == item.attendance_date){
-                            day.addClass('active');
-                        }
-                        container.append(day);
-                    }
-                });
-            };
-        }
-
-        function create_attendance_row(item)
-        {
-            var status = '';
-            if(item.status){
-                status = 'checked';
-            }
-            var tr = $('<tr>');
-{#            var sex_icon = $('<span>').addClass('icon-'+item.sex); //tmp#}
-            var sex_icon = $('<span>').addClass('icon-'+item.student_sex);
-            var col1 = $('<td>').append(sex_icon).append(item.student_full_name);
-            var check_input = $('<input class="status-checkbox" type="checkbox" '+status+' data-on-text="{% trans 'Present' %}" data-off-text="{% trans 'Absent' %}">');
-            var col2 = $('<td>').html(check_input);
-
-            tr.append(col1);
-            tr.append(col2);
-            $('#attendance-table').find('tbody').append(tr);
-            check_input.bootstrapSwitch();
-            check_input.on('switchChange.bootstrapSwitch', function(event, state) {
-                setAttendance(item.classroom, item.student_id, state);
-            });
-        }
 
     </script>
 
