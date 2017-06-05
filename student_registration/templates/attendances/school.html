@@ -11,11 +11,20 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-button-group.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
     <style>
-        .row-class {
+        .row-class  {
             border: 1px solid;
             border-radius: 8px;
             margin: 15px 0px;
             cursor: pointer;
+        }
+        .row-student  {
+            border-radius: 8px;
+            margin: 15px 0px;
+            background: #f5f5f5; /* For browsers that do not support gradients */
+            background: -webkit-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Safari 5.1 to 6.0 */
+            background: -o-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Opera 11.1 to 12.0 */
+            background: -moz-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Firefox 3.6 to 15 */
+            background: linear-gradient(left top, #f5f5f5, #EDEFF1); /* Standard syntax */
         }
         .btn-attendance-day.active {
             background-color: #2aabd2;
@@ -62,8 +71,17 @@
                           </div>
                           <div class="panel-heading">
                             <ol class="breadcrumb">
-                                <li>{{ level.name }}</li>
-                                <li>{{ section.name }}</li>
+                                <li>
+                                    {{ level.name }} - {{ section.name }}
+                                    <span class="badge">{{ total_students }}</span>
+                                </li>
+                                <li>
+                                    <select name="dates" id="dates">
+                                        {% for date in dates %}
+                                            <option value="{{ date }}">{{ date }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </li>
                             </ol>
                           </div>
                      </div>
@@ -72,12 +90,7 @@
             </section>
 
             <div class="container-main" id="classes-list"></div>
-            <div id="attendance-sheet" class="row">
-{#                <div class="row-class">#}
-{#                    <div class="icon-Male"></div>#}
-{#                    <div></div>#}
-{#                    <div><input type="checkbox" name="status" checked="checked" class="toggle-status" /></div>#}
-{#                </div>#}
+            <div id="attendance-sheet" class="">
             {% if not level %}
                 {% for row in levels_by_sections %}
                 <div class="row row-class" itemid="{{ row.level }}" itemref="{{ row.section }}">
@@ -93,8 +106,21 @@
                 </div>
                 {% endfor %}
             {% else %}
-
-
+                {% for line in students %}
+                    <div class="row row-student">
+                        <div class="col-sm-2 icon-{{ line.student.sex }}"></div>
+                        <div class="col-sm-7">{{ line.student }}</div>
+                        <div class="col-sm-3">
+                            <input type="checkbox" name="status" checked="checked" itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" />
+                            <div class="absence-reasons" style="display: none;" id="reasons-{{ line.id }}">
+                                <label class="radio-inline"><input type="radio" name="sick">{% trans "Sick" %}</label>
+                                <label class="radio-inline"><input type="radio" name="no_reason">{% trans "No reason" %}</label>
+                                <label class="radio-inline"><input type="radio" name="no_transport">{% trans "No transport" %}</label>
+                                <label class="radio-inline"><input type="radio" name="other">{% trans "Other" %}</label>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
 
             {% endif %}
 
@@ -149,6 +175,12 @@
             $("[class='toggle-status']").bootstrapSwitch();
             $("[class='toggle-status']").on('switchChange.bootstrapSwitch', function(event, state) {
                 $("[class='status-checkbox']").bootstrapSwitch('state', state);
+                console.log(this);
+                if(state == false){
+                    $('.absence-reasons').show();
+                }else{
+                    $('.absence-reasons').hide();
+                }
             });
         });
 

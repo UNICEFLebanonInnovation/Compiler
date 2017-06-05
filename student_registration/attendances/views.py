@@ -146,7 +146,7 @@ class AttendanceView(LoginRequiredMixin, ListView):
         ).order_by('classroom_id')
 
         if level:
-            students = queryset.objects.filter(
+            students = queryset.filter(
                 classroom_id=level.id,
                 section_id=section.id
             ).order_by('student__first_name')
@@ -161,15 +161,27 @@ class AttendanceView(LoginRequiredMixin, ListView):
                 'total_absent': 0,
             })
 
+        import datetime
+        base = datetime.datetime.now()
+        dates = []
+        weekend = [5, 6]
+
+        for x in range(0, 30):
+            d = base - datetime.timedelta(days=x)
+            if d.weekday() not in weekend:
+                # dates.append(d.strftime('%A %D/%m/%Y'))
+                dates.append(d.strftime('%A %d/%m/%Y'))
+
         return {
             'total': queryset.count(),
-            'total_students': students.count(),
+            'total_students': students.count() if students else 0,
             'students': students,
             'school': school,
             'location': location,
             'location_parent': location_parent,
             'level': level,
             'section': section,
+            'dates': dates,
             'classrooms': ClassRoom.objects.all(),
             'sections': Section.objects.all(),
             'levels_by_sections': levels_by_sections,
