@@ -112,10 +112,13 @@ class AttendanceView(LoginRequiredMixin, ListView):
     template_name = 'attendances/school.html'
 
     def get_context_data(self, **kwargs):
+        level = 0
+        section = 0
         school = 0
         location = 0
         location_parent = 0
         levels_by_sections = []
+        students = []
 
         # if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
         if self.request.user.school:
@@ -125,31 +128,51 @@ class AttendanceView(LoginRequiredMixin, ListView):
         if location and location.parent:
             location_parent = location.parent
 
+        if self.request.GET.get('level', 0):
+            level = ClassRoom.objects.get(id=int(self.request.GET.get('level', 0)))
+        if self.request.GET.get('section', 0):
+            section = Section.objects.get(id=int(self.request.GET.get('section', 0)))
+
         education_year = EducationYear.objects.get(current_year=True)
-        registrations = Enrollment.objects.filter(school_id=school, education_year=education_year)
-        registrations = registrations.filter(
+        queryset = Enrollment.objects.filter(school_id=school, education_year=education_year)
+        registrations = queryset.filter(
             classroom__isnull=False,
             section__isnull=False
         ).distinct().values(
             'classroom__name',
-            'section__name'
-        )
+            'classroom_id',
+            'section__name',
+            'section_id'
+        ).order_by('classroom_id')
+
+        if level:
+            students = queryset.objects.filter(
+                classroom_id=level.id,
+                section_id=section.id
+            ).order_by('student__first_name')
 
         for registry in registrations:
             levels_by_sections.append({
-                'level': registry['classroom__name'],
-                'section': registry['section__name'],
+                'level_name': registry['classroom__name'],
+                'level': registry['classroom_id'],
+                'section_name': registry['section__name'],
+                'section': registry['section_id'],
                 'total_attend': 0,
                 'total_absent': 0,
             })
 
         return {
-            'total': registrations.count(),
+            'total': queryset.count(),
+            'total_students': students.count(),
+            'students': students,
             'school': school,
             'location': location,
             'location_parent': location_parent,
+            'level': level,
+            'section': section,
             'classrooms': ClassRoom.objects.all(),
-            'sections': Section.objects.all()
+            'sections': Section.objects.all(),
+            'levels_by_sections': levels_by_sections,
         }
 
 
