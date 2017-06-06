@@ -19,8 +19,7 @@ from student_registration.locations.models import Location
 from student_registration.users.models import User
 from student_registration.students.models import Student
 from django.db.models import Q
-from django.db.models import Sum
-from student_registration.attendances.tasks import set_app_attendances
+import datetime
 
 
 class OutreachResource(resources.ModelResource):
@@ -522,6 +521,67 @@ class PassedTestFilter(admin.SimpleListFilter):
         return queryset
 
 
+class FromAgeFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'From Age'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'from_age'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l, l) for l in range(0, 100))
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            now = datetime.datetime.now()
+            return queryset.filter(student__birthday_year__lte=(now.year - int(self.value())))
+
+        return queryset
+
+
+class ToAgeFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'To Age'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'to_age'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l, l) for l in range(0, 100))
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            now = datetime.datetime.now()
+            return queryset.filter(student__birthday_year__gte=(now.year - int(self.value())))
+        return queryset
+
+
 class OutreachAdmin(ImportExportModelAdmin):
     resource_class = OutreachResource
     form = OutreachForm
@@ -559,6 +619,8 @@ class OutreachAdmin(ImportExportModelAdmin):
         'not_enrolled_in_this_school',
         RegisteredInLevelFilter,
         RegisteredInSectionFilter,
+        FromAgeFilter,
+        ToAgeFilter,
         OwnerFilter,
         ModifiedByFilter,
         'created',
@@ -642,6 +704,8 @@ class CurrentOutreachAdmin(OutreachAdmin):
         GovernorateFilter,
         'student__sex',
         'student__nationality',
+        FromAgeFilter,
+        ToAgeFilter,
         OwnerFilter,
         ModifiedByFilter,
         'created',
@@ -687,10 +751,8 @@ class PreTestAdmin(OutreachAdmin):
         'level',
         'assigned_to_level',
         'student__sex',
-        # 'exam_corrector_arabic',
-        # 'exam_corrector_language',
-        # 'exam_corrector_math',
-        # 'exam_corrector_science',
+        FromAgeFilter,
+        ToAgeFilter,
         PreTestTotalFilter,
         OwnerFilter,
         ModifiedByFilter,
@@ -753,6 +815,8 @@ class CurrentRoundAdmin(OutreachAdmin):
         'refer_to_level',
         'section',
         'student__sex',
+        FromAgeFilter,
+        ToAgeFilter,
         OwnerFilter,
         ModifiedByFilter,
         'created',
@@ -811,10 +875,8 @@ class PostTestAdmin(OutreachAdmin):
         'refer_to_level',
         'section',
         'student__sex',
-        # 'post_exam_corrector_arabic',
-        # 'post_exam_corrector_language',
-        # 'post_exam_corrector_math',
-        # 'post_exam_corrector_science',
+        FromAgeFilter,
+        ToAgeFilter,
         PostTestTotalFilter,
         OwnerFilter,
         ModifiedByFilter,
