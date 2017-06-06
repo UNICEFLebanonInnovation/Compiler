@@ -1,14 +1,14 @@
 {% load staticfiles i18n %}
 {% load util_tags %}
 
-{% get_range_int 0 7 as notes1 %}
-{% get_range_int 0 7 as notes2 %}
-{% get_range_int 0 7 as notes3 %}
-{% get_range_int 0 7 as notes4 %}
-{% get_range_int 0 7 as notes5 %}
-{% get_range_int 0 7 as notes6 %}
-{% get_range_int 0 7 as notes7 %}
-{% get_range_int 0 7 as notes8 %}
+{% get_range 0 7 as notes1 %}
+{% get_range 0 7 as notes2 %}
+{% get_range 0 7 as notes3 %}
+{% get_range 0 7 as notes4 %}
+{% get_range 0 7 as notes5 %}
+{% get_range 0 7 as notes6 %}
+{% get_range 0 7 as notes7 %}
+{% get_range 0 7 as notes8 %}
 
     <tr id="line-{{ line.id }}" class="registration-line-p" itemscope="{{ line.id }}">
         <td class="synchro-status">

@@ -21,6 +21,15 @@
             background-color: red !important;
             color: #fff;
         }
+        .synchro-status.success {
+            background-color: #1ABB9C !important;
+        }
+        .synchro-status.failed {
+            background-color: #ac2925 !important;
+        }
+        span.required {
+            color: red;
+        }
     </style>
 {% endblock %}
 
@@ -238,14 +247,6 @@
                 item.find('#poat_exam_total').trigger('blur');
             });
 
-{#            $(document).on('blur', '.exam-corrector', function(){#}
-{#                if(parseInt($(this).val()) < 11){#}
-{#                    $(this).addClass('field-warning');#}
-{#                }else{#}
-{#                    $(this).removeClass('field-warning');#}
-{#                }#}
-{#            });#}
-
             $(document).on('blur change', '.outreach-field-p', function(){
                 update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
                 flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches-p');
@@ -310,15 +311,21 @@
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
-                      update_item_store(parseInt(itemid), 'to_update', false, 'outreaches-p');
+                    $('#line-'+itemid).removeClass('warning');
+                    $('#line-'+itemid).find('.synchro-status').removeClass('failed');
+
+                    $('#line-'+itemid).find('.synchro-status').addClass('success');
+                    $('#line-'+itemid).find('.outreach-field-p').removeClass('required');
+                    update_item_store(parseInt(itemid), 'to_update', false, 'outreaches-p');
                 },
                 error: function (response) {
+                    console.log(response);
+                    $('#line-'+itemid).addClass('warning');
+                    $('#line-'+itemid).find('.synchro-status').addClass('failed');
                     var required_fields = JSON.parse(response.responseText);
-                    $('#line-'+itemid).find('.outreach-field-p').removeClass('required');
                     $.each(required_fields, function(field_name, field_msg){
                         $('#line-'+itemid).find('#'+field_name).addClass('required');
                     });
-                    console.log(response);
                 }
             });
         }
