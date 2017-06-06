@@ -74,7 +74,7 @@ class OutreachSerializer(serializers.ModelSerializer):
     student_nationality = serializers.CharField(source='student.nationality')
     student_mother_nationality = serializers.CharField(source='student.mother_nationality', required=False)
     student_address = serializers.CharField(source='student.address', required=False)
-    school = serializers.IntegerField(required=True)
+    # school = serializers.IntegerField(required=True)
     school_name = serializers.CharField(source='school.name', read_only=True)
     school_number = serializers.CharField(source='school.number', read_only=True)
     section_name = serializers.CharField(source='section.name', read_only=True)
