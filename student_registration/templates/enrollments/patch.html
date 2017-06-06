@@ -418,7 +418,6 @@
                 if($(this).val()) {
                     var option = $(this).find('option:selected');
                     var age = calculateAge($(this).attr('itemscope'));
-                    update_item_store(parseInt($(this).attr('itemscope')), 'student_age', age, 'registrations');
                     var itemblock = '.student_age_'+$(this).attr('itemscope');
                     $(itemblock).val(age);
                 }
