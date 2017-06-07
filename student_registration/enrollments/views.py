@@ -100,6 +100,8 @@ class EnrollmentView(LoginRequiredMixin,
             location_parent = location.parent
 
         return {
+            'schools': School.objects.all(),
+            'school_shifts': Enrollment.SCHOOL_SHIFT,
             'school_types': Enrollment.SCHOOL_TYPE,
             'education_levels': ClassRoom.objects.all(),
             'education_results': Enrollment.RESULT,
@@ -113,8 +115,6 @@ class EnrollmentView(LoginRequiredMixin,
             'genders': Person.GENDER,
             'months': Person.MONTHS,
             'idtypes': IDType.objects.all(),
-            'columns': Attribute.objects.filter(type=Enrollment.EAV_TYPE),
-            'eav_type': Enrollment.EAV_TYPE,
             'school': school,
             'location': location,
             'location_parent': location_parent
