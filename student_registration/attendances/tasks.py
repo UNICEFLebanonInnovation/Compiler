@@ -631,7 +631,7 @@ def find_attendances_gap(days):
     from student_registration.schools.models import School
     from student_registration.attendances.models import BySchoolByDay
 
-    base = date(2017, 1, 1)
+    base = date(2016, 10, 1)
     dates = []
     weekend = [5, 6]
     for x in range(0, days):
@@ -680,7 +680,7 @@ def find_attendances_gap_grouped(days):
     from student_registration.schools.models import School
     from student_registration.attendances.models import BySchoolByDay
 
-    base = date(2017, 1, 1)
+    base = date(2016, 10, 1)
     dates = []
     weekend = [5, 6]
     for x in range(0, days):
