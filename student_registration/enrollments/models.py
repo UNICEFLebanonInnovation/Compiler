@@ -58,6 +58,12 @@ class Enrollment(TimeStampedModel):
         ('failed', _('Failed'))
     )
 
+    EXAM_RESULT = Choices(
+        ('graduated', _('Graduated')),
+        ('failed', _('Failed')),
+        ('uncompleted', _('Uncompleted')),
+    )
+
     YES_NO = Choices(
         ('yes', _('Yes')),
         ('no', _('No')),
@@ -371,7 +377,7 @@ class Enrollment(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        choices=RESULT,
+        choices=EXAM_RESULT,
         verbose_name=_('Student status')
     )
 
