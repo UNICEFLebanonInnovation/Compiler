@@ -79,7 +79,7 @@ class Outreach(TimeStampedModel):
     )
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='modifications',
     )
     school = models.ForeignKey(
