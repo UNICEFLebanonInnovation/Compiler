@@ -12,10 +12,15 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
     <style>
         .row-class  {
-            border: 1px solid;
+            font-weight: bold;
             border-radius: 8px;
             margin: 15px 0px;
             cursor: pointer;
+            background: #f5f5f5; /* For browsers that do not support gradients */
+            background: -webkit-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Safari 5.1 to 6.0 */
+            background: -o-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Opera 11.1 to 12.0 */
+            background: -moz-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Firefox 3.6 to 15 */
+            background: linear-gradient(left top, #f5f5f5, #EDEFF1); /* Standard syntax */
         }
         .row-student  {
             border-radius: 8px;
@@ -26,6 +31,9 @@
             background: -moz-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Firefox 3.6 to 15 */
             background: linear-gradient(left top, #f5f5f5, #EDEFF1); /* Standard syntax */
         }
+{#        .row-student div {#}
+{#            border: 1px solid;#}
+{#        }#}
         .btn-attendance-day.active {
             background-color: #2aabd2;
             color: snow;
@@ -43,24 +51,24 @@
                         </br>
                     </div>
                 </div>
-            <div class="row">
+                <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                          <div class="panel-heading" id="header">
-                            <ol class="breadcrumb">
-                                <li><h3 class="panel-title">{% trans "Attendance" %}</h3></li>
-                                <li>
-                                    <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">
-                                        <i class="icon-export-sign icon-white"></i>&nbsp;
-                                            {% trans "Export" %}
-                                    </a>
-                                </li>
-                            </ol>
-                            <div class="actions pull-right">
-                                <i class="fa fa-chevron-down"></i>
-                                <i class="fa fa-times"></i>
-                            </div>
-                          </div>
+{#                          <div class="panel-heading" id="header">#}
+{#                            <ol class="breadcrumb">#}
+{#                                <li><h3 class="panel-title">{% trans "Attendance" %}</h3></li>#}
+{#                                <li>#}
+{#                                    <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">#}
+{#                                        <i class="icon-export-sign icon-white"></i>&nbsp;#}
+{#                                            {% trans "Export" %}#}
+{#                                    </a>#}
+{#                                </li>#}
+{#                            </ol>#}
+{#                            <div class="actions pull-right">#}
+{#                                <i class="fa fa-chevron-down"></i>#}
+{#                                <i class="fa fa-times"></i>#}
+{#                            </div>#}
+{#                          </div>#}
                           <div class="panel-heading">
                             <ol class="breadcrumb">
                                 <li>{{ school }}</li>
@@ -72,24 +80,25 @@
                           <div class="panel-heading">
                             <ol class="breadcrumb">
                                 <li>
-                                    {{ level.name }} - {{ section.name }}
-                                    <span class="badge">{{ total_students }}</span>
-                                </li>
-                                <li>
-                                    <select name="dates" id="dates">
+                                    {% if level %}
+                                        {{ level.name }} - {{ section.name }}
+                                        <span class="badge">{{ total_students }}</span>
+                                    {% endif %}
+                                    {% if not level %}
+                                    <select name="dates" id="dates" class="form-control">
                                         {% for date in dates %}
-                                            <option value="{{ date }}">{{ date }}</option>
+                                            <option value="{{ date.value }}" {% if date.value == selected_date %}selected="selected"{% endif %}>{{ date.label }}</option>
                                         {% endfor %}
                                     </select>
+                                    {% endif %}
                                 </li>
                             </ol>
                           </div>
-                     </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
             </section>
 
-            <div class="container-main" id="classes-list"></div>
             <div id="attendance-sheet" class="">
             {% if not level %}
                 {% for row in levels_by_sections %}
@@ -99,7 +108,7 @@
                         <div>{{ row.section_name }}</div>
                     </div>
                     <div class="col-sm-4"></div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <div class="text-right">{% trans "Total Attended" %}: <span class="badge">0</span></div>
                         <div class="text-right">{% trans "Total absentees" %}: <span class="badge">0</span></div>
                     </div>
@@ -108,23 +117,31 @@
             {% else %}
                 {% for line in students %}
                     <div class="row row-student">
-                        <div class="col-sm-2 icon-{{ line.student.sex }}"></div>
-                        <div class="col-sm-7">{{ line.student }}</div>
-                        <div class="col-sm-3">
+                        <div class="col-xs-6 col-sm-2 icon-{{ line.student.sex }}"></div>
+                        <div class="col-xs-6 col-sm-7">{{ line.student }}</div>
+                        <div class="col-xs-6 col-sm-3">
                             <input type="checkbox" name="status" checked="checked" itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" />
-                            <div class="absence-reasons" style="display: none;" id="reasons-{{ line.id }}">
-                                <label class="radio-inline"><input type="radio" name="sick">{% trans "Sick" %}</label>
-                                <label class="radio-inline"><input type="radio" name="no_reason">{% trans "No reason" %}</label>
-                                <label class="radio-inline"><input type="radio" name="no_transport">{% trans "No transport" %}</label>
-                                <label class="radio-inline"><input type="radio" name="other">{% trans "Other" %}</label>
-                            </div>
+                        </div>
+                        <div class="col-sm-7 absence-reasons" style="display: none;" id="reasons-{{ line.id }}">
+                            <label class="radio-inline"><input type="radio" value="sick" name="absence_reason[{{ line.id }}]" />{% trans "Sick" %}</label>
+                            <label class="radio-inline"><input type="radio" value="no_reason" name="absence_reason[{{ line.id }}]" />{% trans "No reason" %}</label>
+                            <label class="radio-inline"><input type="radio" value="no_transport" name="absence_reason[{{ line.id }}]" />{% trans "No transport" %}</label>
+                            <label class="radio-inline"><input type="radio" value="other" name="absence_reason[{{ line.id }}]" />{% trans "Other" %}</label>
                         </div>
                     </div>
                 {% endfor %}
 
+                <div class="row" style="padding-top: 50px; padding-bottom: 50px;">
+                      <button class="btn btn-success" id="save_attendances">
+                            {% trans "Save" %}
+                      </button>
+                      <button class="btn btn-success" id="exam_day">
+                            {% trans "Exam day" %}
+                      </button>
+                </div>
             {% endif %}
-
             </div>
+
               <a class="btn btn-info" id="attendance-validate-all" href="#" style="display: none;">
                 <i class="icon-validation-sign icon-white"></i>&nbsp;
                     {% trans "Validate All" %}
@@ -145,15 +162,10 @@
     <script type="text/javascript" src="{% static 'js/bootstrap-switch.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
     <script type="text/javascript">
-        var oTable = null;
-        var db = null;
-        var language  = '{{ LANGUAGE_CODE }}';
         var user_id = {{ request.user.id }};
         var user_username = '{{ request.user.username }}';
         var user_email = '{{ request.user.email }}';
         var user_token = '{{ user_token }}';
-        var selected_school = {{ school.id }};
-        var rows = 1;
 
         var protocol = 'http://';
         {% if request.is_secure %}
@@ -169,17 +181,25 @@
             $(document).on('click', '.row-class', function(){
                 var itemid = $(this).attr('itemid');
                 var itemref = $(this).attr('itemref');
-                window.location = '{% url "attendances:attendance" %}' + '?level='+itemid + '&section='+itemref;
+                var url = '{% url "attendances:attendance" %}' + '?date='+$('#dates').val();
+                url = url + '&level='+itemid + '&section='+itemref;
+                window.location = url;
+            });
+
+            $(document).on('change', '#dates', function(){
+                if($(this).val()) {
+                    window.location = '{% url "attendances:attendance" %}' + '?date='+$(this).val();
+                }
             });
 
             $("[class='toggle-status']").bootstrapSwitch();
             $("[class='toggle-status']").on('switchChange.bootstrapSwitch', function(event, state) {
                 $("[class='status-checkbox']").bootstrapSwitch('state', state);
-                console.log(this);
+                var itemid = $(event.target).attr('itemid');
                 if(state == false){
-                    $('.absence-reasons').show();
+                    $('#reasons-'+itemid).show();
                 }else{
-                    $('.absence-reasons').hide();
+                    $('#reasons-'+itemid).hide();
                 }
             });
         });
