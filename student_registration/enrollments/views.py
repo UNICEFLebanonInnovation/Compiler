@@ -255,7 +255,7 @@ class EnrollmentGradingView(LoginRequiredMixin, TemplateView):
                 'total': total,
                 'school': school,
                 'location': location,
-                'results': self.model.RESULT,
+                'results': self.model.EXAM_RESULT,
                 'location_parent': location_parent,
                 'classrooms': ClassRoom.objects.all(),
                 'sections': Section.objects.all(),

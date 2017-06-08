@@ -250,9 +250,14 @@
         <td>
             <select class="registration-field-p" name="exam_result" id="exam_result" itemscope="{{ line.id }}">
                 <option value="0">{% trans "Student status" %}</option>
-                {% for key, item in results %}
-                    <option value="{{ key }}" {% if line.exam_result == key %}selected="selected"{% endif %}>{{ item }}</option>
-                {% endfor %}
+                {% if level == 2 or level == 3 or level == 4 %}
+                    <option value="graduated" {% if line.exam_result == "graduated" %}selected="selected"{% endif %}>{% trans "Graduated" %}</option>
+                    <option value="failed" {% if line.exam_result == "failed" %}selected="selected"{% endif %}>{% trans "Failed" %}</option>
+                    <option value="uncompleted" {% if line.exam_result == "uncompleted" %}selected="selected"{% endif %}>{% trans "Uncompleted" %}</option>
+                {% else %}
+                    <option value="graduated" {% if line.exam_result == "graduated" %}selected="selected"{% endif %}>{% trans "Graduated" %}</option>
+                    <option value="failed" {% if line.exam_result == "failed" %}selected="selected"{% endif %}>{% trans "Failed" %}</option>
+                {% endif %}
             </select>
         </td>
     </tr>
