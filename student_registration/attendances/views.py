@@ -9,6 +9,7 @@ from rest_framework import viewsets, mixins, permissions
 from rest_framework.generics import ListAPIView
 from rest_framework.decorators import detail_route, list_route
 from datetime import datetime
+import datetime
 import tablib
 import json
 from rest_framework import status
@@ -128,6 +129,14 @@ class AttendanceView(LoginRequiredMixin, ListView):
         if location and location.parent:
             location_parent = location.parent
 
+        current_date = datetime.datetime.now().strftime('%d/%m/%Y')
+        selected_date = self.request.GET.get('date', current_date)
+
+        attendances = Attendance.objects.filter(
+            school_id=school,
+            attendance_date=datetime.datetime.strptime(selected_date, '%d/%m/%Y')
+        )
+
         if self.request.GET.get('level', 0):
             level = ClassRoom.objects.get(id=int(self.request.GET.get('level', 0)))
         if self.request.GET.get('section', 0):
@@ -152,16 +161,19 @@ class AttendanceView(LoginRequiredMixin, ListView):
             ).order_by('student__first_name')
 
         for registry in registrations:
+            attendances = attendances.filter(
+                classroom_id=registry['classroom_id'],
+                section_id=registry['section_id']
+            )
             levels_by_sections.append({
                 'level_name': registry['classroom__name'],
                 'level': registry['classroom_id'],
                 'section_name': registry['section__name'],
                 'section': registry['section_id'],
-                'total_attend': 0,
-                'total_absent': 0,
+                'total_attend': attendances.filter(status=True).count(),
+                'total_absent': attendances.filter(status=False).count(),
             })
 
-        import datetime
         base = datetime.datetime.now()
         dates = []
         weekend = [5, 6]
@@ -170,7 +182,10 @@ class AttendanceView(LoginRequiredMixin, ListView):
             d = base - datetime.timedelta(days=x)
             if d.weekday() not in weekend:
                 # dates.append(d.strftime('%A %D/%m/%Y'))
-                dates.append(d.strftime('%A %d/%m/%Y'))
+                dates.append({
+                    'value': d.strftime('%d/%m/%Y'),
+                    'label': d.strftime('%A %d/%m/%Y')
+                })
 
         return {
             'total': queryset.count(),
@@ -185,6 +200,7 @@ class AttendanceView(LoginRequiredMixin, ListView):
             'classrooms': ClassRoom.objects.all(),
             'sections': Section.objects.all(),
             'levels_by_sections': levels_by_sections,
+            'selected_date': selected_date
         }
 
 
