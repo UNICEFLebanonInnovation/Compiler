@@ -7,12 +7,12 @@
 {% block extra_head %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-progressbars.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-switch.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-button-group.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
     <style>
         .row-class  {
-            font-weight: bold;
             border-radius: 8px;
             margin: 15px 0px;
             cursor: pointer;
@@ -79,19 +79,24 @@
                           </div>
                           <div class="panel-heading">
                             <ol class="breadcrumb">
+                                {% if level %}
                                 <li>
-                                    {% if level %}
-                                        {{ level.name }} - {{ section.name }}
-                                        <span class="badge">{{ total_students }}</span>
-                                    {% endif %}
-                                    {% if not level %}
+                                    <a href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to the list" %} - {{ selected_date_view }}</a>
+                                </li>
+                                <li>
+                                    {{ level.name }} - {{ section.name }}
+                                    <span class="badge">{{ total_students }}</span>
+                                </li>
+                                {% endif %}
+                                {% if not level %}
+                                <li>
                                     <select name="dates" id="dates" class="form-control">
                                         {% for date in dates %}
                                             <option value="{{ date.value }}" {% if date.value == selected_date %}selected="selected"{% endif %}>{{ date.label }}</option>
                                         {% endfor %}
                                     </select>
-                                    {% endif %}
                                 </li>
+                                {% endif %}
                             </ol>
                           </div>
                         </div>
@@ -109,8 +114,18 @@
                     </div>
                     <div class="col-sm-4"></div>
                     <div class="col-sm-4">
-                        <div class="text-right">{% trans "Total Attended" %}: <span class="badge">0</span></div>
-                        <div class="text-right">{% trans "Total absentees" %}: <span class="badge">0</span></div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ row.total_attend }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_attend|percentage:row.total }}%">
+                               {{ row.total_attend }} ({{ row.total_attend|percentage:row.total }})%
+                            </div>
+                            {{ row.total }}
+                         </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ row.total_absent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_absent|percentage:row.total }}%">
+                               {{ row.total_absent }} ({{ row.total_absent|percentage:row.total }})%
+                            </div>
+                            {{ row.total }}
+                         </div>
                     </div>
                 </div>
                 {% endfor %}
