@@ -131,6 +131,7 @@ class AttendanceView(LoginRequiredMixin, ListView):
 
         current_date = datetime.datetime.now().strftime('%d/%m/%Y')
         selected_date = self.request.GET.get('date', current_date)
+        selected_date_view = datetime.datetime.strptime(selected_date, '%d/%m/%Y').strftime('%A %d/%m/%Y')
 
         attendances = Attendance.objects.filter(
             school_id=school,
@@ -170,6 +171,7 @@ class AttendanceView(LoginRequiredMixin, ListView):
                 'level': registry['classroom_id'],
                 'section_name': registry['section__name'],
                 'section': registry['section_id'],
+                'total': queryset.filter(classroom_id=registry['classroom_id'], section_id=registry['section_id']).count(),
                 'total_attend': attendances.filter(status=True).count(),
                 'total_absent': attendances.filter(status=False).count(),
             })
@@ -200,7 +202,8 @@ class AttendanceView(LoginRequiredMixin, ListView):
             'classrooms': ClassRoom.objects.all(),
             'sections': Section.objects.all(),
             'levels_by_sections': levels_by_sections,
-            'selected_date': selected_date
+            'selected_date': selected_date,
+            'selected_date_view': selected_date_view,
         }
 
 
