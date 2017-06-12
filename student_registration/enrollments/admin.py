@@ -265,6 +265,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_informal_edu_final_result',
         FromAgeFilter,
         ToAgeFilter,
+        'exam_result',
         'created',
         'modified',
     )
