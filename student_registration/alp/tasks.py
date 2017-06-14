@@ -210,10 +210,15 @@ def matching_pretest_2ndshift_enrollments():
         'CERD (pre-test)',
         'School name ( pre-test)',
         'Student (pre-test)',
+        'Student mother fullname (pre-test)',
         'CERD (enrollment)',
         'School (enrollment)',
-        'Student (enrollment)'
+        'Student (enrollment)',
+        'Student mother fullname (enrollment)',
+        'Level',
     ]
+
+    queryset = Enrollment.objects.all()
 
     for registry in registrations:
         enrollment = None
@@ -221,8 +226,7 @@ def matching_pretest_2ndshift_enrollments():
         if not r_student or not registry.school:
             continue
         try:
-            queryset = Enrollment.objects.all()
-            if r_student.id_number and r_student.id_number not in ['0', '00', '000', '0000', '00000', '000000', '0000000', '00000000', '000000000']:
+            if r_student.id_type_id == 1 and r_student.id_number or '-' in r_student.id_number:
                 id_number_1 = r_student.id_number.replace("-", "")
                 id_number_2 = id_number_1.replace("C", "c")
                 id_number_3 = id_number_1.replace("c", "C")
@@ -239,11 +243,12 @@ def matching_pretest_2ndshift_enrollments():
                     Q(student__id_number=id_number_5)
                 )
             else:
-                enrollment = queryset.filter(
-                      student__number=r_student.number
+                continue
+                # enrollment = queryset.filter(
+                #       student__number=r_student.number
                 #     Q(student__number_part1=r_student.number_part1) |
                 #     Q(student__number_part2=r_student.number_part2)
-                )
+                # )
         except Exception as ex:
             print registry.id, ex.message
             continue
@@ -262,9 +267,12 @@ def matching_pretest_2ndshift_enrollments():
                     registry.school.number,
                     registry.school,
                     registry.student,
+                    registry.student.mother_fullname,
                     row.school.number,
                     row.school,
-                    row.student
+                    row.student,
+                    row.student.mother_fullname,
+                    row.classroom
                 ])
 
     file_format = base_formats.XLSX()
