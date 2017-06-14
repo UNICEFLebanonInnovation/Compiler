@@ -233,7 +233,7 @@ def matching_pretest_2ndshift_enrollments():
                 id_number_4 = r_student.id_number.replace("C", "c")
                 id_number_5 = r_student.id_number.replace("c", "C")
                 enrollment = queryset.filter(
-                    Q(student__number=r_student.number) |
+                    # Q(student__number=r_student.number) |
                     # Q(student__number_part1=r_student.number_part1) |
                     Q(student__id_number=r_student.id_number) |
                     Q(student__id_number=id_number_1) |
@@ -243,12 +243,13 @@ def matching_pretest_2ndshift_enrollments():
                     Q(student__id_number=id_number_5)
                 )
             else:
+                enrollment = queryset.filter(
+                    student__first_name=r_student.first_name,
+                    student__father_name=r_student.father_name,
+                    student__last_name=r_student.last_name,
+                    student__mother_fullname=r_student.mother_fullname
+                )
                 continue
-                # enrollment = queryset.filter(
-                #       student__number=r_student.number
-                #     Q(student__number_part1=r_student.number_part1) |
-                #     Q(student__number_part2=r_student.number_part2)
-                # )
         except Exception as ex:
             print registry.id, ex.message
             continue
