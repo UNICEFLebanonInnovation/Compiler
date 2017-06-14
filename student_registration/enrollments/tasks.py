@@ -49,6 +49,29 @@ def generate_2ndshift_report(school=0, location=0, email=None, user=None):
 
     data = tablib.Dataset()
     data.headers = [
+
+        _('Student status'),
+        _('Final Grade'),
+
+        _('Linguistic field/Arabic'),
+        _('Sociology field'),
+        _('Physical field'),
+        _('Artistic field'),
+        _('Linguistic field/Foreign language'),
+        _('Scientific domain/Mathematics'),
+        _('Scientific domain/Sciences'),
+
+        _('Biology'),
+        _('Chemistry'),
+        _('Physic'),
+        _('Science'),
+        _('Math'),
+        _('History'),
+        _('Geography'),
+        _('Education'),
+        _('Foreign language'),
+        _('Arabic'),
+
         _('ALP result'),
         _('ALP round'),
         _('ALP level'),
@@ -86,6 +109,29 @@ def generate_2ndshift_report(school=0, location=0, email=None, user=None):
         if not line.student or not line.school:
             continue
         content = [
+
+            line.exam_result,
+            line.exam_total,
+
+            line.exam_result_linguistic_ar,
+            line.exam_result_sociology,
+            line.exam_result_physical,
+            line.exam_result_artistic,
+            line.exam_result_linguistic_en,
+            line.exam_result_mathematics,
+            line.exam_result_sciences,
+
+            line.exam_result_bio,
+            line.exam_result_chemistry,
+            line.exam_result_physic,
+            line.exam_result_science,
+            line.exam_result_math,
+            line.exam_result_history,
+            line.exam_result_geo,
+            line.exam_result_education,
+            line.exam_result_language,
+            line.exam_result_arabic,
+
             line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
             line.last_informal_edu_round.name if line.last_informal_edu_round else '',
             line.last_informal_edu_level.name if line.last_informal_edu_level else '',
