@@ -12,7 +12,9 @@ def assign_alp_level():
     from student_registration.alp.models import Outreach, ALPRound
     alp_round = ALPRound.objects.get(current_pre_test=True)
 
-    records = Outreach.objects.filter(alp_round=alp_round)
+    records = Outreach.objects.filter(alp_round=alp_round, level__isnull=False)
+    print records.count()
+
     for record in records:
         try:
             level = record.level
@@ -23,7 +25,8 @@ def assign_alp_level():
             total = record.exam_total
 
             if 40 < total <= 80:
-                notes = [record.exam_result_arabic, record.exam_result_language, record.exam_result_math, record.exam_result_science]
+                # notes = [record.exam_result_arabic, record.exam_result_language, record.exam_result_math, record.exam_result_science]
+                notes = [record.exam_result_language, record.exam_result_math, record.exam_result_science]
                 if sum(i < 10 for i in notes) >= 2:
                     to_level = 12
                     print level.id, total, to_level

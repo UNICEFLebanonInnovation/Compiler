@@ -358,11 +358,12 @@
                     return false;
                 }
 
-                var note1 = parseFloat(item.find('#exam_result_arabic').val());
+{#                var note1 = parseFloat(item.find('#exam_result_arabic').val());#}
                 var note2 = parseFloat(item.find('#exam_result_language').val());
                 var note3 = parseFloat(item.find('#exam_result_math').val());
                 var note4 = parseFloat(item.find('#exam_result_science').val());
-                item.find('#exam_total').val(note1+note2+note3+note4);
+{#                item.find('#exam_total').val(note1+note2+note3+note4);#}
+                item.find('#exam_total').val(note2+note3+note4);
                 item.find('#exam_total').trigger('blur');
             });
 
