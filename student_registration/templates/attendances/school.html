@@ -130,12 +130,14 @@
                 </div>
                 {% endfor %}
             {% else %}
+                <form action="/api/attendances/" method="post" onsubmit="return false;" id="attendance_class">
+
                 {% for line in students %}
                     <div class="row row-student">
                         <div class="col-xs-6 col-sm-2 icon-{{ line.student.sex }}"></div>
                         <div class="col-xs-6 col-sm-7">{{ line.student }}</div>
                         <div class="col-xs-6 col-sm-3">
-                            <input type="checkbox" name="status" checked="checked" itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" />
+                            <input type="checkbox" name="status[{{ line.id }}]" checked="checked" itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" value="" />
                         </div>
                         <div class="col-sm-7 absence-reasons" style="display: none;" id="reasons-{{ line.id }}">
                             <label class="radio-inline"><input type="radio" value="sick" name="absence_reason[{{ line.id }}]" />{% trans "Sick" %}</label>
@@ -145,6 +147,7 @@
                         </div>
                     </div>
                 {% endfor %}
+                </form>
 
                 <div class="row" style="padding-top: 50px; padding-bottom: 50px;">
                       <button class="btn btn-success" id="save_attendances">
@@ -205,6 +208,25 @@
                 if($(this).val()) {
                     window.location = '{% url "attendances:attendance" %}' + '?date='+$(this).val();
                 }
+            });
+
+            $(document).on('click', '#save_attendances', function(){
+                var form = $('#attendance_class');
+                $.ajax({
+                    type: "POST",
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    cache: false,
+                    async: true,
+                    headers: getHeader(),
+                    dataType: 'json',
+                    success: function (response, result, jqXHR) {
+
+                    },
+                    error: function (response) {
+
+                    }
+                });
             });
 
             $("[class='toggle-status']").bootstrapSwitch();
