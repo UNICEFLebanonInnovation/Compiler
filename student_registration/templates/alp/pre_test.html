@@ -474,9 +474,8 @@
                 $(result).each(function(i, item){
                     rows = item.id;
                     if(item.deleted == false){
-                        if(filterSchools == false){
-                            add_table_newline(item.id, prototype, table);
-                            add_fill_line_data(item);
+                        if(item.original_id && $('#line-'+item.original_id).length){
+                            console.log('exist');
                         }else if(filterSchools == true && (parseInt(item.school) == parseInt(selectedSchool) || item.school == selectedSchool)){
                             add_table_newline(item.id, prototype, table);
                             add_fill_line_data(item);
