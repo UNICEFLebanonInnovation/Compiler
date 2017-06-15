@@ -135,9 +135,17 @@ class RegisteredInFilter(admin.SimpleListFilter):
         if self.value() and self.value() == 'pilot':
             return queryset.filter(student_registration__isnull=False)
         if self.value() and self.value() == 'alp':
-            return queryset.filter(alp_enrollment__isnull=False, alp_enrollment__deleted=False)
+            return queryset.filter(
+                alp_enrollment__isnull=False,
+                alp_enrollment__deleted=False,
+                alp_enrollment__dropout_status=False
+            )
         if self.value() and self.value() == '2ndshift':
-            return queryset.filter(student_enrollment__isnull=False, student_enrollment__deleted=False)
+            return queryset.filter(
+                student_enrollment__isnull=False,
+                student_enrollment__deleted=False,
+                student_enrollment__dropout_status=False
+            )
         return queryset
 
 
@@ -167,9 +175,17 @@ class GovernorateFilter(admin.SimpleListFilter):
         """
         if self.value():
             if request.GET.get('registered_in', None) == 'alp':
-                return queryset.filter(alp_enrollment__school__location__parent_id=self.value())
+                return queryset.filter(
+                    alp_enrollment__school__location__parent_id=self.value(),
+                    alp_enrollment__deleted=False,
+                    alp_enrollment__dropout_status=False
+                )
             elif request.GET.get('registered_in', None) == '2ndshift':
-                return queryset.filter(student_enrollment__school__location__parent_id=self.value())
+                return queryset.filter(
+                    student_enrollment__school__location__parent_id=self.value(),
+                    student_enrollment__deleted=False,
+                    student_enrollment__dropout_status=False
+                )
         return queryset
 
 
@@ -199,9 +215,17 @@ class DistrictFilter(admin.SimpleListFilter):
         """
         if self.value():
             if request.GET.get('registered_in', None) == 'alp':
-                return queryset.filter(alp_enrollment__school__location_id=self.value())
+                return queryset.filter(
+                    alp_enrollment__school__location_id=self.value(),
+                    alp_enrollment__deleted=False,
+                    alp_enrollment__dropout_status=False
+                )
             elif request.GET.get('registered_in', None) == '2ndshift':
-                return queryset.filter(student_enrollment__school__location_id=self.value())
+                return queryset.filter(
+                    student_enrollment__school__location_id=self.value(),
+                    student_enrollment__deleted = False,
+                    student_enrollment__dropout_status = False
+                )
         return queryset
 
 
@@ -231,9 +255,17 @@ class SchoolFilter(admin.SimpleListFilter):
         """
         if self.value():
             if request.GET.get('registered_in', None) == 'alp':
-                return queryset.filter(alp_enrollment__school_id=self.value())
+                return queryset.filter(
+                    alp_enrollment__school_id=self.value(),
+                    alp_enrollment__deleted=False,
+                    alp_enrollment__dropout_status=False
+                )
             elif request.GET.get('registered_in', None) == '2ndshift':
-                return queryset.filter(student_enrollment__school_id=self.value())
+                return queryset.filter(
+                    student_enrollment__school_id=self.value(),
+                    student_enrollment__deleted=False,
+                    student_enrollment__dropout_status=False
+                )
         return queryset
 
 
@@ -262,7 +294,11 @@ class EducationYearFilter(admin.SimpleListFilter):
         `self.value()`.
         """
         if self.value():
-            return queryset.filter(student_enrollment__education_year_id=self.value())
+            return queryset.filter(
+                student_enrollment__education_year_id=self.value(),
+                student_enrollment__deleted=False,
+                student_enrollment__dropout_status=False
+            )
         return queryset
 
 
@@ -291,7 +327,11 @@ class FormalEducationLevelFilter(admin.SimpleListFilter):
         `self.value()`.
         """
         if self.value():
-            return queryset.filter(student_enrollment__classroom_id=self.value())
+            return queryset.filter(
+                student_enrollment__classroom_id=self.value(),
+                student_enrollment__deleted=False,
+                student_enrollment__dropout_status=False
+            )
         return queryset
 
 
@@ -350,9 +390,17 @@ class SectionFilter(admin.SimpleListFilter):
         """
         if self.value():
             if request.GET.get('registered_in', None) == 'alp':
-                return queryset.filter(alp_enrollment__section_id=self.value())
+                return queryset.filter(
+                    alp_enrollment__section_id=self.value(),
+                    alp_enrollment__deleted=False,
+                    alp_enrollment__dropout_status=False
+                )
             elif request.GET.get('registered_in', None) == '2ndshift':
-                return queryset.filter(student_enrollment__section_id=self.value())
+                return queryset.filter(
+                    student_enrollment__section_id=self.value(),
+                    student_enrollment__deleted=False,
+                    student_enrollment__dropout_status=False
+                )
         return queryset
 
 
@@ -384,7 +432,9 @@ class ALPRoundFilter(admin.SimpleListFilter):
             if request.GET.get('registered_in', None) == 'alp':
                 return queryset.filter(
                     alp_enrollment__alp_round_id=self.value(),
-                    alp_enrollment__registered_in_level__isnull=False
+                    alp_enrollment__registered_in_level__isnull=False,
+                    alp_enrollment__deleted=False,
+                    alp_enrollment__dropout_status=False
                 )
         return queryset
 
