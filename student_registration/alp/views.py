@@ -58,8 +58,8 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
             return self.queryset
         terms = self.request.GET.get('term', 0)
         if self.request.user.school_id and terms:
-            # todo
-            qs = self.queryset.filter(school_id=self.request.user.school_id, alp_round__lt=4)
+            alp_round = ALPRound.objects.get(current_round=True)
+            qs = self.queryset.filter(school_id=self.request.user.school_id, alp_round__lt=alp_round.id)
             for term in terms.split():
                 qs = qs.filter(
                     Q(student__first_name__contains=term) |
@@ -71,8 +71,8 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         if self.request.GET.get('id', 0):
             return self.queryset.filter(id=self.request.GET.get('id', 0))
         if self.request.user.school_id:
-            # todo
-            return self.queryset.filter(school_id=self.request.user.school_id, alp_round=4)
+            alp_round = ALPRound.objects.get(current_round=True)
+            return self.queryset.filter(school_id=self.request.user.school_id, alp_round=alp_round)
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
