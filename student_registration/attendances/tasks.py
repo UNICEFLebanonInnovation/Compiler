@@ -621,3 +621,109 @@ def calculate_absentees_in_date_range(from_date, to_date, absent_threshold=10):
 
         if new:
             logger.info('New absent record for student {}'.format(student))
+
+
+@app.task
+def find_attendances_gap(days):
+    import datetime
+    import tablib
+    from import_export.formats import base_formats
+    from student_registration.schools.models import School
+    from student_registration.attendances.models import BySchoolByDay
+
+    base = date(2016, 10, 1)
+    dates = []
+    weekend = [5, 6]
+    for x in range(0, days):
+        d = base + datetime.timedelta(days=x)
+        if d.weekday() not in weekend:
+            dates.append(d)
+
+    schools = School.objects.filter(ndshift_school__isnull=False).distinct()
+
+    content = []
+    data = tablib.Dataset()
+    data.headers = [
+        'CERD',
+        'School name',
+        'District',
+        'Governorate',
+        'date',
+    ]
+
+    for d in dates:
+        for school in schools:
+            # print d, school
+            try:
+                attendance = BySchoolByDay.objects.get(school_id=school.id, attendance_date=d)
+            except BySchoolByDay.DoesNotExist:
+                content = [
+                    school.number,
+                    school.name,
+                    school.location,
+                    school.location.parent,
+                    d
+                ]
+                data.append(content)
+
+    file_format = base_formats.XLSX()
+    file_object = open("attendances_gap.xlsx", "w")
+    file_object.write(file_format.export_data(data))
+    file_object.close()
+
+
+@app.task
+def find_attendances_gap_grouped(days):
+    import datetime
+    import tablib
+    from import_export.formats import base_formats
+    from student_registration.schools.models import School
+    from student_registration.attendances.models import BySchoolByDay
+
+    base = date(2016, 10, 1)
+    dates = []
+    weekend = [5, 6]
+    for x in range(0, days):
+        d = base + datetime.timedelta(days=x)
+        if d.weekday() not in weekend:
+            dates.append(d)
+
+    schools = School.objects.filter(ndshift_school__isnull=False).distinct()
+
+    content = []
+    data = tablib.Dataset()
+    data.headers = [
+        'CERD',
+        'School name',
+        'District',
+        'Governorate',
+        'total'
+    ]
+
+    for school in schools:
+        ctr = 0
+        for d in dates:
+            try:
+                attendance = BySchoolByDay.objects.get(school_id=school.id, attendance_date=d)
+            except BySchoolByDay.DoesNotExist:
+                ctr += 1
+
+        data.append([
+                        school.number,
+                        school.name,
+                        school.location,
+                        school.location.parent,
+                        ctr
+                    ])
+
+    file_format = base_formats.XLSX()
+    file_object = open("attendances_gap_grouped_by_school.xlsx", "w")
+    file_object.write(file_format.export_data(data))
+    file_object.close()
+
+
+
+
+
+
+
