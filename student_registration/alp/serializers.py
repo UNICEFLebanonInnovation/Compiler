@@ -324,8 +324,9 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             #     instance.exam_corrector_math = validated_data['exam_corrector_math']
             # if 'exam_corrector_science' in validated_data:
             #     instance.exam_corrector_science = validated_data['exam_corrector_science']
+
             if 'modified_by' in validated_data:
-                instance.modified_by_id = validated_data['modified_by']
+                instance.modified_by = validated_data['modified_by']
 
             instance.save()
 
