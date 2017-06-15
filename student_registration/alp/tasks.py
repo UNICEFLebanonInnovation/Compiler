@@ -236,14 +236,17 @@ def matching_pretest_2ndshift_enrollments():
                 id_number_4 = r_student.id_number.replace("C", "c")
                 id_number_5 = r_student.id_number.replace("c", "C")
                 enrollment = queryset.filter(
-                    # Q(student__number=r_student.number) |
-                    # Q(student__number_part1=r_student.number_part1) |
                     Q(student__id_number=r_student.id_number) |
                     Q(student__id_number=id_number_1) |
                     Q(student__id_number=id_number_2) |
                     Q(student__id_number=id_number_3) |
                     Q(student__id_number=id_number_4) |
-                    Q(student__id_number=id_number_5)
+                    Q(student__id_number=id_number_5) |
+                    Q(Q(student__first_name=r_student.first_name) &
+                      Q(student__father_name=r_student.father_name) &
+                      Q(student__last_name=r_student.last_name) &
+                      Q(student__mother_fullname=r_student.mother_fullname)
+                      )
                 )
             else:
                 enrollment = queryset.filter(
@@ -257,14 +260,6 @@ def matching_pretest_2ndshift_enrollments():
             continue
 
         if enrollment and not enrollment.count() > 2:
-            # data.append([
-            #     registry.school.number,
-            #     registry.school,
-            #     registry.student,
-            #     enrollment.school.number,
-            #     enrollment.school,
-            #     enrollment.student
-            # ])
             for row in enrollment:
                 data.append([
                     registry.school.number,
@@ -317,7 +312,8 @@ def matching_pretest_alp_rounds():
         if not r_student or not registry.school:
             continue
         try:
-            if r_student.id_type_id == 1 and r_student.id_number or '-' in r_student.id_number:
+            # if r_student.id_type_id == 1 and r_student.id_number or '-' in r_student.id_number:
+            if not r_student.id_type_id == 6:
                 id_number_1 = r_student.id_number.replace("-", "")
                 id_number_2 = id_number_1.replace("C", "c")
                 id_number_3 = id_number_1.replace("c", "C")
@@ -329,7 +325,12 @@ def matching_pretest_alp_rounds():
                     Q(student__id_number=id_number_2) |
                     Q(student__id_number=id_number_3) |
                     Q(student__id_number=id_number_4) |
-                    Q(student__id_number=id_number_5)
+                    Q(student__id_number=id_number_5) |
+                    Q(Q(student__first_name=r_student.first_name) &
+                      Q(student__father_name=r_student.father_name) &
+                      Q(student__last_name=r_student.last_name) &
+                      Q(student__mother_fullname=r_student.mother_fullname)
+                      )
                 )
             else:
                 enrollment = queryset.filter(
