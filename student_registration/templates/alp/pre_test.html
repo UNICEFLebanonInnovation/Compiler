@@ -477,7 +477,7 @@
                         if(filterSchools == false){
                             add_table_newline(item.id, prototype, table);
                             add_fill_line_data(item);
-                        }else if(filterSchools == true && parseInt(item.school) == parseInt(selectedSchool)){
+                        }else if(filterSchools == true && (parseInt(item.school) == parseInt(selectedSchool) || item.school == selectedSchool)){
                             add_table_newline(item.id, prototype, table);
                             add_fill_line_data(item);
                         }

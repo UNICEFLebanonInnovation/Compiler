@@ -291,8 +291,9 @@ class PreTestView(LoginRequiredMixin,
             alp_round=alp_round,
         ).values_list('school_id').order_by('school__number').distinct('school__number')
 
-        data = Outreach.objects.exclude(owner__partner_id=None)
-        data = data.filter(school_id=school_id, alp_round=alp_round)
+        if school_id:
+            data = Outreach.objects.exclude(owner__partner_id=None)
+            data = data.filter(school_id=school_id, alp_round=alp_round)
 
         if school_id:
             school = School.objects.get(id=school_id)
