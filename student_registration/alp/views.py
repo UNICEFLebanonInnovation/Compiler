@@ -58,8 +58,8 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
             return self.queryset
         terms = self.request.GET.get('term', 0)
         if self.request.user.school_id and terms:
-            # todo
-            qs = self.queryset.filter(school_id=self.request.user.school_id, alp_round__lt=4)
+            alp_round = ALPRound.objects.get(current_round=True)
+            qs = self.queryset.filter(school_id=self.request.user.school_id, alp_round__lt=alp_round.id)
             for term in terms.split():
                 qs = qs.filter(
                     Q(student__first_name__contains=term) |
@@ -71,8 +71,8 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         if self.request.GET.get('id', 0):
             return self.queryset.filter(id=self.request.GET.get('id', 0))
         if self.request.user.school_id:
-            # todo
-            return self.queryset.filter(school_id=self.request.user.school_id, alp_round=4)
+            alp_round = ALPRound.objects.get(current_round=True)
+            return self.queryset.filter(school_id=self.request.user.school_id, alp_round=alp_round)
 
     def delete(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
@@ -291,8 +291,10 @@ class PreTestView(LoginRequiredMixin,
             alp_round=alp_round,
         ).values_list('school_id').order_by('school__number').distinct('school__number')
 
-        data = Outreach.objects.exclude(owner__partner_id=None)
-        data = data.filter(school_id=school_id, alp_round=alp_round)
+        if school_id:
+            data = Outreach.objects.filter(school_id=school_id, alp_round=alp_round)
+            # data = Outreach.objects.exclude(owner__partner_id=None)
+            # data = data.filter(school_id=school_id, alp_round=alp_round)
 
         if school_id:
             school = School.objects.get(id=school_id)
