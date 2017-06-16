@@ -8,6 +8,12 @@
 
     <tr id="line-{{ line.id }}" class="outreach-line-p" itemscope="{{ line.id }}">
         <td class="synchro-status">
+            {% if request.user.id == line.owner.id %}
+            <button class="btn btn-danger delete-outreach-row" itemscope="{{ line.id }}">
+                <i class="icon-trash icon-white"></i>
+                {% trans "Delete" %}
+            </button>
+            {% endif %}
             &nbsp;<input type="hidden" name="id" value="{{ line.id }}" class="outreach-field-id" />
             <span class="student_fullname" style="display: none;">{{ line.student_fullname }}</span>
         </td>
