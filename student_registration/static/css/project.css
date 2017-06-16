@@ -110,6 +110,20 @@ input.required, select.required {
   vertical-align: middle;
   background-image: url("../images/icon-Female.png");
 }
+.icon-check {
+  background-position: 0px 0px;
+  width: 55px;
+  height: 55px;
+  vertical-align: middle;
+  background-image: url("../images/icon-check.png");
+}
+.icon-2-check {
+  background-position: 0px 0px;
+  width: 55px;
+  height: 55px;
+  vertical-align: middle;
+  background-image: url("../images/icon-2-check.png");
+}
 
 .inlineForm {
     color: #7b7b7b;
