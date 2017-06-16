@@ -34,11 +34,6 @@
               <div class="count">{{ females|intcomma }}</div>
 {#              <span class="count_bottom"><i class="green">4% </i> From Yesterday</span>#}
             </div>
-             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-user"></i>{% trans 'Total Schools' %}</span>
-              <div class="count">{{ schools|intcomma }}</div>
-{#              <span class="count_bottom"><i class="green">4% </i> From Yesterday</span>#}
-            </div>
 
          </div>
 
@@ -62,13 +57,23 @@
                         <thead>
                             <tr>
                                 <th rowspan="2">Governorate</th>
-                                <th colspan="11"># of children by Grade</th>
+                                <th colspan="23"># of children by Grade</th>
                             </tr>
                             <tr>
                                 {% for level in education_levels %}
-                                    <th>{{ level.name }}</th>
+                                    <th colspan="2">{{ level.name }}</th>
                                 {% endfor %}
-                                <th>Total</th>
+                                <th colspan="2">Total</th>
+                                <th rowspan="2">Total</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                {% for level in education_levels %}
+                                    <th>Male</th>
+                                    <th>Female</th>
+                                {% endfor %}
+                                    <th>Male</th>
+                                    <th>Female</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -77,10 +82,22 @@
                                 <td><strong>{{ gov.name }}</strong></td>
                                 {% for level in education_levels %}
                                 <td>
-                                    {% enrollment_by_gov_by_grade enrollments gov.id level.id as number %}
+                                    {% enrollment_by_gov_by_grade_by_gender enrollments gov.id level.id 'Male' as number %}
+                                    {{ number }}
+                                </td>
+                                <td>
+                                    {% enrollment_by_gov_by_grade_by_gender enrollments gov.id level.id 'Female' as number %}
                                     {{ number }}
                                 </td>
                                 {% endfor %}
+                                <td>
+                                    {% enrollment_by_gov_by_grade_by_gender enrollments gov.id 0 'Male' as number %}
+                                    {{ number }}
+                                </td>
+                                <td>
+                                    {% enrollment_by_gov_by_grade_by_gender enrollments gov.id 0 'Female' as number %}
+                                    {{ number }}
+                                </td>
                                 <td>
                                     {% enrollment_by_gov_by_grade enrollments gov.id 0 as number %}
                                     {{ number }}
@@ -91,13 +108,17 @@
                                 <td><strong>Total</strong></td>
                                 {% for level in education_levels %}
                                 <td>
-                                    {% enrollment_by_gov_by_grade enrollments 0 level.id as number %}
+                                    {% enrollment_by_gov_by_grade_by_gender enrollments 0 level.id 'Male' as number %}
+                                    {{ number }}
+                                </td>
+                                <td>
+                                    {% enrollment_by_gov_by_grade_by_gender enrollments 0 level.id 'Female' as number %}
                                     {{ number }}
                                 </td>
                                 {% endfor %}
-                                <td>
-                                    {{ registrations }}
-                                </td>
+                                <td>{{ males }}</td>
+                                <td>{{ females }}</td>
+                                <td>{{ registrations }}</td>
                             </tr>
                         </tbody>
                     </table>
