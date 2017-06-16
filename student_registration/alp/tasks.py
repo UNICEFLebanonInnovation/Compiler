@@ -24,68 +24,80 @@ def assign_alp_level():
 
             total = record.exam_total
 
-            if 40 < total <= 80:
+            # if 40 < total <= 80:
                 # notes = [record.exam_result_arabic, record.exam_result_language, record.exam_result_math, record.exam_result_science]
-                notes = [record.exam_result_language, record.exam_result_math, record.exam_result_science]
-                if sum(i < 10 for i in notes) >= 2:
-                    to_level = 12
-                    print level.id, total, to_level
-                    record.assigned_to_level_id = to_level
-                    record.save()
-                    continue
+                # notes = [record.exam_result_language, record.exam_result_math, record.exam_result_science]
+                # if sum(i < 10 for i in notes) >= 2:
+                #     to_level = 12
+                #     print level.id, total, to_level
+                #     record.assigned_to_level_id = to_level
+                #     record.save()
+                #     continue
 
             if level.id == 1 or level.id == 2 or level.id == 3:
                 if total <= 5:
                     to_level = 10
-                elif 5 < total <= 20:
+                elif 5 < total <= 15:
                     to_level = 11
-                elif 20 < total <= 40:
+                elif 15 < total <= 30:
                     to_level = 12
-                elif 40 < total <= 80:
+                elif 30 < total <= 60:
                     to_level = 2
-                elif 80 < total <= 120:
+                elif 60 < total <= 90:
                     to_level = 3
 
             if level.id == 4 or level.id == 5 or level == 6:
                 if total <= 5:
                     to_level = 10
-                elif 5 < total <= 20:
+                elif 5 < total <= 15:
                     to_level = 11
-                elif 20 < total <= 40:
+                elif 15 < total <= 30:
                     to_level = 12
-                elif 40 < total <= 80:
+                elif 30 < total <= 35:
+                    to_level = 10
+                elif 35 < total <= 45:
+                    to_level = 11
+                elif 45 < total <= 60:
+                    to_level = 12
+                elif 60 < total <= 90:
                     to_level = 2
-                elif 80 < total <= 120:
+                elif 90 < total <= 120:
                     to_level = 3
-                elif 120 < total <= 160:
+                elif 120 < total <= 150:
                     to_level = 4
-                elif 160 < total <= 200:
+                elif 150 < total <= 180:
                     to_level = 5
-                elif 200 < total <= 240:
+                elif 180 < total <= 210:
                     to_level = 6
 
             if level.id == 7 or level.id == 8 or level.id == 9:
                 if total <= 5:
                     to_level = 10
-                elif 5 < total <= 20:
+                elif 5 < total <= 15:
                     to_level = 11
-                elif 20 < total <= 40:
+                elif 15 < total <= 30:
                     to_level = 12
-                elif 40 < total <= 80:
+                elif 30 < total <= 35:
+                    to_level = 10
+                elif 35 < total <= 45:
+                    to_level = 11
+                elif 45 < total <= 60:
+                    to_level = 12
+                elif 60 < total <= 90:
                     to_level = 2
-                elif 80 < total <= 120:
+                elif 90 < total <= 120:
                     to_level = 3
-                elif 120 < total <= 160:
+                elif 120 < total <= 150:
                     to_level = 4
-                elif 160 < total <= 200:
+                elif 150 < total <= 180:
                     to_level = 5
-                elif 200 < total <= 240:
+                elif 180 < total <= 210:
                     to_level = 6
-                elif 240 < total <= 280:
+                elif 210 < total <= 240:
                     to_level = 7
-                elif 280 < total <= 320:
+                elif 240 < total <= 270:
                     to_level = 8
-                elif 320 < total <= 360:
+                elif 270 < total <= 300:
                     to_level = 9
 
             if to_level:
