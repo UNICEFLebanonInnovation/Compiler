@@ -38,6 +38,11 @@
             background-color: #2aabd2;
             color: snow;
         }
+        .s-lft {
+            border-radius: 0 8px 8px 0;
+            height: 75px;
+            background: #0d47a1;
+        }
     </style>
 {% endblock %}
 
@@ -112,20 +117,31 @@
                         <div>{{ row.level_name }}</div>
                         <div>{{ row.section_name }}</div>
                     </div>
-                    <div class="col-sm-4"></div>
                     <div class="col-sm-4">
+                            <span class="icon-check"></span>
+                            <span class="icon-2-check"></span>
+                            {% if row.validation_date %}
+
+                            {% elif row.total_attend or row.total_absent %}
+
+                            {% else %}
+
+                            {% endif %}
+                    </div>
+                    <div class="col-sm-3">
                         <div class="progress">
                             <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ row.total_attend }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_attend|percentage:row.total }}%">
                                {{ row.total_attend }} ({{ row.total_attend|percentage:row.total }})%
                             </div>
-                            {{ row.total }}
                          </div>
                         <div class="progress">
                             <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ row.total_absent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_absent|percentage:row.total }}%">
                                {{ row.total_absent }} ({{ row.total_absent|percentage:row.total }})%
                             </div>
-                            {{ row.total }}
                          </div>
+                    </div>
+                    <div class="col-sm-1 s-lft">
+                        <span class="badge" style="vertical-align: middle;">{{ row.total }}</span>
                     </div>
                 </div>
                 {% endfor %}
