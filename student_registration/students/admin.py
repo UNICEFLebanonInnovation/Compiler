@@ -179,10 +179,14 @@ class ALPhaseFilter(admin.SimpleListFilter):
         provided in the query string and retrievable via
         `self.value()`.
         """
+        alp_round = request.GET.get('alp_round', 0)
         if self.value():
             queryset = queryset.filter(
+                alp_enrollment__isnull=False,
+                alp_enrollment__alp_round=alp_round,
                 alp_enrollment__deleted=False,
-                alp_enrollment__dropout_status=False
+                alp_enrollment__dropout_status=False,
+
             )
         if self.value() and self.value() == 'outreach':
             users = User.objects.filter(groups__name__in=['PARTNER'])
@@ -198,7 +202,6 @@ class ALPhaseFilter(admin.SimpleListFilter):
             )
         if self.value() and self.value() == 'current':
             return queryset.filter(
-                alp_enrollment__alp_round=4,
                 alp_enrollment__registered_in_level__isnull=False,
             )
         if self.value() and self.value() == 'posttest':
