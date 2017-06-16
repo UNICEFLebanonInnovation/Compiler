@@ -166,6 +166,10 @@ class AttendanceView(LoginRequiredMixin, ListView):
                 classroom_id=registry['classroom_id'],
                 section_id=registry['section_id']
             )
+            validation_date = ''
+            validation = attendances.filter(validation_date__isnull=False)
+            if validation.count():
+                validation_date = validation[0]
             levels_by_sections.append({
                 'level_name': registry['classroom__name'],
                 'level': registry['classroom_id'],
@@ -174,6 +178,7 @@ class AttendanceView(LoginRequiredMixin, ListView):
                 'total': queryset.filter(classroom_id=registry['classroom_id'], section_id=registry['section_id']).count(),
                 'total_attend': attendances.filter(status=True).count(),
                 'total_absent': attendances.filter(status=False).count(),
+                'validation_date': validation_date
             })
 
         base = datetime.datetime.now()
