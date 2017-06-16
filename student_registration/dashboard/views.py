@@ -646,6 +646,8 @@ class RegistrationsALPPreTestView(LoginRequiredMixin,
                 'students_by_idtype': students_by_idtype,
                 'students_by_nationality': students_by_nationality,
                 'schools_per_gov': schools_per_gov,
+                'enrollments': self.queryset,
+                'governorates': governorates,
         }
 
 

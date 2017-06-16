@@ -136,10 +136,12 @@ def alp_by_gov_by_grade(registrations, gov, level):
 
 
 @register.assignment_tag
-def alp_by_gov_by_age(registrations, gov, age):
+def alp_by_gov_by_age(registrations, gov, age=None):
     now = datetime.datetime.now()
     if not gov:
         return registrations.filter(student__birthday_year=(now.year - age)).count()
+    elif age == 0:
+        return registrations.filter(school__location__parent_id=gov, student__birthday_year=(now.year - age)).count()
     elif not age:
         return registrations.filter(school__location__parent_id=gov).count()
     return registrations.filter(school__location__parent_id=gov, student__birthday_year=(now.year - age)).count()
