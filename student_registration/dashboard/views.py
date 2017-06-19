@@ -648,6 +648,7 @@ class RegistrationsALPPreTestView(LoginRequiredMixin,
                 'schools_per_gov': schools_per_gov,
                 'enrollments': self.queryset,
                 'governorates': governorates,
+                'education_levels': EducationLevel.objects.all(),
         }
 
 
