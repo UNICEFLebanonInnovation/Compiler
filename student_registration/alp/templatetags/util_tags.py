@@ -167,6 +167,17 @@ def alp_by_gov_by_assignedlevel_by_gender(registrations, gov, level, gender=None
 
 
 @register.assignment_tag
+def alp_by_gov_by_referredlevel_by_gender(registrations, gov, level, gender=None):
+    if gender:
+        registrations = registrations.filter(student__sex=gender)
+    if not gov:
+        return registrations.filter(refer_to_level=level).count()
+    elif not level:
+        return registrations.filter(school__location__parent_id=gov).count()
+    return registrations.filter(school__location__parent_id=gov, refer_to_level=level).count()
+
+
+@register.assignment_tag
 def alp_by_gov_by_age(registrations, gov, age=None):
     now = datetime.datetime.now()
     if not gov:
