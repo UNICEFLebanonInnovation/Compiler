@@ -13,6 +13,7 @@ from student_registration.locations.models import (
 from student_registration.schools.models import (
     School,
     EducationLevel,
+    ClassLevel,
     ClassRoom,
 )
 from student_registration.students.models import (
@@ -726,6 +727,9 @@ class RegistrationsALPPostTestView(LoginRequiredMixin,
                 'students_by_idtype': students_by_idtype,
                 'students_by_nationality': students_by_nationality,
                 'schools_per_gov': schools_per_gov,
+                'enrollments': self.queryset,
+                'governorates': governorates,
+                'education_levels': ClassLevel.objects.all()
         }
 
 
