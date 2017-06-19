@@ -118,12 +118,10 @@
                         <div>{{ row.section_name }}</div>
                     </div>
                     <div class="col-sm-4">
-                            <span class="icon-check"></span>
-                            <span class="icon-2-check"></span>
                             {% if row.validation_date %}
-
+                                <span class="icon-2-check"></span>
                             {% elif row.total_attend or row.total_absent %}
-
+                                <span class="icon-check"></span>
                             {% else %}
 
                             {% endif %}
@@ -141,7 +139,7 @@
                          </div>
                     </div>
                     <div class="col-sm-1 s-lft">
-                        <span class="badge" style="vertical-align: middle;">{{ row.total }}</span>
+                        <span class="" style="vertical-align: middle; color: #fff; font-size: 45px;">{{ row.total }}</span>
                     </div>
                 </div>
                 {% endfor %}
