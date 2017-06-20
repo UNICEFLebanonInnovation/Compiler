@@ -47,12 +47,8 @@ def assign_alp_level():
                     to_level = 3
 
             if level.id == 4 or level.id == 5 or level == 6:
-                if total <= 5:
+                if total <= 30:
                     to_level = 10
-                elif 5 < total <= 15:
-                    to_level = 11
-                elif 15 < total <= 30:
-                    to_level = 12
                 elif 30 < total <= 35:
                     to_level = 10
                 elif 35 < total <= 45:
@@ -71,12 +67,8 @@ def assign_alp_level():
                     to_level = 6
 
             if level.id == 7 or level.id == 8 or level.id == 9:
-                if total <= 5:
+                if total <= 30:
                     to_level = 10
-                elif 5 < total <= 15:
-                    to_level = 11
-                elif 15 < total <= 30:
-                    to_level = 12
                 elif 30 < total <= 35:
                     to_level = 10
                 elif 35 < total <= 45:
