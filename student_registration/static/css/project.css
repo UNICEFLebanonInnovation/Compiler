@@ -124,6 +124,24 @@ input.required, select.required {
   vertical-align: middle;
   background-image: url("../images/icon-2-check.png");
 }
+.icon-date-time {
+  background-position: 0px 0px;
+  width: 50px;
+  height: 50px;
+  vertical-align: middle;
+  background-image: url("../images/icon-date-time.png");
+  background-size: 50px 50px;
+  background-repeat: no-repeat;
+}
+.icon-school {
+  background-position: 0px 0px;
+  width: 51px;
+  height: 51px;
+  vertical-align: middle;
+  background-image: url("../images/icon-school.png");
+  background-size: 51px 51px;
+  background-repeat: no-repeat;
+}
 
 .inlineForm {
     color: #7b7b7b;
