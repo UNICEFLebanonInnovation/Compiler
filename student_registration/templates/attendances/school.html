@@ -24,11 +24,18 @@
             background: linear-gradient(left top, #f5f5f5, #EDEFF1); /* Standard syntax */
         }
         .row-class div {
-            border: 1px solid;
+{#            border: 1px solid;#}
         }
         .row-class .s-col {
             height: 75px;
             max-height: 75px;
+        }
+        .row-class .progress {
+            color: #2aabd2 !important;
+            border: 1px solid #2aabd2;
+        }
+        .row-class .progress .progress-bar {
+            color: #2aabd2 !important;
         }
         .row-student  {
             border-radius: 8px;
@@ -44,7 +51,7 @@
 {#        }#}
         .btn-attendance-day.active {
             background-color: #2aabd2;
-            color: snow;
+            color: red;
         }
         .s-lft {
         }
@@ -54,7 +61,7 @@
         }
         .s-rgt {
             border-radius: 0 8px 8px 0;
-            background: #0d47a1;
+            background: #2aabd2;
         }
         .row-class .s-progs {
             padding-top: 5px;
@@ -131,7 +138,7 @@
             {% if not level %}
                 {% for row in levels_by_sections %}
                 <div class="row row-class" itemid="{{ row.level }}" itemref="{{ row.section }}">
-                    <div class="col-xs-4 col-sm-4 col-md-4 s-lft s-col">
+                    <div class="col-xs-4 col-sm-4 col-md-4 s-lft s-col" style="border-left: 10px solid #2aabd2;">
                         <div>{{ row.level_name }}</div>
                         <div>{{ row.section_name }}</div>
                     </div>
@@ -141,7 +148,7 @@
                         {% elif row.total_attend or row.total_absent %}
                             <span class="icon-check"></span>
                         {% else %}
-
+                            <span class="icon-pending-check"></span>
                         {% endif %}
                     </div>
                     <div class="col-xs-3 col-sm-3 col-md-3 s-progs s-col">
@@ -157,7 +164,8 @@
                          </div>
                     </div>
                     <div class="col-xs-2 col-sm-2 col-md-2 s-rgt s-col">
-                        <span class="" style="vertical-align: middle; color: #fff; font-size: 45px;">{{ row.total }}</span>
+                        <span class="icon-students"></span>
+                        <span style="font-size: 30px; color: #fff; position: absolute; bottom: -5px; left: 22px;">{{ row.total }}</span>
                     </div>
                 </div>
                 {% endfor %}
