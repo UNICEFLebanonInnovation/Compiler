@@ -37,7 +37,16 @@ class UserResource(resources.ModelResource):
 class UserAdmin(ImportExportModelAdmin):
     resource_class = UserResource
     filter_horizontal = ('groups', 'user_permissions', 'locations', 'schools')
-    list_display = ('username', 'first_name', 'last_name', 'email', 'school', 'location', 'phone_number',)
+    list_display = (
+        'username',
+        'first_name',
+        'last_name',
+        'is_active',
+        'email',
+        'school',
+        'location',
+        'phone_number',
+    )
     search_fields = (
         u'username',
         u'school__name',
@@ -49,17 +58,21 @@ class UserAdmin(ImportExportModelAdmin):
         'groups',
         'school',
         'location',
+        'is_active',
     )
-    # fieldsets = (
-    #     ('School', {
-    #         'classes': ('collapse',),
-    #         'fields': ('school', 'schools'),
-    #     }),
-    #     ('Location', {
-    #         'classes': ('collapse',),
-    #         'fields': ('location', 'locations'),
-    #     }),
-    # )
+    actions = ('activate', 'disable',)
+
+    def activate(self, request, queryset):
+        queryset.update(is_active=True)
+        # for user in queryset:
+        #     user.is_active = True
+        #     user.save()
+
+    def disable(self, request, queryset):
+        queryset.update(is_active=False)
+        # for user in queryset:
+        #     user.is_active = True
+        #     user.save()
 
 
 admin.site.register(User, UserAdmin)
