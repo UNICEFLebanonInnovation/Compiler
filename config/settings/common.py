@@ -370,6 +370,7 @@ SUIT_CONFIG = {
             'schools.EducationLevel',
             'schools.ClassLevel',
             'schools.ALPReferMatrix',
+            'schools.ALPAssignmentMatrix',
             'schools.ClassRoom',
             'schools.EducationYear',
             'schools.Section',
