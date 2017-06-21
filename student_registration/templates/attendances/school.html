@@ -30,15 +30,20 @@
             height: 75px;
             max-height: 75px;
         }
-        .row-class .progress {
-            color: #2aabd2 !important;
-            border: 1px solid #2aabd2;
+        .row-class .progress-success {
+            color: #5cb85c !important;
+            border: 1px solid #5cb85c;
+        }
+        .row-class .progress-danger {
+            color: #d9534f !important;
+            border: 1px solid #d9534f;
         }
         .row-class .progress .progress-bar {
-            color: #2aabd2 !important;
+{#            color: #2aabd2 !important;#}
+            color: #0b0b0b;
         }
         .row-student  {
-            border-radius: 8px;
+            border-radius: 0 8px 8px 0;
             margin: 15px 0px;
             background: #f5f5f5; /* For browsers that do not support gradients */
             background: -webkit-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Safari 5.1 to 6.0 */
@@ -46,9 +51,19 @@
             background: -moz-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Firefox 3.6 to 15 */
             background: linear-gradient(left top, #f5f5f5, #EDEFF1); /* Standard syntax */
         }
-{#        .row-student div {#}
+        .row-student .s-col {
+            padding-top: 15px;
+        }
+        .row-student div {
 {#            border: 1px solid;#}
-{#        }#}
+        }
+        .row-student .absence-reasons label {
+            font-style: italic;
+            padding-right: 5px;
+        }
+        .row-student .absence-reasons input {
+            margin-right: 10px;
+        }
         .btn-attendance-day.active {
             background-color: #2aabd2;
             color: red;
@@ -152,12 +167,12 @@
                         {% endif %}
                     </div>
                     <div class="col-xs-3 col-sm-3 col-md-3 s-progs s-col">
-                        <div class="progress">
+                        <div class="progress progress-success">
                             <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ row.total_attend }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_attend|percentage:row.total }}%">
                                {{ row.total_attend }} ({{ row.total_attend|percentage:row.total }})%
                             </div>
                          </div>
-                        <div class="progress">
+                        <div class="progress progress-danger">
                             <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ row.total_absent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_absent|percentage:row.total }}%">
                                {{ row.total_absent }} ({{ row.total_absent|percentage:row.total }})%
                             </div>
@@ -174,12 +189,25 @@
 
                 {% for line in students %}
                     <div class="row row-student">
-                        <div class="col-xs-6 col-sm-2 icon-{{ line.student.sex }}"></div>
-                        <div class="col-xs-6 col-sm-7">{{ line.student }}</div>
-                        <div class="col-xs-6 col-sm-3">
+{#                        <div class="col-xs-6 col-sm-2 icon-{{ line.student.sex }} s-col" style="border-left: 10px solid #2aabd2;"></div>#}
+                        <div class="col-xs-6 col-sm-2 icon-student-{{ line.student.sex }} s-col" style="border-left: 10px solid #2aabd2;"></div>
+                        <div class="col-xs-3 col-sm-3 s-col">
+{#                            <span class="icon-student-{{ line.student.sex }}"></span>#}
+{#                            <span class="icon-student"></span>#}
+                            <span>{{ line.student }}</span>
+                        </div>
+                        <div class="col-xs-3 col-sm-3 s-col">
+                            <span class="icon-mother"></span>
+                            <span>{{ line.student.mother_fullname }}</span>
+                        </div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 s-col">
+                            <span class="icon-age"></span>
+                            <span>{{ line.student.calc_age }}</span>
+                        </div>
+                        <div class="col-xs-6 col-sm-2 col-md-2 s-col">
                             <input type="checkbox" name="status[{{ line.id }}]" checked="checked" itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" value="" />
                         </div>
-                        <div class="col-sm-7 absence-reasons" style="display: none;" id="reasons-{{ line.id }}">
+                        <div class="col-sm-8 absence-reasons" style="display: none;" id="reasons-{{ line.id }}">
                             <label class="radio-inline"><input type="radio" value="sick" name="absence_reason[{{ line.id }}]" />{% trans "Sick" %}</label>
                             <label class="radio-inline"><input type="radio" value="no_reason" name="absence_reason[{{ line.id }}]" />{% trans "No reason" %}</label>
                             <label class="radio-inline"><input type="radio" value="no_transport" name="absence_reason[{{ line.id }}]" />{% trans "No transport" %}</label>
