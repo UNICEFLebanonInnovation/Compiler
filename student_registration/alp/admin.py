@@ -114,13 +114,13 @@ class OutreachResource(resources.ModelResource):
             if obj.refer_to_level_id == 1:
                 if obj.post_exam_total >= 40:
                     if obj.registered_in_level_id < 9:
-                        to_level = EducationLevel.objects.get(id=int(obj.registered_in_level_id) +1)
-                        return to_level.name
+                        to_level = EducationLevel.objects.get(id=int(obj.registered_in_level_id) + 1)
+                        return to_level.name + ' / formal'
                     else:
-                        return obj.registered_in_level.name
+                        return obj.registered_in_level.name + ' / formal'
                     # return 'Refer to ALP following level'
                 # return 'Repeat ALP level/'+obj.registered_in_level.name
-                return obj.registered_in_level.name
+                return obj.registered_in_level.name + ' / informal'
             else:
                 return obj.refer_to_level.name
 
