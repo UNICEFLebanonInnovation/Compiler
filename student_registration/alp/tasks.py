@@ -8,6 +8,25 @@ from student_registration.taskapp.celery import app
 
 
 @app.task
+def auto_assign_to_alp_level():
+    from student_registration.alp.utils import assign_to_level
+    from student_registration.alp.models import Outreach, ALPRound
+    alp_round = ALPRound.objects.get(current_pre_test=True)
+
+    registrations = Outreach.objects.filter(alp_round=alp_round, level__isnull=False)
+
+    print registrations.count()
+
+    for registry in registrations:
+        try:
+            registry.assigned_to_level = assign_to_level(registry.level, registry.exam_total)
+            registry.save()
+        except Exception as ex:
+            print ex.message
+            continue
+
+
+@app.task
 def assign_alp_level():
     from student_registration.alp.models import Outreach, ALPRound
     alp_round = ALPRound.objects.get(current_pre_test=True)
@@ -23,16 +42,6 @@ def assign_alp_level():
                 continue
 
             total = record.exam_total
-
-            # if 40 < total <= 80:
-                # notes = [record.exam_result_arabic, record.exam_result_language, record.exam_result_math, record.exam_result_science]
-                # notes = [record.exam_result_language, record.exam_result_math, record.exam_result_science]
-                # if sum(i < 10 for i in notes) >= 2:
-                #     to_level = 12
-                #     print level.id, total, to_level
-                #     record.assigned_to_level_id = to_level
-                #     record.save()
-                #     continue
 
             if level.id == 1 or level.id == 2 or level.id == 3:
                 if total <= 5:
