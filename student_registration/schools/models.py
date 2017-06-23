@@ -153,7 +153,7 @@ class ALPReferMatrix(models.Model):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "ALP Refer Matrix"
+        verbose_name = "ALP Post-test Refer Matrix"
 
     def __unicode__(self):
         return str(self.id)
@@ -169,3 +169,29 @@ class EducationYear(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class ALPAssignmentMatrix(models.Model):
+    level = models.ForeignKey(
+        EducationLevel,
+        blank=True, null=True,
+        related_name='+',
+    )
+    refer_to = models.ForeignKey(
+        EducationLevel,
+        blank=True, null=True,
+        related_name='refer_to',
+    )
+    range_start = models.IntegerField(blank=True, null=True)
+    range_end = models.IntegerField(blank=True, null=True)
+
+    @property
+    def range(self):
+        return "{}-{}".format(self.range_start, self.range_end)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "ALP Pre-test Refer Matrix"
+
+    def __unicode__(self):
+        return str(self.id)
