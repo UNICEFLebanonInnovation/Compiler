@@ -1,4 +1,4 @@
-{% extends "base.online.html" %}
+{% extends "base.simple.html" %}
 
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
@@ -81,9 +81,19 @@
         .row-class .s-progs {
             padding-top: 5px;
         }
+        .breadcrumb li:first-child {
+            padding-left: 10px;
+        }
     </style>
 {% endblock %}
 
+{% block header %}
+      <li class="nav-item">
+        <a class="nav-link" href="">{{ school }} - {{ location }} - {{ location_parent }}
+            - <span class="badge">{{ total }}</span>
+        </a>
+      </li>
+{% endblock %}
 
 {% block content %}
 
@@ -112,15 +122,15 @@
 {#                                <i class="fa fa-times"></i>#}
 {#                            </div>#}
 {#                          </div>#}
-                          <div class="panel-heading">
-                            <span class="col-sm-2 icon-school"></span>
-                            <ol class="breadcrumb">
-                                <li>{{ school }}</li>
-                                <li>{{ location }}</li>
-                                <li>{{ location_parent }}</li>
-                                <li>{% trans "Total students" %} <span class="badge ttl_students">{{ total }}</span></li>
-                            </ol>
-                          </div>
+{#                          <div class="panel-heading">#}
+{#                            <span class="col-sm-2 icon-school"></span>#}
+{#                            <ol class="breadcrumb">#}
+{#                                <li>{{ school }}</li>#}
+{#                                <li>{{ location }}</li>#}
+{#                                <li>{{ location_parent }}</li>#}
+{#                                <li>{% trans "Total students" %} <span class="badge ttl_students">{{ total }}</span></li>#}
+{#                            </ol>#}
+{#                          </div>#}
                           <div class="panel-heading">
                             <span class="col-sm-2 icon-date-time"></span>
                             <ol class="breadcrumb">
