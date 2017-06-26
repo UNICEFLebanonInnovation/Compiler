@@ -64,16 +64,9 @@ class UserAdmin(ImportExportModelAdmin):
 
     def activate(self, request, queryset):
         queryset.update(is_active=True)
-        # for user in queryset:
-        #     user.is_active = True
-        #     user.save()
 
     def disable(self, request, queryset):
         queryset.update(is_active=False)
-        # for user in queryset:
-        #     user.is_active = True
-        #     user.save()
-
 
 admin.site.register(User, UserAdmin)
 

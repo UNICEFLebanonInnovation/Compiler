@@ -24,16 +24,6 @@ class Nationality(models.Model):
         return self.name
 
 
-class Language(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
 class IDType(models.Model):
     name = models.CharField(max_length=45L, unique=True)
     inuse = models.BooleanField(default=True)
@@ -66,6 +56,10 @@ class Person(TimeStampedModel):
     GENDER = Choices(
         ('Male', _('Male')),
         ('Female', _('Female')),
+    )
+    YES_NO = Choices(
+        ('yes', _('Yes')),
+        ('no', _('No')),
     )
 
     first_name = models.CharField(max_length=64L, blank=True, null=True)
@@ -105,11 +99,15 @@ class Person(TimeStampedModel):
         default=0,
         choices=((str(x), x) for x in range(1, 33))
     )
-    age = models.CharField(max_length=4L, blank=True, null=True)
     phone = models.CharField(max_length=64L, blank=True, null=True)
     phone_prefix = models.CharField(max_length=10L, blank=True, null=True)
+    registered_in_unhcr = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO
+    )
     id_number = models.CharField(max_length=45L, blank=True, null=True)
-    id_number_duplicate = models.CharField(max_length=45L, blank=True, null=True)
     id_type = models.ForeignKey(
         IDType,
         blank=True, null=True,
@@ -131,8 +129,6 @@ class Person(TimeStampedModel):
     number = models.CharField(max_length=45L, blank=True, null=True)
     number_part1 = models.CharField(max_length=45L, blank=True, null=True)
     number_part2 = models.CharField(max_length=45L, blank=True, null=True)
-    old_id_number = models.CharField(max_length=45L, blank=True, null=True)
-    old_id_type = models.IntegerField(blank=True, null=True)
 
     def __unicode__(self):
         if not self.first_name:
@@ -158,14 +154,8 @@ class Person(TimeStampedModel):
             self.birthday_year,
         )
 
-    def get_age(self):
-        if self.age:
-            return self.age
-        current_year = datetime.datetime.now().year
-        return int(current_year)-int(self.birthday_year)
-
     @property
-    def calc_age(self):
+    def age(self):
         current_year = datetime.datetime.now().year
         if self.birthday_year:
             return int(current_year)-int(self.birthday_year)

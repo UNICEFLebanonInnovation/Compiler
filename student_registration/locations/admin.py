@@ -19,6 +19,7 @@ class LocationResource(resources.ModelResource):
             'id',
             'name',
             'type',
+            'parent',
             'latitude',
             'longitude',
             'p_code'
