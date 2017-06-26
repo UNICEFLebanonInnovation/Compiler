@@ -444,13 +444,3 @@ class Outreach(TimeStampedModel):
         else:
             self.refer_to_level = None
         super(Outreach, self).save(**kwargs)
-
-
-class ExtraColumn(TimeStampedModel):
-    name = models.CharField(max_length=64L, blank=True, null=True)
-    label = models.CharField(max_length=64L, blank=True, null=True)
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        blank=False, null=True,
-        related_name='+',
-    )

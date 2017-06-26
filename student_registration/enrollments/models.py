@@ -14,7 +14,6 @@ from student_registration.schools.models import (
     ClassLevel,
     ClassRoom,
     Section,
-    Grade,
     EducationYear,
 )
 from student_registration.locations.models import Location
@@ -130,22 +129,11 @@ class Enrollment(TimeStampedModel):
         related_name='+',
         verbose_name=_('Current Section')
     )
-    grade = models.ForeignKey(
-        Grade,
-        blank=True, null=True,
-        related_name='+',
-    )
     classroom = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
         related_name='+',
         verbose_name=_('Current Class')
-    )
-    year = models.CharField(
-        max_length=4,
-        blank=True,
-        null=True,
-        choices=YEARS
     )
     education_year = models.ForeignKey(
         EducationYear,
