@@ -38,11 +38,6 @@ class User(AbstractUser):
         blank=True, null=True,
         related_name='+',
     )
-    governante = models.ForeignKey(
-        Location,
-        blank=True, null=True,
-        related_name='+',
-    )
     locations = models.ManyToManyField(Location, blank=True)
     schools = models.ManyToManyField(School, blank=True)
 

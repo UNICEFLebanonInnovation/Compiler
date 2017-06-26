@@ -21,7 +21,6 @@ class School(models.Model):
         blank=False, null=True,
         related_name='+',
     )
-    in_use = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['number']
@@ -39,21 +38,10 @@ class School(models.Model):
         return ''
 
     def __unicode__(self):
-        # return self.name
         return u'{} - {}'.format(
             self.name,
             self.number
         )
-
-
-class Course(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
 
 
 class EducationLevel(models.Model):
@@ -74,13 +62,6 @@ class ClassLevel(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "ALP Result"
-
-    def __unicode__(self):
-        return self.name
-
-
-class Grade(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
 
     def __unicode__(self):
         return self.name
