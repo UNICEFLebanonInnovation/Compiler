@@ -60,37 +60,14 @@ api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
 api.register(r'enrollments', EnrollmentViewSet, base_name='enrollments')
 api.register(r'logging-student-move', LoggingStudentMoveViewSet, base_name='logging_student_move')
-api.register(r'registrations-adult', RegisteringAdultViewSet, base_name='registrations_adult')
-api.register(r'registrations-adult-id', RegisteringAdultIDViewSet, base_name='registrations_adult_id')
-api.register(r'registrations-child', RegisteringChildViewSet, base_name='registrations_child')
-api.register(r'registrations-complaint', RegisteringComplaintViewSet, base_name='registrations_complaint')
-
-api.register(r'registrations-complaint-category', RegisteringComplaintCategoryViewSet, base_name='registrations_complaint_category')
-
-
-api.register(r'registrations-notfound', RegisteringNotFoundViewSet, base_name='registrations_notfound')
-api.register(r'registrations-missingchild', MissingChildViewSet, base_name='registrations_missingchild')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
 api.register(r'attendances-report', AttendanceReportViewSet, base_name='attendances_report')
-api.register(r'class-assignment', ClassAssignmentViewSet, base_name='class_assignment')
-api.register(r'waiting-list', WaitingListViewSet, base_name='waiting_list')
-api.register(r'registry-search', RegisteringAdultListSearchView, base_name='registry_search')
 api.register(r'beneficiary', BeneficiaryViewSet, base_name='beneficiary')
-
-api.register(r'household-visit', HouseholdVisitLoadViewSet, base_name='household_visit')
-api.register(r'household-visit-attempt', HouseholdVisitAttemptViewSet, base_name='household_visit_attempt')
-api.register(r'household-team', HouseholdVisitSaveViewSet, base_name='household_team')
-api.register(r'household-visit-child', HouseholdVisitChildViewSet, base_name='household_visit_child')
-api.register(r'household-visit-service', HouseholdVisitServiceViewSet, base_name='household_visit_service')
-api.register(r'household-visit-comment', HouseholdVisitCommentViewSet, base_name='household_visit_comment')
 
 api.register(r'students', StudentViewSet, base_name='students')
 api.register(r'schools', SchoolViewSet, base_name='schools')
 api.register(r'classrooms', ClassRoomViewSet, base_name='classrooms')
 api.register(r'sections', SectionViewSet, base_name='sections')
-api.register(r'grades', GradeViewSet, base_name='grades')
-api.register(r'eav/attributes', AttributeViewSet, base_name='eav-attributes')
-api.register(r'eav/values', ValueViewSet, base_name='eav-values')
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
@@ -110,8 +87,6 @@ urlpatterns = [
     url(r'^students/', include('student_registration.students.urls', namespace='students')),
     url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
     url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
-    url(r'^registrations/', include('student_registration.registrations.urls', namespace='registrations')),
-    url(r'^hhvisit/',include('student_registration.hhvisit.urls', namespace='hhvisit')),
     url(r'^enrollments/', include('student_registration.enrollments.urls', namespace='enrollments')),
     url(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
     url(r'^locations/', include('student_registration.locations.urls', namespace='locations')),

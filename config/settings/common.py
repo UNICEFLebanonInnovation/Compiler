@@ -64,14 +64,10 @@ LOCAL_APPS = (
     'student_registration.students',  # custom students app
     'student_registration.alp',  # custom alp app
     'student_registration.attendances',  # custom attendances app
-    'student_registration.registrations',  # custom registrations app
     'student_registration.enrollments',  # custom enrollments app
     'student_registration.schools',  # custom schools app
     'student_registration.locations',  # custom locations app
-    'student_registration.eav',  # custom EAV app
-    'student_registration.hhvisit',  # custom HH Visit app
     'student_registration.dashboard',  # custom dashboard app
-    'student_registration.helpdesks',  # custom helpdesk app
     'student_registration.winterization',  # custom winterization app
 )
 
@@ -332,7 +328,6 @@ SUIT_CONFIG = {
         {'app': 'helpdesk', 'label': 'HelpDesk Config', 'icon': 'icon-info-sign'},
         {'label': 'HelpDesk Public', 'icon': 'icon-info-sign', 'url': '/helpdesk/dashboard/'},
         {'label': 'Dashboard', 'icon': 'icon-home', 'models': [
-            {'url': '/dashboard/registrations-pilot/', 'label': 'PILOT'},
             {'url': '/dashboard/registrations-2ndshift/', 'label': '2nd Shift'},
             {'url': '/dashboard/2ndshift-overall/', 'label': '2nd Shift Overall'},
             {'url': '/dashboard/alp-overall/', 'label': 'ALP Overall'},
@@ -357,7 +352,6 @@ SUIT_CONFIG = {
             'enrollments.LoggingStudentMove',
             'enrollments.StudentMove',
         )},
-        {'app': 'registrations', 'label': 'Pilot', 'icon': 'icon-th-list'},
         {'label': 'Students', 'icon': 'icon-th-list', 'models': (
             'students.Student',
             'students.Nationality',
@@ -375,7 +369,6 @@ SUIT_CONFIG = {
             'schools.EducationYear',
             'schools.Section',
         )},
-        {'app': 'hhvisit', 'label': 'House Hold Visit', 'icon': 'icon-th-list'},
         {'app': 'attendances', 'label': 'Attendances', 'icon': 'icon-th-list'},
         {'app': 'winterization', 'label': 'Winterization', 'icon': 'icon-th-list'},
         {'app': 'locations', 'label': 'Locations', 'icon': 'icon-globe'},
@@ -386,7 +379,4 @@ HELPDESK_TRANSLATE_TICKET_COMMENTS = True
 HELPDESK_SHOW_DELETE_BUTTON_SUPERUSER_FOLLOW_UP = True
 HELPDESK_STAFF_ONLY_TICKET_OWNERS = True
 HELPDESK_STAFF_ONLY_TICKET_CC = True
-
-ABSENCE_URL = env('ABSENCE_URL', default='NO URL for absentees set in the environment')
-ABSENCE_TOKEN = env('ABSENCE_TOKEN', default='No token for absentees URL set')
 
