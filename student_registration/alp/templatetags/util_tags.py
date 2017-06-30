@@ -112,7 +112,7 @@ def enrollment_by_gov_by_grade(registrations, gov, level):
     if not gov:
         return registrations.filter(classroom=level).count()
     elif not level:
-        return registrations.filter(school__location__parent_id=gov).count()
+        return registrations.filter(classroom__isnull=False, school__location__parent_id=gov).count()
     return registrations.filter(school__location__parent_id=gov, classroom=level).count()
 
 
@@ -122,16 +122,16 @@ def enrollment_by_gov_by_grade_by_gender(registrations, gov, level, gender):
     if not gov:
         return registrations.filter(classroom=level).count()
     elif not level:
-        return registrations.filter(school__location__parent_id=gov).count()
+        return registrations.filter(classroom__isnull=False, school__location__parent_id=gov).count()
     return registrations.filter(school__location__parent_id=gov, classroom=level).count()
 
 
 @register.assignment_tag
-def enrollment_by_gov_by_age(registrations, gov, age):
+def enrollment_by_gov_by_age(registrations, gov, age=None):
     now = datetime.datetime.now()
     if not gov:
         return registrations.filter(student__birthday_year=(now.year - age)).count()
-    elif not age:
+    elif age == None:
         return registrations.filter(school__location__parent_id=gov).count()
     return registrations.filter(school__location__parent_id=gov, student__birthday_year=(now.year - age)).count()
 
@@ -141,7 +141,7 @@ def alp_by_gov_by_grade(registrations, gov, level):
     if not gov:
         return registrations.filter(registered_in_level=level).count()
     elif not level:
-        return registrations.filter(school__location__parent_id=gov).count()
+        return registrations.filter(registered_in_level__isnull=False, school__location__parent_id=gov).count()
     return registrations.filter(school__location__parent_id=gov, registered_in_level=level).count()
 
 
@@ -151,7 +151,7 @@ def alp_by_gov_by_grade_by_gender(registrations, gov, level, gender):
     if not gov:
         return registrations.filter(registered_in_level=level).count()
     elif not level:
-        return registrations.filter(school__location__parent_id=gov).count()
+        return registrations.filter(registered_in_level__isnull=False, school__location__parent_id=gov).count()
     return registrations.filter(school__location__parent_id=gov, registered_in_level=level).count()
 
 
@@ -162,7 +162,7 @@ def alp_by_gov_by_assignedlevel_by_gender(registrations, gov, level, gender=None
     if not gov:
         return registrations.filter(assigned_to_level=level).count()
     elif not level:
-        return registrations.filter(school__location__parent_id=gov).count()
+        return registrations.filter(assigned_to_level__isnull=False, school__location__parent_id=gov).count()
     return registrations.filter(school__location__parent_id=gov, assigned_to_level=level).count()
 
 
@@ -173,7 +173,7 @@ def alp_by_gov_by_referredlevel_by_gender(registrations, gov, level, gender=None
     if not gov:
         return registrations.filter(refer_to_level=level).count()
     elif not level:
-        return registrations.filter(school__location__parent_id=gov).count()
+        return registrations.filter(refer_to_level__isnull=False, school__location__parent_id=gov).count()
     return registrations.filter(school__location__parent_id=gov, refer_to_level=level).count()
 
 
@@ -184,7 +184,7 @@ def alp_by_gov_by_age(registrations, gov, age=None):
         return registrations.filter(student__birthday_year=(now.year - age)).count()
     elif age == 0:
         return registrations.filter(school__location__parent_id=gov, student__birthday_year=(now.year - age)).count()
-    elif not age:
+    elif age == None:
         return registrations.filter(school__location__parent_id=gov).count()
     return registrations.filter(school__location__parent_id=gov, student__birthday_year=(now.year - age)).count()
 
@@ -192,11 +192,41 @@ def alp_by_gov_by_age(registrations, gov, age=None):
 @register.assignment_tag
 def enrollment_by_grade_by_age(registrations, level, age):
     now = datetime.datetime.now()
-    if not age:
+    if age == None:
         return registrations.filter(classroom=level).count()
     elif not level:
-        return registrations.filter(student__birthday_year=(now.year - age)).count()
+        return registrations.filter(classroom__isnull=False, student__birthday_year=(now.year - age)).count()
     return registrations.filter(classroom=level, student__birthday_year=(now.year - age)).count()
+
+
+@register.assignment_tag
+def alp_by_grade_by_age(registrations, level, age=None):
+    now = datetime.datetime.now()
+    if age == None:
+        return registrations.filter(registered_in_level=level).count()
+    elif not level:
+        return registrations.filter(registered_in_level__isnull=False, student__birthday_year=(now.year - age)).count()
+    return registrations.filter(registered_in_level=level, student__birthday_year=(now.year - age)).count()
+
+
+@register.assignment_tag
+def alp_by_assignedlevel_by_age(registrations, level, age=None):
+    now = datetime.datetime.now()
+    if age == None:
+        return registrations.filter(assigned_to_level=level).count()
+    elif not level:
+        return registrations.filter(assigned_to_level__isnull=False, student__birthday_year=(now.year - age)).count()
+    return registrations.filter(assigned_to_level=level, student__birthday_year=(now.year - age)).count()
+
+
+@register.assignment_tag
+def alp_by_referredlevel_by_age(registrations, level, age=None):
+    now = datetime.datetime.now()
+    if age == None:
+        return registrations.filter(refer_to_level=level).count()
+    elif not level:
+        return registrations.filter(refer_to_level__isnull=False, student__birthday_year=(now.year - age)).count()
+    return registrations.filter(refer_to_level=level, student__birthday_year=(now.year - age)).count()
 
 
 @register.assignment_tag
