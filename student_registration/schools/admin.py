@@ -18,6 +18,7 @@ from .models import (
     PartnerOrganization,
     ALPReferMatrix,
     EducationYear,
+    ALPAssignmentMatrix,
 )
 from student_registration.locations.models import Location
 from student_registration.attendances.tasks import set_app_attendances
@@ -264,6 +265,27 @@ class ALPReferMatrixAdmin(ImportExportModelAdmin):
     )
     list_display = fields
 
+
+class ALPAssignmentMatrixResource(resources.ModelResource):
+    class Meta:
+        model = ALPAssignmentMatrix
+
+
+class ALPAssignmentMatrixAdmin(ImportExportModelAdmin):
+    resource_class = ALPAssignmentMatrixResource
+    fields = (
+        'level',
+        'range_start',
+        'range_end',
+        'refer_to',
+    )
+    list_display = (
+        'level',
+        'range',
+        'refer_to',
+    )
+
+
 admin.site.register(School, SchoolAdmin)
 # admin.site.register(Course)
 admin.site.register(EducationLevel, EducationLevelAdmin)
@@ -274,6 +296,7 @@ admin.site.register(ClassRoom, ClassRoomAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
 admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
 admin.site.register(EducationYear)
+admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
 
 
 
