@@ -18,8 +18,8 @@
         <td>{% if student %}{{ student.first_name }}{% endif %}</td>
         <td>{% if student %}{{ student.father_name }}{% endif %}</td>
         <td>{% if student %}{{ student.last_name }}{% endif %}</td>
-        <td>{% if student %}{% trans student.sex %}{% endif %}</td>
-        <td>{% if student %}{% trans student.birthday %}{% endif %}</td>
+        <td>{% if student and student.sex %}{% trans student.sex %}{% endif %}</td>
+        <td>{% if student %}{{ student.birthday }}{% endif %}</td>
         <td>{{ line.classroom }}</td>
         <td>{{ line.section }}</td>
         <td>
