@@ -311,7 +311,7 @@ def import_docs(**kwargs):
             ).json()
 
             logger.info("Prefilter attendance")
-            cleaned = [row['doc'] for row in data['rows'] if 'attendance' in row['doc']]
+            cleaned = [row['doc'] for row in data['rows'] if 'attendance' in row['doc'] and 'doc' in row]
 
             logger.info("refresing attendance in mongo")
             database.attendances.insert_many(cleaned)

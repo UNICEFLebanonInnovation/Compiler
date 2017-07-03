@@ -152,58 +152,58 @@ class Registrations2ndShiftView(LoginRequiredMixin,
         # get children by age range
         now = datetime.datetime.now()
         age_range = {}
-        age_range['0-6'] = self.queryset.filter(student__birthday_year__gte=(now.year - 6)).count()
-        age_range['7-9'] = self.queryset.filter(student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
-        age_range['10-12'] = self.queryset.filter(student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
-        age_range['13+'] = self.queryset.filter(student__birthday_year__lte=(now.year - 13)).count()
+        age_range['0-6'] = self.queryset.filter(student__birthday_year__gte=(now.year - 5)).count()
+        age_range['7-8'] = self.queryset.filter(student__birthday_year__lte=(now.year - 6), student__birthday_year__gte=(now.year - 8)).count()
+        age_range['9-11'] = self.queryset.filter(student__birthday_year__lte=(now.year - 8), student__birthday_year__gte=(now.year - 11)).count()
+        age_range['14+'] = self.queryset.filter(student__birthday_year__lte=(now.year - 11)).count()
 
         age_range_1 = {}
-        age_range_1['0-6'] = self.queryset.filter(school__location__parent_id=1, student__birthday_year__gte=(now.year - 6)).count()
-        age_range_1['7-9'] = self.queryset.filter(school__location__parent_id=1, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
-        age_range_1['10-12'] = self.queryset.filter(school__location__parent_id=1, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
-        age_range_1['13+'] = self.queryset.filter(school__location__parent_id=1, student__birthday_year__lte=(now.year - 13)).count()
+        age_range_1['0-5'] = self.queryset.filter(school__location__parent_id=1, student__birthday_year__gte=(now.year - 5)).count()
+        age_range_1['7-8'] = self.queryset.filter(school__location__parent_id=1, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 8)).count()
+        age_range_1['9-11'] = self.queryset.filter(school__location__parent_id=1, student__birthday_year__lte=(now.year - 9), student__birthday_year__gte=(now.year - 11)).count()
+        age_range_1['14+'] = self.queryset.filter(school__location__parent_id=1, student__birthday_year__lte=(now.year - 14)).count()
 
         age_range_2 = {}
-        age_range_2['0-6'] = self.queryset.filter(school__location__parent_id=2, student__birthday_year__gte=(now.year - 6)).count()
-        age_range_2['7-9'] = self.queryset.filter(school__location__parent_id=2, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
-        age_range_2['10-12'] = self.queryset.filter(school__location__parent_id=2, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
-        age_range_2['13+'] = self.queryset.filter(school__location__parent_id=2, student__birthday_year__lte=(now.year - 13)).count()
+        age_range_2['0-5'] = self.queryset.filter(school__location__parent_id=2, student__birthday_year__gte=(now.year - 5)).count()
+        age_range_2['6-8'] = self.queryset.filter(school__location__parent_id=2, student__birthday_year__lte=(now.year - 6), student__birthday_year__gte=(now.year - 8)).count()
+        age_range_2['9-11'] = self.queryset.filter(school__location__parent_id=2, student__birthday_year__lte=(now.year - 9), student__birthday_year__gte=(now.year - 11)).count()
+        age_range_2['14+'] = self.queryset.filter(school__location__parent_id=2, student__birthday_year__lte=(now.year - 14)).count()
 
         age_range_3 = {}
-        age_range_3['0-6'] = self.queryset.filter(school__location__parent_id=3, student__birthday_year__gte=(now.year - 6)).count()
-        age_range_3['7-9'] = self.queryset.filter(school__location__parent_id=3, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
-        age_range_3['10-12'] = self.queryset.filter(school__location__parent_id=3, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
-        age_range_3['13+'] = self.queryset.filter(school__location__parent_id=3, student__birthday_year__lte=(now.year - 13)).count()
+        age_range_3['0-5'] = self.queryset.filter(school__location__parent_id=3, student__birthday_year__gte=(now.year - 5)).count()
+        age_range_3['6-8'] = self.queryset.filter(school__location__parent_id=3, student__birthday_year__lte=(now.year - 6), student__birthday_year__gte=(now.year - 8)).count()
+        age_range_3['9-11'] = self.queryset.filter(school__location__parent_id=3, student__birthday_year__lte=(now.year - 9), student__birthday_year__gte=(now.year - 11)).count()
+        age_range_3['14+'] = self.queryset.filter(school__location__parent_id=3, student__birthday_year__lte=(now.year - 14)).count()
 
         age_range_4 = {}
-        age_range_4['0-6'] = self.queryset.filter(school__location__parent_id=4, student__birthday_year__gte=(now.year - 6)).count()
-        age_range_4['7-9'] = self.queryset.filter(school__location__parent_id=4, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
-        age_range_4['10-12'] = self.queryset.filter(school__location__parent_id=4, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
-        age_range_4['13+'] = self.queryset.filter(school__location__parent_id=4, student__birthday_year__lte=(now.year - 13)).count()
+        age_range_4['0-5'] = self.queryset.filter(school__location__parent_id=4, student__birthday_year__gte=(now.year - 5)).count()
+        age_range_4['6-8'] = self.queryset.filter(school__location__parent_id=4, student__birthday_year__lte=(now.year - 6), student__birthday_year__gte=(now.year - 8)).count()
+        age_range_4['9-11'] = self.queryset.filter(school__location__parent_id=4, student__birthday_year__lte=(now.year - 9), student__birthday_year__gte=(now.year - 11)).count()
+        age_range_4['14+'] = self.queryset.filter(school__location__parent_id=4, student__birthday_year__lte=(now.year - 14)).count()
 
         age_range_5 = {}
-        age_range_5['0-6'] = self.queryset.filter(school__location__parent_id=5, student__birthday_year__gte=(now.year - 6)).count()
-        age_range_5['7-9'] = self.queryset.filter(school__location__parent_id=5, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
-        age_range_5['10-12'] = self.queryset.filter(school__location__parent_id=5, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
-        age_range_5['13+'] = self.queryset.filter(school__location__parent_id=5, student__birthday_year__lte=(now.year - 13)).count()
+        age_range_5['0-5'] = self.queryset.filter(school__location__parent_id=5, student__birthday_year__gte=(now.year - 5)).count()
+        age_range_5['6-8'] = self.queryset.filter(school__location__parent_id=5, student__birthday_year__lte=(now.year - 6), student__birthday_year__gte=(now.year - 8)).count()
+        age_range_5['9-11'] = self.queryset.filter(school__location__parent_id=5, student__birthday_year__lte=(now.year - 9), student__birthday_year__gte=(now.year - 11)).count()
+        age_range_5['14+'] = self.queryset.filter(school__location__parent_id=5, student__birthday_year__lte=(now.year - 14)).count()
 
         age_range_6 = {}
-        age_range_6['0-6'] = self.queryset.filter(school__location__parent_id=6, student__birthday_year__gte=(now.year - 6)).count()
-        age_range_6['7-9'] = self.queryset.filter(school__location__parent_id=6, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
-        age_range_6['10-12'] = self.queryset.filter(school__location__parent_id=6, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
-        age_range_6['13+'] = self.queryset.filter(school__location__parent_id=6, student__birthday_year__lte=(now.year - 13)).count()
+        age_range_6['0-5'] = self.queryset.filter(school__location__parent_id=6, student__birthday_year__gte=(now.year - 5)).count()
+        age_range_6['6-8'] = self.queryset.filter(school__location__parent_id=6, student__birthday_year__lte=(now.year - 6), student__birthday_year__gte=(now.year - 8)).count()
+        age_range_6['9-11'] = self.queryset.filter(school__location__parent_id=6, student__birthday_year__lte=(now.year - 9), student__birthday_year__gte=(now.year - 11)).count()
+        age_range_6['14+'] = self.queryset.filter(school__location__parent_id=6, student__birthday_year__lte=(now.year - 14)).count()
 
         age_range_7 = {}
-        age_range_7['0-6'] = self.queryset.filter(school__location__parent_id=7, student__birthday_year__gte=(now.year - 6)).count()
-        age_range_7['7-9'] = self.queryset.filter(school__location__parent_id=7, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
-        age_range_7['10-12'] = self.queryset.filter(school__location__parent_id=7, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
-        age_range_7['13+'] = self.queryset.filter(school__location__parent_id=7, student__birthday_year__lte=(now.year - 13)).count()
+        age_range_7['0-5'] = self.queryset.filter(school__location__parent_id=7, student__birthday_year__gte=(now.year - 5)).count()
+        age_range_7['6-8'] = self.queryset.filter(school__location__parent_id=7, student__birthday_year__lte=(now.year - 6), student__birthday_year__gte=(now.year - 8)).count()
+        age_range_7['9-11'] = self.queryset.filter(school__location__parent_id=7, student__birthday_year__lte=(now.year - 9), student__birthday_year__gte=(now.year - 11)).count()
+        age_range_7['14+'] = self.queryset.filter(school__location__parent_id=7, student__birthday_year__lte=(now.year - 14)).count()
 
         age_range_8 = {}
-        age_range_8['0-6'] = self.queryset.filter(school__location__parent_id=8, student__birthday_year__gte=(now.year - 6)).count()
-        age_range_8['7-9'] = self.queryset.filter(school__location__parent_id=8, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 9)).count()
-        age_range_8['10-12'] = self.queryset.filter(school__location__parent_id=8, student__birthday_year__lte=(now.year - 10), student__birthday_year__gte=(now.year - 12)).count()
-        age_range_8['13+'] = self.queryset.filter(school__location__parent_id=8, student__birthday_year__lte=(now.year - 13)).count()
+        age_range_8['0-5'] = self.queryset.filter(school__location__parent_id=8, student__birthday_year__gte=(now.year - 5)).count()
+        age_range_8['7-8'] = self.queryset.filter(school__location__parent_id=8, student__birthday_year__lte=(now.year - 7), student__birthday_year__gte=(now.year - 8)).count()
+        age_range_8['9-11'] = self.queryset.filter(school__location__parent_id=8, student__birthday_year__lte=(now.year - 9), student__birthday_year__gte=(now.year - 11)).count()
+        age_range_8['14+'] = self.queryset.filter(school__location__parent_id=8, student__birthday_year__lte=(now.year - 14)).count()
 
         education_levels = ClassRoom.objects.all()
 
