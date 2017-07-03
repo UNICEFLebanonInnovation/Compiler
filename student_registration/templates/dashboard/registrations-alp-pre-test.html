@@ -309,7 +309,7 @@
                         <i class="icon-export-sign icon-white"></i>&nbsp;
                             Export
                       </button>
-                    {% get_range_int 0 29 as ages %}
+                    {% get_range_int 0 17 as ages %}
                     <table class="table table-striped table-bordered cell-border"
                            data-tableName="Students By Grade by Age"
                            data-height="500"
@@ -321,18 +321,18 @@
                         <thead>
                             <tr>
                                 <th rowspan="2">Grades</th>
-                                <th colspan="30"># of children by Age</th>
+                                <th colspan="18"># of children by Age</th>
                             </tr>
                             <tr>
                                 {% for age in ages %}
                                     <th>{{ age }}</th>
                                 {% endfor %}
-                                <th>Total</th>
+                                <th>17+</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for level in education_levels %}
-                                {% get_range_int 0 29 as ages1 %}
+                                {% get_range_int 0 17 as ages1 %}
                             <tr>
                                 <td><strong>{{ level.name }}</strong></td>
                                 {% for age in ages1 %}
@@ -342,24 +342,11 @@
                                     </td>
                                 {% endfor %}
                                 <td>
-                                    {% alp_by_assignedlevel_by_age enrollments level.id 0 as number %}
+                                    {% alp_by_assignedlevel_by_age enrollments level.id 17 True as number %}
                                     {{ number }}
                                 </td>
                             </tr>
                             {% endfor %}
-                            <tr>
-                                <td><strong>Total</strong></td>
-                                {% get_range_int 0 29 as ages2 %}
-                                {% for age in ages2 %}
-                                    <td>
-                                        {% alp_by_assignedlevel_by_age enrollments 0 age as number %}
-                                        {{ number }}
-                                    </td>
-                                {% endfor %}
-                                <td>
-                                    {{ registrations }}
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>

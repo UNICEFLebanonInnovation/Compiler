@@ -210,12 +210,16 @@ def alp_by_grade_by_age(registrations, level, age=None):
 
 
 @register.assignment_tag
-def alp_by_assignedlevel_by_age(registrations, level, age=None):
+def alp_by_assignedlevel_by_age(registrations, level, age=None, and_above=False):
     now = datetime.datetime.now()
     if age == None:
         return registrations.filter(assigned_to_level=level).count()
-    elif not level:
+    if not level:
         return registrations.filter(assigned_to_level__isnull=False, student__birthday_year=(now.year - age)).count()
+    if and_above:
+        return registrations.filter(assigned_to_level=level, student__birthday_year__lte=(now.year - age)).count()
+    if age == 0:
+        return registrations.filter(assigned_to_level=level, student__birthday_year__gte=(now.year - age)).count()
     return registrations.filter(assigned_to_level=level, student__birthday_year=(now.year - age)).count()
 
 
