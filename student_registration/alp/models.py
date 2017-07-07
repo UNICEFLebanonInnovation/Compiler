@@ -21,7 +21,7 @@ from student_registration.schools.models import (
     Grade
 )
 from student_registration.locations.models import Location
-from student_registration.alp.utils import refer_to_level
+from student_registration.alp.utils import refer_to_level, assign_to_level
 
 
 class ALPRound(models.Model):
@@ -437,10 +437,9 @@ class Outreach(TimeStampedModel):
         return str(self.id)
 
     def save(self, **kwargs):
-        if self.post_exam_total or (self.post_exam_corrector_arabic
-                                    or self.post_exam_corrector_language
-                                    or self.post_exam_corrector_math
-                                    or self.post_exam_corrector_science):
+        # if self.exam_total and self.level and not self.registered_in_level:
+        #     self.assigned_to_level = assign_to_level(self.level, self.exam_total)
+        if self.post_exam_total:
             self.refer_to_level = refer_to_level(self.student_age, self.registered_in_level, self.post_exam_total)
         else:
             self.refer_to_level = None
