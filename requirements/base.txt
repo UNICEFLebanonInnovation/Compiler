@@ -58,5 +58,7 @@ django-autocomplete-light==3.2.1
 django-helpdesk==0.1.18
 mongoengine==0.11.0
 django-admin-rangefilter==0.3.0
+django-bootstrap3==8.2.3
+bootstrap3-datetime==2.4
 
 # Your custom requirements go here

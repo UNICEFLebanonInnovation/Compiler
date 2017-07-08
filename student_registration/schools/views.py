@@ -10,14 +10,12 @@ from .models import (
     School,
     ClassRoom,
     Section,
-    Grade
 )
 
 from .serializers import (
     SchoolSerializer,
     ClassRoomSerializer,
     SectionSerializer,
-    GradeSerializer
 )
 
 
@@ -45,13 +43,4 @@ class SectionViewSet(mixins.ListModelMixin,
     model = Section
     queryset = Section.objects.all()
     serializer_class = SectionSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-
-class GradeViewSet(mixins.ListModelMixin,
-                   viewsets.GenericViewSet):
-
-    model = Grade
-    queryset = Grade.objects.all()
-    serializer_class = GradeSerializer
     permission_classes = (permissions.IsAuthenticated,)

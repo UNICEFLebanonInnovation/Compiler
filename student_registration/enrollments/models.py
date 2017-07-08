@@ -1,13 +1,11 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
-from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from django.conf import settings
 from student_registration.students.models import Student
-from student_registration.registrations.models import RegisteringAdult
 from student_registration.schools.models import (
     School,
     EducationLevel,
@@ -87,18 +85,6 @@ class Enrollment(TimeStampedModel):
         Student,
         blank=False, null=True,
         related_name='student_enrollment',
-    )
-
-    registering_adult = models.ForeignKey(
-        RegisteringAdult,
-        blank=True, null=True,
-        related_name='+',
-    )
-    relation_to_adult = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        choices=RELATION_TYPE
     )
     enrolled_last_year = models.CharField(
         max_length=50,
