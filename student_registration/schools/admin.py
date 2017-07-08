@@ -9,10 +9,8 @@ from import_export.admin import ImportExportModelAdmin
 
 from .models import (
     School,
-    Course,
     EducationLevel,
     ClassLevel,
-    Grade,
     Section,
     ClassRoom,
     PartnerOrganization,
@@ -188,20 +186,6 @@ class ClassLevelAdmin(ImportExportModelAdmin):
     resource_class = ClassLevelResource
 
 
-class GradeResource(resources.ModelResource):
-    class Meta:
-        model = Grade
-        fields = (
-            'id',
-            'name'
-        )
-        export_order = ('name',)
-
-
-class GradeAdmin(ImportExportModelAdmin):
-    resource_class = GradeResource
-
-
 class SectionResource(resources.ModelResource):
     class Meta:
         model = Section
@@ -287,10 +271,8 @@ class ALPAssignmentMatrixAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(School, SchoolAdmin)
-# admin.site.register(Course)
 admin.site.register(EducationLevel, EducationLevelAdmin)
 admin.site.register(ClassLevel, ClassLevelAdmin)
-# admin.site.register(Grade, GradeAdmin)
 admin.site.register(Section, SectionAdmin)
 admin.site.register(ClassRoom, ClassRoomAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)

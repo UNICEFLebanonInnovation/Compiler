@@ -4,7 +4,6 @@ from .models import (
     School,
     ClassRoom,
     Section,
-    Grade
 )
 
 
@@ -40,9 +39,3 @@ class SectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Section
-
-
-class GradeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Grade

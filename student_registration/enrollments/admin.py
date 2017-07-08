@@ -9,13 +9,11 @@ from import_export.widgets import *
 import datetime
 
 from .models import Enrollment, StudentMove, LoggingStudentMove
-from .forms import EnrollmentForm, LoggingStudentMoveForm
-from student_registration.students.models import Student
+from .forms import EnrollmentAdminForm, LoggingStudentMoveForm
 from student_registration.schools.models import (
     School,
 )
 from student_registration.locations.models import Location
-from student_registration.attendances.tasks import set_app_attendances
 
 
 class EnrollmentResource(resources.ModelResource):
@@ -33,7 +31,7 @@ class EnrollmentResource(resources.ModelResource):
 
     class Meta:
         model = Enrollment
-        form = EnrollmentForm
+        form = EnrollmentAdminForm
         fields = (
             'id',
             'student__id',
@@ -187,7 +185,7 @@ class ToAgeFilter(admin.SimpleListFilter):
 
 class EnrollmentAdmin(ImportExportModelAdmin):
     resource_class = EnrollmentResource
-    form = EnrollmentForm
+    form = EnrollmentAdminForm
     fields = (
         'student',
         'school',

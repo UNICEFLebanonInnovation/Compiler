@@ -1,124 +1,93 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django.http import Http404
 from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 import tablib
-import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
 from django.db.models import Q
 from import_export.formats import base_formats
-from django.core.urlresolvers import reverse
-from datetime import datetime
 from student_registration.alp.templatetags.util_tags import has_group
-from django.core import serializers
 
 from student_registration.students.models import (
     Person,
-    Student,
     Nationality,
     IDType,
 )
 from student_registration.schools.models import (
     School,
     ClassRoom,
-    Grade,
     Section,
     EducationLevel,
     ClassLevel,
 )
-from student_registration.students.serializers import StudentSerializer
-from student_registration.eav.models import (
-    Attribute,
-    Value,
-)
-from student_registration.locations.models import Location
 from student_registration.alp.models import ALPRound
 from .models import Enrollment, LoggingStudentMove
+from .forms import EnrollmentForm
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
 
 
-# todo to delete
-class EnrollmentStaffView(LoginRequiredMixin, TemplateView):
-    """
-    Provides the Enrollment page with lookup types in the context
-    """
-    model = Enrollment
-    template_name = 'enrollments/list.html'
+class EnrollmentView(LoginRequiredMixin, FormView):
 
-    def get_context_data(self, **kwargs):
-        data = []
-        schools = []
+    template_name = 'enrollments/registration.html'
+    form_class = EnrollmentForm
+    success_url = '/'
 
-        if has_group(self.request.user, 'MEHE'):
-            schools = School.objects.all()
-        elif has_group(self.request.user, 'COORDINATOR'):
-            schools = self.request.user.schools.all()
-        elif has_group(self.request.user, 'PMU'):
-            schools = School.objects.filter(location_id=self.request.user.location_id)
-
-        school = self.request.GET.get("school", 0)
-        if school:
-            data = self.model.objects.filter(school=school).order_by('id')
-
-        return {
-            'enrollments': data,
-            'schools': schools,
-            'selectedSchool': int(school),
-        }
+    def form_valid(self, form):
+        form.save(self.request.user)
+        return super(EnrollmentView, self).form_valid(form)
 
 
-class EnrollmentView(LoginRequiredMixin,
-                     GroupRequiredMixin,
-                     TemplateView):
-    """
-    Provides the enrollment page with lookup types in the context
-    """
-    model = Enrollment
-    template_name = 'enrollments/index.html'
-
-    group_required = [u"ENROL_CREATE"]
-
-    def get_context_data(self, **kwargs):
-
-        school_id = 0
-        school = 0
-        location = 0
-        location_parent = 0
-        if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
-            school_id = self.request.user.school_id
-        if school_id:
-            school = School.objects.get(id=school_id)
-        if school and school.location:
-            location = school.location
-        if location and location.parent:
-            location_parent = location.parent
-
-        return {
-            'schools': School.objects.all(),
-            'school_shifts': Enrollment.SCHOOL_SHIFT,
-            'school_types': Enrollment.SCHOOL_TYPE,
-            'education_levels': ClassRoom.objects.all(),
-            'education_results': Enrollment.RESULT,
-            'informal_educations': EducationLevel.objects.all(),
-            'education_final_results': ClassLevel.objects.all(),
-            'alp_rounds': ALPRound.objects.all(),
-            'classrooms': ClassRoom.objects.all(),
-            'sections': Section.objects.all(),
-            'nationalities': Nationality.objects.exclude(id=5),
-            'nationalities2': Nationality.objects.all(),
-            'genders': Person.GENDER,
-            'months': Person.MONTHS,
-            'idtypes': IDType.objects.all(),
-            'school': school,
-            'location': location,
-            'location_parent': location_parent
-        }
+# class EnrollmentView(LoginRequiredMixin,
+#                      GroupRequiredMixin,
+#                      TemplateView):
+#     """
+#     Provides the enrollment page with lookup types in the context
+#     """
+#     model = Enrollment
+#     template_name = 'enrollments/index.html'
+#
+#     group_required = [u"ENROL_CREATE"]
+#
+#     def get_context_data(self, **kwargs):
+#
+#         school_id = 0
+#         school = 0
+#         location = 0
+#         location_parent = 0
+#         if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
+#             school_id = self.request.user.school_id
+#         if school_id:
+#             school = School.objects.get(id=school_id)
+#         if school and school.location:
+#             location = school.location
+#         if location and location.parent:
+#             location_parent = location.parent
+#
+#         return {
+#             'schools': School.objects.all(),
+#             'school_shifts': Enrollment.SCHOOL_SHIFT,
+#             'school_types': Enrollment.SCHOOL_TYPE,
+#             'education_levels': ClassRoom.objects.all(),
+#             'education_results': Enrollment.RESULT,
+#             'informal_educations': EducationLevel.objects.all(),
+#             'education_final_results': ClassLevel.objects.all(),
+#             'alp_rounds': ALPRound.objects.all(),
+#             'classrooms': ClassRoom.objects.all(),
+#             'sections': Section.objects.all(),
+#             'nationalities': Nationality.objects.exclude(id=5),
+#             'nationalities2': Nationality.objects.all(),
+#             'genders': Person.GENDER,
+#             'months': Person.MONTHS,
+#             'idtypes': IDType.objects.all(),
+#             'school': school,
+#             'location': location,
+#             'location_parent': location_parent
+#         }
 
 
 class EnrollmentEditView(LoginRequiredMixin,

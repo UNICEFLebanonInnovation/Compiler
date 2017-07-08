@@ -65,11 +65,6 @@
                       </li>
                     {% endif %}
                 {% endif %}
-                {% if request.user|has_group:"PMU" %}
-                  <li class="nav-item">
-                    <a class="nav-link {% if request|is_current_page:"enrollment_view" %}active{% endif %}" href="{% url 'enrollments:enrollment_view' %}">{% trans "Registration" %}</a>
-                  </li>
-                {% endif %}
                 {% if request.user|has_group:"ATTENDANCE" %}
                   <li class="nav-item">
                     <a class="nav-link {% if request|is_current_page:"attendance" %}active{% endif %}" href="{% url 'attendances:attendance' %}">{% trans "Attendance" %}</a>
