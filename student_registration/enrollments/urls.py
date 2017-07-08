@@ -11,11 +11,6 @@ urlpatterns = [
         view=views.EnrollmentView.as_view(),
         name='enrollment'
     ),
-    # url(
-    #     regex=r'^enrollment-edit/$',
-    #     view=views.EnrollmentEditView.as_view(),
-    #     name='enrollment_edit'
-    # ),
     url(
         regex=r'^enrollment-patch/$',
         view=views.EnrollmentPatchView.as_view(),
@@ -25,11 +20,6 @@ urlpatterns = [
         regex=r'^enrollment-grading/$',
         view=views.EnrollmentGradingView.as_view(),
         name='enrollment_grading'
-    ),
-    url(
-        regex=r'^enrollment-view/$',
-        view=views.EnrollmentStaffView.as_view(),
-        name='enrollment_view'
     ),
     url(
         regex=r'^enrollment/export/$',

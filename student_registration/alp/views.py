@@ -3,12 +3,9 @@ from __future__ import absolute_import, unicode_literals
 
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from rest_framework import viewsets, mixins, permissions
-from datetime import datetime
 import tablib
-import json
 from rest_framework import status
 from django.utils.translation import ugettext as _
 from django.db.models import Q
@@ -17,28 +14,20 @@ from braces.views import GroupRequiredMixin
 
 from .models import Outreach, ALPRound
 from .serializers import OutreachSerializer, OutreachExamSerializer, OutreachSmallSerializer
-from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
     Person,
-    Student,
-    Language,
     Nationality,
     IDType,
 )
 from student_registration.schools.models import (
     School,
     ClassRoom,
-    Grade,
     Section,
     EducationLevel,
     ClassLevel,
     PartnerOrganization
 )
 from student_registration.locations.models import Location
-from student_registration.eav.models import (
-    Attribute,
-    Value,
-)
 from student_registration.alp.templatetags.util_tags import has_group
 
 
@@ -134,7 +123,6 @@ class OutreachView(LoginRequiredMixin,
         return {
             'data': data,
             'schools': School.objects.all().order_by('name'),
-            'languages': Language.objects.all(),
             'locations': Location.objects.filter(type_id=2),
             'partners': PartnerOrganization.objects.all(),
             'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km',),
@@ -198,7 +186,6 @@ class CurrentRoundView(LoginRequiredMixin,
             'data': data,
             'total': total,
             'schools': School.objects.all().order_by('name'),
-            'languages': Language.objects.all(),
             'locations': Location.objects.filter(type_id=2),
             'partners': PartnerOrganization.objects.all(),
             'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km',),
@@ -247,7 +234,6 @@ class DataCollectingView(LoginRequiredMixin,
         return {
             'data': data,
             'schools': School.objects.all().order_by('name'),
-            'languages': Language.objects.all(),
             'locations': Location.objects.filter(type_id=2),
             'months': Person.MONTHS,
             'genders': Person.GENDER,

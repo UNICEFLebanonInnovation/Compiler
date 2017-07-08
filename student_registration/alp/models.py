@@ -9,7 +9,6 @@ from django.contrib.postgres.fields import JSONField
 from student_registration.students.models import (
     Person,
     Student,
-    Language,
 )
 from student_registration.schools.models import (
     School,
@@ -18,7 +17,6 @@ from student_registration.schools.models import (
     PartnerOrganization,
     ClassRoom,
     Section,
-    Grade
 )
 from student_registration.locations.models import Location
 from student_registration.alp.utils import refer_to_level, assign_to_level
@@ -92,11 +90,6 @@ class Outreach(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
-    preferred_language = models.ForeignKey(
-        Language,
-        blank=True, null=True,
-        related_name='+',
-    )
     last_class_level = models.ForeignKey(
         ClassLevel,
         blank=True, null=True,
@@ -140,11 +133,6 @@ class Outreach(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
         verbose_name='Current Section',
-    )
-    grade = models.ForeignKey(
-        Grade,
-        blank=True, null=True,
-        related_name='+',
     )
     classroom = models.ForeignKey(
         ClassRoom,

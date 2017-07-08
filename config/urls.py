@@ -11,26 +11,6 @@ from rest_framework_nested import routers
 from student_registration.alp.views import (
     OutreachViewSet,
 )
-from student_registration.registrations.views import (
-    RegisteringAdultViewSet,
-    RegisteringChildViewSet,
-    ClassAssignmentViewSet,
-    WaitingListViewSet,
-    RegisteringAdultListSearchView,
-    RegisteringAdultIDViewSet,
-    RegisteringComplaintViewSet,
-    RegisteringNotFoundViewSet,
-    MissingChildViewSet,
-    RegisteringComplaintCategoryViewSet
-)
-from student_registration.hhvisit.views import (
-    HouseholdVisitLoadViewSet,
-    HouseholdVisitAttemptViewSet,
-    HouseholdVisitChildViewSet,
-    HouseholdVisitServiceViewSet,
-    HouseholdVisitCommentViewSet,
-    HouseholdVisitSaveViewSet
-)
 from student_registration.attendances.views import (
     AttendanceViewSet,
     AttendanceReportViewSet,
@@ -42,11 +22,6 @@ from student_registration.schools.views import (
     SchoolViewSet,
     ClassRoomViewSet,
     SectionViewSet,
-    GradeViewSet,
-)
-from student_registration.eav.views import (
-    AttributeViewSet,
-    ValueViewSet,
 )
 from student_registration.winterization.views import (
     BeneficiaryViewSet
