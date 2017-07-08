@@ -40,9 +40,4 @@ urlpatterns = [
         view=views.RegistrationsALPPostTestView.as_view(),
         name='registrations-alp-post-test'
     ),
-    url(
-        regex=r'^attendances/$',
-        view=views.AttendanceView.as_view(),
-        name='attendances'
-    ),
 ]

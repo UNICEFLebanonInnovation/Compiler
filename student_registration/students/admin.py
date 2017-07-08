@@ -11,7 +11,6 @@ from .models import (
     Student,
     StudentMatching,
     Nationality,
-    Language,
     IDType,
 )
 from .forms import StudentEnrollmentForm
@@ -614,7 +613,7 @@ class StudentAdmin(ImportExportModelAdmin):
         'father_name',
         'last_name',
         'mother_fullname',
-        'calc_age',
+        'age',
         'sex',
         'nationality',
         'mother_nationality',
@@ -691,6 +690,5 @@ class StudentMatchingAdmin(ImportExportModelAdmin):
 
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Nationality, NationalityAdmin)
-admin.site.register(Language)
 admin.site.register(StudentMatching, StudentMatchingAdmin)
 admin.site.register(IDType, IDTypeAdmin)

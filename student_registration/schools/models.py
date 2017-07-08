@@ -79,21 +79,6 @@ class Section(models.Model):
 
 class ClassRoom(models.Model):
     name = models.CharField(max_length=45L, unique=True)
-    school = models.ForeignKey(
-        School,
-        blank=True, null=True,
-        related_name='+',
-    )
-    grade = models.ForeignKey(
-        Grade,
-        blank=True, null=True,
-        related_name='+',
-    )
-    section = models.ForeignKey(
-        Section,
-        blank=True, null=True,
-        related_name='+',
-    )
 
     class Meta:
         ordering = ['id']

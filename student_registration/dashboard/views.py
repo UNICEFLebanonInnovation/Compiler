@@ -16,13 +16,7 @@ from student_registration.schools.models import (
     ClassLevel,
     ClassRoom,
 )
-from student_registration.students.models import (
-    Student,
-    IDType,
-    Nationality,
-)
 
-from student_registration.registrations.models import Registration, RegisteringAdult
 from student_registration.enrollments.models import Enrollment
 from student_registration.alp.models import Outreach, ALPRound
 from student_registration.users.models import User
@@ -370,17 +364,4 @@ class RegistrationsALPPostTestView(LoginRequiredMixin,
                 'enrollments': self.queryset,
                 'governorates': governorates,
                 'education_levels': ClassLevel.objects.all()
-        }
-
-
-class AttendanceView(LoginRequiredMixin, ListView):
-
-    model = Registration
-    template_name = 'dashboard/attendance.html'
-
-    def get_context_data(self, **kwargs):
-
-
-        return {
-
         }
