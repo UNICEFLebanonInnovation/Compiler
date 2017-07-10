@@ -11,11 +11,15 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
 from bootstrap3_datetime.widgets import DateTimePicker
+from student_registration.students.models import (
+    IDType,
+    Nationality,
+)
 
 YES_NO_CHOICE = ((False, _('No')), (True, _('Yes')))
 
 
-class EnrollmentForm(forms.ModelForm):
+class EnrollmentAdminForm(forms.ModelForm):
 
     student = forms.ModelChoiceField(
         queryset=Student.objects.all(),
@@ -23,50 +27,103 @@ class EnrollmentForm(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
-        super(EnrollmentForm, self).__init__(*args, **kwargs)
+        super(EnrollmentAdminForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = Enrollment
         fields = '__all__'
 
 
-class EnrollmentAdminForm(forms.ModelForm):
+class EnrollmentForm(forms.ModelForm):
 
     registration_date = forms.DateField(
-        widget=DateTimePicker(
-            options={
-                "viewMode": "years",
-                "format": "mm/dd/yyyy",
-                "pickTime": False,
-                "stepping": 0,
-                "showClear": True,
-                "showClose": True,
-                "disabledHours": True,
-            }),
+        # widget=DateTimePicker(
+        #     options={
+        #         "viewMode": "years",
+        #         "format": "mm/dd/yyyy",
+        #         "pickTime": False,
+        #         "stepping": 0,
+        #         "showClear": True,
+        #         "showClose": True,
+        #         "disabledHours": True,
+        #     }),
         required=True
     )
-    supporting_family = forms.TypedChoiceField(
+
+    first_name = forms.CharField(widget=forms.TextInput, required=True)
+    father_name = forms.CharField(widget=forms.TextInput, required=True)
+    last_name = forms.CharField(widget=forms.TextInput, required=True)
+    sex = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=(
+            ('', _('Gender')),
+            ('Male', _('Male')),
+            ('Female', _('Female')),
+        )
+    )
+    birthday_year = forms.ChoiceField(
+        widget=forms.TextInput, required=True,
+        choices=((str(x), x) for x in range(1930, 2051))
+    )
+    birthday_month = forms.ChoiceField(
+        widget=forms.TextInput, required=True,
+        choices=(
+            ('1', _('January')),
+            ('2', _('February')),
+            ('3', _('March')),
+            ('4', _('April')),
+            ('5', _('May')),
+            ('6', _('June')),
+            ('7', _('July')),
+            ('8', _('August')),
+            ('9', _('September')),
+            ('10', _('October')),
+            ('11', _('November')),
+            ('12', _('December')),
+        )
+    )
+    birthday_day = forms.ChoiceField(
+        widget=forms.TextInput, required=True,
+        choices=((str(x), x) for x in range(1, 32))
+    )
+    phone = forms.CharField(widget=forms.TextInput, required=True)
+    phone_prefix = forms.CharField(widget=forms.TextInput, required=True)
+    nationality = forms.ModelChoiceField(
+        queryset=Nationality.objects.all(), widget=forms.Select(attrs=({'placeholder': _('Nationality')})),
+        required=True, to_field_name='id',
+    )
+
+    mother_fullname = forms.CharField(widget=forms.TextInput, required=True)
+    mother_nationality = forms.ModelChoiceField(
+        queryset=Nationality.objects.all(), widget=forms.Select(attrs=({'placeholder': _('Mother Nationality')})),
+        required=True, to_field_name='id',
+    )
+    registered_in_unhcr = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=YES_NO_CHOICE,
         widget=forms.RadioSelect
     )
+    id_type = forms.ModelChoiceField(
+        queryset=IDType.objects.all(), widget=forms.Select(attrs=({'placeholder': _('ID Type')})),
+        required=True, to_field_name='id',
+    )
+    id_number = forms.CharField(widget=forms.TextInput, required=True)
 
     def __init__(self, *args, **kwargs):
         super(EnrollmentForm, self).__init__(*args, **kwargs)
         self.fields['id_type'].empty_label = _('ID Type')
-        self.fields['id_number'].empty_label = _('ID Type')
+        self.fields['id_number'].empty_label = _('ID Number')
         self.fields['sex'].empty_label = _('Gender')
         self.fields['nationality'].empty_label = _('Nationality')
-        self.fields['location'].empty_label = _('Location')
-        self.fields['partner_organization'].empty_label = _('Partner Organisation')
-        self.fields['education_status'].empty_label = _('Are you currently studying?')
-        self.fields['education_type'].empty_label = _('Type of education?')
-        self.fields['education_level'].empty_label = _('Current education level?')
         self.helper = FormHelper()
         self.helper.form_show_labels = False
         self.helper.layout = Layout(
             Fieldset(
                 _('Basic Data'),
+                Div(
+                    Div(PrependedText('registration_date', _('Registration date')), css_class='col-md-4'),
+                    css_class='row',
+                ),
                 Div(
                     Div(PrependedText('first_name', _('First Name')), css_class='col-md-4'),
                     Div(PrependedText('father_name', _('Father Name')), css_class='col-md-4'),
@@ -74,13 +131,23 @@ class EnrollmentAdminForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('mother_firstname', _('Mother First Name')), css_class='col-md-6'),
-                    Div(PrependedText('mother_lastname', _('Mother Last Name')), css_class='col-md-6'),
+                    Div(PrependedText('sex', _('Gender')), css_class='col-md-4'),
+                    Div('nationality', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('id_number', _('ID Number')), css_class='col-md-6', ),
+                    Div('birthday_year', css_class='col-md-4'),
+                    Div('birthday_Month', css_class='col-md-4'),
+                    Div('birthday_day', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('mother_fullname', _('Mother Full name')), css_class='col-md-6'),
+                    css_class='row',
+                ),
+                Div(
                     Div('id_type', css_class='col-md-6',),
+                    Div(PrependedText('id_number', _('ID Number')), css_class='col-md-6', ),
                     css_class='row',
                 ),
                 Div(
@@ -194,13 +261,14 @@ class EnrollmentAdminForm(forms.ModelForm):
                 ),
             ),
             FormActions(
-                Submit('save', _('Save changes')),
+                Submit('save', _('Save')),
                 Button('cancel', _('Cancel'))
             )
         )
 
-    def save(self, student=None):
-        pass
+    def save(self, user=None):
+        print self
+        return True
         # user_profile = super(EnrollmentForm, self).save(commit=False)
         # if user:
         #     user_profile.user = user
@@ -212,9 +280,9 @@ class EnrollmentAdminForm(forms.ModelForm):
         fields = '__all__'
         # exclude = ('user', 'full_name', 'mother_fullname',)
         # widgets = {
-        #     'employment_status': forms.RadioSelect(),
-        #     'sports_group': forms.RadioSelect(),
-        #     'location': autocomplete.ModelSelect2(url='locations:location-autocomplete')
+            # 'employment_status': forms.RadioSelect(),
+            # 'sports_group': forms.RadioSelect(),
+            # 'student': autocomplete.ModelSelect2(url='student_autocomplete')
         # }
 
     # class Media:
