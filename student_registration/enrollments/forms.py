@@ -8,7 +8,7 @@ from student_registration.students.models import Student
 
 from model_utils import Choices
 from crispy_forms.helper import FormHelper
-from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes
+from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
 from bootstrap3_datetime.widgets import DateTimePicker
 from student_registration.students.models import (
@@ -62,12 +62,13 @@ class EnrollmentForm(forms.ModelForm):
         )
     )
     birthday_year = forms.ChoiceField(
-        widget=forms.TextInput, required=True,
+        widget=forms.Select, required=True,
         choices=((str(x), x) for x in range(1930, 2051))
     )
     birthday_month = forms.ChoiceField(
-        widget=forms.TextInput, required=True,
+        widget=forms.Select, required=True,
         choices=(
+            ('', _('Birthday Month')),
             ('1', _('January')),
             ('2', _('February')),
             ('3', _('March')),
@@ -83,11 +84,10 @@ class EnrollmentForm(forms.ModelForm):
         )
     )
     birthday_day = forms.ChoiceField(
-        widget=forms.TextInput, required=True,
+        widget=forms.Select, required=True,
         choices=((str(x), x) for x in range(1, 32))
     )
-    phone = forms.CharField(widget=forms.TextInput, required=True)
-    phone_prefix = forms.CharField(widget=forms.TextInput, required=True)
+
     nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select(attrs=({'placeholder': _('Nationality')})),
         required=True, to_field_name='id',
@@ -109,12 +109,29 @@ class EnrollmentForm(forms.ModelForm):
     )
     id_number = forms.CharField(widget=forms.TextInput, required=True)
 
+    phone_prefix = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 2})), required=True)
+    phone = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 6})), required=True)
+    address = forms.CharField(widget=forms.TextInput, required=True)
+
     def __init__(self, *args, **kwargs):
         super(EnrollmentForm, self).__init__(*args, **kwargs)
-        self.fields['id_type'].empty_label = _('ID Type')
-        self.fields['id_number'].empty_label = _('ID Number')
+        self.fields['id_type'].empty_label = _('Student ID Type')
         self.fields['sex'].empty_label = _('Gender')
-        self.fields['nationality'].empty_label = _('Nationality')
+        self.fields['nationality'].empty_label = _('Student nationality')
+        self.fields['mother_nationality'].empty_label = _('Mather nationality')
+        self.fields['classroom'].empty_label = _('Current Class')
+        self.fields['section'].empty_label = _('Current Section')
+
+        self.fields['last_education_level'].empty_label = _('Last education level')
+        self.fields['last_school_type'].empty_label = _('School type')
+        self.fields['last_school_shift'].empty_label = _('School shift')
+        self.fields['last_school'].empty_label = _('School')
+        self.fields['last_education_year'].empty_label = _('Education year')
+        self.fields['last_year_result'].empty_label = _('Result')
+        self.fields['last_informal_edu_level'].empty_label = _('ALP level')
+        self.fields['last_informal_edu_round'].empty_label = _('ALP round')
+        self.fields['last_informal_edu_final_result'].empty_label = _('')
+        self.fields['section'].empty_label = _('ALP result')
         self.helper = FormHelper()
         self.helper.form_show_labels = False
         self.helper.layout = Layout(
@@ -131,132 +148,67 @@ class EnrollmentForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('sex', _('Gender')), css_class='col-md-4'),
-                    Div('nationality', css_class='col-md-4'),
+                    Div('sex', css_class='col-md-3'),
+                    Div('birthday_year', css_class='col-md-2'),
+                    Div('birthday_month', css_class='col-md-2'),
+                    Div('birthday_day', css_class='col-md-2'),
+                    Div('nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div('birthday_year', css_class='col-md-4'),
-                    Div('birthday_Month', css_class='col-md-4'),
-                    Div('birthday_day', css_class='col-md-4'),
+                    Div(PrependedText('mother_fullname', _('Mother Full name')), css_class='col-md-4'),
+                    Div('mother_nationality', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('mother_fullname', _('Mother Full name')), css_class='col-md-6'),
+                    Div(InlineRadios('registered_in_unhcr', _('Registered in UNHCR')), css_class='col-md-4'),
+                    Div('id_type', css_class='col-md-4'),
+                    Div(PrependedText('id_number', _('Student ID Number')), css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
-                    Div('id_type', css_class='col-md-6',),
-                    Div(PrependedText('id_number', _('ID Number')), css_class='col-md-6', ),
-                    css_class='row',
-                ),
-                Div(
-                    Div(PrependedText('disability', _('Disability')), css_class='col-md-4', ),
-                    Div('sex', css_class='col-md-4', ),
-                    Div(PrependedText('birthdate', _('Birthdate')), css_class='col-md-4', ),
-                    css_class='row',
-                ),
-                Div(
-                    Div('nationality', css_class='col-md-4', ),
-                    Div(PrependedText('phone', _('Phone Number')), css_class='col-md-4', ),
-                    Div(PrependedText('parents_phone_number', _('Parents Phone Number')), css_class='col-md-4', ),
-                    css_class='row',
-                ),
-                Div(
-                    Div('location', css_class='col-md-6', ),
-                    Div('partner_organization', css_class='col-md-6', ),
+                    Div(PrependedText('phone_prefix', _('Prefix (2 digits)')), css_class='col-md-4'),
+                    Div(PrependedText('phone', _('Number (6 digits)')), css_class='col-md-4'),
+                    Div(PrependedText('address', _('Address')), css_class='col-md-4'),
                     css_class='row',
                 ),
             ),
             Fieldset(
-                _('Educational Information'),
+                _('Current situation'),
                 Div(
-                    Div(
-                        HTML(_('1. Have you ever attended school or other training programs?')),
-                        'education_status', css_class='col-md-4',
-                    ),
-                    Div(
-                        HTML(_('1.a What type of education are/were you enrolled in?')),
-                        'education_type', css_class='col-md-4',
-                    ),
-                    Div(
-                        HTML(_('1.b What is the level of education you have successfully completed?')),
-                        'education_level', css_class='col-md-4',
-                    ),
-                    css_class='row',
-                ),
-                HTML(_('2. What were your reason(s) for stopping studying? Please tick all that apply?')),
-                Field('leaving_education_reasons'),
-            ),
-            Fieldset(
-                _('Livelihood Information'),
-                Div(
-                    Div(
-                        HTML(_('1. Relationship with Labour Market')),
-                        Field('employment_status'),
-                        css_class='col-md-6'),
-                    Div(
-                        HTML(_('2. What is the sector(s) you worked in / or are working in?')),
-                        Field('employment_sectors'),
-                        css_class='col-md-6'),
-                    css_class='row',
-                ),
-                Div(
-                    Div(
-                        HTML(_('3. If you are currently not working, are you searching for work now?')),
-                        Div('looking_for_work'),
-                        css_class='col-md-6'),
-                    Div(
-                        HTML(_('3.a If yes, through whom? (select multiple)')),
-                        Div('through_whom'),
-                        css_class='col-md-6'),
-                    css_class='row',
-                ),
-                Div(
-                    Div(
-                        HTML(_('4. What are the obstacles in searching for/or having work?')),
-                        Div('obstacles_for_work'),
-                        css_class='col-md-6'),
-                    Div(
-                        HTML(_('4.a Do you participate in supporting your family financially?')),
-                        Div('supporting_family'),
-                        css_class='col-md-6'),
-                    css_class='row',
-                ),
-                Div(
-                    Div(
-                        HTML(_('5. Please check all the choice(s) that best describes your household composition')),
-                        Div('household_composition'),
-                        css_class='col-md-6'),
-                    Div(
-                        HTML(_('6. How many members in your household work?')),
-                        Div('household_working'),
-                        css_class='col-md-6'),
+                    Div('classroom', css_class='col-md-6'),
+                    Div('section', css_class='col-md-6'),
                     css_class='row',
                 ),
             ),
             Fieldset(
-                _('Follow-up Availability'),
+                _('Last student formal education'),
                 Div(
-                    Div(
-                        HTML(_('1. Have you attended any kind of training before?')),
-                        Div('trained_before'),
-                        css_class='col-md-6'),
-                    Div(
-                        HTML(_('1.a If not, why?')),
-                        Div('not_trained_reason'),
-                        css_class='col-md-6'),
+                    Div('last_education_level', css_class='col-md-6'),
+                    Div('last_school_type', css_class='col-md-6'),
                     css_class='row',
                 ),
                 Div(
-                    Div(
-                        HTML(_('How did you know about this program?')),
-                        Div('referred_by'),
-                        css_class='col-md-6'),
-                    Div(
-                        HTML(_('4. We would like to follow up with you after the training, what is your preferred method of communication?')),
-                        Div('communication_preference'),
-                        css_class='col-md-6'),
+                    Div('last_school_shift', css_class='col-md-6'),
+                    Div('last_school', css_class='col-md-6'),
+                    css_class='row',
+                ),
+                Div(
+                    Div('last_education_year', css_class='col-md-6'),
+                    Div('last_year_result', css_class='col-md-6'),
+                    css_class='row',
+                ),
+            ),
+            Fieldset(
+                _('Last student informal education'),
+                Div(
+                    Div('participated_in_alp', css_class='col-md-6'),
+                    Div('last_informal_edu_level', css_class='col-md-6'),
+                    css_class='row',
+                ),
+                Div(
+                    Div('last_informal_edu_round', css_class='col-md-6'),
+                    Div('last_informal_edu_final_result', css_class='col-md-6'),
                     css_class='row',
                 ),
             ),
