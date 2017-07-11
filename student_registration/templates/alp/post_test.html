@@ -113,7 +113,7 @@
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Language" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Exam language" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Math" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science" %}</label></th>
@@ -233,12 +233,12 @@
 
                 $(this).removeClass('required');
                 var item = $(this).parent().parent();
-                var max = parseInt(item.find('#level').find('option:selected').attr('data-value'));
-                if(parseFloat($(this).val()) > max){
-                    $(this).val(0);
-                    $(this).addClass('required');
-                    return false;
-                }
+{#                var max = parseInt(item.find('#level').find('option:selected').attr('data-value'));#}
+{#                if(parseFloat($(this).val()) > max){#}
+{#                    $(this).val(0);#}
+{#                    $(this).addClass('required');#}
+{#                    return false;#}
+{#                }#}
 
                 var note1 = parseFloat(item.find('#post_exam_result_arabic').val());
                 var note2 = parseFloat(item.find('#post_exam_result_language').val());
