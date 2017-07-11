@@ -406,10 +406,8 @@ class Outreach(TimeStampedModel):
 
     @property
     def next_level(self):
-        if self.registered_in_level and not self.refer_to_level:
-            return self.registered_in_level_id
-        if self.refer_to_level and self.post_exam_total >= 40:
-            return self.registered_in_level_id + 1
+        if self.refer_to_level:
+            return self.refer_to_level
         return ''
 
     @property

@@ -36,7 +36,7 @@
     {% if request.user|has_group:"CERD" %}
         <td>
             <select name="level" id="level" class="outreach-field note-indicator" itemscope="$$itemscope_id$$">
-                <option value="">{% trans "Registered in level" %}</option>
+                <option value="">{% trans "Entrance Test" %} (Pre-Test)</option>
                 {% for item in informal_educations %}
                     <option value="{{ item.id }}" data-value="{{ item.note }}">{{ item.name }}</option>
                 {% endfor %}
@@ -49,7 +49,7 @@
         </td>
         <td>
             <select name="exam_language" id="exam_language" class="outreach-field" itemscope="$$itemscope_id$$">
-                <option value="">{% trans "Language" %}</option>
+                <option value="">{% trans "Exam language" %}</option>
                 {% for key, item in languages %}
                     <option value="{{ key }}">{{ item }}</option>
                 {% endfor %}

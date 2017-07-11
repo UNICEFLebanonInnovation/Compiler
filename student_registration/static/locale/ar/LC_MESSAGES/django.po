@@ -1028,7 +1028,7 @@ msgid "Current Class"
 msgstr "الصف الحالي"
 
 msgid "Current Level"
-msgstr " المستوى المسجل فيه حالياً"
+msgstr " المستوى الحالي"
 
 msgid "Current Section"
 msgstr "الشعبة الحالية"
@@ -1231,11 +1231,11 @@ msgstr " المستوي المرفع اليه"
 msgid "Filter by"
 msgstr "تصفية القائمة حسب"
 
-msgid "Pre-test result"
-msgstr "نتيجة امتحان تحديد المستوى "
+msgid "Pre-test total"
+msgstr "مجموع علامات ال Pre-test "
 
-msgid "Post-test result"
-msgstr "نتيجة امتحان آخر الدورة"
+msgid "Post-test total"
+msgstr "مجموع علامات ال Post-test"
 
 msgid "Select Level if applicable"
 msgstr "مستوى التلميذ اذا كان مسجل لديك"
@@ -1413,3 +1413,18 @@ msgstr "المجال اللغوي/عربي"
 
 msgid "Linguistic field/Foreign language"
 msgstr "المجال الغوي/لغة اجنبية"
+
+msgid "Exam language"
+msgstr "لغة الامتحان"
+
+msgid "Entrance Test"
+msgstr "امتحان الدخول"
+
+msgid "Pre-test result"
+msgstr "نتيجة ال Pre-test"
+
+msgid "Post-test result"
+msgstr "نتيجة ال Post-test"
+
+msgid "Refer to level"
+msgstr "نتيجة ال Post-test"
