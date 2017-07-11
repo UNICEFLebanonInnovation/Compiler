@@ -57,6 +57,11 @@ class Outreach(TimeStampedModel):
         ('failed', _('Failed'))
     )
 
+    LANGUAGES = Choices(
+        ('english', _('English')),
+        ('french', _('French'))
+    )
+
     YES_NO = Choices(
         ('yes', _('Yes')),
         ('no', _('No'))
@@ -236,6 +241,12 @@ class Outreach(TimeStampedModel):
         null=True,
         default=0,
     )
+    exam_language = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=LANGUAGES
+    )
     exam_corrector_arabic = models.IntegerField(
         blank=True,
         null=True,
@@ -310,6 +321,12 @@ class Outreach(TimeStampedModel):
         blank=True,
         null=True,
         default=0,
+    )
+    post_exam_language = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=LANGUAGES
     )
     post_exam_corrector_arabic = models.IntegerField(
         blank=True,

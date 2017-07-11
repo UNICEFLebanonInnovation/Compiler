@@ -69,6 +69,7 @@ class OutreachResource(resources.ModelResource):
             'school__name',
             'level__name',
             'exam_result_arabic',
+            'exam_language',
             'exam_result_language',
             'exam_result_math',
             'exam_result_science',
@@ -82,6 +83,7 @@ class OutreachResource(resources.ModelResource):
             'registered_in_level__name',
             'section__name',
             'post_exam_result_arabic',
+            'post_exam_language',
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',
@@ -594,13 +596,14 @@ class OutreachAdmin(ImportExportModelAdmin):
         }),
         ('Pre-test', {
             'classes': ('collapse',),
-            'fields': ('level', 'exam_result_arabic', 'exam_result_language', 'exam_result_math', 'exam_result_science',
+            'fields': ('level', 'exam_result_arabic', 'exam_language', 'exam_result_language', 'exam_result_math', 'exam_result_science',
                        'pre_test_total', 'assigned_to_level'),
         }),
         ('Post-test', {
             'classes': ('collapse',),
-            'fields': ('registered_in_level', 'post_exam_result_arabic', 'post_exam_result_language',
-                       'post_exam_result_math', 'post_exam_result_science', 'post_test_total', 'refer_to_level'),
+            'fields': ('registered_in_level', 'post_exam_result_arabic', 'post_exam_language',
+                       'post_exam_result_language', 'post_exam_result_math', 'post_exam_result_science',
+                       'post_test_total', 'refer_to_level'),
         }),
         ('Last formal education', {
             'classes': ('collapse',),
