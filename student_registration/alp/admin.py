@@ -595,12 +595,12 @@ class OutreachAdmin(ImportExportModelAdmin):
         ('Pre-test', {
             'classes': ('collapse',),
             'fields': ('level', 'exam_result_arabic', 'exam_result_language', 'exam_result_math', 'exam_result_science',
-                       'assigned_to_level'),
+                       'pre_test_total', 'assigned_to_level'),
         }),
         ('Post-test', {
             'classes': ('collapse',),
             'fields': ('registered_in_level', 'post_exam_result_arabic', 'post_exam_result_language',
-                       'post_exam_result_math', 'post_exam_result_science', 'refer_to_level'),
+                       'post_exam_result_math', 'post_exam_result_science', 'post_test_total', 'refer_to_level'),
         }),
         ('Last formal education', {
             'classes': ('collapse',),
