@@ -585,6 +585,36 @@ class ToAgeFilter(admin.SimpleListFilter):
 class OutreachAdmin(ImportExportModelAdmin):
     resource_class = OutreachResource
     form = OutreachForm
+    fieldsets = (
+        (None, {
+            'fields': ('student', 'school', 'owner', 'modified_by')
+        }),
+        ('Current Situation', {
+            'fields': ('alp_round', 'registered_in_level', 'section')
+        }),
+        ('Pre-test', {
+            'classes': ('collapse',),
+            'fields': ('level', 'exam_result_arabic', 'exam_result_language', 'exam_result_math', 'exam_result_science',
+                       'assigned_to_level'),
+        }),
+        ('Post-test', {
+            'classes': ('collapse',),
+            'fields': ('registered_in_level', 'post_exam_result_arabic', 'post_exam_result_language',
+                       'post_exam_result_math', 'post_exam_result_science', 'refer_to_level'),
+        }),
+        ('Last formal education', {
+            'classes': ('collapse',),
+            'fields': ('last_education_level', 'last_education_year'),
+        }),
+        ('Last informal education', {
+            'classes': ('collapse',),
+            'fields': ('participated_in_alp', 'last_informal_edu_round', 'last_informal_edu_level',
+                       'last_informal_edu_final_result'),
+        }),
+        ('Status options', {
+            'fields': ('status', 'deleted', 'dropout_status')
+        }),
+    )
     list_display = (
         'student',
         'student_age',

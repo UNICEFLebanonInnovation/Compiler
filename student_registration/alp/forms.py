@@ -33,7 +33,21 @@ class OutreachForm(forms.ModelForm):
             'classroom',
             'alp_year',
             'exam_school',
+            'enrolled_in_this_school',
+            'not_enrolled_in_this_school',
+            'exam_not_exist_in_school',
             'registered_in_school',
+            'exam_corrector_arabic',
+            'exam_corrector_language',
+            'exam_corrector_math',
+            'exam_corrector_science',
+            'post_exam_corrector_arabic',
+            'post_exam_corrector_language',
+            'post_exam_corrector_math',
+            'post_exam_corrector_science',
+            'last_year_result',
+            'last_informal_edu_result',
+            'last_informal_edu_year',
         )
 
 
