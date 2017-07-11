@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 from .models import Outreach
-from student_registration.students.serializers import StudentSerializer
+# from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
     IDType,
     Nationality,
@@ -79,8 +79,10 @@ class OutreachSerializer(serializers.ModelSerializer):
     school_number = serializers.CharField(source='school.number', read_only=True)
     section_name = serializers.CharField(source='section.name', read_only=True)
     level_name = serializers.CharField(source='level.name', read_only=True)
+    assigned_to_level_name = serializers.CharField(source='assigned_to_level.name', read_only=True)
     registered_in_level_name = serializers.CharField(source='registered_in_level.name', read_only=True)
     refer_to_level_name = serializers.CharField(source='refer_to_level.name', read_only=True)
+    alp_round_name = serializers.CharField(source='alp_round.name', read_only=True)
     governorate_name = serializers.CharField(source='school.location.parent.name', read_only=True)
     location = serializers.CharField(source='school.location.name', read_only=True)
     student_nationality_id = serializers.CharField(source='student.nationality.id', read_only=True)
@@ -97,7 +99,7 @@ class OutreachSerializer(serializers.ModelSerializer):
     next_level = serializers.CharField(read_only=True)
 
     def create(self, validated_data):
-
+        from student_registration.students.serializers import StudentSerializer
         student_data = validated_data.pop('student', None)
         if 'id' in student_data and student_data['id']:
             student = update_student(student_data, Student.objects.get(id=student_data['id']))
@@ -210,12 +212,14 @@ class OutreachSerializer(serializers.ModelSerializer):
             'pretest_total',
             'posttest_total',
             'assigned_to_level',
+            'assigned_to_level_name',
             'registered_in_level',
             'next_level',
             'alp_round',
             'registered_in_level_name',
             'refer_to_level',
-            'refer_to_level_name'
+            'refer_to_level_name',
+            'alp_round_name',
         )
 
 
@@ -281,7 +285,7 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
     student_address = serializers.CharField(source='student.address', required=False)
 
     def create(self, validated_data):
-
+        from student_registration.students.serializers import StudentSerializer
         student_data = validated_data.pop('student', None)
         student_serializer = StudentSerializer(data=student_data)
         student_serializer.is_valid(raise_exception=True)

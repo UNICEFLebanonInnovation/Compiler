@@ -24,7 +24,7 @@
     {% if role == "CERD" and alp_phase == 'pre_test' %}
         <td>
             <select name="level" id="level" class="outreach-field-p note-indicator" itemscope="{{ line.id }}">
-                <option value="">{% trans "Registered in level" %}</option>
+                <option value="">{% trans "Entrance Test" %} (Pre-Test)</option>
                 {% for item in informal_educations %}
                     <option value="{{ item.id }}" {% if line.level_id == item.id %}selected{% endif %} data-value="{{ item.note }}">{{ item.name }}</option>
                 {% endfor %}
@@ -36,7 +36,7 @@
         </td>
         <td>
             <select name="exam_language" id="exam_language" class="outreach-field-p" itemscope="{{ line.id }}">
-                <option value="">{% trans "Language" %}</option>
+                <option value="">{% trans "Exam language" %}</option>
                 {% for key, item in languages %}
                     <option value="{{ key }}" {% if line.exam_language == key %}selected{% endif %}>{{ item }}</option>
                 {% endfor %}
@@ -96,7 +96,7 @@
             </td>
             <td>
                 <select name="post_exam_language" id="post_exam_language" class="outreach-field-p" itemscope="{{ line.id }}">
-                    <option value="">{% trans "Language" %}</option>
+                    <option value="">{% trans "Exam language" %}</option>
                     {% for key, item in languages %}
                         <option value="{{ key }}" {% if line.post_exam_language == key %}selected{% endif %}>{{ item }}</option>
                     {% endfor %}
@@ -122,7 +122,7 @@
             </td>
             <td>
                 <input type="text" name="" class="post_exam_total_{{ line.id }}" readonly="readonly"
-                       itemscope="{{ line.id }}" id="post_exam_total" value="{{ line.post_exam_total_ }}" disabled="disabled" size="3" />
+                       itemscope="{{ line.id }}" id="post_exam_total" value="{{ line.post_exam_total }}" disabled="disabled" size="3" />
 {#                <span class="note-indicator-total">{% if level %}/{{ level.note|multiply:4 }}{% endif %}</span>#}
             </td>
 {#            <td>#}
