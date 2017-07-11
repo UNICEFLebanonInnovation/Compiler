@@ -270,7 +270,7 @@ class Outreach(TimeStampedModel):
         EducationLevel,
         blank=True, null=True,
         related_name='+',
-        verbose_name='Registered in level',
+        verbose_name='Entrance Test (Pre-Test)',
     )
     registered_in_level = models.ForeignKey(
         EducationLevel,
@@ -282,7 +282,7 @@ class Outreach(TimeStampedModel):
         EducationLevel,
         blank=True, null=True,
         related_name='+',
-        verbose_name='Assigned to level',
+        verbose_name='Pre-test result',
     )
     exam_school = models.ForeignKey(
         School,
@@ -339,6 +339,7 @@ class Outreach(TimeStampedModel):
         ClassLevel,
         blank=True, null=True,
         related_name='+',
+        verbose_name='Post-test result',
     )
     dropout_status = models.BooleanField(blank=True, default=False)
 
