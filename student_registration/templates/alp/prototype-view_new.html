@@ -35,10 +35,10 @@
             <span class="note-indicator-value">{% if level %}/{{ level.note }}{% endif %}</span>
         </td>
         <td>
-            <select name="post_exam_language" id="post_exam_language" class="outreach-field-p" itemscope="{{ line.id }}">
+            <select name="exam_language" id="exam_language" class="outreach-field-p" itemscope="{{ line.id }}">
                 <option value="">{% trans "Language" %}</option>
                 {% for key, item in languages %}
-                    <option value="{{ key }}" {% if line.post_exam_language == key %}selected{% endif %}>{{ item }}</option>
+                    <option value="{{ key }}" {% if line.exam_language == key %}selected{% endif %}>{{ item }}</option>
                 {% endfor %}
             </select>
         </td>
@@ -93,6 +93,14 @@
                        value="{% if line.post_exam_result_arabic %}{{ line.post_exam_result_arabic }}{% else %}0{% endif %}"
                        class="outreach-field-p post-exam-note" itemscope="{{ line.id }}" maxlength="5" size="6" />
 {#                <span class="note-indicator-value">{% if level %}/{{ level.note }}{% endif %}</span>#}
+            </td>
+            <td>
+                <select name="post_exam_language" id="post_exam_language" class="outreach-field-p" itemscope="{{ line.id }}">
+                    <option value="">{% trans "Language" %}</option>
+                    {% for key, item in languages %}
+                        <option value="{{ key }}" {% if line.post_exam_language == key %}selected{% endif %}>{{ item }}</option>
+                    {% endfor %}
+                </select>
             </td>
             <td>
                 <input type="text" name="post_exam_result_language" id="post_exam_result_language"
