@@ -225,6 +225,7 @@ class OutreachExamSerializer(serializers.ModelSerializer):
         model = Outreach
         fields = (
             'exam_result_arabic',
+            'exam_language',
             'exam_result_language',
             'exam_result_math',
             'exam_result_science',
@@ -236,9 +237,10 @@ class OutreachExamSerializer(serializers.ModelSerializer):
             'registered_in_level',
             'section',
             'assigned_to_level',
-            'not_enrolled_in_this_school',
-            'exam_not_exist_in_school',
+            # 'not_enrolled_in_this_school',
+            # 'exam_not_exist_in_school',
             'post_exam_result_arabic',
+            'post_exam_language',
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',
@@ -309,6 +311,8 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
 
             if 'exam_result_arabic' in validated_data:
                 instance.exam_result_arabic = validated_data['exam_result_arabic']
+            if 'exam_language' in validated_data:
+                instance.exam_language = validated_data['exam_language']
             if 'exam_result_language' in validated_data:
                 instance.exam_result_language = validated_data['exam_result_language']
             if 'exam_result_math' in validated_data:
@@ -366,6 +370,7 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'governorate_name',
             'school_number',
             'exam_result_arabic',
+            'exam_language',
             'exam_result_language',
             'exam_result_math',
             'exam_result_science',
@@ -379,6 +384,7 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'not_enrolled_in_this_school',
             'exam_not_exist_in_school',
             'post_exam_result_arabic',
+            'post_exam_language',
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',

@@ -305,6 +305,7 @@ class PreTestView(LoginRequiredMixin,
 
         return {
             'data': data,
+            'languages': Outreach.LANGUAGES,
             'schools': School.objects.filter(id__in=schools),
             'months': Person.MONTHS,
             'genders': Person.GENDER,
@@ -366,6 +367,7 @@ class PostTestView(LoginRequiredMixin,
 
         return {
             'data': data,
+            'languages': Outreach.LANGUAGES,
             'schools': School.objects.filter(id__in=schools),
             'locations': Location.objects.filter(type_id=2),
             'months': Person.MONTHS,
