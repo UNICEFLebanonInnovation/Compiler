@@ -59,15 +59,23 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
             return self.queryset
         terms = self.request.GET.get('term', 0)
         if self.request.user.school_id and terms:
+            self.serializer_class = StudentSerializer
             alp_round = ALPRound.objects.get(current_round=True)
-            qs = self.queryset.filter(school_id=self.request.user.school_id, alp_round__lt=alp_round.id)
+            qs = Student.objects.filter(
+                alp_enrollment__isnull=False,
+                alp_enrollment__deleted=False,
+                alp_enrollment__dropout_status=False,
+                alp_enrollment__alp_round__lt=alp_round.id,
+                alp_enrollment__school_id=self.request.user.school_id
+            )
+            # qs = self.queryset.filter(school_id=self.request.user.school_id, alp_round__lt=alp_round.id)
             for term in terms.split():
                 qs = qs.filter(
-                    Q(student__first_name__contains=term) |
-                    Q(student__father_name__contains=term) |
-                    Q(student__last_name__contains=term) |
-                    Q(student__id_number__contains=term)
-                )
+                    Q(first_name__contains=term) |
+                    Q(father_name__contains=term) |
+                    Q(last_name__contains=term) |
+                    Q(id_number__contains=term)
+                ).distinct()
             return qs
         if self.request.GET.get('id', 0):
             return self.queryset.filter(id=self.request.GET.get('id', 0))

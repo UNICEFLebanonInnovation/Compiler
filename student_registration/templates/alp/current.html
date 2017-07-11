@@ -132,7 +132,9 @@
                                         <th rowspan="2"><label class="col-140">{% trans "Student father name" %}</label></th>
                                         <th rowspan="2"><label class="col-140">{% trans "Student last name" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Sex" %}</label></th>
-                                        <th colspan="5" style="text-align: center; background-color: #b0e1ef;"><label class="col-100">{% trans "Student actual status" %}</label></th>
+                                        <th colspan="2" style="text-align: center; background-color: #b0e100;"><label class="col-100">{% trans "Pre-test" %}</label></th>
+                                        <th colspan="2" style="text-align: center; background-color: #ec971f;"><label class="col-100">{% trans "Post-test" %}</label></th>
+                                        <th colspan="2" style="text-align: center; background-color: #b0e1ef;"><label class="col-100">{% trans "Student actual status" %}</label></th>
                                         <th colspan="3" style="text-align: center;"><label>{% trans "Student birthday" %}</label></th>
                                         <th rowspan="2"><label class="col-60">{% trans "Student age" %}</label></th>
                                         <th rowspan="2"><label class="col-100">{% trans "Student nationality" %}</label></th>
@@ -148,11 +150,16 @@
                                         <th colspan="4" style="text-align: center; background-color: #ec971f;"><label>{% trans "Last student informal education" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
-                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Pre-test result" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Assigned to level" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-60">{% trans "Post-test result" %}</label></th>
+
+                                        <th style="background-color: #b0e100;"><label class="col-60">{% trans "Pre-test total" %}</label></th>
+                                        <th style="background-color: #b0e100;"><label class="col-60">{% trans "Pre-test result" %}</label></th>
+
+                                        <th style="background-color: #ec971f;"><label class="col-60">{% trans "Post-test total" %}</label></th>
+                                        <th style="background-color: #ec971f;"><label class="col-60">{% trans "Post-test result" %}</label></th>
+
                                         <th style="background-color: #b0e1ef;"><label class="col-230">{% trans "Current Level" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-230">{% trans "Current Section" %}</label></th>
+
                                         <th><label class="col-80">{% trans "year" %}</label></th>
                                         <th><label class="col-100">{% trans "month" %}</label></th>
                                         <th><label class="col-80">{% trans "day" %}</label></th>
@@ -325,8 +332,6 @@
                         return false;
                     }
                     var total_records = $('#registrations-table').find('tr.registration-line').length;
-                    console.log(total_records);
-                    console.log(total);
                     if(total_records < total) {
                         offset = limit;
                         limit = limit + 100;
@@ -345,8 +350,6 @@
                     return false;
                 }
                 var total_records = $('#registrations-table').find('tr.registration-line').length;
-                console.log(total_records);
-                console.log(total);
                 if(total_records < total) {
                     offset = limit;
                     limit = limit + 100;
@@ -473,7 +476,7 @@
               minLength: 3,
               select: function( event, ui ) {
                   $("#search_old_student").val('');
-                  add_external_record(ui.item);
+                  add_external_record(ui.item.registration);
                   return false;
               }
             }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
@@ -485,10 +488,12 @@
             };
 
             $("#search_old_student").autocomplete( "instance" )._renderItem = function( ul, item ) {
+                    var item = item.registration;
                   return $( "<li>" )
                     .append( "<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_birthday + ") "
-                                   + "<br>" + '{% trans "Last year situation" %}: ' + item.registered_in_level_name + " / " + item.section_name
-                                   + "<br>" + '{% trans "Referred to level" %}: ' + " / " + item.refer_to_level_name
+                                   + "<br>" + "Last year situation: " + item.registered_in_level_name + " / " + item.section_name
+                                   + "<br>" + "Post-test result: " + item.refer_to_level_name
+                                   + "<br>" + "Round: " + item.alp_round_name
                                    + "</div>" )
                     .appendTo( ul );
             };
@@ -561,14 +566,10 @@
         function filterByClass(classroom, section)
         {
             var store = getStoreByName('registrations');
-            console.log(classroom);
-            console.log(section);
             if(section != 0) {
                 var index = store.index("registered_in_levelAndSection");
                 var request = index.getAll([classroom, parseInt(section)]);
-                console.log(request);
             }else{
-                console.log('ko');
                 var index = store.index("registered_in_level");
                 var request = index.getAll(parseInt(classroom));
             }
@@ -811,7 +812,8 @@
                             item.student_mother_nationality = item.student_mother_nationality_id;
                             item.student_id_type = item.student_id_type_id;
 
-                            item.registered_in_level = item.next_level;
+                            item.assigned_to_level_name = item.assigned_to_level_name;
+                            item.refer_to_level_name = item.refer_to_level_name;
                             item.last_education_level = item.last_education_level_id;
                             item.last_informal_edu_level = item.last_informal_edu_level_id;
                             item.last_informal_edu_round = item.last_informal_edu_round_id;
@@ -839,6 +841,7 @@
             var request = store.index('student_id').get(parseInt(item.student_id));
             request.onsuccess = function() {
                 if(request.result === undefined) {
+                    item.owner = user_id;
                     item.synchronized = false;
                     item.deleted = false;
                     item.to_update = false;
@@ -847,7 +850,10 @@
                     item.student_id_type = item.student_id_type_id;
                     item.alp_round = alp_round;
 
-                    item.registered_in_level = item.next_level;
+                    item.assigned_to_level_name = item.assigned_to_level_name;
+                    item.refer_to_level_name = item.refer_to_level_name;
+                    item.registered_in_level = '';
+                    item.section = '';
                     item.last_education_level = item.last_education_level_id;
                     item.last_informal_edu_level = item.last_informal_edu_level_id;
                     item.last_informal_edu_round = item.last_informal_edu_round_id;

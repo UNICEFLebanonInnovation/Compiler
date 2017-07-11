@@ -6,8 +6,11 @@ from .models import (
 
 
 class StudentSerializer(serializers.ModelSerializer):
+    from student_registration.alp.serializers import OutreachSerializer
+
     id = serializers.IntegerField(read_only=True)
     number = serializers.CharField(read_only=True)
+    registration = OutreachSerializer(source='last_alp_registration')
 
     def create(self, validated_data):
 
@@ -41,4 +44,5 @@ class StudentSerializer(serializers.ModelSerializer):
             'mother_nationality',
             'address',
             'number',
+            'registration',
         )
