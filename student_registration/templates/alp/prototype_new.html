@@ -48,6 +48,14 @@
             <span class="note-indicator-value outreach-field" name="note-indicator-value" id="note-indicator-value" itemscope="$$itemscope_id$$"></span>
         </td>
         <td>
+            <select name="exam_language" id="exam_language" class="outreach-field" itemscope="$$itemscope_id$$">
+                <option value="">{% trans "Language" %}</option>
+                {% for key, item in languages %}
+                    <option value="{{ key }}">{{ item }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
             <input type="text" name="exam_result_language" id="exam_result_language" class="outreach-field exam-note"
                    itemscope="$$itemscope_id$$" maxlength="5" size="6" placeholder="{% trans "Foreign language" %}" />
             <span class="note-indicator-value outreach-field" name="note-indicator-value" id="note-indicator-value" itemscope="$$itemscope_id$$"></span>
