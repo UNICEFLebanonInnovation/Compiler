@@ -17,6 +17,7 @@ from braces.views import GroupRequiredMixin
 
 from .models import Outreach, ALPRound
 from .serializers import OutreachSerializer, OutreachExamSerializer, OutreachSmallSerializer
+from student_registration.users.utils import force_default_language
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
     Person,
@@ -131,6 +132,8 @@ class OutreachView(LoginRequiredMixin,
         if location and location.parent:
             location_parent = location.parent
 
+        force_default_language(self.request)
+
         return {
             'data': data,
             'schools': School.objects.all().order_by('name'),
@@ -194,6 +197,8 @@ class CurrentRoundView(LoginRequiredMixin,
         if location and location.parent:
             location_parent = location.parent
 
+        force_default_language(self.request)
+
         return {
             'data': data,
             'total': total,
@@ -243,6 +248,8 @@ class DataCollectingView(LoginRequiredMixin,
         location = 0
         location_parent = 0
         alp_round = ALPRound.objects.get(current_pre_test=True)
+
+        force_default_language(self.request)
 
         return {
             'data': data,
@@ -302,6 +309,8 @@ class PreTestView(LoginRequiredMixin,
             location = school.location
         if location and location.parent:
             location_parent = location.parent
+
+        force_default_language(self.request)
 
         return {
             'data': data,
@@ -364,6 +373,8 @@ class PostTestView(LoginRequiredMixin,
             location = school.location
         if location and location.parent:
             location_parent = location.parent
+
+        force_default_language(self.request)
 
         return {
             'data': data,
