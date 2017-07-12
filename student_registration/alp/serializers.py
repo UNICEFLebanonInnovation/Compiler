@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 from .models import Outreach
-from student_registration.students.serializers import StudentSerializer
+# from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
     IDType,
     Nationality,
@@ -79,8 +79,10 @@ class OutreachSerializer(serializers.ModelSerializer):
     school_number = serializers.CharField(source='school.number', read_only=True)
     section_name = serializers.CharField(source='section.name', read_only=True)
     level_name = serializers.CharField(source='level.name', read_only=True)
+    assigned_to_level_name = serializers.CharField(source='assigned_to_level.name', read_only=True)
     registered_in_level_name = serializers.CharField(source='registered_in_level.name', read_only=True)
     refer_to_level_name = serializers.CharField(source='refer_to_level.name', read_only=True)
+    alp_round_name = serializers.CharField(source='alp_round.name', read_only=True)
     governorate_name = serializers.CharField(source='school.location.parent.name', read_only=True)
     location = serializers.CharField(source='school.location.name', read_only=True)
     student_nationality_id = serializers.CharField(source='student.nationality.id', read_only=True)
@@ -97,7 +99,7 @@ class OutreachSerializer(serializers.ModelSerializer):
     next_level = serializers.CharField(read_only=True)
 
     def create(self, validated_data):
-
+        from student_registration.students.serializers import StudentSerializer
         student_data = validated_data.pop('student', None)
         if 'id' in student_data and student_data['id']:
             student = update_student(student_data, Student.objects.get(id=student_data['id']))
@@ -210,12 +212,14 @@ class OutreachSerializer(serializers.ModelSerializer):
             'pretest_total',
             'posttest_total',
             'assigned_to_level',
+            'assigned_to_level_name',
             'registered_in_level',
             'next_level',
             'alp_round',
             'registered_in_level_name',
             'refer_to_level',
-            'refer_to_level_name'
+            'refer_to_level_name',
+            'alp_round_name',
         )
 
 
@@ -225,6 +229,7 @@ class OutreachExamSerializer(serializers.ModelSerializer):
         model = Outreach
         fields = (
             'exam_result_arabic',
+            'exam_language',
             'exam_result_language',
             'exam_result_math',
             'exam_result_science',
@@ -236,9 +241,10 @@ class OutreachExamSerializer(serializers.ModelSerializer):
             'registered_in_level',
             'section',
             'assigned_to_level',
-            'not_enrolled_in_this_school',
-            'exam_not_exist_in_school',
+            # 'not_enrolled_in_this_school',
+            # 'exam_not_exist_in_school',
             'post_exam_result_arabic',
+            'post_exam_language',
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',
@@ -279,7 +285,7 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
     student_address = serializers.CharField(source='student.address', required=False)
 
     def create(self, validated_data):
-
+        from student_registration.students.serializers import StudentSerializer
         student_data = validated_data.pop('student', None)
         student_serializer = StudentSerializer(data=student_data)
         student_serializer.is_valid(raise_exception=True)
@@ -309,6 +315,8 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
 
             if 'exam_result_arabic' in validated_data:
                 instance.exam_result_arabic = validated_data['exam_result_arabic']
+            if 'exam_language' in validated_data:
+                instance.exam_language = validated_data['exam_language']
             if 'exam_result_language' in validated_data:
                 instance.exam_result_language = validated_data['exam_result_language']
             if 'exam_result_math' in validated_data:
@@ -366,6 +374,7 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'governorate_name',
             'school_number',
             'exam_result_arabic',
+            'exam_language',
             'exam_result_language',
             'exam_result_math',
             'exam_result_science',
@@ -379,6 +388,7 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'not_enrolled_in_this_school',
             'exam_not_exist_in_school',
             'post_exam_result_arabic',
+            'post_exam_language',
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',

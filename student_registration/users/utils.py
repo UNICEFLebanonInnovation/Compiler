@@ -21,3 +21,9 @@ def get_user_token(user_id):
     except Token.DoesNotExist:
         token = Token.objects.create(user_id=user_id)
     return token.key
+
+
+def force_default_language(request, language='ar-ar'):
+    from django.utils import translation
+    translation.activate('ar-ar')
+    request.session[translation.LANGUAGE_SESSION_KEY] = 'ar-ar'
