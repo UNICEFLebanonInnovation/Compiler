@@ -198,6 +198,38 @@ class Student(Person):
     status = models.BooleanField(default=True)
 
     @property
+    def last_alp_registration(self):
+        return self.alp_enrollment.all().last
+
+    @property
+    def last_alp_round(self):
+        registry = self.last_alp_registration()
+        if registry:
+            return registry.alp_round.name
+        return None
+
+    @property
+    def last_alp_level(self):
+        registry = self.last_alp_registration()
+        if registry:
+            return registry.registered_to_level.name
+        return None
+
+    @property
+    def last_alp_section(self):
+        registry = self.last_alp_registration()
+        if registry:
+            return registry.section.name
+        return None
+
+    @property
+    def last_alp_referral_level(self):
+        registry = self.last_alp_registration()
+        if registry:
+            return registry.refer_to_level.name
+        return None
+
+    @property
     def attendance_list(self):
         attendances = {}
         for item in self.attendances.all():
