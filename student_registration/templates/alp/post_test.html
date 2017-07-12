@@ -104,15 +104,16 @@
                                         <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Sex" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Age" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Registered in level" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Registered in section" %}</label></th>
-                                        <th colspan="5" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Current Level" %}</label></th>
+                                        <th rowspan="2"><label>{% trans "Current Section" %}</label></th>
+                                        <th colspan="6" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
                                         <th rowspan="2" style="background-color: #b0e1ef;"><label class="col-100">{% trans "Refer to level" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Created by" %}</label></th>
                                         <th rowspan="2"><label>{% trans "Modified by" %}</label></th>
                                     </tr>
                                     <tr id="thead-line-2">
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
+                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Exam language" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Math" %}</label></th>
                                         <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science" %}</label></th>
@@ -232,12 +233,12 @@
 
                 $(this).removeClass('required');
                 var item = $(this).parent().parent();
-                var max = parseInt(item.find('#level').find('option:selected').attr('data-value'));
-                if(parseFloat($(this).val()) > max){
-                    $(this).val(0);
-                    $(this).addClass('required');
-                    return false;
-                }
+{#                var max = parseInt(item.find('#level').find('option:selected').attr('data-value'));#}
+{#                if(parseFloat($(this).val()) > max){#}
+{#                    $(this).val(0);#}
+{#                    $(this).addClass('required');#}
+{#                    return false;#}
+{#                }#}
 
                 var note1 = parseFloat(item.find('#post_exam_result_arabic').val());
                 var note2 = parseFloat(item.find('#post_exam_result_language').val());
