@@ -41,15 +41,11 @@
                    itemscope="$$itemscope_id$$" readonly="readonly" disabled="disabled"/>
         </td>
         <td>
-            <select name="assigned_to_level" id="assigned_to_level" class="registration-field" itemscope="$$itemscope_id$$" readonly="readonly" disabled="disabled">
-                <option value="">{% trans "Assigned to level" %}</option>
-                {% for item in informal_educations %}
-                    <option value="{{ item.id }}">{{ item.name }}</option>
-                {% endfor %}
-            </select>
+            <input type="text" name="assigned_to_level_name" id="assigned_to_level_name" class="registration-field col-120"
+                   itemscope="$$itemscope_id$$" readonly="readonly" disabled="disabled"/>
         </td>
-        <td>
-        </td>
+        <td><input readonly="readonly" disabled="disabled" class="col-60"/></td>
+        <td><input readonly="readonly" disabled="disabled" class="col-60"/></td>
         <td>
             <select name="registered_in_level" id="registered_in_level" class="registration-field" itemscope="$$itemscope_id$$">
                 <option value="">{% trans "Select Level if applicable" %}</option>
