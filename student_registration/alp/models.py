@@ -57,6 +57,11 @@ class Outreach(TimeStampedModel):
         ('failed', _('Failed'))
     )
 
+    LANGUAGES = Choices(
+        ('english', _('English')),
+        ('french', _('French'))
+    )
+
     YES_NO = Choices(
         ('yes', _('Yes')),
         ('no', _('No'))
@@ -236,6 +241,12 @@ class Outreach(TimeStampedModel):
         null=True,
         default=0,
     )
+    exam_language = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=LANGUAGES
+    )
     exam_corrector_arabic = models.IntegerField(
         blank=True,
         null=True,
@@ -270,7 +281,7 @@ class Outreach(TimeStampedModel):
         EducationLevel,
         blank=True, null=True,
         related_name='+',
-        verbose_name='Registered in level',
+        verbose_name='Entrance Test (Pre-Test)',
     )
     registered_in_level = models.ForeignKey(
         EducationLevel,
@@ -282,7 +293,7 @@ class Outreach(TimeStampedModel):
         EducationLevel,
         blank=True, null=True,
         related_name='+',
-        verbose_name='Assigned to level',
+        verbose_name='Pre-test result',
     )
     exam_school = models.ForeignKey(
         School,
@@ -310,6 +321,12 @@ class Outreach(TimeStampedModel):
         blank=True,
         null=True,
         default=0,
+    )
+    post_exam_language = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=LANGUAGES
     )
     post_exam_corrector_arabic = models.IntegerField(
         blank=True,
@@ -339,6 +356,7 @@ class Outreach(TimeStampedModel):
         ClassLevel,
         blank=True, null=True,
         related_name='+',
+        verbose_name='Post-test result',
     )
     dropout_status = models.BooleanField(blank=True, default=False)
 
@@ -388,10 +406,8 @@ class Outreach(TimeStampedModel):
 
     @property
     def next_level(self):
-        if self.registered_in_level and not self.refer_to_level:
-            return self.registered_in_level_id
-        if self.refer_to_level and self.post_exam_total >= 40:
-            return self.registered_in_level_id + 1
+        if self.refer_to_level:
+            return self.refer_to_level
         return ''
 
     @property
