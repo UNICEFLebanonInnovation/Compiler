@@ -17,6 +17,7 @@ from braces.views import GroupRequiredMixin
 
 from .models import Outreach, ALPRound
 from .serializers import OutreachSerializer, OutreachExamSerializer, OutreachSmallSerializer
+from student_registration.users.utils import force_default_language
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
     Person,
@@ -58,15 +59,23 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
             return self.queryset
         terms = self.request.GET.get('term', 0)
         if self.request.user.school_id and terms:
+            self.serializer_class = StudentSerializer
             alp_round = ALPRound.objects.get(current_round=True)
-            qs = self.queryset.filter(school_id=self.request.user.school_id, alp_round__lt=alp_round.id)
+            qs = Student.objects.filter(
+                alp_enrollment__isnull=False,
+                alp_enrollment__deleted=False,
+                alp_enrollment__dropout_status=False,
+                alp_enrollment__alp_round__lt=alp_round.id,
+                alp_enrollment__school_id=self.request.user.school_id
+            )
+            # qs = self.queryset.filter(school_id=self.request.user.school_id, alp_round__lt=alp_round.id)
             for term in terms.split():
                 qs = qs.filter(
-                    Q(student__first_name__contains=term) |
-                    Q(student__father_name__contains=term) |
-                    Q(student__last_name__contains=term) |
-                    Q(student__id_number__contains=term)
-                )
+                    Q(first_name__contains=term) |
+                    Q(father_name__contains=term) |
+                    Q(last_name__contains=term) |
+                    Q(id_number__contains=term)
+                ).distinct()
             return qs
         if self.request.GET.get('id', 0):
             return self.queryset.filter(id=self.request.GET.get('id', 0))
@@ -131,6 +140,8 @@ class OutreachView(LoginRequiredMixin,
         if location and location.parent:
             location_parent = location.parent
 
+        force_default_language(self.request)
+
         return {
             'data': data,
             'schools': School.objects.all().order_by('name'),
@@ -194,6 +205,8 @@ class CurrentRoundView(LoginRequiredMixin,
         if location and location.parent:
             location_parent = location.parent
 
+        force_default_language(self.request)
+
         return {
             'data': data,
             'total': total,
@@ -243,6 +256,8 @@ class DataCollectingView(LoginRequiredMixin,
         location = 0
         location_parent = 0
         alp_round = ALPRound.objects.get(current_pre_test=True)
+
+        force_default_language(self.request)
 
         return {
             'data': data,
@@ -303,8 +318,11 @@ class PreTestView(LoginRequiredMixin,
         if location and location.parent:
             location_parent = location.parent
 
+        force_default_language(self.request)
+
         return {
             'data': data,
+            'languages': Outreach.LANGUAGES,
             'schools': School.objects.filter(id__in=schools),
             'months': Person.MONTHS,
             'genders': Person.GENDER,
@@ -364,8 +382,11 @@ class PostTestView(LoginRequiredMixin,
         if location and location.parent:
             location_parent = location.parent
 
+        force_default_language(self.request)
+
         return {
             'data': data,
+            'languages': Outreach.LANGUAGES,
             'schools': School.objects.filter(id__in=schools),
             'locations': Location.objects.filter(type_id=2),
             'months': Person.MONTHS,
