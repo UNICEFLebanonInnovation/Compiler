@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, division
 from django.utils.translation import ugettext as _
 from django import forms
 from dal import autocomplete
+from django.core.urlresolvers import reverse
 from .models import Enrollment, LoggingStudentMove
 from student_registration.students.models import Student
 
@@ -14,6 +15,9 @@ from bootstrap3_datetime.widgets import DateTimePicker
 from student_registration.students.models import (
     IDType,
     Nationality,
+)
+from student_registration.schools.models import (
+    School
 )
 
 YES_NO_CHOICE = ((False, _('No')), (True, _('Yes')))
@@ -35,6 +39,35 @@ class EnrollmentAdminForm(forms.ModelForm):
 
 
 class EnrollmentForm(forms.ModelForm):
+
+    old_or_new = forms.TypedChoiceField(
+        label="First time registered?",
+        choices=((1, "Yes"), (0, "No")),
+        coerce=lambda x: bool(int(x)),
+        widget=forms.RadioSelect,
+        initial='1',
+        required=True,
+    )
+    student_outreached = forms.TypedChoiceField(
+        label="Student outreached?",
+        choices=((1, "Yes"), (0, "No")),
+        coerce=lambda x: bool(int(x)),
+        widget=forms.RadioSelect,
+        required=True,
+    )
+    have_barcode = forms.TypedChoiceField(
+        label="Have barcode with him?",
+        choices=((1, "Yes"), (0, "No")),
+        coerce=lambda x: bool(int(x)),
+        widget=forms.RadioSelect,
+        required=False,
+    )
+    search_barcode = forms.CharField(widget=forms.TextInput, required=True)
+    search_student = forms.CharField(widget=forms.TextInput, required=True)
+    # school = forms.ModelChoiceField(
+    #     queryset=School.objects.all(), widget=forms.Select(attrs=({'placeholder': _('Schools')})),
+    #     required=False, to_field_name='id',
+    # )
 
     registration_date = forms.DateField(
         # widget=DateTimePicker(
@@ -98,13 +131,15 @@ class EnrollmentForm(forms.ModelForm):
         queryset=Nationality.objects.all(), widget=forms.Select(attrs=({'placeholder': _('Mother Nationality')})),
         required=True, to_field_name='id',
     )
-    registered_in_unhcr = forms.TypedChoiceField(
-        coerce=lambda x: x == 'True',
-        choices=YES_NO_CHOICE,
-        widget=forms.RadioSelect
-    )
+    # registered_in_unhcr = forms.TypedChoiceField(
+    #     choices = ((1, "Yes"), (0, "No")),
+    #     coerce = lambda x: bool(int(x)),
+    #     widget = forms.RadioSelect,
+    #     initial = '1',
+    #     required = True,
+    # )
     id_type = forms.ModelChoiceField(
-        queryset=IDType.objects.all(), widget=forms.Select(attrs=({'placeholder': _('ID Type')})),
+        queryset=IDType.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
     id_number = forms.CharField(widget=forms.TextInput, required=True)
@@ -130,11 +165,45 @@ class EnrollmentForm(forms.ModelForm):
         self.fields['last_year_result'].empty_label = _('Result')
         self.fields['last_informal_edu_level'].empty_label = _('ALP level')
         self.fields['last_informal_edu_round'].empty_label = _('ALP round')
-        self.fields['last_informal_edu_final_result'].empty_label = _('')
-        self.fields['section'].empty_label = _('ALP result')
+        self.fields['last_informal_edu_final_result'].empty_label = _('ALP result')
         self.helper = FormHelper()
         self.helper.form_show_labels = False
+        self.helper.form_action = reverse('enrollments:add')
         self.helper.layout = Layout(
+            Fieldset(
+                _('Registry'),
+                Div(
+                    Div(InlineRadios('old_or_new'), css_class='col-md-4'),
+                    Div(InlineRadios('student_outreached'), css_class='col-md-4'),
+                    Div(InlineRadios('have_barcode'), css_class='col-md-4'),
+                    css_class='row',
+                ),
+                # Div(
+                #     Div(PrependedText('outreach_barcode', _('Outreach Barcode')), css_class='col-md-4'),
+                #     css_class='row',
+                # ),
+                # Div(css_id='search_results', css_class='row',),
+                # css_id='registry',
+            ),
+            Fieldset(
+                _('Register by Barcode'),
+                Div(
+                    Div(PrependedText('search_barcode', _('Search child by barcode')), css_class='col-md-6'),
+                    css_class='row',
+                ),
+            ),
+            Fieldset(
+                _('Search old student (fullname Or ID number)'),
+                Div(
+                    Div('school', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('search_student', _('Search old student')), css_class='col-md-6'),
+                    css_class='row',
+                ),
+                css_id='search_options',
+            ),
             Fieldset(
                 _('Basic Data'),
                 Div(
@@ -161,7 +230,8 @@ class EnrollmentForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    Div(InlineRadios('registered_in_unhcr', _('Registered in UNHCR')), css_class='col-md-4'),
+                    # Div(InlineRadios('registered_in_unhcr', _('Registered in UNHCR')), css_class='col-md-4'),
+                    Div('registered_in_unhcr', css_class='col-md-4'),
                     Div('id_type', css_class='col-md-4'),
                     Div(PrependedText('id_number', _('Student ID Number')), css_class='col-md-4'),
                     css_class='row',
@@ -218,8 +288,14 @@ class EnrollmentForm(forms.ModelForm):
             )
         )
 
+    def clean(self):
+        super(EnrollmentForm, self).clean()
+        # print self.cleaned_data.get('student')
+        # cc_myself = self.cleaned_data.get("cc_myself")
+
     def save(self, user=None):
-        print self
+        print self.fields
+        print 'ok'
         return True
         # user_profile = super(EnrollmentForm, self).save(commit=False)
         # if user:
@@ -237,8 +313,8 @@ class EnrollmentForm(forms.ModelForm):
             # 'student': autocomplete.ModelSelect2(url='student_autocomplete')
         # }
 
-    # class Media:
-    #     js = ('js/bootstrap-datetimepicker.js', )
+    class Media:
+        js = ('js/validator.js', 'js/registrations.js')
 
 
 class LoggingStudentMoveForm(forms.ModelForm):

@@ -358,6 +358,17 @@ class Enrollment(TimeStampedModel):
     deleted = models.BooleanField(blank=True, default=False)
     dropout_status = models.BooleanField(blank=True, default=False)
     moved = models.BooleanField(blank=True, default=False)
+    outreach_barcode = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    student_outreached = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=YES_NO
+    )
 
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
