@@ -10,7 +10,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
     number = serializers.CharField(read_only=True)
-    registration = OutreachSerializer(source='last_alp_registration')
+    registration = OutreachSerializer(source='last_alp_registration', read_only=True)
 
     def create(self, validated_data):
 
