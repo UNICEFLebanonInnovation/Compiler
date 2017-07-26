@@ -71,7 +71,6 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     school_name = serializers.CharField(source='school.name', read_only=True)
     school_number = serializers.CharField(source='school.number', read_only=True)
     section_name = serializers.CharField(source='section.name', read_only=True)
-    grade_name = serializers.CharField(source='grade.name', read_only=True)
     classroom_name = serializers.CharField(source='classroom.name', read_only=True)
     governorate_name = serializers.CharField(source='school.location.parent.name', read_only=True)
     location = serializers.CharField(source='school.location.name', read_only=True)
@@ -254,8 +253,6 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'school',
             'school_name',
             'school_number',
-            'grade',
-            'grade_name',
             'section',
             'section_name',
             'classroom',
