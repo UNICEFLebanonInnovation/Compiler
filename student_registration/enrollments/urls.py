@@ -7,9 +7,9 @@ from . import views
 urlpatterns = [
 
     url(
-        regex=r'^enrollment/$',
+        regex=r'^add/$',
         view=views.EnrollmentView.as_view(),
-        name='enrollment'
+        name='add'
     ),
     url(
         regex=r'^enrollment-patch/$',
