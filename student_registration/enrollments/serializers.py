@@ -1,11 +1,11 @@
 
 from rest_framework import serializers
 from .models import Enrollment, LoggingStudentMove
-from student_registration.students.serializers import StudentSerializer
-from student_registration.students.models import (
-    IDType,
-    Nationality
-)
+# from student_registration.students.serializers import StudentSerializer
+# from student_registration.students.models import (
+#     IDType,
+#     Nationality
+# )
 
 
 class LoggingStudentMoveSerializer(serializers.ModelSerializer):
@@ -69,6 +69,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     student_mother_nationality = serializers.CharField(source='student.mother_nationality')
     student_address = serializers.CharField(source='student.address')
     school_name = serializers.CharField(source='school.name', read_only=True)
+    education_year_name = serializers.CharField(source='education_year.name', read_only=True)
     school_number = serializers.CharField(source='school.number', read_only=True)
     section_name = serializers.CharField(source='section.name', read_only=True)
     classroom_name = serializers.CharField(source='classroom.name', read_only=True)
@@ -87,6 +88,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     moved = serializers.CharField(read_only=True)
 
     def create(self, validated_data):
+        from student_registration.students.serializers import StudentSerializer
 
         student_data = validated_data.pop('student', None)
         student_serializer = StudentSerializer(data=student_data)
@@ -147,6 +149,8 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         try:
             if 'school' in validated_data:
                 instance.school = validated_data['school']
+            if 'education_year' in validated_data:
+                instance.education_year_id = validated_data['education_year']
             if 'registered_in_unhcr' in validated_data:
                 instance.registered_in_unhcr = validated_data['registered_in_unhcr']
             if 'participated_in_alp' in validated_data:
@@ -294,5 +298,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'exam_result_sciences',
             'exam_total',
             'exam_result',
+            'education_year',
+            'education_year_name',
         )
 

@@ -65,7 +65,7 @@ class Person(TimeStampedModel):
     first_name = models.CharField(max_length=64L, blank=True, null=True)
     last_name = models.CharField(max_length=64L, blank=True, null=True)
     father_name = models.CharField(max_length=64L, blank=True, null=True)
-    full_name = models.CharField(max_length=225L, blank=True, null=True)
+    # full_name = models.CharField(max_length=225L, blank=True, null=True)
     mother_fullname = models.CharField(max_length=64L, blank=True, null=True)
     mother_firstname = models.CharField(max_length=64L, blank=True, null=True)
     mother_lastname = models.CharField(max_length=64L, blank=True, null=True)
@@ -140,6 +140,14 @@ class Person(TimeStampedModel):
             self.last_name,
         )
 
+    @property
+    def full_name(self):
+        return u'{} {} {}'.format(
+            self.first_name,
+            self.father_name,
+            self.last_name,
+        )
+
     def nationality_name(self):
         if self.nationality:
             return self.nationality.name
@@ -196,6 +204,10 @@ class Person(TimeStampedModel):
 class Student(Person):
 
     status = models.BooleanField(default=True)
+
+    @property
+    def last_enrollment(self):
+        return self.student_enrollment.all().last
 
     @property
     def last_alp_registration(self):

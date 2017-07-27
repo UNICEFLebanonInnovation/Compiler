@@ -37,6 +37,27 @@ class EnrollmentView(LoginRequiredMixin, FormView):
     form_class = EnrollmentForm
     success_url = '/'
 
+    def get_context_data(self, **kwargs):
+        context = super(EnrollmentView, self).get_context_data(**kwargs)
+        return context
+
+    # def get_initial(self):
+    #     initial = super(LeagueTransferView, self).get_initial()
+    #     initial['league'] = self.kwargs['pk'] # add custom data to initial
+    #     initial['petitioner'] = self.petitioner # add custom data to initial
+    #     return initial
+    #
+    # def get_form(self, form_class=None):
+    #     form = super(LeagueTransferView, self).get_form(form_class)
+    #     # override the queryset
+    #     form.fields['offered_player'].queryset = self.petitioner.players
+    #     return form
+    #
+    # def get(self, request, *args, **kwargs):
+    #     # only perform 1 query to get 'petitioner'
+    #     self.petitioner = get_object_or_404(Team, user=self.request.user.profile, league=self.kwargs['pk'])
+    #     return super(LeagueTransferView, self).get(request, *args, **kwargs)
+
     def form_valid(self, form):
         form.save(self.request.user)
         return super(EnrollmentView, self).form_valid(form)
