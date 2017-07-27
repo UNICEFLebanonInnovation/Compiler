@@ -20,14 +20,14 @@ $(document).ready(function(){
             term: request.term
           },
           success: function( data ) {
-            response( data);
+            response(data);
           }
         } );
       },
       minLength: 3,
       select: function( event, ui ) {
           $("#id_search_student").val('');
-          get_registration(ui.item);
+          // get_registration(ui.item);
           return false;
       }
     }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
@@ -40,9 +40,13 @@ $(document).ready(function(){
 
     $("#id_search_student").autocomplete( "instance" )._renderItem = function( ul, item ) {
           return $( "<li>" )
-            .append( "<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_sex + " - " + item.student_age + ") "
-                           + "<br>" + '{% trans "Current situation" %}: '+ item.school_name + " - " + item.school_number + " / " + item.classroom_name + " / " + item.section_name
-                           + "</div>" )
+            .append( "<div style='border: 1px solid;'>"
+                            +  "<b>Base Data:</b> " + item.full_name + " - " + item.mother_fullname + " - " + item.id_number
+                            + "<br/> <b>Gender - Birthday:</b> " + item.sex + " - " + item.birthday
+                            + "<br/> <b>Last education year:</b> " + item.enrollment.education_year_name
+                            + "<br/> <b>Last education school:</b> " + item.enrollment.school_name + " - " + item.enrollment.school_number
+                            + "<br/> <b>Class / Section:</b> " + item.enrollment.classroom_name + " / " + item.enrollment.section_name
+                            + "</div>" )
             .appendTo( ul );
     };
 
@@ -64,7 +68,7 @@ $(document).ready(function(){
       minLength: 3,
       select: function( event, ui ) {
           $("#id_search_barcode").val('');
-          get_registration(ui.item);
+          // get_registration(ui.item);
           return false;
       }
     }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
