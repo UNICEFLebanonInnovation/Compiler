@@ -15,6 +15,9 @@ from .models import (
 from .serializers import (
     StudentSerializer,
 )
+from student_registration.enrollments.models import (
+    EducationYear
+)
 
 
 class StudentViewSet(mixins.RetrieveModelMixin,
@@ -29,9 +32,26 @@ class StudentViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        if self.request.user.is_superuser:
+        if self.request.method in ["PATCH", "POST", "PUT"]:
             return self.queryset
-        return []
+        terms = self.request.GET.get('term', 0)
+        if terms:
+            # education_year = EducationYear.objects.get(current_year=True)
+            qs = Student.objects.filter(
+                student_enrollment__isnull=False,
+                student_enrollment__deleted=False,
+                student_enrollment__dropout_status=False,
+                # student_enrollment__education_year__lt=education_year.id,
+                # student_enrollment__school_id=self.request.user.school_id
+            )
+            for term in terms.split():
+                qs = qs.filter(
+                    Q(first_name__contains=term) |
+                    Q(father_name__contains=term) |
+                    Q(last_name__contains=term) |
+                    Q(id_number__contains=term)
+                ).distinct()
+            return qs
 
 
 class StudentAutocomplete(autocomplete.Select2QuerySetView):
