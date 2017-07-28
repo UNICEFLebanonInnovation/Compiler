@@ -367,7 +367,7 @@ class Enrollment(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        choices=YES_NO
+        choices=Choices((1, _("Yes")), (0, _("No")))
     )
 
     objects = EnrollmentManager()
