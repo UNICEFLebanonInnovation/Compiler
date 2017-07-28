@@ -6,8 +6,17 @@ var arabic_fields = "#id_first_name, #id_father_name, #id_last_name, #id_mother_
 
 $(document).ready(function(){
 
+    // $('#id_registration_date').datetimepicker({
+    //     "format": "mm/dd/yyyy",
+    //     "pickTime": false,
+    //     "viewMode": "years",
+    //     "stepping": 0,
+    //     "showClear": true,
+    //     "showClose": true,
+    //     "disabledHours": true
+    // });
+
     $(document).on('blur', arabic_fields, function(){
-        console.log('ok');
         checkArabicOnly($(this));
     });
 

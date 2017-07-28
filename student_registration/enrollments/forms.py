@@ -41,45 +41,46 @@ class EnrollmentAdminForm(forms.ModelForm):
 class EnrollmentForm(forms.ModelForm):
 
     old_or_new = forms.TypedChoiceField(
-        label="First time registered?",
+        label=_("First time registered?"),
         choices=((1, "Yes"), (0, "No")),
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
         initial='1',
         required=True,
     )
-    student_outreached = forms.TypedChoiceField(
-        label="Student outreached?",
+    outreached = forms.TypedChoiceField(
+        label=_("Student outreached?"),
         choices=((1, "Yes"), (0, "No")),
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
         required=True,
     )
     have_barcode = forms.TypedChoiceField(
-        label="Have barcode with him?",
+        label=_("Have barcode with him?"),
         choices=((1, "Yes"), (0, "No")),
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
         required=False,
     )
-    search_barcode = forms.CharField(widget=forms.TextInput, required=True)
-    search_student = forms.CharField(widget=forms.TextInput, required=True)
-    # school = forms.ModelChoiceField(
-    #     queryset=School.objects.all(), widget=forms.Select(attrs=({'placeholder': _('Schools')})),
-    #     required=False, to_field_name='id',
-    # )
+    search_barcode = forms.CharField(widget=forms.TextInput, required=False)
+    search_student = forms.CharField(widget=forms.TextInput, required=False)
+    search_school = forms.ModelChoiceField(
+        queryset=School.objects.all(), widget=forms.Select,
+        empty_label=_('Search by school'),
+        required=False, to_field_name='id',
+    )
 
     registration_date = forms.DateField(
-        # widget=DateTimePicker(
-        #     options={
-        #         "viewMode": "years",
-        #         "format": "mm/dd/yyyy",
-        #         "pickTime": False,
-        #         "stepping": 0,
-        #         "showClear": True,
-        #         "showClose": True,
-        #         "disabledHours": True,
-        #     }),
+        widget=DateTimePicker(
+            options={
+                "viewMode": "years",
+                "format": "mm/dd/yyyy",
+                "pickTime": False,
+                "stepping": 0,
+                "showClear": True,
+                "showClose": True,
+                "disabledHours": True,
+            }),
         required=True
     )
 
@@ -122,13 +123,15 @@ class EnrollmentForm(forms.ModelForm):
     )
 
     nationality = forms.ModelChoiceField(
-        queryset=Nationality.objects.all(), widget=forms.Select(attrs=({'placeholder': _('Nationality')})),
+        queryset=Nationality.objects.all(), widget=forms.Select,
+        empty_label=_('Student nationality'),
         required=True, to_field_name='id',
     )
 
     mother_fullname = forms.CharField(widget=forms.TextInput, required=True)
     mother_nationality = forms.ModelChoiceField(
-        queryset=Nationality.objects.all(), widget=forms.Select(attrs=({'placeholder': _('Mother Nationality')})),
+        queryset=Nationality.objects.all(), widget=forms.Select,
+        empty_label=_('Mather nationality'),
         required=True, to_field_name='id',
     )
     # registered_in_unhcr = forms.TypedChoiceField(
@@ -140,7 +143,7 @@ class EnrollmentForm(forms.ModelForm):
     # )
     id_type = forms.ModelChoiceField(
         queryset=IDType.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
+        required=True, to_field_name='id', empty_label=_('Student ID Type')
     )
     id_number = forms.CharField(widget=forms.TextInput, required=True)
 
@@ -150,10 +153,6 @@ class EnrollmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(EnrollmentForm, self).__init__(*args, **kwargs)
-        self.fields['id_type'].empty_label = _('Student ID Type')
-        self.fields['sex'].empty_label = _('Gender')
-        self.fields['nationality'].empty_label = _('Student nationality')
-        self.fields['mother_nationality'].empty_label = _('Mather nationality')
         self.fields['classroom'].empty_label = _('Current Class')
         self.fields['section'].empty_label = _('Current Section')
 
@@ -166,6 +165,12 @@ class EnrollmentForm(forms.ModelForm):
         self.fields['last_informal_edu_level'].empty_label = _('ALP level')
         self.fields['last_informal_edu_round'].empty_label = _('ALP round')
         self.fields['last_informal_edu_final_result'].empty_label = _('ALP result')
+
+        self.fields['school'].widget = forms.HiddenInput()
+        self.fields['owner'].widget = forms.HiddenInput()
+        self.fields['student'].widget = forms.HiddenInput()
+        self.fields['student'].required = False
+
         self.helper = FormHelper()
         self.helper.form_show_labels = False
         self.helper.form_action = reverse('enrollments:add')
@@ -173,17 +178,14 @@ class EnrollmentForm(forms.ModelForm):
             Fieldset(
                 _('Registry'),
                 Div(
+                    'school',
+                    'owner',
+                    'student',
                     Div(InlineRadios('old_or_new'), css_class='col-md-4'),
-                    Div(InlineRadios('student_outreached'), css_class='col-md-4'),
+                    Div(InlineRadios('outreached'), css_class='col-md-4'),
                     Div(InlineRadios('have_barcode'), css_class='col-md-4'),
                     css_class='row',
                 ),
-                # Div(
-                #     Div(PrependedText('outreach_barcode', _('Outreach Barcode')), css_class='col-md-4'),
-                #     css_class='row',
-                # ),
-                # Div(css_id='search_results', css_class='row',),
-                # css_id='registry',
             ),
             Fieldset(
                 _('Register by Barcode'),
@@ -195,11 +197,12 @@ class EnrollmentForm(forms.ModelForm):
             Fieldset(
                 _('Search old student (fullname Or ID number)'),
                 Div(
-                    Div('school', css_class='col-md-4'),
+                    Div('search_school', css_class='col-md-4'),
+                    Div(PrependedText('search_student', _('Search old student')), css_class='col-md-6'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('search_student', _('Search old student')), css_class='col-md-6'),
+                    Div(PrependedText('outreach_barcode', _('Outreach Barcode')), css_class='col-md-4'),
                     css_class='row',
                 ),
                 css_id='search_options',
@@ -290,10 +293,11 @@ class EnrollmentForm(forms.ModelForm):
 
     def clean(self):
         super(EnrollmentForm, self).clean()
-        # print self.cleaned_data.get('student')
+        print self.cleaned_data
         # cc_myself = self.cleaned_data.get("cc_myself")
 
     def save(self, user=None):
+        print 'ok'
         print self.fields
         print 'ok'
         return True
@@ -307,14 +311,14 @@ class EnrollmentForm(forms.ModelForm):
         model = Enrollment
         fields = '__all__'
         # exclude = ('user', 'full_name', 'mother_fullname',)
-        # widgets = {
-            # 'employment_status': forms.RadioSelect(),
-            # 'sports_group': forms.RadioSelect(),
-            # 'student': autocomplete.ModelSelect2(url='student_autocomplete')
-        # }
+        widgets = {
+            'employment_status': forms.RadioSelect(),
+            'sports_group': forms.RadioSelect(),
+            'student': autocomplete.ModelSelect2(url='student_autocomplete')
+        }
 
     class Media:
-        js = ('js/validator.js', 'js/registrations.js')
+        js = ('js/bootstrap-datetimepicker.js', 'js/validator.js', 'js/registrations.js')
 
 
 class LoggingStudentMoveForm(forms.ModelForm):
