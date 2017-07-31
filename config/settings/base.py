@@ -75,7 +75,7 @@ THIRD_PARTY_APPS = [
 ]
 
 # Apps specific for this project go here.
-LOCAL_APPS = (
+LOCAL_APPS = [
     'student_registration.users',  # custom users app
     'student_registration.students',  # custom students app
     'student_registration.alp',  # custom alp app
@@ -85,7 +85,7 @@ LOCAL_APPS = (
     'student_registration.locations',  # custom locations app
     'student_registration.dashboard',  # custom dashboard app
     'student_registration.winterization',  # custom winterization app
-)
+]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -320,6 +320,13 @@ if CELERY_BROKER_URL == 'django://':
 else:
     CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 ########## END CELERY
+
+COUCHBASE_URL = env('COUCHBASE_URL', default='NO_URL')
+COUCHBASE_USER = env('COUCHBASE_USER', default='NO_USER')
+COUCHBASE_PASS = env('COUCHBASE_PASS', default='NO_PASS')
+
+MONGODB_URI = env('MONGODB_URI', default='mongodb://localhost/education')
+
 # django-compressor
 # ------------------------------------------------------------------------------
 INSTALLED_APPS += ['compressor']

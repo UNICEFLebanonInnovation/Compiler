@@ -7,7 +7,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
+
 from rest_framework_nested import routers
+from rest_framework_swagger.views import get_swagger_view
+
 from student_registration.alp.views import (
     OutreachViewSet,
 )
@@ -29,7 +32,7 @@ from student_registration.winterization.views import (
 from student_registration.users.views import LoginRedirectView, PasswordChangeView, PasswordChangeDoneView
 from student_registration.enrollments.views import EnrollmentViewSet, LoggingStudentMoveViewSet
 from student_registration.students.views import StudentAutocomplete
-from .views import acme_view
+
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
@@ -43,6 +46,9 @@ api.register(r'students', StudentViewSet, base_name='students')
 api.register(r'schools', SchoolViewSet, base_name='schools')
 api.register(r'classrooms', ClassRoomViewSet, base_name='classrooms')
 api.register(r'sections', SectionViewSet, base_name='sections')
+
+schema_view = get_swagger_view(title='Compiler API')
+
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
@@ -71,11 +77,9 @@ urlpatterns = [
     url(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/docs/', include('rest_framework_swagger.urls')),
+    url(r'^api/docs/', schema_view),
 
     url(r'^api/', include(api.urls)),
-
-    url(r'^.well-known/acme-challenge/(?P<slug>.*)/', acme_view),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
