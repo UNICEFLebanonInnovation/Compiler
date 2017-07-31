@@ -12,24 +12,22 @@ services:
       - postgres_backup_dev:/backups
     environment:
       - POSTGRES_USER=student_registration
-    ports:
-      - "5432:5432"
 
   django:
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile-dev
-    command: python /app/manage.py runserver_plus 0.0.0.0:8000
+    command: /start-dev.sh
     depends_on:
       - postgres
     environment:
       - POSTGRES_USER=student_registration
+      - USE_DOCKER=yes
     volumes:
       - .:/app
     ports:
       - "8000:8000"
-    links:
-      - postgres
+
 
   pycharm:
     build:
@@ -41,6 +39,6 @@ services:
       - POSTGRES_USER=student_registration
     volumes:
       - .:/app
-    links:
-      - postgres
+
+
 
