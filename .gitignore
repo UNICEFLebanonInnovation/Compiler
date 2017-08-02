@@ -72,3 +72,5 @@ mailhog
 
 deis
 staticfiles
+
+*.dump
