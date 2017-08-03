@@ -29,13 +29,14 @@ from student_registration.alp.models import ALPRound
 from .models import Enrollment, LoggingStudentMove
 from .forms import EnrollmentForm
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
+from django.core import serializers
 
 
 class EnrollmentView(LoginRequiredMixin, FormView):
 
     template_name = 'enrollments/registration.html'
     form_class = EnrollmentForm
-    success_url = '/'
+    success_url = '/enrollments/add/'
 
     def get_context_data(self, **kwargs):
         # force_default_language(self.request)
@@ -46,12 +47,15 @@ class EnrollmentView(LoginRequiredMixin, FormView):
 
     def get_initial(self):
         initial = super(EnrollmentView, self).get_initial()
-        initial['school'] = self.request.user.school_id
-        initial['owner'] = self.request.user.id
+        if self.request.GET.get('enrollment_id'):
+            instance = Enrollment.objects.get(id=self.request.GET.get('enrollment_id'))
+            data = EnrollmentSerializer(instance).data
+            initial = data
+            initial['student_id'] = instance.student_id
         return initial
-    #
+
     # def get_form(self, form_class=None):
-    #     form = super(LeagueTransferView, self).get_form(form_class)
+    #     form = super(EnrollmentView, self).get_form(form_class)
     #     # override the queryset
     #     form.fields['offered_player'].queryset = self.petitioner.players
     #     return form
@@ -61,20 +65,17 @@ class EnrollmentView(LoginRequiredMixin, FormView):
     #     self.petitioner = get_object_or_404(Team, user=self.request.user.profile, league=self.kwargs['pk'])
     #     return super(LeagueTransferView, self).get(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        if form.is_valid():
-            print 'ok'
-            return self.form_valid(form)
-        else:
-            print 'ko'
-            return self.form_invalid(form)
-
-    # def form_valid(self, form):
-    #     form.save(self.request.user)
-    #     print form.is_valid()
-    #     return super(EnrollmentView, self).form_valid(form)
+    # def post(self, request, *args, **kwargs):
+    #     form_class = self.get_form_class()
+    #     form = self.get_form(form_class)
+    #     if form.is_valid():
+    #         return self.form_valid(form)
+    #     else:
+    #         return self.form_invalid(form)
+    #
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(EnrollmentView, self).form_valid(form)
 
 
 # class EnrollmentView(LoginRequiredMixin,
