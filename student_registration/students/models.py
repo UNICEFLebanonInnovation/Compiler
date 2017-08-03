@@ -248,6 +248,52 @@ class Student(Person):
             attendances[item.attendance_date] = item.status
         return attendances
 
+    @classmethod
+    def create(cls, data):
+        instance = cls(
+            first_name=data['student_first_name'],
+            father_name=data['student_father_name'],
+            last_name=data['student_last_name'],
+            mother_fullname=data['student_mother_fullname'],
+            sex=data['student_sex'],
+            birthday_day=data['student_birthday_day'],
+            birthday_month=data['student_birthday_month'],
+            birthday_year=data['student_birthday_year'],
+            nationality_id=data['student_nationality'],
+            mother_nationality_id=data['student_mother_nationality'],
+            phone=data['student_phone'],
+            phone_prefix=data['student_phone_prefix'],
+            address=data['student_address'],
+            registered_in_unhcr=data['registered_in_unhcr'],
+            id_type_id=data['student_id_type'],
+            id_number=data['student_id_number'],
+        )
+        instance.save()
+        return instance
+
+    @classmethod
+    def update(cls, instance, data):
+        instance.update(
+            first_name=data['student_first_name'],
+            father_name=data['student_father_name'],
+            last_name=data['student_last_name'],
+            mother_fullname=data['student_mother_fullname'],
+            sex=data['student_sex'],
+            birthday_day=data['student_birthday_day'],
+            birthday_month=data['student_birthday_month'],
+            birthday_year=data['student_birthday_year'],
+            nationality_id=data['student_nationality'],
+            mother_nationality_id=data['student_mother_nationality'],
+            phone=data['student_phone'],
+            phone_prefix=data['student_phone_prefix'],
+            address=data['student_address'],
+            registered_in_unhcr=data['registered_in_unhcr'],
+            id_type_id=data['student_id_type'],
+            id_number=data['student_id_number'],
+        )
+        instance.save()
+        return instance
+
 
 class StudentMatching(models.Model):
 

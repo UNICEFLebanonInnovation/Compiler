@@ -2,9 +2,37 @@
  * Created by ali on 7/22/17.
  */
 
-var arabic_fields = "#id_first_name, #id_father_name, #id_last_name, #id_mother_fullname";
+var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname";
 
 $(document).ready(function(){
+
+    $(document).on('click', 'input[name=new_registry], input[name=outreached], input[name=have_barcode]', function(){
+        reorganizeForm();
+    });
+
+    // $('input[name=old_or_new]').click(function () {
+    //     if($(this).val() == '1'){
+    //
+    //     }else{
+    //         $('#outreach_option').removeClass('invisible');
+    //     }
+    // });
+    //
+    // $('input[name=outreached]').click(function () {
+    //     if($(this).val() == '1') {
+    //         $('#have_barcode_option').removeClass('invisible');
+    //     }else{
+    //         $('#have_barcode_option').addClass('invisible');
+    //     }
+    // });
+    //
+    // $('input[name=have_barcode]').click(function(){
+    //     if($(this).val() == '1' && $('input[name=old_or_new]').val() == '1'){
+    //         $('#register_by_barcode').removeClass('invisible');
+    //     }else{
+    //        $('#register_by_barcode').addClass('invisible');
+    //     }
+    // });
 
     // $('#id_registration_date').datetimepicker({
     //     "format": "mm/dd/yyyy",
@@ -35,8 +63,7 @@ $(document).ready(function(){
       },
       minLength: 3,
       select: function( event, ui ) {
-          $("#id_search_student").val('');
-          // get_registration(ui.item);
+          window.location = '/enrollments/add/?enrollment_id='+ui.item.enrollment.id;
           return false;
       }
     }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
@@ -64,7 +91,7 @@ $(document).ready(function(){
     $("#id_search_barcode").autocomplete({
       source: function( request, response ) {
         $.ajax( {
-          url: '/api/students/',
+          url: '/api/household/',
           dataType: "json",
           data: {
             term: request.term
@@ -76,8 +103,7 @@ $(document).ready(function(){
       },
       minLength: 3,
       select: function( event, ui ) {
-          $("#id_search_barcode").val('');
-          // get_registration(ui.item);
+            console.log(ui.item);
           return false;
       }
     }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
@@ -89,10 +115,41 @@ $(document).ready(function(){
     };
 
     $("#id_search_barcode").autocomplete( "instance" )._renderItem = function( ul, item ) {
-          return $( "<li>" )
-            .append( "<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_sex + " - " + item.student_age + ") "
-                           + "<br>" + '{% trans "Current situation" %}: '+ item.school_name + " - " + item.school_number + " / " + item.classroom_name + " / " + item.section_name
-                           + "</div>" )
-            .appendTo( ul );
+        $(item.children).each(function(i, child){
+              ul.append(
+                  $( "<li>" )
+                .append( "<div style='border: 1px solid;'>" + child.first_name + " - " + child.barcode_number + " (" + child.sex + " - " + child.student_age + ") "
+                               + "</div>" )
+              );
+        });
+
+          return ul;
     };
 });
+
+
+function reorganizeForm()
+{
+    var new_registry = $('input[name=new_registry]:checked').val();
+    var outreached = $('input[name=outreached]:checked').val();
+    var have_barcode = $('input[name=have_barcode]:checked').val();
+
+    if(new_registry == '1'){
+        $('.child_data').removeClass('invisible');
+    }else{
+        $('.child_data').removeClass('invisible');
+        $('#search_options').removeClass('invisible');
+
+        if(have_barcode == '1') {
+            $('#register_by_barcode').removeClass('invisible');
+        }
+    }
+
+    if(outreached == '1') {
+        $('#have_barcode_option').removeClass('invisible');
+    }
+
+    if(have_barcode == '1') {
+        $('#register_by_barcode').removeClass('invisible');
+    }
+}
