@@ -13,8 +13,8 @@ import math
 
 
 class Nationality(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
-    code = models.CharField(max_length=5L, null=True)
+    name = models.CharField(max_length=45, unique=True)
+    code = models.CharField(max_length=5, null=True)
 
     class Meta:
         ordering = ['id']
@@ -25,7 +25,7 @@ class Nationality(models.Model):
 
 
 class IDType(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
+    name = models.CharField(max_length=45, unique=True)
     inuse = models.BooleanField(default=True)
 
     class Meta:
@@ -62,13 +62,13 @@ class Person(TimeStampedModel):
         ('no', _('No')),
     )
 
-    first_name = models.CharField(max_length=64L, blank=True, null=True)
-    last_name = models.CharField(max_length=64L, blank=True, null=True)
-    father_name = models.CharField(max_length=64L, blank=True, null=True)
+    first_name = models.CharField(max_length=64, blank=True, null=True)
+    last_name = models.CharField(max_length=64, blank=True, null=True)
+    father_name = models.CharField(max_length=64, blank=True, null=True)
     # full_name = models.CharField(max_length=225L, blank=True, null=True)
-    mother_fullname = models.CharField(max_length=64L, blank=True, null=True)
-    mother_firstname = models.CharField(max_length=64L, blank=True, null=True)
-    mother_lastname = models.CharField(max_length=64L, blank=True, null=True)
+    mother_fullname = models.CharField(max_length=64, blank=True, null=True)
+    mother_firstname = models.CharField(max_length=64, blank=True, null=True)
+    mother_lastname = models.CharField(max_length=64, blank=True, null=True)
     sex = models.CharField(
         max_length=50,
         blank=True,
@@ -99,15 +99,15 @@ class Person(TimeStampedModel):
         default=0,
         choices=((str(x), x) for x in range(1, 33))
     )
-    phone = models.CharField(max_length=64L, blank=True, null=True)
-    phone_prefix = models.CharField(max_length=10L, blank=True, null=True)
+    phone = models.CharField(max_length=64, blank=True, null=True)
+    phone_prefix = models.CharField(max_length=10, blank=True, null=True)
     registered_in_unhcr = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=YES_NO
     )
-    id_number = models.CharField(max_length=45L, blank=True, null=True)
+    id_number = models.CharField(max_length=45, blank=True, null=True)
     id_type = models.ForeignKey(
         IDType,
         blank=True, null=True,
@@ -126,9 +126,9 @@ class Person(TimeStampedModel):
         blank=True,
         null=True
     )
-    number = models.CharField(max_length=45L, blank=True, null=True)
-    number_part1 = models.CharField(max_length=45L, blank=True, null=True)
-    number_part2 = models.CharField(max_length=45L, blank=True, null=True)
+    number = models.CharField(max_length=45, blank=True, null=True)
+    number_part1 = models.CharField(max_length=45, blank=True, null=True)
+    number_part2 = models.CharField(max_length=45, blank=True, null=True)
 
     def __unicode__(self):
         if not self.first_name:

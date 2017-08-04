@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='student',
             name='mother_firstname',
-            field=models.CharField(blank=True, max_length=64L, null=True),
+            field=models.CharField(blank=True, max_length=64, null=True),
         ),
         migrations.AddField(
             model_name='student',
             name='mother_lastname',
-            field=models.CharField(blank=True, max_length=64L, null=True),
+            field=models.CharField(blank=True, max_length=64, null=True),
         ),
     ]

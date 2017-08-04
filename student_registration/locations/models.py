@@ -9,7 +9,7 @@ from django.contrib.gis.db import models
 
 
 class LocationType(models.Model):
-    name = models.CharField(max_length=64L, unique=True)
+    name = models.CharField(max_length=64, unique=True)
 
     class Meta:
         ordering = ['name']
@@ -21,11 +21,11 @@ class LocationType(models.Model):
 
 class Location(MPTTModel):
 
-    name = models.CharField(max_length=254L)
+    name = models.CharField(max_length=254)
     type = models.ForeignKey(LocationType, verbose_name='Location Type')
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    p_code = models.CharField(max_length=32L, blank=True, null=True)
+    p_code = models.CharField(max_length=32, blank=True, null=True)
 
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
 

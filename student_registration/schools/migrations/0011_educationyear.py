@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='EducationYear',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100L, unique=True)),
+                ('name', models.CharField(max_length=100, unique=True)),
             ],
             options={
                 'ordering': ['id'],

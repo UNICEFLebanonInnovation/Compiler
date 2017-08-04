@@ -20,10 +20,10 @@ class Migration(migrations.Migration):
             name='Location',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=254L)),
+                ('name', models.CharField(max_length=254)),
                 ('latitude', models.FloatField(blank=True, null=True)),
                 ('longitude', models.FloatField(blank=True, null=True)),
-                ('p_code', models.CharField(blank=True, max_length=32L, null=True)),
+                ('p_code', models.CharField(blank=True, max_length=32, null=True)),
                 ('lft', models.PositiveIntegerField(db_index=True, editable=False)),
                 ('rght', models.PositiveIntegerField(db_index=True, editable=False)),
                 ('tree_id', models.PositiveIntegerField(db_index=True, editable=False)),
@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
             name='LocationType',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=64L, unique=True)),
+                ('name', models.CharField(max_length=64, unique=True)),
             ],
             options={
                 'ordering': ['name'],

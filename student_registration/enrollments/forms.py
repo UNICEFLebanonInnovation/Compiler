@@ -293,13 +293,9 @@ class EnrollmentForm(forms.ModelForm):
 
     def clean(self):
         super(EnrollmentForm, self).clean()
-        print self.cleaned_data
         # cc_myself = self.cleaned_data.get("cc_myself")
 
     def save(self, user=None):
-        print 'ok'
-        print self.fields
-        print 'ok'
         return True
         # user_profile = super(EnrollmentForm, self).save(commit=False)
         # if user:
