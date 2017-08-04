@@ -20,6 +20,7 @@ from student_registration.attendances.views import (
 )
 from student_registration.students.views import (
     StudentViewSet,
+    StudentAutocomplete,
 )
 from student_registration.schools.views import (
     SchoolViewSet,
@@ -31,8 +32,7 @@ from student_registration.winterization.views import (
 )
 from student_registration.users.views import LoginRedirectView, PasswordChangeView, PasswordChangeDoneView
 from student_registration.enrollments.views import EnrollmentViewSet, LoggingStudentMoveViewSet
-from student_registration.students.views import StudentAutocomplete
-
+from student_registration.outreach.views import HouseHoldViewSet
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
@@ -43,6 +43,7 @@ api.register(r'attendances-report', AttendanceReportViewSet, base_name='attendan
 api.register(r'beneficiary', BeneficiaryViewSet, base_name='beneficiary')
 
 api.register(r'students', StudentViewSet, base_name='students')
+api.register(r'household', HouseHoldViewSet, base_name='household')
 api.register(r'schools', SchoolViewSet, base_name='schools')
 api.register(r'classrooms', ClassRoomViewSet, base_name='classrooms')
 api.register(r'sections', SectionViewSet, base_name='sections')
@@ -67,6 +68,7 @@ urlpatterns = [
 
     url(r'^students/', include('student_registration.students.urls', namespace='students')),
     url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
+    url(r'^outreach/', include('student_registration.outreach.urls', namespace='outreach')),
     url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
     url(r'^enrollments/', include('student_registration.enrollments.urls', namespace='enrollments')),
     url(r'^schools/', include('student_registration.schools.urls', namespace='schools')),

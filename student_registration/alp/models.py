@@ -414,7 +414,7 @@ class Outreach(TimeStampedModel):
     @property
     def student_age(self):
         if self.student:
-            return self.student.calc_age
+            return self.student.age
         return 0
 
     @property

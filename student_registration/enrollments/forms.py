@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.utils.translation import ugettext as _
 from django import forms
+import json
 from dal import autocomplete
 from django.core.urlresolvers import reverse
 from .models import Enrollment, LoggingStudentMove
@@ -19,6 +20,7 @@ from student_registration.students.models import (
 from student_registration.schools.models import (
     School
 )
+from .serializers import EnrollmentSerializer
 
 YES_NO_CHOICE = ((False, _('No')), (True, _('Yes')))
 
@@ -40,12 +42,11 @@ class EnrollmentAdminForm(forms.ModelForm):
 
 class EnrollmentForm(forms.ModelForm):
 
-    old_or_new = forms.TypedChoiceField(
+    new_registry = forms.TypedChoiceField(
         label=_("First time registered?"),
         choices=((1, "Yes"), (0, "No")),
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
-        initial='1',
         required=True,
     )
     outreached = forms.TypedChoiceField(
@@ -71,23 +72,23 @@ class EnrollmentForm(forms.ModelForm):
     )
 
     registration_date = forms.DateField(
-        widget=DateTimePicker(
-            options={
-                "viewMode": "years",
-                "format": "mm/dd/yyyy",
-                "pickTime": False,
-                "stepping": 0,
-                "showClear": True,
-                "showClose": True,
-                "disabledHours": True,
-            }),
+        # widget=DateTimePicker(
+        #     options={
+        #         "viewMode": "years",
+        #         "format": "mm/dd/yyyy",
+        #         "pickTime": False,
+        #         "stepping": 0,
+        #         "showClear": True,
+        #         "showClose": True,
+        #         "disabledHours": True,
+        #     }),
         required=True
     )
 
-    first_name = forms.CharField(widget=forms.TextInput, required=True)
-    father_name = forms.CharField(widget=forms.TextInput, required=True)
-    last_name = forms.CharField(widget=forms.TextInput, required=True)
-    sex = forms.ChoiceField(
+    student_first_name = forms.CharField(widget=forms.TextInput, required=True)
+    student_father_name = forms.CharField(widget=forms.TextInput, required=True)
+    student_last_name = forms.CharField(widget=forms.TextInput, required=True)
+    student_sex = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=(
             ('', _('Gender')),
@@ -95,11 +96,11 @@ class EnrollmentForm(forms.ModelForm):
             ('Female', _('Female')),
         )
     )
-    birthday_year = forms.ChoiceField(
+    student_birthday_year = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=((str(x), x) for x in range(1930, 2051))
     )
-    birthday_month = forms.ChoiceField(
+    student_birthday_month = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=(
             ('', _('Birthday Month')),
@@ -117,19 +118,19 @@ class EnrollmentForm(forms.ModelForm):
             ('12', _('December')),
         )
     )
-    birthday_day = forms.ChoiceField(
+    student_birthday_day = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=((str(x), x) for x in range(1, 32))
     )
 
-    nationality = forms.ModelChoiceField(
+    student_nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select,
         empty_label=_('Student nationality'),
         required=True, to_field_name='id',
     )
 
-    mother_fullname = forms.CharField(widget=forms.TextInput, required=True)
-    mother_nationality = forms.ModelChoiceField(
+    student_mother_fullname = forms.CharField(widget=forms.TextInput, required=True)
+    student_mother_nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select,
         empty_label=_('Mather nationality'),
         required=True, to_field_name='id',
@@ -141,15 +142,18 @@ class EnrollmentForm(forms.ModelForm):
     #     initial = '1',
     #     required = True,
     # )
-    id_type = forms.ModelChoiceField(
+    student_id_type = forms.ModelChoiceField(
         queryset=IDType.objects.all(), widget=forms.Select,
         required=True, to_field_name='id', empty_label=_('Student ID Type')
     )
-    id_number = forms.CharField(widget=forms.TextInput, required=True)
+    student_id_number = forms.CharField(widget=forms.TextInput, required=True)
 
-    phone_prefix = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 2})), required=True)
-    phone = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 6})), required=True)
-    address = forms.CharField(widget=forms.TextInput, required=True)
+    student_phone_prefix = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 2})), required=True)
+    student_phone = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 6})), required=True)
+    student_address = forms.CharField(widget=forms.TextInput, required=True)
+
+    student_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         super(EnrollmentForm, self).__init__(*args, **kwargs)
@@ -166,11 +170,6 @@ class EnrollmentForm(forms.ModelForm):
         self.fields['last_informal_edu_round'].empty_label = _('ALP round')
         self.fields['last_informal_edu_final_result'].empty_label = _('ALP result')
 
-        self.fields['school'].widget = forms.HiddenInput()
-        self.fields['owner'].widget = forms.HiddenInput()
-        self.fields['student'].widget = forms.HiddenInput()
-        self.fields['student'].required = False
-
         self.helper = FormHelper()
         self.helper.form_show_labels = False
         self.helper.form_action = reverse('enrollments:add')
@@ -178,12 +177,11 @@ class EnrollmentForm(forms.ModelForm):
             Fieldset(
                 _('Registry'),
                 Div(
-                    'school',
-                    'owner',
-                    'student',
-                    Div(InlineRadios('old_or_new'), css_class='col-md-4'),
+                    'student_id',
+                    'enrollment_id',
+                    Div(InlineRadios('new_registry'), css_class='col-md-4'),
                     Div(InlineRadios('outreached'), css_class='col-md-4'),
-                    Div(InlineRadios('have_barcode'), css_class='col-md-4'),
+                    Div(InlineRadios('have_barcode'), css_class='col-md-4 invisible', css_id='have_barcode_option'),
                     css_class='row',
                 ),
             ),
@@ -193,6 +191,7 @@ class EnrollmentForm(forms.ModelForm):
                     Div(PrependedText('search_barcode', _('Search child by barcode')), css_class='col-md-6'),
                     css_class='row',
                 ),
+                css_id='register_by_barcode', css_class='invisible'
             ),
             Fieldset(
                 _('Search old student (fullname Or ID number)'),
@@ -205,7 +204,7 @@ class EnrollmentForm(forms.ModelForm):
                     Div(PrependedText('outreach_barcode', _('Outreach Barcode')), css_class='col-md-4'),
                     css_class='row',
                 ),
-                css_id='search_options',
+                css_id='search_options', css_class='invisible'
             ),
             Fieldset(
                 _('Basic Data'),
@@ -214,37 +213,38 @@ class EnrollmentForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('first_name', _('First Name')), css_class='col-md-4'),
-                    Div(PrependedText('father_name', _('Father Name')), css_class='col-md-4'),
-                    Div(PrependedText('last_name', _('Last Name')), css_class='col-md-4'),
+                    Div(PrependedText('student_first_name', _('First Name')), css_class='col-md-4'),
+                    Div(PrependedText('student_father_name', _('Father Name')), css_class='col-md-4'),
+                    Div(PrependedText('student_last_name', _('Last Name')), css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
-                    Div('sex', css_class='col-md-3'),
-                    Div('birthday_year', css_class='col-md-2'),
-                    Div('birthday_month', css_class='col-md-2'),
-                    Div('birthday_day', css_class='col-md-2'),
-                    Div('nationality', css_class='col-md-3'),
+                    Div('student_sex', css_class='col-md-3'),
+                    Div('student_birthday_year', css_class='col-md-2'),
+                    Div('student_birthday_month', css_class='col-md-2'),
+                    Div('student_birthday_day', css_class='col-md-2'),
+                    Div('student_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('mother_fullname', _('Mother Full name')), css_class='col-md-4'),
-                    Div('mother_nationality', css_class='col-md-4'),
+                    Div(PrependedText('student_mother_fullname', _('Mother Full name')), css_class='col-md-4'),
+                    Div('student_mother_nationality', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
                     # Div(InlineRadios('registered_in_unhcr', _('Registered in UNHCR')), css_class='col-md-4'),
                     Div('registered_in_unhcr', css_class='col-md-4'),
-                    Div('id_type', css_class='col-md-4'),
-                    Div(PrependedText('id_number', _('Student ID Number')), css_class='col-md-4'),
+                    Div('student_id_type', css_class='col-md-4'),
+                    Div(PrependedText('student_id_number', _('Student ID Number')), css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('phone_prefix', _('Prefix (2 digits)')), css_class='col-md-4'),
-                    Div(PrependedText('phone', _('Number (6 digits)')), css_class='col-md-4'),
-                    Div(PrependedText('address', _('Address')), css_class='col-md-4'),
+                    Div(PrependedText('student_phone_prefix', _('Prefix (2 digits)')), css_class='col-md-4'),
+                    Div(PrependedText('student_phone', _('Number (6 digits)')), css_class='col-md-4'),
+                    Div(PrependedText('student_address', _('Address')), css_class='col-md-4'),
                     css_class='row',
                 ),
+                css_class='invisible child_data'
             ),
             Fieldset(
                 _('Current situation'),
@@ -253,6 +253,7 @@ class EnrollmentForm(forms.ModelForm):
                     Div('section', css_class='col-md-6'),
                     css_class='row',
                 ),
+                css_class='invisible child_data'
             ),
             Fieldset(
                 _('Last student formal education'),
@@ -271,6 +272,7 @@ class EnrollmentForm(forms.ModelForm):
                     Div('last_year_result', css_class='col-md-6'),
                     css_class='row',
                 ),
+                css_class='invisible child_data'
             ),
             Fieldset(
                 _('Last student informal education'),
@@ -284,6 +286,7 @@ class EnrollmentForm(forms.ModelForm):
                     Div('last_informal_edu_final_result', css_class='col-md-6'),
                     css_class='row',
                 ),
+                css_class='invisible child_data'
             ),
             FormActions(
                 Submit('save', _('Save')),
@@ -291,11 +294,30 @@ class EnrollmentForm(forms.ModelForm):
             )
         )
 
-    def clean(self):
-        super(EnrollmentForm, self).clean()
+    # def clean(self):
+    #     super(EnrollmentForm, self).clean()
+        # print self.cleaned_data
         # cc_myself = self.cleaned_data.get("cc_myself")
 
-    def save(self, user=None):
+    def save(self, request=None):
+        instance = super(EnrollmentForm, self).save()
+        instance.school = request.user.school
+        instance.owner = request.user
+        instance.student = Student.create(request.POST)
+        instance.save()
+        # print self.fields
+        # print json.dumps(request.POST)
+        # request.POST.pop('search_barcode', None)
+        # request.POST.pop('search_student', None)
+        # request.POST.pop('search_school', None)
+        # request.POST.pop('save', None)
+        # request.POST.pop('csrfmiddlewaretoken', None)
+        # serializer = EnrollmentSerializer(data=json.dumps(request.POST))
+        # print serializer.is_valid()
+        # print serializer.errors
+        # serializer.create(validated_data=serializer.validated_data)
+        # print 'ok'
+        # print serializer
         return True
         # user_profile = super(EnrollmentForm, self).save(commit=False)
         # if user:
@@ -305,8 +327,63 @@ class EnrollmentForm(forms.ModelForm):
 
     class Meta:
         model = Enrollment
-        fields = '__all__'
-        # exclude = ('user', 'full_name', 'mother_fullname',)
+        fields = (
+            'student_id',
+            'enrollment_id',
+            'student_first_name',
+            'student_father_name',
+            'student_last_name',
+            'student_mother_fullname',
+            'student_sex',
+            'student_birthday_year',
+            'student_birthday_month',
+            'student_birthday_day',
+            'student_phone',
+            'student_phone_prefix',
+            'student_id_number',
+            'student_id_type',
+            'student_nationality',
+            'student_mother_nationality',
+            'registered_in_unhcr',
+            'participated_in_alp',
+            'last_informal_edu_level',
+            'last_informal_edu_round',
+            'last_informal_edu_final_result',
+            'student_address',
+            'section',
+            'classroom',
+            'last_year_result',
+            'last_school_type',
+            'last_school_shift',
+            'last_school',
+            'last_education_level',
+            'last_education_year',
+            'outreach_barcode',
+            # 'owner',
+            # 'moved',
+            # 'exam_result_arabic',
+            # 'exam_result_language',
+            # 'exam_result_education',
+            # 'exam_result_geo',
+            # 'exam_result_history',
+            # 'exam_result_math',
+            # 'exam_result_science',
+            # 'exam_result_physic',
+            # 'exam_result_chemistry',
+            # 'exam_result_bio',
+            # 'exam_result_linguistic_ar',
+            # 'exam_result_linguistic_en',
+            # 'exam_result_sociology',
+            # 'exam_result_physical',
+            # 'exam_result_artistic',
+            # 'exam_result_mathematics',
+            # 'exam_result_sciences',
+            # 'exam_total',
+            # 'exam_result',
+            # 'education_year',
+            # 'education_year_name',
+        )
+        initial_fields = fields
         widgets = {
             'employment_status': forms.RadioSelect(),
             'sports_group': forms.RadioSelect(),

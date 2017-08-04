@@ -78,6 +78,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     'student_registration.users',  # custom users app
     'student_registration.students',  # custom students app
+    'student_registration.outreach',  # custom alp app
     'student_registration.alp',  # custom alp app
     'student_registration.attendances',  # custom attendances app
     'student_registration.enrollments',  # custom enrollments app
