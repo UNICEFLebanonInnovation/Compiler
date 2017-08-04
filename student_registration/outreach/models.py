@@ -4,6 +4,7 @@ from django.db import models
 from model_utils import Choices
 from django.contrib.postgres.fields import JSONField
 from django.utils.translation import ugettext as _
+from student_registration.students.models import Person
 
 
 class HouseHold(models.Model):
@@ -54,8 +55,9 @@ class HouseHold(models.Model):
 
 class Child(Person):
 
-    class Meta:
-        ordering = ['id']
-
-    def __unicode__(self):
-        return self.name
+    household = models.ForeignKey(
+        HouseHold,
+        blank=True, null=True,
+        related_name='+'
+    )
+    barcode_subset = models.CharField(max_length=45L, blank=True, null=True)
