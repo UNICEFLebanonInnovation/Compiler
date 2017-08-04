@@ -190,9 +190,11 @@ def alp_by_gov_by_age(registrations, gov, age=None):
 
 
 @register.assignment_tag
-def enrollment_by_grade_by_age(registrations, level, age):
+def enrollment_by_grade_by_age(registrations, level, age=None):
     now = datetime.datetime.now()
-    if age == None:
+    if age == 0:
+        return registrations.filter(classroom=level, student__birthday_year=(now.year - age)).count()
+    elif age == None:
         return registrations.filter(classroom=level).count()
     elif not level:
         return registrations.filter(classroom__isnull=False, student__birthday_year=(now.year - age)).count()
