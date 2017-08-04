@@ -221,7 +221,7 @@
                         <i class="icon-export-sign icon-white"></i>&nbsp;
                             Export
                       </button>
-                    {% get_range_int 1 20 as ages %}
+                    {% get_range_int 0 30 as ages %}
                     <table class="table table-striped table-bordered cell-border"
                            data-tableName="Students By Grade by Age"
                            data-height="500"
@@ -244,7 +244,7 @@
                         </thead>
                         <tbody>
                             {% for level in education_levels %}
-                                {% get_range_int 1 20 as ages1 %}
+                                {% get_range_int 0 30 as ages1 %}
                             <tr>
                                 <td><strong>{{ level.name }}</strong></td>
                                 {% for age in ages1 %}
@@ -261,7 +261,7 @@
                             {% endfor %}
                             <tr>
                                 <td><strong>Total</strong></td>
-                                {% get_range_int 1 20 as ages2 %}
+                                {% get_range_int 0 30 as ages2 %}
                                 {% for age in ages2 %}
                                     <td>
                                         {% enrollment_by_grade_by_age enrollments 0 age as number %}
