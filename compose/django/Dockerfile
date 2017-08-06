@@ -1,28 +1,51 @@
-FROM python:2.7
-ENV PYTHONUNBUFFERED 1
+FROM python:3.5-alpine
 
-RUN groupadd -r django \
-    && useradd -r -g django django
+ADD requirements /requirements
 
-# Requirements have to be pulled and installed here, otherwise caching won't work
-COPY ./requirements /requirements
-RUN pip install --no-cache-dir -r /requirements/production.txt \
-    && rm -rf /requirements
+ARG REQUIREMENTS_FILE=production.txt
 
-COPY ./compose/django/gunicorn.sh ./compose/django/entrypoint.sh /
-RUN sed -i 's/\r//' /entrypoint.sh \
-    && sed -i 's/\r//' /gunicorn.sh \
-    && chmod +x /entrypoint.sh \
-    && chown django /entrypoint.sh \
-    && chmod +x /gunicorn.sh \
-    && chown django /gunicorn.sh
+# Install build deps, then run `pip install`, then remove unneeded build deps all in a single step.
+# Correct the path to your production requirements file, if needed.
+RUN set -ex \
+    && apk add --no-cache --virtual .build-deps \
+            gcc \
+            make \
+            libc-dev \
+            musl-dev \
+            linux-headers \
+            pcre-dev \
+            postgresql-dev \
+            libxml2-dev \
+            libxslt-dev \
+            jpeg-dev \
+            libffi-dev \
+    && pyvenv /venv \
+    && /venv/bin/pip install -U pip \
+    && LIBRARY_PATH=/lib:/usr/lib /bin/sh -c "/venv/bin/pip install --no-cache-dir -r /requirements/$REQUIREMENTS_FILE" \
+    && runDeps="$( \
+            scanelf --needed --nobanner --recursive /venv \
+                    | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+                    | sort -u \
+                    | xargs -r apk info --installed \
+                    | sort -u \
+    )" \
+    && apk add --virtual .python-rundeps $runDeps \
+    && apk add --update postgresql-client \
+    && apk del .build-deps
 
-COPY . /app
+COPY ./compose/django/*.sh /
+# Copy your application code to the container (make sure you create a .dockerignore file if any large files or directories should be excluded)
+RUN mkdir /code/
+WORKDIR /code/
+ADD . /code/
 
-RUN chown -R django /app
+# uWSGI will listen on this port
+EXPOSE 8000
 
-USER django
+# Call collectstatic (customize the following line with the minimal environment variables needed for manage.py to run):
+RUN /venv/bin/python manage.py collectstatic --noinput
 
-WORKDIR /app
+# Start
+CMD ["/gunicorn.sh"]
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -89,7 +89,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         from student_registration.students.serializers import StudentSerializer
-        print validated_data
+        print(validated_data)
         student_data = validated_data.pop('student', None)
         student_serializer = StudentSerializer(data=student_data)
         student_serializer.is_valid(raise_exception=True)

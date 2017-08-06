@@ -73,10 +73,7 @@ class Person(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices(
-            ('Male', _('Male')),
-            ('Female', _('Female')),
-        )
+        choices=GENDER
     )
     birthday_year = models.CharField(
         max_length=4,

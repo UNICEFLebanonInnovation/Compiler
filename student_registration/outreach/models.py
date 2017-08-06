@@ -1,9 +1,11 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from model_utils import Choices
 from django.contrib.postgres.fields import JSONField
 from django.utils.translation import ugettext as _
+
+from model_utils import Choices
+
 from student_registration.students.models import Person
 
 
@@ -19,9 +21,9 @@ class HouseHold(models.Model):
             ('granted_referral', _('Granted for the referral')),
         )
     )
-    interview_comment = models.CharField(max_length=200L, blank=True, null=True)
-    name = models.CharField(max_length=100L, blank=True, null=True)
-    phone_number = models.CharField(max_length=45L, blank=True, null=True)
+    interview_comment = models.CharField(max_length=200, blank=True, null=True)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    phone_number = models.CharField(max_length=45, blank=True, null=True)
     residence_type = models.CharField(
         max_length=50,
         blank=True,
@@ -32,17 +34,17 @@ class HouseHold(models.Model):
             ('garage_store_other', _('Garage, Store or other')),
         )
     )
-    p_code = models.CharField(max_length=45L, blank=True, null=True)
-    address = models.CharField(max_length=100L, blank=True, null=True)
-    number_of_children = models.CharField(max_length=45L, blank=True, null=True)
-    barcode_number = models.CharField(max_length=45L, blank=True, null=True)
+    p_code = models.CharField(max_length=45, blank=True, null=True)
+    address = models.CharField(max_length=100, blank=True, null=True)
+    number_of_children = models.CharField(max_length=45, blank=True, null=True)
+    barcode_number = models.CharField(max_length=45, blank=True, null=True)
 
-    social_worker_name = models.CharField(max_length=200L, blank=True, null=True)
-    partner_name = models.CharField(max_length=200L, blank=True, null=True)
-    governorate = models.CharField(max_length=200L, blank=True, null=True)
-    district = models.CharField(max_length=200L, blank=True, null=True)
-    village = models.CharField(max_length=200L, blank=True, null=True)
-    interview_date = models.CharField(max_length=200L, blank=True, null=True)
+    social_worker_name = models.CharField(max_length=200, blank=True, null=True)
+    partner_name = models.CharField(max_length=200, blank=True, null=True)
+    governorate = models.CharField(max_length=200, blank=True, null=True)
+    district = models.CharField(max_length=200, blank=True, null=True)
+    village = models.CharField(max_length=200, blank=True, null=True)
+    interview_date = models.CharField(max_length=200, blank=True, null=True)
 
     children = JSONField(blank=True, null=True)
 
@@ -60,4 +62,4 @@ class Child(Person):
         blank=True, null=True,
         related_name='+'
     )
-    barcode_subset = models.CharField(max_length=45L, blank=True, null=True)
+    barcode_subset = models.CharField(max_length=45, blank=True, null=True)

@@ -16,15 +16,18 @@ services:
   django:
     build:
       context: .
-      dockerfile: ./compose/django/Dockerfile-dev
+      dockerfile: ./compose/django/Dockerfile
+      args:
+        - REQUIREMENTS_FILE=local.txt
     command: /start-dev.sh
     depends_on:
       - postgres
     environment:
       - POSTGRES_USER=student_registration
+      - DATABASE_URL=postgres://student_registration:postgres@postgres:5432/student_registration
       - USE_DOCKER=yes
     volumes:
-      - .:/app
+      - .:/code
     ports:
       - "8000:8000"
 
@@ -32,13 +35,17 @@ services:
   pycharm:
     build:
       context: .
-      dockerfile: ./compose/django/Dockerfile-dev
+      dockerfile: ./compose/django/Dockerfile
+      args:
+        - REQUIREMENTS_FILE=local.txt
+    command: /start-dev.sh
     depends_on:
       - postgres
     environment:
       - POSTGRES_USER=student_registration
+      - DATABASE_URL=postgres://student_registration:postgres@postgres:5432/student_registration
     volumes:
-      - .:/app
+      - .:/code
 
 
 
