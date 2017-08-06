@@ -29,7 +29,7 @@ from student_registration.winterization.views import (
 )
 from student_registration.users.views import LoginRedirectView, PasswordChangeView, PasswordChangeDoneView
 from student_registration.enrollments.views import EnrollmentViewSet, LoggingStudentMoveViewSet
-from student_registration.outreach.views import HouseHoldViewSet
+from student_registration.outreach.views import HouseHoldViewSet, ChildViewSet
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
@@ -41,6 +41,7 @@ api.register(r'beneficiary', BeneficiaryViewSet, base_name='beneficiary')
 
 api.register(r'students', StudentViewSet, base_name='students')
 api.register(r'household', HouseHoldViewSet, base_name='household')
+api.register(r'child', ChildViewSet, base_name='child')
 api.register(r'schools', SchoolViewSet, base_name='schools')
 api.register(r'classrooms', ClassRoomViewSet, base_name='classrooms')
 api.register(r'sections', SectionViewSet, base_name='sections')

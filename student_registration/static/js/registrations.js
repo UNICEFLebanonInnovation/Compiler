@@ -10,40 +10,6 @@ $(document).ready(function(){
         reorganizeForm();
     });
 
-    // $('input[name=old_or_new]').click(function () {
-    //     if($(this).val() == '1'){
-    //
-    //     }else{
-    //         $('#outreach_option').removeClass('invisible');
-    //     }
-    // });
-    //
-    // $('input[name=outreached]').click(function () {
-    //     if($(this).val() == '1') {
-    //         $('#have_barcode_option').removeClass('invisible');
-    //     }else{
-    //         $('#have_barcode_option').addClass('invisible');
-    //     }
-    // });
-    //
-    // $('input[name=have_barcode]').click(function(){
-    //     if($(this).val() == '1' && $('input[name=old_or_new]').val() == '1'){
-    //         $('#register_by_barcode').removeClass('invisible');
-    //     }else{
-    //        $('#register_by_barcode').addClass('invisible');
-    //     }
-    // });
-
-    // $('#id_registration_date').datetimepicker({
-    //     "format": "mm/dd/yyyy",
-    //     "pickTime": false,
-    //     "viewMode": "years",
-    //     "stepping": 0,
-    //     "showClear": true,
-    //     "showClose": true,
-    //     "disabledHours": true
-    // });
-
     $(document).on('blur', arabic_fields, function(){
         checkArabicOnly($(this));
     });
@@ -91,7 +57,7 @@ $(document).ready(function(){
     $("#id_search_barcode").autocomplete({
       source: function( request, response ) {
         $.ajax( {
-          url: '/api/household/',
+          url: '/api/child/',
           dataType: "json",
           data: {
             term: request.term
@@ -115,15 +81,12 @@ $(document).ready(function(){
     };
 
     $("#id_search_barcode").autocomplete( "instance" )._renderItem = function( ul, item ) {
-        $(item.children).each(function(i, child){
-              ul.append(
-                  $( "<li>" )
-                .append( "<div style='border: 1px solid;'>" + child.first_name + " - " + child.barcode_number + " (" + child.sex + " - " + child.student_age + ") "
-                               + "</div>" )
-              );
-        });
-
-          return ul;
+          return $( "<li>" )
+            .append( "<div style='border: 1px solid;'>"
+                            +  "<b>Base Data:</b> " + item.full_name + " - " + item.mother_fullname + " - " + item.id_number
+                            + "<br/> <b>Gender - Birthday:</b> " + item.sex + " - " + item.birthday
+                            + "</div>" )
+            .appendTo( ul );
     };
 });
 

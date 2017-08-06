@@ -21,8 +21,4 @@ class ChildSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Child
-        fields = (
-            'name',
-            'barcode_number',
-            'children',
-        )
+        fields = '__all__'
