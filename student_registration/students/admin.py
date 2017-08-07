@@ -59,7 +59,7 @@ class EnrollmentInline(admin.TabularInline):
     model = Enrollment
     extra = 0
     fields = (
-        # 'education_year',
+        'education_year',
         'school',
         'section',
         'classroom',
