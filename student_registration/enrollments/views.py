@@ -29,7 +29,8 @@ from student_registration.alp.models import ALPRound
 from .models import Enrollment, LoggingStudentMove
 from .forms import EnrollmentForm
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
-from django.core import serializers
+from student_registration.outreach.models import Child
+from student_registration.outreach.serializers import ChildSerializer
 
 
 class EnrollmentView(LoginRequiredMixin, FormView):
@@ -47,11 +48,14 @@ class EnrollmentView(LoginRequiredMixin, FormView):
 
     def get_initial(self):
         initial = super(EnrollmentView, self).get_initial()
+        data = []
         if self.request.GET.get('enrollment_id'):
             instance = Enrollment.objects.get(id=self.request.GET.get('enrollment_id'))
             data = EnrollmentSerializer(instance).data
-            initial = data
-            initial['student_id'] = instance.student_id
+        if self.request.GET.get('child_id'):
+            instance = Child.objects.get(id=self.request.GET.get('child_id'))
+            data = ChildSerializer(instance).data
+        initial = data
         return initial
 
     # def get_form(self, form_class=None):

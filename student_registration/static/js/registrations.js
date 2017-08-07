@@ -16,8 +16,12 @@ $(document).ready(function(){
 
     $("#id_search_student").autocomplete({
       source: function( request, response ) {
+          var school = $('#id_search_school').val();
+          if(school == ''){
+              school = 0;
+          }
         $.ajax( {
-          url: '/api/students/',
+          url: '/api/students/?school='+school+'&school_type='+$('#id_school_type').val(),
           dataType: "json",
           data: {
             term: request.term
@@ -69,7 +73,7 @@ $(document).ready(function(){
       },
       minLength: 3,
       select: function( event, ui ) {
-            console.log(ui.item);
+          window.location = '/enrollments/add/?child_id='+ui.item.child_id;
           return false;
       }
     }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
@@ -83,8 +87,43 @@ $(document).ready(function(){
     $("#id_search_barcode").autocomplete( "instance" )._renderItem = function( ul, item ) {
           return $( "<li>" )
             .append( "<div style='border: 1px solid;'>"
-                            +  "<b>Base Data:</b> " + item.full_name + " - " + item.mother_fullname + " - " + item.id_number
-                            + "<br/> <b>Gender - Birthday:</b> " + item.sex + " - " + item.birthday
+                            +  "<b>Base Data:</b> " + item.student_full_name + " - " + item.stduent_mother_fullname + " - " + item.student_id_number
+                            + "<br/> <b>Gender - Birthday:</b> " + item.student_sex + " - " + item.student_birthday
+                            + "</div>" )
+            .appendTo( ul );
+    };
+
+    $("#id_outreach_barcode").autocomplete({
+      source: function( request, response ) {
+        $.ajax( {
+          url: '/api/child/',
+          dataType: "json",
+          data: {
+            term: request.term
+          },
+          success: function( data ) {
+            response( data);
+          }
+        } );
+      },
+      minLength: 3,
+      select: function( event, ui ) {
+          $('#id_outreach_barcode').val(ui.item.barcode_subset);
+          return false;
+      }
+    }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
+         var that = this;
+         $.each( items, function( index, item ) {
+             that._renderItemData( ul, item );
+        });
+        $( ul ).find( "li:odd" ).addClass( "odd" );
+    };
+
+    $("#id_outreach_barcode").autocomplete( "instance" )._renderItem = function( ul, item ) {
+          return $( "<li>" )
+            .append( "<div style='border: 1px solid;'>"
+                            +  "<b>Base Data:</b> " + item.student_full_name + " - " + item.stduent_mother_fullname + " - " + item.student_id_number
+                            + "<br/> <b>Gender - Birthday:</b> " + item.student_sex + " - " + item.student_birthday
                             + "</div>" )
             .appendTo( ul );
     };
