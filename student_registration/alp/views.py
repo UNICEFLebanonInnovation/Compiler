@@ -67,6 +67,7 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
                 pre_test_round = ALPRound.objects.get(current_pre_test=True)
                 qs = qs.filter(
                     alp_enrollment__alp_round=pre_test_round.id,
+                    alp_enrollment__school__in=self.request.user.schools.all(),
                 ).exclude(
                     alp_enrollment__school_id=self.request.user.school_id,
                 )
