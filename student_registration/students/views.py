@@ -35,15 +35,18 @@ class StudentViewSet(mixins.RetrieveModelMixin,
         if self.request.method in ["PATCH", "POST", "PUT"]:
             return self.queryset
         terms = self.request.GET.get('term', 0)
+        school_type = self.request.GET.get('school_type', '2ndshift')
+        user_school = self.request.user.school_id
+        school = int(self.request.GET.get('school', 0))
         if terms:
-            # education_year = EducationYear.objects.get(current_year=True)
-            qs = Student.objects.filter(
-                student_enrollment__isnull=False,
-                student_enrollment__deleted=False,
-                student_enrollment__dropout_status=False,
-                # student_enrollment__education_year__lt=education_year.id,
-                # student_enrollment__school_id=self.request.user.school_id
-            )
+            if school_type == 'alp':
+                qs = Student.alp.filter(
+                    alp_enrollment__school_id__in=[school, user_school]
+                )
+            else:
+                qs = Student.second_shift.filter(
+                    student_enrollment__school_id__in=[school, user_school]
+                )
             for term in terms.split():
                 qs = qs.filter(
                     Q(first_name__contains=term) |
