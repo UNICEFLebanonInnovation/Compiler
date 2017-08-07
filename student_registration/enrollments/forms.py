@@ -5,7 +5,7 @@ from django import forms
 import json
 from dal import autocomplete
 from django.core.urlresolvers import reverse
-from .models import Enrollment, LoggingStudentMove
+from .models import Enrollment, LoggingStudentMove, EducationYear
 from student_registration.students.models import Student
 
 from model_utils import Choices
@@ -69,6 +69,15 @@ class EnrollmentForm(forms.ModelForm):
         queryset=School.objects.all(), widget=forms.Select,
         empty_label=_('Search by school'),
         required=False, to_field_name='id',
+        initial=0
+    )
+    school_type = forms.ChoiceField(
+        widget=forms.Select, required=False,
+        choices=(
+            ('', _('School type')),
+            ('alp', _('ALP')),
+            ('2ndshift', _('2nd Shift')),
+        )
     )
 
     registration_date = forms.DateField(
@@ -154,6 +163,7 @@ class EnrollmentForm(forms.ModelForm):
 
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    outreach_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         super(EnrollmentForm, self).__init__(*args, **kwargs)
@@ -179,6 +189,7 @@ class EnrollmentForm(forms.ModelForm):
                 Div(
                     'student_id',
                     'enrollment_id',
+                    'outreach_id',
                     Div(InlineRadios('new_registry'), css_class='col-md-4'),
                     Div(InlineRadios('outreached'), css_class='col-md-4'),
                     Div(InlineRadios('have_barcode'), css_class='col-md-4 invisible', css_id='have_barcode_option'),
@@ -196,8 +207,9 @@ class EnrollmentForm(forms.ModelForm):
             Fieldset(
                 _('Search old student (fullname Or ID number)'),
                 Div(
+                    Div('school_type', css_class='col-md-4'),
                     Div('search_school', css_class='col-md-4'),
-                    Div(PrependedText('search_student', _('Search old student')), css_class='col-md-6'),
+                    Div(PrependedText('search_student', _('Search old student')), css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
@@ -303,7 +315,12 @@ class EnrollmentForm(forms.ModelForm):
         instance = super(EnrollmentForm, self).save()
         instance.school = request.user.school
         instance.owner = request.user
-        instance.student = Student.create(request.POST)
+        instance.education_year = EducationYear.objects.get(current_year=True)
+        if request.POST.get('student_id'):
+            student = Student.objects.get(id=int(request.POST.get('student_id'))).update(request.POST)
+        else:
+            student = Student.create(request.POST)
+        instance.student = student
         instance.save()
         # print self.fields
         # print json.dumps(request.POST)
