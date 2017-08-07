@@ -13,6 +13,7 @@ from .models import (
     Nationality,
     Language,
     IDType,
+    Generic,
 )
 from .forms import StudentEnrollmentForm
 from student_registration.schools.models import (
@@ -689,7 +690,36 @@ class StudentMatchingAdmin(ImportExportModelAdmin):
         return ''
 
 
+class GenericResource(resources.ModelResource):
+    class Meta:
+        model = Generic
+        fields = (
+            'id',
+            'full_name',
+            'mother_fullname',
+            'phone',
+            'birthday',
+            'id_type',
+            'id_number',
+            'address',
+        )
+        export_order = fields
+
+
+class GenericAdmin(ImportExportModelAdmin):
+    resource_class = GenericResource
+    list_display = (
+        'full_name',
+        'mother_fullname',
+    )
+    list_filter = (
+    )
+    search_fields = (
+    )
+
+
 admin.site.register(Student, StudentAdmin)
+admin.site.register(Generic, GenericAdmin)
 admin.site.register(Nationality, NationalityAdmin)
 admin.site.register(Language)
 admin.site.register(StudentMatching, StudentMatchingAdmin)

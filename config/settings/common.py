@@ -360,6 +360,7 @@ SUIT_CONFIG = {
         {'app': 'registrations', 'label': 'Pilot', 'icon': 'icon-th-list'},
         {'label': 'Students', 'icon': 'icon-th-list', 'models': (
             'students.Student',
+            'students.Generic',
             'students.Nationality',
             'students.IDType',
             'students.Language',

@@ -2,7 +2,7 @@ __author__ = 'achamseddine'
 
 import json
 import os
-
+from django.db.models import Q
 from datetime import datetime
 from student_registration.taskapp.celery import app
 
@@ -206,3 +206,175 @@ def move_student_to_school(school_from, school_to):
     registrations = Outreach.objects.filter(school_id=school_from)
     print registrations.count()
     registrations.update(school_id=school_to)
+
+
+@app.task
+def matching_pretest_2ndshift_enrollments():
+    import tablib
+    from import_export.formats import base_formats
+    from .models import Outreach, ALPRound
+    from student_registration.enrollments.models import Enrollment, EducationYear
+
+    alp_round = ALPRound.objects.get(current_pre_test=True)
+    registrations = Outreach.objects.filter(alp_round=alp_round)
+
+    print registrations.count()
+
+    content = []
+    data = tablib.Dataset()
+    data.headers = [
+        'CERD (pre-test)',
+        'School name ( pre-test)',
+        'Student (pre-test)',
+        'Student mother fullname (pre-test)',
+        'CERD (enrollment)',
+        'School (enrollment)',
+        'Student (enrollment)',
+        'Student mother fullname (enrollment)',
+        'Level',
+    ]
+
+    queryset = Enrollment.objects.all()
+
+    for registry in registrations:
+        enrollment = None
+        r_student = registry.student
+        if not r_student or not registry.school:
+            continue
+        try:
+            if r_student.id_type_id == 1 and r_student.id_number or '-' in r_student.id_number:
+                id_number_1 = r_student.id_number.replace("-", "")
+                id_number_2 = id_number_1.replace("C", "c")
+                id_number_3 = id_number_1.replace("c", "C")
+                id_number_4 = r_student.id_number.replace("C", "c")
+                id_number_5 = r_student.id_number.replace("c", "C")
+                enrollment = queryset.filter(
+                    Q(student__id_number=r_student.id_number) |
+                    Q(student__id_number=id_number_1) |
+                    Q(student__id_number=id_number_2) |
+                    Q(student__id_number=id_number_3) |
+                    Q(student__id_number=id_number_4) |
+                    Q(student__id_number=id_number_5) |
+                    Q(Q(student__first_name=r_student.first_name) &
+                      Q(student__father_name=r_student.father_name) &
+                      Q(student__last_name=r_student.last_name) &
+                      Q(student__mother_fullname=r_student.mother_fullname)
+                      )
+                )
+            else:
+                enrollment = queryset.filter(
+                    student__first_name=r_student.first_name,
+                    student__father_name=r_student.father_name,
+                    student__last_name=r_student.last_name,
+                    student__mother_fullname=r_student.mother_fullname
+                )
+        except Exception as ex:
+            print registry.id, ex.message
+            continue
+
+        if enrollment and not enrollment.count() > 2:
+            for row in enrollment:
+                data.append([
+                    registry.school.number,
+                    registry.school,
+                    registry.student,
+                    registry.student.mother_fullname,
+                    row.school.number,
+                    row.school,
+                    row.student,
+                    row.student.mother_fullname,
+                    row.classroom
+                ])
+
+    file_format = base_formats.XLSX()
+    file_object = open("pre_test_matching_enrollment.xlsx", "w")
+    file_object.write(file_format.export_data(data))
+    file_object.close()
+
+
+@app.task
+def matching_pretest_alp_rounds():
+    import tablib
+    from import_export.formats import base_formats
+    from .models import Outreach, ALPRound
+
+    alp_round = ALPRound.objects.get(current_pre_test=True)
+    registrations = Outreach.objects.filter(alp_round=alp_round)
+
+    print registrations.count()
+
+    content = []
+    data = tablib.Dataset()
+    data.headers = [
+        'CERD (pre-test)',
+        'School name ( pre-test)',
+        'Student (pre-test)',
+        'Student mother fullname (pre-test)',
+        'CERD (enrollment)',
+        'School (enrollment)',
+        'Student (enrollment)',
+        'Student mother fullname (enrollment)',
+        'Level',
+    ]
+
+    queryset = Outreach.objects.filter(registered_in_level__isnull=False, alp_round_id__lt=alp_round.id)
+
+    for registry in registrations:
+        enrollment = None
+        r_student = registry.student
+        if not r_student or not registry.school:
+            continue
+        try:
+            # if r_student.id_type_id == 1 and r_student.id_number or '-' in r_student.id_number:
+            if not r_student.id_type_id == 6:
+                id_number_1 = r_student.id_number.replace("-", "")
+                id_number_2 = id_number_1.replace("C", "c")
+                id_number_3 = id_number_1.replace("c", "C")
+                id_number_4 = r_student.id_number.replace("C", "c")
+                id_number_5 = r_student.id_number.replace("c", "C")
+                enrollment = queryset.filter(
+                    Q(student__id_number=r_student.id_number) |
+                    Q(student__id_number=id_number_1) |
+                    Q(student__id_number=id_number_2) |
+                    Q(student__id_number=id_number_3) |
+                    Q(student__id_number=id_number_4) |
+                    Q(student__id_number=id_number_5) |
+                    Q(Q(student__first_name=r_student.first_name) &
+                      Q(student__father_name=r_student.father_name) &
+                      Q(student__last_name=r_student.last_name) &
+                      Q(student__mother_fullname=r_student.mother_fullname)
+                      )
+                )
+            else:
+                enrollment = queryset.filter(
+                    student__first_name=r_student.first_name,
+                    student__father_name=r_student.father_name,
+                    student__last_name=r_student.last_name,
+                    student__mother_fullname=r_student.mother_fullname
+                )
+        except Exception as ex:
+            print registry.id, ex.message
+            continue
+
+        if enrollment and not enrollment.count() > 2:
+            for row in enrollment:
+                data.append([
+                    registry.school.number,
+                    registry.school,
+                    registry.student,
+                    registry.student.mother_fullname,
+                    row.school.number,
+                    row.school,
+                    row.student,
+                    row.student.mother_fullname,
+                    row.registered_in_level
+                ])
+
+    file_format = base_formats.XLSX()
+    file_object = open("pre_test_matching_rounds.xlsx", "w")
+    file_object.write(file_format.export_data(data))
+    file_object.close()
+
+
+
+

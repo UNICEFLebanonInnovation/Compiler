@@ -316,3 +316,83 @@ def find_matching_2():
         if enrollment:
             e_student = enrollment.student
             StudentMatching.objects.get_or_create(registry=e_student, enrolment=r_student)
+
+
+@app.task
+def matching_generic_2ndshift_enrollments():
+    import tablib
+    from import_export.formats import base_formats
+    from student_registration.enrollments.models import Enrollment, EducationYear
+    from .models import Generic
+
+    registrations = Generic.objects.all()
+
+    print registrations.count()
+
+    content = []
+    data = tablib.Dataset()
+    data.headers = [
+        'Student (pre-test)',
+        'Mother full name',
+        'Phone',
+        'Birthday',
+        'ID Type',
+        'ID number',
+        'address',
+        'CERD (enrollment)',
+        'School (enrollment)',
+        'Student (enrollment)',
+        'Student mother fullname (enrollment)',
+        'Level',
+    ]
+    queryset = Enrollment.objects.all()
+
+    for r_student in registrations:
+        enrollment = None
+        try:
+            str = ''
+            if r_student.id_type_id == 1:
+                str = r_student.id_number
+            else:
+                str = str.replace(".0", "")
+            id_number_1 = str.replace("-", "")
+            id_number_2 = id_number_1.replace("C", "c")
+            id_number_3 = id_number_1.replace("c", "C")
+            id_number_4 = str.replace("C", "c")
+            id_number_5 = str.replace("c", "C")
+            enrollment = queryset.filter(
+                Q(student__id_number=str) |
+                Q(student__id_number=id_number_1) |
+                Q(student__id_number=id_number_2) |
+                Q(student__id_number=id_number_3) |
+                Q(student__id_number=id_number_4) |
+                Q(student__id_number=id_number_5)
+            )
+        except Exception as ex:
+            print r_student.id, ex.message
+            continue
+
+        if enrollment and not enrollment.count() > 2:
+            for row in enrollment:
+                data.append([
+                    r_student.full_name,
+                    r_student.mother_fullname,
+                    r_student.phone,
+                    r_student.birthday,
+                    r_student.id_type,
+                    str,
+                    r_student.address,
+                    row.school.number,
+                    row.school,
+                    row.student,
+                    row.student.mother_fullname,
+                    row.classroom
+                ])
+
+    file_format = base_formats.XLSX()
+    file_object = open("generic_matching_enrollment.xlsx", "w")
+    file_object.write(file_format.export_data(data))
+    file_object.close()
+
+
+
