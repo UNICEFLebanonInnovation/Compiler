@@ -26,7 +26,7 @@ from student_registration.schools.models import (
     ClassLevel,
 )
 from student_registration.alp.models import ALPRound
-from .models import Enrollment, LoggingStudentMove
+from .models import Enrollment, LoggingStudentMove, EducationYear
 from .forms import EnrollmentForm
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
 from student_registration.outreach.models import Child
@@ -52,10 +52,11 @@ class EnrollmentView(LoginRequiredMixin, FormView):
         if self.request.GET.get('enrollment_id'):
             instance = Enrollment.objects.get(id=self.request.GET.get('enrollment_id'))
             data = EnrollmentSerializer(instance).data
-        if self.request.GET.get('child_id'):
-            instance = Child.objects.get(id=self.request.GET.get('child_id'))
+        if self.request.GET.get('student_outreach_child'):
+            instance = Child.objects.get(id=int(self.request.GET.get('student_outreach_child')))
             data = ChildSerializer(instance).data
         initial = data
+
         return initial
 
     # def get_form(self, form_class=None):

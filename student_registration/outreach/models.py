@@ -26,9 +26,9 @@ class HouseHold(models.Model):
         blank=True,
         null=True,
         choices=Choices(
-            ('granted', _('Granted')),
-            ('denied', _('Denied')),
-            ('granted_referral', _('Granted for the referral')),
+            ('1', _('Granted')),
+            ('2', _('Denied')),
+            ('3', _('Granted for the referral')),
         )
     )
     interview_comment = models.CharField(max_length=200, blank=True, null=True)
@@ -39,9 +39,9 @@ class HouseHold(models.Model):
         blank=True,
         null=True,
         choices=Choices(
-            ('informal_s', _('Informal Settlement')),
-            ('house_appart', _('House or Apartment')),
-            ('garage_store_other', _('Garage, Store or other')),
+            ('1', _('Informal Settlement')),
+            ('2', _('House or Apartment')),
+            ('3', _('Garage, Store or other')),
         )
     )
     p_code = models.CharField(max_length=45, blank=True, null=True)
