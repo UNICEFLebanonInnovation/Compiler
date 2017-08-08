@@ -9,7 +9,6 @@ from model_utils.models import TimeStampedModel
 from .utils import *
 from datetime import date
 import datetime
-import math
 
 
 class StudentManager(models.Manager):
@@ -225,8 +224,13 @@ class Person(TimeStampedModel):
 
 
 class Student(Person):
+    from student_registration.outreach.models import Child
 
     status = models.BooleanField(default=True)
+    outreach_child = models.ForeignKey(
+        Child,
+        blank=True, null=True,
+    )
 
     objects = StudentManager()
     second_shift = Student2ndShiftManager()
@@ -294,6 +298,7 @@ class Student(Person):
             registered_in_unhcr=data['registered_in_unhcr'],
             id_type_id=data['student_id_type'],
             id_number=data['student_id_number'],
+            outreach_child_id=data['child_id'] if 'child_id' in data else None
         )
         instance.save()
         return instance

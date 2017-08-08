@@ -49,7 +49,7 @@ class EnrollmentForm(forms.ModelForm):
         widget=forms.RadioSelect,
         required=True,
     )
-    outreached = forms.TypedChoiceField(
+    student_outreached = forms.TypedChoiceField(
         label=_("Student outreached?"),
         choices=((1, "Yes"), (0, "No")),
         coerce=lambda x: bool(int(x)),
@@ -163,7 +163,10 @@ class EnrollmentForm(forms.ModelForm):
 
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
-    outreach_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
+    school = forms.CharField(widget=forms.HiddenInput, required=False)
+    owner = forms.CharField(widget=forms.HiddenInput, required=False)
+    education_year = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         super(EnrollmentForm, self).__init__(*args, **kwargs)
@@ -189,9 +192,12 @@ class EnrollmentForm(forms.ModelForm):
                 Div(
                     'student_id',
                     'enrollment_id',
-                    'outreach_id',
+                    'student_outreach_child',
+                    'school',
+                    'owner',
+                    'education_year',
                     Div(InlineRadios('new_registry'), css_class='col-md-4'),
-                    Div(InlineRadios('outreached'), css_class='col-md-4'),
+                    Div(InlineRadios('student_outreached'), css_class='col-md-4'),
                     Div(InlineRadios('have_barcode'), css_class='col-md-4 invisible', css_id='have_barcode_option'),
                     css_class='row',
                 ),
@@ -312,35 +318,23 @@ class EnrollmentForm(forms.ModelForm):
         # cc_myself = self.cleaned_data.get("cc_myself")
 
     def save(self, request=None):
-        instance = super(EnrollmentForm, self).save()
-        instance.school = request.user.school
-        instance.owner = request.user
-        instance.education_year = EducationYear.objects.get(current_year=True)
-        if request.POST.get('student_id'):
-            student = Student.objects.get(id=int(request.POST.get('student_id'))).update(request.POST)
-        else:
-            student = Student.create(request.POST)
-        instance.student = student
-        instance.save()
-        # print self.fields
-        # print json.dumps(request.POST)
-        # request.POST.pop('search_barcode', None)
-        # request.POST.pop('search_student', None)
-        # request.POST.pop('search_school', None)
-        # request.POST.pop('save', None)
-        # request.POST.pop('csrfmiddlewaretoken', None)
-        # serializer = EnrollmentSerializer(data=json.dumps(request.POST))
-        # print serializer.is_valid()
-        # print serializer.errors
-        # serializer.create(validated_data=serializer.validated_data)
-        # print 'ok'
-        # print serializer
-        return True
-        # user_profile = super(EnrollmentForm, self).save(commit=False)
-        # if user:
-        #     user_profile.user = user
-        # user_profile.save()
-        # return user_profile
+        # instance = super(EnrollmentForm, self).save()
+        # instance.school = request.user.school
+        # instance.owner = request.user
+        # instance.education_year = EducationYear.objects.get(current_year=True)
+        # if request.POST.get('student_id'):
+        #     student = Student.objects.get(id=int(request.POST.get('student_id'))).update(request.POST)
+        # else:
+        #     student = Student.create(request.POST)
+        # instance.student = student
+        # instance.save()
+        serializer = EnrollmentSerializer(data=request.POST)
+        if serializer.is_valid():
+            instance = serializer.create(validated_data=serializer.validated_data)
+            instance.school = request.user.school
+            instance.owner = request.user
+            instance.education_year = EducationYear.objects.get(current_year=True)
+            instance.save()
 
     class Meta:
         model = Enrollment
