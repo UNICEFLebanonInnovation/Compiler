@@ -6,7 +6,9 @@ var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_studen
 
 $(document).ready(function(){
 
-    $(document).on('click', 'input[name=new_registry], input[name=outreached], input[name=have_barcode]', function(){
+    reorganizeForm();
+
+    $(document).on('click', 'input[name=new_registry], input[name=student_outreached], input[name=have_barcode]', function(){
         reorganizeForm();
     });
 
@@ -133,25 +135,37 @@ $(document).ready(function(){
 function reorganizeForm()
 {
     var new_registry = $('input[name=new_registry]:checked').val();
-    var outreached = $('input[name=outreached]:checked').val();
+    var outreached = $('input[name=student_outreached]:checked').val();
     var have_barcode = $('input[name=have_barcode]:checked').val();
 
-    if(new_registry == '1'){
-        $('.child_data').removeClass('invisible');
-    }else{
-        $('.child_data').removeClass('invisible');
-        $('#search_options').removeClass('invisible');
+    console.log(new_registry);
+    console.log(outreached);
 
-        if(have_barcode == '1') {
-            $('#register_by_barcode').removeClass('invisible');
-        }
-    }
-
-    if(outreached == '1') {
-        $('#have_barcode_option').removeClass('invisible');
-    }
-
-    if(have_barcode == '1') {
+    if(new_registry == '1' && outreached == '1' && (have_barcode == '1' || have_barcode == '0')){
         $('#register_by_barcode').removeClass('invisible');
+        $('#search_options').addClass('invisible');
+        $('.child_data').addClass('invisible');
+        return true;
+    }
+
+    if(new_registry == '1' && outreached == '0'){
+        $('#register_by_barcode').addClass('invisible');
+        $('#search_options').addClass('invisible');
+        $('.child_data').removeClass('invisible');
+        return true;
+    }
+
+    if(new_registry == '0' && outreached == '0'){
+        $('#register_by_barcode').addClass('invisible');
+        $('#search_options').removeClass('invisible');
+        $('.child_data').addClass('invisible');
+        return true;
+    }
+
+    if(new_registry == '0' && outreached == '1' && have_barcode == '1'){
+        $('#register_by_barcode').addClass('invisible');
+        $('#search_options').removeClass('invisible');
+        $('.child_data').addClass('invisible');
+        return true;
     }
 }

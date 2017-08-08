@@ -6,18 +6,21 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
+from rest_framework.decorators import detail_route, list_route
+from rest_framework.response import Response
 from dal import autocomplete
 from django.db.models import Q
+
 from .models import (
     Student,
 )
-
 from .serializers import (
     StudentSerializer,
 )
 from student_registration.enrollments.models import (
     EducationYear
 )
+from student_registration.alp.models import ALPRound
 
 
 class StudentViewSet(mixins.RetrieveModelMixin,
@@ -40,12 +43,16 @@ class StudentViewSet(mixins.RetrieveModelMixin,
         school = int(self.request.GET.get('school', 0))
         if terms:
             if school_type == 'alp':
+                alp_round = ALPRound.objects.get(current_round=True)
                 qs = Student.alp.filter(
-                    alp_enrollment__school_id__in=[school, user_school]
+                    alp_enrollment__school_id__in=[school, user_school],
+                    alp_enrollment__alp_round__lt=alp_round.id
                 )
             else:
+                education_year = EducationYear.objects.get(current_year=True)
                 qs = Student.second_shift.filter(
-                    student_enrollment__school_id__in=[school, user_school]
+                    student_enrollment__school_id__in=[school, user_school],
+                    student_enrollment__education_year__lt=education_year.id
                 )
             for term in terms.split():
                 qs = qs.filter(
@@ -55,6 +62,10 @@ class StudentViewSet(mixins.RetrieveModelMixin,
                     Q(id_number__contains=term)
                 ).distinct()
             return qs
+
+    @list_route()
+    def by_barcode(self, request):
+        return Response(request.GET)
 
 
 class StudentAutocomplete(autocomplete.Select2QuerySetView):
