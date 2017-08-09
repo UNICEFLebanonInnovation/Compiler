@@ -3,6 +3,8 @@ set -ex
 
 export DJANGO_SETTINGS_MODULE=config.settings.test
 
+/venv/bin/pip install -r /code/requirements/test.txt
+
 # Ensure there are no missing migrations
 /venv/bin/python manage.py makemigrations --dry-run | grep 'No changes detected' || (echo 'There are changes which require migrations.' && exit 1)
 
