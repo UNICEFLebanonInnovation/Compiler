@@ -9,6 +9,7 @@ dependencies:
     - "~/docker"
 
   override:
+    - docker info
     - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
     - docker build --rm=false -f ./compose/django/Dockerfile -t jamescw/compiler:$CIRCLE_BRANCH .
     - mkdir -p ~/docker; docker save jamescw/compiler > ~/docker/image.tar

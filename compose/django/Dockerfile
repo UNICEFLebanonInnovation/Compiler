@@ -4,6 +4,9 @@ ADD requirements /requirements
 
 ARG REQUIREMENTS_FILE=production.txt
 
+ARG SETTINGS_MODULE=config.settings.production
+ENV DJANGO_SETTINGS_MODULE $SETTINGS_MODULE
+
 # Install build deps, then run `pip install`, then remove unneeded build deps all in a single step.
 # Correct the path to your production requirements file, if needed.
 RUN set -ex \
