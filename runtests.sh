@@ -12,6 +12,7 @@ export DJANGO_SETTINGS_MODULE=config.settings.test
 /venv/bin/coverage erase
 /venv/bin/coverage run manage.py test --noinput --keepdb --settings="$DJANGO_SETTINGS_MODULE" "$@"
 /venv/bin/coverage report --include "$@/*.py"
+/venv/bin/coverage html -d /reports
 
 # Check code style
 /venv/bin/flake8 .
