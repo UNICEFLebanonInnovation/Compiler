@@ -4,9 +4,6 @@ ADD requirements /requirements
 
 ARG REQUIREMENTS_FILE=production.txt
 
-ARG SETTINGS_MODULE=config.settings.production
-ENV DJANGO_SETTINGS_MODULE $SETTINGS_MODULE
-
 # Install build deps, then run `pip install`, then remove unneeded build deps all in a single step.
 # Correct the path to your production requirements file, if needed.
 RUN set -ex \
@@ -46,7 +43,7 @@ ADD . /code/
 EXPOSE 8000
 
 # Call collectstatic (customize the following line with the minimal environment variables needed for manage.py to run):
-RUN /venv/bin/python manage.py collectstatic --noinput
+RUN /venv/bin/python manage.py collectstatic --noinput --settings=config.settings.test
 
 # Start
 CMD ["/gunicorn.sh"]
