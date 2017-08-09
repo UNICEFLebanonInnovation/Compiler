@@ -9,7 +9,6 @@ dependencies:
     - "~/docker"
 
   override:
-    - echo "Ignore CircleCI defaults"
     - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
     - docker build --rm=false -t jamescw/compiler:$CIRCLE_BRANCH .
     - mkdir -p ~/docker; docker save jamescw/compiler > ~/docker/image.tar
