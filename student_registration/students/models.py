@@ -79,10 +79,6 @@ class Person(TimeStampedModel):
         ('Male', _('Male')),
         ('Female', _('Female')),
     )
-    YES_NO = Choices(
-        ('yes', _('Yes')),
-        ('no', _('No')),
-    )
 
     first_name = models.CharField(max_length=64L, blank=True, null=True)
     last_name = models.CharField(max_length=64L, blank=True, null=True)
@@ -127,7 +123,7 @@ class Person(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        choices=YES_NO
+        choices=Choices((1, _("Yes")), (0, _("No")))
     )
     id_number = models.CharField(max_length=45L, blank=True, null=True)
     id_type = models.ForeignKey(
