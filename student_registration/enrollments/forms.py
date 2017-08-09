@@ -23,7 +23,7 @@ from student_registration.schools.models import (
 )
 from .serializers import EnrollmentSerializer
 
-YES_NO_CHOICE = ((False, _('No')), (True, _('Yes')))
+YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
 
 
 class EnrollmentAdminForm(forms.ModelForm):
@@ -45,21 +45,21 @@ class EnrollmentForm(forms.ModelForm):
 
     new_registry = forms.TypedChoiceField(
         label=_("First time registered?"),
-        choices=((1, "Yes"), (0, "No")),
+        choices=YES_NO_CHOICE,
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
         required=True,
     )
     student_outreached = forms.TypedChoiceField(
         label=_("Student outreached?"),
-        choices=((1, "Yes"), (0, "No")),
+        choices=YES_NO_CHOICE,
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
         required=True,
     )
     have_barcode = forms.TypedChoiceField(
         label=_("Have barcode with him?"),
-        choices=((1, "Yes"), (0, "No")),
+        choices=YES_NO_CHOICE,
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
         required=False,
@@ -145,13 +145,13 @@ class EnrollmentForm(forms.ModelForm):
         empty_label=_('Mather nationality'),
         required=True, to_field_name='id',
     )
-    # registered_in_unhcr = forms.TypedChoiceField(
-    #     choices = ((1, "Yes"), (0, "No")),
-    #     coerce = lambda x: bool(int(x)),
-    #     widget = forms.RadioSelect,
-    #     initial = '1',
-    #     required = True,
-    # )
+    student_registered_in_unhcr = forms.TypedChoiceField(
+        label=_("Registered in UNHCR?"),
+        choices=YES_NO_CHOICE,
+        coerce=lambda x: bool(int(x)),
+        widget=forms.RadioSelect,
+        required=True,
+    )
     student_id_type = forms.ModelChoiceField(
         queryset=IDType.objects.all(), widget=forms.Select,
         required=True, to_field_name='id', empty_label=_('Student ID Type')
@@ -168,6 +168,9 @@ class EnrollmentForm(forms.ModelForm):
         required=False, to_field_name='id',
         initial=1
     )
+
+
+
 
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -258,8 +261,7 @@ class EnrollmentForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    # Div(InlineRadios('registered_in_unhcr', _('Registered in UNHCR')), css_class='col-md-4'),
-                    Div('registered_in_unhcr', css_class='col-md-4'),
+                    Div(InlineRadios('student_registered_in_unhcr', _('Registered in UNHCR')), css_class='col-md-4'),
                     Div('student_id_type', css_class='col-md-4'),
                     Div(PrependedText('student_id_number', _('Student ID Number')), css_class='col-md-4'),
                     css_class='row',
@@ -346,38 +348,39 @@ class EnrollmentForm(forms.ModelForm):
 
     class Meta:
         model = Enrollment
-        fields = (
-            'student_id',
-            'enrollment_id',
-            'student_first_name',
-            'student_father_name',
-            'student_last_name',
-            'student_mother_fullname',
-            'student_sex',
-            'student_birthday_year',
-            'student_birthday_month',
-            'student_birthday_day',
-            'student_phone',
-            'student_phone_prefix',
-            'student_id_number',
-            'student_id_type',
-            'student_nationality',
-            'student_mother_nationality',
-            'registered_in_unhcr',
-            'participated_in_alp',
-            'last_informal_edu_level',
-            'last_informal_edu_round',
-            'last_informal_edu_final_result',
-            'student_address',
-            'section',
-            'classroom',
-            'last_year_result',
-            'last_school_type',
-            'last_school_shift',
-            'last_school',
-            'last_education_level',
-            'last_education_year',
-            'outreach_barcode',
+        fields = '__all__'
+            # (
+            # 'student_id',
+            # 'enrollment_id',
+            # 'student_first_name',
+            # 'student_father_name',
+            # 'student_last_name',
+            # 'student_mother_fullname',
+            # 'student_sex',
+            # 'student_birthday_year',
+            # 'student_birthday_month',
+            # 'student_birthday_day',
+            # 'student_phone',
+            # 'student_phone_prefix',
+            # 'student_id_number',
+            # 'student_id_type',
+            # 'student_nationality',
+            # 'student_mother_nationality',
+            # 'registered_in_unhcr',
+            # 'participated_in_alp',
+            # 'last_informal_edu_level',
+            # 'last_informal_edu_round',
+            # 'last_informal_edu_final_result',
+            # 'student_address',
+            # 'section',
+            # 'classroom',
+            # 'last_year_result',
+            # 'last_school_type',
+            # 'last_school_shift',
+            # 'last_school',
+            # 'last_education_level',
+            # 'last_education_year',
+            # 'outreach_barcode',
             # 'owner',
             # 'moved',
             # 'exam_result_arabic',
@@ -401,7 +404,7 @@ class EnrollmentForm(forms.ModelForm):
             # 'exam_result',
             # 'education_year',
             # 'education_year_name',
-        )
+        # )
         initial_fields = fields
         widgets = {
             'employment_status': forms.RadioSelect(),
