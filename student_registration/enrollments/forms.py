@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, division
 from django.utils.translation import ugettext as _
 from django import forms
 import json
+import itertools
 from dal import autocomplete
 from django.core.urlresolvers import reverse
 from .models import Enrollment, LoggingStudentMove, EducationYear
@@ -19,11 +20,15 @@ from student_registration.students.models import (
 )
 from student_registration.schools.models import (
     School,
-    Section
+    Section,
+    ClassRoom
 )
 from .serializers import EnrollmentSerializer
 
 YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
+EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+EDUCATION_YEARS.append(('0', _('Last education year')))
+EDUCATION_YEARS.append(('na', 'N/A'))
 
 
 class EnrollmentAdminForm(forms.ModelForm):
@@ -162,15 +167,56 @@ class EnrollmentForm(forms.ModelForm):
     student_phone = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 6})), required=True)
     student_address = forms.CharField(widget=forms.TextInput, required=True)
 
+    classroom = forms.ModelChoiceField(
+        queryset=ClassRoom.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
     section = forms.ModelChoiceField(
         queryset=Section.objects.all(), widget=forms.Select,
-        empty_label=_('Section'),
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
         initial=1
     )
 
-
-
+    last_education_level = forms.ModelChoiceField(
+        label=_('Last education level'),
+        queryset=ClassRoom.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    last_school_type = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=(
+            ('', _('School type')),
+            ('out_the_country', _('School out of the country')),
+            ('public_in_country', _('Public school in the country')),
+            ('private_in_country', _('Private school in the country')),
+        )
+    )
+    last_school_shift = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=(
+            ('', _('School shift')),
+            ('first', _('First shift')),
+            ('second', _('Second shift')),
+        )
+    )
+    last_school = forms.ModelChoiceField(
+        queryset=School.objects.all(), widget=forms.Select,
+        label=_('School'),
+        required=True, to_field_name='id',
+    )
+    last_education_year = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=EDUCATION_YEARS,
+        initial='0',
+    )
+    last_year_result = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=(
+            ('', _('Result')),
+            ('graduated', _('Graduated')),
+            ('failed', _('Failed'))
+        )
+    )
 
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -229,16 +275,13 @@ class EnrollmentForm(forms.ModelForm):
                     Div(PrependedText('search_student', _('Search old student')), css_class='col-md-4'),
                     css_class='row',
                 ),
-                Div(
-                    Div(PrependedText('outreach_barcode', _('Outreach Barcode')), css_class='col-md-4'),
-                    css_class='row',
-                ),
                 css_id='search_options', css_class='invisible'
             ),
             Fieldset(
                 _('Basic Data'),
                 Div(
                     Div(PrependedText('registration_date', _('Registration date')), css_class='col-md-4'),
+                    Div(PrependedText('outreach_barcode', _('Outreach Barcode')), css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
@@ -261,7 +304,7 @@ class EnrollmentForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    Div(InlineRadios('student_registered_in_unhcr', _('Registered in UNHCR')), css_class='col-md-4'),
+                    Div(InlineRadios('student_registered_in_unhcr'), css_class='col-md-4'),
                     Div('student_id_type', css_class='col-md-4'),
                     Div(PrependedText('student_id_number', _('Student ID Number')), css_class='col-md-4'),
                     css_class='row',
@@ -348,63 +391,41 @@ class EnrollmentForm(forms.ModelForm):
 
     class Meta:
         model = Enrollment
-        fields = '__all__'
-            # (
-            # 'student_id',
-            # 'enrollment_id',
-            # 'student_first_name',
-            # 'student_father_name',
-            # 'student_last_name',
-            # 'student_mother_fullname',
-            # 'student_sex',
-            # 'student_birthday_year',
-            # 'student_birthday_month',
-            # 'student_birthday_day',
-            # 'student_phone',
-            # 'student_phone_prefix',
-            # 'student_id_number',
-            # 'student_id_type',
-            # 'student_nationality',
-            # 'student_mother_nationality',
-            # 'registered_in_unhcr',
-            # 'participated_in_alp',
-            # 'last_informal_edu_level',
-            # 'last_informal_edu_round',
-            # 'last_informal_edu_final_result',
-            # 'student_address',
-            # 'section',
-            # 'classroom',
-            # 'last_year_result',
-            # 'last_school_type',
-            # 'last_school_shift',
-            # 'last_school',
-            # 'last_education_level',
-            # 'last_education_year',
-            # 'outreach_barcode',
-            # 'owner',
-            # 'moved',
-            # 'exam_result_arabic',
-            # 'exam_result_language',
-            # 'exam_result_education',
-            # 'exam_result_geo',
-            # 'exam_result_history',
-            # 'exam_result_math',
-            # 'exam_result_science',
-            # 'exam_result_physic',
-            # 'exam_result_chemistry',
-            # 'exam_result_bio',
-            # 'exam_result_linguistic_ar',
-            # 'exam_result_linguistic_en',
-            # 'exam_result_sociology',
-            # 'exam_result_physical',
-            # 'exam_result_artistic',
-            # 'exam_result_mathematics',
-            # 'exam_result_sciences',
-            # 'exam_total',
-            # 'exam_result',
-            # 'education_year',
-            # 'education_year_name',
-        # )
+        fields = (
+            'student_id',
+            'enrollment_id',
+            'student_first_name',
+            'student_father_name',
+            'student_last_name',
+            'student_mother_fullname',
+            'student_sex',
+            'student_birthday_year',
+            'student_birthday_month',
+            'student_birthday_day',
+            'student_phone',
+            'student_phone_prefix',
+            'student_id_number',
+            'student_id_type',
+            'student_nationality',
+            'student_mother_nationality',
+            'student_registered_in_unhcr',
+            'participated_in_alp',
+            'last_informal_edu_level',
+            'last_informal_edu_round',
+            'last_informal_edu_final_result',
+            'student_address',
+            'section',
+            'classroom',
+            'last_year_result',
+            'last_school_type',
+            'last_school_shift',
+            'last_school',
+            'last_education_level',
+            'last_education_year',
+            'outreach_barcode',
+            'owner',
+            'education_year',
+        )
         initial_fields = fields
         widgets = {
             'employment_status': forms.RadioSelect(),
