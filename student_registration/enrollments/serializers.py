@@ -62,6 +62,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     student_phone = serializers.CharField(source='student.phone')
     student_phone_prefix = serializers.CharField(source='student.phone_prefix')
     student_id_number = serializers.CharField(source='student.id_number')
+    student_registered_in_unhcr = serializers.CharField(source='student.registered_in_unhcr')
     student_id_type = serializers.CharField(source='student.id_type')
     student_id_type_name = serializers.CharField(source='student.id_type.name', read_only=True)
     student_number = serializers.CharField(source='student.number', read_only=True)
@@ -128,49 +129,54 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         student_data = validated_data.pop('student', None)
 
         if student_data:
-            student = instance.student
-            if 'first_name' in student_data:
-                student.first_name = student_data['first_name']
-            if 'father_name' in student_data:
-                student.father_name = student_data['father_name']
-            if 'last_name' in student_data:
-                student.last_name = student_data['last_name']
-            if 'mother_fullname' in student_data:
-                student.mother_fullname = student_data['mother_fullname']
+            from student_registration.students.serializers import StudentSerializer
 
-            if 'birthday_year' in student_data:
-                student.birthday_year = student_data['birthday_year']
-            if 'birthday_month' in student_data:
-                student.birthday_month = student_data['birthday_month']
-            if 'birthday_day' in student_data:
-                student.birthday_day = student_data['birthday_day']
+            student_serializer = StudentSerializer(instance.student, data=student_data)
+            student_serializer.is_valid(raise_exception=True)
+            student_serializer.instance = student_serializer.save()
 
-            if 'sex' in student_data:
-                student.sex = student_data['sex']
-            if 'phone' in student_data:
-                student.phone = student_data['phone']
-            if 'phone_prefix' in student_data:
-                student.phone_prefix = student_data['phone_prefix']
-            if 'address' in student_data:
-                student.address = student_data['address']
-            if 'nationality' in student_data:
-                student.nationality_id = student_data['nationality']
-            if 'mother_nationality' in student_data:
-                student.mother_nationality_id = student_data['mother_nationality']
-            if 'id_type' in student_data:
-                student.id_type_id = student_data['id_type']
-            if 'id_number' in student_data:
-                student.id_number = student_data['id_number']
-
-            student.save()
+            # if 'first_name' in student_data:
+            #     student.first_name = student_data['first_name']
+            # if 'father_name' in student_data:
+            #     student.father_name = student_data['father_name']
+            # if 'last_name' in student_data:
+            #     student.last_name = student_data['last_name']
+            # if 'mother_fullname' in student_data:
+            #     student.mother_fullname = student_data['mother_fullname']
+            #
+            # if 'birthday_year' in student_data:
+            #     student.birthday_year = student_data['birthday_year']
+            # if 'birthday_month' in student_data:
+            #     student.birthday_month = student_data['birthday_month']
+            # if 'birthday_day' in student_data:
+            #     student.birthday_day = student_data['birthday_day']
+            #
+            # if 'sex' in student_data:
+            #     student.sex = student_data['sex']
+            # if 'phone' in student_data:
+            #     student.phone = student_data['phone']
+            # if 'phone_prefix' in student_data:
+            #     student.phone_prefix = student_data['phone_prefix']
+            # if 'address' in student_data:
+            #     student.address = student_data['address']
+            # if 'nationality' in student_data:
+            #     student.nationality_id = student_data['nationality']
+            # if 'mother_nationality' in student_data:
+            #     student.mother_nationality_id = student_data['mother_nationality']
+            # if 'id_type' in student_data:
+            #     student.id_type_id = student_data['id_type']
+            # if 'id_number' in student_data:
+            #     student.id_number = student_data['id_number']
+            #
+            # student.save()
 
         try:
             if 'school' in validated_data:
                 instance.school = validated_data['school']
             if 'education_year' in validated_data:
                 instance.education_year_id = validated_data['education_year']
-            if 'registered_in_unhcr' in validated_data:
-                instance.registered_in_unhcr = validated_data['registered_in_unhcr']
+            # if 'registered_in_unhcr' in validated_data:
+            #     instance.registered_in_unhcr = validated_data['registered_in_unhcr']
             if 'participated_in_alp' in validated_data:
                 instance.participated_in_alp = validated_data['participated_in_alp']
             if 'last_informal_edu_level' in validated_data:
@@ -269,7 +275,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'student_number',
             'student_nationality',
             'student_mother_nationality',
-            'registered_in_unhcr',
+            'student_registered_in_unhcr',
             'participated_in_alp',
             'last_informal_edu_level',
             'last_informal_edu_round',

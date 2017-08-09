@@ -45,6 +45,7 @@ class StudentSerializer(serializers.ModelSerializer):
             'phone_prefix',
             'id_number',
             'id_type',
+            'registered_in_unhcr',
             'nationality',
             'mother_nationality',
             'address',
