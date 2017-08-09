@@ -15,6 +15,18 @@ class School(models.Model):
     number_students_2nd_shift = models.IntegerField(blank=True, null=True)
     is_alp = models.BooleanField(blank=True, default=False)
     number_students_alp = models.IntegerField(blank=True, null=True)
+    academic_year_start = models.DateField(
+        blank=True,
+        null=True,
+    )
+    academic_year_end = models.DateField(
+        blank=True,
+        null=True,
+    )
+    academic_year_exam_end = models.DateField(
+        blank=True,
+        null=True,
+    )
 
     location = models.ForeignKey(
         Location,

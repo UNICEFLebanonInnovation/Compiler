@@ -18,7 +18,8 @@ from student_registration.students.models import (
     Nationality,
 )
 from student_registration.schools.models import (
-    School
+    School,
+    Section
 )
 from .serializers import EnrollmentSerializer
 
@@ -160,6 +161,13 @@ class EnrollmentForm(forms.ModelForm):
     student_phone_prefix = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 2})), required=True)
     student_phone = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 6})), required=True)
     student_address = forms.CharField(widget=forms.TextInput, required=True)
+
+    section = forms.ModelChoiceField(
+        queryset=Section.objects.all(), widget=forms.Select,
+        empty_label=_('Section'),
+        required=False, to_field_name='id',
+        initial=1
+    )
 
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
