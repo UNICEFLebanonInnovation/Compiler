@@ -17,14 +17,14 @@ def assign_section(section):
     registrations = Enrollment.objects.filter(section__isnull=True)
     section = Section.objects.get(id=section)
 
-    print len(registrations), " registration found"
-    print "Start assignment"
+    print(len(registrations), " registration found")
+    print("Start assignment")
 
     for registry in registrations:
         registry.section = section
         registry.save()
 
-    print "End assignment"
+    print("End assignment")
 
 
 @app.task
@@ -32,10 +32,10 @@ def assign_education_year(year):
     from student_registration.enrollments.models import Enrollment
     registrations = Enrollment.objects.filter(education_year__isnull=True)
 
-    print registrations.count(), " registrations found"
-    print "Start assignment"
+    print(registrations.count(), " registrations found")
+    print("Start assignment")
     registrations.update(education_year_id=year)
-    print "End assignment"
+    print("End assignment")
 
 
 @app.task
@@ -207,6 +207,6 @@ def track_student_moves():
         # )
 
         if len(match_records):
-            print match_records
+            print(match_records)
             for item in match_records:
                 StudentMove.objects.get_or_create(enrolment1=registry, enrolment2=item, school1=registry.school, school2=item.school)

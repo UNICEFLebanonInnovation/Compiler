@@ -60,5 +60,5 @@ def generate_id(
         return result
 
     except Exception as exp:
-        print exp.message
+        print(exp.message)  #TODO: use logging instead
         return ''

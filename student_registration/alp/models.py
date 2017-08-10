@@ -23,7 +23,7 @@ from student_registration.alp.utils import refer_to_level, assign_to_level
 
 
 class ALPRound(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
+    name = models.CharField(max_length=45, unique=True)
     current_round = models.BooleanField(blank=True, default=False)
     current_pre_test = models.BooleanField(blank=True, default=False)
     current_post_test = models.BooleanField(blank=True, default=False)
