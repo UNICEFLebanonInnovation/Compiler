@@ -7,7 +7,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
+
 from rest_framework_nested import routers
+from rest_framework_swagger.views import get_swagger_view
+
 from student_registration.alp.views import (
     OutreachViewSet,
 )
@@ -17,6 +20,7 @@ from student_registration.attendances.views import (
 )
 from student_registration.students.views import (
     StudentViewSet,
+    StudentAutocomplete,
 )
 from student_registration.schools.views import (
     SchoolViewSet,
@@ -28,8 +32,7 @@ from student_registration.winterization.views import (
 )
 from student_registration.users.views import LoginRedirectView, PasswordChangeView, PasswordChangeDoneView
 from student_registration.enrollments.views import EnrollmentViewSet, LoggingStudentMoveViewSet
-from student_registration.students.views import StudentAutocomplete
-from .views import acme_view
+from student_registration.outreach.views import HouseHoldViewSet, ChildViewSet
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
@@ -40,9 +43,14 @@ api.register(r'attendances-report', AttendanceReportViewSet, base_name='attendan
 api.register(r'beneficiary', BeneficiaryViewSet, base_name='beneficiary')
 
 api.register(r'students', StudentViewSet, base_name='students')
+api.register(r'household', HouseHoldViewSet, base_name='household')
+api.register(r'child', ChildViewSet, base_name='child')
 api.register(r'schools', SchoolViewSet, base_name='schools')
 api.register(r'classrooms', ClassRoomViewSet, base_name='classrooms')
 api.register(r'sections', SectionViewSet, base_name='sections')
+
+schema_view = get_swagger_view(title='Compiler API')
+
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
@@ -53,7 +61,7 @@ urlpatterns = [
     url(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
 
     # Django Admin, use {% url 'admin:index' %}
-    url(settings.ADMIN_URL, include(admin.site.urls)),
+    url(settings.ADMIN_URL, admin.site.urls),
 
     # User management
     url(r'^users/', include('student_registration.users.urls', namespace='users')),
@@ -61,6 +69,7 @@ urlpatterns = [
 
     url(r'^students/', include('student_registration.students.urls', namespace='students')),
     url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
+    url(r'^outreach/', include('student_registration.outreach.urls', namespace='outreach')),
     url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
     url(r'^enrollments/', include('student_registration.enrollments.urls', namespace='enrollments')),
     url(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
@@ -71,11 +80,9 @@ urlpatterns = [
     url(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/docs/', include('rest_framework_swagger.urls')),
+    url(r'^api/docs/', schema_view),
 
     url(r'^api/', include(api.urls)),
-
-    url(r'^.well-known/acme-challenge/(?P<slug>.*)/', acme_view),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -88,5 +95,9 @@ if settings.DEBUG:
         url(r'^403/$', default_views.permission_denied, kwargs={'exception': Exception('Permission Denied')}),
         url(r'^404/$', default_views.page_not_found, kwargs={'exception': Exception('Page not Found')}),
         url(r'^500/$', default_views.server_error),
-        url(r'^__debug__/', include(debug_toolbar.urls)),
     ]
+    if 'debug_toolbar' in settings.INSTALLED_APPS:
+        import debug_toolbar
+        urlpatterns = [
+            url(r'^__debug__/', include(debug_toolbar.urls)),
+        ] + urlpatterns

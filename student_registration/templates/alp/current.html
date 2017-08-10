@@ -62,6 +62,9 @@
                                     <li><b>{{ location }}</b></li>
                                     <li><b>{{ location_parent }}</b></li>
                                     <li><input type="text" id="search_old_student" size="300" style="width: 400px;" placeholder="{% trans "Search an old student" %}" /></li>
+                                    {% if request.user|has_group:"ALP_SFOS" %}
+                                        <li><input type="text" id="search_student_other" size="300" style="width: 400px;" placeholder="{% trans "Search student from other schools" %}" /></li>
+                                    {% endif %}
                               </ol>
                           </div>
                           <div class="panel-heading" style="position: absolute; top:50px;" id="header">
@@ -223,6 +226,7 @@
         var user_token = '{{ user_token }}';
         var alp_round = '{{ alp_round }}';
         var school = '{{ school_id }}';
+        var search_school = '{{ school_id }}';
         var rows = 1;
         var limit = 100;
         var offset = 0;
@@ -244,6 +248,7 @@
         $(document).ready(function(){
 
             $('#search_old_student').val('');
+            $('#search_student_other').val('');
             $('#filter_class').val(0);
             $('#filter_section').val(0);
             $('#filter_assignedlevel').val(0);
@@ -463,7 +468,7 @@
             $("#search_old_student").autocomplete({
               source: function( request, response ) {
                 $.ajax( {
-                  url: synchro_path,
+                  url: synchro_path+'?school='+search_school,
                   dataType: "json",
                   data: {
                     term: request.term
@@ -494,6 +499,45 @@
                                    + "<br>" + "Last year situation: " + item.registered_in_level_name + " / " + item.section_name
                                    + "<br>" + "Post-test result: " + item.refer_to_level_name
                                    + "<br>" + "Round: " + item.alp_round_name
+                                   + "</div>" )
+                    .appendTo( ul );
+            };
+
+            $("#search_student_other").autocomplete({
+              source: function( request, response ) {
+                $.ajax( {
+                  url: synchro_path+'?school=0',
+                  dataType: "json",
+                  data: {
+                    term: request.term
+                  },
+                  success: function( data ) {
+                    response( data);
+                  }
+                } );
+              },
+              minLength: 3,
+              select: function( event, ui ) {
+                  $("#search_student_other").val('');
+                  add_external_record(ui.item.registration);
+                  return false;
+              }
+            }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
+                 var that = this;
+                 $.each( items, function( index, item ) {
+                     that._renderItemData( ul, item );
+                });
+                $( ul ).find( "li:odd" ).addClass( "odd" );
+            };
+
+            $("#search_student_other").autocomplete( "instance" )._renderItem = function( ul, item ) {
+                    var item = item.registration;
+                  return $( "<li>" )
+                    .append( "<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_birthday + ") "
+                                   + "<br>" + "Last year situation: " + item.registered_in_level_name + " / " + item.section_name
+                                   + "<br>" + "Post-test result: " + item.refer_to_level_name
+                                   + "<br>" + "Round: " + item.alp_round_name
+                                   + "<br>" + "School: " + item.school_name
                                    + "</div>" )
                     .appendTo( ul );
             };
@@ -845,6 +889,7 @@
                     item.synchronized = false;
                     item.deleted = false;
                     item.to_update = false;
+                    item.school = school;
                     item.student_nationality = item.student_nationality_id;
                     item.student_mother_nationality = item.student_mother_nationality_id;
                     item.student_id_type = item.student_id_type_id;
