@@ -79,7 +79,8 @@ class Enrollment(TimeStampedModel):
 
     YEARS = ((str(x), x) for x in range(2016, 2051))
 
-    EDUCATION_YEARS = ((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2021))
+    EDUCATION_YEARS.append(('n/a', 'N/A'))
 
     student = models.ForeignKey(
         Student,
@@ -150,7 +151,7 @@ class Enrollment(TimeStampedModel):
         max_length=10,
         blank=True,
         null=True,
-        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+        choices=EDUCATION_YEARS
     )
     last_year_result = models.CharField(
         max_length=50,
@@ -363,11 +364,27 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
     )
+    new_registry = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
     student_outreached = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+    have_barcode = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+    registration_date = models.DateField(
+        blank=True,
+        null=True,
     )
 
     objects = EnrollmentManager()
@@ -382,11 +399,13 @@ class Enrollment(TimeStampedModel):
     @property
     def student_age(self):
         if self.student:
-            return self.student.calc_age
+            return self.student.age
         return 0
 
     def __unicode__(self):
-        return self.student.__unicode__()
+        if self.student:
+            return self.student.__unicode__()
+        return str(self.id)
 
 
 class StudentMove(models.Model):

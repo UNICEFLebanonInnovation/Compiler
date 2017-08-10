@@ -15,14 +15,11 @@ def auto_assign_to_alp_level():
 
     registrations = Outreach.objects.filter(alp_round=alp_round, level__isnull=False)
 
-    print registrations.count()
-
     for registry in registrations:
         try:
             registry.assigned_to_level = assign_to_level(registry.level, registry.exam_total)
             registry.save()
         except Exception as ex:
-            print ex.message
             continue
 
 
@@ -32,7 +29,6 @@ def assign_alp_level():
     alp_round = ALPRound.objects.get(current_pre_test=True)
 
     records = Outreach.objects.filter(alp_round=alp_round, level__isnull=False)
-    print records.count()
 
     for record in records:
         try:
@@ -102,11 +98,9 @@ def assign_alp_level():
                     to_level = 9
 
             if to_level:
-                print level.id, total, to_level
                 record.assigned_to_level_id = to_level
                 record.save()
         except Exception as ex:
-            print ex.message
             continue
 
 
@@ -127,7 +121,7 @@ def auto_refer_to_alp_level():
             )
             record.save()
         except Exception as ex:
-            print ex.message
+            print(ex.message)
             continue
 
 
@@ -144,14 +138,14 @@ def assign_section(section):
     )
     section = Section.objects.get(id=section)
 
-    print len(registrations), " ALP registrations found"
-    print "Start assignment"
+    print(len(registrations), " ALP registrations found")
+    print("Start assignment")
 
     for registry in registrations:
         registry.section = section
         registry.save()
 
-    print "End assignment"
+    print("End assignment")
 
 
 @app.task
@@ -159,9 +153,8 @@ def assign_round(round_id):
     from student_registration.alp.models import Outreach
 
     registrations = Outreach.objects.filter(alp_round__isnull=True).update(alp_round_id=round_id)
-    print registrations
 
-    print "End assignment"
+    print("End assignment")
 
 
 @app.task
@@ -169,9 +162,8 @@ def assign_round_to_deleted(round_id):
     from student_registration.alp.models import Outreach
 
     registrations = Outreach.objects.filter(alp_round__isnull=True, id__lt=13724).update(alp_round_id=round_id)
-    print registrations
 
-    print "End assignment"
+    print("End assignment")
 
 
 @app.task
@@ -187,13 +179,13 @@ def fix_round_assignment(update):
         id__gt=14163
     )
 
-    print len(registrations), " records to assign"
+    print(len(registrations), " records to assign")
 
     if update == 1:
         total = registrations.update(alp_round_id=4)
-        print total, " records assigned"
+        print(total, " records assigned")
 
-    print "End assignment"
+    print("End assignment")
 
 
 @app.task
@@ -202,7 +194,6 @@ def move_student_to_school(school_from, school_to):
 
     if not school_from or not school_to:
         return False
-    print "from school: ", school_from, " to school: ", school_to
+    print("from school: ", school_from, " to school: ", school_to)
     registrations = Outreach.objects.filter(school_id=school_from)
-    print registrations.count()
     registrations.update(school_id=school_to)

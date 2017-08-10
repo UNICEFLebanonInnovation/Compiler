@@ -1,6 +1,0 @@
-[
-  {"model": "alp.alpround", "pk": 1, "fields": {"name": "ALP 2015"}},
-  {"model": "alp.alpround", "pk": 2, "fields": {"name": "ALP/2016-1"}},
-  {"model": "alp.alpround", "pk": 3, "fields": {"name": "ALP/2016-2"}},
-  {"model": "alp.alpround", "pk": 4, "fields": {"name": "ALP/2017-1"}}
-]

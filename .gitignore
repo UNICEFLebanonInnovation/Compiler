@@ -24,8 +24,10 @@ sftp-config.json
 __pycache__
 
 # Logs
+logs
 *.log
 pip-log.txt
+npm-debug.log*
 
 # Unit test / coverage reports
 .coverage
@@ -49,6 +51,7 @@ htmlcov
 !.idea/vcs.xml
 !.idea/webResources.xml
 
+
 # Vim
 
 *~
@@ -67,10 +70,11 @@ node_modules/
 # User-uploaded media
 student_registration/media/
 
-# MailHog binary
-mailhog
 
-deis
-staticfiles
+
+staticfiles/
+
+.cache/
+
 
 *.dump
