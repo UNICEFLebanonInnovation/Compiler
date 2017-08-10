@@ -193,7 +193,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'classroom',
         'owner',
         'status',
-        'year',
+        'education_year',
         'enrolled_in_this_school',
         'registered_in_unhcr',
         'last_education_level',

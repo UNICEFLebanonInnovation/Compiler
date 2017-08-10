@@ -1,5 +1,5 @@
 Student Registration
-==============================
+====================
 
 Simple, interactive and online student registration.
 
@@ -8,11 +8,11 @@ Simple, interactive and online student registration.
      :alt: Built with Cookiecutter Django
 
 
-LICENSE: MIT
+:License: GPLv3
 
 
 Settings
-------------
+--------
 
 Moved to settings_.
 
@@ -42,7 +42,7 @@ To run the tests, check your test coverage, and generate an HTML coverage report
     $ open htmlcov/index.html
 
 Running tests with py.test
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -75,43 +75,19 @@ Please note: For Celery's import magic to work, it is important *where* the cele
 
 
 
-Email Server
-^^^^^^^^^^^^
-
-In development, it is often nice to be able to see emails that are being sent from your application. If you choose to use `MailHog`_ when generating the project a local SMTP server with a web interface will be available.
-
-.. _mailhog: https://github.com/mailhog/MailHog
-
-To start the service, make sure you have nodejs installed, and then type the following::
-
-    $ npm install
-    $ grunt serve
-
-(After the first run you only need to type ``grunt serve``) This will start an email server that listens on ``127.0.0.1:1025`` in addition to starting your Django project and a watch task for live reload.
-
-To view messages that are sent by your application, open your browser and go to ``http://127.0.0.1:8025``
-
-The email server will exit when you exit the Grunt task on the CLI with Ctrl+C.
-
-
-
-
-
 Sentry
 ^^^^^^
 
-Sentry is an error logging aggregator service. You can sign up for a free account at http://getsentry.com or download and host it yourself.
+Sentry is an error logging aggregator service. You can sign up for a free account at  https://sentry.io/signup/?code=cookiecutter  or download and host it yourself.
 The system is setup with reasonable defaults, including 404 logging and integration with the WSGI application.
 
 You must set the DSN url in production.
 
 
-
-
 Deployment
 ----------
 
-
+The following details how to deploy this application.
 
 
 

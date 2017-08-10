@@ -9,12 +9,24 @@ from student_registration.locations.models import Location
 
 class School(models.Model):
 
-    name = models.CharField(max_length=555L)
-    number = models.CharField(max_length=45L, unique=True)
+    name = models.CharField(max_length=255)
+    number = models.CharField(max_length=45, unique=True)
     is_2nd_shift = models.BooleanField(blank=True, default=False)
     number_students_2nd_shift = models.IntegerField(blank=True, null=True)
     is_alp = models.BooleanField(blank=True, default=False)
     number_students_alp = models.IntegerField(blank=True, null=True)
+    academic_year_start = models.DateField(
+        blank=True,
+        null=True,
+    )
+    academic_year_end = models.DateField(
+        blank=True,
+        null=True,
+    )
+    academic_year_exam_end = models.DateField(
+        blank=True,
+        null=True,
+    )
 
     location = models.ForeignKey(
         Location,
@@ -45,7 +57,7 @@ class School(models.Model):
 
 
 class EducationLevel(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
+    name = models.CharField(max_length=45, unique=True)
     note = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -57,7 +69,7 @@ class EducationLevel(models.Model):
 
 
 class ClassLevel(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
+    name = models.CharField(max_length=45, unique=True)
 
     class Meta:
         ordering = ['id']
@@ -68,7 +80,7 @@ class ClassLevel(models.Model):
 
 
 class Section(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
+    name = models.CharField(max_length=45, unique=True)
 
     class Meta:
         ordering = ['id']
@@ -78,7 +90,7 @@ class Section(models.Model):
 
 
 class ClassRoom(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
+    name = models.CharField(max_length=45, unique=True)
 
     class Meta:
         ordering = ['id']
@@ -89,7 +101,7 @@ class ClassRoom(models.Model):
 
 
 class PartnerOrganization(models.Model):
-    name = models.CharField(max_length=100L, unique=True)
+    name = models.CharField(max_length=100, unique=True)
 
     class Meta:
         ordering = ['name']
@@ -126,7 +138,7 @@ class ALPReferMatrix(models.Model):
 
 
 class EducationYear(models.Model):
-    name = models.CharField(max_length=100L, unique=True)
+    name = models.CharField(max_length=100, unique=True)
     current_year = models.BooleanField(blank=True, default=False)
 
     class Meta:
