@@ -4,14 +4,13 @@ from __future__ import absolute_import, unicode_literals
 from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
-from django.core import serializers
 from django.utils.translation import ugettext as _
 from django.db.models import Q
 
 import tablib
+from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
-from rest_framework import status
 from import_export.formats import base_formats
 
 from student_registration.alp.templatetags.util_tags import has_group
@@ -28,10 +27,11 @@ from student_registration.schools.models import (
     ClassLevel,
 )
 from student_registration.alp.models import ALPRound
-from .models import Enrollment, LoggingStudentMove
+from student_registration.outreach.models import Child
+from student_registration.outreach.serializers import ChildSerializer
+from .models import Enrollment, LoggingStudentMove, EducationYear
 from .forms import EnrollmentForm
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
-
 
 
 class EnrollmentView(LoginRequiredMixin, FormView):
@@ -49,11 +49,15 @@ class EnrollmentView(LoginRequiredMixin, FormView):
 
     def get_initial(self):
         initial = super(EnrollmentView, self).get_initial()
+        data = []
         if self.request.GET.get('enrollment_id'):
             instance = Enrollment.objects.get(id=self.request.GET.get('enrollment_id'))
             data = EnrollmentSerializer(instance).data
-            initial = data
-            initial['student_id'] = instance.student_id
+        if self.request.GET.get('student_outreach_child'):
+            instance = Child.objects.get(id=int(self.request.GET.get('student_outreach_child')))
+            data = ChildSerializer(instance).data
+        initial = data
+
         return initial
 
     # def get_form(self, form_class=None):

@@ -9,7 +9,29 @@ from model_utils.models import TimeStampedModel
 from .utils import *
 from datetime import date
 import datetime
-import math
+
+
+class StudentManager(models.Manager):
+    def get_queryset(self):
+        return super(StudentManager, self).get_queryset()
+
+
+class Student2ndShiftManager(models.Manager):
+    def get_queryset(self):
+        return super(Student2ndShiftManager, self).get_queryset().filter(
+            student_enrollment__isnull=False,
+            student_enrollment__deleted=False,
+            student_enrollment__dropout_status=False,
+        )
+
+
+class StudentALPManager(models.Manager):
+    def get_queryset(self):
+        return super(StudentALPManager, self).get_queryset().filter(
+            alp_enrollment__isnull=False,
+            alp_enrollment__deleted=False,
+            alp_enrollment__dropout_status=False
+        )
 
 
 class Nationality(models.Model):
@@ -57,10 +79,6 @@ class Person(TimeStampedModel):
         ('Male', _('Male')),
         ('Female', _('Female')),
     )
-    YES_NO = Choices(
-        ('yes', _('Yes')),
-        ('no', _('No')),
-    )
 
     first_name = models.CharField(max_length=64, blank=True, null=True)
     last_name = models.CharField(max_length=64, blank=True, null=True)
@@ -102,7 +120,7 @@ class Person(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        choices=YES_NO
+        choices=Choices((1, _("Yes")), (0, _("No")))
     )
     id_number = models.CharField(max_length=45, blank=True, null=True)
     id_type = models.ForeignKey(
@@ -199,8 +217,17 @@ class Person(TimeStampedModel):
 
 
 class Student(Person):
+    from student_registration.outreach.models import Child
 
     status = models.BooleanField(default=True)
+    outreach_child = models.ForeignKey(
+        Child,
+        blank=True, null=True,
+    )
+
+    objects = StudentManager()
+    second_shift = Student2ndShiftManager()
+    alp = StudentALPManager()
 
     @property
     def last_enrollment(self):
@@ -264,32 +291,30 @@ class Student(Person):
             registered_in_unhcr=data['registered_in_unhcr'],
             id_type_id=data['student_id_type'],
             id_number=data['student_id_number'],
+            outreach_child_id=data['child_id'] if 'child_id' in data else None
         )
         instance.save()
         return instance
 
-    @classmethod
-    def update(cls, instance, data):
-        instance.update(
-            first_name=data['student_first_name'],
-            father_name=data['student_father_name'],
-            last_name=data['student_last_name'],
-            mother_fullname=data['student_mother_fullname'],
-            sex=data['student_sex'],
-            birthday_day=data['student_birthday_day'],
-            birthday_month=data['student_birthday_month'],
-            birthday_year=data['student_birthday_year'],
-            nationality_id=data['student_nationality'],
-            mother_nationality_id=data['student_mother_nationality'],
-            phone=data['student_phone'],
-            phone_prefix=data['student_phone_prefix'],
-            address=data['student_address'],
-            registered_in_unhcr=data['registered_in_unhcr'],
-            id_type_id=data['student_id_type'],
-            id_number=data['student_id_number'],
-        )
-        instance.save()
-        return instance
+    def update(self, data):
+        self.first_name = data['student_first_name']
+        self.father_name = data['student_father_name']
+        self.last_name = data['student_last_name']
+        self.mother_fullname = data['student_mother_fullname']
+        self.sex = data['student_sex']
+        self.birthday_day = data['student_birthday_day']
+        self.birthday_month = data['student_birthday_month']
+        self.birthday_year = data['student_birthday_year']
+        self.nationality_id = data['student_nationality']
+        self.mother_nationality_id = data['student_mother_nationality']
+        self.phone = data['student_phone']
+        self.phone_prefix = data['student_phone_prefix']
+        self.address = data['student_address']
+        self.registered_in_unhcr = data['registered_in_unhcr']
+        self.id_type_id = data['student_id_type']
+        self.id_number = data['student_id_number']
+        self.save()
+        return self
 
 
 class StudentMatching(models.Model):

@@ -79,7 +79,8 @@ class Enrollment(TimeStampedModel):
 
     YEARS = ((str(x), x) for x in range(2016, 2051))
 
-    EDUCATION_YEARS = ((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2021))
+    EDUCATION_YEARS.append(('n/a', 'N/A'))
 
     student = models.ForeignKey(
         Student,
@@ -150,7 +151,7 @@ class Enrollment(TimeStampedModel):
         max_length=10,
         blank=True,
         null=True,
-        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+        choices=EDUCATION_YEARS
     )
     last_year_result = models.CharField(
         max_length=50,
