@@ -59,6 +59,7 @@ THIRD_PARTY_APPS = (
     'bootstrap3',
     'bootstrap3_datetime',
     'import_export',
+    'django_tables2',
 )
 
 # Apps specific for this project go here.

@@ -37,4 +37,6 @@ urlpatterns = [
         view=views.ExportDuplicatesView.as_view(),
         name='enrollment_export_duplicate'
     ),
+
+    url(r'^list/$', views.FilteredListView.as_view(), name='filtertableview'),
 ]
