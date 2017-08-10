@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='nationality',
             name='code',
-            field=models.CharField(max_length=5L, null=True),
+            field=models.CharField(max_length=5, null=True),
         ),
     ]
