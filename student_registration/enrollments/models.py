@@ -402,6 +402,9 @@ class Enrollment(TimeStampedModel):
             return self.student.age
         return 0
 
+    def get_absolute_url(self):
+        return 'student/%d' % self.pk
+
     def __unicode__(self):
         if self.student:
             return self.student.__unicode__()

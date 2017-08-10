@@ -13,6 +13,13 @@ from django.db.models import Q
 from import_export.formats import base_formats
 from student_registration.alp.templatetags.util_tags import has_group
 
+from django_filters.views import FilterView
+from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
+from django_tables2.export.views import ExportMixin
+
+from .filters import EnrollmentFilter
+from .tables import BootstrapTable, EnrollmentTable
+
 from student_registration.students.models import (
     Person,
     Nationality,
@@ -627,3 +634,13 @@ class ExportDuplicatesView(LoginRequiredMixin, ListView):
         )
         response['Content-Disposition'] = 'attachment; filename=duplications.xls'
         return response
+
+
+class FilteredListView(FilterView, ExportMixin, SingleTableView, RequestConfig):
+
+    table_class = EnrollmentTable
+    model = Enrollment
+    template_name = 'enrollments/bootstrap_template.html'
+    table = BootstrapTable(Enrollment.objects.all(), order_by='id')
+
+    filterset_class = EnrollmentFilter
