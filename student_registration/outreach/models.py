@@ -1,9 +1,11 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from model_utils import Choices
 from django.contrib.postgres.fields import JSONField, ArrayField
 from django.utils.translation import ugettext as _
+
+from model_utils import Choices
+
 from student_registration.students.models import Person
 
 

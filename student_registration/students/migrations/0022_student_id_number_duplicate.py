@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='student',
             name='id_number_duplicate',
-            field=models.CharField(blank=True, max_length=45L, null=True),
+            field=models.CharField(blank=True, max_length=45, null=True),
         ),
     ]
