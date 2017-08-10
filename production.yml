@@ -11,16 +11,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - postgres_backup:/backups
     env_file: .env
-    ports:
-      - "5432:5432"
 
   django:
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
-    user: django
-    volumes:
-      - .:/app
     depends_on:
       - postgres
       - redis
@@ -31,8 +26,32 @@ services:
     build: ./compose/nginx
     depends_on:
       - django
+
+      - certbot
+    environment:
+      - MY_DOMAIN_NAME=compiler.uniceflebanon.org
+
     ports:
       - "0.0.0.0:80:80"
+
+      - "0.0.0.0:443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
+
+  certbot:
+    image: quay.io/letsencrypt/letsencrypt
+    command: bash -c "sleep 6 && certbot certonly -n --standalone -d compiler.uniceflebanon.org --test --agree-tos --email jcranwellward@unicef.org --server https://acme-v01.api.letsencrypt.org/directory --rsa-key-size 4096 --verbose --keep-until-expiring --preferred-challenges http-01"
+    entrypoint: ""
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
+    ports:
+      - "80"
+      - "443"
+    environment:
+      - TERM=xterm
+
 
   redis:
     image: redis:3.0
@@ -41,7 +60,6 @@ services:
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
-    user: django
     env_file: .env
     depends_on:
      - postgres
@@ -52,7 +70,6 @@ services:
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
-    user: django
     env_file: .env
     depends_on:
       - postgres

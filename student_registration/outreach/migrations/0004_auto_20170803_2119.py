@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='child',
             name='barcode_subset',
-            field=models.CharField(blank=True, max_length=45L, null=True),
+            field=models.CharField(blank=True, max_length=45, null=True),
         ),
     ]

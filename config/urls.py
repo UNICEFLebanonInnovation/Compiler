@@ -7,7 +7,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
+
 from rest_framework_nested import routers
+from rest_framework_swagger.views import get_swagger_view
+
 from student_registration.alp.views import (
     OutreachViewSet,
 )
@@ -46,6 +49,9 @@ api.register(r'schools', SchoolViewSet, base_name='schools')
 api.register(r'classrooms', ClassRoomViewSet, base_name='classrooms')
 api.register(r'sections', SectionViewSet, base_name='sections')
 
+schema_view = get_swagger_view(title='Compiler API')
+
+
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
     url(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
@@ -55,7 +61,7 @@ urlpatterns = [
     url(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
 
     # Django Admin, use {% url 'admin:index' %}
-    url(settings.ADMIN_URL, include(admin.site.urls)),
+    url(settings.ADMIN_URL, admin.site.urls),
 
     # User management
     url(r'^users/', include('student_registration.users.urls', namespace='users')),
@@ -74,7 +80,7 @@ urlpatterns = [
     url(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/docs/', include('rest_framework_swagger.urls')),
+    url(r'^api/docs/', schema_view),
 
     url(r'^api/', include(api.urls)),
 
@@ -89,5 +95,9 @@ if settings.DEBUG:
         url(r'^403/$', default_views.permission_denied, kwargs={'exception': Exception('Permission Denied')}),
         url(r'^404/$', default_views.page_not_found, kwargs={'exception': Exception('Page not Found')}),
         url(r'^500/$', default_views.server_error),
-        url(r'^__debug__/', include(debug_toolbar.urls)),
     ]
+    if 'debug_toolbar' in settings.INSTALLED_APPS:
+        import debug_toolbar
+        urlpatterns = [
+            url(r'^__debug__/', include(debug_toolbar.urls)),
+        ] + urlpatterns
