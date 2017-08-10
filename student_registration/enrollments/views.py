@@ -4,15 +4,16 @@ from __future__ import absolute_import, unicode_literals
 from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
-from rest_framework import viewsets, mixins, permissions
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
-import tablib
-from rest_framework import status
 from django.utils.translation import ugettext as _
 from django.db.models import Q
-from import_export.formats import base_formats
-from student_registration.alp.templatetags.util_tags import has_group
 
+import tablib
+from rest_framework import status
+from rest_framework import viewsets, mixins, permissions
+from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from import_export.formats import base_formats
+
+from student_registration.alp.templatetags.util_tags import has_group
 from student_registration.students.models import (
     Person,
     Nationality,
@@ -26,7 +27,9 @@ from student_registration.schools.models import (
     ClassLevel,
 )
 from student_registration.alp.models import ALPRound
-from .models import Enrollment, LoggingStudentMove
+from student_registration.outreach.models import Child
+from student_registration.outreach.serializers import ChildSerializer
+from .models import Enrollment, LoggingStudentMove, EducationYear
 from .forms import EnrollmentForm
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
 
@@ -35,7 +38,7 @@ class EnrollmentView(LoginRequiredMixin, FormView):
 
     template_name = 'enrollments/registration.html'
     form_class = EnrollmentForm
-    success_url = '/'
+    success_url = '/enrollments/add/'
 
     def get_context_data(self, **kwargs):
         # force_default_language(self.request)
@@ -46,12 +49,19 @@ class EnrollmentView(LoginRequiredMixin, FormView):
 
     def get_initial(self):
         initial = super(EnrollmentView, self).get_initial()
-        initial['school'] = self.request.user.school_id
-        initial['owner'] = self.request.user.id
+        data = []
+        if self.request.GET.get('enrollment_id'):
+            instance = Enrollment.objects.get(id=self.request.GET.get('enrollment_id'))
+            data = EnrollmentSerializer(instance).data
+        if self.request.GET.get('student_outreach_child'):
+            instance = Child.objects.get(id=int(self.request.GET.get('student_outreach_child')))
+            data = ChildSerializer(instance).data
+        initial = data
+
         return initial
-    #
+
     # def get_form(self, form_class=None):
-    #     form = super(LeagueTransferView, self).get_form(form_class)
+    #     form = super(EnrollmentView, self).get_form(form_class)
     #     # override the queryset
     #     form.fields['offered_player'].queryset = self.petitioner.players
     #     return form
@@ -61,20 +71,17 @@ class EnrollmentView(LoginRequiredMixin, FormView):
     #     self.petitioner = get_object_or_404(Team, user=self.request.user.profile, league=self.kwargs['pk'])
     #     return super(LeagueTransferView, self).get(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        if form.is_valid():
-            print 'ok'
-            return self.form_valid(form)
-        else:
-            print 'ko'
-            return self.form_invalid(form)
-
-    # def form_valid(self, form):
-    #     form.save(self.request.user)
-    #     print form.is_valid()
-    #     return super(EnrollmentView, self).form_valid(form)
+    # def post(self, request, *args, **kwargs):
+    #     form_class = self.get_form_class()
+    #     form = self.get_form(form_class)
+    #     if form.is_valid():
+    #         return self.form_valid(form)
+    #     else:
+    #         return self.form_invalid(form)
+    #
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(EnrollmentView, self).form_valid(form)
 
 
 # class EnrollmentView(LoginRequiredMixin,

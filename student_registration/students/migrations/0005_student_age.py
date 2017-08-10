@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='student',
             name='age',
-            field=models.CharField(blank=True, max_length=4L, null=True),
+            field=models.CharField(blank=True, max_length=4, null=True),
         ),
     ]

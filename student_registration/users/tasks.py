@@ -18,7 +18,7 @@ def generate_passwords(group):
             user.update_password(password)
             user.save()
         except Exception as ex:
-            print ex
+            print(ex)  #TODO: use logging
             pass
 
 
@@ -33,7 +33,7 @@ def assign_groups_to_2nd_shift_schools():
                 user.groups.add(group)
                 user.save()
         except Exception as ex:
-            print ex
+            print(ex)  #TODO: use logging instead
             pass
 
 
@@ -48,7 +48,7 @@ def assign_groups_to_2nd_shift_directors():
                 user.groups.add(group)
                 user.save()
         except Exception as ex:
-            print ex
+            print(ex)  #TODO: use logging instead
             pass
 
 
@@ -63,7 +63,7 @@ def assign_groups_to_alp_schools():
                 user.groups.add(group)
                 user.save()
         except Exception as ex:
-            print ex
+            print(ex)  #TODO: use logging instead
             pass
 
 
@@ -78,7 +78,7 @@ def assign_groups_to_alp_directors():
                 user.groups.add(group)
                 user.save()
         except Exception as ex:
-            print ex
+            print(ex)  #TODO: use logging instead
             pass
 
 
@@ -95,5 +95,5 @@ def generate_tokens(group):
             except Token.DoesNotExist:
                 token = Token.objects.create(user_id=user.id)
         except Exception as ex:
-            print ex
+            print(ex)  #TODO: use logging instead
             pass
