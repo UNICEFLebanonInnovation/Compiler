@@ -21,14 +21,24 @@ from student_registration.students.models import (
 from student_registration.schools.models import (
     School,
     Section,
-    ClassRoom
+    ClassRoom,
+    EducationLevel,
+    ClassLevel,
 )
+from student_registration.alp.models import ALPRound
 from .serializers import EnrollmentSerializer
 
 YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
+
 EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
 EDUCATION_YEARS.append(('0', _('Last education year')))
-EDUCATION_YEARS.append(('na', 'N/A'))
+EDUCATION_YEARS.append(('n/a', 'N/A'))
+
+YEARS = list(((str(x), x) for x in range(1930, 2051)))
+YEARS.append(('', _('Birthday Year')))
+
+DAYS = list(((str(x), x) for x in range(1, 32)))
+DAYS.append(('', _('Birthday Day')))
 
 
 class EnrollmentAdminForm(forms.ModelForm):
@@ -113,7 +123,7 @@ class EnrollmentForm(forms.ModelForm):
     )
     student_birthday_year = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=((str(x), x) for x in range(1930, 2051))
+        choices=YEARS
     )
     student_birthday_month = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -135,7 +145,7 @@ class EnrollmentForm(forms.ModelForm):
     )
     student_birthday_day = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=((str(x), x) for x in range(1, 32))
+        choices=DAYS
     )
 
     student_nationality = forms.ModelChoiceField(
@@ -217,6 +227,26 @@ class EnrollmentForm(forms.ModelForm):
             ('failed', _('Failed'))
         )
     )
+    participated_in_alp = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=(
+            ('', _('Participated in ALP')),
+            ('yes', _('Yes')),
+            ('no', _('No')),
+        )
+    )
+    last_informal_edu_level = forms.ModelChoiceField(
+        queryset=EducationLevel.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    last_informal_edu_round = forms.ModelChoiceField(
+        queryset=ALPRound.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    last_informal_edu_final_result = forms.ModelChoiceField(
+        queryset=ClassLevel.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
 
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -291,11 +321,14 @@ class EnrollmentForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    Div('student_sex', css_class='col-md-3'),
-                    Div('student_birthday_year', css_class='col-md-2'),
-                    Div('student_birthday_month', css_class='col-md-2'),
-                    Div('student_birthday_day', css_class='col-md-2'),
-                    Div('student_nationality', css_class='col-md-3'),
+                    Div('student_birthday_year', css_class='col-md-4'),
+                    Div('student_birthday_month', css_class='col-md-4'),
+                    Div('student_birthday_day', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div('student_sex', css_class='col-md-4'),
+                    Div('student_nationality', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
@@ -306,7 +339,7 @@ class EnrollmentForm(forms.ModelForm):
                 Div(
                     Div(InlineRadios('student_registered_in_unhcr'), css_class='col-md-4'),
                     Div('student_id_type', css_class='col-md-4'),
-                    Div(PrependedText('student_id_number', _('Student ID Number')), css_class='col-md-4'),
+                    Div(PrependedText('student_id_number', _('ID Number')), css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
@@ -424,7 +457,7 @@ class EnrollmentForm(forms.ModelForm):
             'last_education_year',
             'outreach_barcode',
             'owner',
-            'education_year',
+            # 'education_year',
         )
         initial_fields = fields
         widgets = {
