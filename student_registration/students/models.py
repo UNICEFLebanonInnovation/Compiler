@@ -195,6 +195,10 @@ class Person(TimeStampedModel):
         elapsed_years = years_difference - int(is_before_birthday)
         return elapsed_years
 
+    @property
+    def phone_number(self):
+        return '{}-{}'.format(self.phone_prefix, self.phone)
+
     class Meta:
         abstract = True
 
