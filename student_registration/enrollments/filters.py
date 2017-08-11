@@ -9,4 +9,6 @@ class EnrollmentFilter(FilterSet):
         fields = {
             'student__first_name': ['contains'],
             'student__id_number': ['exact'],
+            'classroom': ['exact'],
+            'section': ['exact'],
         }
