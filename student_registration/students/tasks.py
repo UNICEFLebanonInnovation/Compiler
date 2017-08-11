@@ -24,10 +24,10 @@ def generate_2ndshift_unique_number(offset=0):
             student.number_part2 = generate_id(student.first_name, student.father_name, student.last_name,
                                                '', '',
                                                student.birthday_day, student.birthday_month, student.birthday_year)
-            print student.number, student.id
+            print(student.number, student.id)  #TODO: use logging instead
             student.save()
         except Exception as ex:
-            print ex.message
+            print(ex.message)
             continue
 
 
@@ -50,10 +50,10 @@ def generate_alp_unique_number():
             student.number_part2 = generate_id(student.first_name, student.father_name, student.last_name,
                                                '', '',
                                                student.birthday_day, student.birthday_month, student.birthday_year)
-            print student.number, student.id
+            print(student.number, student.id)
             student.save()
         except Exception as ex:
-            print ex.message
+            print(ex.message)
             continue
 
 
@@ -67,13 +67,12 @@ def disable_duplicate_enrolments(offset=None, school_number=None):
         registrations = queryset.order_by('-id', 'student__number', 'school__number')[offset:limit]
     elif school_number:
         registrations = queryset.filter(school__number=school_number).order_by('-id', 'student__number', 'school__number')
-    print len(registrations)
 
     students = {}
     students2 = {}
     duplicates = []
 
-    print "Start find duplicates"
+    print("Start find duplicates")
     for registry in registrations:
         student = registry.student
         if student.number not in students:
@@ -87,17 +86,17 @@ def disable_duplicate_enrolments(offset=None, school_number=None):
             else:
                 duplicates.append(registry)
 
-    print "End find duplicates"
+    print("End find duplicates")
 
-    print "duplicates: ", len(duplicates)
+    print("duplicates: ", len(duplicates))
 
-    print "Start disable duplicates"
+    print("Start disable duplicates")
 
     for registry in duplicates:
         registry.deleted = True
         registry.save()
 
-    print "End disable duplicates"
+    print("End disable duplicates")
 
 
 @app.task
@@ -106,16 +105,13 @@ def disable_duplicate_outreaches(school_number=None):
     alp_round = ALPRound.objects.get(current_round=True)
     registrations = Outreach.objects.filter(alp_round=alp_round).order_by('-id')
     if school_number:
-        print school_number
         registrations = registrations.filter(school__number=school_number)
-
-    print len(registrations)
 
     students = {}
     students2 = {}
     duplicates = []
 
-    print "Start find duplicates"
+    print("Start find duplicates")
     for registry in registrations:
 
         student = registry.student
@@ -129,14 +125,14 @@ def disable_duplicate_outreaches(school_number=None):
         else:
             duplicates.append(registry)
 
-    print "End find duplicates"
+    print("End find duplicates")
 
-    print "duplicates: ", len(duplicates)
+    print("duplicates: ", len(duplicates))
 
-    print "Start disable duplicates"
+    print("Start disable duplicates")
 
     for registry in duplicates:
         registry.deleted = True
         registry.save()
 
-    print "End disable duplicates"
+    print("End disable duplicates")
