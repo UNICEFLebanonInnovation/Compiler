@@ -8,6 +8,9 @@ class EnrollmentFilter(FilterSet):
         model = Enrollment
         fields = {
             'student__first_name': ['contains'],
+            'student__father_name': ['contains'],
+            'student__last_name': ['contains'],
+            'student__mother_fullname': ['contains'],
             'student__id_number': ['exact'],
             'classroom': ['exact'],
             'section': ['exact'],
