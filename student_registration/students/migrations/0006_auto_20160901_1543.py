@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='student',
             name='number',
-            field=models.CharField(blank=True, max_length=45L, null=True),
+            field=models.CharField(blank=True, max_length=45, null=True),
         ),
     ]
