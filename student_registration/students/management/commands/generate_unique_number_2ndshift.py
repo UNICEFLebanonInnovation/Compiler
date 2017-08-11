@@ -13,5 +13,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for offset in options['offset']:
-            print 'Generate hash number for 2nd shift students'
+            print('Generate hash number for 2nd shift students')
             generate_2ndshift_unique_number(offset)
