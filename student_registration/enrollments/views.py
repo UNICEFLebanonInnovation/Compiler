@@ -642,7 +642,11 @@ class ExportDuplicatesView(LoginRequiredMixin, ListView):
         return response
 
 
-class FilteredListView(FilterView, ExportMixin, SingleTableView, RequestConfig):
+class FilteredListView(LoginRequiredMixin,
+                       FilterView,
+                       ExportMixin,
+                       SingleTableView,
+                       RequestConfig):
 
     table_class = EnrollmentTable
     model = Enrollment
@@ -650,3 +654,8 @@ class FilteredListView(FilterView, ExportMixin, SingleTableView, RequestConfig):
     table = BootstrapTable(Enrollment.objects.all(), order_by='id')
 
     filterset_class = EnrollmentFilter
+
+    # def get_context_data(self, **kwargs):
+    #     return {
+    #         'table': self.table
+    #     }
