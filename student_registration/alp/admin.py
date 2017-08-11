@@ -868,7 +868,6 @@ class CurrentRoundAdmin(OutreachAdmin):
 
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_round=True)
-        print alp_round
         qs = super(CurrentRoundAdmin, self).get_queryset(request)
         return qs.filter(
             alp_round=alp_round,

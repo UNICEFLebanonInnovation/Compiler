@@ -17,10 +17,10 @@ export PGPASSWORD=$POSTGRES_PASSWORD
 # check that we have an argument for a filename candidate
 if [[ $# -eq 0 ]] ; then
     echo 'usage:'
-    echo '    docker-compose run postgres restore <backup-file>'
+    echo '    docker-compose -f production.yml run postgres restore <backup-file>'
     echo ''
     echo 'to get a list of available backups, run:'
-    echo '    docker-compose run postgres list-backups'
+    echo '    docker-compose -f production.yml run postgres list-backups'
     exit 1
 fi
 
@@ -31,7 +31,7 @@ BACKUPFILE=/backups/$1
 if ! [ -f $BACKUPFILE ]; then
     echo "backup file not found"
     echo 'to get a list of available backups, run:'
-    echo '    docker-compose run postgres list-backups'
+    echo '    docker-compose -f production.yml run postgres list-backups'
     exit 1
 fi
 
@@ -53,4 +53,4 @@ createdb -h postgres -U $POSTGRES_USER $POSTGRES_USER -O $POSTGRES_USER
 
 # restore the database
 echo "restoring database $POSTGRES_USER"
-psql -h postgres -U $POSTGRES_USER < $BACKUPFILE
+gunzip -c $BACKUPFILE | psql -h postgres -U $POSTGRES_USER

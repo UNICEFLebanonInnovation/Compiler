@@ -277,7 +277,6 @@ def set_app_users():
         docs.append(doc)
 
     response = set_docs(docs)
-    print response
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
 
@@ -297,7 +296,7 @@ def import_docs(**kwargs):
             if re.match('^\d+-\d+-\d+(-alp)?$', row["id"]):
                 ids.append(row["id"])
 
-        batches = [ids[x: x + 1000] for x in xrange(0, len(ids), 1000)]
+        batches = [ids[x: x + 1000] for x in range(0, len(ids), 1000)]
 
         database = client.get_default_database()
         database.attendances.drop()
