@@ -12,6 +12,14 @@ urlpatterns = [
         name='add'
     ),
     url(
+        regex=r'^edit/$',
+        view=views.EnrollmentEditView.as_view(),
+        name='edit'
+    ),
+
+    url(r'^list/$', views.EnrollmentListView.as_view(), name='list'),
+
+    url(
         regex=r'^enrollment-patch/$',
         view=views.EnrollmentPatchView.as_view(),
         name='enrollment_patch'
@@ -38,5 +46,4 @@ urlpatterns = [
         name='enrollment_export_duplicate'
     ),
 
-    url(r'^list/$', views.FilteredListView.as_view(), name='filtertableview'),
 ]
