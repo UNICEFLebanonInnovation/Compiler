@@ -12,7 +12,7 @@ urlpatterns = [
         name='add'
     ),
     url(
-        regex=r'^edit/$',
+        regex=r'^edit/(?P<id>[\w.@+-]+)/$',
         view=views.EnrollmentEditView.as_view(),
         name='edit'
     ),
