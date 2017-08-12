@@ -9,6 +9,7 @@ from rest_framework import viewsets, mixins, permissions
 from rest_framework.generics import ListAPIView
 from rest_framework.decorators import detail_route, list_route
 from datetime import datetime
+import datetime
 import tablib
 import json
 from rest_framework import status
@@ -16,12 +17,19 @@ from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from student_registration.schools.models import (
     School,
-    Section
+    Grade,
+    Section,
+    ClassRoom
 )
 from student_registration.locations.models import Location
+from student_registration.registrations.models import Registration
 from .models import Attendance, Absentee
 from .serializers import AttendanceSerializer, AbsenteeSerializer
 from student_registration.attendances.tasks import set_app_attendances
+from student_registration.enrollments.models import (
+    Enrollment,
+    EducationYear,
+)
 
 
 class AttendanceViewSet(mixins.RetrieveModelMixin,
@@ -102,37 +110,105 @@ class AttendanceReportViewSet(mixins.ListModelMixin,
 
 class AttendanceView(LoginRequiredMixin, ListView):
     model = Attendance
-    template_name = 'attendances/index.html'
+    template_name = 'attendances/school.html'
 
     def get_context_data(self, **kwargs):
-        selected_school = 0
+        level = 0
+        section = 0
         school = 0
-        queryset = []
-        data = []
+        location = 0
+        location_parent = 0
+        levels_by_sections = []
+        students = []
 
-        if self.request.user.is_superuser:
-            self.template_name = 'attendances/list.html'
-            queryset = self.model.objects.order_by('attendance_date')\
-                                    .values_list('attendance_date', 'classroom_id', 'validation_status')\
-                                    .distinct('attendance_date', 'classroom_id', 'validation_status')
+        # if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
         if self.request.user.school:
-            selected_school = self.request.user.school.id
             school = self.request.user.school
+        if school and school.location:
+            location = school.location
+        if location and location.parent:
+            location_parent = location.parent
 
-        for item in queryset:
-            data.append({
-                "attendance_date": item[0].strftime('%Y-%m-%d'),
-                "classroom": item[1],
-                "validated": item[2],
+        current_date = datetime.datetime.now().strftime('%d/%m/%Y')
+        selected_date = self.request.GET.get('date', current_date)
+        selected_date_view = datetime.datetime.strptime(selected_date, '%d/%m/%Y').strftime('%A %d/%m/%Y')
+
+        attendances = Attendance.objects.filter(
+            school_id=school,
+            attendance_date=datetime.datetime.strptime(selected_date, '%d/%m/%Y')
+        )
+
+        if self.request.GET.get('level', 0):
+            level = ClassRoom.objects.get(id=int(self.request.GET.get('level', 0)))
+        if self.request.GET.get('section', 0):
+            section = Section.objects.get(id=int(self.request.GET.get('section', 0)))
+
+        education_year = EducationYear.objects.get(current_year=True)
+        queryset = Enrollment.objects.filter(school_id=school, education_year=education_year)
+        registrations = queryset.filter(
+            classroom__isnull=False,
+            section__isnull=False
+        ).distinct().values(
+            'classroom__name',
+            'classroom_id',
+            'section__name',
+            'section_id'
+        ).order_by('classroom_id')
+
+        if level:
+            students = queryset.filter(
+                classroom_id=level.id,
+                section_id=section.id
+            ).order_by('student__first_name')
+
+        for registry in registrations:
+            attendances = attendances.filter(
+                classroom_id=registry['classroom_id'],
+                section_id=registry['section_id']
+            )
+            validation_date = ''
+            validation = attendances.filter(validation_date__isnull=False)
+            if validation.count():
+                validation_date = validation[0]
+            levels_by_sections.append({
+                'level_name': registry['classroom__name'],
+                'level': registry['classroom_id'],
+                'section_name': registry['section__name'],
+                'section': registry['section_id'],
+                'total': queryset.filter(classroom_id=registry['classroom_id'], section_id=registry['section_id']).count(),
+                'total_attend': attendances.filter(status=True).count(),
+                'total_absent': attendances.filter(status=False).count(),
+                'validation_date': validation_date
             })
 
+        base = datetime.datetime.now()
+        dates = []
+        weekend = [5, 6]
+
+        for x in range(0, 30):
+            d = base - datetime.timedelta(days=x)
+            if d.weekday() not in weekend:
+                # dates.append(d.strftime('%A %D/%m/%Y'))
+                dates.append({
+                    'value': d.strftime('%d/%m/%Y'),
+                    'label': d.strftime('%A %d/%m/%Y')
+                })
+
         return {
-            'days': json.dumps(data),
+            'total': queryset.count(),
+            'total_students': students.count() if students else 0,
+            'students': students,
             'school': school,
-            'selected_school': selected_school,
-            'locations': Location.objects.all(),
-            'schools': School.objects.all(),
-            'sections': Section.objects.all()
+            'location': location,
+            'location_parent': location_parent,
+            'level': level,
+            'section': section,
+            'dates': dates,
+            'classrooms': ClassRoom.objects.all(),
+            'sections': Section.objects.all(),
+            'levels_by_sections': levels_by_sections,
+            'selected_date': selected_date,
+            'selected_date_view': selected_date_view,
         }
 
 
@@ -172,6 +248,8 @@ class AbsenteeView(ListAPIView):
     """
     API endpoint for validated absentees
     """
-    queryset = Absentee.objects.all()
+    queryset = Absentee.objects.filter(
+        school__location__pilot_in_use=True
+    )
     serializer_class = AbsenteeSerializer
     permission_classes = (permissions.IsAdminUser,)
