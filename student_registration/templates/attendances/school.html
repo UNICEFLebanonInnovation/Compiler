@@ -1,0 +1,324 @@
+{% extends "base.simple.html" %}
+
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+{% block extra_head %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-progressbars.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-switch.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-button-group.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
+    <style>
+        .row-class  {
+            max-height:75px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0px;
+            cursor: pointer;
+            background: #f5f5f5; /* For browsers that do not support gradients */
+            background: -webkit-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Safari 5.1 to 6.0 */
+            background: -o-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Opera 11.1 to 12.0 */
+            background: -moz-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Firefox 3.6 to 15 */
+            background: linear-gradient(left top, #f5f5f5, #EDEFF1); /* Standard syntax */
+        }
+        .row-class div {
+{#            border: 1px solid;#}
+        }
+        .row-class .s-col {
+            height: 75px;
+            max-height: 75px;
+        }
+        .row-class .progress-success {
+            color: #5cb85c !important;
+            border: 1px solid #5cb85c;
+        }
+        .row-class .progress-danger {
+            color: #d9534f !important;
+            border: 1px solid #d9534f;
+        }
+        .row-class .progress .progress-bar {
+{#            color: #2aabd2 !important;#}
+            color: #0b0b0b;
+        }
+        .row-student  {
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0px;
+            background: #f5f5f5; /* For browsers that do not support gradients */
+            background: -webkit-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Safari 5.1 to 6.0 */
+            background: -o-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Opera 11.1 to 12.0 */
+            background: -moz-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Firefox 3.6 to 15 */
+            background: linear-gradient(left top, #f5f5f5, #EDEFF1); /* Standard syntax */
+        }
+        .row-student .s-col {
+            padding-top: 15px;
+        }
+        .row-student div {
+{#            border: 1px solid;#}
+        }
+        .row-student .absence-reasons label {
+            font-style: italic;
+            padding-right: 5px;
+        }
+        .row-student .absence-reasons input {
+            margin-right: 10px;
+        }
+        .btn-attendance-day.active {
+            background-color: #2aabd2;
+            color: red;
+        }
+        .s-lft {
+        }
+        .s-lft div {
+            padding-top: 5px;
+            margin-top: 5px;
+        }
+        .s-rgt {
+            border-radius: 0 8px 8px 0;
+            background: #2aabd2;
+        }
+        .row-class .s-progs {
+            padding-top: 5px;
+        }
+        .breadcrumb li:first-child {
+            padding-left: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block header %}
+      <li class="nav-item">
+        <a class="nav-link" href="">{{ school }} - {{ location }} - {{ location_parent }}
+            - <span class="badge">{{ total }}</span>
+        </a>
+      </li>
+{% endblock %}
+
+{% block content %}
+
+         <section class="main-content-wrapper">
+            <section id="main-content">
+                 <div class="row">
+                    <div class="col-md-12">
+                        </br>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+{#                          <div class="panel-heading" id="header">#}
+{#                            <ol class="breadcrumb">#}
+{#                                <li><h3 class="panel-title">{% trans "Attendance" %}</h3></li>#}
+{#                                <li>#}
+{#                                    <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">#}
+{#                                        <i class="icon-export-sign icon-white"></i>&nbsp;#}
+{#                                            {% trans "Export" %}#}
+{#                                    </a>#}
+{#                                </li>#}
+{#                            </ol>#}
+{#                            <div class="actions pull-right">#}
+{#                                <i class="fa fa-chevron-down"></i>#}
+{#                                <i class="fa fa-times"></i>#}
+{#                            </div>#}
+{#                          </div>#}
+{#                          <div class="panel-heading">#}
+{#                            <span class="col-sm-2 icon-school"></span>#}
+{#                            <ol class="breadcrumb">#}
+{#                                <li>{{ school }}</li>#}
+{#                                <li>{{ location }}</li>#}
+{#                                <li>{{ location_parent }}</li>#}
+{#                                <li>{% trans "Total students" %} <span class="badge ttl_students">{{ total }}</span></li>#}
+{#                            </ol>#}
+{#                          </div>#}
+                          <div class="panel-heading">
+                            <span class="col-sm-2 icon-date-time"></span>
+                            <ol class="breadcrumb">
+                                {% if level %}
+                                <li>
+                                    <a href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to the list" %} - {{ selected_date_view }}</a>
+                                </li>
+                                <li>
+                                    {{ level.name }} - {{ section.name }}
+                                    <span class="badge">{{ total_students }}</span>
+                                </li>
+                                {% endif %}
+                                {% if not level %}
+                                <li>
+                                    <select name="dates" id="dates" class="form-control">
+                                        {% for date in dates %}
+                                            <option value="{{ date.value }}" {% if date.value == selected_date %}selected="selected"{% endif %}>{{ date.label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </li>
+                                {% endif %}
+                            </ol>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div id="attendance-sheet" class="">
+            {% if not level %}
+                {% for row in levels_by_sections %}
+                <div class="row row-class" itemid="{{ row.level }}" itemref="{{ row.section }}">
+                    <div class="col-xs-4 col-sm-4 col-md-4 s-lft s-col" style="border-left: 10px solid #2aabd2;">
+                        <div>{{ row.level_name }}</div>
+                        <div>{{ row.section_name }}</div>
+                    </div>
+                    <div class="col-xs-3 col-sm-3 col-md-3 s-col">
+                        {% if row.validation_date %}
+                            <span class="icon-2-check"></span>
+                        {% elif row.total_attend or row.total_absent %}
+                            <span class="icon-check"></span>
+                        {% else %}
+                            <span class="icon-pending-check"></span>
+                        {% endif %}
+                    </div>
+                    <div class="col-xs-3 col-sm-3 col-md-3 s-progs s-col">
+                        <div class="progress progress-success">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ row.total_attend }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_attend|percentage:row.total }}%">
+                               {{ row.total_attend }} ({{ row.total_attend|percentage:row.total }})%
+                            </div>
+                         </div>
+                        <div class="progress progress-danger">
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ row.total_absent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_absent|percentage:row.total }}%">
+                               {{ row.total_absent }} ({{ row.total_absent|percentage:row.total }})%
+                            </div>
+                         </div>
+                    </div>
+                    <div class="col-xs-2 col-sm-2 col-md-2 s-rgt s-col">
+                        <span class="icon-students"></span>
+                        <span style="font-size: 30px; color: #fff; position: absolute; bottom: -5px; left: 22px;">{{ row.total }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <form action="/api/attendances/" method="post" onsubmit="return false;" id="attendance_class">
+
+                {% for line in students %}
+                    <div class="row row-student">
+{#                        <div class="col-xs-6 col-sm-2 icon-{{ line.student.sex }} s-col" style="border-left: 10px solid #2aabd2;"></div>#}
+                        <div class="col-xs-6 col-sm-2 icon-student-{{ line.student.sex }} s-col" style="border-left: 10px solid #2aabd2;"></div>
+                        <div class="col-xs-3 col-sm-3 s-col">
+{#                            <span class="icon-student-{{ line.student.sex }}"></span>#}
+{#                            <span class="icon-student"></span>#}
+                            <span>{{ line.student }}</span>
+                        </div>
+                        <div class="col-xs-3 col-sm-3 s-col">
+                            <span class="icon-mother"></span>
+                            <span>{{ line.student.mother_fullname }}</span>
+                        </div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 s-col">
+                            <span class="icon-age"></span>
+                            <span>{{ line.student.calc_age }}</span>
+                        </div>
+                        <div class="col-xs-6 col-sm-2 col-md-2 s-col">
+                            <input type="checkbox" name="status[{{ line.id }}]" checked="checked" itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" value="" />
+                        </div>
+                        <div class="col-sm-8 absence-reasons" style="display: none;" id="reasons-{{ line.id }}">
+                            <label class="radio-inline"><input type="radio" value="sick" name="absence_reason[{{ line.id }}]" />{% trans "Sick" %}</label>
+                            <label class="radio-inline"><input type="radio" value="no_reason" name="absence_reason[{{ line.id }}]" />{% trans "No reason" %}</label>
+                            <label class="radio-inline"><input type="radio" value="no_transport" name="absence_reason[{{ line.id }}]" />{% trans "No transport" %}</label>
+                            <label class="radio-inline"><input type="radio" value="other" name="absence_reason[{{ line.id }}]" />{% trans "Other" %}</label>
+                        </div>
+                    </div>
+                {% endfor %}
+                </form>
+
+                <div class="row" style="padding-top: 50px; padding-bottom: 50px;">
+                      <button class="btn btn-success" id="save_attendances">
+                            {% trans "Save" %}
+                      </button>
+                      <button class="btn btn-success" id="exam_day">
+                            {% trans "Exam day" %}
+                      </button>
+                </div>
+            {% endif %}
+            </div>
+
+              <a class="btn btn-info" id="attendance-validate-all" href="#" style="display: none;">
+                <i class="icon-validation-sign icon-white"></i>&nbsp;
+                    {% trans "Validate All" %}
+              </a>
+         </section>
+
+{% endblock %}
+
+{% block extra_js %}
+    {% get_user_token request.user.id as user_token %}
+
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap-switch.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
+    <script type="text/javascript">
+        var user_id = {{ request.user.id }};
+        var user_username = '{{ request.user.username }}';
+        var user_email = '{{ request.user.email }}';
+        var user_token = '{{ user_token }}';
+
+        var protocol = 'http://';
+        {% if request.is_secure %}
+            protocol = 'https://';
+        {% endif %}
+        var host = '{{ request.get_host }}';
+        var synchro_path = protocol+host+'/api/attendances/';
+
+        $(document).ready(function(){
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $(document).on('click', '.row-class', function(){
+                var itemid = $(this).attr('itemid');
+                var itemref = $(this).attr('itemref');
+                var url = '{% url "attendances:attendance" %}' + '?date='+$('#dates').val();
+                url = url + '&level='+itemid + '&section='+itemref;
+                window.location = url;
+            });
+
+            $(document).on('change', '#dates', function(){
+                if($(this).val()) {
+                    window.location = '{% url "attendances:attendance" %}' + '?date='+$(this).val();
+                }
+            });
+
+            $(document).on('click', '#save_attendances', function(){
+                var form = $('#attendance_class');
+                $.ajax({
+                    type: "POST",
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    cache: false,
+                    async: true,
+                    headers: getHeader(),
+                    dataType: 'json',
+                    success: function (response, result, jqXHR) {
+
+                    },
+                    error: function (response) {
+
+                    }
+                });
+            });
+
+            $("[class='toggle-status']").bootstrapSwitch();
+            $("[class='toggle-status']").on('switchChange.bootstrapSwitch', function(event, state) {
+                $("[class='status-checkbox']").bootstrapSwitch('state', state);
+                var itemid = $(event.target).attr('itemid');
+                if(state == false){
+                    $('#reasons-'+itemid).show();
+                }else{
+                    $('#reasons-'+itemid).hide();
+                }
+            });
+        });
+
+    </script>
+
+{% endblock %}
