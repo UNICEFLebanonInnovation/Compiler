@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django.views.generic import ListView, FormView, TemplateView
+from django.views.generic import ListView, FormView, TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.utils.translation import ugettext as _
@@ -100,6 +100,7 @@ class EnrollmentEditView(LoginRequiredMixin,
 
     template_name = 'enrollments/edit.html'
     form_class = EnrollmentForm
+    # queryset = Enrollment.objects.all()
     success_url = '/enrollments/list/'
 
     def get_context_data(self, **kwargs):
@@ -114,6 +115,9 @@ class EnrollmentEditView(LoginRequiredMixin,
         # form = super(EnrollmentEditView, self).get_form(form_class)
         # print form
         # return EnrollmentForm(instance=Enrollment.objects.get(id=48677))
+
+    # def get_object(self):
+    #     return EnrollmentForm(instance=Enrollment.objects.get(id=48677))
 
     def form_valid(self, form):
         form.save(self.request)
