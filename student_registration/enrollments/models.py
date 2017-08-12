@@ -403,7 +403,7 @@ class Enrollment(TimeStampedModel):
         return 0
 
     def get_absolute_url(self):
-        return '/edit/%d' % self.pk
+        return '/enrollments/edit/%d/' % self.pk
 
     def __unicode__(self):
         if self.student:

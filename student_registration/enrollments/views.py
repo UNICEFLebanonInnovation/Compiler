@@ -4,10 +4,6 @@ from __future__ import absolute_import, unicode_literals
 from django.views.generic import ListView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
-from rest_framework import viewsets, mixins, permissions
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
-import tablib
-from rest_framework import status
 from django.utils.translation import ugettext as _
 from django.db.models import Q
 
@@ -46,7 +42,9 @@ from .forms import EnrollmentForm
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
 
 
-class EnrollmentView(LoginRequiredMixin, FormView):
+class EnrollmentView(LoginRequiredMixin,
+                     # GroupRequiredMixin,
+                     FormView):
 
     template_name = 'enrollments/new.html'
     form_class = EnrollmentForm
@@ -97,13 +95,12 @@ class EnrollmentView(LoginRequiredMixin, FormView):
 
 
 class EnrollmentEditView(LoginRequiredMixin,
-                         GroupRequiredMixin,
-                         TemplateView):
+                         # GroupRequiredMixin,
+                         FormView):
 
     template_name = 'enrollments/edit.html'
     form_class = EnrollmentForm
     success_url = '/enrollments/list/'
-
 
     def get_context_data(self, **kwargs):
         # force_default_language(self.request)
@@ -111,6 +108,12 @@ class EnrollmentEditView(LoginRequiredMixin,
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
         return super(EnrollmentEditView, self).get_context_data(**kwargs)
+
+    # def get_form(self, form_class=None):
+        # print EnrollmentForm(instance=Enrollment.objects.get(id=48677))
+        # form = super(EnrollmentEditView, self).get_form(form_class)
+        # print form
+        # return EnrollmentForm(instance=Enrollment.objects.get(id=48677))
 
     def form_valid(self, form):
         form.save(self.request)
