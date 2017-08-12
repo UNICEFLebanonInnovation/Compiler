@@ -1,28 +1,26 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
+import datetime
+import tablib
+import json
 
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
+
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.generics import ListAPIView
 from rest_framework.decorators import detail_route, list_route
 from datetime import datetime
-import datetime
-import tablib
-import json
 from rest_framework import status
+
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from student_registration.schools.models import (
     School,
-    Grade,
     Section,
     ClassRoom
 )
-from student_registration.locations.models import Location
-from student_registration.registrations.models import Registration
 from .models import Attendance, Absentee
 from .serializers import AttendanceSerializer, AbsenteeSerializer
 from student_registration.attendances.tasks import set_app_attendances
@@ -249,7 +247,7 @@ class AbsenteeView(ListAPIView):
     API endpoint for validated absentees
     """
     queryset = Absentee.objects.filter(
-        school__location__pilot_in_use=True
+        school__location=True
     )
     serializer_class = AbsenteeSerializer
     permission_classes = (permissions.IsAdminUser,)
