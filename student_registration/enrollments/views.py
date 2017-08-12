@@ -48,9 +48,9 @@ from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
 
 class EnrollmentView(LoginRequiredMixin, FormView):
 
-    template_name = 'enrollments/registration.html'
+    template_name = 'enrollments/new.html'
     form_class = EnrollmentForm
-    success_url = '/enrollments/add/'
+    success_url = '/enrollments/list/'
 
     def get_context_data(self, **kwargs):
         # force_default_language(self.request)
@@ -96,16 +96,55 @@ class EnrollmentView(LoginRequiredMixin, FormView):
         return super(EnrollmentView, self).form_valid(form)
 
 
-# class EnrollmentView(LoginRequiredMixin,
-#                      GroupRequiredMixin,
-#                      TemplateView):
+class EnrollmentEditView(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         TemplateView):
+
+    template_name = 'enrollments/edit.html'
+    form_class = EnrollmentForm
+    success_url = '/enrollments/list/'
+
+
+    def get_context_data(self, **kwargs):
+        # force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(EnrollmentEditView, self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(EnrollmentEditView, self).form_valid(form)
+
+
+class EnrollmentListView(LoginRequiredMixin,
+                         FilterView,
+                         ExportMixin,
+                         SingleTableView,
+                         RequestConfig):
+    table_class = EnrollmentTable
+    model = Enrollment
+    template_name = 'enrollments/list.html'
+    table = BootstrapTable(Enrollment.objects.all(), order_by='id')
+
+    filterset_class = EnrollmentFilter
+
+    # def get_context_data(self, **kwargs):
+    #     return {
+    #         'table': self.table
+    #     }
+
+
+# class EnrollmentEditView(LoginRequiredMixin,
+#                          GroupRequiredMixin,
+#                          TemplateView):
 #     """
 #     Provides the enrollment page with lookup types in the context
 #     """
 #     model = Enrollment
-#     template_name = 'enrollments/index.html'
+#     template_name = 'enrollments/edit.html'
 #
-#     group_required = [u"ENROL_CREATE"]
+#     group_required = [u"ENROL_EDIT"]
 #
 #     def get_context_data(self, **kwargs):
 #
@@ -113,16 +152,19 @@ class EnrollmentView(LoginRequiredMixin, FormView):
 #         school = 0
 #         location = 0
 #         location_parent = 0
+#         total = 0
 #         if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
 #             school_id = self.request.user.school_id
 #         if school_id:
 #             school = School.objects.get(id=school_id)
+#             total = self.model.objects.filter(school_id=school_id).count()
 #         if school and school.location:
 #             location = school.location
 #         if location and location.parent:
 #             location_parent = location.parent
 #
 #         return {
+#             'total': total,
 #             'schools': School.objects.all(),
 #             'school_shifts': Enrollment.SCHOOL_SHIFT,
 #             'school_types': Enrollment.SCHOOL_TYPE,
@@ -142,57 +184,6 @@ class EnrollmentView(LoginRequiredMixin, FormView):
 #             'location': location,
 #             'location_parent': location_parent
 #         }
-
-
-class EnrollmentEditView(LoginRequiredMixin,
-                         GroupRequiredMixin,
-                         TemplateView):
-    """
-    Provides the enrollment page with lookup types in the context
-    """
-    model = Enrollment
-    template_name = 'enrollments/edit.html'
-
-    group_required = [u"ENROL_EDIT"]
-
-    def get_context_data(self, **kwargs):
-
-        school_id = 0
-        school = 0
-        location = 0
-        location_parent = 0
-        total = 0
-        if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
-            school_id = self.request.user.school_id
-        if school_id:
-            school = School.objects.get(id=school_id)
-            total = self.model.objects.filter(school_id=school_id).count()
-        if school and school.location:
-            location = school.location
-        if location and location.parent:
-            location_parent = location.parent
-
-        return {
-            'total': total,
-            'schools': School.objects.all(),
-            'school_shifts': Enrollment.SCHOOL_SHIFT,
-            'school_types': Enrollment.SCHOOL_TYPE,
-            'education_levels': ClassRoom.objects.all(),
-            'education_results': Enrollment.RESULT,
-            'informal_educations': EducationLevel.objects.all(),
-            'education_final_results': ClassLevel.objects.all(),
-            'alp_rounds': ALPRound.objects.all(),
-            'classrooms': ClassRoom.objects.all(),
-            'sections': Section.objects.all(),
-            'nationalities': Nationality.objects.exclude(id=5),
-            'nationalities2': Nationality.objects.all(),
-            'genders': Person.GENDER,
-            'months': Person.MONTHS,
-            'idtypes': IDType.objects.all(),
-            'school': school,
-            'location': location,
-            'location_parent': location_parent
-        }
 
 
 class EnrollmentPatchView(LoginRequiredMixin, TemplateView):
@@ -640,22 +631,3 @@ class ExportDuplicatesView(LoginRequiredMixin, ListView):
         )
         response['Content-Disposition'] = 'attachment; filename=duplications.xls'
         return response
-
-
-class FilteredListView(LoginRequiredMixin,
-                       FilterView,
-                       ExportMixin,
-                       SingleTableView,
-                       RequestConfig):
-
-    table_class = EnrollmentTable
-    model = Enrollment
-    template_name = 'enrollments/bootstrap_template.html'
-    table = BootstrapTable(Enrollment.objects.all(), order_by='id')
-
-    filterset_class = EnrollmentFilter
-
-    # def get_context_data(self, **kwargs):
-    #     return {
-    #         'table': self.table
-    #     }
