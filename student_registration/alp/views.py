@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView
+from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from rest_framework import viewsets, mixins, permissions
@@ -13,7 +13,10 @@ from import_export.formats import base_formats
 from braces.views import GroupRequiredMixin
 
 from .models import Outreach, ALPRound
+from .forms import RegistrationForm
 from .serializers import OutreachSerializer, OutreachExamSerializer, OutreachSmallSerializer
+from student_registration.outreach.models import Child
+from student_registration.outreach.serializers import ChildSerializer
 from student_registration.users.utils import force_default_language
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
@@ -110,6 +113,37 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         if has_group(self.request.user, 'CERD'):
             self.serializer_class = OutreachExamSerializer
         return super(OutreachViewSet, self).partial_update(request)
+
+
+class AddView(LoginRequiredMixin, FormView):
+
+    template_name = 'alp/registration.html'
+    form_class = RegistrationForm
+    success_url = '/alp/add/'
+
+    def get_context_data(self, **kwargs):
+        # force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(AddView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super(AddView, self).get_initial()
+        data = []
+        if self.request.GET.get('enrollment_id'):
+            instance = Outreach.objects.get(id=self.request.GET.get('enrollment_id'))
+            data = OutreachSerializer(instance).data
+        if self.request.GET.get('student_outreach_child'):
+            instance = Child.objects.get(id=int(self.request.GET.get('student_outreach_child')))
+            data = ChildSerializer(instance).data
+        initial = data
+
+        return initial
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(AddView, self).form_valid(form)
 
 
 class OutreachView(LoginRequiredMixin,
