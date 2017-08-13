@@ -347,6 +347,30 @@ class Outreach(TimeStampedModel):
         verbose_name='Post-test result',
     )
     dropout_status = models.BooleanField(blank=True, default=False)
+    outreach_barcode = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    new_registry = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+    student_outreached = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+    have_barcode = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+
 
     objects = OutreachManager()
     drop_objects = OutreachDropoutManager()
