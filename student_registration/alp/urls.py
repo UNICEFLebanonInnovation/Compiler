@@ -7,6 +7,11 @@ from . import views
 urlpatterns = [
 
     url(
+        regex=r'^add/$',
+        view=views.AddView.as_view(),
+        name='add'
+    ),
+    url(
         regex=r'^alp-registrations/$',
         view=views.CurrentRoundView.as_view(),
         name='alp_registrations'
