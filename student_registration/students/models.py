@@ -192,6 +192,10 @@ class Person(TimeStampedModel):
         elapsed_years = years_difference - int(is_before_birthday)
         return elapsed_years
 
+    @property
+    def phone_number(self):
+        return '{}-{}'.format(self.phone_prefix, self.phone)
+
     class Meta:
         abstract = True
 
@@ -272,49 +276,32 @@ class Student(Person):
             attendances[item.attendance_date] = item.status
         return attendances
 
-    @classmethod
-    def create(cls, data):
-        instance = cls(
-            first_name=data['student_first_name'],
-            father_name=data['student_father_name'],
-            last_name=data['student_last_name'],
-            mother_fullname=data['student_mother_fullname'],
-            sex=data['student_sex'],
-            birthday_day=data['student_birthday_day'],
-            birthday_month=data['student_birthday_month'],
-            birthday_year=data['student_birthday_year'],
-            nationality_id=data['student_nationality'],
-            mother_nationality_id=data['student_mother_nationality'],
-            phone=data['student_phone'],
-            phone_prefix=data['student_phone_prefix'],
-            address=data['student_address'],
-            registered_in_unhcr=data['registered_in_unhcr'],
-            id_type_id=data['student_id_type'],
-            id_number=data['student_id_number'],
-            outreach_child_id=data['child_id'] if 'child_id' in data else None
-        )
-        instance.save()
-        return instance
+    def get_absolute_url(self):
+        return 'student/%d' % self.pk
 
-    def update(self, data):
-        self.first_name = data['student_first_name']
-        self.father_name = data['student_father_name']
-        self.last_name = data['student_last_name']
-        self.mother_fullname = data['student_mother_fullname']
-        self.sex = data['student_sex']
-        self.birthday_day = data['student_birthday_day']
-        self.birthday_month = data['student_birthday_month']
-        self.birthday_year = data['student_birthday_year']
-        self.nationality_id = data['student_nationality']
-        self.mother_nationality_id = data['student_mother_nationality']
-        self.phone = data['student_phone']
-        self.phone_prefix = data['student_phone_prefix']
-        self.address = data['student_address']
-        self.registered_in_unhcr = data['registered_in_unhcr']
-        self.id_type_id = data['student_id_type']
-        self.id_number = data['student_id_number']
-        self.save()
-        return self
+    # @classmethod
+    # def create(cls, data):
+    #     instance = cls(
+    #         first_name=data['student_first_name'],
+    #         father_name=data['student_father_name'],
+    #         last_name=data['student_last_name'],
+    #         mother_fullname=data['student_mother_fullname'],
+    #         sex=data['student_sex'],
+    #         birthday_day=data['student_birthday_day'],
+    #         birthday_month=data['student_birthday_month'],
+    #         birthday_year=data['student_birthday_year'],
+    #         nationality_id=data['student_nationality'],
+    #         mother_nationality_id=data['student_mother_nationality'],
+    #         phone=data['student_phone'],
+    #         phone_prefix=data['student_phone_prefix'],
+    #         address=data['student_address'],
+    #         registered_in_unhcr=data['registered_in_unhcr'],
+    #         id_type_id=data['student_id_type'],
+    #         id_number=data['student_id_number'],
+    #         outreach_child_id=data['child_id'] if 'child_id' in data else None
+    #     )
+    #     instance.save()
+    #     return instance
 
 
 class StudentMatching(models.Model):
