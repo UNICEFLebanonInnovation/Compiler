@@ -49,15 +49,3 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse('users:detail', kwargs={'username': self.username})
-
-    def save(self, **kwargs):
-        """
-        Generate the HASH password
-        :param kwargs:
-        :return:
-        """
-        if self.pk is None:
-            self.set_password(self.password)
-        elif self.password and not self.password.startswith("pbkdf2_"):
-            self.set_password(self.password)
-        super(AbstractUser, self).save(**kwargs)
