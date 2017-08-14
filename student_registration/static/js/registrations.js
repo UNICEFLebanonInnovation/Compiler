@@ -6,6 +6,8 @@ var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_studen
 
 $(document).ready(function(){
 
+    $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
+
     reorganizeForm();
 
     $(document).on('click', 'input[name=new_registry], input[name=student_outreached], input[name=have_barcode]', function(){
