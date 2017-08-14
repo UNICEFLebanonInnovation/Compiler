@@ -2,9 +2,9 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.utils.translation import ugettext as _
 from django import forms
+from dal import autocomplete
 from django.core.urlresolvers import reverse
 
-from dal import autocomplete
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
@@ -458,11 +458,53 @@ class EnrollmentForm(forms.ModelForm):
             # 'education_year',
         )
         initial_fields = fields
-        # widgets = {
-        # }
+        widgets = {}
 
     class Media:
-        js = ('js/bootstrap-datetimepicker.js', 'js/validator.js', 'js/registrations.js')
+        js = (
+            # 'js/bootstrap-datetimepicker.js',
+            # 'js/validator.js',
+            'js/jquery-1.12.3.min.js',
+            'js/jquery-ui-1.12.1.js',
+            'js/registrations.js',
+        )
+
+
+class GradingForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(GradingForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = False
+        self.helper.form_action = reverse('enrollments:grading')
+        self.helper.layout = Layout(
+            Fieldset(
+                _('Registry'),
+                Div(
+                    Div(InlineRadios('new_registry'), css_class='col-md-4'),
+                    Div(InlineRadios('student_outreached'), css_class='col-md-4'),
+                    Div(InlineRadios('have_barcode'), css_class='col-md-4 invisible', css_id='have_barcode_option'),
+                    css_class='row',
+                ),
+            ),
+        )
+
+    def save(self, request=None):
+        instance = super(GradingForm, self).save()
+
+    class Meta:
+        model = Enrollment
+        fields = ()
+        initial_fields = fields
+        widgets = {}
+
+    class Media:
+        js = (
+            # 'js/bootstrap-datetimepicker.js',
+            'js/validator.js',
+            'js/registrations.js'
+        )
 
 
 class LoggingStudentMoveForm(forms.ModelForm):
