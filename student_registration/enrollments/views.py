@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django.views.generic import ListView, FormView, TemplateView
+from django.views.generic import ListView, FormView, TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.utils.translation import ugettext as _
@@ -14,6 +14,14 @@ from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from import_export.formats import base_formats
 
 from student_registration.alp.templatetags.util_tags import has_group
+
+from django_filters.views import FilterView
+from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
+from django_tables2.export.views import ExportMixin
+
+from .filters import EnrollmentFilter
+from .tables import BootstrapTable, EnrollmentTable
+
 from student_registration.students.models import (
     Person,
     Nationality,
@@ -34,11 +42,13 @@ from .forms import EnrollmentForm
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
 
 
-class EnrollmentView(LoginRequiredMixin, FormView):
+class EnrollmentView(LoginRequiredMixin,
+                     # GroupRequiredMixin,
+                     FormView):
 
-    template_name = 'enrollments/registration.html'
+    template_name = 'enrollments/new.html'
     form_class = EnrollmentForm
-    success_url = '/enrollments/add/'
+    success_url = '/enrollments/list/'
 
     def get_context_data(self, **kwargs):
         # force_default_language(self.request)
@@ -84,16 +94,64 @@ class EnrollmentView(LoginRequiredMixin, FormView):
         return super(EnrollmentView, self).form_valid(form)
 
 
-# class EnrollmentView(LoginRequiredMixin,
-#                      GroupRequiredMixin,
-#                      TemplateView):
+class EnrollmentEditView(LoginRequiredMixin,
+                         # GroupRequiredMixin,
+                         FormView):
+
+    template_name = 'enrollments/edit.html'
+    form_class = EnrollmentForm
+    # queryset = Enrollment.objects.all()
+    success_url = '/enrollments/list/'
+
+    def get_context_data(self, **kwargs):
+        # force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(EnrollmentEditView, self).get_context_data(**kwargs)
+
+    # def get_form(self, form_class=None):
+        # print EnrollmentForm(instance=Enrollment.objects.get(id=48677))
+        # form = super(EnrollmentEditView, self).get_form(form_class)
+        # print form
+        # return EnrollmentForm(instance=Enrollment.objects.get(id=48677))
+
+    # def get_object(self):
+    #     return EnrollmentForm(instance=Enrollment.objects.get(id=48677))
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(EnrollmentEditView, self).form_valid(form)
+
+
+class EnrollmentListView(LoginRequiredMixin,
+                         FilterView,
+                         ExportMixin,
+                         SingleTableView,
+                         RequestConfig):
+    table_class = EnrollmentTable
+    model = Enrollment
+    template_name = 'enrollments/list.html'
+    table = BootstrapTable(Enrollment.objects.all(), order_by='id')
+
+    filterset_class = EnrollmentFilter
+
+    # def get_context_data(self, **kwargs):
+    #     return {
+    #         'table': self.table
+    #     }
+
+
+# class EnrollmentEditView(LoginRequiredMixin,
+#                          GroupRequiredMixin,
+#                          TemplateView):
 #     """
 #     Provides the enrollment page with lookup types in the context
 #     """
 #     model = Enrollment
-#     template_name = 'enrollments/index.html'
+#     template_name = 'enrollments/edit.html'
 #
-#     group_required = [u"ENROL_CREATE"]
+#     group_required = [u"ENROL_EDIT"]
 #
 #     def get_context_data(self, **kwargs):
 #
@@ -101,16 +159,19 @@ class EnrollmentView(LoginRequiredMixin, FormView):
 #         school = 0
 #         location = 0
 #         location_parent = 0
+#         total = 0
 #         if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
 #             school_id = self.request.user.school_id
 #         if school_id:
 #             school = School.objects.get(id=school_id)
+#             total = self.model.objects.filter(school_id=school_id).count()
 #         if school and school.location:
 #             location = school.location
 #         if location and location.parent:
 #             location_parent = location.parent
 #
 #         return {
+#             'total': total,
 #             'schools': School.objects.all(),
 #             'school_shifts': Enrollment.SCHOOL_SHIFT,
 #             'school_types': Enrollment.SCHOOL_TYPE,
@@ -130,57 +191,6 @@ class EnrollmentView(LoginRequiredMixin, FormView):
 #             'location': location,
 #             'location_parent': location_parent
 #         }
-
-
-class EnrollmentEditView(LoginRequiredMixin,
-                         GroupRequiredMixin,
-                         TemplateView):
-    """
-    Provides the enrollment page with lookup types in the context
-    """
-    model = Enrollment
-    template_name = 'enrollments/edit.html'
-
-    group_required = [u"ENROL_EDIT"]
-
-    def get_context_data(self, **kwargs):
-
-        school_id = 0
-        school = 0
-        location = 0
-        location_parent = 0
-        total = 0
-        if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
-            school_id = self.request.user.school_id
-        if school_id:
-            school = School.objects.get(id=school_id)
-            total = self.model.objects.filter(school_id=school_id).count()
-        if school and school.location:
-            location = school.location
-        if location and location.parent:
-            location_parent = location.parent
-
-        return {
-            'total': total,
-            'schools': School.objects.all(),
-            'school_shifts': Enrollment.SCHOOL_SHIFT,
-            'school_types': Enrollment.SCHOOL_TYPE,
-            'education_levels': ClassRoom.objects.all(),
-            'education_results': Enrollment.RESULT,
-            'informal_educations': EducationLevel.objects.all(),
-            'education_final_results': ClassLevel.objects.all(),
-            'alp_rounds': ALPRound.objects.all(),
-            'classrooms': ClassRoom.objects.all(),
-            'sections': Section.objects.all(),
-            'nationalities': Nationality.objects.exclude(id=5),
-            'nationalities2': Nationality.objects.all(),
-            'genders': Person.GENDER,
-            'months': Person.MONTHS,
-            'idtypes': IDType.objects.all(),
-            'school': school,
-            'location': location,
-            'location_parent': location_parent
-        }
 
 
 class EnrollmentPatchView(LoginRequiredMixin, TemplateView):
