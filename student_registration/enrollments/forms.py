@@ -460,32 +460,20 @@ class EnrollmentForm(forms.ModelForm):
             # 'education_year',
         )
         initial_fields = fields
-        widgets = {
-            'employment_status': forms.RadioSelect(),
-            'sports_group': forms.RadioSelect(),
-            'student': autocomplete.ModelSelect2(url='student_autocomplete')
-        }
+        widgets = {}
 
     class Media:
-        js = ('js/bootstrap-datetimepicker.js', 'js/validator.js', 'js/registrations.js')
+        js = (
+            # 'js/bootstrap-datetimepicker.js',
+            # 'js/validator.js',
+            # 'js/registrations.js'
+        )
 
 
 class GradingForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(GradingForm, self).__init__(*args, **kwargs)
-        self.fields['classroom'].empty_label = _('Current Class')
-        self.fields['section'].empty_label = _('Current Section')
-
-        self.fields['last_education_level'].empty_label = _('Last education level')
-        self.fields['last_school_type'].empty_label = _('School type')
-        self.fields['last_school_shift'].empty_label = _('School shift')
-        self.fields['last_school'].empty_label = _('School')
-        self.fields['last_education_year'].empty_label = _('Education year')
-        self.fields['last_year_result'].empty_label = _('Result')
-        self.fields['last_informal_edu_level'].empty_label = _('ALP level')
-        self.fields['last_informal_edu_round'].empty_label = _('ALP round')
-        self.fields['last_informal_edu_final_result'].empty_label = _('ALP result')
 
         self.helper = FormHelper()
         self.helper.form_show_labels = False
@@ -494,12 +482,6 @@ class GradingForm(forms.ModelForm):
             Fieldset(
                 _('Registry'),
                 Div(
-                    'student_id',
-                    'enrollment_id',
-                    'student_outreach_child',
-                    'school',
-                    'owner',
-                    'education_year',
                     Div(InlineRadios('new_registry'), css_class='col-md-4'),
                     Div(InlineRadios('student_outreached'), css_class='col-md-4'),
                     Div(InlineRadios('have_barcode'), css_class='col-md-4 invisible', css_id='have_barcode_option'),
@@ -515,14 +497,14 @@ class GradingForm(forms.ModelForm):
         model = Enrollment
         fields = ()
         initial_fields = fields
-        widgets = {
-            'employment_status': forms.RadioSelect(),
-            'sports_group': forms.RadioSelect(),
-            'student': autocomplete.ModelSelect2(url='student_autocomplete')
-        }
+        widgets = {}
 
     class Media:
-        js = ('js/bootstrap-datetimepicker.js', 'js/validator.js', 'js/registrations.js')
+        js = (
+            # 'js/bootstrap-datetimepicker.js',
+            'js/validator.js',
+            'js/registrations.js'
+        )
 
 
 class LoggingStudentMoveForm(forms.ModelForm):
