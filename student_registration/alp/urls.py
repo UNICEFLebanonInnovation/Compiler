@@ -12,6 +12,16 @@ urlpatterns = [
         name='add'
     ),
     url(
+        regex=r'^pre-test-grading/$',
+        view=views.PreTestGradingView.as_view(),
+        name='pre_test_grading'
+    ),
+    url(
+        regex=r'^post-test-grading/$',
+        view=views.PostTestGradingView.as_view(),
+        name='post_test_grading'
+    ),
+    url(
         regex=r'^alp-registrations/$',
         view=views.CurrentRoundView.as_view(),
         name='alp_registrations'

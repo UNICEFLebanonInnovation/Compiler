@@ -11,7 +11,7 @@ from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HT
 from bootstrap3_datetime.widgets import DateTimePicker
 
 from .models import Outreach, ALPRound
-from .serializers import OutreachSerializer
+from .serializers import OutreachSerializer, OutreachExamSerializer
 from student_registration.students.models import (
     Student,
     Nationality,
@@ -414,4 +414,176 @@ class RegistrationForm(forms.ModelForm):
             # 'js/bootstrap-datetimepicker.js',
             # 'js/validator.js',
             # 'js/registrations.js'
+        )
+
+
+class PreTestGradingForm(forms.ModelForm):
+
+    exam_result_arabic = forms.FloatField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        max_value=60, min_value=0,
+        required=True
+    )
+    exam_language = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=(
+            ('', _('Exam language')),
+            ('english', _('English')),
+            ('french', _('French'))
+        )
+    )
+    exam_result_language = forms.FloatField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        max_value=60, min_value=0,
+        required=True
+    )
+    exam_result_math = forms.FloatField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        max_value=60, min_value=0,
+        required=True
+    )
+    exam_result_science = forms.FloatField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        max_value=60, min_value=0,
+        required=True
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(PreTestGradingForm, self).__init__(*args, **kwargs)
+        self.fields['level'].empty_label = _('Level')
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = False
+        self.helper.form_action = reverse('alp:pre_test_grading')
+        self.helper.layout = Layout(
+            Fieldset(
+                _('Entrance Test'),
+                Div(
+                    Div('level', css_class='col-md-4'),
+                    css_class='row',
+                ),
+            ),
+            Fieldset(
+                _('Grades'),
+                Div(
+                    Div(PrependedText('exam_result_arabic', _('Arabic')), css_class='col-md-4'),
+                    Div('exam_language', css_class='col-md-4'),
+                    Div(PrependedText('exam_result_language', _('Language')), css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('exam_result_math', _('Math')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_science', _('Science')), css_class='col-md-4'),
+                    css_class='row',
+                ),
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+                Button('cancel', _('Cancel'))
+            )
+        )
+
+    def save(self, request=None):
+        serializer = OutreachExamSerializer(data=request.POST)
+        if serializer.is_valid():
+            instance = serializer.update(validated_data=serializer.validated_data)
+            instance.modified_by = request.user
+            instance.save()
+
+    class Meta:
+        model = Outreach
+        fields = (
+            'exam_result_arabic',
+            'exam_language',
+            'exam_result_language',
+            'exam_result_math',
+            'exam_result_science',
+            'level',
+        )
+
+    class Media:
+        js = (
+            # 'js/validator.js',
+        )
+
+
+class PostTestGradingForm(forms.ModelForm):
+
+    post_exam_result_arabic = forms.FloatField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        max_value=60, min_value=0,
+        required=True
+    )
+    post_exam_language = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=(
+            ('', _('Exam language')),
+            ('english', _('English')),
+            ('french', _('French'))
+        )
+    )
+    post_exam_result_language = forms.FloatField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        max_value=60, min_value=0,
+        required=True
+    )
+    post_exam_result_math = forms.FloatField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        max_value=60, min_value=0,
+        required=True
+    )
+    post_exam_result_science = forms.FloatField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        max_value=60, min_value=0,
+        required=True
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(PostTestGradingForm, self).__init__(*args, **kwargs)
+        self.fields['level'].empty_label = _('Level')
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = False
+        self.helper.form_action = reverse('alp:post_test_grading')
+        self.helper.layout = Layout(
+            Fieldset(
+                _('Grades'),
+                Div(
+                    Div(PrependedText('post_exam_result_arabic', _('Arabic')), css_class='col-md-4'),
+                    Div('post_exam_language', css_class='col-md-4'),
+                    Div(PrependedText('post_exam_result_language', _('Language')), css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('post_exam_result_math', _('Math')), css_class='col-md-4'),
+                    Div(PrependedText('post_exam_result_science', _('Science')), css_class='col-md-4'),
+                    css_class='row',
+                ),
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+                Button('cancel', _('Cancel'))
+            )
+        )
+
+    def save(self, request=None):
+        serializer = OutreachExamSerializer(data=request.POST)
+        if serializer.is_valid():
+            instance = serializer.update(validated_data=serializer.validated_data)
+            instance.modified_by = request.user
+            instance.save()
+
+    class Meta:
+        model = Outreach
+        fields = (
+            'post_exam_result_arabic',
+            'post_exam_language',
+            'post_exam_result_language',
+            'post_exam_result_math',
+            'post_exam_result_science',
+        )
+
+    class Media:
+        js = (
+            # 'js/validator.js',
         )

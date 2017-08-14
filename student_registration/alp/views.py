@@ -146,6 +146,42 @@ class AddView(LoginRequiredMixin, FormView):
         return super(AddView, self).form_valid(form)
 
 
+class PreTestGradingView(LoginRequiredMixin, FormView):
+
+    template_name = 'alp/pre_test_grading.html'
+    form_class = RegistrationForm
+    success_url = '/alp/pre-test/'
+
+    def get_context_data(self, **kwargs):
+        # force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(PreTestGradingView, self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(PreTestGradingView, self).form_valid(form)
+
+
+class PostTestGradingView(LoginRequiredMixin, FormView):
+
+    template_name = 'alp/post_test_grading.html'
+    form_class = RegistrationForm
+    success_url = '/alp/post-test/'
+
+    def get_context_data(self, **kwargs):
+        # force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(PostTestGradingView, self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(PostTestGradingView, self).form_valid(form)
+
+
 class OutreachView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    TemplateView):
