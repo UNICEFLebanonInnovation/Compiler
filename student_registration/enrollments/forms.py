@@ -464,10 +464,9 @@ class EnrollmentForm(forms.ModelForm):
 
     class Media:
         js = (
-            # 'js/bootstrap-datetimepicker.js',
-            # 'js/validator.js',
             'js/jquery-1.12.3.min.js',
             'js/jquery-ui-1.12.1.js',
+            'js/validator.js',
             'js/registrations.js',
         )
 
