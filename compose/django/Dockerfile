@@ -19,6 +19,7 @@ RUN set -ex \
             libxslt-dev \
             jpeg-dev \
             libffi-dev \
+            openssh \
     && pyvenv /venv \
     && /venv/bin/pip install -U pip \
     && LIBRARY_PATH=/lib:/usr/lib /bin/sh -c "/venv/bin/pip install --no-cache-dir -r /requirements/$REQUIREMENTS_FILE" \
@@ -39,8 +40,12 @@ RUN mkdir /code/
 WORKDIR /code/
 ADD . /code/
 
+# SSH support on Azure
+RUN echo "root:Docker!" | chpasswd
+COPY ./compose/django/sshd_config /etc/ssh/
+
 # uWSGI will listen on this port
-EXPOSE 8000
+EXPOSE 2222 8000
 
 # Call collectstatic (customize the following line with the minimal environment variables needed for manage.py to run):
 RUN /venv/bin/python manage.py collectstatic --noinput --settings=config.settings.test
