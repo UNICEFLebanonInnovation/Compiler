@@ -32,5 +32,5 @@ deployment:
      branch: [develop, staging, master, Complier-2-0]
      commands:
        - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-       - docker push jamescw/compiler:$CIRCLE_BRANCH
+       - docker push jamescw/compiler:v2
 
