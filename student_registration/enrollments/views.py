@@ -100,7 +100,6 @@ class EnrollmentEditView(LoginRequiredMixin,
 
     template_name = 'enrollments/edit.html'
     form_class = EnrollmentForm
-    # queryset = Enrollment.objects.all()
     success_url = '/enrollments/list/'
 
     def get_context_data(self, **kwargs):
@@ -110,17 +109,17 @@ class EnrollmentEditView(LoginRequiredMixin,
             kwargs['form'] = self.get_form()
         return super(EnrollmentEditView, self).get_context_data(**kwargs)
 
-    # def get_form(self, form_class=None):
-        # print EnrollmentForm(instance=Enrollment.objects.get(id=48677))
-        # form = super(EnrollmentEditView, self).get_form(form_class)
-        # print form
-        # return EnrollmentForm(instance=Enrollment.objects.get(id=48677))
-
-    # def get_object(self):
-    #     return EnrollmentForm(instance=Enrollment.objects.get(id=48677))
+    def get_form(self, form_class=None):
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            EnrollmentForm(self.request.POST, instance=instance)
+        else:
+            data = EnrollmentSerializer(instance).data
+            return EnrollmentForm(data, instance=instance)
 
     def form_valid(self, form):
-        form.save(self.request)
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
         return super(EnrollmentEditView, self).form_valid(form)
 
 
