@@ -403,7 +403,7 @@ class EnrollmentForm(forms.ModelForm):
         # print self.cleaned_data
         # cc_myself = self.cleaned_data.get("cc_myself")
 
-    def save(self, request=None):
+    def save(self, request=None, instance=None):
         # instance = super(EnrollmentForm, self).save()
         # instance.school = request.user.school
         # instance.owner = request.user
@@ -414,13 +414,18 @@ class EnrollmentForm(forms.ModelForm):
         #     student = Student.create(request.POST)
         # instance.student = student
         # instance.save()
-        serializer = EnrollmentSerializer(data=request.POST)
-        if serializer.is_valid():
-            instance = serializer.create(validated_data=serializer.validated_data)
-            instance.school = request.user.school
-            instance.owner = request.user
-            instance.education_year = EducationYear.objects.get(current_year=True)
-            instance.save()
+        if instance:
+            serializer = EnrollmentSerializer(instance, data=request.POST)
+            if serializer.is_valid():
+                serializer.update(validated_data=serializer.validated_data)
+        else:
+            serializer = EnrollmentSerializer(data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.create(validated_data=serializer.validated_data)
+                instance.school = request.user.school
+                instance.owner = request.user
+                instance.education_year = EducationYear.objects.get(current_year=True)
+                instance.save()
 
     class Meta:
         model = Enrollment
