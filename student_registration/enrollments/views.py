@@ -135,6 +135,10 @@ class EnrollmentListView(LoginRequiredMixin,
 
     filterset_class = EnrollmentFilter
 
+    def get_queryset(self):
+        education_year = EducationYear.objects.get(current_year=True)
+        return Enrollment.objects.filter(education_year=education_year, school=self.request.user.school_id)
+
     # def get_context_data(self, **kwargs):
     #     return {
     #         'table': self.table
