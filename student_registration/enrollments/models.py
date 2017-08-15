@@ -390,6 +390,8 @@ class Enrollment(TimeStampedModel):
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
 
+
+
     @property
     def student_fullname(self):
         if self.student:
