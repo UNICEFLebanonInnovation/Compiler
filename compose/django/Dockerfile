@@ -19,7 +19,6 @@ RUN set -ex \
             libxslt-dev \
             jpeg-dev \
             libffi-dev \
-            openssh \
     && pyvenv /venv \
     && /venv/bin/pip install -U pip \
     && LIBRARY_PATH=/lib:/usr/lib /bin/sh -c "/venv/bin/pip install --no-cache-dir -r /requirements/$REQUIREMENTS_FILE" \
@@ -31,7 +30,7 @@ RUN set -ex \
                     | sort -u \
     )" \
     && apk add --virtual .python-rundeps $runDeps \
-    && apk add --update postgresql-client \
+    && apk add --update postgresql-client openssh \
     && apk del .build-deps
 
 COPY ./compose/django/*.sh /
