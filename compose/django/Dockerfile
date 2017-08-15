@@ -44,11 +44,11 @@ ADD . /code/
 RUN echo "root:Docker!" | chpasswd
 COPY ./compose/django/sshd_config /etc/ssh/
 
-# uWSGI will listen on this port
-EXPOSE 2222 80
-
 # Call collectstatic (customize the following line with the minimal environment variables needed for manage.py to run):
 RUN /venv/bin/python manage.py collectstatic --noinput --settings=config.settings.test
+
+# uWSGI will listen on this port
+EXPOSE 2222 80
 
 # Start
 ENTRYPOINT ["/entrypoint.sh"]
