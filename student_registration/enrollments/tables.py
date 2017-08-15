@@ -14,28 +14,40 @@ class BootstrapTable(tables.Table):
 
 class EnrollmentTable(tables.Table):
 
-    # student = tables.RelatedLinkColumn()
-    id = tables.LinkColumn()
+    edit_column = tables.TemplateColumn(verbose_name='Edit student',
+                                        template_name='django_tables2/edit_column.html')
+    delete_column = tables.TemplateColumn(verbose_name='Delete student',
+                                          template_name='django_tables2/delete_column.html')
+    moved_column = tables.TemplateColumn(verbose_name='Student moved',
+                                         template_name='django_tables2/moved_column.html')
+
+    student_age = tables.Column(verbose_name='Age', accessor='student.age')
+    student_birthday = tables.Column(verbose_name='Birthday', accessor='student.birthday')
+    student_phone_number = tables.Column(verbose_name='Phone number', accessor='student.phone_number')
+    student_registered_in_unhcr = tables.Column(verbose_name='Registered in UNHCR',
+                                                accessor='student.registered_in_unhcr')
 
     class Meta:
         model = Enrollment
         template = 'django_tables2/bootstrap.html'
         fields = (
-            'id',
+            'edit_column',
+            'delete_column',
+            'moved_column',
             'student.first_name',
             'student.father_name',
             'student.last_name',
             'student.sex',
-            'student.age',
-            'student.birthday',
+            'student_age',
+            'student_birthday',
             'student.nationality',
             'student.mother_fullname',
             'student.mother_nationality',
-            'student.registered_in_unhcr',
+            'student_registered_in_unhcr',
             'student.id_type',
             'student.id_number',
             'student.address',
-            'student.phone_number',
+            'student_phone_number',
             'classroom',
             'section',
             'last_education_level',

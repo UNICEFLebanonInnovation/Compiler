@@ -3,6 +3,9 @@
  */
 
 var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname";
+var protocol = window.location.protocol;
+var host = protocol+window.location.host;
+var moved_student_path = host+'/api/logging-student-move/';
 
 $(document).ready(function(){
 
@@ -16,6 +19,18 @@ $(document).ready(function(){
 
     $(document).on('blur', arabic_fields, function(){
         checkArabicOnly($(this));
+    });
+
+    $(document).on('click', '.moved-registration-row', function(){
+        var item = $(this);
+        console.log('ok');
+        bootbox.confirm(
+            "Are you sure you want to tag this student as moved?", function(result) {
+            if(result == true){
+                moved_student(item.attr('itemscope'));
+                item.parents('tr').remove();
+            }
+        });
     });
 
     $("#id_search_student").autocomplete({
@@ -170,4 +185,26 @@ function reorganizeForm()
         $('.child_data').addClass('invisible');
         return true;
     }
+}
+
+
+function moved_student(item)
+{
+    data = {moved: item};
+
+    $.ajax({
+        type: "POST",
+        url: moved_student_path,
+        data: data,
+        cache: false,
+        async: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            console.log(response);
+        },
+        error: function(response) {
+            console.log(response);
+        }
+    });
 }

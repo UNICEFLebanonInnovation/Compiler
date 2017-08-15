@@ -67,6 +67,9 @@ input.required, select.required {
 .icon-delete {
     background-position: -312px 0;
 }
+.icon-edit-sign {
+  background-position: 0px -72px;
+}
 .icon-plus-sign {
     background-position: -408px -96px;
 }
