@@ -151,7 +151,9 @@ TEMPLATES[0]['OPTIONS']['loaders'] = [
 # Use the Heroku-style specification
 # Raises ImproperlyConfigured exception if DATABASE_URL not in os.environ
 DATABASES['default'] = env.db('DATABASE_URL')
-#DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
+
+if env.bool('DATABASE_SSL_ENABLED', default=False):
+    DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
 
 # CACHING
 # ------------------------------------------------------------------------------
