@@ -2,19 +2,16 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.utils.translation import ugettext as _
 from django import forms
-import json
-import itertools
 from dal import autocomplete
 from django.core.urlresolvers import reverse
-from .models import Enrollment, LoggingStudentMove, EducationYear
-from student_registration.students.models import Student
 
-from model_utils import Choices
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
 from bootstrap3_datetime.widgets import DateTimePicker
+
 from student_registration.students.models import (
+    Student,
     IDType,
     Nationality,
 )
@@ -26,6 +23,7 @@ from student_registration.schools.models import (
     ClassLevel,
 )
 from student_registration.alp.models import ALPRound
+from .models import Enrollment, LoggingStudentMove, EducationYear
 from .serializers import EnrollmentSerializer
 
 YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
