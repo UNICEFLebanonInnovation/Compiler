@@ -356,6 +356,45 @@ class Enrollment(TimeStampedModel):
         verbose_name=_('Student status')
     )
 
+    exam_result_arabic_cmplt = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Arabic Term 2')
+    )
+
+    exam_result_language_cmplt = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Foreign language Term 2')
+    )
+
+    exam_result_math_cmplt = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Arabic Term 2')
+    )
+
+    exam_total_cmplt = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        verbose_name=_('Final Grade Term 2')
+    )
+
+    exam_result_final = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=EXAM_RESULT,
+        verbose_name=_('Final Student status')
+    )
+
     deleted = models.BooleanField(blank=True, default=False)
     dropout_status = models.BooleanField(blank=True, default=False)
     moved = models.BooleanField(blank=True, default=False)
@@ -389,6 +428,8 @@ class Enrollment(TimeStampedModel):
 
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
+
+
 
     @property
     def student_fullname(self):

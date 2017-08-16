@@ -58,7 +58,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     student_phone_prefix = serializers.CharField(source='student.phone_prefix')
     student_id_number = serializers.CharField(source='student.id_number')
     student_registered_in_unhcr = serializers.CharField(source='student.registered_in_unhcr')
-    student_id_type = serializers.CharField(source='student.id_type')
+    student_id_type = serializers.CharField(source='student.id_type.id')
     student_id_type_name = serializers.CharField(source='student.id_type.name', read_only=True)
     student_number = serializers.CharField(source='student.number', read_only=True)
     student_nationality = serializers.CharField(source='student.nationality')

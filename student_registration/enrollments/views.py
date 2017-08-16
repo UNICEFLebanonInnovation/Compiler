@@ -38,7 +38,7 @@ from student_registration.alp.models import ALPRound
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from .models import Enrollment, LoggingStudentMove, EducationYear
-from .forms import EnrollmentForm
+from .forms import EnrollmentForm, GradingTerm1Form, GradingTerm2Form
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
 
 
@@ -100,7 +100,6 @@ class EnrollmentEditView(LoginRequiredMixin,
 
     template_name = 'enrollments/edit.html'
     form_class = EnrollmentForm
-    # queryset = Enrollment.objects.all()
     success_url = '/enrollments/list/'
 
     def get_context_data(self, **kwargs):
@@ -110,17 +109,17 @@ class EnrollmentEditView(LoginRequiredMixin,
             kwargs['form'] = self.get_form()
         return super(EnrollmentEditView, self).get_context_data(**kwargs)
 
-    # def get_form(self, form_class=None):
-        # print EnrollmentForm(instance=Enrollment.objects.get(id=48677))
-        # form = super(EnrollmentEditView, self).get_form(form_class)
-        # print form
-        # return EnrollmentForm(instance=Enrollment.objects.get(id=48677))
-
-    # def get_object(self):
-    #     return EnrollmentForm(instance=Enrollment.objects.get(id=48677))
+    def get_form(self, form_class=None):
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            EnrollmentForm(self.request.POST, instance=instance)
+        else:
+            data = EnrollmentSerializer(instance).data
+            return EnrollmentForm(data, instance=instance)
 
     def form_valid(self, form):
-        form.save(self.request)
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
         return super(EnrollmentEditView, self).form_valid(form)
 
 
@@ -136,10 +135,49 @@ class EnrollmentListView(LoginRequiredMixin,
 
     filterset_class = EnrollmentFilter
 
+    def get_queryset(self):
+        education_year = EducationYear.objects.get(current_year=True)
+        # return Enrollment.objects.filter(education_year=education_year, school=self.request.user.school_id)
+        return Enrollment.objects.filter(school=self.request.user.school_id)
+
     # def get_context_data(self, **kwargs):
     #     return {
     #         'table': self.table
     #     }
+
+
+class GradingView(LoginRequiredMixin,
+                         # GroupRequiredMixin,
+                         FormView):
+
+    template_name = 'enrollments/grading.html'
+    form_class = GradingTerm1Form
+    success_url = '/enrollments/list/'
+
+    def get_context_data(self, **kwargs):
+        # force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(GradingView, self).get_context_data(**kwargs)
+
+    def get_form_class(self):
+        if int(self.kwargs['term']) == 2:
+            return GradingTerm2Form
+        return GradingTerm1Form
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(GradingView, self).form_valid(form)
 
 
 # class EnrollmentEditView(LoginRequiredMixin,
