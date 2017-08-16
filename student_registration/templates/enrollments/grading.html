@@ -2,8 +2,6 @@
 {% load staticfiles i18n %}
 {% load crispy_forms_tags %}
 
-{% block head_title %}Registration{% endblock %}
-
 {% block extra_head %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
@@ -14,19 +12,28 @@
 
     <div id="resume" class="inner-content">
 
-        <section id="page-title" class="inner-section ui-menu-color02">
-            <div class="container-fluid nopadding">
-                <h2 class="font-accident-two-light color01 uppercase"
-                    data-animation-origin="right"
-                    data-animation-duration="400"
-                    data-animation-delay="100"
-                    data-animation-distance="50px">{% trans "Registration" %}</h2>
-
-            </div>
-        </section>
-
         <section class="inner-section light bg-color01">
             <div class="container-fluid nopadding">
+                <fieldset>
+                    <legend>{% trans "Student base data" %}</legend>
+                    <blockquote class="blockquote">
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Student fullname" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.student }}</div>
+                        </div>
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Current situation" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.classroom }} - {{ form.instance.section }}</div>
+                        </div>
+                        {% if form.fields.term.initial == '2' %}
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Previows situation" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.exam_total }} - {{ form.instance.exam_result }}</div>
+                        </div>
+                        {% endif %}
+                    </blockquote>
+                </fieldset>
+
                 {{ form.errors }}
                 {% crispy form %}
             </div>
@@ -37,8 +44,5 @@
 {% endblock %}
 
 {% block extra_js %}
-
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
 
 {% endblock %}
