@@ -16,8 +16,16 @@ urlpatterns = [
         view=views.EnrollmentEditView.as_view(),
         name='edit'
     ),
-
-    url(r'^list/$', views.EnrollmentListView.as_view(), name='list'),
+    url(
+        regex=r'^list/$',
+        view=views.EnrollmentListView.as_view(),
+        name='list'
+    ),
+    url(
+        regex=r'^grading/(?P<pk>[\w.@+-]+)/(?P<term>[\w.@+-]+)/$',
+        view=views.GradingView.as_view(),
+        name='grading'
+    ),
 
     url(
         regex=r'^enrollment-patch/$',
