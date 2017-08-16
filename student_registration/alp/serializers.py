@@ -9,46 +9,6 @@ from student_registration.students.models import (
 )
 
 
-def update_student(student_data, student):
-
-    if 'first_name' in student_data:
-        student.first_name = student_data['first_name']
-    if 'father_name' in student_data:
-        student.father_name = student_data['father_name']
-    if 'last_name' in student_data:
-        student.last_name = student_data['last_name']
-    if 'mother_fullname' in student_data:
-        student.mother_fullname = student_data['mother_fullname']
-
-    if 'birthday_year' in student_data:
-        student.birthday_year = student_data['birthday_year']
-    if 'birthday_month' in student_data:
-        student.birthday_month = student_data['birthday_month']
-    if 'birthday_day' in student_data:
-        student.birthday_day = student_data['birthday_day']
-
-    if 'sex' in student_data:
-        student.sex = student_data['sex']
-    if 'phone' in student_data:
-        student.phone = student_data['phone']
-    if 'phone_prefix' in student_data:
-        student.phone_prefix = student_data['phone_prefix']
-    if 'address' in student_data:
-        student.address = student_data['address']
-    if 'nationality' in student_data:
-        student.nationality_id = student_data['nationality']
-    if 'mother_nationality' in student_data:
-        student.mother_nationality_id = student_data['mother_nationality']
-    if 'id_type' in student_data:
-        student.id_type_id = student_data['id_type']
-    if 'id_number' in student_data:
-        student.id_number = student_data['id_number']
-
-    student.save()
-
-    return student
-
-
 class OutreachSerializer(serializers.ModelSerializer):
 
     original_id = serializers.IntegerField(source='id', read_only=True)
@@ -98,20 +58,29 @@ class OutreachSerializer(serializers.ModelSerializer):
     posttest_total = serializers.CharField(read_only=True)
     next_level = serializers.CharField(read_only=True)
 
+    csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
+    save = serializers.IntegerField(source='owner.id', read_only=True)
+    enrollment_id = serializers.IntegerField(source='id', read_only=True)
+    search_student = serializers.CharField(source='student.full_name', read_only=True)
+    search_school = serializers.CharField(source='school.name', read_only=True)
+    search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
+
     def create(self, validated_data):
         from student_registration.students.serializers import StudentSerializer
         student_data = validated_data.pop('student', None)
+
         if 'id' in student_data and student_data['id']:
-            student = update_student(student_data, Student.objects.get(id=student_data['id']))
+            student_serializer = StudentSerializer(Student.objects.get(id=student_data['id']), data=student_data)
+            student_serializer.is_valid(raise_exception=True)
+            student_serializer.instance = student_serializer.save()
         else:
             student_serializer = StudentSerializer(data=student_data)
             student_serializer.is_valid(raise_exception=True)
             student_serializer.instance = student_serializer.save()
-            student = student_serializer.instance
 
         try:
             instance = Outreach.objects.create(**validated_data)
-            instance.student = student
+            instance.student = student_serializer.instance
             instance.save()
 
         except Exception as ex:
@@ -122,32 +91,41 @@ class OutreachSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
 
         try:
-
             student_data = validated_data.pop('student', None)
-            student = update_student(student_data, instance.student)
 
-            if 'registered_in_unhcr' in validated_data:
-                instance.registered_in_unhcr = validated_data['registered_in_unhcr']
-            if 'participated_in_alp' in validated_data:
-                instance.participated_in_alp = validated_data['participated_in_alp']
-            if 'last_informal_edu_level' in validated_data:
-                instance.last_informal_edu_level = validated_data['last_informal_edu_level']
-            if 'last_informal_edu_round' in validated_data:
-                instance.last_informal_edu_round = validated_data['last_informal_edu_round']
-            if 'last_informal_edu_final_result' in validated_data:
-                instance.last_informal_edu_final_result = validated_data['last_informal_edu_final_result']
-            if 'section' in validated_data:
-                instance.section = validated_data['section']
-            if 'registered_in_level' in validated_data:
-                instance.registered_in_level = validated_data['registered_in_level']
-            if 'assigned_to_level' in validated_data:
-                instance.assigned_to_level = validated_data['assigned_to_level']
-            if 'last_education_level' in validated_data:
-                instance.last_education_level = validated_data['last_education_level']
-            if 'last_education_year' in validated_data:
-                instance.last_education_year = validated_data['last_education_year']
-            if 'level' in validated_data:
-                instance.level = validated_data['level']
+            if student_data:
+                from student_registration.students.serializers import StudentSerializer
+
+                student_serializer = StudentSerializer(instance.student, data=student_data)
+                student_serializer.is_valid(raise_exception=True)
+                student_serializer.instance = student_serializer.save()
+
+            for key in validated_data:
+                if hasattr(instance, key):
+                    instance.setattr(key, validated_data[key])
+
+            # if 'registered_in_unhcr' in validated_data:
+            #     instance.registered_in_unhcr = validated_data['registered_in_unhcr']
+            # if 'participated_in_alp' in validated_data:
+            #     instance.participated_in_alp = validated_data['participated_in_alp']
+            # if 'last_informal_edu_level' in validated_data:
+            #     instance.last_informal_edu_level = validated_data['last_informal_edu_level']
+            # if 'last_informal_edu_round' in validated_data:
+            #     instance.last_informal_edu_round = validated_data['last_informal_edu_round']
+            # if 'last_informal_edu_final_result' in validated_data:
+            #     instance.last_informal_edu_final_result = validated_data['last_informal_edu_final_result']
+            # if 'section' in validated_data:
+            #     instance.section = validated_data['section']
+            # if 'registered_in_level' in validated_data:
+            #     instance.registered_in_level = validated_data['registered_in_level']
+            # if 'assigned_to_level' in validated_data:
+            #     instance.assigned_to_level = validated_data['assigned_to_level']
+            # if 'last_education_level' in validated_data:
+            #     instance.last_education_level = validated_data['last_education_level']
+            # if 'last_education_year' in validated_data:
+            #     instance.last_education_year = validated_data['last_education_year']
+            # if 'level' in validated_data:
+            #     instance.level = validated_data['level']
             # if 'modified_by' in validated_data:
             #     instance.modified_by_id = validated_data['modified_by']
 
@@ -306,23 +284,33 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
         try:
 
             student_data = validated_data.pop('student', None)
-            student = update_student(student_data, instance.student)
 
-            if 'level' in validated_data:
-                instance.level = validated_data['level']
-            if 'assigned_to_level' in validated_data:
-                instance.assigned_to_level = validated_data['assigned_to_level']
+            if student_data:
+                from student_registration.students.serializers import StudentSerializer
 
-            if 'exam_result_arabic' in validated_data:
-                instance.exam_result_arabic = validated_data['exam_result_arabic']
-            if 'exam_language' in validated_data:
-                instance.exam_language = validated_data['exam_language']
-            if 'exam_result_language' in validated_data:
-                instance.exam_result_language = validated_data['exam_result_language']
-            if 'exam_result_math' in validated_data:
-                instance.exam_result_math = validated_data['exam_result_math']
-            if 'exam_result_science' in validated_data:
-                instance.exam_result_science = validated_data['exam_result_science']
+                student_serializer = StudentSerializer(instance.student, data=student_data)
+                student_serializer.is_valid(raise_exception=True)
+                student_serializer.instance = student_serializer.save()
+
+            for key in validated_data:
+                if hasattr(instance, key):
+                    instance.setattr(key, validated_data[key])
+
+            # if 'level' in validated_data:
+            #     instance.level = validated_data['level']
+            # if 'assigned_to_level' in validated_data:
+            #     instance.assigned_to_level = validated_data['assigned_to_level']
+            #
+            # if 'exam_result_arabic' in validated_data:
+            #     instance.exam_result_arabic = validated_data['exam_result_arabic']
+            # if 'exam_language' in validated_data:
+            #     instance.exam_language = validated_data['exam_language']
+            # if 'exam_result_language' in validated_data:
+            #     instance.exam_result_language = validated_data['exam_result_language']
+            # if 'exam_result_math' in validated_data:
+            #     instance.exam_result_math = validated_data['exam_result_math']
+            # if 'exam_result_science' in validated_data:
+            #     instance.exam_result_science = validated_data['exam_result_science']
 
             # if 'exam_corrector_arabic' in validated_data:
             #     instance.exam_corrector_arabic = validated_data['exam_corrector_arabic']
@@ -333,8 +321,8 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             # if 'exam_corrector_science' in validated_data:
             #     instance.exam_corrector_science = validated_data['exam_corrector_science']
 
-            if 'modified_by' in validated_data:
-                instance.modified_by = validated_data['modified_by']
+            # if 'modified_by' in validated_data:
+            #     instance.modified_by = validated_data['modified_by']
 
             instance.save()
 
