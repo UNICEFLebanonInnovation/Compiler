@@ -476,40 +476,195 @@ class EnrollmentForm(forms.ModelForm):
         )
 
 
-class GradingForm(forms.ModelForm):
+class GradingTerm1Form(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(GradingForm, self).__init__(*args, **kwargs)
+        super(GradingTerm1Form, self).__init__(*args, **kwargs)
+        instance = kwargs['instance']
 
         self.helper = FormHelper()
         self.helper.form_show_labels = False
-        self.helper.form_action = reverse('enrollments:grading')
+        self.helper.form_action = reverse('enrollments:grading', args={'pk': instance.id, 'term': 1})
+        if instance.classroom == 1:
+            pass
+
         self.helper.layout = Layout(
             Fieldset(
-                _('Registry'),
+                _('Grading Term 1'),
                 Div(
-                    Div(InlineRadios('new_registry'), css_class='col-md-4'),
-                    Div(InlineRadios('student_outreached'), css_class='col-md-4'),
-                    Div(InlineRadios('have_barcode'), css_class='col-md-4 invisible', css_id='have_barcode_option'),
+                    Div(PrependedText('exam_result_arabic', _('Arabic')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_language', _('Foreign language')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_education', _('Education')), css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('exam_result_geo', _('Geography')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_history', _('History')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_math', _('Math')), css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('exam_result_science', _('Science')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_physic', _('Physic')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_chemistry', _('Chemistry')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_bio', _('Biology')), css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('exam_result_linguistic_ar', _('Linguistic field/Arabic')),
+                        css_class='col-md-4'),
+                    Div(PrependedText('exam_result_linguistic_en', _('Linguistic field/Foreign language')),
+                        css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('exam_result_sociology', _('Sociology field')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_physical', _('Physical field')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_artistic', _('Artistic field')), css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('exam_result_mathematics', _('Scientific domain/Mathematics')),
+                        css_class='col-md-4'),
+                    Div(PrependedText('exam_result_sciences', _('Scientific domain/Sciences')),
+                        css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('exam_total', _('Final Grade')), css_class='col-md-4'),
+                    Div('exam_result', css_class='col-md-4'),
                     css_class='row',
                 ),
             ),
         )
 
     def save(self, request=None):
-        instance = super(GradingForm, self).save()
+        instance = super(GradingTerm1Form, self).save()
 
     class Meta:
         model = Enrollment
-        fields = ()
+        fields = (
+            'exam_result_arabic',
+            'exam_result_language',
+            'exam_result_education',
+            'exam_result_geo',
+            'exam_result_history',
+            'exam_result_math',
+            'exam_result_science',
+            'exam_result_physic',
+            'exam_result_chemistry',
+            'exam_result_bio',
+            'exam_result_linguistic_ar',
+            'exam_result_linguistic_en',
+            'exam_result_sociology',
+            'exam_result_physical',
+            'exam_result_artistic',
+            'exam_result_mathematics',
+            'exam_result_sciences',
+            'exam_total',
+            'exam_result',
+        )
         initial_fields = fields
         widgets = {}
 
     class Media:
         js = (
-            # 'js/bootstrap-datetimepicker.js',
-            'js/validator.js',
-            'js/registrations.js'
+        )
+
+
+class GradingTerm2Form(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(GradingTerm2Form, self).__init__(*args, **kwargs)
+        instance = kwargs['instance']
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = False
+        self.helper.form_action = reverse('enrollments:grading', args={'pk': instance.id, 'term': 2})
+        if instance.classroom == 1:
+            pass
+
+        self.helper.layout = Layout(
+            Fieldset(
+                _('Grading Term 2'),
+                Div(
+                    Div(PrependedText('exam_result_arabic', _('Arabic')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_language', _('Foreign language')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_education', _('Education')), css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('exam_result_geo', _('Geography')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_history', _('History')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_math', _('Math')), css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('exam_result_science', _('Science')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_physic', _('Physic')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_chemistry', _('Chemistry')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_bio', _('Biology')), css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('exam_result_linguistic_ar', _('Linguistic field/Arabic')),
+                        css_class='col-md-4'),
+                    Div(PrependedText('exam_result_linguistic_en', _('Linguistic field/Foreign language')),
+                        css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('exam_result_sociology', _('Sociology field')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_physical', _('Physical field')), css_class='col-md-4'),
+                    Div(PrependedText('exam_result_artistic', _('Artistic field')), css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('exam_result_mathematics', _('Scientific domain/Mathematics')),
+                        css_class='col-md-4'),
+                    Div(PrependedText('exam_result_sciences', _('Scientific domain/Sciences')),
+                        css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    Div(PrependedText('exam_total', _('Final Grade')), css_class='col-md-4'),
+                    Div('exam_result', css_class='col-md-4'),
+                    css_class='row',
+                ),
+            ),
+        )
+
+    def save(self, request=None):
+        instance = super(GradingTerm2Form, self).save()
+
+    class Meta:
+        model = Enrollment
+        fields = (
+            'exam_result_arabic',
+            'exam_result_language',
+            'exam_result_education',
+            'exam_result_geo',
+            'exam_result_history',
+            'exam_result_math',
+            'exam_result_science',
+            'exam_result_physic',
+            'exam_result_chemistry',
+            'exam_result_bio',
+            'exam_result_linguistic_ar',
+            'exam_result_linguistic_en',
+            'exam_result_sociology',
+            'exam_result_physical',
+            'exam_result_artistic',
+            'exam_result_mathematics',
+            'exam_result_sciences',
+            'exam_total',
+            'exam_result',
+        )
+        initial_fields = fields
+        widgets = {}
+
+    class Media:
+        js = (
         )
 
 

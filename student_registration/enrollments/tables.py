@@ -20,6 +20,10 @@ class EnrollmentTable(tables.Table):
                                           template_name='django_tables2/delete_column.html')
     moved_column = tables.TemplateColumn(verbose_name='Student moved',
                                          template_name='django_tables2/moved_column.html')
+    grading_term1 = tables.TemplateColumn(verbose_name='Grading Term 1',
+                                         template_name='django_tables2/grading_term1_column.html')
+    grading_term2 = tables.TemplateColumn(verbose_name='Grading Term 2',
+                                         template_name='django_tables2/grading_term2_column.html')
 
     student_age = tables.Column(verbose_name='Age', accessor='student.age')
     student_birthday = tables.Column(verbose_name='Birthday', accessor='student.birthday')
@@ -34,6 +38,8 @@ class EnrollmentTable(tables.Table):
             'edit_column',
             'delete_column',
             'moved_column',
+            'grading_term1',
+            'grading_term2',
             'student.first_name',
             'student.father_name',
             'student.last_name',
