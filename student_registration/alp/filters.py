@@ -7,6 +7,7 @@ class OutreachFilter(FilterSet):
     class Meta:
         model = Outreach
         fields = {
+            'school': ['exact'],
             'student__first_name': ['contains'],
             'student__father_name': ['contains'],
             'student__last_name': ['contains'],
@@ -18,13 +19,39 @@ class OutreachFilter(FilterSet):
 class PreTestFilter(OutreachFilter):
     class Meta:
         model = Outreach
+        fields = {
+            'school': ['exact'],
+            'student__first_name': ['contains'],
+            'student__father_name': ['contains'],
+            'student__last_name': ['contains'],
+            'student__mother_fullname': ['contains'],
+            'student__id_number': ['exact'],
+        }
 
 
 class PostTestFilter(OutreachFilter):
     class Meta:
         model = Outreach
+        fields = {
+            'school': ['exact'],
+            'registered_in_level': ['exact'],
+            'student__first_name': ['contains'],
+            'student__father_name': ['contains'],
+            'student__last_name': ['contains'],
+            'student__mother_fullname': ['contains'],
+            'student__id_number': ['exact'],
+        }
 
 
-class SchoolFilter(OutreachFilter):
+class SchoolFilter(FilterSet):
     class Meta:
         model = Outreach
+        fields = {
+            'registered_in_level': ['exact'],
+            'section': ['exact'],
+            'student__first_name': ['contains'],
+            'student__father_name': ['contains'],
+            'student__last_name': ['contains'],
+            'student__mother_fullname': ['contains'],
+            'student__id_number': ['exact'],
+        }
