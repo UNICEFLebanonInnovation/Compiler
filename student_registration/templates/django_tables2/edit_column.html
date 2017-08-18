@@ -1,5 +1,5 @@
 {% load staticfiles i18n %}
-<a href="/enrollments/edit/{{ record.id }}" class="btn btn-info">
+<a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-info">
     <i class="icon-edit-sign icon-white"></i>
     {% trans "Edit" %}
 </a>
