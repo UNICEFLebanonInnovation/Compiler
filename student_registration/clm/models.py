@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
-from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import ArrayField, JSONField
 
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
@@ -13,7 +13,6 @@ from student_registration.locations.models import Location
 from student_registration.schools.models import (
     School,
     ClassRoom,
-    Section,
     EducationalLevel,
 )
 
@@ -96,8 +95,13 @@ class Disability(models.Model):
 class CLM(TimeStampedModel):
 
     LANGUAGES = Choices(
-        ('english', _('English/Arabic')),
-        ('french', _('French/Arabic'))
+        ('english_arabic', _('English/Arabic')),
+        ('french_arabic', _('French/Arabic'))
+    )
+    STATUS = Choices(
+        'enrolled',
+        'pre_test',
+        'post_test'
     )
 
     district = models.ForeignKey(
@@ -156,12 +160,12 @@ class CLM(TimeStampedModel):
         related_name='+',
     )
 
-    section = models.ForeignKey(
-        Section,
-        blank=True, null=True,
-        related_name='+',
-        verbose_name=_('Current Section')
-    )
+    status = models.CharField(max_length=50, choices=STATUS, default=STATUS.enrolled)
+    pre_test = JSONField(blank=True, null=True)
+    post_test = JSONField(blank=True, null=True)
+
+    scores = JSONField(blank=True, null=True, default=dict)
+
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
