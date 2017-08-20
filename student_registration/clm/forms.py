@@ -4,6 +4,7 @@ from django.utils.translation import ugettext as _
 from django import forms
 from django.core.urlresolvers import reverse
 
+from model_utils import Choices
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
@@ -20,7 +21,18 @@ from student_registration.schools.models import (
     EducationLevel,
     ClassLevel,
 )
-from .models import CLM, BLN, RS, CBECE
+from student_registration.locations.models import Location
+from .models import (
+    CLM,
+    BLN,
+    RS,
+    CBECE,
+    Cycle,
+    RSCycle,
+    Referral,
+    Disability,
+    Site,
+)
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer
 
 YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
@@ -63,12 +75,60 @@ class CommonForm(forms.ModelForm):
         required=False, to_field_name='id',
         initial=0
     )
-    school_type = forms.ChoiceField(
+
+    cycle = forms.ModelChoiceField(
+        queryset=Cycle.objects.all(), widget=forms.Select,
+        empty_label=_('Programme Cycle'),
+        required=False, to_field_name='id',
+        initial=0
+    )
+
+    site = forms.ModelChoiceField(
+        queryset=Site.objects.all(), widget=forms.Select,
+        empty_label=_('Programme Site'),
+        required=False, to_field_name='id',
+        initial=0
+    )
+
+    governorate = forms.ModelChoiceField(
+        queryset=Location.objects.all(parent__isnull=True), widget=forms.Select,
+        empty_label=_('Governorate'),
+        required=True, to_field_name='id',
+        initial=0
+    )
+    district = forms.ModelChoiceField(
+        queryset=Location.objects.all(parent__isnull=False), widget=forms.Select,
+        empty_label=_('District'),
+        required=True, to_field_name='id',
+        initial=0
+    )
+    location = forms.CharField(widget=forms.TextInput, required=True)
+    school = forms.ModelChoiceField(
+        queryset=School.objects.all(), widget=forms.Select,
+        empty_label=_('School'),
+        required=False, to_field_name='id',
+        initial=0
+    )
+    language = forms.MultipleChoiceField(
+        choices=Choices(
+            ('english_arabic', _('English/Arabic')),
+            ('french_arabic', _('French/Arabic'))
+        ),
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+    referral = forms.ModelChoiceField(
+        queryset=Referral.objects.all(), widget=forms.Select,
+        empty_label=_('Referral'),
+        required=False, to_field_name='id',
+        initial=0
+    )
+    shift = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=(
-            ('', _('School type')),
-            ('alp', _('ALP')),
-            ('2ndshift', _('2nd Shift')),
+            ('', _('School shift')),
+            ('first', _('First shift')),
+            ('second', _('Second shift')),
         )
     )
 
@@ -133,30 +193,19 @@ class CommonForm(forms.ModelForm):
         widget=forms.RadioSelect,
         required=True,
     )
-    student_id_type = forms.ModelChoiceField(
-        queryset=IDType.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id', empty_label=_('Student ID Type')
-    )
-    student_id_number = forms.CharField(widget=forms.TextInput, required=True)
-
-    student_phone_prefix = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 2})), required=True)
-    student_phone = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 6})), required=True)
+    # student_id_type = forms.ModelChoiceField(
+    #     queryset=IDType.objects.all(), widget=forms.Select,
+    #     required=True, to_field_name='id', empty_label=_('Student ID Type')
+    # )
+    # student_id_number = forms.CharField(widget=forms.TextInput, required=True)
+    #
+    # student_phone_prefix = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 2})), required=True)
+    # student_phone = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 6})), required=True)
     student_address = forms.CharField(widget=forms.TextInput, required=True)
-
-    classroom = forms.ModelChoiceField(
-        queryset=ClassRoom.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
-    )
-    section = forms.ModelChoiceField(
-        queryset=Section.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
-        initial=1
-    )
 
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
     student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
-    school = forms.CharField(widget=forms.HiddenInput, required=False)
     # owner = forms.CharField(widget=forms.HiddenInput, required=False)
     education_year = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -323,6 +372,14 @@ class BLNForm(CommonForm):
 
 
 class RSForm(CommonForm):
+
+    cycle = forms.ModelChoiceField(
+        queryset=RSCycle.objects.all(), widget=forms.Select,
+        empty_label=_('Programme Cycle'),
+        required=True, to_field_name='id',
+        initial=0
+    )
+
     def save(self, request=None, instance=None, serializer=None):
         super(RSForm, self).save()
 
@@ -332,6 +389,7 @@ class RSForm(CommonForm):
 
 
 class CBECEForm(CommonForm):
+
     def save(self, request=None, instance=None, serializer=None):
         super(CBECEForm, self).save()
 
