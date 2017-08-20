@@ -3,6 +3,56 @@ from rest_framework import serializers
 from .models import CLM, BLN, RS, CBECE
 
 
+def create_instance(validated_data, model):
+    from student_registration.students.serializers import StudentSerializer
+    from student_registration.students.models import Student
+
+    student_data = validated_data.pop('student', None)
+
+    if 'id' in student_data and student_data['id']:
+        student_serializer = StudentSerializer(Student.objects.get(id=student_data['id']), data=student_data)
+        student_serializer.is_valid(raise_exception=True)
+        student_serializer.instance = student_serializer.save()
+    else:
+        student_serializer = StudentSerializer(data=student_data)
+        student_serializer.is_valid(raise_exception=True)
+        student_serializer.instance = student_serializer.save()
+
+    try:
+        instance = model.objects.create(**validated_data)
+        instance.student = student_serializer.instance
+        instance.save()
+
+    except Exception as ex:
+        raise serializers.ValidationError({'Enrollment instance': ex.message})
+
+    return instance
+
+
+def update_instance(instance, validated_data):
+    student_data = validated_data.pop('student', None)
+
+    if student_data:
+        from student_registration.students.serializers import StudentSerializer
+
+        student_serializer = StudentSerializer(instance.student, data=student_data)
+        student_serializer.is_valid(raise_exception=True)
+        student_serializer.instance = student_serializer.save()
+
+    try:
+
+        for key in validated_data:
+            if hasattr(instance, key):
+                instance.setattr(key, validated_data[key])
+
+        instance.save()
+
+    except Exception as ex:
+        raise serializers.ValidationError({'Enrollment instance': ex.message})
+
+    return instance
+
+
 class CLMSerializer(serializers.ModelSerializer):
 
     original_id = serializers.IntegerField(source='id', read_only=True)
@@ -48,55 +98,6 @@ class CLMSerializer(serializers.ModelSerializer):
     search_school = serializers.CharField(source='school.name', read_only=True)
     school_type = serializers.CharField(source='school.name', read_only=True)
     search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
-
-    def create(self, validated_data):
-        from student_registration.students.serializers import StudentSerializer
-        from student_registration.students.models import Student
-
-        student_data = validated_data.pop('student', None)
-
-        if 'id' in student_data and student_data['id']:
-            student_serializer = StudentSerializer(Student.objects.get(id=student_data['id']), data=student_data)
-            student_serializer.is_valid(raise_exception=True)
-            student_serializer.instance = student_serializer.save()
-        else:
-            student_serializer = StudentSerializer(data=student_data)
-            student_serializer.is_valid(raise_exception=True)
-            student_serializer.instance = student_serializer.save()
-
-        try:
-            instance = Enrollment.objects.create(**validated_data)
-            instance.student = student_serializer.instance
-            instance.save()
-
-        except Exception as ex:
-            raise serializers.ValidationError({'Enrollment instance': ex.message})
-
-        return instance
-
-    def update(self, instance, validated_data):
-
-        student_data = validated_data.pop('student', None)
-
-        if student_data:
-            from student_registration.students.serializers import StudentSerializer
-
-            student_serializer = StudentSerializer(instance.student, data=student_data)
-            student_serializer.is_valid(raise_exception=True)
-            student_serializer.instance = student_serializer.save()
-
-        try:
-
-            for key in validated_data:
-                if hasattr(instance, key):
-                    instance.setattr(key, validated_data[key])
-
-            instance.save()
-
-        except Exception as ex:
-            raise serializers.ValidationError({'Enrollment instance': ex.message})
-
-        return instance
 
     class Meta:
         model = CLM
@@ -153,3 +154,38 @@ class CLMSerializer(serializers.ModelSerializer):
             'school_type',
         )
 
+
+class BLNSerializer(CLMSerializer):
+
+    def create(self, validated_data):
+        create_instance(validated_data=validated_data, model=self.Meta.model)
+
+    def update(self, instance, validated_data):
+        update_instance(instance=instance, validated_data=validated_data)
+
+    class Meta:
+        model = BLN
+
+
+class RSSerializer(CLMSerializer):
+
+    def create(self, validated_data):
+        create_instance(validated_data=validated_data, model=self.Meta.model)
+
+    def update(self, instance, validated_data):
+        update_instance(instance=instance, validated_data=validated_data)
+
+    class Meta:
+        model = RS
+
+
+class CBECESerializer(CLMSerializer):
+
+    def create(self, validated_data):
+        create_instance(validated_data=validated_data, model=self.Meta.model)
+
+    def update(self, instance, validated_data):
+        update_instance(instance=instance, validated_data=validated_data)
+
+    class Meta:
+        model = CBECE

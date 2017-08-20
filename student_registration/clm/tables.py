@@ -61,12 +61,6 @@ class CommonTable(tables.Table):
             'student.id_number',
             'student.address',
             'student_phone_number',
-            'last_education_level',
-            'last_education_year',
-            'participated_in_alp',
-            'last_informal_edu_level',
-            'last_informal_edu_round',
-            'last_informal_edu_final_result',
         )
 
 
