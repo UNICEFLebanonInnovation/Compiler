@@ -7,7 +7,7 @@ from . import views
 urlpatterns = [
 
     url(
-        regex=r'^/$',
+        regex=r'^index/$',
         view=views.CLMView.as_view(),
         name='clm'
     ),

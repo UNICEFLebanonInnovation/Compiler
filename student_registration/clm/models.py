@@ -127,7 +127,7 @@ class CLM(TimeStampedModel):
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
-        related_name='clm_enrollments',
+        related_name='+',
     )
     disability = models.ForeignKey(
         Disability,
@@ -140,17 +140,12 @@ class CLM(TimeStampedModel):
         null=True,
         choices=Choices((1, _("Yes")), (0, _("No")))
     )
-    labours = ArrayField(
-        models.ForeignKey(
-            Labour,
-            blank=True, null=True,
-            related_name='+',
-        ),
+    labours = models.ManyToManyField(
+        Labour,
         blank=True,
-        null=True,
+        related_name='+'
     )
     labour_hours = models.IntegerField(
-        max_length=5,
         blank=True,
         null=True,
     )
@@ -233,14 +228,10 @@ class BLN(CLM):
         blank=True, null=True,
         related_name='+',
     )
-    referral = ArrayField(
-        models.ForeignKey(
-            Cycle,
-            blank=True, null=True,
-            related_name='+',
-        ),
+    referral = models.ManyToManyField(
+        Cycle,
         blank=True,
-        null=True,
+        related_name='+'
     )
 
 
@@ -296,14 +287,10 @@ class CBECE(CLM):
         blank=False, null=True,
         related_name='+',
     )
-    referral = ArrayField(
-        models.ForeignKey(
-            Cycle,
-            blank=True, null=True,
-            related_name='+',
-        ),
+    referral = models.ManyToManyField(
+        Cycle,
         blank=True,
-        null=True,
+        related_name='+'
     )
     child_muac = models.CharField(
         max_length=50,
@@ -316,14 +303,10 @@ class CBECE(CLM):
         blank=True, null=True,
         related_name='+',
     )
-    referral_reasons = ArrayField(
-        models.ForeignKey(
-            Cycle,
-            blank=True, null=True,
-            related_name='+',
-        ),
+    referral_reasons = models.ManyToManyField(
+        Cycle,
         blank=True,
-        null=True,
+        related_name='+'
     )
     pre_test_arabic = models.IntegerField(
         blank=True,
