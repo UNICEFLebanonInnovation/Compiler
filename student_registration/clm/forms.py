@@ -20,7 +20,6 @@ from student_registration.schools.models import (
     EducationLevel,
     ClassLevel,
 )
-from student_registration.alp.models import ALPRound
 from .models import CLM, BLN, RS, CBECE
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer
 
@@ -154,88 +153,17 @@ class CommonForm(forms.ModelForm):
         initial=1
     )
 
-    last_education_level = forms.ModelChoiceField(
-        label=_('Last education level'),
-        queryset=ClassRoom.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
-    )
-    last_school_type = forms.ChoiceField(
-        widget=forms.Select, required=True,
-        choices=(
-            ('', _('School type')),
-            ('out_the_country', _('School out of the country')),
-            ('public_in_country', _('Public school in the country')),
-            ('private_in_country', _('Private school in the country')),
-        )
-    )
-    last_school_shift = forms.ChoiceField(
-        widget=forms.Select, required=True,
-        choices=(
-            ('', _('School shift')),
-            ('first', _('First shift')),
-            ('second', _('Second shift')),
-        )
-    )
-    last_school = forms.ModelChoiceField(
-        queryset=School.objects.all(), widget=forms.Select,
-        label=_('School'),
-        required=True, to_field_name='id',
-    )
-    last_education_year = forms.ChoiceField(
-        widget=forms.Select, required=True,
-        choices=EDUCATION_YEARS,
-        initial='0',
-    )
-    last_year_result = forms.ChoiceField(
-        widget=forms.Select, required=True,
-        choices=(
-            ('', _('Result')),
-            ('graduated', _('Graduated')),
-            ('failed', _('Failed'))
-        )
-    )
-    participated_in_alp = forms.ChoiceField(
-        widget=forms.Select, required=True,
-        choices=(
-            ('', _('Participated in ALP')),
-            ('yes', _('Yes')),
-            ('no', _('No')),
-        )
-    )
-    last_informal_edu_level = forms.ModelChoiceField(
-        queryset=EducationLevel.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
-    )
-    last_informal_edu_round = forms.ModelChoiceField(
-        queryset=ALPRound.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
-    )
-    last_informal_edu_final_result = forms.ModelChoiceField(
-        queryset=ClassLevel.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
-    )
-
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
     student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
     school = forms.CharField(widget=forms.HiddenInput, required=False)
-    owner = forms.CharField(widget=forms.HiddenInput, required=False)
+    # owner = forms.CharField(widget=forms.HiddenInput, required=False)
     education_year = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)
         self.fields['classroom'].empty_label = _('Current Class')
         self.fields['section'].empty_label = _('Current Section')
-
-        self.fields['last_education_level'].empty_label = _('Last education level')
-        self.fields['last_school_type'].empty_label = _('School type')
-        self.fields['last_school_shift'].empty_label = _('School shift')
-        self.fields['last_school'].empty_label = _('School')
-        self.fields['last_education_year'].empty_label = _('Education year')
-        self.fields['last_year_result'].empty_label = _('Result')
-        self.fields['last_informal_edu_level'].empty_label = _('ALP level')
-        self.fields['last_informal_edu_round'].empty_label = _('ALP round')
-        self.fields['last_informal_edu_final_result'].empty_label = _('ALP result')
 
         self.helper = FormHelper()
         self.helper.form_show_labels = False
@@ -248,7 +176,7 @@ class CommonForm(forms.ModelForm):
                     'enrollment_id',
                     'student_outreach_child',
                     'school',
-                    'owner',
+                    # 'owner',
                     'education_year',
                     Div(InlineRadios('new_registry'), css_class='col-md-4'),
                     Div(InlineRadios('student_outreached'), css_class='col-md-4'),
@@ -326,39 +254,6 @@ class CommonForm(forms.ModelForm):
                 ),
                 css_class='invisible child_data'
             ),
-            Fieldset(
-                _('Last student formal education'),
-                Div(
-                    Div('last_education_level', css_class='col-md-6'),
-                    Div('last_school_type', css_class='col-md-6'),
-                    css_class='row',
-                ),
-                Div(
-                    Div('last_school_shift', css_class='col-md-6'),
-                    Div('last_school', css_class='col-md-6'),
-                    css_class='row',
-                ),
-                Div(
-                    Div('last_education_year', css_class='col-md-6'),
-                    Div('last_year_result', css_class='col-md-6'),
-                    css_class='row',
-                ),
-                css_class='invisible child_data'
-            ),
-            Fieldset(
-                _('Last student informal education'),
-                Div(
-                    Div('participated_in_alp', css_class='col-md-6'),
-                    Div('last_informal_edu_level', css_class='col-md-6'),
-                    css_class='row',
-                ),
-                Div(
-                    Div('last_informal_edu_round', css_class='col-md-6'),
-                    Div('last_informal_edu_final_result', css_class='col-md-6'),
-                    css_class='row',
-                ),
-                css_class='invisible child_data'
-            ),
             FormActions(
                 Submit('save', _('Save')),
                 Button('cancel', _('Cancel'))
@@ -375,7 +270,7 @@ class CommonForm(forms.ModelForm):
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.school = request.user.school
-                instance.owner = request.user
+                # instance.owner = request.user
                 instance.save()
 
     class Meta:
@@ -398,21 +293,11 @@ class CommonForm(forms.ModelForm):
             'student_nationality',
             'student_mother_nationality',
             'student_registered_in_unhcr',
-            'participated_in_alp',
-            'last_informal_edu_level',
-            'last_informal_edu_round',
-            'last_informal_edu_final_result',
             'student_address',
             'section',
             'classroom',
-            'last_year_result',
-            'last_school_type',
-            'last_school_shift',
-            'last_school',
-            'last_education_level',
-            'last_education_year',
             'outreach_barcode',
-            'owner',
+            # 'owner',
             # 'education_year',
         )
         initial_fields = fields
@@ -434,6 +319,7 @@ class BLNForm(CommonForm):
 
     class Meta:
         model = BLN
+        fields = CommonForm.Meta.fields
 
 
 class RSForm(CommonForm):
@@ -442,6 +328,7 @@ class RSForm(CommonForm):
 
     class Meta:
         model = RS
+        fields = CommonForm.Meta.fields
 
 
 class CBECEForm(CommonForm):
@@ -450,3 +337,4 @@ class CBECEForm(CommonForm):
 
     class Meta:
         model = CBECE
+        fields = CommonForm.Meta.fields
