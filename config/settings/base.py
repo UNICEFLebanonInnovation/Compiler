@@ -81,6 +81,7 @@ LOCAL_APPS = [
     'student_registration.students',  # custom students app
     'student_registration.outreach',  # custom alp app
     'student_registration.alp',  # custom alp app
+    'student_registration.clm',  # custom clm app
     'student_registration.attendances',  # custom attendances app
     'student_registration.enrollments',  # custom enrollments app
     'student_registration.schools',  # custom schools app
@@ -383,6 +384,7 @@ SUIT_CONFIG = {
         ]},
         {'app': 'auth', 'label': 'Groups', 'icon': 'icon-user'},
         {'app': 'users', 'label': 'Users', 'icon': 'icon-user'},
+        {'app': 'clm', 'label': 'CLM', 'icon': 'icon-th-list'},
         {'label': 'ALP', 'icon': 'icon-th-list', 'models': (
             'alp.CurrentRound',
             'alp.CurrentOutreach',

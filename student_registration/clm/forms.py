@@ -21,8 +21,8 @@ from student_registration.schools.models import (
     ClassLevel,
 )
 from student_registration.alp.models import ALPRound
-from .models import Enrollment, LoggingStudentMove, EducationYear
-from .serializers import EnrollmentSerializer
+from .models import CLM, BLN, RS, CBECE
+from .serializers import BLNSerializer, RSSerializer, CBECESerializer
 
 YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
 
@@ -33,7 +33,7 @@ DAYS = list(((str(x), x) for x in range(1, 32)))
 DAYS.append(('', _('Birthday Day')))
 
 
-class EnrollmentForm(forms.ModelForm):
+class CommonForm(forms.ModelForm):
 
     new_registry = forms.TypedChoiceField(
         label=_("First time registered?"),
@@ -74,16 +74,6 @@ class EnrollmentForm(forms.ModelForm):
     )
 
     registration_date = forms.DateField(
-        # widget=DateTimePicker(
-        #     options={
-        #         "viewMode": "years",
-        #         "format": "mm/dd/yyyy",
-        #         "pickTime": False,
-        #         "stepping": 0,
-        #         "showClear": True,
-        #         "showClose": True,
-        #         "disabledHours": True,
-        #     }),
         required=True
     )
 
@@ -233,7 +223,7 @@ class EnrollmentForm(forms.ModelForm):
     education_year = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
-        super(EnrollmentForm, self).__init__(*args, **kwargs)
+        super(CommonForm, self).__init__(*args, **kwargs)
         self.fields['classroom'].empty_label = _('Current Class')
         self.fields['section'].empty_label = _('Current Section')
 
@@ -375,22 +365,21 @@ class EnrollmentForm(forms.ModelForm):
             )
         )
 
-    def save(self, request=None, instance=None):
+    def save(self, request=None, instance=None, serializer=None):
         if instance:
-            serializer = EnrollmentSerializer(instance, data=request.POST)
+            serializer = serializer(instance, data=request.POST)
             if serializer.is_valid():
                 serializer.update(validated_data=serializer.validated_data)
         else:
-            serializer = EnrollmentSerializer(data=request.POST)
+            serializer = serializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.school = request.user.school
                 instance.owner = request.user
-                instance.education_year = EducationYear.objects.get(current_year=True)
                 instance.save()
 
     class Meta:
-        model = Enrollment
+        model = CLM
         fields = (
             'student_id',
             'enrollment_id',
@@ -436,3 +425,28 @@ class EnrollmentForm(forms.ModelForm):
             'js/validator.js',
             'js/registrations.js',
         )
+
+
+class BLNForm(CommonForm):
+
+    def save(self, request=None, instance=None, serializer=None):
+        super(BLNForm, self).save()
+
+    class Meta:
+        model = BLN
+
+
+class RSForm(CommonForm):
+    def save(self, request=None, instance=None, serializer=None):
+        super(RSForm, self).save()
+
+    class Meta:
+        model = RS
+
+
+class CBECEForm(CommonForm):
+    def save(self, request=None, instance=None, serializer=None):
+        super(CBECEForm, self).save()
+
+    class Meta:
+        model = CBECE
