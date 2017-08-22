@@ -1,11 +1,6 @@
 
 from rest_framework import serializers
 from .models import Enrollment, LoggingStudentMove
-from student_registration.students.serializers import StudentSerializer
-from student_registration.students.models import (
-    IDType,
-    Nationality
-)
 
 
 class LoggingStudentMoveSerializer(serializers.ModelSerializer):
@@ -88,6 +83,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     moved = serializers.CharField(read_only=True)
 
     def create(self, validated_data):
+        from student_registration.students.serializers import StudentSerializer
 
         student_data = validated_data.pop('student', None)
         student_serializer = StudentSerializer(data=student_data)
