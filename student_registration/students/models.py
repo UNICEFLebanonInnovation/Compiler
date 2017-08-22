@@ -206,6 +206,27 @@ class Person(TimeStampedModel):
 class Student(Person):
 
     status = models.BooleanField(default=True)
+    hh_barcode = models.CharField(max_length=45, blank=True, null=True)
+
+    @property
+    def secondshift_registrations(self):
+        return self.student_enrollment.all()
+
+    def current_secondshift_registration(self):
+        from student_registration.schools.models import EducationYear
+
+        education_year = EducationYear.objects.get(current_year=True)
+        return self.student_enrollment.filter(education_year=education_year)
+
+    @property
+    def alp_registrations(self):
+        return self.alp_enrollment.all()
+
+    def current_alp_registration(self):
+        from student_registration.alp.models import ALPRound
+
+        alp_round = ALPRound.objects.get(current_round=True)
+        return self.alp_enrollment.filter(alp_round=alp_round)
 
     @property
     def last_alp_registration(self):

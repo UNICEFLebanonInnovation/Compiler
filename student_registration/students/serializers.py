@@ -7,10 +7,17 @@ from .models import (
 
 class StudentSerializer(serializers.ModelSerializer):
     from student_registration.alp.serializers import OutreachSerializer
+    from student_registration.enrollments.serializers import EnrollmentSerializer
 
     id = serializers.IntegerField(read_only=True)
     number = serializers.CharField(read_only=True)
     registration = OutreachSerializer(source='last_alp_registration', read_only=True)
+
+    alp_registrations = OutreachSerializer(read_only=True, many=True)
+    secondshift_registrations = EnrollmentSerializer(read_only=True, many=True)
+
+    current_alp_registration = OutreachSerializer(read_only=True, many=True)
+    current_secondshift_registration = EnrollmentSerializer(read_only=True, many=True)
 
     def create(self, validated_data):
 
@@ -44,5 +51,10 @@ class StudentSerializer(serializers.ModelSerializer):
             'mother_nationality',
             'address',
             'number',
+            'hh_barcode',
             'registration',
+            'alp_registrations',
+            'secondshift_registrations',
+            'current_alp_registration',
+            'current_secondshift_registration',
         )
