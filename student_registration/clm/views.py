@@ -45,7 +45,7 @@ class BLNAddView(LoginRequiredMixin,
                      # GroupRequiredMixin,
                      FormView):
 
-    template_name = 'clm/bln_new.html'
+    template_name = 'clm/bln_add.html'
     form_class = BLNForm
     success_url = '/clm/bln-list/'
 
@@ -124,7 +124,7 @@ class RSAddView(LoginRequiredMixin,
                 # GroupRequiredMixin,
                 FormView):
 
-    template_name = 'clm/rs_new.html'
+    template_name = 'clm/rs_add.html'
     form_class = RSForm
     success_url = '/clm/rs-list/'
 
@@ -203,7 +203,7 @@ class CBECEAddView(LoginRequiredMixin,
                    # GroupRequiredMixin,
                    FormView):
 
-    template_name = 'clm/cbece_new.html'
+    template_name = 'clm/cbece_add.html'
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
 
