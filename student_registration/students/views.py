@@ -36,14 +36,9 @@ class StudentViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        if self.request.user.is_superuser:
-            return self.queryset
-        return []
-
-    def get_basic_queryset(self):
         alp_round = ALPRound.objects.get(current_round=True)
         education_year = EducationYear.objects.get(current_year=True)
-        qs = Student.objects.filter(
+        qs = self.queryset.filter(
             Q(alp_enrollment__isnull=False,
               alp_enrollment__deleted=False,
               # alp_enrollment__dropout_status=False,
@@ -53,51 +48,26 @@ class StudentViewSet(mixins.RetrieveModelMixin,
               # student_enrollment__dropout_status=False,
               student_enrollment__education_year=education_year)
         )
-        return qs
-
-    @list_route(url_path='by_barcode/(?P<barcode>.+)')
-    def by_barcode(self, request, *args, **kwargs):
-        qs = self.get_basic_queryset()
-        qs = qs.filter(hh_barcode=kwargs['barcode'])
-        serializer = StudentSerializer(qs, many=True)
-        return Response(serializer.data)
-
-    @list_route(url_path='by_case_number/(?P<id_number>.+)')
-    def by_case_number(self, request, *args, **kwargs):
-        qs = self.get_basic_queryset()
-        qs = qs.filter(id_number=kwargs['id_number'])
-        serializer = StudentSerializer(qs, many=True)
-        return Response(serializer.data)
-
-    @list_route(url_path='by_individual_number/(?P<id_number>.+)')
-    def by_individual_number(self, request, *args, **kwargs):
-        qs = self.get_basic_queryset()
+        if self.request.GET.get('barcode', None):
+            qs = qs.filter(hh_barcode=self.request.GET.get('barcode', None))
+        if self.request.GET.get('case_number', None):
+            qs = qs.filter(id_number=self.request.GET.get('case_number', None))
+        if self.request.GET.get('name', None):
+            for term in self.request.GET.get('name', None).split():
+                qs = qs.filter(
+                    Q(first_name__contains=term) |
+                    Q(father_name__contains=term) |
+                    Q(last_name__contains=term) |
+                    Q(id_number__contains=term)
+                ).distinct()
         try:
-            qs = qs.get(id_number=kwargs['id_number'])
-            serializer = StudentSerializer(qs)
-            return Response(serializer.data)
-        except Student.DoesNotExist:
-            return Response()
+            if self.request.GET.get('individual_number', None):
+                qs = qs.filter(id_number=self.request.GET.get('individual_number', None))
+        except Exception as ex:
+            print ex.message
+            return []
 
-    @list_route(url_path='attendances_per_gov/(?P<start_date>.+)/(?P<end_date>.+)/(?P<gov>.+)')
-    def attendances_per_gov(self, request, *args, **kwargs):
-        start_date = kwargs['start_date']
-        end_date = kwargs['end_date']
-        gov_id = kwargs['gov']
-
-        qs = self.get_basic_queryset()
-        serializer = StudentSerializer(qs, many=True)
-        return Response(serializer.data)
-
-    @list_route(url_path='date_interval/(?P<start_date>.+)/(?P<end_date>.+)/(?P<id>.+)')
-    def date_interval(self, request, *args, **kwargs):
-        start_date = kwargs['start_date']
-        end_date = kwargs['end_date']
-        student_id = kwargs['id']
-
-        qs = self.get_basic_queryset()
-        serializer = StudentSerializer(qs, many=True)
-        return Response(serializer.data)
+        return qs
 
 
 class StudentAutocomplete(autocomplete.Select2QuerySetView):
