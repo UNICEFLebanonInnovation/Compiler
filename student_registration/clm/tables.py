@@ -31,9 +31,6 @@ class CommonTable(tables.Table):
     pre_test_total = tables.Column(verbose_name=_('Pre-test total'), accessor='student.birthday')
     pre_test_result = tables.Column(verbose_name=_('Pre-test result'), accessor='assigned_to_level')
     post_test_total = tables.Column(verbose_name=_('Post-test total'), accessor='student.birthday')
-    post_test_result = tables.Column(verbose_name=_('Post-test result'), accessor='refer_to_level')
-    current_level = tables.Column(verbose_name=_('Current Level'), accessor='registered_in_level')
-    current_section = tables.Column(verbose_name=_('Current Section'), accessor='section')
 
     class Meta:
         model = CLM

@@ -62,7 +62,7 @@ class Labour(models.Model):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "ID Type"
+        verbose_name = "Labour"
 
     def __unicode__(self):
         return self.name
