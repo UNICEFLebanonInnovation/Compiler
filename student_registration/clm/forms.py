@@ -176,26 +176,6 @@ class CommonForm(forms.ModelForm):
     )
 
     student_mother_fullname = forms.CharField(widget=forms.TextInput, required=True)
-    # student_mother_nationality = forms.ModelChoiceField(
-    #     queryset=Nationality.objects.all(), widget=forms.Select,
-    #     empty_label=_('Mather nationality'),
-    #     required=True, to_field_name='id',
-    # )
-    # student_registered_in_unhcr = forms.TypedChoiceField(
-    #     label=_("Registered in UNHCR?"),
-    #     choices=YES_NO_CHOICE,
-    #     coerce=lambda x: bool(int(x)),
-    #     widget=forms.RadioSelect,
-    #     required=True,
-    # )
-    # student_id_type = forms.ModelChoiceField(
-    #     queryset=IDType.objects.all(), widget=forms.Select,
-    #     required=True, to_field_name='id', empty_label=_('Student ID Type')
-    # )
-    # student_id_number = forms.CharField(widget=forms.TextInput, required=True)
-    #
-    # student_phone_prefix = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 2})), required=True)
-    # student_phone = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 6})), required=True)
     student_address = forms.CharField(widget=forms.TextInput, required=True)
     student_p_code = forms.CharField(widget=forms.TextInput, required=True)
 
@@ -239,7 +219,7 @@ class CommonForm(forms.ModelForm):
         required=False,
     )
     labours = forms.MultipleChoiceField(
-        choices=Labour.objects.all(),
+        choices=((str(x.id), x.name) for x in Labour.objects.all()),
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -253,103 +233,6 @@ class CommonForm(forms.ModelForm):
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
     student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
-    # owner = forms.CharField(widget=forms.HiddenInput, required=False)
-    # education_year = forms.CharField(widget=forms.HiddenInput, required=False)
-
-    def __init__(self, *args, **kwargs):
-        super(CommonForm, self).__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.form_show_labels = False
-        # self.helper.form_action = reverse('enrollments:add')
-        # self.helper.layout = Layout(
-        #     Fieldset(
-        #         _('Registry'),
-        #         Div(
-        #             'student_id',
-        #             'enrollment_id',
-        #             'student_outreach_child',
-        #             Div(InlineRadios('new_registry'), css_class='col-md-4'),
-        #             Div(InlineRadios('student_outreached'), css_class='col-md-4'),
-        #             Div(InlineRadios('have_barcode'), css_class='col-md-4 invisible', css_id='have_barcode_option'),
-        #             css_class='row',
-        #         ),
-        #     ),
-        #     Fieldset(
-        #         _('Register by Barcode'),
-        #         Div(
-        #             Div(PrependedText('search_barcode', _('Search child by barcode')), css_class='col-md-6'),
-        #             css_class='row',
-        #         ),
-        #         css_id='register_by_barcode', css_class='invisible'
-        #     ),
-        #     Fieldset(
-        #         _('Search old student (fullname Or ID number)'),
-        #         Div(
-        #             Div('school_type', css_class='col-md-4'),
-        #             Div('search_school', css_class='col-md-4'),
-        #             Div(PrependedText('search_student', _('Search old student')), css_class='col-md-4'),
-        #             css_class='row',
-        #         ),
-        #         css_id='search_options', css_class='invisible'
-        #     ),
-        #     Fieldset(
-        #         _('Basic Data'),
-        #         Div(
-        #             Div(PrependedText('registration_date', _('Registration date')), css_class='col-md-4'),
-        #             Div(PrependedText('outreach_barcode', _('Outreach Barcode')), css_class='col-md-4'),
-        #             css_class='row',
-        #         ),
-        #         Div(
-        #             Div(PrependedText('student_first_name', _('First Name')), css_class='col-md-4'),
-        #             Div(PrependedText('student_father_name', _('Father Name')), css_class='col-md-4'),
-        #             Div(PrependedText('student_last_name', _('Last Name')), css_class='col-md-4'),
-        #             css_class='row',
-        #         ),
-        #         Div(
-        #             Div('student_birthday_year', css_class='col-md-4'),
-        #             Div('student_birthday_month', css_class='col-md-4'),
-        #             Div('student_birthday_day', css_class='col-md-4'),
-        #             css_class='row',
-        #         ),
-        #         Div(
-        #             Div('student_sex', css_class='col-md-4'),
-        #             Div('student_nationality', css_class='col-md-4'),
-        #             css_class='row',
-        #         ),
-        #         Div(
-        #             Div(PrependedText('student_mother_fullname', _('Mother Full name')), css_class='col-md-4'),
-        #             Div('student_mother_nationality', css_class='col-md-4'),
-        #             css_class='row',
-        #         ),
-        #         Div(
-        #             Div(InlineRadios('student_registered_in_unhcr'), css_class='col-md-4'),
-        #             Div('student_id_type', css_class='col-md-4'),
-        #             Div(PrependedText('student_id_number', _('ID Number')), css_class='col-md-4'),
-        #             css_class='row',
-        #         ),
-        #         Div(
-        #             Div(PrependedText('student_phone_prefix', _('Prefix (2 digits)')), css_class='col-md-4'),
-        #             Div(PrependedText('student_phone', _('Number (6 digits)')), css_class='col-md-4'),
-        #             Div(PrependedText('student_address', _('Address')), css_class='col-md-4'),
-        #             css_class='row',
-        #         ),
-        #         css_class='invisible child_data'
-        #     ),
-        #     Fieldset(
-        #         _('Current situation'),
-        #         Div(
-        #             Div('classroom', css_class='col-md-6'),
-        #             Div('section', css_class='col-md-6'),
-        #             css_class='row',
-        #         ),
-        #         css_class='invisible child_data'
-        #     ),
-        #     FormActions(
-        #         Submit('save', _('Save')),
-        #         Button('cancel', _('Cancel'))
-        #     )
-        # )
 
     def save(self, request=None, instance=None, serializer=None):
         if instance:
@@ -360,8 +243,7 @@ class CommonForm(forms.ModelForm):
             serializer = serializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
-                instance.school = request.user.school
-                # instance.owner = request.user
+                instance.owner = request.user
                 instance.save()
 
     class Meta:
@@ -413,12 +295,170 @@ class CommonForm(forms.ModelForm):
 
 class BLNForm(CommonForm):
 
+    def __init__(self, *args, **kwargs):
+        super(BLNForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = reverse('clm:bln_add')
+        self.helper.layout = Layout(
+            Fieldset(
+                _('Registry'),
+                Div(
+                    'student_id',
+                    'enrollment_id',
+                    'student_outreach_child',
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div(InlineRadios('new_registry'), css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div(InlineRadios('student_outreached'), css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div(InlineRadios('have_barcode'), css_class='col-md-3'),
+                    css_class='row',
+                ),
+            ),
+            Fieldset(
+                _('Register by Barcode'),
+                Div(
+                    Div(PrependedText('search_barcode', _('Search child by barcode')), css_class='col-md-6'),
+                    css_class='row',
+                ),
+                css_id='register_by_barcode', css_class='invisible'
+            ),
+            Fieldset(
+                _('Search old student (fullname Or ID number)'),
+                Div(
+                    Div(PrependedText('search_student', _('Search old student')), css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_id='search_options', css_class='invisible'
+            ),
+            Fieldset(
+                _('Program Information'),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('cycle', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('governorate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('district', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('location', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('language', css_class='col-md-3'),
+                    css_class='row',
+                ),
+            ),
+            Fieldset(
+                _('Child Information'),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('referral', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('student_first_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('student_father_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('student_last_name', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('student_birthday_year', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('student_birthday_month', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('student_birthday_day', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('student_sex', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('student_nationality', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('student_mother_fullname', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('outreach_barcode', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('student_address', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('student_p_code', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('child_muac', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('disability', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='invisible child_data'
+            ),
+            Fieldset(
+                _('Family Status'),
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('hh_educational_level', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('student_family_status', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('student_have_children', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('have_labour', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('labours', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('labour_hours', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='invisible child_data'
+            ),
+            Fieldset(
+                _('Assessment'),
+                Div(
+                    HTML('<div class="col-md-3"><button class="btn btn-success">Pre-Assessment</span></div>'),
+                    HTML('<div class="col-md-3"><button class="btn btn-success">Post-Assessment</span></div>'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<div class="p-3"></div>'),
+                    css_class='row'
+                ),
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+                Button('cancel', _('Cancel'))
+            )
+        )
+
     def save(self, request=None, instance=None, serializer=None):
         super(BLNForm, self).save()
 
     class Meta:
         model = BLN
         fields = CommonForm.Meta.fields
+        exclude = (
+            'site',
+            'rscycle',
+            'school',
+            'school_shift',
+        )
 
     class Media:
         js = (
