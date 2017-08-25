@@ -30,8 +30,8 @@ from .serializers import BLNSerializer, RSSerializer, CBECESerializer
 
 
 class CLMView(LoginRequiredMixin,
-                         GroupRequiredMixin,
-                         TemplateView):
+            # GroupRequiredMixin,
+            TemplateView):
 
     template_name = 'clm/index.html'
 
@@ -117,7 +117,7 @@ class BLNListView(LoginRequiredMixin,
     filterset_class = BLNFilter
 
     def get_queryset(self):
-        return BLN.objects.filter(school=self.request.user.school_id)
+        return BLN.objects.filter(owner=self.request.user)
 
 
 class RSAddView(LoginRequiredMixin,
@@ -196,7 +196,7 @@ class RSListView(LoginRequiredMixin,
     filterset_class = RSFilter
 
     def get_queryset(self):
-        return RS.objects.filter(school=self.request.user.school_id)
+        return RS.objects.filter(owner=self.request.user)
 
 
 class CBECEAddView(LoginRequiredMixin,
@@ -275,7 +275,7 @@ class CBECEListView(LoginRequiredMixin,
     filtecbeceet_class = CBECEFilter
 
     def get_queryset(self):
-        return CBECE.objects.filter(school=self.request.user.school_id)
+        return CBECE.objects.filter(owner=self.request.user)
 
 
 ####################### API VIEWS #############################
