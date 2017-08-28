@@ -103,6 +103,31 @@ class CLM(TimeStampedModel):
         'pre_test',
         'post_test'
     )
+    YES_NO = Choices(
+        (1, _("Yes")),
+        (0, _("No"))
+    )
+    PARTICIPATION = Choices(
+        ('less_than_5days', _('Less than 5 absence days')),
+        ('5_10_days', _('5 to 10 absence days')),
+        ('10_15_days', _('10 to 15 absence days')),
+        ('more_than_15days', _('More than 15 absence days'))
+    )
+    BARRIERS = Choices(
+        ('seasonal_work', _('Seasonal work')),
+        ('transportation', 'Transportation'),
+        ('weather', _('Weather')),
+        ('sickness', _('Sickness')),
+        ('security', _('Security')),
+        ('other', _('Other'))
+    )
+    LEARNING_RESULT = Choices(
+        ('graduated_next_level', _('Graduated to the next level')),
+        ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
+        ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
+        ('referred_to_another_program', _('Referred to another program')),
+        ('dropout', _('Dropout from school'))
+    )
 
     district = models.ForeignKey(
         Location,
@@ -160,6 +185,29 @@ class CLM(TimeStampedModel):
     post_test = JSONField(blank=True, null=True)
 
     scores = JSONField(blank=True, null=True, default=dict)
+
+    participation = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=PARTICIPATION
+    )
+    barriers = ArrayField(
+        models.CharField(
+            choices=BARRIERS,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+    )
+    learning_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LEARNING_RESULT
+    )
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
