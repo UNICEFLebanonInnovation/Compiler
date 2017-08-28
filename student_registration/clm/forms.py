@@ -29,6 +29,7 @@ from .models import (
     Disability,
     Site,
     Labour,
+    Assessment
 )
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer
 
@@ -307,6 +308,37 @@ class BLNForm(CommonForm):
     def __init__(self, *args, **kwargs):
         super(BLNForm, self).__init__(*args, **kwargs)
 
+        pre_test = ''
+        post_test = ''
+        display_assessment = ' d-none'
+        display_registry = ''
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        if instance:
+            assessment_pre = Assessment.objects.get(slug='bln_pre_test')
+            assessment_post = Assessment.objects.get(slug='bln_post_test')
+            display_assessment = ''
+            display_registry = ' d-none'
+            pre_test = '{form}?d[youth_id]={id}&d[status]={status}&returnURL={callback}'.format(
+                form=assessment_pre.assessment_form,
+                id=instance.student.id,
+                type='pre_test',
+                # status=instance.STATUS.pre_test if instance.status == instance.STATUS.enrolled
+                # else instance.STATUS.post_test,
+                callback=self.request.build_absolute_uri(
+                    reverse('clm:bln_edit', kwargs={'id': instance.student.id})
+                )
+            )
+            post_test = '{form}?d[youth_id]={id}&d[status]={status}&returnURL={callback}'.format(
+                form=assessment_post.assessment_form,
+                id=instance.student.id,
+                type='post_test',
+                # status=instance.STATUS.pre_test if instance.status == instance.STATUS.enrolled
+                # else instance.STATUS.post_test,
+                callback=self.request.build_absolute_uri(
+                    reverse('clm:bln_edit', kwargs={'id': instance.student.id})
+                )
+            )
+
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = reverse('clm:bln_add')
@@ -328,7 +360,7 @@ class BLNForm(CommonForm):
                     Div(InlineRadios('have_barcode'), css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning'
+                css_class='bd-callout bd-callout-warning'+display_registry
             ),
             Fieldset(
                 None,
@@ -339,7 +371,7 @@ class BLNForm(CommonForm):
                     Div('search_barcode', css_class='col-md-6'),
                     css_class='row',
                 ),
-                css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'
+                css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
             ),
             Fieldset(
                 None,
@@ -347,10 +379,10 @@ class BLNForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">Search old student (fullname Or ID number)</h4>')
                 ),
                 Div(
-                    Div('search_student', css_class='col-md-4'),
+                    Div('search_student', css_class='col-md-6'),
                     css_class='row',
                 ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning'
+                css_id='search_options', css_class='bd-callout bd-callout-warning'+display_registry
             ),
             Fieldset(
                 None,
@@ -464,15 +496,15 @@ class BLNForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">Assessment</h4>')
                 ),
                 Div(
-                    HTML('<div class="col-md-3"><button class="btn btn-success">Pre-Assessment</span></div>'),
-                    HTML('<div class="col-md-3"><button class="btn btn-success">Post-Assessment</span></div>'),
+                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">Pre-Assessment</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+post_test+'">Post-Assessment</a></div>'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<div class="p-3"></div>'),
                     css_class='row'
                 ),
-                css_class='bd-callout bd-callout-warning'
+                css_class='bd-callout bd-callout-warning'+display_assessment
             ),
             Fieldset(
                 None,
@@ -488,7 +520,7 @@ class BLNForm(CommonForm):
                     Div('learning_result', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning'
+                css_class='bd-callout bd-callout-warning'+display_assessment
             ),
             FormActions(
                 Submit('save', _('Save')),
