@@ -255,6 +255,9 @@ class EnrollmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(EnrollmentForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+
         self.fields['classroom'].empty_label = _('Current Class')
         self.fields['section'].empty_label = _('Current Section')
 
