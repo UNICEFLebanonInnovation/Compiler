@@ -264,7 +264,7 @@ class RegistrationForm(forms.ModelForm):
                     'alp_round',
                     Div(InlineRadios('new_registry'), css_class='col-md-4'),
                     Div(InlineRadios('student_outreached'), css_class='col-md-4'),
-                    Div(InlineRadios('have_barcode'), css_class='col-md-4 invisible', css_id='have_barcode_option'),
+                    Div(InlineRadios('have_barcode'), css_class='col-md-4 d-none', css_id='have_barcode_option'),
                     css_class='row',
                 ),
             ),
@@ -274,7 +274,7 @@ class RegistrationForm(forms.ModelForm):
                     Div(PrependedText('search_barcode', _('Search child by barcode')), css_class='col-md-6'),
                     css_class='row',
                 ),
-                css_id='register_by_barcode', css_class='invisible'
+                css_id='register_by_barcode', css_class='d-none'
             ),
             Fieldset(
                 _('Search old student (fullname Or ID number)'),
@@ -283,7 +283,7 @@ class RegistrationForm(forms.ModelForm):
                     Div(PrependedText('search_student', _('Search old student')), css_class='col-md-4'),
                     css_class='row',
                 ),
-                css_id='search_options', css_class='invisible'
+                css_id='search_options', css_class='d-none'
             ),
             Fieldset(
                 _('Basic Data'),
@@ -325,7 +325,7 @@ class RegistrationForm(forms.ModelForm):
                     Div(PrependedText('student_address', _('Address')), css_class='col-md-4'),
                     css_class='row',
                 ),
-                css_class='invisible child_data'
+                css_class='d-none child_data'
             ),
             Fieldset(
                 _('Current situation'),
@@ -334,7 +334,7 @@ class RegistrationForm(forms.ModelForm):
                     Div('section', css_class='col-md-6'),
                     css_class='row',
                 ),
-                css_class='invisible child_data'
+                css_class='d-none child_data'
             ),
             Fieldset(
                 _('Last student formal education'),
@@ -343,7 +343,7 @@ class RegistrationForm(forms.ModelForm):
                     Div('last_education_year', css_class='col-md-6'),
                     css_class='row',
                 ),
-                css_class='invisible child_data'
+                css_class='d-none child_data'
             ),
             Fieldset(
                 _('Last student informal education'),
@@ -357,7 +357,7 @@ class RegistrationForm(forms.ModelForm):
                     Div('last_informal_edu_final_result', css_class='col-md-6'),
                     css_class='row',
                 ),
-                css_class='invisible child_data'
+                css_class='d-none child_data'
             ),
             FormActions(
                 Submit('save', _('Save')),
