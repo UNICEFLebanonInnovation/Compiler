@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django.views.generic import ListView, FormView, TemplateView, UpdateView
+import json
+
+from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.detail import SingleObjectMixin
+from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.db.models import Q
 
@@ -95,12 +102,33 @@ class BLNEditView(LoginRequiredMixin,
             BLNForm(self.request.POST, instance=instance)
         else:
             data = BLNSerializer(instance).data
-            return BLNForm(data, instance=instance)
+            return BLNForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
         instance = BLN.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(BLNEditView, self).form_valid(form)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class BLNAssessmentSubmission(SingleObjectMixin, View):
+
+    model = BLN
+    slug_url_kwarg = 'status'
+
+    def post(self, request, *args, **kwargs):
+
+        if 'status' not in request.body:
+            return HttpResponseBadRequest()
+
+        payload = json.loads(request.body.decode('utf-8'))
+
+        enrollment = BLN.objects.get(id=self.kwargs['pk'])
+
+        enrollment.status = payload['status']
+        setattr(enrollment, payload['status'], payload)
+
+        return HttpResponse()
 
 
 class BLNListView(LoginRequiredMixin,

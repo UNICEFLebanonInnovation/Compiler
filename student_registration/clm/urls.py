@@ -23,6 +23,11 @@ urlpatterns = [
         name='bln_edit'
     ),
     url(
+        regex=r'^bln-assessment/(?P<pk>[\w.@+-]+)/$',
+        view=views.BLNAssessmentSubmission.as_view(),
+        name='bln_assessment'
+    ),
+    url(
         regex=r'^bln-list/$',
         view=views.BLNListView.as_view(),
         name='bln_list'

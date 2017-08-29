@@ -4,7 +4,6 @@ from django.utils.translation import ugettext as _
 from django import forms
 from django.core.urlresolvers import reverse
 
-from model_utils import Choices
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
@@ -25,10 +24,8 @@ from .models import (
     CBECE,
     Cycle,
     RSCycle,
-    Referral,
     Disability,
     Site,
-    Labour,
     Assessment
 )
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer
@@ -83,10 +80,7 @@ class CommonForm(forms.ModelForm):
     )
     location = forms.CharField(widget=forms.TextInput, required=True)
     language = forms.MultipleChoiceField(
-        choices=(
-            ('english_arabic', _('English/Arabic')),
-            ('french_arabic', _('French/Arabic'))
-        ),
+        choices=CLM.LANGUAGES,
         widget=forms.CheckboxSelectMultiple,
         required=True
     )
@@ -96,11 +90,7 @@ class CommonForm(forms.ModelForm):
     student_last_name = forms.CharField(widget=forms.TextInput, required=True)
     student_sex = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=(
-            ('', '-----------'),
-            ('Male', _('Male')),
-            ('Female', _('Female')),
-        )
+        choices=Student.GENDER
     )
     student_birthday_year = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -108,21 +98,7 @@ class CommonForm(forms.ModelForm):
     )
     student_birthday_month = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=(
-            ('', '-----------'),
-            ('1', _('January')),
-            ('2', _('February')),
-            ('3', _('March')),
-            ('4', _('April')),
-            ('5', _('May')),
-            ('6', _('June')),
-            ('7', _('July')),
-            ('8', _('August')),
-            ('9', _('September')),
-            ('10', _('October')),
-            ('11', _('November')),
-            ('12', _('December')),
-        )
+        choices=Student.MONTHS
     )
     student_birthday_day = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -137,7 +113,7 @@ class CommonForm(forms.ModelForm):
 
     student_mother_fullname = forms.CharField(widget=forms.TextInput, required=True)
     student_address = forms.CharField(widget=forms.TextInput, required=True)
-    student_p_code = forms.CharField(widget=forms.TextInput, required=True)
+    student_p_code = forms.CharField(widget=forms.TextInput, required=False)
 
     disability = forms.ModelChoiceField(
         queryset=Disability.objects.all(), widget=forms.Select,
@@ -146,14 +122,7 @@ class CommonForm(forms.ModelForm):
     )
     student_family_status = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=(
-            ('', '-----------'),
-            ('married', _('Married')),
-            ('engaged', _('Engaged')),
-            ('divorced', _('Divorced')),
-            ('widower', _('Widower')),
-            ('single', _('Single')),
-        )
+        choices=Student.FAMILY_STATUS
     )
     student_have_children = forms.TypedChoiceField(
         label=_("Have children?"),
@@ -163,19 +132,17 @@ class CommonForm(forms.ModelForm):
         required=False,
     )
 
-    have_labour = forms.TypedChoiceField(
-        label=_("Have work?"),
-        choices=YES_NO_CHOICE,
-        coerce=lambda x: bool(int(x)),
-        widget=forms.RadioSelect,
-        required=False,
-    )
-    labours = forms.MultipleChoiceField(
-        choices=((str(x.id), x.name) for x in Labour.objects.all()),
+    have_labour = forms.MultipleChoiceField(
+        choices=CLM.HAVE_LABOUR,
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
-    labour_hours = forms.CharField(widget=forms.TextInput, required=True)
+    labours = forms.MultipleChoiceField(
+        choices=CLM.LABOURS,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    labour_hours = forms.CharField(widget=forms.TextInput, required=False)
     hh_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.all(), widget=forms.Select,
         empty_label=_('HH educational level'),
@@ -187,37 +154,17 @@ class CommonForm(forms.ModelForm):
     student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
 
     participation = forms.ChoiceField(
-        widget=forms.Select, required=True,
-        choices=(
-            ('', '-----------'),
-            ('less_than_5days', _('Less than 5 absence days')),
-            ('5_10_days', _('5 to 10 absence days')),
-            ('10_15_days', _('10 to 15 absence days')),
-            ('more_than_15days', _('More than 15 absence days'))
-        )
+        widget=forms.Select, required=False,
+        choices=CLM.BARRIERS
     )
     barriers = forms.MultipleChoiceField(
-        choices=(
-            ('seasonal_work', _('Seasonal work')),
-            ('transportation', 'Transportation'),
-            ('weather', _('Weather')),
-            ('sickness', _('Sickness')),
-            ('security', _('Security')),
-            ('other', _('Other'))
-        ),
+        choices=CLM.BARRIERS,
         widget=forms.CheckboxSelectMultiple,
-        required=True
+        required=False
     )
     learning_result = forms.ChoiceField(
-        widget=forms.Select, required=True,
-        choices=(
-            ('', '-----------'),
-            ('graduated_next_level', _('Graduated to the next level')),
-            ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
-            ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
-            ('referred_to_another_program', _('Referred to another program')),
-            ('dropout', _('Dropout from school'))
-        )
+        widget=forms.Select, required=False,
+        choices=CLM.LEARNING_RESULT
     )
 
     def save(self, request=None, instance=None, serializer=None):
@@ -226,20 +173,23 @@ class CommonForm(forms.ModelForm):
             if serializer.is_valid():
                 serializer.update(validated_data=serializer.validated_data)
         else:
+            print request.POST
             serializer = serializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.owner = request.user
                 instance.save()
+            else:
+                print serializer.errors
 
     class Meta:
         model = CLM
         fields = (
-            'new_registry',
-            'student_outreached',
-            'have_barcode',
-            'search_barcode',
-            'search_student',
+            # 'new_registry',
+            # 'student_outreached',
+            # 'have_barcode',
+            # 'search_barcode',
+            # 'search_student',
             'outreach_barcode',
             'governorate',
             'district',
@@ -287,25 +237,17 @@ class BLNForm(CommonForm):
     cycle = forms.ModelChoiceField(
         queryset=Cycle.objects.all(), widget=forms.Select,
         empty_label=_('Programme Cycle'),
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
         initial=0
     )
-    referral = forms.ModelChoiceField(
-        queryset=Referral.objects.all(), widget=forms.Select,
-        empty_label=_('Referral'),
-        required=False, to_field_name='id',
-        initial=0
-    )
-    child_muac = forms.ChoiceField(
-        widget=forms.Select, required=True,
-        choices=(
-            ('', _('Child MUAC')),
-            ('1', _('< 11.5 CM (severe malnutrition)')),
-            ('2', _('< 12.5 CM (moderate malnutrition)')),
-        )
+    referral = forms.MultipleChoiceField(
+        choices=CLM.REFERRAL,
+        widget=forms.CheckboxSelectMultiple,
+        required=True,
     )
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super(BLNForm, self).__init__(*args, **kwargs)
 
         pre_test = ''
@@ -313,35 +255,32 @@ class BLNForm(CommonForm):
         display_assessment = ' d-none'
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
+        form_action = reverse('clm:bln_add')
+
         if instance:
+            form_action = reverse('clm:bln_edit', kwargs={'pk': instance.id})
             assessment_pre = Assessment.objects.get(slug='bln_pre_test')
             assessment_post = Assessment.objects.get(slug='bln_post_test')
             display_assessment = ''
             display_registry = ' d-none'
-            pre_test = '{form}?d[youth_id]={id}&d[status]={status}&returnURL={callback}'.format(
+            pre_test = '{form}?d[status]={status}&returnURL={callback}'.format(
                 form=assessment_pre.assessment_form,
-                id=instance.student.id,
-                type='pre_test',
-                # status=instance.STATUS.pre_test if instance.status == instance.STATUS.enrolled
-                # else instance.STATUS.post_test,
+                status='pre_test',
                 callback=self.request.build_absolute_uri(
-                    reverse('clm:bln_edit', kwargs={'id': instance.student.id})
+                    reverse('clm:bln_assessment', kwargs={'pk': instance.id})
                 )
             )
-            post_test = '{form}?d[youth_id]={id}&d[status]={status}&returnURL={callback}'.format(
+            post_test = '{form}?d[status]={status}&returnURL={callback}'.format(
                 form=assessment_post.assessment_form,
-                id=instance.student.id,
-                type='post_test',
-                # status=instance.STATUS.pre_test if instance.status == instance.STATUS.enrolled
-                # else instance.STATUS.post_test,
+                status='post_test',
                 callback=self.request.build_absolute_uri(
-                    reverse('clm:bln_edit', kwargs={'id': instance.student.id})
+                    reverse('clm:bln_assessment', kwargs={'pk': instance.id})
                 )
             )
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
-        self.helper.form_action = reverse('clm:bln_add')
+        self.helper.form_action = form_action
         self.helper.layout = Layout(
             Fieldset(
                 None,
@@ -446,18 +385,16 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">11</span>'),
-                    Div('outreach_barcode', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">12</span>'),
                     Div('student_address', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('student_p_code', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('disability', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">14</span>'),
-                    Div('child_muac', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">15</span>'),
-                    Div('disability', css_class='col-md-3'),
+                    Div('outreach_barcode', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='child_data bd-callout bd-callout-warning'
@@ -472,16 +409,13 @@ class BLNForm(CommonForm):
                     Div('hh_educational_level', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('student_family_status', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('student_have_children', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('have_labour', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('have_labour', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('labours', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
@@ -496,8 +430,8 @@ class BLNForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">Assessment</h4>')
                 ),
                 Div(
-                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">Pre-Assessment</a></div>'),
-                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+post_test+'">Post-Assessment</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">Pre-test</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+post_test+'">Post-test</a></div>'),
                     css_class='row',
                 ),
                 Div(
@@ -524,19 +458,19 @@ class BLNForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                Button('cancel', _('Cancel'))
+                Button('cancel', _('Cancel')),
+                HTML('<a class="btn btn-info" href="/clm/bln-list/">Back to list</a>'),
             )
         )
 
     def save(self, request=None, instance=None, serializer=None):
-        super(BLNForm, self).save()
+        super(BLNForm, self).save(request=request, instance=None, serializer=BLNSerializer)
 
     class Meta:
         model = BLN
         fields = CommonForm.Meta.fields + (
             'cycle',
             'referral',
-            'child_muac',
         )
 
     class Media:
@@ -571,19 +505,7 @@ class RSForm(CommonForm):
     )
     shift = forms.ChoiceField(
         widget=forms.Select, required=False,
-        choices=(
-            ('', _('School shift')),
-            ('first', _('First shift')),
-            ('second', _('Second shift')),
-        )
-    )
-    child_muac = forms.ChoiceField(
-        widget=forms.Select, required=True,
-        choices=(
-            ('', _('Child MUAC')),
-            ('1', _('< 11.5 CM (severe malnutrition)')),
-            ('2', _('< 12.5 CM (moderate malnutrition)')),
-        )
+        choices=RS.SCHOOL_SHIFT
     )
 
     def save(self, request=None, instance=None, serializer=None):
@@ -596,7 +518,6 @@ class RSForm(CommonForm):
             'site',
             'school',
             'shift',
-            'child_muac',
         )
 
 
@@ -620,11 +541,14 @@ class CBECEForm(CommonForm):
         required=False, to_field_name='id',
         initial=0
     )
-    referral = forms.ModelChoiceField(
-        queryset=Referral.objects.all(), widget=forms.Select,
-        empty_label=_('Referral'),
-        required=False, to_field_name='id',
-        initial=0
+    referral = forms.MultipleChoiceField(
+        choices=CLM.REFERRAL,
+        widget=forms.CheckboxSelectMultiple,
+        required=True,
+    )
+    child_muac = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        choices=CBECE.MUAC
     )
 
     def save(self, request=None, instance=None, serializer=None):
@@ -637,4 +561,5 @@ class CBECEForm(CommonForm):
             'site',
             'school',
             'referral',
+            'child_muac',
         )
