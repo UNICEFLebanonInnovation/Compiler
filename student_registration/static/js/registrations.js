@@ -159,30 +159,30 @@ function reorganizeForm()
     console.log(outreached);
 
     if(new_registry == '1' && outreached == '1' && (have_barcode == '1' || have_barcode == '0')){
-        $('#register_by_barcode').removeClass('invisible');
-        $('#search_options').addClass('invisible');
-        $('.child_data').addClass('invisible');
+        $('#register_by_barcode').removeClass('d-none');
+        $('#search_options').addClass('d-none');
+        $('.child_data').addClass('d-none');
         return true;
     }
 
     if(new_registry == '1' && outreached == '0'){
-        $('#register_by_barcode').addClass('invisible');
-        $('#search_options').addClass('invisible');
-        $('.child_data').removeClass('invisible');
+        $('#register_by_barcode').addClass('d-none');
+        $('#search_options').addClass('d-none');
+        $('.child_data').removeClass('d-none');
         return true;
     }
 
     if(new_registry == '0' && outreached == '0'){
-        $('#register_by_barcode').addClass('invisible');
-        $('#search_options').removeClass('invisible');
-        $('.child_data').addClass('invisible');
+        $('#register_by_barcode').addClass('d-none');
+        $('#search_options').removeClass('d-none');
+        $('.child_data').addClass('d-none');
         return true;
     }
 
     if(new_registry == '0' && outreached == '1' && have_barcode == '1'){
-        $('#register_by_barcode').addClass('invisible');
-        $('#search_options').removeClass('invisible');
-        $('.child_data').addClass('invisible');
+        $('#register_by_barcode').addClass('d-none');
+        $('#search_options').removeClass('d-none');
+        $('.child_data').addClass('d-none');
         return true;
     }
 }

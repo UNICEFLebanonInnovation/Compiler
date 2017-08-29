@@ -107,6 +107,13 @@ class CLM(TimeStampedModel):
         (1, _("Yes")),
         (0, _("No"))
     )
+    REFERRAL = Choices(
+        ('from_same_ngo', _('Referral from the same NGO')),
+        ('from_other_ngo', _('Referral from an other NGO')),
+        ('form_official_reference', _('Referral from an official reference (Mukhtar, Municipality, School Director, etc.)')),
+        ('from_host_community', _('Referral from the host community')),
+        ('from_displaced_community', _('Referral from the displaced community')),
+    )
     PARTICIPATION = Choices(
         ('less_than_5days', _('Less than 5 absence days')),
         ('5_10_days', _('5 to 10 absence days')),
@@ -121,6 +128,20 @@ class CLM(TimeStampedModel):
         ('security', _('Security')),
         ('other', _('Other'))
     )
+    HAVE_LABOUR = Choices(
+        ('no', _('No')),
+        ('yes_morning', _('Yes - Morning')),
+        ('yes_afternoon', _('Yes - Afternoon')),
+    )
+    LABOURS = Choices(
+        ('agriculture', _('Agriculture')),
+        ('building', _('Building')),
+        ('manufacturing', _('Manufacturing')),
+        ('retail_store', _('Retail / Store')),
+        ('begging', _('Begging')),
+        ('other_many_other', _('Other (hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)')),
+        ('other', _('Other')),
+    )
     LEARNING_RESULT = Choices(
         ('graduated_next_level', _('Graduated to the next level')),
         ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
@@ -128,7 +149,11 @@ class CLM(TimeStampedModel):
         ('referred_to_another_program', _('Referred to another program')),
         ('dropout', _('Dropout from school'))
     )
-
+    governorate = models.ForeignKey(
+        Location,
+        blank=True, null=True,
+        related_name='+',
+    )
     district = models.ForeignKey(
         Location,
         blank=True, null=True,
@@ -159,16 +184,25 @@ class CLM(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
-    have_labour = models.CharField(
-        max_length=50,
+    have_labour = ArrayField(
+        models.CharField(
+            choices=HAVE_LABOUR,
+            max_length=50,
+            blank=True,
+            null=True,
+        ),
         blank=True,
         null=True,
-        choices=Choices((1, _("Yes")), (0, _("No")))
     )
-    labours = models.ManyToManyField(
-        Labour,
+    labours = ArrayField(
+        models.CharField(
+            choices=LABOURS,
+            max_length=50,
+            blank=True,
+            null=True,
+        ),
         blank=True,
-        related_name='+'
+        null=True,
     )
     labour_hours = models.IntegerField(
         blank=True,
@@ -226,19 +260,19 @@ class CLM(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices((1, _("Yes")), (0, _("No")))
+        choices=YES_NO,
     )
     student_outreached = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices((1, _("Yes")), (0, _("No")))
+        choices=YES_NO,
     )
     have_barcode = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices((1, _("Yes")), (0, _("No")))
+        choices=YES_NO,
     )
     registration_date = models.DateField(
         blank=True,
@@ -276,10 +310,15 @@ class BLN(CLM):
         blank=True, null=True,
         related_name='+',
     )
-    referral = models.ManyToManyField(
-        Cycle,
+    referral = ArrayField(
+        models.CharField(
+            choices=CLM.REFERRAL,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
         blank=True,
-        related_name='+'
+        null=True,
     )
 
 
@@ -319,6 +358,10 @@ class CBECE(CLM):
         ('1', _('< 11.5 CM (severe malnutrition)')),
         ('2', _('< 12.5 CM (moderate malnutrition)')),
     )
+    REFER_SEASON = Choices(
+        ('academic', _('Academic')),
+        ('absence', _('Absence'))
+    )
 
     cycle = models.ForeignKey(
         Cycle,
@@ -335,10 +378,15 @@ class CBECE(CLM):
         blank=False, null=True,
         related_name='+',
     )
-    referral = models.ManyToManyField(
-        Cycle,
+    referral = ArrayField(
+        models.CharField(
+            choices=CLM.REFERRAL,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
         blank=True,
-        related_name='+'
+        null=True,
     )
     child_muac = models.CharField(
         max_length=50,
@@ -351,10 +399,15 @@ class CBECE(CLM):
         blank=True, null=True,
         related_name='+',
     )
-    referral_reasons = models.ManyToManyField(
-        Cycle,
+    referral_reasons = ArrayField(
+        models.CharField(
+            choices=REFER_SEASON,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
         blank=True,
-        related_name='+'
+        null=True,
     )
     pre_test_arabic = models.IntegerField(
         blank=True,
