@@ -99,9 +99,12 @@ class BLNEditView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         instance = BLN.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            BLNForm(self.request.POST, instance=instance)
+            print self.request.POST
+            return BLNForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = BLNSerializer(instance).data
+            print data
+            data['student_nationality'] = data['student_nationality_id']
             return BLNForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
