@@ -11,16 +11,17 @@
 
 {% block content-full-page %}
 
-
-        <div>
+<ol class="breadcrumb">
+  <li class="breadcrumb-item active">
             <a href="{% url "clm:bln_add" %}" class="btn btn-success">
                 <i class="icon-plus-sign icon-white"></i>
                 {% trans "Add new Child" %}
             </a>
-        </div>
+  </li>
+</ol>
 
         {% if filter %}
-            <div class="col-sm-10">
+            <div class="col-sm-10 pb-5">
                 <form action="" method="get" class="form form-inline">
                     {% bootstrap_form filter.form layout='inline' %}
                     {% bootstrap_button 'filter' %}
