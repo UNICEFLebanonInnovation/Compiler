@@ -122,7 +122,8 @@ class CommonForm(forms.ModelForm):
     )
     student_family_status = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=Student.FAMILY_STATUS
+        choices=Student.FAMILY_STATUS,
+        initial='single'
     )
     student_have_children = forms.TypedChoiceField(
         label=_("Have children?"),
@@ -135,7 +136,7 @@ class CommonForm(forms.ModelForm):
     have_labour = forms.MultipleChoiceField(
         choices=CLM.HAVE_LABOUR,
         widget=forms.CheckboxSelectMultiple,
-        required=False
+        required=False, initial='no'
     )
     labours = forms.MultipleChoiceField(
         choices=CLM.LABOURS,
@@ -155,7 +156,7 @@ class CommonForm(forms.ModelForm):
 
     participation = forms.ChoiceField(
         widget=forms.Select, required=False,
-        choices=CLM.BARRIERS
+        choices=CLM.PARTICIPATION
     )
     barriers = forms.MultipleChoiceField(
         choices=CLM.BARRIERS,
@@ -167,20 +168,28 @@ class CommonForm(forms.ModelForm):
         choices=CLM.LEARNING_RESULT
     )
 
+    def __init__(self, *args, **kwargs):
+        super(CommonForm, self).__init__(*args, **kwargs)
+
+        self.fields['cycle'].empty_label = _('-----------')
+        self.fields['governorate'].empty_label = _('-----------')
+        self.fields['district'].empty_label = _('-----------')
+        self.fields['student_sex'].empty_label = _('-----------')
+        self.fields['student_nationality'].empty_label = _('-----------')
+        self.fields['disability'].empty_label = _('-----------')
+        self.fields['hh_educational_level'].empty_label = _('-----------')
+
     def save(self, request=None, instance=None, serializer=None):
         if instance:
             serializer = serializer(instance, data=request.POST)
             if serializer.is_valid():
-                serializer.update(validated_data=serializer.validated_data)
+                serializer.update(validated_data=serializer.validated_data, instance=instance)
         else:
-            print request.POST
             serializer = serializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.owner = request.user
                 instance.save()
-            else:
-                print serializer.errors
 
     class Meta:
         model = CLM
@@ -353,7 +362,7 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('referral', css_class='col-md-3'),
+                    Div('referral', css_class='col-md-9'),
                     css_class='row',
                 ),
                 Div(
@@ -410,16 +419,16 @@ class BLNForm(CommonForm):
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('student_family_status', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('student_have_children', css_class='col-md-3'),
+                    Div('student_have_children', css_class='col-md-3', css_id='student_have_children'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('have_labour', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('labours', css_class='col-md-3'),
+                    Div('labours', css_class='col-md-3', css_id='labours'),
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('labour_hours', css_class='col-md-3'),
+                    Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
                     css_class='row',
                 ),
                 css_class='child_data bd-callout bd-callout-warning'
@@ -464,7 +473,7 @@ class BLNForm(CommonForm):
         )
 
     def save(self, request=None, instance=None, serializer=None):
-        super(BLNForm, self).save(request=request, instance=None, serializer=BLNSerializer)
+        super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
 
     class Meta:
         model = BLN
