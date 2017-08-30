@@ -1,4 +1,6 @@
 
+import json
+
 from rest_framework import serializers
 from .models import CLM, BLN, RS, CBECE
 
@@ -43,7 +45,7 @@ def update_instance(instance, validated_data):
 
         for key in validated_data:
             if hasattr(instance, key):
-                instance.setattr(key, validated_data[key])
+                setattr(instance, key, validated_data[key])
 
         instance.save()
 
@@ -66,6 +68,7 @@ class CLMSerializer(serializers.ModelSerializer):
     student_birthday_month = serializers.CharField(source='student.birthday_month')
     student_birthday_day = serializers.CharField(source='student.birthday_day')
     student_nationality = serializers.CharField(source='student.nationality')
+    student_nationality_id = serializers.CharField(source='student.nationality.id')
     student_address = serializers.CharField(source='student.address')
     student_p_code = serializers.CharField(source='student.p_code', required=False)
     student_family_status = serializers.CharField(source='student.family_status')
@@ -87,6 +90,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'original_id',
             'enrollment_id',
             'student_id',
+            'language',
             'student_outreach_child',
             'student_outreach_child_id',
             'student_first_name',
@@ -98,6 +102,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'student_birthday_month',
             'student_birthday_day',
             'student_nationality',
+            'student_nationality_id',
             'student_address',
             'student_p_code',
             'owner',
@@ -112,6 +117,9 @@ class CLMSerializer(serializers.ModelSerializer):
             'labours',
             'labour_hours',
             'hh_educational_level',
+            'participation',
+            'barriers',
+            'learning_result',
             'student_outreached',
             'new_registry',
             'have_barcode',
@@ -141,7 +149,6 @@ class BLNSerializer(CLMSerializer):
             print student_serializer.instance
 
         try:
-            print validated_data
             instance = BLN.objects.create(**validated_data)
             instance.student = student_serializer.instance
             instance.save()
