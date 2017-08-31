@@ -14,9 +14,8 @@
 
         <section class="inner-section light bg-color01">
             <div class="container-fluid nopadding">
-                <fieldset>
-                    <legend>{% trans "Student base data" %}</legend>
-                    <blockquote class="blockquote">
+                <fieldset class="bd-callout bd-callout-warning'">
+                        <h4 id="alternatives-to-hidden-labels">{% trans "Student" %}</h4>
                         <div class="row">
                             <label class="col-md-4"><strong>{% trans "Student fullname" %}</strong></label>
                             <div class="col-md-4">{{ form.instance.student }}</div>
@@ -31,7 +30,6 @@
                             <div class="col-md-4">{{ form.instance.exam_total }} - {{ form.instance.exam_result }}</div>
                         </div>
                         {% endif %}
-                    </blockquote>
                 </fieldset>
 
                 {{ form.errors }}

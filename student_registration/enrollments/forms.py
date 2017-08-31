@@ -272,130 +272,190 @@ class EnrollmentForm(forms.ModelForm):
         self.fields['last_informal_edu_final_result'].empty_label = _('ALP result')
 
         self.helper = FormHelper()
-        self.helper.form_show_labels = False
-        self.helper.form_action = reverse('enrollments:add')
+        self.helper.form_show_labels = True
+        if instance:
+            self.helper.form_action = reverse('enrollments:edit', kwargs={'pk': instance.id})
+        else:
+            self.helper.form_action = reverse('enrollments:add')
+
         self.helper.layout = Layout(
             Fieldset(
-                _('Registry'),
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">Registry</h4>')
+                ),
                 Div(
                     'student_id',
                     'enrollment_id',
                     'student_outreach_child',
                     'school',
                     'owner',
-                    'education_year',
-                    Div(InlineRadios('new_registry'), css_class='col-md-4'),
-                    Div(InlineRadios('student_outreached'), css_class='col-md-4'),
-                    Div(InlineRadios('have_barcode'), css_class='col-md-4 d-none', css_id='have_barcode_option'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div(InlineRadios('new_registry'), css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div(InlineRadios('student_outreached'), css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div(InlineRadios('have_barcode'), css_class='col-md-3', css_id='have_barcode_option'),
                     css_class='row',
                 ),
+                css_class='bd-callout bd-callout-warning'
             ),
             Fieldset(
-                _('Register by Barcode'),
+                None,
                 Div(
-                    Div(PrependedText('search_barcode', _('Search child by barcode')), css_class='col-md-6'),
+                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('search_barcode', css_class='col-md-4'),
                     css_class='row',
                 ),
-                css_id='register_by_barcode', css_class='d-none'
+                css_id='register_by_barcode', css_class='bd-callout bd-callout-warning child_data'
             ),
             Fieldset(
-                _('Search old student (fullname Or ID number)'),
+                None,
                 Div(
-                    Div('school_type', css_class='col-md-4'),
-                    Div('search_school', css_class='col-md-4'),
-                    Div(PrependedText('search_student', _('Search old student')), css_class='col-md-4'),
+                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Search old student (fullname Or ID number)')+'</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('school_type', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('search_school', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('search_student', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_id='search_options', css_class='d-none'
+                css_id='search_options', css_class='bd-callout bd-callout-warning'
             ),
             Fieldset(
-                _('Basic Data'),
+                None,
                 Div(
-                    Div(PrependedText('registration_date', _('Registration date')), css_class='col-md-4'),
-                    Div(PrependedText('outreach_barcode', _('Outreach Barcode')), css_class='col-md-4'),
+                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Basic Data')+'</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('registration_date', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('outreach_barcode', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('student_first_name', _('First Name')), css_class='col-md-4'),
-                    Div(PrependedText('student_father_name', _('Father Name')), css_class='col-md-4'),
-                    Div(PrependedText('student_last_name', _('Last Name')), css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_first_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_father_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_last_name', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div('student_birthday_year', css_class='col-md-4'),
-                    Div('student_birthday_month', css_class='col-md-4'),
-                    Div('student_birthday_day', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_birthday_year', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_birthday_month', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_birthday_day', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div('student_sex', css_class='col-md-4'),
-                    Div('student_nationality', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_sex', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('student_mother_fullname', _('Mother Full name')), css_class='col-md-4'),
-                    Div('student_mother_nationality', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_mother_fullname', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_mother_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div(InlineRadios('student_registered_in_unhcr'), css_class='col-md-4'),
-                    Div('student_id_type', css_class='col-md-4'),
-                    Div(PrependedText('student_id_number', _('ID Number')), css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div(InlineRadios('student_registered_in_unhcr'), css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_id_type', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_id_number', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('student_phone_prefix', _('Prefix (2 digits)')), css_class='col-md-4'),
-                    Div(PrependedText('student_phone', _('Number (6 digits)')), css_class='col-md-4'),
-                    Div(PrependedText('student_address', _('Address')), css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_phone_prefix', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_phone', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_address', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='d-none child_data'
+                css_class='bd-callout bd-callout-warning child_data'
             ),
             Fieldset(
-                _('Current situation'),
+                None,
                 Div(
-                    Div('classroom', css_class='col-md-6'),
-                    Div('section', css_class='col-md-6'),
+                    HTML('<h4 id="alternatives-to-hidden-labels">'+('Current situation')+'</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('classroom', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('section', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='d-none child_data'
+                css_class='bd-callout bd-callout-warning child_data'
             ),
             Fieldset(
-                _('Last student formal education'),
+                None,
                 Div(
-                    Div('last_education_level', css_class='col-md-6'),
-                    Div('last_school_type', css_class='col-md-6'),
+                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Last student formal education')+'</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('last_education_level', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('last_school_type', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('last_school_shift', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div('last_school_shift', css_class='col-md-6'),
-                    Div('last_school', css_class='col-md-6'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('last_school', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('last_education_year', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('last_year_result', css_class='col-md-3'),
                     css_class='row',
                 ),
-                Div(
-                    Div('last_education_year', css_class='col-md-6'),
-                    Div('last_year_result', css_class='col-md-6'),
-                    css_class='row',
-                ),
-                css_class='d-none child_data'
+                css_class='bd-callout bd-callout-warning child_data'
             ),
             Fieldset(
-                _('Last student informal education'),
+                None,
                 Div(
-                    Div('participated_in_alp', css_class='col-md-6'),
-                    Div('last_informal_edu_level', css_class='col-md-6'),
+                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Last student informal education')+'</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('participated_in_alp', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('last_informal_edu_level', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div('last_informal_edu_round', css_class='col-md-6'),
-                    Div('last_informal_edu_final_result', css_class='col-md-6'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('last_informal_edu_round', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('last_informal_edu_final_result', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='d-none child_data'
+                css_class='bd-callout bd-callout-warning child_data'
             ),
             FormActions(
                 Submit('save', _('Save')),
-                Button('cancel', _('Cancel'))
+                Button('cancel', _('Cancel')),
+                HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -418,7 +478,7 @@ class EnrollmentForm(forms.ModelForm):
         if instance:
             serializer = EnrollmentSerializer(instance, data=request.POST)
             if serializer.is_valid():
-                serializer.update(validated_data=serializer.validated_data)
+                serializer.update(validated_data=serializer.validated_data, instance=instance)
         else:
             serializer = EnrollmentSerializer(data=request.POST)
             if serializer.is_valid():
@@ -463,7 +523,6 @@ class EnrollmentForm(forms.ModelForm):
             'last_education_year',
             'outreach_barcode',
             'owner',
-            # 'education_year',
         )
         initial_fields = fields
         widgets = {}
@@ -479,71 +538,100 @@ class EnrollmentForm(forms.ModelForm):
 
 class GradingTerm1Form(forms.ModelForm):
 
-    term = forms.CharField(widget=forms.HiddenInput, required=False, initial='1')
-
     def __init__(self, *args, **kwargs):
         super(GradingTerm1Form, self).__init__(*args, **kwargs)
         instance = kwargs['instance']
+        print {'pk': instance.id, 'term': 1}
 
         self.helper = FormHelper()
-        self.helper.form_show_labels = False
-        self.helper.form_action = reverse('enrollments:grading', args={'pk': instance.id, 'term': 1})
+        self.helper.form_show_labels = True
+        self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': 1})
         if instance.classroom == 1:
             pass
 
         self.helper.layout = Layout(
             Fieldset(
-                _('Grading Term 1'),
+                None,
                 Div(
-                    'term',
-                    Div(PrependedText('exam_result_arabic', _('Arabic')), css_class='col-md-4'),
-                    Div(PrependedText('exam_result_language', _('Foreign language')), css_class='col-md-4'),
-                    Div(PrependedText('exam_result_education', _('Education')), css_class='col-md-4'),
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_arabic', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_language', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_education', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('exam_result_geo', _('Geography')), css_class='col-md-4'),
-                    Div(PrependedText('exam_result_history', _('History')), css_class='col-md-4'),
-                    Div(PrependedText('exam_result_math', _('Math')), css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_geo', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_history', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_math', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('exam_result_science', _('Science')), css_class='col-md-4'),
-                    Div(PrependedText('exam_result_physic', _('Physic')), css_class='col-md-4'),
-                    Div(PrependedText('exam_result_chemistry', _('Chemistry')), css_class='col-md-4'),
-                    Div(PrependedText('exam_result_bio', _('Biology')), css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_science', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_physic', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_chemistry', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('exam_result_linguistic_ar', _('Linguistic field/Arabic')),
-                        css_class='col-md-4'),
-                    Div(PrependedText('exam_result_linguistic_en', _('Linguistic field/Foreign language')),
-                        css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_bio', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('exam_result_sociology', _('Sociology field')), css_class='col-md-4'),
-                    Div(PrependedText('exam_result_physical', _('Physical field')), css_class='col-md-4'),
-                    Div(PrependedText('exam_result_artistic', _('Artistic field')), css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_linguistic_ar', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_linguistic_en', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('exam_result_mathematics', _('Scientific domain/Mathematics')),
-                        css_class='col-md-4'),
-                    Div(PrependedText('exam_result_sciences', _('Scientific domain/Sciences')),
-                        css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_sociology', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_physical', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_artistic', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('exam_total', _('Final Grade')), css_class='col-md-4'),
-                    Div('exam_result', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_mathematics', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_sciences', css_class='col-md-3'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_total', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
             ),
+            FormActions(
+                Submit('save', _('Save')),
+                Button('cancel', _('Cancel')),
+                HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+            )
         )
 
-    def save(self, request=None):
+    def save(self, instance=None, request=None):
         instance = super(GradingTerm1Form, self).save()
+        # if instance:
+        #     serializer = EnrollmentSerializer(instance, data=request.POST)
+        #     if serializer.is_valid():
+        #         serializer.update(validated_data=serializer.validated_data, instance=instance)
 
     class Meta:
         model = Enrollment
@@ -577,37 +665,48 @@ class GradingTerm1Form(forms.ModelForm):
 
 class GradingTerm2Form(forms.ModelForm):
 
-    term = forms.CharField(widget=forms.HiddenInput, required=False, initial='2')
-
     def __init__(self, *args, **kwargs):
         super(GradingTerm2Form, self).__init__(*args, **kwargs)
         instance = kwargs['instance']
 
         self.helper = FormHelper()
-        self.helper.form_show_labels = False
-        self.helper.form_action = reverse('enrollments:grading', args={'pk': instance.id, 'term': 2})
+        self.helper.form_show_labels = True
+        self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': 2})
         if instance.classroom == 1:
             pass
 
         self.helper.layout = Layout(
             Fieldset(
-                _('Grading Term 2'),
+                None,
                 Div(
-                    'term',
-                    Div(PrependedText('exam_result_arabic_cmplt', _('Arabic')), css_class='col-md-4'),
-                    Div(PrependedText('exam_result_language_cmplt', _('Foreign language')), css_class='col-md-4'),
-                    Div(PrependedText('exam_result_math_cmplt', _('Math')), css_class='col-md-4'),
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 2') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_arabic_cmplt', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_language_cmplt', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_math_cmplt', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    Div(PrependedText('exam_total_cmplt', _('Final Grade')), css_class='col-md-4'),
-                    Div('exam_result_final', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_total_cmplt', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_final', css_class='col-md-3'),
                     css_class='row',
                 ),
+                css_class='bd-callout bd-callout-warning'
             ),
+            FormActions(
+                Submit('save', _('Save')),
+                Button('cancel', _('Cancel')),
+                HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+            )
         )
 
-    def save(self, request=None):
+    def save(self, instance=None, request=None):
         instance = super(GradingTerm2Form, self).save()
 
     class Meta:
