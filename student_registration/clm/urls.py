@@ -9,7 +9,7 @@ urlpatterns = [
     url(
         regex=r'^index/$',
         view=views.CLMView.as_view(),
-        name='clm'
+        name='index'
     ),
 
     url(
