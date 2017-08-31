@@ -23,6 +23,11 @@
             <a class="nav-link" href="{% url 'clm:index' %}">{% trans "CLM tools" %}</a>
         </li>
         {% endif %}
+        {% if request.user|has_group:"SCHOOL" or request.user|has_group:"DIRECTOR" %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'enrollments:list' %}">{% trans "2nd shift registration" %}</a>
+              </li>
+        {% endif %}
     </ul>
   {% endif %}
 

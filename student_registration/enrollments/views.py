@@ -42,23 +42,24 @@ from .forms import EnrollmentForm, GradingTerm1Form, GradingTerm2Form
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
 
 
-class EnrollmentView(LoginRequiredMixin,
-                     # GroupRequiredMixin,
-                     FormView):
+class AddView(LoginRequiredMixin,
+              GroupRequiredMixin,
+              FormView):
 
     template_name = 'enrollments/new.html'
     form_class = EnrollmentForm
     success_url = '/enrollments/list/'
+    group_required = [u"ENROL_CREATE"]
 
     def get_context_data(self, **kwargs):
         # force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        return super(EnrollmentView, self).get_context_data(**kwargs)
+        return super(AddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
-        initial = super(EnrollmentView, self).get_initial()
+        initial = super(AddView, self).get_initial()
         data = []
         if self.request.GET.get('enrollment_id'):
             instance = Enrollment.objects.get(id=self.request.GET.get('enrollment_id'))
@@ -70,12 +71,6 @@ class EnrollmentView(LoginRequiredMixin,
 
         return initial
 
-    # def get_form(self, form_class=None):
-    #     form = super(EnrollmentView, self).get_form(form_class)
-    #     # override the queryset
-    #     form.fields['offered_player'].queryset = self.petitioner.players
-    #     return form
-    #
     # def get(self, request, *args, **kwargs):
     #     # only perform 1 query to get 'petitioner'
     #     self.petitioner = get_object_or_404(Team, user=self.request.user.profile, league=self.kwargs['pk'])
@@ -88,31 +83,32 @@ class EnrollmentView(LoginRequiredMixin,
     #         return self.form_valid(form)
     #     else:
     #         return self.form_invalid(form)
-    #
+
     def form_valid(self, form):
         form.save(self.request)
-        return super(EnrollmentView, self).form_valid(form)
+        return super(AddView, self).form_valid(form)
 
 
-class EnrollmentEditView(LoginRequiredMixin,
-                         # GroupRequiredMixin,
-                         FormView):
+class EditView(LoginRequiredMixin,
+               GroupRequiredMixin,
+               FormView):
 
     template_name = 'enrollments/edit.html'
     form_class = EnrollmentForm
     success_url = '/enrollments/list/'
+    group_required = [u"ENROL_EDIT"]
 
     def get_context_data(self, **kwargs):
         # force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        return super(EnrollmentEditView, self).get_context_data(**kwargs)
+        return super(EditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
         instance = Enrollment.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            EnrollmentForm(self.request.POST, instance=instance)
+            return EnrollmentForm(self.request.POST, instance=instance)
         else:
             data = EnrollmentSerializer(instance).data
             return EnrollmentForm(data, instance=instance)
@@ -120,19 +116,19 @@ class EnrollmentEditView(LoginRequiredMixin,
     def form_valid(self, form):
         instance = Enrollment.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
-        return super(EnrollmentEditView, self).form_valid(form)
+        return super(EditView, self).form_valid(form)
 
 
-class EnrollmentListView(LoginRequiredMixin,
-                         FilterView,
-                         ExportMixin,
-                         SingleTableView,
-                         RequestConfig):
+class ListingView(LoginRequiredMixin,
+                  FilterView,
+                  ExportMixin,
+                  SingleTableView,
+                  RequestConfig):
+
     table_class = EnrollmentTable
     model = Enrollment
     template_name = 'enrollments/list.html'
     table = BootstrapTable(Enrollment.objects.all(), order_by='id')
-
     filterset_class = EnrollmentFilter
 
     def get_queryset(self):
@@ -140,19 +136,15 @@ class EnrollmentListView(LoginRequiredMixin,
         # return Enrollment.objects.filter(education_year=education_year, school=self.request.user.school_id)
         return Enrollment.objects.filter(school=self.request.user.school_id)
 
-    # def get_context_data(self, **kwargs):
-    #     return {
-    #         'table': self.table
-    #     }
-
 
 class GradingView(LoginRequiredMixin,
-                         # GroupRequiredMixin,
-                         FormView):
+                  GroupRequiredMixin,
+                  FormView):
 
     template_name = 'enrollments/grading.html'
     form_class = GradingTerm1Form
     success_url = '/enrollments/list/'
+    group_required = [u"ENROL_GRADING"]
 
     def get_context_data(self, **kwargs):
         # force_default_language(self.request)
@@ -170,7 +162,7 @@ class GradingView(LoginRequiredMixin,
         form_class = self.get_form_class()
         instance = Enrollment.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            form_class(self.request.POST, instance=instance)
+            return form_class(self.request.POST, instance=instance)
         else:
             return form_class(instance=instance)
 
@@ -180,145 +172,47 @@ class GradingView(LoginRequiredMixin,
         return super(GradingView, self).form_valid(form)
 
 
-# class EnrollmentEditView(LoginRequiredMixin,
-#                          GroupRequiredMixin,
-#                          TemplateView):
-#     """
-#     Provides the enrollment page with lookup types in the context
-#     """
-#     model = Enrollment
-#     template_name = 'enrollments/edit.html'
+# class EnrollmentGradingView(LoginRequiredMixin, TemplateView):
 #
-#     group_required = [u"ENROL_EDIT"]
+#         model = Enrollment
+#         template_name = 'enrollments/grading.html'
 #
-#     def get_context_data(self, **kwargs):
+#         def get_context_data(self, **kwargs):
 #
-#         school_id = 0
-#         school = 0
-#         location = 0
-#         location_parent = 0
-#         total = 0
-#         if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
-#             school_id = self.request.user.school_id
-#         if school_id:
-#             school = School.objects.get(id=school_id)
-#             total = self.model.objects.filter(school_id=school_id).count()
-#         if school and school.location:
-#             location = school.location
-#         if location and location.parent:
-#             location_parent = location.parent
+#             school_id = 0
+#             school = 0
+#             location = 0
+#             location_parent = 0
+#             total = 0
+#             level = int(self.request.GET.get('level', 0))
+#             section = int(self.request.GET.get('section', 0))
+#             queryset = []
+#             if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
+#                 school_id = self.request.user.school_id
+#             if school_id:
+#                 school = School.objects.get(id=school_id)
+#                 total = self.model.objects.filter(school_id=school_id).count()
+#             if school and school.location:
+#                 location = school.location
+#             if location and location.parent:
+#                 location_parent = location.parent
+#             if school_id and level:
+#                 queryset = self.model.objects.filter(school=school_id, classroom=level).order_by('student__first_name')
+#                 if section:
+#                     queryset = queryset.filter(section=section)
 #
-#         return {
-#             'total': total,
-#             'schools': School.objects.all(),
-#             'school_shifts': Enrollment.SCHOOL_SHIFT,
-#             'school_types': Enrollment.SCHOOL_TYPE,
-#             'education_levels': ClassRoom.objects.all(),
-#             'education_results': Enrollment.RESULT,
-#             'informal_educations': EducationLevel.objects.all(),
-#             'education_final_results': ClassLevel.objects.all(),
-#             'alp_rounds': ALPRound.objects.all(),
-#             'classrooms': ClassRoom.objects.all(),
-#             'sections': Section.objects.all(),
-#             'nationalities': Nationality.objects.exclude(id=5),
-#             'nationalities2': Nationality.objects.all(),
-#             'genders': Person.GENDER,
-#             'months': Person.MONTHS,
-#             'idtypes': IDType.objects.all(),
-#             'school': school,
-#             'location': location,
-#             'location_parent': location_parent
-#         }
-
-
-class EnrollmentPatchView(LoginRequiredMixin, TemplateView):
-    """
-    Provides the enrollment page with lookup types in the context
-    """
-    model = Enrollment
-    template_name = 'enrollments/patch.html'
-
-    def get_context_data(self, **kwargs):
-
-        school_id = 0
-        school = 0
-        location = 0
-        location_parent = 0
-        total = 0
-        if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
-            school_id = self.request.user.school_id
-        if school_id:
-            school = School.objects.get(id=school_id)
-            total = self.model.objects.filter(school_id=school_id).count()
-        if school and school.location:
-            location = school.location
-        if location and location.parent:
-            location_parent = location.parent
-
-        return {
-            'total': total,
-            'schools': School.objects.all(),
-            'school_shifts': Enrollment.SCHOOL_SHIFT,
-            'school_types': Enrollment.SCHOOL_TYPE,
-            'education_levels': ClassRoom.objects.all(),
-            'education_results': Enrollment.RESULT,
-            'informal_educations': EducationLevel.objects.all(),
-            'education_final_results': ClassLevel.objects.all(),
-            'alp_rounds': ALPRound.objects.all(),
-            'classrooms': ClassRoom.objects.all(),
-            'sections': Section.objects.all(),
-            'nationalities': Nationality.objects.exclude(id=5),
-            'nationalities2': Nationality.objects.all(),
-            'genders': Person.GENDER,
-            'months': Person.MONTHS,
-            'idtypes': IDType.objects.all(),
-            'school': school,
-            'location': location,
-            'location_parent': location_parent
-        }
-
-
-class EnrollmentGradingView(LoginRequiredMixin, TemplateView):
-
-        model = Enrollment
-        template_name = 'enrollments/grading.html'
-
-        def get_context_data(self, **kwargs):
-
-            school_id = 0
-            school = 0
-            location = 0
-            location_parent = 0
-            total = 0
-            level = int(self.request.GET.get('level', 0))
-            section = int(self.request.GET.get('section', 0))
-            queryset = []
-            if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
-                school_id = self.request.user.school_id
-            if school_id:
-                school = School.objects.get(id=school_id)
-                total = self.model.objects.filter(school_id=school_id).count()
-            if school and school.location:
-                location = school.location
-            if location and location.parent:
-                location_parent = location.parent
-            if school_id and level:
-                queryset = self.model.objects.filter(school=school_id, classroom=level).order_by('student__first_name')
-                if section:
-                    queryset = queryset.filter(section=section)
-
-            return {
-                'data': queryset,
-                'level': level,
-                'section': section,
-                'total': total,
-                'school': school,
-                'location': location,
-                'results': self.model.EXAM_RESULT,
-                'location_parent': location_parent,
-                'classrooms': ClassRoom.objects.all(),
-                'sections': Section.objects.all(),
-            }
+#             return {
+#                 'data': queryset,
+#                 'level': level,
+#                 'section': section,
+#                 'total': total,
+#                 'school': school,
+#                 'location': location,
+#                 'results': self.model.EXAM_RESULT,
+#                 'location_parent': location_parent,
+#                 'classrooms': ClassRoom.objects.all(),
+#                 'sections': Section.objects.all(),
+#             }
 
 
 ####################### API VIEWS #############################
@@ -609,70 +503,4 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
             content_type='application/vnd.ms-excel',
         )
         response['Content-Disposition'] = 'attachment; filename=student_by_school.xls'
-        return response
-
-
-class ExportDuplicatesView(LoginRequiredMixin, ListView):
-
-    model = Enrollment
-    queryset = Enrollment.objects.order_by('-id')
-
-    def get(self, request, *args, **kwargs):
-
-        students = {}
-        students2 = {}
-        schools = {}
-        duplicates = []
-        queryset = self.queryset
-
-        for registry in queryset:
-            student = registry.student
-            if student.number not in students:
-                students[student.number] = registry
-            else:
-                duplicates.append(registry)
-                schools[registry.school_id] = registry.school.name
-
-            if student.number_part1 not in students2:
-                students2[student.number_part1] = registry
-            else:
-                duplicates.append(registry)
-
-            # if not student.id_number in students2:
-            #     students2[student.id_number] = registry
-            # else:
-            #     duplicates.append(registry)
-            #     duplicates.append(students2[student.id_number])
-
-        data = tablib.Dataset()
-        data.headers = [
-            'ID',
-            'Student ID',
-            'Fullname',
-            'Number',
-            'Number part1',
-            'ID number',
-            'School',
-        ]
-
-        content = []
-        for registry in duplicates:
-            student = registry.student
-            content = [
-                registry.id,
-                student.id,
-                student.__unicode__(),
-                student.number,
-                student.number_part1,
-                student.id_number,
-                registry.school.name,
-            ]
-            data.append(content)
-
-        file_format = base_formats.XLS()
-        response = HttpResponse(
-            file_format.export_data(data),
-            content_type='application/vnd.ms-excel',
-        )
-        response['Content-Disposition'] = 'attachment; filename=duplications.xls'
         return response

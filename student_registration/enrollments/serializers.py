@@ -305,3 +305,54 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'school_type',
         )
 
+
+class GradingSerializer(serializers.ModelSerializer):
+
+    csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
+    save = serializers.IntegerField(source='owner.id', read_only=True)
+
+    def update(self, instance, validated_data):
+
+        try:
+
+            for key in validated_data:
+                if hasattr(instance, key):
+                    setattr(instance, key, validated_data[key])
+
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'Enrollment instance': ex.message})
+
+        return instance
+
+    class Meta:
+        model = Enrollment
+        fields = (
+            'exam_result_arabic',
+            'exam_result_language',
+            'exam_result_education',
+            'exam_result_geo',
+            'exam_result_history',
+            'exam_result_math',
+            'exam_result_science',
+            'exam_result_physic',
+            'exam_result_chemistry',
+            'exam_result_bio',
+            'exam_result_linguistic_ar',
+            'exam_result_linguistic_en',
+            'exam_result_sociology',
+            'exam_result_physical',
+            'exam_result_artistic',
+            'exam_result_mathematics',
+            'exam_result_sciences',
+            'exam_total',
+            'exam_result',
+            'exam_result_arabic_cmplt',
+            'exam_result_language_cmplt',
+            'exam_result_math_cmplt',
+            'exam_total_cmplt',
+            'exam_result_final',
+            'csrfmiddlewaretoken',
+            'save',
+        )
