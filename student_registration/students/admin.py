@@ -12,6 +12,7 @@ from .models import (
     StudentMatching,
     Nationality,
     IDType,
+    Labour,
 )
 from .forms import StudentEnrollmentForm
 from student_registration.schools.models import (
@@ -692,3 +693,4 @@ admin.site.register(Student, StudentAdmin)
 admin.site.register(Nationality, NationalityAdmin)
 admin.site.register(StudentMatching, StudentMatchingAdmin)
 admin.site.register(IDType, IDTypeAdmin)
+admin.site.register(Labour)
