@@ -9,11 +9,11 @@ var moved_student_path = host+'/api/logging-student-move/';
 
 $(document).ready(function(){
 
-    $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
+    // $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
 
     reorganizeForm();
 
-    $(document).on('click', 'input[name=new_registry], input[name=student_outreached], input[name=have_barcode]', function(){
+    $(document).on('click', 'input[name=new_registry], input[name=student_outreached], input[name=have_barcode], #id_student_family_status, input[name=have_labour]:checked', function(){
         reorganizeForm();
     });
 
@@ -154,36 +154,55 @@ function reorganizeForm()
     var new_registry = $('input[name=new_registry]:checked').val();
     var outreached = $('input[name=student_outreached]:checked').val();
     var have_barcode = $('input[name=have_barcode]:checked').val();
-
-    console.log(new_registry);
-    console.log(outreached);
+    var family_status = $('#id_student_family_status').val();
+    var have_labour = $('input[name=have_labour]:checked').val();
 
     if(new_registry == '1' && outreached == '1' && (have_barcode == '1' || have_barcode == '0')){
-        $('#register_by_barcode').removeClass('invisible');
-        $('#search_options').addClass('invisible');
-        $('.child_data').addClass('invisible');
+        $('#register_by_barcode').removeClass('d-none');
+        $('#search_options').addClass('d-none');
+        $('.child_data').addClass('d-none');
         return true;
     }
 
     if(new_registry == '1' && outreached == '0'){
-        $('#register_by_barcode').addClass('invisible');
-        $('#search_options').addClass('invisible');
-        $('.child_data').removeClass('invisible');
+        $('#register_by_barcode').addClass('d-none');
+        $('#search_options').addClass('d-none');
+        $('.child_data').removeClass('d-none');
         return true;
     }
 
     if(new_registry == '0' && outreached == '0'){
-        $('#register_by_barcode').addClass('invisible');
-        $('#search_options').removeClass('invisible');
-        $('.child_data').addClass('invisible');
+        $('#register_by_barcode').addClass('d-none');
+        $('#search_options').removeClass('d-none');
+        $('.child_data').addClass('d-none');
         return true;
     }
 
     if(new_registry == '0' && outreached == '1' && have_barcode == '1'){
-        $('#register_by_barcode').addClass('invisible');
-        $('#search_options').removeClass('invisible');
-        $('.child_data').addClass('invisible');
+        $('#register_by_barcode').addClass('d-none');
+        $('#search_options').removeClass('d-none');
+        $('.child_data').addClass('d-none');
         return true;
+    }
+
+    if(family_status == 'married' || family_status == 'divorced'){
+        $('div#student_have_children').removeClass('d-none');
+        $('div#student_have_children').prev().removeClass('d-none');
+    }else{
+        $('div#student_have_children').addClass('d-none');
+        $('div#student_have_children').prev().addClass('d-none');
+    }
+
+    if(have_labour == 'yes_morning' || have_labour == 'yes_afternoon'){
+        $('div#labours').removeClass('d-none');
+        $('div#labours').prev().removeClass('d-none');
+        $('div#labour_hours').removeClass('d-none');
+        $('div#labour_hours').prev().removeClass('d-none');
+    }else{
+        $('div#labours').addClass('d-none');
+        $('div#labours').prev().addClass('d-none');
+        $('div#labour_hours').addClass('d-none');
+        $('div#labour_hours').prev().addClass('d-none');
     }
 }
 

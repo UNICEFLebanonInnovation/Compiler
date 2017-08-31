@@ -1,9 +1,9 @@
 from __future__ import unicode_literals, absolute_import, division
 
-from django.contrib.gis.db import models
-from django.db.models.signals import pre_save
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.contrib.postgres.fields import ArrayField
+
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from .utils import *
@@ -48,11 +48,21 @@ class Nationality(models.Model):
 
 class IDType(models.Model):
     name = models.CharField(max_length=45, unique=True)
-    inuse = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['id']
         verbose_name = "ID Type"
+
+    def __unicode__(self):
+        return self.name
+
+
+class Labour(models.Model):
+    name = models.CharField(max_length=45, unique=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Labour"
 
     def __unicode__(self):
         return self.name
@@ -78,6 +88,13 @@ class Person(TimeStampedModel):
     GENDER = Choices(
         ('Male', _('Male')),
         ('Female', _('Female')),
+    )
+    FAMILY_STATUS = Choices(
+        ('married', _('Married')),
+        ('engaged', _('Engaged')),
+        ('divorced', _('Divorced')),
+        ('widower', _('Widower')),
+        ('single', _('Single')),
     )
 
     first_name = models.CharField(max_length=64, blank=True, null=True)
@@ -114,6 +131,18 @@ class Person(TimeStampedModel):
         default=0,
         choices=((str(x), x) for x in range(1, 33))
     )
+    family_status = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=FAMILY_STATUS
+    )
+    have_children = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
     phone = models.CharField(max_length=64, blank=True, null=True)
     phone_prefix = models.CharField(max_length=10, blank=True, null=True)
     registered_in_unhcr = models.CharField(
@@ -140,6 +169,11 @@ class Person(TimeStampedModel):
     address = models.TextField(
         blank=True,
         null=True
+    )
+    p_code = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
     )
     number = models.CharField(max_length=45, blank=True, null=True)
     number_part1 = models.CharField(max_length=45, blank=True, null=True)

@@ -173,3 +173,14 @@ class ALPAssignmentMatrix(models.Model):
 
     def __unicode__(self):
         return str(self.id)
+
+
+class EducationalLevel(models.Model):
+    name = models.CharField(max_length=45, unique=True)
+    note = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.name
