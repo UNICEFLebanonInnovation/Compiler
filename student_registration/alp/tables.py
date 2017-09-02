@@ -17,7 +17,7 @@ class CommonTable(tables.Table):
 
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
                                         template_name='django_tables2/edit_column.html',
-                                        attrs={'url': '/enrollments/edit/'})
+                                        attrs={'url': ''})
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': 'api/alp/'})
@@ -40,6 +40,10 @@ class CommonTable(tables.Table):
 
 class OutreachTable(CommonTable):
 
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+                                        template_name='django_tables2/edit_column.html',
+                                        attrs={'url': '/alp/outreach-edit/'})
+
     class Meta:
         model = Outreach
         fields = (
@@ -51,6 +55,9 @@ class OutreachTable(CommonTable):
             'student.last_name',
             'student.sex',
             'student_age',
+            'student_birthday_day',
+            'student_birthday_month',
+            'student_birthday_year',
             'student_birthday',
             'student.nationality',
             'student.mother_fullname',
