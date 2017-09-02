@@ -248,7 +248,7 @@ class PreTestEditView(LoginRequiredMixin, FormView):
 
 class PreTestGradingView(LoginRequiredMixin, FormView):
 
-    template_name = 'alp/pre_test_grading.html'
+    template_name = 'alp/test_grading.html'
     form_class = PreTestGradingForm
     success_url = '/alp/pre-test/'
 
@@ -279,7 +279,7 @@ class PostTestView(LoginRequiredMixin,
                    SingleTableView,
                    RequestConfig):
 
-    table_class = PostTestFilter
+    table_class = PostTestTable
     model = Outreach
     template_name = 'alp/post_test.html'
     table = BootstrapTable(Outreach.objects.all(), order_by='id')
@@ -293,7 +293,7 @@ class PostTestView(LoginRequiredMixin,
 
 class PostTestGradingView(LoginRequiredMixin, FormView):
 
-    template_name = 'alp/post_test_grading.html'
+    template_name = 'alp/test_grading.html'
     form_class = PostTestGradingForm
     success_url = '/alp/post-test/'
 
