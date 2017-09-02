@@ -578,7 +578,7 @@ class OutreachEditView(LoginRequiredMixin,
 #         }
 
 
-class OutreachExportViewSet(LoginRequiredMixin, ListView):
+class ExportViewSet(LoginRequiredMixin, ListView):
     model = Outreach
 
     def get(self, request, *args, **kwargs):
