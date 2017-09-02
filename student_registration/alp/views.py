@@ -17,29 +17,17 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
 from .models import Outreach, ALPRound
-from .forms import RegistrationForm
-from .serializers import OutreachSerializer, OutreachExamSerializer, OutreachSmallSerializer
-from .tables import BootstrapTable, CommonTable, OutreachTable, PreTestTable, PostTestTable, SchoolTable
+from .forms import RegistrationForm, PreTestGradingForm, PostTestGradingForm, OutreachForm, PreTestForm
+from .serializers import OutreachSerializer, GradingSerializer, OutreachSmallSerializer
+from .tables import BootstrapTable, OutreachTable, PreTestTable, PostTestTable, SchoolTable
 from .filters import OutreachFilter, PreTestFilter, PostTestFilter, SchoolFilter
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.users.utils import force_default_language
 from student_registration.students.serializers import StudentSerializer
 from student_registration.students.models import (
-    Person,
     Student,
-    Nationality,
-    IDType,
 )
-from student_registration.schools.models import (
-    School,
-    ClassRoom,
-    Section,
-    EducationLevel,
-    ClassLevel,
-    PartnerOrganization
-)
-from student_registration.locations.models import Location
 from student_registration.alp.templatetags.util_tags import has_group
 
 
@@ -117,7 +105,7 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
 
     def partial_update(self, request, *args, **kwargs):
         if has_group(self.request.user, 'CERD'):
-            self.serializer_class = OutreachExamSerializer
+            self.serializer_class = GradingSerializer
         return super(OutreachViewSet, self).partial_update(request)
 
 
@@ -125,7 +113,7 @@ class AddView(LoginRequiredMixin, FormView):
 
     template_name = 'alp/registration.html'
     form_class = RegistrationForm
-    success_url = '/alp/add/'
+    success_url = '/alp/list/'
 
     def get_context_data(self, **kwargs):
         # force_default_language(self.request)
@@ -152,6 +140,33 @@ class AddView(LoginRequiredMixin, FormView):
         return super(AddView, self).form_valid(form)
 
 
+class EditView(LoginRequiredMixin, FormView):
+
+    template_name = 'alp/registration.html'
+    form_class = RegistrationForm
+    success_url = '/alp/list/'
+
+    def get_context_data(self, **kwargs):
+        # force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(EditView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return RegistrationForm(self.request.POST, instance=instance)
+        else:
+            data = OutreachSerializer(instance).data
+            return RegistrationForm(data, instance=instance)
+
+    def form_valid(self, form):
+        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(EditView, self).form_valid(form)
+
+
 class SchoolView(LoginRequiredMixin,
                  FilterView,
                  ExportMixin,
@@ -160,7 +175,7 @@ class SchoolView(LoginRequiredMixin,
 
     table_class = SchoolTable
     model = Outreach
-    template_name = 'enrollments/list.html'
+    template_name = 'alp/list.html'
     table = BootstrapTable(Outreach.objects.all(), order_by='id')
 
     filterset_class = SchoolFilter
@@ -178,7 +193,7 @@ class PreTestView(LoginRequiredMixin,
 
     table_class = PreTestTable
     model = Outreach
-    template_name = 'enrollments/pre_test.html'
+    template_name = 'alp/pre_test.html'
     table = BootstrapTable(Outreach.objects.all(), order_by='id')
 
     filterset_class = PreTestFilter
@@ -188,10 +203,53 @@ class PreTestView(LoginRequiredMixin,
         return Outreach.objects.filter(alp_round=alp_round)
 
 
+class PreTestAddView(LoginRequiredMixin, FormView):
+    template_name = 'alp/pretest_registration.html'
+    form_class = RegistrationForm
+    success_url = '/alp/pre-test/'
+
+    def get_context_data(self, **kwargs):
+        # force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(PreTestAddView, self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(PreTestAddView, self).form_valid(form)
+
+
+class PreTestEditView(LoginRequiredMixin, FormView):
+    template_name = 'alp/pre_test_registration.html'
+    form_class = RegistrationForm
+    success_url = '/alp/pre-test/'
+
+    def get_context_data(self, **kwargs):
+        # force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(PreTestEditView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return PreTestForm(self.request.POST, instance=instance)
+        else:
+            data = OutreachSmallSerializer(instance).data
+            return PreTestForm(data, instance=instance)
+
+    def form_valid(self, form):
+        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(PreTestEditView, self).form_valid(form)
+
+
 class PreTestGradingView(LoginRequiredMixin, FormView):
 
     template_name = 'alp/pre_test_grading.html'
-    form_class = RegistrationForm
+    form_class = PreTestGradingForm
     success_url = '/alp/pre-test/'
 
     def get_context_data(self, **kwargs):
@@ -201,8 +259,17 @@ class PreTestGradingView(LoginRequiredMixin, FormView):
             kwargs['form'] = self.get_form()
         return super(PreTestGradingView, self).get_context_data(**kwargs)
 
+    def get_form(self, form_class=None):
+        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return PreTestGradingForm(self.request.POST, instance=instance)
+        else:
+            data = GradingSerializer(instance).data
+            return PreTestGradingForm(data, instance=instance)
+
     def form_valid(self, form):
-        form.save(self.request)
+        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
         return super(PreTestGradingView, self).form_valid(form)
 
 
@@ -214,7 +281,7 @@ class PostTestView(LoginRequiredMixin,
 
     table_class = PostTestFilter
     model = Outreach
-    template_name = 'enrollments/post_test.html'
+    template_name = 'alp/post_test.html'
     table = BootstrapTable(Outreach.objects.all(), order_by='id')
 
     filterset_class = PostTestFilter
@@ -227,7 +294,7 @@ class PostTestView(LoginRequiredMixin,
 class PostTestGradingView(LoginRequiredMixin, FormView):
 
     template_name = 'alp/post_test_grading.html'
-    form_class = RegistrationForm
+    form_class = PostTestGradingForm
     success_url = '/alp/post-test/'
 
     def get_context_data(self, **kwargs):
@@ -237,176 +304,244 @@ class PostTestGradingView(LoginRequiredMixin, FormView):
             kwargs['form'] = self.get_form()
         return super(PostTestGradingView, self).get_context_data(**kwargs)
 
+    def get_form(self, form_class=None):
+        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return PostTestGradingForm(self.request.POST, instance=instance)
+        else:
+            data = GradingSerializer(instance).data
+            return PostTestGradingForm(data, instance=instance)
+
     def form_valid(self, form):
-        form.save(self.request)
+        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
         return super(PostTestGradingView, self).form_valid(form)
 
 
 class OutreachView(LoginRequiredMixin,
-                   GroupRequiredMixin,
-                   TemplateView):
-    model = Outreach
-    template_name = 'alp/index.html'
+                  FilterView,
+                  ExportMixin,
+                  SingleTableView,
+                  RequestConfig):
 
-    group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
-
-    def handle_no_permission(self, request):
-        # return HttpResponseRedirect(reverse("403.html"))
-        # return HttpResponseForbidden(reverse("404.html"))
-        return HttpResponseForbidden()
-
-    def get_context_data(self, **kwargs):
-        data = []
-        school = 0
-        location = 0
-        location_parent = 0
-        school_id = int(self.request.GET.get("school", 0))
-        alp_round = ALPRound.objects.get(current_round=True)
-
-        if has_group(self.request.user, 'ALP_SCHOOL'):
-            school_id = self.request.user.school_id
-        if school_id:
-            school = School.objects.get(id=school_id)
-        if school and school.location:
-            location = school.location
-        if location and location.parent:
-            location_parent = location.parent
-
-        force_default_language(self.request)
-
-        return {
-            'data': data,
-            'schools': School.objects.all().order_by('name'),
-            'locations': Location.objects.filter(type_id=2),
-            'partners': PartnerOrganization.objects.all(),
-            'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km',),
-            'months': Person.MONTHS,
-            'genders': Person.GENDER,
-            'idtypes': IDType.objects.all(),
-            'education_levels': ClassRoom.objects.all(),
-            'education_results': Outreach.RESULT,
-            'informal_educations': EducationLevel.objects.all(),
-            'alp_rounds': ALPRound.objects.all(),
-            'education_final_results': ClassLevel.objects.all(),
-            'classrooms': ClassRoom.objects.all(),
-            'sections': Section.objects.all(),
-            'nationalities': Nationality.objects.exclude(id=5),
-            'nationalities2': Nationality.objects.all(),
-            'school_id': school_id,
-            'school': school,
-            'location': location,
-            'location_parent': location_parent,
-            'alp_round': alp_round.id,
-        }
-
-
-class CurrentRoundView(LoginRequiredMixin,
-                       GroupRequiredMixin,
-                       TemplateView):
-    model = Outreach
-    template_name = 'alp/current.html'
-
-    group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
-
-    def handle_no_permission(self, request):
-        return HttpResponseForbidden()
-
-    def get_context_data(self, **kwargs):
-        data = []
-        school = 0
-        location = 0
-        location_parent = 0
-        total = 0
-        school_id = int(self.request.GET.get("school", 0))
-        round_id = int(self.request.GET.get("round_id", 0))
-        if round_id:
-            alp_round = ALPRound.objects.get(id=round_id)
-        else:
-            alp_round = ALPRound.objects.get(current_pre_test=True)
-
-        if has_group(self.request.user, 'ALP_SCHOOL'):
-            school_id = self.request.user.school_id
-        if school_id:
-            school = School.objects.get(id=school_id)
-            total = self.model.objects.filter(school_id=school_id, alp_round=alp_round).count()
-        if school and school.location:
-            location = school.location
-        if location and location.parent:
-            location_parent = location.parent
-
-        force_default_language(self.request)
-
-        return {
-            'data': data,
-            'total': total,
-            'schools': School.objects.all().order_by('name'),
-            'locations': Location.objects.filter(type_id=2),
-            'partners': PartnerOrganization.objects.all(),
-            'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km',),
-            'months': Person.MONTHS,
-            'genders': Person.GENDER,
-            'idtypes': IDType.objects.all(),
-            'education_levels': ClassRoom.objects.all(),
-            'education_results': Outreach.RESULT,
-            'informal_educations': EducationLevel.objects.all(),
-            'alp_rounds': ALPRound.objects.all(),
-            'education_final_results': ClassLevel.objects.all(),
-            'classrooms': ClassRoom.objects.all(),
-            'sections': Section.objects.all(),
-            'nationalities': Nationality.objects.exclude(id=5),
-            'nationalities2': Nationality.objects.all(),
-            'school_id': school_id,
-            'school': school,
-            'location': location,
-            'location_parent': location_parent,
-            'alp_round': alp_round.id,
-        }
-
-
-class DataCollectingView(LoginRequiredMixin,
-                         GroupRequiredMixin,
-                         TemplateView):
+    table_class = OutreachTable
     model = Outreach
     template_name = 'alp/outreach.html'
+    table = BootstrapTable(Outreach.objects.all(), order_by='id')
 
-    group_required = [u"PARTNER"]
+    filterset_class = OutreachFilter
 
-    def handle_no_permission(self, request):
-        # return HttpResponseRedirect(reverse("403.html"))
-        # return HttpResponseForbidden(reverse("404.html"))
-        return HttpResponseForbidden()
+    def get_queryset(self):
+        alp_round = ALPRound.objects.get(current_pre_test=True)
+        return Outreach.objects.filter(alp_round=alp_round, owner=self.request.user)
+
+
+class OutreachAddView(LoginRequiredMixin, FormView):
+
+    template_name = 'alp/outreach_registration.html'
+    form_class = RegistrationForm
+    success_url = '/alp/outreach/'
 
     def get_context_data(self, **kwargs):
-        data = []
-        school = 0
-        location = 0
-        location_parent = 0
-        alp_round = ALPRound.objects.get(current_pre_test=True)
+        # force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(OutreachAddView, self).get_context_data(**kwargs)
 
-        force_default_language(self.request)
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(OutreachAddView, self).form_valid(form)
 
-        return {
-            'data': data,
-            'schools': School.objects.all().order_by('name'),
-            # 'languages': Language.objects.all(),
-            'locations': Location.objects.filter(type_id=2),
-            'months': Person.MONTHS,
-            'genders': Person.GENDER,
-            'idtypes': IDType.objects.all(),
-            'education_levels': ClassRoom.objects.all(),
-            'education_results': Outreach.RESULT,
-            'informal_educations': EducationLevel.objects.all(),
-            'alp_rounds': ALPRound.objects.all(),
-            'education_final_results': ClassLevel.objects.all(),
-            'classrooms': ClassRoom.objects.all(),
-            'sections': Section.objects.all(),
-            'nationalities': Nationality.objects.exclude(id=5),
-            'nationalities2': Nationality.objects.all(),
-            'school': school,
-            'location': location,
-            'location_parent': location_parent,
-            'alp_round': alp_round.id
-        }
+
+class OutreachEditView(LoginRequiredMixin, FormView):
+
+    template_name = 'alp/outreach_registration.html'
+    form_class = RegistrationForm
+    success_url = '/alp/outreach/'
+
+    def get_context_data(self, **kwargs):
+        # force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(OutreachEditView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return OutreachForm(self.request.POST, instance=instance)
+        else:
+            data = OutreachSmallSerializer(instance).data
+            return OutreachForm(data, instance=instance)
+
+    def form_valid(self, form):
+        instance = Outreach.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(OutreachEditView, self).form_valid(form)
+
+
+# class OutreachView(LoginRequiredMixin,
+#                    GroupRequiredMixin,
+#                    TemplateView):
+#     model = Outreach
+#     template_name = 'alp/index.html'
+#
+#     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
+#
+#     def handle_no_permission(self, request):
+#         return HttpResponseForbidden()
+#
+#     def get_context_data(self, **kwargs):
+#         data = []
+#         school = 0
+#         location = 0
+#         location_parent = 0
+#         school_id = int(self.request.GET.get("school", 0))
+#         alp_round = ALPRound.objects.get(current_round=True)
+#
+#         if has_group(self.request.user, 'ALP_SCHOOL'):
+#             school_id = self.request.user.school_id
+#         if school_id:
+#             school = School.objects.get(id=school_id)
+#         if school and school.location:
+#             location = school.location
+#         if location and location.parent:
+#             location_parent = location.parent
+#
+#         force_default_language(self.request)
+#
+#         return {
+#             'data': data,
+#             'schools': School.objects.all().order_by('name'),
+#             'locations': Location.objects.filter(type_id=2),
+#             'partners': PartnerOrganization.objects.all(),
+#             'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km',),
+#             'months': Person.MONTHS,
+#             'genders': Person.GENDER,
+#             'idtypes': IDType.objects.all(),
+#             'education_levels': ClassRoom.objects.all(),
+#             'education_results': Outreach.RESULT,
+#             'informal_educations': EducationLevel.objects.all(),
+#             'alp_rounds': ALPRound.objects.all(),
+#             'education_final_results': ClassLevel.objects.all(),
+#             'classrooms': ClassRoom.objects.all(),
+#             'sections': Section.objects.all(),
+#             'nationalities': Nationality.objects.exclude(id=5),
+#             'nationalities2': Nationality.objects.all(),
+#             'school_id': school_id,
+#             'school': school,
+#             'location': location,
+#             'location_parent': location_parent,
+#             'alp_round': alp_round.id,
+#         }
+
+
+# class CurrentRoundView(LoginRequiredMixin,
+#                        GroupRequiredMixin,
+#                        TemplateView):
+#     model = Outreach
+#     template_name = 'alp/current.html'
+#
+#     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
+#
+#     def handle_no_permission(self, request):
+#         return HttpResponseForbidden()
+#
+#     def get_context_data(self, **kwargs):
+#         data = []
+#         school = 0
+#         location = 0
+#         location_parent = 0
+#         total = 0
+#         school_id = int(self.request.GET.get("school", 0))
+#         round_id = int(self.request.GET.get("round_id", 0))
+#         if round_id:
+#             alp_round = ALPRound.objects.get(id=round_id)
+#         else:
+#             alp_round = ALPRound.objects.get(current_pre_test=True)
+#
+#         if has_group(self.request.user, 'ALP_SCHOOL'):
+#             school_id = self.request.user.school_id
+#         if school_id:
+#             school = School.objects.get(id=school_id)
+#             total = self.model.objects.filter(school_id=school_id, alp_round=alp_round).count()
+#         if school and school.location:
+#             location = school.location
+#         if location and location.parent:
+#             location_parent = location.parent
+#
+#         force_default_language(self.request)
+#
+#         return {
+#             'data': data,
+#             'total': total,
+#             'schools': School.objects.all().order_by('name'),
+#             'locations': Location.objects.filter(type_id=2),
+#             'partners': PartnerOrganization.objects.all(),
+#             'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km',),
+#             'months': Person.MONTHS,
+#             'genders': Person.GENDER,
+#             'idtypes': IDType.objects.all(),
+#             'education_levels': ClassRoom.objects.all(),
+#             'education_results': Outreach.RESULT,
+#             'informal_educations': EducationLevel.objects.all(),
+#             'alp_rounds': ALPRound.objects.all(),
+#             'education_final_results': ClassLevel.objects.all(),
+#             'classrooms': ClassRoom.objects.all(),
+#             'sections': Section.objects.all(),
+#             'nationalities': Nationality.objects.exclude(id=5),
+#             'nationalities2': Nationality.objects.all(),
+#             'school_id': school_id,
+#             'school': school,
+#             'location': location,
+#             'location_parent': location_parent,
+#             'alp_round': alp_round.id,
+#         }
+
+
+# class DataCollectingView(LoginRequiredMixin,
+#                          GroupRequiredMixin,
+#                          TemplateView):
+#     model = Outreach
+#     template_name = 'alp/outreach.html'
+#
+#     group_required = [u"PARTNER"]
+#
+#     def handle_no_permission(self, request):
+#         return HttpResponseForbidden()
+#
+#     def get_context_data(self, **kwargs):
+#         data = []
+#         school = 0
+#         location = 0
+#         location_parent = 0
+#         alp_round = ALPRound.objects.get(current_pre_test=True)
+#
+#         force_default_language(self.request)
+#
+#         return {
+#             'data': data,
+#             'schools': School.objects.all().order_by('name'),
+#             # 'languages': Language.objects.all(),
+#             'locations': Location.objects.filter(type_id=2),
+#             'months': Person.MONTHS,
+#             'genders': Person.GENDER,
+#             'idtypes': IDType.objects.all(),
+#             'education_levels': ClassRoom.objects.all(),
+#             'education_results': Outreach.RESULT,
+#             'informal_educations': EducationLevel.objects.all(),
+#             'alp_rounds': ALPRound.objects.all(),
+#             'education_final_results': ClassLevel.objects.all(),
+#             'classrooms': ClassRoom.objects.all(),
+#             'sections': Section.objects.all(),
+#             'nationalities': Nationality.objects.exclude(id=5),
+#             'nationalities2': Nationality.objects.all(),
+#             'school': school,
+#             'location': location,
+#             'location_parent': location_parent,
+#             'alp_round': alp_round.id
+#         }
 
 
 # class PreTestView(LoginRequiredMixin,
@@ -531,34 +666,6 @@ class DataCollectingView(LoginRequiredMixin,
 #             'location_parent': location_parent,
 #             'alp_phase': 'post_test',
 #         }
-
-
-class OutreachStaffView(LoginRequiredMixin, TemplateView):
-    model = Outreach
-    template_name = 'alp/list.html'
-
-    def get_context_data(self, **kwargs):
-        data = []
-        schools = School.objects.all()
-
-        try:
-            school = int(self.request.GET.get("school", 0))
-        except Exception as ex:
-            school = 0
-        try:
-            location = int(self.request.GET.get("location", 0))
-        except Exception as ex:
-            location = 0
-        if school:
-            data = self.model.objects.filter(school=school).order_by('id')
-
-        return {
-            'outreaches': data,
-            'locations': Location.objects.filter(type_id=2),
-            'schools': schools,
-            'selectedSchool': school,
-            'selectedLocation': location,
-        }
 
 
 class OutreachExportViewSet(LoginRequiredMixin, ListView):
