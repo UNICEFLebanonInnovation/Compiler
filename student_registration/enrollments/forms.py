@@ -282,7 +282,7 @@ class EnrollmentForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">Registry</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Registry') + '</h4>')
                 ),
                 Div(
                     'student_id',
@@ -628,10 +628,6 @@ class GradingTerm1Form(forms.ModelForm):
 
     def save(self, instance=None, request=None):
         instance = super(GradingTerm1Form, self).save()
-        # if instance:
-        #     serializer = EnrollmentSerializer(instance, data=request.POST)
-        #     if serializer.is_valid():
-        #         serializer.update(validated_data=serializer.validated_data, instance=instance)
 
     class Meta:
         model = Enrollment
