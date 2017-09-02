@@ -12,6 +12,11 @@ urlpatterns = [
         name='add'
     ),
     url(
+        regex=r'^edit/(?P<pk>[\w.@+-]+)/$',
+        view=views.EditView.as_view(),
+        name='edit'
+    ),
+    url(
         regex=r'^list/$',
         view=views.SchoolView.as_view(),
         name='list'
@@ -22,19 +27,44 @@ urlpatterns = [
         name='pre_test'
     ),
     url(
+        regex=r'^pre-test-add/$',
+        view=views.PreTestAddView.as_view(),
+        name='pre_test_add'
+    ),
+    url(
+        regex=r'^pre-test-edit/(?P<pk>[\w.@+-]+)/$',
+        view=views.PreTestEditView.as_view(),
+        name='pre_test_edit'
+    ),
+    url(
         regex=r'^post-test/$',
         view=views.PostTestView.as_view(),
         name='post_test'
     ),
     url(
-        regex=r'^pre-test-grading/$',
+        regex=r'^pre-test-grading/(?P<pk>[\w.@+-]+)/$',
         view=views.PreTestGradingView.as_view(),
         name='pre_test_grading'
     ),
     url(
-        regex=r'^post-test-grading/$',
+        regex=r'^post-test-grading/(?P<pk>[\w.@+-]+)/$',
         view=views.PostTestGradingView.as_view(),
         name='post_test_grading'
+    ),
+    url(
+        regex=r'^outreach/$',
+        view=views.OutreachView.as_view(),
+        name='outreach'
+    ),
+    url(
+        regex=r'^outreach-add/$',
+        view=views.OutreachAddView.as_view(),
+        name='outreach_add'
+    ),
+    url(
+        regex=r'^outreach-edit/(?P<pk>[\w.@+-]+)/$',
+        view=views.OutreachEditView.as_view(),
+        name='outreach_edit'
     ),
     # url(
     #     regex=r'^alp-registrations/$',
