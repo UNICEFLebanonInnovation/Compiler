@@ -90,10 +90,14 @@ urlpatterns = [
     #     name='alp_pre_test'
     # ),
     url(
-        regex=r'^alp-export-by-school/$',
+        regex=r'^number-by-school/$',
         view=views.ExportBySchoolView.as_view(),
         name='alp_export_by_school'
     ),
 
-    url(regex=r'^data-collecting/export/$', view=views.OutreachExportViewSet.as_view(), name='alp_data_export'),
+    url(
+        regex=r'^export/$',
+        view=views.ExportViewSet.as_view(),
+        name='export'
+    ),
 ]
