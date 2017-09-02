@@ -24,9 +24,6 @@ class CommonTable(tables.Table):
 
     student_age = tables.Column(verbose_name=_('Age'), accessor='student.age')
     student_birthday = tables.Column(verbose_name=_('Birthday'), accessor='student.birthday')
-    student_phone_number = tables.Column(verbose_name=_('Phone number'), accessor='student.phone_number')
-    student_registered_in_unhcr = tables.Column(verbose_name=_('Registered in UNHCR'),
-                                                accessor='student.registered_in_unhcr')
 
     class Meta:
         model = Outreach
@@ -38,10 +35,6 @@ class CommonTable(tables.Table):
             'student.father_name',
             'student.last_name',
             'student.sex',
-            'student_age',
-            'student_birthday',
-            'student.nationality',
-            'student.mother_fullname',
         )
 
 
@@ -66,17 +59,27 @@ class OutreachTable(CommonTable):
             'student.id_type',
             'student.id_number',
             'student.address',
-            'student_phone_number',
+            'student_phone',
+            'student_phone_prefix',
         )
 
 
 class PreTestTable(CommonTable):
+
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+                                        template_name='django_tables2/edit_column.html',
+                                        attrs={'url': '/alp/pre-test-edit/'})
+    grading = tables.TemplateColumn(verbose_name=_('Grading'),
+                                        template_name='django_tables2/edit_column.html',
+                                        attrs={'url': '/alp/pre-test-grading/'})
+    created_by = tables.Column(verbose_name=_('Created By'), accessor='owner')
 
     class Meta:
         model = Outreach
         fields = (
             'edit_column',
             'delete_column',
+            'grading',
             'school',
             'student.first_name',
             'student.father_name',
@@ -84,10 +87,17 @@ class PreTestTable(CommonTable):
             'student.sex',
             'student_age',
             'level',
+            'exam_result_arabic',
+            'exam_language',
+            'exam_result_language',
+            'exam_result_math',
+            'exam_result_science',
             'pretest_total',
             'assigned_to_level',
             'student_birthday',
             'student.nationality',
+            'created_by',
+            'modified_by',
         )
 
 
@@ -101,6 +111,7 @@ class PostTestTable(CommonTable):
                                         attrs={'url': '/alp/post-test-grading/'})
     current_level = tables.Column(verbose_name=_('Current Level'), accessor='registered_in_level')
     current_section = tables.Column(verbose_name=_('Current Section'), accessor='section')
+    created_by = tables.Column(verbose_name=_('Created By'), accessor='owner')
 
     class Meta:
         model = Outreach
@@ -126,6 +137,8 @@ class PostTestTable(CommonTable):
             'post_exam_result_science',
             'posttest_total',
             'refer_to_level',
+            'created_by',
+            'modified_by',
         )
 
 
@@ -139,6 +152,10 @@ class SchoolTable(CommonTable):
                                           attrs={'url': 'api/alp/'})
     current_level = tables.Column(verbose_name=_('Current Level'), accessor='registered_in_level')
     current_section = tables.Column(verbose_name=_('Current Section'), accessor='section')
+
+    student_phone_number = tables.Column(verbose_name=_('Phone number'), accessor='student.phone_number')
+    student_registered_in_unhcr = tables.Column(verbose_name=_('Registered in UNHCR'),
+                                                accessor='student.registered_in_unhcr')
 
     class Meta:
         model = Outreach

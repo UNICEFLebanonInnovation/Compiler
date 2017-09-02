@@ -136,7 +136,7 @@ class AddView(LoginRequiredMixin, FormView):
         return initial
 
     def form_valid(self, form):
-        form.save(self.request)
+        form.save(request=self.request)
         return super(AddView, self).form_valid(form)
 
 
@@ -204,8 +204,8 @@ class PreTestView(LoginRequiredMixin,
 
 
 class PreTestAddView(LoginRequiredMixin, FormView):
-    template_name = 'alp/pretest_registration.html'
-    form_class = RegistrationForm
+    template_name = 'alp/registration.html'
+    form_class = PreTestForm
     success_url = '/alp/pre-test/'
 
     def get_context_data(self, **kwargs):
@@ -216,13 +216,13 @@ class PreTestAddView(LoginRequiredMixin, FormView):
         return super(PreTestAddView, self).get_context_data(**kwargs)
 
     def form_valid(self, form):
-        form.save(self.request)
+        form.save(request=self.request)
         return super(PreTestAddView, self).form_valid(form)
 
 
 class PreTestEditView(LoginRequiredMixin, FormView):
-    template_name = 'alp/pre_test_registration.html'
-    form_class = RegistrationForm
+    template_name = 'alp/registration.html'
+    form_class = PreTestForm
     success_url = '/alp/pre-test/'
 
     def get_context_data(self, **kwargs):
@@ -350,7 +350,7 @@ class OutreachAddView(LoginRequiredMixin, FormView):
         return super(OutreachAddView, self).get_context_data(**kwargs)
 
     def form_valid(self, form):
-        form.save(self.request)
+        form.save(request=self.request)
         return super(OutreachAddView, self).form_valid(form)
 
 
