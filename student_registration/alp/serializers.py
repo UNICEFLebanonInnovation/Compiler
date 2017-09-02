@@ -199,14 +199,9 @@ class GradingSerializer(serializers.ModelSerializer):
 
 
 class OutreachSmallSerializer(serializers.ModelSerializer):
-    original_id = serializers.IntegerField(source='id', read_only=True)
-    student_id = serializers.IntegerField(source='student.id', read_only=True)
     student_id_type_id = serializers.CharField(source='student.id_type_id', read_only=True)
     student_nationality_id = serializers.CharField(source='student.nationality_id', read_only=True)
     student_mother_nationality_id = serializers.CharField(source='student.mother_nationality_id', read_only=True)
-    location = serializers.IntegerField(source='school.location_id', read_only=True)
-    governorate_name = serializers.CharField(source='school.location.parent.name', read_only=True)
-    school_number = serializers.CharField(source='school.number', read_only=True)
 
     student_first_name = serializers.CharField(source='student.first_name')
     student_father_name = serializers.CharField(source='student.father_name')
@@ -269,9 +264,6 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
     class Meta:
         model = Outreach
         fields = (
-            'id',
-            'original_id',
-            'student_id',
             'student_first_name',
             'student_father_name',
             'student_last_name',
@@ -291,26 +283,10 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'student_id_type',
             'student_address',
             'school',
-            'owner',
-            'modified_by',
-            'location',
-            'governorate_name',
-            'school_number',
             'exam_result_arabic',
             'exam_language',
             'exam_result_language',
             'exam_result_math',
             'exam_result_science',
             'level',
-            'registered_in_level',
-            'assigned_to_level',
-            'not_enrolled_in_this_school',
-            'exam_not_exist_in_school',
-            'post_exam_result_arabic',
-            'post_exam_language',
-            'post_exam_result_language',
-            'post_exam_result_math',
-            'post_exam_result_science',
-            'refer_to_level',
-            'alp_round',
         )
