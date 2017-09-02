@@ -8,10 +8,9 @@ from dal import autocomplete
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
-from bootstrap3_datetime.widgets import DateTimePicker
 
 from .models import Outreach, ALPRound
-from .serializers import OutreachSerializer
+from .serializers import OutreachSerializer, OutreachSmallSerializer
 from student_registration.students.models import (
     Student,
     Nationality,
@@ -281,21 +280,27 @@ class OutreachForm(forms.ModelForm):
 
     class Media:
         js = (
-            # 'js/bootstrap-datetimepicker.js',
-            # 'js/validator.js',
-            # 'js/registrations.js'
+            'js/jquery-1.12.3.min.js',
+            'js/jquery-ui-1.12.1.js',
+            'js/validator.js',
+            'js/registrations.js',
         )
 
 
 class PreTestForm(forms.ModelForm):
 
-    search_school = forms.ModelChoiceField(
+    school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
-        empty_label=_('Search by school'),
-        required=False, to_field_name='id',
+        empty_label=_('School'),
+        required=True, to_field_name='id',
         initial=0
     )
-
+    level = forms.ModelChoiceField(
+        queryset=EducationLevel.objects.all(), widget=forms.Select,
+        empty_label=_('Entrance Test (Pre-Test)'),
+        required=True, to_field_name='id',
+        initial=0
+    )
     student_first_name = forms.CharField(widget=forms.TextInput, required=True)
     student_father_name = forms.CharField(widget=forms.TextInput, required=True)
     student_last_name = forms.CharField(widget=forms.TextInput, required=True)
@@ -307,78 +312,60 @@ class PreTestForm(forms.ModelForm):
             ('Female', _('Female')),
         )
     )
-    student_birthday_year = forms.ChoiceField(
-        widget=forms.Select, required=True,
-        choices=YEARS
+    exam_result_arabic = forms.FloatField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        max_value=60, min_value=0,
+        required=True
     )
-    student_birthday_month = forms.ChoiceField(
+    exam_language = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=(
-            ('', _('Birthday Month')),
-            ('1', _('January')),
-            ('2', _('February')),
-            ('3', _('March')),
-            ('4', _('April')),
-            ('5', _('May')),
-            ('6', _('June')),
-            ('7', _('July')),
-            ('8', _('August')),
-            ('9', _('September')),
-            ('10', _('October')),
-            ('11', _('November')),
-            ('12', _('December')),
+            ('', _('Exam language')),
+            ('english', _('English')),
+            ('french', _('French'))
         )
     )
-    student_birthday_day = forms.ChoiceField(
-        widget=forms.Select, required=True,
-        choices=DAYS
+    exam_result_language = forms.FloatField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        max_value=60, min_value=0,
+        required=True
     )
-
-    student_nationality = forms.ModelChoiceField(
-        queryset=Nationality.objects.all(), widget=forms.Select,
-        empty_label=_('Student nationality'),
-        required=True, to_field_name='id',
+    exam_result_math = forms.FloatField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        max_value=60, min_value=0,
+        required=True
     )
-
-    student_mother_fullname = forms.CharField(widget=forms.TextInput, required=True)
-    student_mother_nationality = forms.ModelChoiceField(
-        queryset=Nationality.objects.all(), widget=forms.Select,
-        empty_label=_('Mather nationality'),
-        required=True, to_field_name='id',
+    exam_result_science = forms.FloatField(
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        max_value=60, min_value=0,
+        required=True
     )
-    student_registered_in_unhcr = forms.TypedChoiceField(
-        label=_("Registered in UNHCR?"),
-        choices=YES_NO_CHOICE,
-        coerce=lambda x: bool(int(x)),
-        widget=forms.RadioSelect,
-        required=True,
-    )
-    student_id_type = forms.ModelChoiceField(
-        queryset=IDType.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id', empty_label=_('Student ID Type')
-    )
-    student_id_number = forms.CharField(widget=forms.TextInput, required=True)
-
-    student_phone_prefix = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 2})), required=True)
-    student_phone = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 6})), required=True)
-    student_address = forms.CharField(widget=forms.TextInput, required=True)
 
     def __init__(self, *args, **kwargs):
         super(PreTestForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
+        self.fields['level'].empty_label = _('Entrance Test (Pre-Test)')
+        self.fields['school'].empty_label = _('School')
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         if instance:
-            self.helper.form_action = reverse('alp:pretest_edit', kwargs={'pk': instance.id})
+            self.helper.form_action = reverse('alp:pre_test_edit', kwargs={'pk': instance.id})
         else:
-            self.helper.form_action = reverse('alp:pretest_add')
+            self.helper.form_action = reverse('alp:pre_test_add')
         self.helper.layout = Layout(
             Fieldset(
                 None,
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Basic Data') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('school', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('level', css_class='col-md-3'),
+                    css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -391,43 +378,7 @@ class PreTestForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_birthday_year', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_birthday_month', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_birthday_day', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
                     Div('student_sex', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_nationality', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_mother_fullname', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_mother_nationality', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div(InlineRadios('student_registered_in_unhcr'), css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_id_type', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_id_number', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_phone_prefix', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_phone', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_address', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
@@ -464,16 +415,19 @@ class PreTestForm(forms.ModelForm):
 
     def save(self, instance=None, request=None):
         if instance:
-            serializer = OutreachSerializer(instance, data=request.POST)
+            serializer = OutreachSmallSerializer(instance, data=request.POST)
             if serializer.is_valid():
                 serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance.modified_by = request.user
+                instance.calculate_pre_result()
+                instance.save()
         else:
-            serializer = OutreachSerializer(data=request.POST)
+            serializer = OutreachSmallSerializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
-                instance.school = request.user.school
                 instance.owner = request.user
                 instance.alp_round = ALPRound.objects.get(current_round=True)
+                instance.calculate_pre_result()
                 instance.save()
 
     class Meta:
@@ -482,25 +436,23 @@ class PreTestForm(forms.ModelForm):
             'student_first_name',
             'student_father_name',
             'student_last_name',
-            'student_mother_fullname',
             'student_sex',
-            'student_birthday_year',
-            'student_birthday_month',
-            'student_birthday_day',
             'exam_result_arabic',
             'exam_language',
             'exam_result_language',
             'exam_result_math',
             'exam_result_science',
             'level',
+            'school',
         )
         initial_fields = fields
 
     class Media:
         js = (
-            # 'js/bootstrap-datetimepicker.js',
-            # 'js/validator.js',
-            # 'js/registrations.js'
+            'js/jquery-1.12.3.min.js',
+            'js/jquery-ui-1.12.1.js',
+            'js/validator.js',
+            'js/registrations.js',
         )
 
 
@@ -837,6 +789,8 @@ class RegistrationForm(forms.ModelForm):
             serializer = OutreachSerializer(instance, data=request.POST)
             if serializer.is_valid():
                 serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance.modified_by = request.user
+                instance.save()
         else:
             serializer = OutreachSerializer(data=request.POST)
             if serializer.is_valid():
@@ -881,9 +835,10 @@ class RegistrationForm(forms.ModelForm):
 
     class Media:
         js = (
-            # 'js/bootstrap-datetimepicker.js',
-            # 'js/validator.js',
-            # 'js/registrations.js'
+            'js/jquery-1.12.3.min.js',
+            'js/jquery-ui-1.12.1.js',
+            'js/validator.js',
+            'js/registrations.js',
         )
 
 
@@ -974,6 +929,7 @@ class PreTestGradingForm(forms.ModelForm):
     def save(self, instance=None, request=None):
         instance = super(PreTestGradingForm, self).save()
         instance.modified_by = request.user
+        instance.calculate_pre_result()
         instance.save()
 
     class Meta:
@@ -1066,6 +1022,7 @@ class PostTestGradingForm(forms.ModelForm):
     def save(self, instance=None, request=None):
         instance = super(PostTestGradingForm, self).save()
         instance.modified_by = request.user
+        instance.calculate_post_result()
         instance.save()
 
     class Meta:
