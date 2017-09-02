@@ -12,7 +12,6 @@ class OutreachFilter(FilterSet):
             'student__father_name': ['contains'],
             'student__last_name': ['contains'],
             'student__mother_fullname': ['contains'],
-            'student__id_number': ['exact'],
         }
 
 

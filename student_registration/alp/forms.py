@@ -93,10 +93,10 @@ class OutreachAdminForm(forms.ModelForm):
 
 class OutreachForm(forms.ModelForm):
 
-    search_school = forms.ModelChoiceField(
+    school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
-        empty_label=_('Search by school'),
-        required=False, to_field_name='id',
+        empty_label=_('School'),
+        required=True, to_field_name='id',
         initial=0
     )
 
@@ -171,6 +171,7 @@ class OutreachForm(forms.ModelForm):
         super(OutreachForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
+        self.fields['school'].empty_label = _('School')
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -183,6 +184,11 @@ class OutreachForm(forms.ModelForm):
                 None,
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Basic Data') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('school', css_class='col-md-3'),
+                    css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -245,11 +251,13 @@ class OutreachForm(forms.ModelForm):
 
     def save(self, instance=None, request=None):
         if instance:
-            serializer = OutreachSerializer(instance, data=request.POST)
+            serializer = OutreachSmallSerializer(instance, data=request.POST)
             if serializer.is_valid():
                 serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance.modified_by = request.user
+                instance.save()
         else:
-            serializer = OutreachSerializer(data=request.POST)
+            serializer = OutreachSmallSerializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.school = request.user.school
