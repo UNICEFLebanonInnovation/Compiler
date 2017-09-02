@@ -967,11 +967,11 @@ class PreTestGradingForm(forms.ModelForm):
             FormActions(
                 Submit('save', _('Save')),
                 Button('cancel', _('Cancel')),
-                HTML('<a class="btn btn-info" href="/alp/pre_test/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info" href="/alp/pre-test/">' + _('Back to list') + '</a>'),
             )
         )
 
-    def save(self, request=None):
+    def save(self, instance=None, request=None):
         instance = super(PreTestGradingForm, self).save()
         instance.modified_by = request.user
         instance.save()
@@ -1029,8 +1029,6 @@ class PostTestGradingForm(forms.ModelForm):
 
         instance = kwargs['instance']
 
-        self.fields['level'].empty_label = _('Level')
-
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = reverse('alp:post_test_grading', kwargs={'pk': instance.id})
@@ -1061,11 +1059,11 @@ class PostTestGradingForm(forms.ModelForm):
             FormActions(
                 Submit('save', _('Save')),
                 Button('cancel', _('Cancel')),
-                HTML('<a class="btn btn-info" href="/alp/post_test/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info" href="/alp/post-test/">' + _('Back to list') + '</a>'),
             )
         )
 
-    def save(self, request=None):
+    def save(self, instance=None, request=None):
         instance = super(PostTestGradingForm, self).save()
         instance.modified_by = request.user
         instance.save()
