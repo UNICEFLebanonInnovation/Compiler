@@ -102,32 +102,7 @@ class OutreachSerializer(serializers.ModelSerializer):
 
             for key in validated_data:
                 if hasattr(instance, key):
-                    instance.setattr(key, validated_data[key])
-
-            # if 'registered_in_unhcr' in validated_data:
-            #     instance.registered_in_unhcr = validated_data['registered_in_unhcr']
-            # if 'participated_in_alp' in validated_data:
-            #     instance.participated_in_alp = validated_data['participated_in_alp']
-            # if 'last_informal_edu_level' in validated_data:
-            #     instance.last_informal_edu_level = validated_data['last_informal_edu_level']
-            # if 'last_informal_edu_round' in validated_data:
-            #     instance.last_informal_edu_round = validated_data['last_informal_edu_round']
-            # if 'last_informal_edu_final_result' in validated_data:
-            #     instance.last_informal_edu_final_result = validated_data['last_informal_edu_final_result']
-            # if 'section' in validated_data:
-            #     instance.section = validated_data['section']
-            # if 'registered_in_level' in validated_data:
-            #     instance.registered_in_level = validated_data['registered_in_level']
-            # if 'assigned_to_level' in validated_data:
-            #     instance.assigned_to_level = validated_data['assigned_to_level']
-            # if 'last_education_level' in validated_data:
-            #     instance.last_education_level = validated_data['last_education_level']
-            # if 'last_education_year' in validated_data:
-            #     instance.last_education_year = validated_data['last_education_year']
-            # if 'level' in validated_data:
-            #     instance.level = validated_data['level']
-            # if 'modified_by' in validated_data:
-            #     instance.modified_by_id = validated_data['modified_by']
+                    setattr(instance, key, validated_data[key])
 
             instance.save()
 
@@ -177,7 +152,6 @@ class OutreachSerializer(serializers.ModelSerializer):
             'last_education_level',
             'last_education_year',
             'owner',
-            # 'modified_by',
             'governorate_name',
             'location',
             'student_nationality_id',
@@ -201,7 +175,7 @@ class OutreachSerializer(serializers.ModelSerializer):
         )
 
 
-class OutreachExamSerializer(serializers.ModelSerializer):
+class GradingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Outreach
@@ -212,26 +186,15 @@ class OutreachExamSerializer(serializers.ModelSerializer):
             'exam_result_math',
             'exam_result_science',
             'level',
-            # 'exam_corrector_arabic',
-            # 'exam_corrector_language',
-            # 'exam_corrector_math',
-            # 'exam_corrector_science',
             'registered_in_level',
             'section',
             'assigned_to_level',
-            # 'not_enrolled_in_this_school',
-            # 'exam_not_exist_in_school',
             'post_exam_result_arabic',
             'post_exam_language',
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',
-            # 'post_exam_corrector_arabic',
-            # 'post_exam_corrector_language',
-            # 'post_exam_corrector_math',
-            # 'post_exam_corrector_science',
             'refer_to_level',
-            'modified_by',
         )
 
 
@@ -294,35 +257,7 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
 
             for key in validated_data:
                 if hasattr(instance, key):
-                    instance.setattr(key, validated_data[key])
-
-            # if 'level' in validated_data:
-            #     instance.level = validated_data['level']
-            # if 'assigned_to_level' in validated_data:
-            #     instance.assigned_to_level = validated_data['assigned_to_level']
-            #
-            # if 'exam_result_arabic' in validated_data:
-            #     instance.exam_result_arabic = validated_data['exam_result_arabic']
-            # if 'exam_language' in validated_data:
-            #     instance.exam_language = validated_data['exam_language']
-            # if 'exam_result_language' in validated_data:
-            #     instance.exam_result_language = validated_data['exam_result_language']
-            # if 'exam_result_math' in validated_data:
-            #     instance.exam_result_math = validated_data['exam_result_math']
-            # if 'exam_result_science' in validated_data:
-            #     instance.exam_result_science = validated_data['exam_result_science']
-
-            # if 'exam_corrector_arabic' in validated_data:
-            #     instance.exam_corrector_arabic = validated_data['exam_corrector_arabic']
-            # if 'exam_corrector_language' in validated_data:
-            #     instance.exam_corrector_language = validated_data['exam_corrector_language']
-            # if 'exam_corrector_math' in validated_data:
-            #     instance.exam_corrector_math = validated_data['exam_corrector_math']
-            # if 'exam_corrector_science' in validated_data:
-            #     instance.exam_corrector_science = validated_data['exam_corrector_science']
-
-            # if 'modified_by' in validated_data:
-            #     instance.modified_by = validated_data['modified_by']
+                    setattr(instance, key, validated_data[key])
 
             instance.save()
 
@@ -367,10 +302,6 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'exam_result_math',
             'exam_result_science',
             'level',
-            # 'exam_corrector_arabic',
-            # 'exam_corrector_language',
-            # 'exam_corrector_math',
-            # 'exam_corrector_science',
             'registered_in_level',
             'assigned_to_level',
             'not_enrolled_in_this_school',
@@ -380,10 +311,6 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',
-            # 'post_exam_corrector_arabic',
-            # 'post_exam_corrector_language',
-            # 'post_exam_corrector_math',
-            # 'post_exam_corrector_science',
             'refer_to_level',
             'alp_round',
         )

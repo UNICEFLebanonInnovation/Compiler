@@ -6,7 +6,7 @@ from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import *
-from .forms import OutreachForm
+from .forms import OutreachAdminForm
 from .models import (
     Outreach,
     ALPRound,
@@ -586,7 +586,7 @@ class ToAgeFilter(admin.SimpleListFilter):
 
 class OutreachAdmin(ImportExportModelAdmin):
     resource_class = OutreachResource
-    form = OutreachForm
+    form = OutreachAdminForm
     fieldsets = (
         (None, {
             'fields': ('student', 'school', 'owner', 'modified_by')
