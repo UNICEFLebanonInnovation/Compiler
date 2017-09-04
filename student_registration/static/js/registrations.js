@@ -9,7 +9,7 @@ var moved_student_path = host+'/api/logging-student-move/';
 
 $(document).ready(function(){
 
-    // $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
+    $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
 
     reorganizeForm();
 
@@ -33,119 +33,165 @@ $(document).ready(function(){
         });
     });
 
-    $("#id_search_student").autocomplete({
-      source: function( request, response ) {
-          var school = $('#id_search_school').val();
-          if(school == ''){
-              school = 0;
-          }
-        $.ajax( {
-          url: '/api/students/?school='+school+'&school_type='+$('#id_school_type').val(),
-          dataType: "json",
-          data: {
-            term: request.term
-          },
-          success: function( data ) {
-            response(data);
-          }
-        } );
-      },
-      minLength: 3,
-      select: function( event, ui ) {
-          window.location = '/enrollments/add/?enrollment_id='+ui.item.enrollment.id;
-          return false;
-      }
-    }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
-         var that = this;
-         $.each( items, function( index, item ) {
-             that._renderItemData( ul, item );
-        });
-        $( ul ).find( "li:odd" ).addClass( "odd" );
-    };
+    if($(document).find('#id_search_student').length == 1) {
 
-    $("#id_search_student").autocomplete( "instance" )._renderItem = function( ul, item ) {
-          return $( "<li>" )
-            .append( "<div style='border: 1px solid;'>"
-                            +  "<b>Base Data:</b> " + item.full_name + " - " + item.mother_fullname + " - " + item.id_number
-                            + "<br/> <b>Gender - Birthday:</b> " + item.sex + " - " + item.birthday
-                            + "<br/> <b>Last education year:</b> " + item.enrollment.education_year_name
-                            + "<br/> <b>Last education school:</b> " + item.enrollment.school_name + " - " + item.enrollment.school_number
-                            + "<br/> <b>Class / Section:</b> " + item.enrollment.classroom_name + " / " + item.enrollment.section_name
-                            + "</div>" )
-            .appendTo( ul );
-    };
+        $("#id_search_student").autocomplete({
+            source: function (request, response) {
+                var school = $('#id_search_school').val();
+                if (school == '') {
+                    school = 0;
+                }
+                $.ajax({
+                    url: '/api/students/?school=' + school + '&school_type=' + $('#id_school_type').val(),
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function (event, ui) {
+                window.location = '/enrollments/add/?enrollment_id=' + ui.item.enrollment.id;
+                return false;
+            }
+        }).autocomplete("instance")._renderMenu = function (ul, items) {
+            var that = this;
+            $.each(items, function (index, item) {
+                that._renderItemData(ul, item);
+            });
+            $(ul).find("li:odd").addClass("odd");
+        };
 
+        $("#id_search_student").autocomplete("instance")._renderItem = function (ul, item) {
+            return $("<li>")
+                .append("<div style='border: 1px solid;'>"
+                    + "<b>Base Data:</b> " + item.full_name + " - " + item.mother_fullname + " - " + item.id_number
+                    + "<br/> <b>Gender - Birthday:</b> " + item.sex + " - " + item.birthday
+                    + "<br/> <b>Last education year:</b> " + item.enrollment.education_year_name
+                    + "<br/> <b>Last education school:</b> " + item.enrollment.school_name + " - " + item.enrollment.school_number
+                    + "<br/> <b>Class / Section:</b> " + item.enrollment.classroom_name + " / " + item.enrollment.section_name
+                    + "</div>")
+                .appendTo(ul);
+        };
+    }
 
+    if($(document).find('#id_search_barcode').length == 1) {
 
-    $("#id_search_barcode").autocomplete({
-      source: function( request, response ) {
-        $.ajax( {
-          url: '/api/child/',
-          dataType: "json",
-          data: {
-            term: request.term
-          },
-          success: function( data ) {
-            response( data);
-          }
-        } );
-      },
-      minLength: 3,
-      select: function( event, ui ) {
-          window.location = '/enrollments/add/?child_id='+ui.item.child_id;
-          return false;
-      }
-    }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
-         var that = this;
-         $.each( items, function( index, item ) {
-             that._renderItemData( ul, item );
-        });
-        $( ul ).find( "li:odd" ).addClass( "odd" );
-    };
+        $("#id_search_barcode").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/api/child/',
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function (event, ui) {
+                window.location = '/enrollments/add/?child_id=' + ui.item.child_id;
+                return false;
+            }
+        }).autocomplete("instance")._renderMenu = function (ul, items) {
+            var that = this;
+            $.each(items, function (index, item) {
+                that._renderItemData(ul, item);
+            });
+            $(ul).find("li:odd").addClass("odd");
+        };
 
-    $("#id_search_barcode").autocomplete( "instance" )._renderItem = function( ul, item ) {
-          return $( "<li>" )
-            .append( "<div style='border: 1px solid;'>"
-                            +  "<b>Base Data:</b> " + item.student_full_name + " - " + item.stduent_mother_fullname + " - " + item.student_id_number
-                            + "<br/> <b>Gender - Birthday:</b> " + item.student_sex + " - " + item.student_birthday
-                            + "</div>" )
-            .appendTo( ul );
-    };
+        $("#id_search_barcode").autocomplete("instance")._renderItem = function (ul, item) {
+            return $("<li>")
+                .append("<div style='border: 1px solid;'>"
+                    + "<b>Base Data:</b> " + item.student_full_name + " - " + item.stduent_mother_fullname + " - " + item.student_id_number
+                    + "<br/> <b>Gender - Birthday:</b> " + item.student_sex + " - " + item.student_birthday
+                    + "</div>")
+                .appendTo(ul);
+        };
+    }
 
-    $("#id_outreach_barcode").autocomplete({
-      source: function( request, response ) {
-        $.ajax( {
-          url: '/api/child/',
-          dataType: "json",
-          data: {
-            term: request.term
-          },
-          success: function( data ) {
-            response( data);
-          }
-        } );
-      },
-      minLength: 3,
-      select: function( event, ui ) {
-          $('#id_outreach_barcode').val(ui.item.barcode_subset);
-          return false;
-      }
-    }).autocomplete( "instance" )._renderMenu = function( ul, items ) {
-         var that = this;
-         $.each( items, function( index, item ) {
-             that._renderItemData( ul, item );
-        });
-        $( ul ).find( "li:odd" ).addClass( "odd" );
-    };
+    if($(document).find('#id_outreach_barcode').length == 1) {
 
-    $("#id_outreach_barcode").autocomplete( "instance" )._renderItem = function( ul, item ) {
-          return $( "<li>" )
-            .append( "<div style='border: 1px solid;'>"
-                            +  "<b>Base Data:</b> " + item.student_full_name + " - " + item.stduent_mother_fullname + " - " + item.student_id_number
-                            + "<br/> <b>Gender - Birthday:</b> " + item.student_sex + " - " + item.student_birthday
-                            + "</div>" )
-            .appendTo( ul );
-    };
+        $("#id_outreach_barcode").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/api/child/',
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function (event, ui) {
+                $('#id_outreach_barcode').val(ui.item.barcode_subset);
+                return false;
+            }
+        }).autocomplete("instance")._renderMenu = function (ul, items) {
+            var that = this;
+            $.each(items, function (index, item) {
+                that._renderItemData(ul, item);
+            });
+            $(ul).find("li:odd").addClass("odd");
+        };
+
+        $("#id_outreach_barcode").autocomplete("instance")._renderItem = function (ul, item) {
+            return $("<li>")
+                .append("<div style='border: 1px solid;'>"
+                    + "<b>Base Data:</b> " + item.student_full_name + " - " + item.stduent_mother_fullname + " - " + item.student_id_number
+                    + "<br/> <b>Gender - Birthday:</b> " + item.student_sex + " - " + item.student_birthday
+                    + "</div>")
+                .appendTo(ul);
+        };
+    }
+
+    if($(document).find('#search_moved_student').length == 1) {
+
+        $("#search_moved_student").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/api/logging-student-move/',
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function (event, ui) {
+                console.log(ui);
+                $("#search_moved_student").val('');
+                window.location = '/enrollments/moved/' + ui.item.enrolment_id + '/' + ui.item.id;
+                return false;
+            }
+        }).autocomplete("instance")._renderMenu = function (ul, items) {
+            var that = this;
+            $.each(items, function (index, item) {
+                that._renderItemData(ul, item);
+            });
+            $(ul).find("li:odd").addClass("odd");
+        };
+
+        $("#search_moved_student").autocomplete("instance")._renderItem = function (ul, item) {
+            return $("<li>")
+                .append("<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_sex + " - " + item.student_age + ") "
+                    + "<br> Current situation: " + item.school_name + " - " + item.school_number + " / " + item.classroom_name + " / " + item.section_name
+                    + "</div>")
+                .appendTo(ul);
+        };
+    }
 });
 
 

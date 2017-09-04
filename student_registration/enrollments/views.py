@@ -22,23 +22,10 @@ from django_tables2.export.views import ExportMixin
 from .filters import EnrollmentFilter
 from .tables import BootstrapTable, EnrollmentTable
 
-from student_registration.students.models import (
-    Person,
-    Nationality,
-    IDType,
-)
-from student_registration.schools.models import (
-    School,
-    ClassRoom,
-    Section,
-    EducationLevel,
-    ClassLevel,
-)
-from student_registration.alp.models import ALPRound
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from .models import Enrollment, LoggingStudentMove, EducationYear
-from .forms import EnrollmentForm, GradingTerm1Form, GradingTerm2Form
+from .forms import EnrollmentForm, GradingTerm1Form, GradingTerm2Form, StudentMovedForm
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
 
 
@@ -70,19 +57,6 @@ class AddView(LoginRequiredMixin,
         initial = data
 
         return initial
-
-    # def get(self, request, *args, **kwargs):
-    #     # only perform 1 query to get 'petitioner'
-    #     self.petitioner = get_object_or_404(Team, user=self.request.user.profile, league=self.kwargs['pk'])
-    #     return super(LeagueTransferView, self).get(request, *args, **kwargs)
-
-    # def post(self, request, *args, **kwargs):
-    #     form_class = self.get_form_class()
-    #     form = self.get_form(form_class)
-    #     if form.is_valid():
-    #         return self.form_valid(form)
-    #     else:
-    #         return self.form_invalid(form)
 
     def form_valid(self, form):
         form.save(self.request)
@@ -117,6 +91,38 @@ class EditView(LoginRequiredMixin,
         instance = Enrollment.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(EditView, self).form_valid(form)
+
+
+class MovedView(LoginRequiredMixin,
+                GroupRequiredMixin,
+                FormView):
+
+    template_name = 'enrollments/moved.html'
+    form_class = StudentMovedForm
+    success_url = '/enrollments/list/'
+    group_required = [u"SCHOOL"]
+
+    def get_context_data(self, **kwargs):
+        # force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(MovedView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return StudentMovedForm(self.request.POST, instance=instance, moved=self.kwargs['moved'])
+        else:
+            return StudentMovedForm(instance=instance, moved=self.kwargs['moved'])
+
+    def form_valid(self, form):
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        moved = LoggingStudentMove.objects.get(id=self.kwargs['moved'])
+        moved.school_to = self.request.user.school
+        moved.save()
+        form.save(request=self.request, instance=instance)
+        return super(MovedView, self).form_valid(form)
 
 
 class ListingView(LoginRequiredMixin,
@@ -172,49 +178,6 @@ class GradingView(LoginRequiredMixin,
         return super(GradingView, self).form_valid(form)
 
 
-# class EnrollmentGradingView(LoginRequiredMixin, TemplateView):
-#
-#         model = Enrollment
-#         template_name = 'enrollments/grading.html'
-#
-#         def get_context_data(self, **kwargs):
-#
-#             school_id = 0
-#             school = 0
-#             location = 0
-#             location_parent = 0
-#             total = 0
-#             level = int(self.request.GET.get('level', 0))
-#             section = int(self.request.GET.get('section', 0))
-#             queryset = []
-#             if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
-#                 school_id = self.request.user.school_id
-#             if school_id:
-#                 school = School.objects.get(id=school_id)
-#                 total = self.model.objects.filter(school_id=school_id).count()
-#             if school and school.location:
-#                 location = school.location
-#             if location and location.parent:
-#                 location_parent = location.parent
-#             if school_id and level:
-#                 queryset = self.model.objects.filter(school=school_id, classroom=level).order_by('student__first_name')
-#                 if section:
-#                     queryset = queryset.filter(section=section)
-#
-#             return {
-#                 'data': queryset,
-#                 'level': level,
-#                 'section': section,
-#                 'total': total,
-#                 'school': school,
-#                 'location': location,
-#                 'results': self.model.EXAM_RESULT,
-#                 'location_parent': location_parent,
-#                 'classrooms': ClassRoom.objects.all(),
-#                 'sections': Section.objects.all(),
-#             }
-
-
 ####################### API VIEWS #############################
 
 
@@ -232,7 +195,7 @@ class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
             return self.queryset
         terms = self.request.GET.get('term', 0)
         if terms:
-            qs = self.queryset
+            qs = self.queryset.exclude(enrolment__dropout_status=True, school_to__isnull=False)
             for term in terms.split():
                 qs = qs.filter(
                     Q(student__first_name__contains=term) |
