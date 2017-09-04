@@ -75,6 +75,7 @@ class Enrollment(TimeStampedModel):
     SCHOOL_SHIFT = Choices(
         ('first', _('First shift')),
         ('second', _('Second shift')),
+        ('alp', _('ALP')),
     )
 
     YEARS = ((str(x), x) for x in range(2016, 2051))
