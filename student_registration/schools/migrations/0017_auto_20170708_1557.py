@@ -18,10 +18,10 @@ class Migration(migrations.Migration):
         migrations.DeleteModel(
             name='Grade',
         ),
-        migrations.RemoveField(
-            model_name='classroom',
-            name='grade',
-        ),
+        # migrations.RemoveField(
+        #     model_name='classroom',
+        #     name='grade',
+        # ),
         migrations.RemoveField(
             model_name='classroom',
             name='school',
