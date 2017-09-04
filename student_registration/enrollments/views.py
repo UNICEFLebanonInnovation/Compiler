@@ -24,6 +24,7 @@ from .tables import BootstrapTable, EnrollmentTable
 
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
+from student_registration.schools.models import ClassRoom
 from .models import Enrollment, LoggingStudentMove, EducationYear
 from .forms import EnrollmentForm, GradingTerm1Form, GradingTerm2Form, StudentMovedForm
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
@@ -466,4 +467,56 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
             content_type='application/vnd.ms-excel',
         )
         response['Content-Disposition'] = 'attachment; filename=student_by_school.xls'
+        return response
+
+
+class ExportByCycleView(LoginRequiredMixin, ListView):
+
+    model = Enrollment
+    queryset = Enrollment.objects.all()
+
+    def get(self, request, *args, **kwargs):
+
+        classrooms = ClassRoom.objects.all()
+        schools = self.queryset.values_list(
+                        'school', 'school__number', 'school__name', 'school__location__name',
+                        'school__location__parent__name', ).distinct().order_by('school__number')
+
+        data = tablib.Dataset()
+        data.headers = [
+            _('CERD'),
+            _('School name'),
+            _('# Students registered in the Compiler'),
+            'Class name',
+            '# Students registered in class',
+            _('District'),
+            _('Governorate'),
+        ]
+
+        content = []
+        for school in schools:
+            enrollments = self.model.objects.filter(school=school[0])
+            nbr = enrollments.count()
+            for cls in classrooms:
+                nbr_cls = enrollments.filter(classroom=cls).count()
+                if not nbr_cls:
+                    pass
+
+                content = [
+                    school[1],
+                    school[2],
+                    nbr,
+                    cls.name,
+                    nbr_cls,
+                    school[3],
+                    school[4]
+                ]
+                data.append(content)
+
+        file_format = base_formats.XLS()
+        response = HttpResponse(
+            file_format.export_data(data),
+            content_type='application/vnd.ms-excel',
+        )
+        response['Content-Disposition'] = 'attachment; filename=student_by_cycle.xls'
         return response
