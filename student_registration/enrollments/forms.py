@@ -721,6 +721,60 @@ class GradingTerm2Form(forms.ModelForm):
         js = ()
 
 
+class StudentMovedForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        moved = kwargs.pop('moved', None)
+        super(StudentMovedForm, self).__init__(*args, **kwargs)
+        instance = kwargs['instance']
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = reverse('enrollments:moved',
+                                          kwargs={'pk': instance.id, 'moved': moved}
+                                          )
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Registration') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('classroom', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('section', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+                Button('cancel', _('Cancel')),
+                HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def save(self, instance=None, request=None):
+        instance = super(StudentMovedForm, self).save()
+
+        instance.school = request.user.school
+        instance.moved = False
+        instance.save()
+
+    class Meta:
+        model = Enrollment
+        fields = (
+            'classroom',
+            'section',
+        )
+        initial_fields = fields
+        widgets = {}
+
+    class Media:
+        js = ()
+
+
 class LoggingStudentMoveForm(forms.ModelForm):
 
     student = forms.ModelChoiceField(

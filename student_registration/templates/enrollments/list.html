@@ -8,6 +8,7 @@
 
 {% block extra_head %}
     <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
 {% endblock %}
 
 {% block content-full-page %}
@@ -34,6 +35,9 @@
                     {% trans "Export" %}
             </a>
           </li>
+          <li class="breadcrumb-item">
+              <input type="text" id="search_moved_student" size="300" style="width: 300px;" placeholder="{% trans "Search moved student" %}" />
+          </li>
         </ol>
 
         {% if filter %}
@@ -51,7 +55,9 @@
 {% endblock %}
 
 {% block extra_js %}
+    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/registrations.js' %}"></script>
 {% endblock %}
