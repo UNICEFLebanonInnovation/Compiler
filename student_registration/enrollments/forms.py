@@ -541,7 +541,6 @@ class GradingTerm1Form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(GradingTerm1Form, self).__init__(*args, **kwargs)
         instance = kwargs['instance']
-        print {'pk': instance.id, 'term': 1}
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
