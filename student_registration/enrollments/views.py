@@ -140,8 +140,8 @@ class ListingView(LoginRequiredMixin,
 
     def get_queryset(self):
         education_year = EducationYear.objects.get(current_year=True)
-        # return Enrollment.objects.filter(education_year=education_year, school=self.request.user.school_id)
-        return Enrollment.objects.filter(school=self.request.user.school_id)
+        # return Enrollment.objects.exclude(moved=True).filter(education_year=education_year, school=self.request.user.school_id)
+        return Enrollment.objects.exclude(moved=True).filter(school=self.request.user.school_id)
 
 
 class GradingView(LoginRequiredMixin,
@@ -196,7 +196,7 @@ class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
             return self.queryset
         terms = self.request.GET.get('term', 0)
         if terms:
-            qs = self.queryset.exclude(enrolment__dropout_status=True, school_to__isnull=False)
+            qs = self.queryset.exclude(enrolment__dropout_status=True).filter(to_school__isnull=True)
             for term in terms.split():
                 qs = qs.filter(
                     Q(student__first_name__contains=term) |
