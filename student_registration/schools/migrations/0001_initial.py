@@ -79,11 +79,11 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=45, unique=True)),
             ],
         ),
-        migrations.AddField(
-            model_name='classroom',
-            name='grade',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.Grade'),
-        ),
+        # migrations.AddField(
+        #     model_name='classroom',
+        #     name='grade',
+        #     field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.Grade'),
+        # ),
         migrations.AddField(
             model_name='classroom',
             name='school',

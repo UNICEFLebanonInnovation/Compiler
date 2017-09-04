@@ -21,16 +21,13 @@ $(document).ready(function(){
         checkArabicOnly($(this));
     });
 
-    $(document).on('click', '.moved-registration-row', function(){
+    $(document).on('click', '.moved-button', function(){
         var item = $(this);
-        console.log('ok');
-        bootbox.confirm(
-            "Are you sure you want to tag this student as moved?", function(result) {
-            if(result == true){
-                moved_student(item.attr('itemscope'));
-                item.parents('tr').remove();
-            }
-        });
+        console.log(item);
+        if(confirm("Are you sure you want to tag this student as moved?")) {
+            moved_student(item.attr('itemscope'));
+            item.parents('tr').remove();
+        }
     });
 
     if($(document).find('#id_search_student').length == 1) {
@@ -259,7 +256,7 @@ function moved_student(item)
 
     $.ajax({
         type: "POST",
-        url: moved_student_path,
+        url: '/api/logging-student-move/',
         data: data,
         cache: false,
         async: false,

@@ -12,10 +12,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='enrollment',
-            name='grade',
-        ),
+        # migrations.RemoveField(
+        #     model_name='enrollment',
+        #     name='grade',
+        # ),
         migrations.RemoveField(
             model_name='enrollment',
             name='relation_to_adult',
