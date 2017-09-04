@@ -17,6 +17,11 @@ urlpatterns = [
         name='edit'
     ),
     url(
+        regex=r'^moved/(?P<pk>[\w.@+-]+)/(?P<moved>[\w.@+-]+)/$',
+        view=views.MovedView.as_view(),
+        name='moved'
+    ),
+    url(
         regex=r'^list/$',
         view=views.ListingView.as_view(),
         name='list'
@@ -26,11 +31,6 @@ urlpatterns = [
         view=views.GradingView.as_view(),
         name='grading'
     ),
-    # url(
-    #     regex=r'^enrollment-grading/$',
-    #     view=views.EnrollmentGradingView.as_view(),
-    #     name='enrollment_grading'
-    # ),
     url(
         regex=r'^export/$',
         view=views.ExportViewSet.as_view(),
