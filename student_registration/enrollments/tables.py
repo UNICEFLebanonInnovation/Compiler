@@ -19,7 +19,7 @@ class EnrollmentTable(tables.Table):
                                         attrs={'url': '/enrollments/edit/'})
     delete_column = tables.TemplateColumn(verbose_name='Delete student',
                                           template_name='django_tables2/delete_column.html',
-                                          attrs={'url': '/api/enrollment/'})
+                                          attrs={'url': '/api/enrollments/'})
     moved_column = tables.TemplateColumn(verbose_name='Student moved',
                                          template_name='django_tables2/moved_column.html')
     grading_term1 = tables.TemplateColumn(verbose_name='Grading Term 1',
