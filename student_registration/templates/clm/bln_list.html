@@ -13,10 +13,25 @@
 
 <ol class="breadcrumb">
   <li class="breadcrumb-item active">
-            <a href="{% url "clm:bln_add" %}" class="btn btn-success">
-                <i class="icon-plus-sign icon-white"></i>
-                {% trans "Add new Child" %}
-            </a>
+    {{ request.user.partner }}
+  </li>
+  <li class="breadcrumb-item active">
+    {{ request.user }}
+  </li>
+</ol>
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item active">
+        <a href="{% url "clm:bln_add" %}" class="btn btn-success">
+            <i class="icon-plus-sign icon-white"></i>
+            {% trans "Add new Child" %}
+        </a>
+  </li>
+  <li class="breadcrumb-item active">
+        <a href="{% url "clm:bln_add" %}" class="btn btn-success">
+            <i class="icon-plus-sign icon-white"></i>
+            {% trans "Export data" %}
+        </a>
   </li>
 </ol>
 

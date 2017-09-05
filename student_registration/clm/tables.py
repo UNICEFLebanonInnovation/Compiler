@@ -21,6 +21,12 @@ class CommonTable(tables.Table):
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': ''})
+    pre_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
+                                           template_name='django_tables2/clm_assessment.html',
+                                           attrs={'url': ''})
+    post_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
+                                            template_name='django_tables2/clm_assessment.html',
+                                            attrs={'url': ''})
 
     student_age = tables.Column(verbose_name=_('Age'), accessor='student.age')
     student_birthday = tables.Column(verbose_name=_('Birthday'), accessor='student.birthday')
@@ -31,6 +37,8 @@ class CommonTable(tables.Table):
         fields = (
             'edit_column',
             'delete_column',
+            'pre_assessment',
+            'post_assessment',
             'student.first_name',
             'student.father_name',
             'student.last_name',

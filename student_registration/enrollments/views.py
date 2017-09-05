@@ -127,6 +127,7 @@ class MovedView(LoginRequiredMixin,
 
 
 class ListingView(LoginRequiredMixin,
+                  GroupRequiredMixin,
                   FilterView,
                   ExportMixin,
                   SingleTableView,
@@ -137,6 +138,7 @@ class ListingView(LoginRequiredMixin,
     template_name = 'enrollments/list.html'
     table = BootstrapTable(Enrollment.objects.all(), order_by='id')
     filterset_class = EnrollmentFilter
+    group_required = [u"SCHOOL"]
 
     def get_queryset(self):
         education_year = EducationYear.objects.get(current_year=True)
