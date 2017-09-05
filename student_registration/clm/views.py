@@ -133,10 +133,10 @@ class BLNAssessmentSubmission(SingleObjectMixin, View):
 
 
 class BLNListView(LoginRequiredMixin,
-                         FilterView,
-                         ExportMixin,
-                         SingleTableView,
-                         RequestConfig):
+                  FilterView,
+                  ExportMixin,
+                  SingleTableView,
+                  RequestConfig):
 
     table_class = BLNTable
     model = BLN

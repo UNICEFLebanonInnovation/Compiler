@@ -32,7 +32,7 @@ from .serializers import BLNSerializer, RSSerializer, CBECESerializer
 
 YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
 
-YEARS = list(((str(x), x) for x in range(1930, 2051)))
+YEARS = list(((str(x), x) for x in range(1990, 2017)))
 YEARS.append(('', _('---------')))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
@@ -63,7 +63,7 @@ class CommonForm(forms.ModelForm):
         required=False,
     )
     search_barcode = forms.CharField(widget=forms.TextInput, required=False)
-    search_student = forms.CharField(widget=forms.TextInput, required=False)
+    # search_student = forms.CharField(widget=forms.TextInput, required=False)
     outreach_barcode = forms.CharField(widget=forms.TextInput, required=False)
 
     governorate = forms.ModelChoiceField(
@@ -119,6 +119,7 @@ class CommonForm(forms.ModelForm):
         queryset=Disability.objects.all(), widget=forms.Select,
         empty_label=_('Disability'),
         required=True, to_field_name='id',
+        initial=1
     )
     student_family_status = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -190,6 +191,11 @@ class CommonForm(forms.ModelForm):
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.owner = request.user
                 instance.save()
+            else:
+                print serializer.errors
+                return False
+
+        return True
 
     class Meta:
         model = CLM
@@ -321,17 +327,17 @@ class BLNForm(CommonForm):
                 ),
                 css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
             ),
-            Fieldset(
-                None,
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">Search old student (fullname Or ID number)</h4>')
-                ),
-                Div(
-                    Div('search_student', css_class='col-md-6'),
-                    css_class='row',
-                ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning'+display_registry
-            ),
+            # Fieldset(
+            #     None,
+            #     Div(
+            #         HTML('<h4 id="alternatives-to-hidden-labels">Search old student</h4>')
+            #     ),
+            #     Div(
+            #         Div('search_student', css_class='col-md-6'),
+            #         css_class='row',
+            #     ),
+            #     css_id='search_options', css_class='bd-callout bd-callout-warning'+display_registry
+            # ),
             Fieldset(
                 None,
                 Div(
@@ -406,7 +412,7 @@ class BLNForm(CommonForm):
                     Div('outreach_barcode', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='child_data bd-callout bd-callout-warning'
+                css_class='bd-callout bd-callout-warning'
             ),
             Fieldset(
                 None,
@@ -431,7 +437,7 @@ class BLNForm(CommonForm):
                     Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
                     css_class='row',
                 ),
-                css_class='child_data bd-callout bd-callout-warning'
+                css_class='bd-callout bd-callout-warning'
             ),
             Fieldset(
                 None,

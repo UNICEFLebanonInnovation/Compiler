@@ -68,7 +68,7 @@ class CLMSerializer(serializers.ModelSerializer):
     student_birthday_month = serializers.CharField(source='student.birthday_month')
     student_birthday_day = serializers.CharField(source='student.birthday_day')
     student_nationality = serializers.CharField(source='student.nationality')
-    student_nationality_id = serializers.CharField(source='student.nationality.id')
+    student_nationality_id = serializers.CharField(source='student.nationality.id', read_only=True)
     student_address = serializers.CharField(source='student.address')
     student_p_code = serializers.CharField(source='student.p_code', required=False)
     student_family_status = serializers.CharField(source='student.family_status')
@@ -80,7 +80,7 @@ class CLMSerializer(serializers.ModelSerializer):
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
     save = serializers.IntegerField(source='owner.id', read_only=True)
     enrollment_id = serializers.IntegerField(source='id', read_only=True)
-    search_student = serializers.CharField(source='student.full_name', read_only=True)
+    # search_student = serializers.CharField(source='student.full_name', read_only=True)
     search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
 
     class Meta:
@@ -123,7 +123,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'student_outreached',
             'new_registry',
             'have_barcode',
-            'search_student',
+            # 'search_student',
             'search_barcode',
             'csrfmiddlewaretoken',
             'save',
