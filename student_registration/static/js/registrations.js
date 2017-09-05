@@ -9,7 +9,9 @@ var moved_student_path = host+'/api/logging-student-move/';
 
 $(document).ready(function(){
 
-    $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
+    if($(document).find('#id_registration_date').length == 1) {
+        $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
+    }
 
     reorganizeForm();
 
