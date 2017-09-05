@@ -25,9 +25,15 @@ $(document).ready(function(){
 
     $(document).on('click', '.moved-button', function(){
         var item = $(this);
-        console.log(item);
         if(confirm("Are you sure you want to tag this student as moved?")) {
             moved_student(item.attr('itemscope'));
+            item.parents('tr').remove();
+        }
+    });
+    $(document).on('click', '.delete-button', function(){
+        var item = $(this);
+        if(confirm("Are you sure you want to delete this student?")) {
+            delete_student(item);
             item.parents('tr').remove();
         }
     });
@@ -260,6 +266,26 @@ function moved_student(item)
         type: "POST",
         url: '/api/logging-student-move/',
         data: data,
+        cache: false,
+        async: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            console.log(response);
+        },
+        error: function(response) {
+            console.log(response);
+        }
+    });
+}
+
+function delete_student(item)
+{
+    var url = item.attr('data-action');
+
+    $.ajax({
+        type: "DELETE",
+        url: url+'/',
         cache: false,
         async: false,
         headers: getHeader(),

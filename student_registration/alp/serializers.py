@@ -117,6 +117,7 @@ class OutreachSerializer(serializers.ModelSerializer):
             'id',
             'original_id',
             'student_id',
+            'enrollment_id',
             'student_first_name',
             'student_father_name',
             'student_last_name',
@@ -172,6 +173,11 @@ class OutreachSerializer(serializers.ModelSerializer):
             'refer_to_level',
             'refer_to_level_name',
             'alp_round_name',
+            'search_barcode',
+            'search_school',
+            'search_student',
+            'save',
+            'csrfmiddlewaretoken',
         )
 
 
