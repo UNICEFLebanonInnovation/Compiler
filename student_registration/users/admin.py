@@ -44,7 +44,14 @@ class UserAdmin(AuthUserAdmin):
         (None, {'fields': ('partner', 'location', 'school', 'locations', 'schools')})
     )
 
-    add_fieldsets = fieldsets
+    add_fieldsets = (
+        (None, {'fields': ('username', 'password1', 'password2')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
+                                       'groups', 'user_permissions')}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        (None, {'fields': ('partner', 'location', 'school', 'locations', 'schools')})
+    )
 
     def activate(self, request, queryset):
         queryset.update(is_active=True)
