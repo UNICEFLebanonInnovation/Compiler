@@ -10,6 +10,7 @@ class EnrollmentFilter(FilterSet):
             # 'education_year': ['exact'],
             'classroom': ['exact'],
             'section': ['exact'],
+            'exam_result': ['exact'],
             'student__first_name': ['contains'],
             'student__father_name': ['contains'],
             'student__last_name': ['contains'],

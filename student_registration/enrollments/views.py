@@ -52,10 +52,14 @@ class AddView(LoginRequiredMixin,
         if self.request.GET.get('enrollment_id'):
             instance = Enrollment.objects.get(id=self.request.GET.get('enrollment_id'))
             data = EnrollmentSerializer(instance).data
-        if self.request.GET.get('student_outreach_child'):
-            instance = Child.objects.get(id=int(self.request.GET.get('student_outreach_child')))
+        if self.request.GET.get('child_id'):
+            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
-        initial = data
+        if data:
+            data['new_registry'] = self.request.GET.get('new_registry')
+            data['student_outreached'] = self.request.GET.get('student_outreached')
+            data['have_barcode'] = self.request.GET.get('have_barcode')
+            initial = data
 
         return initial
 
