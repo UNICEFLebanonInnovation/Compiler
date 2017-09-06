@@ -41,6 +41,7 @@ class OutreachSerializer(serializers.ModelSerializer):
     level_name = serializers.CharField(source='level.name', read_only=True)
     assigned_to_level_name = serializers.CharField(source='assigned_to_level.name', read_only=True)
     registered_in_level_name = serializers.CharField(source='registered_in_level.name', read_only=True)
+    classroom_name = serializers.CharField(source='registered_in_level.name', read_only=True)
     refer_to_level_name = serializers.CharField(source='refer_to_level.name', read_only=True)
     alp_round_name = serializers.CharField(source='alp_round.name', read_only=True)
     governorate_name = serializers.CharField(source='school.location.parent.name', read_only=True)
@@ -170,6 +171,7 @@ class OutreachSerializer(serializers.ModelSerializer):
             'next_level',
             'alp_round',
             'registered_in_level_name',
+            'classroom_name',
             'refer_to_level',
             'refer_to_level_name',
             'alp_round_name',
