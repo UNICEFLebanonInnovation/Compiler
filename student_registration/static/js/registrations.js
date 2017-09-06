@@ -43,11 +43,15 @@ $(document).ready(function(){
         $("#id_search_student").autocomplete({
             source: function (request, response) {
                 var school = $('#id_search_school').val();
-                if (school == '') {
-                    school = 0;
+                if (school == '') { school = 0; }
+
+                var school_type = $('#id_school_type').val();
+                if (school_type == undefined){
+                    school_type = 'alp';
                 }
+
                 $.ajax({
-                    url: '/api/students/?school=' + school + '&school_type=' + $('#id_school_type').val(),
+                    url: '/api/students-search/?school=' + school + '&school_type=' + school_type,
                     dataType: "json",
                     data: {
                         term: request.term
@@ -59,7 +63,21 @@ $(document).ready(function(){
             },
             minLength: 3,
             select: function (event, ui) {
-                window.location = '/enrollments/add/?enrollment_id=' + ui.item.enrollment.id;
+                var registry_id = 0;
+                if($('#id_school_type').val() == undefined){
+                    registry_id = ui.item.registration.id;
+                }else{
+                    registry_id = ui.item.enrollment.id;
+                }
+                var params = {
+                    enrollment_id: registry_id,
+                    new_registry: $('input[name=new_registry]:checked').val(),
+                    student_outreached: $('input[name=student_outreached]:checked').val(),
+                    have_barcode: $('input[name=have_barcode]:checked').val()
+                };
+                var str = '?'+jQuery.param( params );
+
+                window.location = $(document).find('form').attr('action')+str;
                 return false;
             }
         }).autocomplete("instance")._renderMenu = function (ul, items) {
@@ -71,13 +89,17 @@ $(document).ready(function(){
         };
 
         $("#id_search_student").autocomplete("instance")._renderItem = function (ul, item) {
+            var registry = null;
+            if($('#id_school_type').val() == undefined){ registry = item.registration; }
+            else { registry = item.enrollment; }
+
             return $("<li>")
                 .append("<div style='border: 1px solid;'>"
                     + "<b>Base Data:</b> " + item.full_name + " - " + item.mother_fullname + " - " + item.id_number
                     + "<br/> <b>Gender - Birthday:</b> " + item.sex + " - " + item.birthday
-                    + "<br/> <b>Last education year:</b> " + item.enrollment.education_year_name
-                    + "<br/> <b>Last education school:</b> " + item.enrollment.school_name + " - " + item.enrollment.school_number
-                    + "<br/> <b>Class / Section:</b> " + item.enrollment.classroom_name + " / " + item.enrollment.section_name
+                    + "<br/> <b>Last education year:</b> " + registry.education_year_name
+                    + "<br/> <b>Last education school:</b> " + registry.school_name + " - " + registry.school_number
+                    + "<br/> <b>Class / Section:</b> " + registry.classroom_name + " / " + registry.section_name
                     + "</div>")
                 .appendTo(ul);
         };
@@ -100,7 +122,16 @@ $(document).ready(function(){
             },
             minLength: 3,
             select: function (event, ui) {
-                window.location = '/enrollments/add/?child_id=' + ui.item.child_id;
+
+                var params = {
+                    child_id: ui.item.child_id,
+                    new_registry: $('input[name=new_registry]:checked').val(),
+                    student_outreached: $('input[name=student_outreached]:checked').val(),
+                    have_barcode: $('input[name=have_barcode]:checked').val()
+                };
+                var str = '?'+jQuery.param( params );
+
+                window.location = $(document).find('form').attr('action')+str;
                 return false;
             }
         }).autocomplete("instance")._renderMenu = function (ul, items) {
@@ -199,6 +230,13 @@ $(document).ready(function(){
     }
 });
 
+function urlParam(name){
+	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	if (results && results.length){
+        return results[1] || 0;
+    }
+    return 0;
+}
 
 function reorganizeForm()
 {
@@ -208,31 +246,10 @@ function reorganizeForm()
     var family_status = $('#id_student_family_status').val();
     var have_labour = $('input[name=have_labour]:checked').val();
 
-    if(new_registry == '1' && outreached == '1' && (have_barcode == '1' || have_barcode == '0')){
-        $('#register_by_barcode').removeClass('d-none');
-        $('#search_options').addClass('d-none');
-        $('.child_data').addClass('d-none');
-        return true;
-    }
-
-    if(new_registry == '1' && outreached == '0'){
+    if(urlParam('child_id') || urlParam('enrollment_id')) {
+        $('#registry_block').addClass('d-none');
         $('#register_by_barcode').addClass('d-none');
         $('#search_options').addClass('d-none');
-        $('.child_data').removeClass('d-none');
-        return true;
-    }
-
-    if(new_registry == '0' && outreached == '0'){
-        $('#register_by_barcode').addClass('d-none');
-        $('#search_options').removeClass('d-none');
-        $('.child_data').addClass('d-none');
-        return true;
-    }
-
-    if(new_registry == '0' && outreached == '1' && have_barcode == '1'){
-        $('#register_by_barcode').addClass('d-none');
-        $('#search_options').removeClass('d-none');
-        $('.child_data').addClass('d-none');
         return true;
     }
 
@@ -255,6 +272,48 @@ function reorganizeForm()
         $('div#labour_hours').addClass('d-none');
         $('div#labour_hours').prev().addClass('d-none');
     }
+
+    if(new_registry == '1' && outreached == '1' && (have_barcode == '1' || have_barcode == '0')){
+        $('#have_barcode_option').removeClass('d-none');
+        $('#have_barcode_option').prev().removeClass('d-none');
+
+        $('#register_by_barcode').removeClass('d-none');
+        $('#search_options').addClass('d-none');
+        $('.child_data').addClass('d-none');
+        return true;
+    }
+
+    if(new_registry == '1' && outreached == '0'){
+        $('#have_barcode_option').addClass('d-none');
+        $('#have_barcode_option').prev().addClass('d-none');
+
+        $('#register_by_barcode').addClass('d-none');
+        $('#search_options').addClass('d-none');
+        $('.child_data').removeClass('d-none');
+        return true;
+    }
+
+    if(new_registry == '0' && outreached == '0'){
+
+        $('#have_barcode_option').addClass('d-none');
+        $('#have_barcode_option').prev().addClass('d-none');
+
+        $('#register_by_barcode').addClass('d-none');
+        $('#search_options').removeClass('d-none');
+        $('.child_data').addClass('d-none');
+        return true;
+    }
+
+    if(new_registry == '0' && outreached == '1' && have_barcode == '1'){
+        $('#have_barcode_option').removeClass('d-none');
+        $('#have_barcode_option').prev().removeClass('d-none');
+
+        $('#register_by_barcode').addClass('d-none');
+        $('#search_options').removeClass('d-none');
+        $('.child_data').addClass('d-none');
+        return true;
+    }
+
 }
 
 

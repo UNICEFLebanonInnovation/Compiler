@@ -176,8 +176,19 @@ class ALPAssignmentMatrix(models.Model):
 
 
 class EducationalLevel(models.Model):
-    name = models.CharField(max_length=45, unique=True)
-    note = models.IntegerField(blank=True, null=True)
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.name
+
+
+class Holiday(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
 
     class Meta:
         ordering = ['id']
