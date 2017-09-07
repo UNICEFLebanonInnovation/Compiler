@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.online.html" %}
 
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
@@ -37,36 +37,57 @@
             <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                          <div class="panel-heading">
-                          <h4 class="panel-title">
-                          <ol class="breadcrumb">
-                              <li><a>{% trans "Attendance" %}</a></li>
-                                {% if selected_school %}
-                                    <li><a>{{ school.location.name }}</a></li>
-                                    <li><a>{{ school.name }}</a></li>
-                                {% else %}
-                                    <li><a>
-                                    <select id="location-filter">
-                                        <option value="0">{% trans 'Select a Location' %}</option>
-                                        {% for item in locations %}
+                          <div class="panel-heading" id="header">
+                            <ol class="breadcrumb">
+                                <li><h3 class="panel-title">{% trans "Attendance" %}</h3></li>
+                                <li>
+                                  <button class="btn btn-info" id="registration-synchro">
+                                    <i class="icon-synch-sign icon-white"></i>&nbsp;
+                                        {% trans "synchronize" %}
+                                  </button>
+                                  <button class="btn btn-info" id="registration-download">
+                                    <i class="icon-synch-sign icon-white"></i>&nbsp;
+                                        {% trans "download data" %}
+                                  </button>
+                                    <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">
+                                        <i class="icon-export-sign icon-white"></i>&nbsp;
+                                            {% trans "Export" %}
+                                    </a>
+                                </li>
+                                <li>
+                                    <select name="classroom" id="filter_class" class="col-200">
+                                        <option value="0">{% trans "Filter by Class" %}</option>
+                                        {% for item in classrooms %}
                                             <option value="{{ item.id }}">{{ item.name }}</option>
                                         {% endfor %}
                                     </select>
-                                    </a></li>
-                                    <li><a>
-                                    <select id="school-filter">
-                                        <option value="0">{% trans 'Select a School' %}</option>
-                                        {% for item in schools %}
-                                            <option value="{{ item.id }}" itemscope="{% if item.location %}{{ item.location.id }}{% else %}0{% endif %}">{{ item.name }}</option>
+                                    <select name="section" id="filter_section" class="col-200">
+                                        <option value="0">{% trans "Filter by Section" %}</option>
+                                        {% for item in sections %}
+                                            <option value="{{ item.id }}">{{ item.name }}</option>
                                         {% endfor %}
                                     </select>
-                                    </a></li>
-                                {% endif %}
+                                    <button class="btn btn-success" id="filter_go">
+                                        {% trans "Filter data" %}
+                                    </button>
+{#                                    <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />#}
+                                    <button class="btn btn-warning" id="filter_cancel">
+                                        {% trans "Rest filter" %}
+                                    </button>
+                                </li>
                             </ol>
+                            <div class="actions pull-right">
+                                <i class="fa fa-chevron-down"></i>
+                                <i class="fa fa-times"></i>
+                            </div>
+                          </div>
+                          <div class="panel-heading">
                             <ol class="breadcrumb">
-                                <li><a><div class="btn-group" role="group" aria-label="days" id="attendance-days"></div></a></li>
+                                <li>{{ school }}</li>
+                                <li>{{ location }}</li>
+                                <li>{{ location_parent }}</li>
+                                <li>{% trans "Total students" %} <span class="badge ttl_students">{{ total }}</span></li>
                             </ol>
-                            </h4>
                           </div>
                      </div>
                 </div>
@@ -125,7 +146,7 @@
         var user_username = '{{ request.user.username }}';
         var user_email = '{{ request.user.email }}';
         var user_token = '{{ user_token }}';
-        var selected_school = {{ selected_school }};
+        var selected_school = {{ school.id }};
         var rows = 1;
 
         var protocol = 'http://';
@@ -224,8 +245,7 @@
         {
             $("#attendance-validate-all").show();
             var store = getStoreByName("classrooms");
-            var index = store.index("school");
-            var request = index.getAll(parseInt(school));
+            var request = store.getAll()
             var container = $('#classes-list');
 
             container.empty();
@@ -238,7 +258,7 @@
                     var ttl_present = '{% trans "Total present" %}'+ ': '+'<span class="badge ttl_present">0</span><br/>';
                     var ttl_absent = '{% trans "Total absent" %}'+ ': '+'<span class="badge ttl_absent">0</span>';
                     var col1 = $('<div>').addClass('col-md-4').html(total+ttl_present+ttl_absent);
-                    var col2 = $('<div>').addClass('col-md-8').html(item.name+'<br>'+item.grade_name+' - '+item.section_name);
+                    var col2 = $('<div>').addClass('col-md-8').html(item.name+' - '+item.section_name);
                     var col3 = $('<div>').addClass('col-md-4').html();
 
                     row.append(col1);
@@ -556,18 +576,16 @@
 
         function load_base_data()
         {
-            pull_data_from_server('/api/schools/', 'schools');
             pull_data_from_server('/api/classrooms/', 'classrooms');
-            pull_data_from_server('/api/grades/', 'grades');
             pull_data_from_server('/api/sections/', 'sections');
-            pull_data_from_server('/api/students/', 'students');
-            pull_data_from_server('/api/registrations/', 'registrations');
-            pull_data_from_server('/api/attendances/', 'attendances');
+{#            pull_data_from_server('/api/students/', 'students');#}
+            pull_data_from_server('/api/enrollments/', 'registrations');
+{#            pull_data_from_server('/api/attendances/', 'attendances');#}
         }
 
         function createStores()
         {
-            var request = indexedDB.open("comp1_attendances", 5);
+            var request = indexedDB.open("db_attendances", 3);
 
             request.onupgradeneeded = function() {
                 // The database did not previously exist, so create object stores and indexes.
@@ -592,14 +610,7 @@
 
                     var store2 = db.createObjectStore("students", {keyPath: "id", autoIncrement:true});
 
-                    var store3 = db.createObjectStore("schools", {keyPath: "id", autoIncrement:true});
-                    store3.createIndex('location', 'location', { unique: false, multiEntry: true });
-
                     var store4 = db.createObjectStore("classrooms", {keyPath: "id", autoIncrement:true});
-                    store4.createIndex('school', 'school', { unique: false, multiEntry: true });
-                    store4.createIndex('section', 'section', { unique: false, multiEntry: true });
-                    store4.createIndex('grade', 'grade', { unique: false, multiEntry: true });
-
 
                     var store5 = db.createObjectStore("registrations", {keyPath: "id", autoIncrement:true});
                     store5.createIndex('classroom', 'classroom', { unique: false, multiEntry: true });
@@ -608,7 +619,6 @@
                     store6.createIndex('date', 'attendance_date');
                     store6.createIndex('classroomAndDate', ['classroom', 'attendance_date']);
 
-                    db.createObjectStore("grades", {keyPath: "id", autoIncrement:true});
                     db.createObjectStore("sections", {keyPath: "id", autoIncrement:true});
 
                     var profile_store = db.createObjectStore("user", {keyPath: "id"});
@@ -623,18 +633,6 @@
                     display_classes(selected_school);
                     display_attendance_days(getCurrentDate());
                 }
-{#                var store = getStoreByName('classroomsAttendances');#}
-{#                store.put({classroom: 1, attendance_date: '04/08/2016', validated: 0});#}
-{#                store.put({classroom: 2, attendance_date: '04/08/2016', validated: 0});#}
-{#                store.put({classroom: 4, attendance_date: '04/08/2016', validated: 0});#}
-{##}
-{#                store.put({classroom: 1, attendance_date: '05/08/2016', validated: 0});#}
-{#                store.put({classroom: 2, attendance_date: '05/08/2016', validated: 0});#}
-{#                store.put({classroom: 4, attendance_date: '05/08/2016', validated: 0});#}
-{##}
-{#                store.put({classroom: 1, attendance_date: '08/08/2016', validated: 0});#}
-{#                store.put({classroom: 2, attendance_date: '08/08/2016', validated: 0});#}
-{#                store.put({classroom: 4, attendance_date: '08/08/2016', validated: 0});#}
             };
         }
 
