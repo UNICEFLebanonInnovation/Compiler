@@ -1,0 +1,38 @@
+{#{% extends "base.html" %}#}
+{#{% load staticfiles i18n %}#}
+{#{% load crispy_forms_tags %}#}
+{##}
+{#{% block extra_head %}#}
+{##}
+{#    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">#}
+{##}
+{#{% endblock %}#}
+{##}
+{#{% block content %}#}
+{##}
+{#    <div id="resume" class="inner-content">#}
+{##}
+{#        <section class="inner-section light bg-color01">#}
+{#            <div class="container-fluid nopadding">#}
+{#                <fieldset>#}
+{#                    <legend>{% trans "Student base data" %}</legend>#}
+{#                    <div class="row">#}
+{#                        <div class="col-md-6">{{ form.instance.student }}</div>#}
+{#                    </div>#}
+{#                    <div class="row">#}
+{#                        <div class="col-md-6">{{ form.instance.classroom }} - {{ form.instance.section }}</div>#}
+{#                    </div>#}
+{#                </fieldset>#}
+{##}
+{#                {{ form.errors }}#}
+{#                {% crispy form %}#}
+{#            </div>#}
+{#        </section>#}
+{##}
+{#    </div>#}
+{##}
+{#{% endblock %}#}
+{##}
+{#{% block extra_js %}#}
+{##}
+{#{% endblock %}#}

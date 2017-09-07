@@ -6,4 +6,10 @@ from . import views
 
 urlpatterns = [
 
+    url(
+        regex=r'^profile/$',
+        view=views.ProfileView.as_view(),
+        name='profile'
+    ),
+
 ]
