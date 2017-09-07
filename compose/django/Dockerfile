@@ -30,7 +30,7 @@ RUN set -ex \
                     | sort -u \
     )" \
     && apk add --virtual .python-rundeps $runDeps \
-    && apk add --update postgresql-client \
+    && apk add --update postgresql-client openssh \
     && apk del .build-deps
 
 COPY ./compose/django/*.sh /
@@ -39,13 +39,17 @@ RUN mkdir /code/
 WORKDIR /code/
 ADD . /code/
 
-# uWSGI will listen on this port
-EXPOSE 8000
+# SSH support on Azure
+RUN echo "root:Docker!" | chpasswd
+COPY ./compose/django/sshd_config /etc/ssh/
 
 # Call collectstatic (customize the following line with the minimal environment variables needed for manage.py to run):
 RUN /venv/bin/python manage.py collectstatic --noinput --settings=config.settings.test
 
-# Start
-CMD ["/gunicorn.sh"]
+# uWSGI will listen on this port
+EXPOSE 2222 80
 
+# Start
 ENTRYPOINT ["/entrypoint.sh"]
+
+CMD ["/gunicorn.sh"]

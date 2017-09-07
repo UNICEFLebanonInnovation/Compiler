@@ -20,6 +20,7 @@ from student_registration.attendances.views import (
 )
 from student_registration.students.views import (
     StudentViewSet,
+    StudentSearchViewSet,
     StudentAutocomplete,
 )
 from student_registration.schools.views import (
@@ -43,6 +44,7 @@ api.register(r'attendances-report', AttendanceReportViewSet, base_name='attendan
 api.register(r'beneficiary', BeneficiaryViewSet, base_name='beneficiary')
 
 api.register(r'students', StudentViewSet, base_name='students')
+api.register(r'students-search', StudentSearchViewSet, base_name='students-search')
 api.register(r'household', HouseHoldViewSet, base_name='household')
 api.register(r'child', ChildViewSet, base_name='child')
 api.register(r'schools', SchoolViewSet, base_name='schools')
@@ -69,6 +71,7 @@ urlpatterns = [
 
     url(r'^students/', include('student_registration.students.urls', namespace='students')),
     url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
+    url(r'^clm/', include('student_registration.clm.urls', namespace='clm')),
     url(r'^outreach/', include('student_registration.outreach.urls', namespace='outreach')),
     url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
     url(r'^enrollments/', include('student_registration.enrollments.urls', namespace='enrollments')),

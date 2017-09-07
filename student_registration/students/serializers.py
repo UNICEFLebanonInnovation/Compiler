@@ -48,6 +48,7 @@ class StudentSerializer(serializers.ModelSerializer):
             'registered_in_unhcr',
             'nationality',
             'mother_nationality',
+            'family_status',
             'address',
             'number',
             'registration',
