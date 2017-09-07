@@ -75,6 +75,7 @@ class Enrollment(TimeStampedModel):
     SCHOOL_SHIFT = Choices(
         ('first', _('First shift')),
         ('second', _('Second shift')),
+        ('alp', _('ALP')),
     )
 
     YEARS = ((str(x), x) for x in range(2016, 2051))
@@ -356,6 +357,45 @@ class Enrollment(TimeStampedModel):
         verbose_name=_('Student status')
     )
 
+    exam_result_arabic_cmplt = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Arabic Term 2')
+    )
+
+    exam_result_language_cmplt = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Foreign language Term 2')
+    )
+
+    exam_result_math_cmplt = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Arabic Term 2')
+    )
+
+    exam_total_cmplt = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        verbose_name=_('Final Grade Term 2')
+    )
+
+    exam_result_final = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=EXAM_RESULT,
+        verbose_name=_('Final Student status')
+    )
+
     deleted = models.BooleanField(blank=True, default=False)
     dropout_status = models.BooleanField(blank=True, default=False)
     moved = models.BooleanField(blank=True, default=False)
@@ -390,6 +430,8 @@ class Enrollment(TimeStampedModel):
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
 
+
+
     @property
     def student_fullname(self):
         if self.student:
@@ -401,6 +443,9 @@ class Enrollment(TimeStampedModel):
         if self.student:
             return self.student.age
         return 0
+
+    def get_absolute_url(self):
+        return '/enrollments/edit/%d/' % self.pk
 
     def __unicode__(self):
         if self.student:

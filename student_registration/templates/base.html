@@ -30,12 +30,11 @@
     <!-- Your stuff: Third-party css libraries go here -->
 
     <!-- This file store project specific CSS -->
-{% if LANGUAGE_CODE == 'ar-ar' %}
-    <link href="{% static 'css/project-ar.css' %}" rel="stylesheet">
-{% else %}
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
-{% endif %}
-    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+{#    <link href="{% static 'css/main.css' %}" rel="stylesheet">#}
+    {% endblock %}
+
+    {% block extra_head %}
     {% endblock %}
 
   </head>

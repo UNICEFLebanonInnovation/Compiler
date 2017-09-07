@@ -347,6 +347,30 @@ class Outreach(TimeStampedModel):
         verbose_name='Post-test result',
     )
     dropout_status = models.BooleanField(blank=True, default=False)
+    outreach_barcode = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    new_registry = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+    student_outreached = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+    have_barcode = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+
 
     objects = OutreachManager()
     drop_objects = OutreachDropoutManager()
@@ -435,16 +459,22 @@ class Outreach(TimeStampedModel):
             return self.student.nationality
         return ''
 
+    def calculate_pre_result(self):
+        self.assigned_to_level = assign_to_level(self.level, self.exam_total)
+
+    def calculate_post_result(self):
+        self.refer_to_level = refer_to_level(self.student_age, self.registered_in_level, self.post_exam_total)
+
     def __unicode__(self):
         if self.student:
             return self.student.__unicode__()
         return str(self.id)
 
-    def save(self, **kwargs):
+    # def save(self, **kwargs):
         # if self.exam_total and self.level and not self.registered_in_level:
         #     self.assigned_to_level = assign_to_level(self.level, self.exam_total)
-        if self.post_exam_total:
-            self.refer_to_level = refer_to_level(self.student_age, self.registered_in_level, self.post_exam_total)
-        else:
-            self.refer_to_level = None
-        super(Outreach, self).save(**kwargs)
+        # if self.post_exam_total:
+        #     self.refer_to_level = refer_to_level(self.student_age, self.registered_in_level, self.post_exam_total)
+        # else:
+        #     self.refer_to_level = None
+        # super(Outreach, self).save(**kwargs)

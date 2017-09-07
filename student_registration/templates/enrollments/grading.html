@@ -1,343 +1,46 @@
 {% extends "base.html" %}
 {% load staticfiles i18n %}
-{% get_current_language as LANGUAGE_CODE %}
-{% load util_tags %}
+{% load crispy_forms_tags %}
 
 {% block extra_head %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
 
 {% endblock %}
 
-{% block content-full-page %}
+{% block content %}
 
-    <style>
-        .synchro-status.success {
-            background-color: #1ABB9C !important;
-        }
-        .synchro-status.failed {
-            background-color: #ac2925 !important;
-        }
-        tr.highlighted {
-            background-color: darkseagreen !important;
-        }
-        .registration-field-p:focus {
-            background-color: yellow;
-        }
-        .registration-field:focus {
-            background-color: yellow;
-        }
-        tr.warning {
-            border: 3px solid #90111A;
-        }
-    </style>
+    <div id="resume" class="inner-content">
 
-         <section class="main-content-wrapper">
-            <section id="main-content">
-                 <div class="row">
-                    <div class="col-md-12">
-                        </br>
-                    </div>
-                </div>
-            <div class="row">
-                <div class="alert alert-success" role="alert" id="alert-synchro-success" style="display: none;"><strong>{% trans 'Well done' %}</strong> {% trans 'Synchronization success' %}</div>
-                <div class="alert alert-warning" role="alert" id="alert-synchro-warning" style="display: none;"><strong>{% trans 'Warning' %}</strong> {% trans 'Please check fill required field' %}</div>
-                <div class="alert alert-danger" role="alert" id="alert-connection" style="display: none;">{% trans 'Please check your internet connectivity' %}</div>
-            </div>
-            <div class="row">
-                    <div class="col-md-12">
-                        <div class="panel panel-default">
-                          <div class="panel-heading" style="position: absolute; top:50px;" id="header">
-                            <ol class="breadcrumb">
-                                <li><h3 class="panel-title">{% trans "Edit grading" %}</h3></li>
-                                <li>
-                                  <button class="btn btn-info" id="registration-synchro">
-                                    <i class="icon-synch-sign icon-white"></i>&nbsp;
-                                        {% trans "synchronize" %}
-                                  </button>
-                                    <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">
-                                        <i class="icon-export-sign icon-white"></i>&nbsp;
-                                            {% trans "Export" %}
-                                    </a>
-                                </li>
-                                <li>
-                                    <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />
-                                    <select name="classroom" id="filter_class" class="col-200">
-                                        <option value="0">{% trans "Filter by Class" %}</option>
-                                        {% for item in classrooms %}
-                                            <option value="{{ item.id }}" {% if level == item.id %}selected="selected"{% endif %}>{{ item.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <select name="section" id="filter_section" class="col-200">
-                                        <option value="0">{% trans "Filter by Section" %}</option>
-                                        {% for item in sections %}
-                                            <option value="{{ item.id }}" {% if section == item.id %}selected="selected"{% endif %}>{{ item.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </li>
-                            </ol>
-                            <div class="actions pull-right">
-                                <i class="fa fa-chevron-down"></i>
-                                <i class="fa fa-times"></i>
-                            </div>
-                          </div>
-                          <div class="panel-heading">
-                            <ol class="breadcrumb">
-                                <li>{{ school }}</li>
-                                <li>{{ location }}</li>
-                                <li>{{ location_parent }}</li>
-                                <li>{% trans "Total students" %} <span class="badge ttl_students">{{ total }}</span></li>
-                            </ol>
+        <section class="inner-section light bg-color01">
+            <div class="container-fluid nopadding">
+                <fieldset class="bd-callout bd-callout-warning'">
+                        <h4 id="alternatives-to-hidden-labels">{% trans "Student" %}</h4>
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Student fullname" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.student }}</div>
                         </div>
-                          <div class="panel-body">
-                              <div class="loader"></div>
-                                <table id="registrations-table" class="table table-striped table-bordered cell-border"
-                                       data-height="500"
-                                       data-pagination="true"
-                                       data-search="true"
-                                       cellspacing="0"
-                                       width="100%" style="margin-bottom: 100px; margin-top: 75px;">
-                                <thead>
-                                    <tr id="thead-line-1">
-                                        <th>#</th>
-                                        <th><label>{% trans "Student first name" %}</label></th>
-                                        <th><label>{% trans "Student father name" %}</label></th>
-                                        <th><label>{% trans "Student last name" %}</label></th>
-                                        <th><label>{% trans "Sex" %}</label></th>
-                                        <th><label>{% trans "Student birthday" %}</label></th>
-                                        <th><label>{% trans "Current Level" %}</label></th>
-                                        <th><label>{% trans "Current Section" %}</label></th>
-                                        {% if level == 1 %}
-                                            <th><label class="col-140">{% trans "Linguistic field/Arabic" %}</label></th>
-                                            <th><label class="col-140">{% trans "Sociology field" %}</label></th>
-                                            <th><label class="col-200">{% trans "Physical field" %}</label></th>
-                                            <th><label class="col-140">{% trans "Artistic field" %}</label></th>
-                                            <th><label class="col-200">{% trans "Linguistic field/Foreign language" %}</label></th>
-                                            <th><label class="col-200">{% trans "Scientific domain/Mathematics" %}</label></th>
-                                            <th><label class="col-200">{% trans "Scientific domain/Sciences" %}</label></th>
-                                        {% else %}
-                                            <th><label class="col-100">{% trans "Arabic" %}</label></th>
-                                            <th><label class="col-100">{% trans "Foreign language" %}</label></th>
-                                            <th><label class="col-140">{% trans "Education" %}</label></th>
-                                            <th><label class="col-140">{% trans "Geography" %}</label></th>
-                                            <th><label class="col-100">{% trans "History" %}</label></th>
-                                            <th><label class="col-100">{% trans "Math" %}</label></th>
-                                            <th><label class="col-100">{% trans "Science" %}</label></th>
-                                            <th><label class="col-100">{% trans "Physic" %}</label></th>
-                                            <th><label class="col-100">{% trans "Chemistry" %}</label></th>
-                                            <th><label class="col-140">{% trans "Biology" %}</label></th>
-                                        {% endif %}
-                                        <th><label class="col-140">{% trans "Final Grade" %}</label></th>
-                                        <th><label class="col-100">{% trans "Student status" %}</label></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {% for line in data %}
-                                    {% if level == 1 %}
-                                        {% include 'enrollments/prototype_grade_ece.html' with student=line.student level=level %}
-                                    {% else %}
-                                        {% include 'enrollments/prototype_grade.html' with student=line.student level=level %}
-                                    {% endif %}
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Current situation" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.classroom }} - {{ form.instance.section }}</div>
                         </div>
-                     </div>
-                </div>
-            </div>
+                        {% if form.fields.term.initial == '2' %}
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Previows situation" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.exam_total }} - {{ form.instance.exam_result }}</div>
+                        </div>
+                        {% endif %}
+                </fieldset>
 
-            </section>
-         </section>
+                {{ form.errors }}
+                {% crispy form %}
+            </div>
+        </section>
+
+    </div>
 
 {% endblock %}
 
 {% block extra_js %}
-
-    {% get_user_token request.user.id as user_token %}
-    <script type="text/javascript">
-        var oTable = null;
-        var db = null;
-    </script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
-    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/appcache.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/indexedDB.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/eav.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jquery.quicksearch.js' %}"></script>
-    <script type="text/javascript">
-        var db = null;
-        var language  = '{{ LANGUAGE_CODE }}';
-        var user_id = {{ request.user.id }};
-        var school_id = {{ request.user.school_id }};
-        var user_username = '{{ request.user.username }}';
-        var user_email = '{{ request.user.email }}';
-        var user_token = '{{ user_token }}';
-        var synchro_result = true;
-        var table = $('#registrations-table');
-        var protocol = 'http://';
-        {% if request.is_secure %}
-            protocol = 'https://';
-        {% endif %}
-        var host = protocol+'{{ request.get_host }}';
-        var synchro_path = host+'/api/enrollments/';
-
-        $(document).ready(function(){
-
-            $('#search').val('');
-            createStores();
-
-            $('input#search').quicksearch('table tbody tr', {
-                selector: 'span'
-            });
-
-            $("#filter_class").change(function(){
-                var selected_class = $(this).val();
-               // reload the page with the school id passed in post
-                var url = '{% url "enrollments:enrollment_grading" %}';
-                if(selected_class){
-                    url = url+'?level='+selected_class;
-                }
-                window.location.href = url;
-            });
-
-            $("#filter_section").change(function(){
-                var selected_class = $("#filter_class").val();
-                var selected_section = $(this).val();
-               // reload the page with the school id passed in post
-                var url = '{% url "enrollments:enrollment_grading" %}';
-                if(parseInt(selected_class) && parseInt(selected_section)){
-                    url = url+'?level='+selected_class;
-                    url = url+'&section='+selected_section;
-                    window.location.href = url;
-                }
-            });
-
-            $(document).on('click', 'tbody tr', function(){
-                $('tbody').find('tr').removeClass('highlighted');
-                $(this).addClass('highlighted');
-            });
-
-            $(window).scroll(function () {
-                var l = $(this).scrollLeft();
-                if(parseInt(l) <= 0){
-                    $('#header').css({'left': l});
-                }else{
-                    $('#header').css({'right': -l});
-                }
-            });
-
-            $(document).on('blur, change', '.registration-field-p', function(){
-                update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'registrations-p');
-                flag_record_to_update(parseInt($(this).attr('itemscope')), 'registrations-p');
-            });
-
-            $(document).on('click', '#registration-synchro', function(){
-                synchro_result = true;
-                $('.alert').hide();
-                if(navigator.onLine) {
-                    $(".loader").show();
-                    synchronize_data(true);
-                }else{
-                    $('#alert-connection').show();
-                }
-            });
-
-        });
-
-        function synchronize_data()
-        {
-            patch_data();
-        }
-
-        function patch_data()
-        {
-            var store = getStoreByName('registrations-p');
-            var request = store.getAll();
-            request.onsuccess = function() {
-                var result = request.result;
-                $(result).each(function(i, item){
-                    $(".loader").show();
-                    if(item.to_update == true){
-                        patch_data_into_server(item);
-                    }
-                    $(".loader").hide();
-                });
-            };
-        }
-
-        function patch_data_into_server(item)
-        {
-            var itemid = item.id;
-            var data = item;
-            delete data.id;
-
-            $.ajax({
-                type: "PATCH",
-                url: synchro_path+itemid+'/',
-                data: data,
-                cache: false,
-                headers: getHeader(),
-                dataType: 'json',
-                success: function (response, result, jqXHR) {
-                    $('#line-'+itemid).removeClass('warning');
-                    $('#line-'+itemid).find('.synchro-status').removeClass('failed');
-                    $('#line-'+itemid).find('.synchro-status').addClass('success');
-                    $('#line-'+itemid).find('.registration-field').removeClass('required');
-                    update_item_store(parseInt(itemid), 'to_update', false, 'registrations-p');
-                },
-                error: function (response) {
-                    console.log(response);
-                    $('#line-'+itemid).addClass('warning');
-                    $('#line-'+itemid).find('.synchro-status').removeClass('success');
-                    $('#line-'+itemid).find('.synchro-status').addClass('failed');
-                    var required_fields = JSON.parse(response.responseText);
-                    $.each(required_fields, function(field_name, field_msg){
-                        $('#line-'+itemid).find('#'+field_name).addClass('required');
-                    });
-                    synchro_result = false;
-                }
-            });
-        }
-
-        function createStores()
-        {
-            var request = indexedDB.open("registrations_grading_1", 3);
-
-            request.onupgradeneeded = function() {
-                // The database did not previously exist, so create object stores and indexes.
-                db = request.result;
-                var flag = false;
-                try {
-                    if(!db.objectStoreNames().contains('registrations')) {
-                        flag = true;
-                    }
-                }catch(err) {
-                    flag = true;
-                }
-                if(flag){
-
-                    db.createObjectStore("registrations-p", {keyPath: "id", autoIncrement:true});
-
-                    var profile_store = db.createObjectStore("user", {keyPath: "id"});
-                    profile_store.put({id: user_id, username: user_username, email: user_email});
-                }
-            };
-
-            request.onsuccess = function() {
-                db = request.result;
-            };
-        }
-
-    </script>
 
 {% endblock %}
