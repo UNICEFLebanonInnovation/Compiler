@@ -72,6 +72,7 @@ THIRD_PARTY_APPS = [
     'bootstrap3',
     'bootstrap3_datetime',
     'import_export',
+    'django_tables2',
 ]
 
 # Apps specific for this project go here.
@@ -80,6 +81,7 @@ LOCAL_APPS = [
     'student_registration.students',  # custom students app
     'student_registration.outreach',  # custom alp app
     'student_registration.alp',  # custom alp app
+    'student_registration.clm',  # custom clm app
     'student_registration.attendances',  # custom attendances app
     'student_registration.enrollments',  # custom enrollments app
     'student_registration.schools',  # custom schools app
@@ -297,8 +299,8 @@ AUTHENTICATION_BACKENDS = [
 
 # Some really nice defaults
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 ACCOUNT_ALLOW_REGISTRATION = env.bool('DJANGO_ACCOUNT_ALLOW_REGISTRATION', True)
 ACCOUNT_ADAPTER = 'student_registration.users.adapters.AccountAdapter'
@@ -307,7 +309,8 @@ SOCIALACCOUNT_ADAPTER = 'student_registration.users.adapters.SocialAccountAdapte
 # Custom user app defaults
 # Select the correct user model
 AUTH_USER_MODEL = 'users.User'
-LOGIN_REDIRECT_URL = 'users:redirect'
+LOGIN_REDIRECT_URL = '/'
+# LOGIN_REDIRECT_URL = 'users:redirect'
 LOGIN_URL = 'account_login'
 
 # SLUGLIFIER
@@ -382,6 +385,7 @@ SUIT_CONFIG = {
         ]},
         {'app': 'auth', 'label': 'Groups', 'icon': 'icon-user'},
         {'app': 'users', 'label': 'Users', 'icon': 'icon-user'},
+        {'app': 'clm', 'label': 'CLM', 'icon': 'icon-th-list'},
         {'label': 'ALP', 'icon': 'icon-th-list', 'models': (
             'alp.CurrentRound',
             'alp.CurrentOutreach',
@@ -425,4 +429,6 @@ HELPDESK_STAFF_ONLY_TICKET_OWNERS = True
 HELPDESK_STAFF_ONLY_TICKET_CC = True
 HELPDESK_CREATE_TICKET_HIDE_ASSIGNED_TO = True
 HELPDESK_ENABLE_PER_QUEUE_PERMISSION = True
+HELPDESK_VIEW_A_TICKET_PUBLIC = False
+HELPDESK_SUBMIT_A_TICKET_PUBLIC = False
 

@@ -1,0 +1,12 @@
+{% load staticfiles i18n %}
+{% load util_tags %}
+{% if request.user|has_group:"ENROL_GRADING" %}
+    {% if record.exam_result == 'uncompleted' %}
+    <a href="/enrollments/grading/{{ record.id }}/2/" class="btn btn-info">
+        <i class="icon-edit-sign icon-white"></i>
+        {% trans "Term 2" %}
+    </a>
+    {% endif %}
+{% else %}
+    {% trans "Not allowad" %}
+{% endif %}

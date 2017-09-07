@@ -1,9 +1,9 @@
 from __future__ import unicode_literals, absolute_import, division
 
-from django.contrib.gis.db import models
-from django.db.models.signals import pre_save
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.contrib.postgres.fields import ArrayField
+
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from .utils import *
@@ -48,11 +48,21 @@ class Nationality(models.Model):
 
 class IDType(models.Model):
     name = models.CharField(max_length=45, unique=True)
-    inuse = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['id']
         verbose_name = "ID Type"
+
+    def __unicode__(self):
+        return self.name
+
+
+class Labour(models.Model):
+    name = models.CharField(max_length=45, unique=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Labour"
 
     def __unicode__(self):
         return self.name
@@ -78,6 +88,13 @@ class Person(TimeStampedModel):
     GENDER = Choices(
         ('Male', _('Male')),
         ('Female', _('Female')),
+    )
+    FAMILY_STATUS = Choices(
+        ('married', _('Married')),
+        ('engaged', _('Engaged')),
+        ('divorced', _('Divorced')),
+        ('widower', _('Widower')),
+        ('single', _('Single')),
     )
 
     first_name = models.CharField(max_length=64, blank=True, null=True)
@@ -114,6 +131,18 @@ class Person(TimeStampedModel):
         default=0,
         choices=((str(x), x) for x in range(1, 33))
     )
+    family_status = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=FAMILY_STATUS
+    )
+    have_children = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
     phone = models.CharField(max_length=64, blank=True, null=True)
     phone_prefix = models.CharField(max_length=10, blank=True, null=True)
     registered_in_unhcr = models.CharField(
@@ -140,6 +169,11 @@ class Person(TimeStampedModel):
     address = models.TextField(
         blank=True,
         null=True
+    )
+    p_code = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
     )
     number = models.CharField(max_length=45, blank=True, null=True)
     number_part1 = models.CharField(max_length=45, blank=True, null=True)
@@ -191,6 +225,10 @@ class Person(TimeStampedModel):
         is_before_birthday = (today.month, today.day) < (int(self.birthday_month), int(self.birthday_day))
         elapsed_years = years_difference - int(is_before_birthday)
         return elapsed_years
+
+    @property
+    def phone_number(self):
+        return '{}-{}'.format(self.phone_prefix, self.phone)
 
     class Meta:
         abstract = True
@@ -272,49 +310,32 @@ class Student(Person):
             attendances[item.attendance_date] = item.status
         return attendances
 
-    @classmethod
-    def create(cls, data):
-        instance = cls(
-            first_name=data['student_first_name'],
-            father_name=data['student_father_name'],
-            last_name=data['student_last_name'],
-            mother_fullname=data['student_mother_fullname'],
-            sex=data['student_sex'],
-            birthday_day=data['student_birthday_day'],
-            birthday_month=data['student_birthday_month'],
-            birthday_year=data['student_birthday_year'],
-            nationality_id=data['student_nationality'],
-            mother_nationality_id=data['student_mother_nationality'],
-            phone=data['student_phone'],
-            phone_prefix=data['student_phone_prefix'],
-            address=data['student_address'],
-            registered_in_unhcr=data['registered_in_unhcr'],
-            id_type_id=data['student_id_type'],
-            id_number=data['student_id_number'],
-            outreach_child_id=data['child_id'] if 'child_id' in data else None
-        )
-        instance.save()
-        return instance
+    def get_absolute_url(self):
+        return 'student/%d' % self.pk
 
-    def update(self, data):
-        self.first_name = data['student_first_name']
-        self.father_name = data['student_father_name']
-        self.last_name = data['student_last_name']
-        self.mother_fullname = data['student_mother_fullname']
-        self.sex = data['student_sex']
-        self.birthday_day = data['student_birthday_day']
-        self.birthday_month = data['student_birthday_month']
-        self.birthday_year = data['student_birthday_year']
-        self.nationality_id = data['student_nationality']
-        self.mother_nationality_id = data['student_mother_nationality']
-        self.phone = data['student_phone']
-        self.phone_prefix = data['student_phone_prefix']
-        self.address = data['student_address']
-        self.registered_in_unhcr = data['registered_in_unhcr']
-        self.id_type_id = data['student_id_type']
-        self.id_number = data['student_id_number']
-        self.save()
-        return self
+    # @classmethod
+    # def create(cls, data):
+    #     instance = cls(
+    #         first_name=data['student_first_name'],
+    #         father_name=data['student_father_name'],
+    #         last_name=data['student_last_name'],
+    #         mother_fullname=data['student_mother_fullname'],
+    #         sex=data['student_sex'],
+    #         birthday_day=data['student_birthday_day'],
+    #         birthday_month=data['student_birthday_month'],
+    #         birthday_year=data['student_birthday_year'],
+    #         nationality_id=data['student_nationality'],
+    #         mother_nationality_id=data['student_mother_nationality'],
+    #         phone=data['student_phone'],
+    #         phone_prefix=data['student_phone_prefix'],
+    #         address=data['student_address'],
+    #         registered_in_unhcr=data['registered_in_unhcr'],
+    #         id_type_id=data['student_id_type'],
+    #         id_number=data['student_id_number'],
+    #         outreach_child_id=data['child_id'] if 'child_id' in data else None
+    #     )
+    #     instance.save()
+    #     return instance
 
 
 class StudentMatching(models.Model):
