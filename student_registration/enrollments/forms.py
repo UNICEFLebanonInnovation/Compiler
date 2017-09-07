@@ -460,16 +460,6 @@ class EnrollmentForm(forms.ModelForm):
         # cc_myself = self.cleaned_data.get("cc_myself")
 
     def save(self, request=None, instance=None):
-        # instance = super(EnrollmentForm, self).save()
-        # instance.school = request.user.school
-        # instance.owner = request.user
-        # instance.education_year = EducationYear.objects.get(current_year=True)
-        # if request.POST.get('student_id'):
-        #     student = Student.objects.get(id=int(request.POST.get('student_id'))).update(request.POST)
-        # else:
-        #     student = Student.create(request.POST)
-        # instance.student = student
-        # instance.save()
         if instance:
             serializer = EnrollmentSerializer(instance, data=request.POST)
             if serializer.is_valid():
@@ -539,85 +529,224 @@ class GradingTerm1Form(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': 1})
-        if instance.classroom == 1:
-            pass
 
-        self.helper.layout = Layout(
-            Fieldset(
-                None,
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
+        if instance.classroom_id in [2, 3, 4]:
+            self.helper.layout = Layout(
+                Fieldset(
+                    None,
+                    Div(
+                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_arabic', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">2</span>'),
+                        Div('exam_result_language', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">3</span>'),
+                        Div('exam_result_education', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">4</span>'),
+                        Div('exam_result_geo', css_class='col-md-2'),
+                        css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_math', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_science', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result', css_class='col-md-2'),
+                        css_class='row',
+                    ),
+                    Div(
+                        'exam_result_history',
+                        'exam_result_physic',
+                        'exam_result_chemistry',
+                        'exam_result_bio',
+                        'exam_result_linguistic_ar',
+                        'exam_result_linguistic_en',
+                        'exam_result_sociology',
+                        'exam_result_physical',
+                        'exam_result_artistic',
+                        'exam_result_mathematics',
+                        'exam_result_sciences',
+                        'exam_total',
+                        css_class='d-none'
+                    ),
+                    css_class='bd-callout bd-callout-warning'
                 ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_arabic', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_language', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_education', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_geo', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_history', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_math', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_science', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_physic', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_chemistry', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_bio', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_linguistic_ar', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_linguistic_en', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_sociology', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_physical', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_artistic', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_mathematics', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_sciences', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_total', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                css_class='bd-callout bd-callout-warning'
-            ),
-            FormActions(
-                Submit('save', _('Save')),
-                Button('cancel', _('Cancel')),
-                HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                FormActions(
+                    Submit('save', _('Save')),
+                    Button('cancel', _('Cancel')),
+                    HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                )
             )
-        )
+
+        if instance.classroom_id in [5, 6, 7]:
+            self.helper.layout = Layout(
+                Fieldset(
+                    None,
+                    Div(
+                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_arabic', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">2</span>'),
+                        Div('exam_result_language', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">3</span>'),
+                        Div('exam_result_education', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">4</span>'),
+                        Div('exam_result_geo', css_class='col-md-2'),
+                        css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_math', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_science', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_total', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result', css_class='col-md-2'),
+                        css_class='row',
+                    ),
+                    Div(
+                        'exam_result_history',
+                        'exam_result_physic',
+                        'exam_result_chemistry',
+                        'exam_result_bio',
+                        'exam_result_linguistic_ar',
+                        'exam_result_linguistic_en',
+                        'exam_result_sociology',
+                        'exam_result_physical',
+                        'exam_result_artistic',
+                        'exam_result_mathematics',
+                        'exam_result_sciences',
+                        css_class='d-none'
+                    ),
+                    css_class='bd-callout bd-callout-warning'
+                ),
+                FormActions(
+                    Submit('save', _('Save')),
+                    Button('cancel', _('Cancel')),
+                    HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                )
+            )
+
+        if instance.classroom_id in [8, 9, 10]:
+            self.helper.layout = Layout(
+                Fieldset(
+                    None,
+                    Div(
+                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_arabic', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">2</span>'),
+                        Div('exam_result_language', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">3</span>'),
+                        Div('exam_result_education', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">4</span>'),
+                        Div('exam_result_geo', css_class='col-md-2'),
+                        css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_history', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_math', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_physic', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_chemistry', css_class='col-md-2'),
+                        css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_bio', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_total', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result', css_class='col-md-2'),
+                        css_class='row',
+                    ),
+                    Div(
+                        'exam_result_science',
+                        'exam_result_linguistic_ar',
+                        'exam_result_linguistic_en',
+                        'exam_result_sociology',
+                        'exam_result_physical',
+                        'exam_result_artistic',
+                        'exam_result_mathematics',
+                        'exam_result_sciences',
+                        css_class='d-none'
+                    ),
+                    css_class='bd-callout bd-callout-warning'
+                ),
+                FormActions(
+                    Submit('save', _('Save')),
+                    Button('cancel', _('Cancel')),
+                    HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                )
+            )
+
+        if instance.classroom_id == 1:
+            self.helper.layout = Layout(
+                Fieldset(
+                    None,
+                    Div(
+                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_linguistic_ar', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_linguistic_en', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_sociology', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_physical', css_class='col-md-2'),
+                        css_class='row',
+                    ),
+                    Div(
+
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_artistic', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_mathematics', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result_sciences', css_class='col-md-2'),
+                        css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_total', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('exam_result', css_class='col-md-2'),
+                        css_class='row',
+                    ),
+                    Div(
+                        'exam_result_arabic',
+                        'exam_result_language',
+                        'exam_result_education',
+                        'exam_result_geo',
+                        'exam_result_history',
+                        'exam_result_math',
+                        'exam_result_science',
+                        'exam_result_physic',
+                        'exam_result_chemistry',
+                        'exam_result_bio',
+                        css_class='d-none'
+                    ),
+                    css_class='bd-callout bd-callout-warning'
+                ),
+                FormActions(
+                    Submit('save', _('Save')),
+                    Button('cancel', _('Cancel')),
+                    HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                )
+            )
 
     def save(self, instance=None, request=None):
         instance = super(GradingTerm1Form, self).save()
