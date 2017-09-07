@@ -6,7 +6,7 @@
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand mr-15" href="">
+  <a class="navbar-brand mr-15" href="/">
         <img src="{% static 'images/logo.png' %}" style="float: left; width: 30px; height: 30px;" class="mr-10" />
           {% trans "Compiler" %} 2.0
   </a>
@@ -44,6 +44,11 @@
         {% if request.user|has_group:"ALP_SCHOOL" %}
               <li class="nav-item">
                   <a class="nav-link" href="{% url 'alp:list' %}">{% trans "ALP Registrations" %}</a>
+              </li>
+        {% endif %}
+        {% if request.user|has_group:"ATTENDANCE" %}
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'attendances:attendance' %}">{% trans "Attendance" %}</a>
               </li>
         {% endif %}
     </ul>
