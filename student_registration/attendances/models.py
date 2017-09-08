@@ -1,10 +1,13 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
+from django.conf import settings
+from django.utils.translation import ugettext as _
+from django.contrib.postgres.fields import JSONField, ArrayField
+
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django.utils.translation import ugettext as _
-from django.conf import settings
+
 from student_registration.students.models import (
     Student,
 )
@@ -18,16 +21,23 @@ from student_registration.schools.models import (
 
 class Attendance(TimeStampedModel):
 
-    REASON = Choices(
+    ABSENCE_REASON = Choices(
         ('sick', _('Sick')),
         ('no_reason', _('No reason')),
         ('no_transport', _('No transport')),
         ('other', _('Other')),
     )
 
+    CLOSE_REASON = Choices(
+        ('public_holiday', _('Public Holiday')),
+        ('school_holiday', _('School Holiday')),
+        ('strike', _('Strike')),
+        ('weekly_holiday', _('Weekly Holiday')),
+    )
+
     student = models.ForeignKey(
         Student,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='attendances',
     )
     school = models.ForeignKey(
@@ -68,8 +78,16 @@ class Attendance(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        choices=REASON
+        choices=ABSENCE_REASON
     )
+    close_reason = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=CLOSE_REASON
+    )
+
+    students = JSONField(blank=True, null=True)
 
     @property
     def student_fullname(self):
