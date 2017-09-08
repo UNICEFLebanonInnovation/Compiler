@@ -1,4 +1,4 @@
-{% extends "base.simple.html" %}
+{% extends "base.html" %}
 
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
@@ -6,11 +6,11 @@
 
 {% block extra_head %}
 
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-progressbars.css' %}">
+{#    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">#}
+{#    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-progressbars.css' %}">#}
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-switch.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-button-group.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
+{#    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-button-group.css' %}">#}
+{#    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">#}
     <style>
         .row-class  {
             max-height:75px;
@@ -22,6 +22,10 @@
             background: -o-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Opera 11.1 to 12.0 */
             background: -moz-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Firefox 3.6 to 15 */
             background: linear-gradient(left top, #f5f5f5, #EDEFF1); /* Standard syntax */
+            box-shadow: 1px 1px 5px #888888;
+        }
+        .row-class:hover {
+            text-decoration: none;
         }
         .row-class div {
 {#            border: 1px solid;#}
@@ -42,6 +46,11 @@
 {#            color: #2aabd2 !important;#}
             color: #0b0b0b;
         }
+        .row-class.disabled {
+            pointer-events: none;
+            cursor: not-allowed !important;
+            opacity: .65;
+        }
         .row-student  {
             border-radius: 0 8px 8px 0;
             margin: 15px 0px;
@@ -50,6 +59,7 @@
             background: -o-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Opera 11.1 to 12.0 */
             background: -moz-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Firefox 3.6 to 15 */
             background: linear-gradient(left top, #f5f5f5, #EDEFF1); /* Standard syntax */
+            box-shadow: 1px 1px 5px #888888;
         }
         .row-student .s-col {
             padding-top: 15px;
@@ -81,8 +91,15 @@
         .row-class .s-progs {
             padding-top: 5px;
         }
+        .s-progs .progress {
+            margin-top: 10px;
+        }
         .breadcrumb li:first-child {
             padding-left: 10px;
+        }
+        .absolute-right-30 {
+            position: absolute;
+            right: 30px;
         }
     </style>
 {% endblock %}
@@ -132,27 +149,46 @@
 {#                            </ol>#}
 {#                          </div>#}
                           <div class="panel-heading">
-                            <span class="col-sm-2 icon-date-time"></span>
-                            <ol class="breadcrumb">
                                 {% if level %}
-                                <li>
-                                    <a href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to the list" %} - {{ selected_date_view }}</a>
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to " %} {{ selected_date_view }}</a>
+                                    <a type="button" class="btn btn-warning absolute-right-30" href="#">{% trans "Exam day" %}</a>
                                 </li>
-                                <li>
+{#                                <li class="breadcrumb-item">#}
+{#                                    {{ level.name }} - {{ section.name }}#}
+{#                                    <span class="badge">{{ total_students }}</span>#}
+{#                                </li>#}
+                            </ol>
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
                                     {{ level.name }} - {{ section.name }}
-                                    <span class="badge">{{ total_students }}</span>
                                 </li>
+                                <li class="breadcrumb-item">
+                                    {% trans "Total students" %} <span class="badge badge-default">{{ total_students }}</span>
+                                </li>
+                            </ol>
                                 {% endif %}
                                 {% if not level %}
-                                <li>
-                                    <select name="dates" id="dates" class="form-control">
-                                        {% for date in dates %}
-                                            <option value="{{ date.value }}" {% if date.value == selected_date %}selected="selected"{% endif %}>{{ date.label }}</option>
-                                        {% endfor %}
-                                    </select>
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <div class="form-group">
+{#                                        <span class="col-sm-2 icon-date-time"></span>#}
+                                        <select name="dates" id="dates" class="form-control">
+                                            {% for date in dates %}
+                                                <option value="{{ date.value }}" {% if date.value == selected_date %}selected="selected"{% endif %} data-action="{% url "attendances:attendance" %}?date={{ date.value }}">{{ date.label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
                                 </li>
-                                {% endif %}
+                                <li class="breadcrumb-item">
+                                      <button type="button" class="closing-reason-b btn btn-primary" itemref="public_holiday">{% trans "Public Holiday" %}</button>
+                                      <button type="button" class="closing-reason-b btn btn-warning" itemref="school_holiday">{% trans "School Holiday" %}</button>
+                                      <button type="button" class="closing-reason-b btn btn-danger" itemref="strike">{% trans "Strike" %}</button>
+                                      <button type="button" class="closing-reason-b btn btn-info" itemref="weekly_holiday">{% trans "Weekly Holiday" %}</button>
+                                </li>
                             </ol>
+                                {% endif %}
                           </div>
                         </div>
                     </div>
@@ -160,9 +196,11 @@
             </section>
 
             <div id="attendance-sheet" class="">
+                <input type="hidden" name="school" value="{{ request.user.school_id }}" id="school" />
+                <input type="hidden" name="owner" value="{{ request.user.id }}" id="owner" />
             {% if not level %}
                 {% for row in levels_by_sections %}
-                <div class="row row-class" itemid="{{ row.level }}" itemref="{{ row.section }}">
+                <a class="row row-class" href="{% url "attendances:attendance" %}?date={{ selected_date }}&level={{ row.level }}&section={{ row.section }}">
                     <div class="col-xs-4 col-sm-4 col-md-4 s-lft s-col" style="border-left: 10px solid #2aabd2;">
                         <div>{{ row.level_name }}</div>
                         <div>{{ row.section_name }}</div>
@@ -190,15 +228,24 @@
                     </div>
                     <div class="col-xs-2 col-sm-2 col-md-2 s-rgt s-col">
                         <span class="icon-students"></span>
-                        <span style="font-size: 30px; color: #fff; position: absolute; bottom: -5px; left: 22px;">{{ row.total }}</span>
+                        <span style="font-size: 30px; color: #fff; position: absolute; bottom: -5px; left: 22px; text-shadow: 1px 1px 1px;">{{ row.total }}</span>
                     </div>
-                </div>
+                </a>
                 {% endfor %}
             {% else %}
                 <form action="/api/attendances/" method="post" onsubmit="return false;" id="attendance_class">
-
+                    <input type="hidden" name="attendance_date" value="{{ selected_date }}" id="attendance_date" />
+                    <input type="hidden" name="school" value="{{ request.user.school_id }}" id="school" />
+                    <input type="hidden" name="owner" value="{{ request.user.id }}" id="owner" />
                 {% for line in students %}
                     <div class="row row-student">
+                        <input type="hidden" name="id[{{ line.id }}]" value="{{ line.student.id }}" />
+                        <input type="hidden" name="fullname[{{ line.id }}]" value="{{ line.student }}" />
+                        <input type="hidden" name="sex[{{ line.id }}]" value="{{ line.student.sex }}" />
+                        <input type="hidden" name="level[{{ line.id }}]" value="{{ level.id }}" />
+                        <input type="hidden" name="level_name[{{ line.id }}]" value="{{ level.name }}" />
+                        <input type="hidden" name="section[{{ line.id }}]" value="{{ section.id }}" />
+                        <input type="hidden" name="section_name[{{ line.id }}]" value="{{ section.name }}" />
 {#                        <div class="col-xs-6 col-sm-2 icon-{{ line.student.sex }} s-col" style="border-left: 10px solid #2aabd2;"></div>#}
                         <div class="col-xs-6 col-sm-2 icon-student-{{ line.student.sex }} s-col" style="border-left: 10px solid #2aabd2;"></div>
                         <div class="col-xs-3 col-sm-3 s-col">
@@ -212,7 +259,7 @@
                         </div>
                         <div class="col-xs-2 col-sm-2 col-md-2 s-col">
                             <span class="icon-age"></span>
-                            <span>{{ line.student.calc_age }}</span>
+                            <span>{{ line.student.age }}</span>
                         </div>
                         <div class="col-xs-6 col-sm-2 col-md-2 s-col">
                             <input type="checkbox" name="status[{{ line.id }}]" checked="checked" itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" value="" />
@@ -227,14 +274,12 @@
                 {% endfor %}
                 </form>
 
-                <div class="row" style="padding-top: 50px; padding-bottom: 50px;">
-                      <button class="btn btn-success" id="save_attendances">
-                            {% trans "Save" %}
-                      </button>
-                      <button class="btn btn-success" id="exam_day">
-                            {% trans "Exam day" %}
-                      </button>
-                </div>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to" %} {{ selected_date_view }}</a>
+                        <button type="button" class="btn btn-success absolute-right-30" id="save_attendances">{% trans "Save" %}</button>
+                    </li>
+                </ol>
             {% endif %}
             </div>
 
@@ -250,61 +295,57 @@
     {% get_user_token request.user.id as user_token %}
 
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap-switch.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
     <script type="text/javascript">
-        var user_id = {{ request.user.id }};
-        var user_username = '{{ request.user.username }}';
-        var user_email = '{{ request.user.email }}';
         var user_token = '{{ user_token }}';
 
-        var protocol = 'http://';
-        {% if request.is_secure %}
-            protocol = 'https://';
-        {% endif %}
-        var host = '{{ request.get_host }}';
-        var synchro_path = protocol+host+'/api/attendances/';
+{#        var protocol = 'http://';#}
+{#        {% if request.is_secure %}#}
+{#            protocol = 'https://';#}
+{#        {% endif %}#}
+{#        var host = '{{ request.get_host }}';#}
+{#        var synchro_path = protocol+host+'/api/attendances/';#}
 
         $(document).ready(function(){
 
             $('[data-toggle="tooltip"]').tooltip();
 
-            $(document).on('click', '.row-class', function(){
-                var itemid = $(this).attr('itemid');
-                var itemref = $(this).attr('itemref');
-                var url = '{% url "attendances:attendance" %}' + '?date='+$('#dates').val();
-                url = url + '&level='+itemid + '&section='+itemref;
-                window.location = url;
+            $(document).on('click', '.closing-reason-b', function () {
+                if(confirm('Are you sure that the school is closed today?')){
+                    var data = {
+                        owner: $('input#owner').val(),
+                        attendance_date: $('select#dates').val(),
+                        school: $('input#school').val(),
+                        close_reason: $(this).attr('itemref'),
+                        students: {}
+                    };
+                    set_attendances(data);
+                    $('.closing-reason-b').attr('disabled', 'disabled');
+                    $('.row-class').addClass('disabled');
+                    $('.closing-reason-b').hide();
+                    $(this).show();
+                }
             });
 
             $(document).on('change', '#dates', function(){
                 if($(this).val()) {
-                    window.location = '{% url "attendances:attendance" %}' + '?date='+$(this).val();
+                    window.location = $('#dates').find('option:selected').attr('data-action');
                 }
             });
 
             $(document).on('click', '#save_attendances', function(){
                 var form = $('#attendance_class');
-                $.ajax({
-                    type: "POST",
-                    url: form.attr('action'),
-                    data: form.serialize(),
-                    cache: false,
-                    async: true,
-                    headers: getHeader(),
-                    dataType: 'json',
-                    success: function (response, result, jqXHR) {
-
-                    },
-                    error: function (response) {
-
-                    }
-                });
+                var data = {
+                        owner: $('input#owner').val(),
+                        attendance_date: $('input#attendance_date').val(),
+                        school: $('input#school').val(),
+                        students: form.serializeArray()
+                };
+                set_attendances(data);
             });
 
             $("[class='toggle-status']").bootstrapSwitch();
@@ -318,6 +359,28 @@
                 }
             });
         });
+
+        function set_attendances(data)
+        {
+            console.log(data);
+            return false;
+
+            $.ajax({
+                type: "POST",
+                url: "/api/attendances/",
+                data: data,
+                cache: false,
+                async: true,
+                headers: getHeader(),
+                dataType: 'json',
+                success: function (response, result, jqXHR) {
+
+                },
+                error: function (response) {
+
+                }
+            });
+        }
 
     </script>
 
