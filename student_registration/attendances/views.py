@@ -8,10 +8,10 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 
+from braces.views import GroupRequiredMixin
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.generics import ListAPIView
 from rest_framework.decorators import detail_route, list_route
-from datetime import datetime
 from rest_framework import status
 
 from django.utils.translation import ugettext as _
@@ -106,9 +106,13 @@ class AttendanceReportViewSet(mixins.ListModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
-class AttendanceView(LoginRequiredMixin, ListView):
+class AttendanceView(LoginRequiredMixin,
+                     GroupRequiredMixin,
+                     ListView):
+
     model = Attendance
     template_name = 'attendances/school.html'
+    group_required = [u"ATTENDANCE"]
 
     def get_context_data(self, **kwargs):
         level = 0
@@ -118,6 +122,8 @@ class AttendanceView(LoginRequiredMixin, ListView):
         location_parent = 0
         levels_by_sections = []
         students = []
+        date_format = '%Y-%m-%d'
+        date_format_display = '%A %d/%m/%Y'
 
         # if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
         if self.request.user.school:
@@ -127,13 +133,13 @@ class AttendanceView(LoginRequiredMixin, ListView):
         if location and location.parent:
             location_parent = location.parent
 
-        current_date = datetime.datetime.now().strftime('%d/%m/%Y')
+        current_date = datetime.datetime.now().strftime(date_format)
         selected_date = self.request.GET.get('date', current_date)
-        selected_date_view = datetime.datetime.strptime(selected_date, '%d/%m/%Y').strftime('%A %d/%m/%Y')
+        selected_date_view = datetime.datetime.strptime(selected_date, date_format).strftime(date_format_display)
 
         attendances = Attendance.objects.filter(
             school_id=school,
-            attendance_date=datetime.datetime.strptime(selected_date, '%d/%m/%Y')
+            attendance_date=datetime.datetime.strptime(selected_date, date_format)
         )
 
         if self.request.GET.get('level', 0):
@@ -188,8 +194,8 @@ class AttendanceView(LoginRequiredMixin, ListView):
             if d.weekday() not in weekend:
                 # dates.append(d.strftime('%A %D/%m/%Y'))
                 dates.append({
-                    'value': d.strftime('%d/%m/%Y'),
-                    'label': d.strftime('%A %d/%m/%Y')
+                    'value': d.strftime(date_format),
+                    'label': d.strftime(date_format_display)
                 })
 
         return {

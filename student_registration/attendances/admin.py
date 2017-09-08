@@ -374,7 +374,7 @@ class AttendanceSyncLogAdmin(ImportExportModelAdmin):
         'successful',
     )
 
-
+admin.site.register(Attendance)
 admin.site.register(BySchoolByDay, BySchoolByDayAdmin)
 admin.site.register(Absentee, AbsenteeAdmin)
 admin.site.register(AttendanceSyncLog, AttendanceSyncLogAdmin)
