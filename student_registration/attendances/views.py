@@ -51,14 +51,25 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
         return self.queryset
 
     def create(self, request, *args, **kwargs):
+
+        print request.POST
+        queryDict = request.POST
+        myDict = dict(queryDict.iterlists())
+        print myDict
+        for key, value in myDict.iteritems():
+            print key, value
+        # data = json.dumps(request.POST)
+        # print data
+
         """
         :return: JSON
         """
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.instance = serializer.save()
-
-        return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
+        # serializer = self.get_serializer(data=request.data)
+        # serializer.is_valid(raise_exception=True)
+        # serializer.instance = serializer.save()
+        #
+        # return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
+        return JsonResponse({'status': status.HTTP_201_CREATED})
 
     def update(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])

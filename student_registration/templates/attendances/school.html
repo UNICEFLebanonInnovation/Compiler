@@ -166,6 +166,7 @@
                                 </li>
                                 <li class="breadcrumb-item">
                                     {% trans "Total students" %} <span class="badge badge-default">{{ total_students }}</span>
+                                    <a href="#" class="btn btn-success absolute-right-30" id="save_attendances">{% trans "Save" %}</a>
                                 </li>
                             </ol>
                                 {% endif %}
@@ -186,6 +187,7 @@
                                       <button type="button" class="closing-reason-b btn btn-warning" itemref="school_holiday">{% trans "School Holiday" %}</button>
                                       <button type="button" class="closing-reason-b btn btn-danger" itemref="strike">{% trans "Strike" %}</button>
                                       <button type="button" class="closing-reason-b btn btn-info" itemref="weekly_holiday">{% trans "Weekly Holiday" %}</button>
+                                      <button type="button" class="btn btn-success absolute-right-30" id="attendance_validate">{% trans "Validate all" %}</button>
                                 </li>
                             </ol>
                                 {% endif %}
@@ -239,13 +241,13 @@
                     <input type="hidden" name="owner" value="{{ request.user.id }}" id="owner" />
                 {% for line in students %}
                     <div class="row row-student">
-                        <input type="hidden" name="id[{{ line.id }}]" value="{{ line.student.id }}" />
-                        <input type="hidden" name="fullname[{{ line.id }}]" value="{{ line.student }}" />
-                        <input type="hidden" name="sex[{{ line.id }}]" value="{{ line.student.sex }}" />
-                        <input type="hidden" name="level[{{ line.id }}]" value="{{ level.id }}" />
-                        <input type="hidden" name="level_name[{{ line.id }}]" value="{{ level.name }}" />
-                        <input type="hidden" name="section[{{ line.id }}]" value="{{ section.id }}" />
-                        <input type="hidden" name="section_name[{{ line.id }}]" value="{{ section.name }}" />
+                        <input type="hidden" name="att[{{ line.id }}][id]" value="{{ line.student.id }}" />
+                        <input type="hidden" name="att[{{ line.id }}][fullname]" value="{{ line.student }}" />
+                        <input type="hidden" name="att[{{ line.id }}][sex]" value="{{ line.student.sex }}" />
+                        <input type="hidden" name="att[{{ line.id }}][level]" value="{{ level.id }}" />
+                        <input type="hidden" name="att[{{ line.id }}][level_name]" value="{{ level.name }}" />
+                        <input type="hidden" name="att[{{ line.id }}][section]" value="{{ section.id }}" />
+                        <input type="hidden" name="att[{{ line.id }}][section_name]" value="{{ section.name }}" />
 {#                        <div class="col-xs-6 col-sm-2 icon-{{ line.student.sex }} s-col" style="border-left: 10px solid #2aabd2;"></div>#}
                         <div class="col-xs-6 col-sm-2 icon-student-{{ line.student.sex }} s-col" style="border-left: 10px solid #2aabd2;"></div>
                         <div class="col-xs-3 col-sm-3 s-col">
@@ -262,13 +264,13 @@
                             <span>{{ line.student.age }}</span>
                         </div>
                         <div class="col-xs-6 col-sm-2 col-md-2 s-col">
-                            <input type="checkbox" name="status[{{ line.id }}]" checked="checked" itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" value="" />
+                            <input type="checkbox" name="att[{{ line.id }}][status]" checked="checked" itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" value="" />
                         </div>
                         <div class="col-sm-8 absence-reasons" style="display: none;" id="reasons-{{ line.id }}">
-                            <label class="radio-inline"><input type="radio" value="sick" name="absence_reason[{{ line.id }}]" />{% trans "Sick" %}</label>
-                            <label class="radio-inline"><input type="radio" value="no_reason" name="absence_reason[{{ line.id }}]" />{% trans "No reason" %}</label>
-                            <label class="radio-inline"><input type="radio" value="no_transport" name="absence_reason[{{ line.id }}]" />{% trans "No transport" %}</label>
-                            <label class="radio-inline"><input type="radio" value="other" name="absence_reason[{{ line.id }}]" />{% trans "Other" %}</label>
+                            <label class="radio-inline"><input type="radio" value="sick" name="att[{{ line.id }}][absence_reason]" />{% trans "Sick" %}</label>
+                            <label class="radio-inline"><input type="radio" value="no_reason" name="att[{{ line.id }}][absence_reason]" />{% trans "No reason" %}</label>
+                            <label class="radio-inline"><input type="radio" value="no_transport" name="att[{{ line.id }}][absence_reason]" />{% trans "No transport" %}</label>
+                            <label class="radio-inline"><input type="radio" value="other" name="att[{{ line.id }}][absence_reason]" />{% trans "Other" %}</label>
                         </div>
                     </div>
                 {% endfor %}
@@ -277,16 +279,11 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
                         <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to" %} {{ selected_date_view }}</a>
-                        <button type="button" class="btn btn-success absolute-right-30" id="save_attendances">{% trans "Save" %}</button>
+                        <a href="#" class="btn btn-success absolute-right-30" id="save_attendances">{% trans "Save" %}</a>
                     </li>
                 </ol>
             {% endif %}
             </div>
-
-              <a class="btn btn-info" id="attendance-validate-all" href="#" style="display: none;">
-                <i class="icon-validation-sign icon-white"></i>&nbsp;
-                    {% trans "Validate All" %}
-              </a>
          </section>
 
 {% endblock %}
@@ -339,13 +336,45 @@
 
             $(document).on('click', '#save_attendances', function(){
                 var form = $('#attendance_class');
+                var form_data = form.serializeArray();
+                console.log(form_data);
                 var data = {
                         owner: $('input#owner').val(),
                         attendance_date: $('input#attendance_date').val(),
                         school: $('input#school').val(),
-                        students: form.serializeArray()
+                        students: form_data
                 };
-                set_attendances(data);
+                var students = [
+                    {
+                        id: 112,
+                        fullname: 'jkfhs kjfdhjksdh',
+                        sex: 'Male',
+                        status: true
+                    },
+                    {
+                        id: 112,
+                        fullname: 'jkfhs kjfdhjksdh',
+                        sex: 'Male',
+                        status: true
+                    }];
+                set_attendances(form_data);
+            });
+
+            $(document).on('click', '#attendance_validate', function(){
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth()+1; //January is 0!
+                var yyyy = today.getFullYear();
+                if(confirm('Are you sure you want to validate all attendances?')) {
+                    var data = {
+                        validation_owner: $('input#owner').val(),
+                        attendance_date: $('input#attendance_date').val(),
+                        school: $('input#school').val(),
+                        validation_status: true,
+                        validation_date: yyyy+'-'+mm+'-'+dd
+                    };
+                    set_attendances(data);
+                }
             });
 
             $("[class='toggle-status']").bootstrapSwitch();
@@ -362,13 +391,14 @@
 
         function set_attendances(data)
         {
-            console.log(data);
-            return false;
+{#            console.log(JSON.stringify(data));#}
+{#            console.log(data);#}
+{#            return false;#}
 
             $.ajax({
                 type: "POST",
                 url: "/api/attendances/",
-                data: data,
+                data: JSON.stringify(data),
                 cache: false,
                 async: true,
                 headers: getHeader(),
