@@ -9,11 +9,12 @@ class AttendanceSerializer(serializers.ModelSerializer):
     validation_status = serializers.CharField(required=False)
     validation_date = serializers.DateField(required=False)
     validation_owner = serializers.IntegerField(required=False)
-    students = serializers.JSONField(required=False)
+    # students = serializers.JSONField(required=False)
 
     class Meta:
         model = Attendance
         fields = (
+            'id',
             'school',
             'attendance_date',
             'validation_status',

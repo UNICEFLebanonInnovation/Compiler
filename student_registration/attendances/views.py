@@ -4,6 +4,7 @@ import datetime
 import tablib
 import json
 
+from django.views import View
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
@@ -51,28 +52,23 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
         return self.queryset
 
     def create(self, request, *args, **kwargs):
-
-        print request.POST
-        queryDict = request.POST
-        myDict = dict(queryDict.iterlists())
-        print myDict
-        for key, value in myDict.iteritems():
-            print key, value
-        # data = json.dumps(request.POST)
-        # print data
-
         """
         :return: JSON
         """
-        # serializer = self.get_serializer(data=request.data)
-        # serializer.is_valid(raise_exception=True)
-        # serializer.instance = serializer.save()
-        #
-        # return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.data})
-        return JsonResponse({'status': status.HTTP_201_CREATED})
+        try:
+            instance = Attendance.objects.get(school=int(request.POST.get('school')),
+                                              attendance_date=request.POST.get('attendance_date'))
+            return JsonResponse({'status': status.HTTP_201_CREATED, 'data': instance.id})
+        except Attendance.DoesNotExist:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.instance = serializer.save()
+            return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.instance})
 
     def update(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
+        instance.students = request.data.keys()[0]
+        instance.save()
         return JsonResponse({'status': status.HTTP_200_OK})
 
     @list_route(methods=['get'], url_path='push-by-school/(?P<school>\d+)')
@@ -117,6 +113,18 @@ class AttendanceReportViewSet(mixins.ListModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
+class AttendanceSubmissionView(LoginRequiredMixin,
+                               GroupRequiredMixin,
+                               View):
+    group_required = [u"ATTENDANCE"]
+
+    def post(self, *args, **kwargs):
+        print self.request.POST.keys()
+        print self.request.POST.values()
+        print self.request.POST.items()
+        # return super(AttendanceSubmissionView, self).get_redirect_url(*args, **kwargs)
+
+
 class AttendanceView(LoginRequiredMixin,
                      GroupRequiredMixin,
                      ListView):
@@ -143,6 +151,9 @@ class AttendanceView(LoginRequiredMixin,
             location = school.location
         if location and location.parent:
             location_parent = location.parent
+
+        # attqs = Attendance.objects.filter(school=14, students__level_section='1-1')
+        # print attqs.count()
 
         current_date = datetime.datetime.now().strftime(date_format)
         selected_date = self.request.GET.get('date', current_date)
