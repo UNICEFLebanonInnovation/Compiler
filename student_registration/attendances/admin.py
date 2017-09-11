@@ -374,7 +374,35 @@ class AttendanceSyncLogAdmin(ImportExportModelAdmin):
         'successful',
     )
 
-admin.site.register(Attendance)
+
+class AttendanceResource(resources.ModelResource):
+    class Meta:
+        model = Attendance
+        fields = ()
+        export_order = fields
+
+
+class AttendanceAdmin(ImportExportModelAdmin):
+    resource_class = AttendanceResource
+    fields = (
+        'school',
+        'attendance_date',
+        'validation_status',
+        'validation_date',
+        'validation_owner',
+        'close_reason',
+        'students',
+        'owner',
+    )
+    list_display = (
+        'id',
+        'school',
+    )
+    list_filter = (
+        'school',
+    )
+
+admin.site.register(Attendance, AttendanceAdmin)
 admin.site.register(BySchoolByDay, BySchoolByDayAdmin)
 admin.site.register(Absentee, AbsenteeAdmin)
 admin.site.register(AttendanceSyncLog, AttendanceSyncLogAdmin)
