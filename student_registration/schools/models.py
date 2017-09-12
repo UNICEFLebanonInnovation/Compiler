@@ -50,6 +50,14 @@ class School(models.Model):
             return self.location.parent.name
         return ''
 
+    @property
+    def have_academic_year_dates(self):
+        if not self.academic_year_start \
+           or not self.academic_year_end \
+           or not self.academic_year_exam_end:
+            return False
+        return True
+
     def __unicode__(self):
         return u'{} - {}'.format(
             self.name,
