@@ -16,7 +16,6 @@ from student_registration.alp.views import (
 )
 from student_registration.attendances.views import (
     AttendanceViewSet,
-    AttendanceReportViewSet,
 )
 from student_registration.students.views import (
     StudentViewSet,
@@ -40,7 +39,6 @@ api.register(r'outreach', OutreachViewSet, base_name='outreach')
 api.register(r'enrollments', EnrollmentViewSet, base_name='enrollments')
 api.register(r'logging-student-move', LoggingStudentMoveViewSet, base_name='logging_student_move')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
-api.register(r'attendances-report', AttendanceReportViewSet, base_name='attendances_report')
 api.register(r'beneficiary', BeneficiaryViewSet, base_name='beneficiary')
 
 api.register(r'students', StudentViewSet, base_name='students')
