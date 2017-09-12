@@ -146,7 +146,7 @@ class BLNSerializer(CLMSerializer):
             student_serializer = StudentSerializer(data=student_data)
             student_serializer.is_valid(raise_exception=True)
             student_serializer.instance = student_serializer.save()
-            print student_serializer.instance
+            # print student_serializer.instance
 
         try:
             instance = BLN.objects.create(**validated_data)
