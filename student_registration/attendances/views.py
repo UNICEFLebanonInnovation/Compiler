@@ -78,53 +78,6 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
-class AttendanceReportViewSet(mixins.ListModelMixin,
-                              viewsets.GenericViewSet):
-
-    model = Attendance
-    queryset = Attendance.objects.all()
-    serializer_class = AttendanceSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def list(self, request, *args, **kwargs):
-        school = request.GET.get("school", 0)
-
-        queryset = self.queryset.filter(school_id=school)
-        data = tablib.Dataset()
-        data.headers = [
-            _('Student number'), _('Student fullname'), _('Mother fullname'),
-        ]
-
-        content = []
-        for line in queryset:
-            content = [
-                line.student.number,
-                line.student.__unicode__(),
-                line.student.mother_fullname,
-            ]
-            data.append(content)
-
-        file_format = base_formats.XLS()
-        # response = HttpResponse(
-        #     file_format.export_data(data),
-        #     content_type='application/vnd.ms-excel',
-        # )
-        # response['Content-Disposition'] = 'attachment; filename=registration_list.xls'
-        return JsonResponse({'status': status.HTTP_200_OK})
-
-
-class AttendanceSubmissionView(LoginRequiredMixin,
-                               GroupRequiredMixin,
-                               View):
-    group_required = [u"ATTENDANCE"]
-
-    def post(self, *args, **kwargs):
-        print self.request.POST.keys()
-        print self.request.POST.values()
-        print self.request.POST.items()
-        # return super(AttendanceSubmissionView, self).get_redirect_url(*args, **kwargs)
-
-
 class AttendanceView(LoginRequiredMixin,
                      GroupRequiredMixin,
                      ListView):
@@ -236,38 +189,6 @@ class AttendanceView(LoginRequiredMixin,
             'selected_date': selected_date,
             'selected_date_view': selected_date_view,
         }
-
-
-class ExportViewSet(LoginRequiredMixin, ListView):
-
-    model = Attendance
-
-    def get(self, request, *args, **kwargs):
-
-        school = request.GET.get("school")
-
-        queryset = self.queryset
-        data = tablib.Dataset()
-        data.headers = [
-            _('Student number'), _('Student fullname'), _('Mother fullname'),
-        ]
-
-        content = []
-        for line in queryset:
-            content = [
-                line.student.number,
-                line.student.__unicode__(),
-                line.student.mother_fullname,
-            ]
-            data.append(content)
-
-        file_format = base_formats.XLS()
-        response = HttpResponse(
-            file_format.export_data(data),
-            content_type='application/vnd.ms-excel',
-        )
-        response['Content-Disposition'] = 'attachment; filename=registration_list.xls'
-        return response
 
 
 class AbsenteeView(ListAPIView):
