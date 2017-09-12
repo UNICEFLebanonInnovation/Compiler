@@ -8,6 +8,7 @@ from django.views import View
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
+from django.core.urlresolvers import reverse, reverse_lazy
 
 from braces.views import GroupRequiredMixin
 from rest_framework import viewsets, mixins, permissions
@@ -105,6 +106,9 @@ class AttendanceView(LoginRequiredMixin,
         if location and location.parent:
             location_parent = location.parent
 
+        # if not school.have_academic_year_dates:
+            # return reverse('schools:profile', kwargs={})
+
         # attqs = Attendance.objects.filter(school=14, students__level_section='1-1')
         # print attqs.count()
 
@@ -137,7 +141,8 @@ class AttendanceView(LoginRequiredMixin,
         if level:
             students = queryset.filter(
                 classroom_id=level.id,
-                section_id=section.id
+                section_id=section.id,
+                # registration_date__lte=selected_date
             ).order_by('student__first_name')
 
         for registry in registrations:
@@ -162,16 +167,14 @@ class AttendanceView(LoginRequiredMixin,
 
         base = datetime.datetime.now()
         dates = []
-        weekend = [5, 6]
+        day_range = school.attendance_range if school.attendance_range else Attendance.DEFAULT_ATTENDANCE_RANGE
 
-        for x in range(0, 30):
+        for x in range(0, day_range):
             d = base - datetime.timedelta(days=x)
-            if d.weekday() not in weekend:
-                # dates.append(d.strftime('%A %D/%m/%Y'))
-                dates.append({
-                    'value': d.strftime(date_format),
-                    'label': d.strftime(date_format_display)
-                })
+            dates.append({
+                'value': d.strftime(date_format),
+                'label': d.strftime(date_format_display)
+            })
 
         return {
             'total': queryset.count(),

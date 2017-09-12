@@ -192,7 +192,7 @@ class CommonForm(forms.ModelForm):
                 instance.owner = request.user
                 instance.save()
             else:
-                print serializer.errors
+                # print serializer.errors
                 return False
 
         return True
