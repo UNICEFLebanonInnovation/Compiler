@@ -1,5 +1,6 @@
 /* These styles are generated from project.scss. */
 
+<<<<<<< HEAD
 .alert-debug {
   color: black;
   background-color: white;
@@ -48,6 +49,11 @@ input.required, select.required {
     border: 1px solid #ac2925;
     background-color: #ac2925;
 }
+=======
+[hidden][style="display: block;"] {
+  display: block !important;
+}
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 [class^="icon-"], [class*=" icon-"] {
     display: inline-block;
     width: 14px;
@@ -67,6 +73,12 @@ input.required, select.required {
 .icon-delete {
     background-position: -312px 0;
 }
+<<<<<<< HEAD
+=======
+.icon-edit-sign {
+  background-position: 0px -72px;
+}
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 .icon-plus-sign {
     background-position: -408px -96px;
 }
@@ -91,11 +103,17 @@ input.required, select.required {
 .icon-prev-sign {
   background-position: -430px -71px;
 }
+<<<<<<< HEAD
 
 .icon-edit {
     background-position: -95px -71px;
 }
 
+=======
+.icon-edit {
+    background-position: -95px -71px;
+}
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 .icon-Male {
   background-position: 0px 0px;
   width: 55px;
@@ -110,6 +128,7 @@ input.required, select.required {
   vertical-align: middle;
   background-image: url("../images/icon-Female.png");
 }
+<<<<<<< HEAD
 
 .inlineForm {
     color: #7b7b7b;
@@ -222,4 +241,35 @@ div.error, span.error {
 table.dataTable, table.dataTable th, table.dataTable td
 {
   box-sizing: inherit !important;
+=======
+.badge {
+    margin-top: 3px;
+    width: 25px;
+    height: 22px;
+}
+.bd-callout {
+    padding: 1.25rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid #eee;
+    border-left-width: .25rem;
+    border-radius: .25rem;
+}
+.bd-callout-warning {
+    border-left-color: #f0ad4e;
+}
+.bd-callout-warning h4 {
+    color: #f0ad4e;
+}
+.bd-callout h4 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+}
+.table-container thead {
+    /*background: rgba(255,255,255,.5) !important;*/
+    /*color: rgba(255,255,255,.5);*/
+}
+tr.odd {
+    background-color: #eceeef;
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 }

@@ -9,19 +9,42 @@ from student_registration.locations.models import Location
 
 class School(models.Model):
 
+<<<<<<< HEAD
     name = models.CharField(max_length=555L)
     number = models.CharField(max_length=45L, unique=True)
+=======
+    name = models.CharField(max_length=255)
+    number = models.CharField(max_length=45, unique=True)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     is_2nd_shift = models.BooleanField(blank=True, default=False)
     number_students_2nd_shift = models.IntegerField(blank=True, null=True)
     is_alp = models.BooleanField(blank=True, default=False)
     number_students_alp = models.IntegerField(blank=True, null=True)
+<<<<<<< HEAD
+=======
+    academic_year_start = models.DateField(
+        blank=True,
+        null=True,
+    )
+    academic_year_end = models.DateField(
+        blank=True,
+        null=True,
+    )
+    academic_year_exam_end = models.DateField(
+        blank=True,
+        null=True,
+    )
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     location = models.ForeignKey(
         Location,
         blank=False, null=True,
         related_name='+',
     )
+<<<<<<< HEAD
     in_use = models.BooleanField(blank=True, default=False)
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     class Meta:
         ordering = ['number']
@@ -39,13 +62,17 @@ class School(models.Model):
         return ''
 
     def __unicode__(self):
+<<<<<<< HEAD
         # return self.name
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         return u'{} - {}'.format(
             self.name,
             self.number
         )
 
 
+<<<<<<< HEAD
 class Course(models.Model):
     name = models.CharField(max_length=45L, unique=True)
 
@@ -58,6 +85,10 @@ class Course(models.Model):
 
 class EducationLevel(models.Model):
     name = models.CharField(max_length=45L, unique=True)
+=======
+class EducationLevel(models.Model):
+    name = models.CharField(max_length=45, unique=True)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     note = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -69,7 +100,11 @@ class EducationLevel(models.Model):
 
 
 class ClassLevel(models.Model):
+<<<<<<< HEAD
     name = models.CharField(max_length=45L, unique=True)
+=======
+    name = models.CharField(max_length=45, unique=True)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     class Meta:
         ordering = ['id']
@@ -79,6 +114,7 @@ class ClassLevel(models.Model):
         return self.name
 
 
+<<<<<<< HEAD
 class Grade(models.Model):
     name = models.CharField(max_length=45L, unique=True)
 
@@ -88,6 +124,10 @@ class Grade(models.Model):
 
 class Section(models.Model):
     name = models.CharField(max_length=45L, unique=True)
+=======
+class Section(models.Model):
+    name = models.CharField(max_length=45, unique=True)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     class Meta:
         ordering = ['id']
@@ -97,6 +137,7 @@ class Section(models.Model):
 
 
 class ClassRoom(models.Model):
+<<<<<<< HEAD
     name = models.CharField(max_length=45L, unique=True)
     school = models.ForeignKey(
         School,
@@ -113,6 +154,9 @@ class ClassRoom(models.Model):
         blank=True, null=True,
         related_name='+',
     )
+=======
+    name = models.CharField(max_length=45, unique=True)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     class Meta:
         ordering = ['id']
@@ -123,7 +167,11 @@ class ClassRoom(models.Model):
 
 
 class PartnerOrganization(models.Model):
+<<<<<<< HEAD
     name = models.CharField(max_length=100L, unique=True)
+=======
+    name = models.CharField(max_length=100, unique=True)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     class Meta:
         ordering = ['name']
@@ -160,7 +208,11 @@ class ALPReferMatrix(models.Model):
 
 
 class EducationYear(models.Model):
+<<<<<<< HEAD
     name = models.CharField(max_length=100L, unique=True)
+=======
+    name = models.CharField(max_length=100, unique=True)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     current_year = models.BooleanField(blank=True, default=False)
 
     class Meta:
@@ -195,3 +247,17 @@ class ALPAssignmentMatrix(models.Model):
 
     def __unicode__(self):
         return str(self.id)
+<<<<<<< HEAD
+=======
+
+
+class EducationalLevel(models.Model):
+    name = models.CharField(max_length=45, unique=True)
+    note = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.name
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1

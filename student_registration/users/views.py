@@ -76,7 +76,11 @@ class UserChangeLanguageRedirectView(LoginRequiredMixin, RedirectView):
         user_language = kwargs['language']
         translation.activate(user_language)
         self.request.session[translation.LANGUAGE_SESSION_KEY] = user_language
+<<<<<<< HEAD
         return reverse('home') + '?' + user_language + '-1'
+=======
+        return reverse('home')
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 
 class LoginRedirectView(LoginRequiredMixin, RedirectView):

@@ -15,11 +15,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='student',
             name='number_part1',
+<<<<<<< HEAD
             field=models.CharField(blank=True, max_length=45L, null=True),
+=======
+            field=models.CharField(blank=True, max_length=45, null=True),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         ),
         migrations.AddField(
             model_name='student',
             name='number_part2',
+<<<<<<< HEAD
             field=models.CharField(blank=True, max_length=45L, null=True),
+=======
+            field=models.CharField(blank=True, max_length=45, null=True),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         ),
     ]

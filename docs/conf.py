@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 # -*- coding: utf-8 -*-
 #
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 # Student Registration documentation build configuration file, created by
 # sphinx-quickstart.
 #
@@ -11,8 +14,11 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+<<<<<<< HEAD
 from __future__ import unicode_literals
 
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 import os
 import sys
 
@@ -44,7 +50,11 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Student Registration'
+<<<<<<< HEAD
 copyright = """2016, James Cranwell-Ward"""
+=======
+copyright = """2017, UNICEF Lebanon Innovation"""
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -189,7 +199,11 @@ latex_documents = [
     ('index',
      'student_registration.tex',
      'Student Registration Documentation',
+<<<<<<< HEAD
      """James Cranwell-Ward""", 'manual'),
+=======
+     """UNICEF Lebanon Innovation""", 'manual'),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -219,7 +233,11 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'student_registration', 'Student Registration Documentation',
+<<<<<<< HEAD
      ["""James Cranwell-Ward"""], 1)
+=======
+     ["""UNICEF Lebanon Innovation"""], 1)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 ]
 
 # If true, show URL addresses after external links.
@@ -233,8 +251,13 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     ('index', 'student_registration', 'Student Registration Documentation',
+<<<<<<< HEAD
      """James Cranwell-Ward""", 'Student Registration',
      """Simple, interactive and online student registration.""", 'Miscellaneous'),
+=======
+     """UNICEF Lebanon Innovation""", 'Student Registration',
+     """Simple student registration platformm""", 'Miscellaneous'),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 ]
 
 # Documents to append as an appendix to all manuals.

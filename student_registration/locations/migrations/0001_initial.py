@@ -20,10 +20,17 @@ class Migration(migrations.Migration):
             name='Location',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+<<<<<<< HEAD
                 ('name', models.CharField(max_length=254L)),
                 ('latitude', models.FloatField(blank=True, null=True)),
                 ('longitude', models.FloatField(blank=True, null=True)),
                 ('p_code', models.CharField(blank=True, max_length=32L, null=True)),
+=======
+                ('name', models.CharField(max_length=254)),
+                ('latitude', models.FloatField(blank=True, null=True)),
+                ('longitude', models.FloatField(blank=True, null=True)),
+                ('p_code', models.CharField(blank=True, max_length=32, null=True)),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
                 ('lft', models.PositiveIntegerField(db_index=True, editable=False)),
                 ('rght', models.PositiveIntegerField(db_index=True, editable=False)),
                 ('tree_id', models.PositiveIntegerField(db_index=True, editable=False)),
@@ -33,14 +40,22 @@ class Migration(migrations.Migration):
                 'ordering': ['name'],
             },
             managers=[
+<<<<<<< HEAD
                 ('_default_manager', django.db.models.manager.Manager()),
+=======
+                ('objects', django.db.models.manager.Manager()),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             ],
         ),
         migrations.CreateModel(
             name='LocationType',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+<<<<<<< HEAD
                 ('name', models.CharField(max_length=64L, unique=True)),
+=======
+                ('name', models.CharField(max_length=64, unique=True)),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             ],
             options={
                 'ordering': ['name'],

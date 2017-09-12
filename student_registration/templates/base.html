@@ -2,7 +2,12 @@
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
 <!DOCTYPE html>
+<<<<<<< HEAD
 <html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>
+=======
+{#<html ng-app {% if LANGUAGE_CODE == 'ar-ar' %}lang="ar" dir="rtl"{% endif %}>#}
+<html ng-app>
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -19,16 +24,26 @@
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
+<<<<<<< HEAD
 {#      <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>#}
     <![endif]-->
 
     {% block css %}
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+=======
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+    {% block css %}
+    <!-- Latest compiled and minified Bootstrap 4 Alpha 4 CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     <!-- Your stuff: Third-party css libraries go here -->
 
     <!-- This file store project specific CSS -->
+<<<<<<< HEAD
 {% if LANGUAGE_CODE == 'ar-ar' %}
     <link href="{% static 'css/project-ar.css' %}" rel="stylesheet">
 {% else %}
@@ -42,11 +57,21 @@
     {% endblock %}
     {% block extra_head %}
     {% endblock %}
+=======
+    <link href="{% static 'css/project.css' %}" rel="stylesheet">
+{#    <link href="{% static 'css/main.css' %}" rel="stylesheet">#}
+    {% endblock %}
+
+    {% block extra_head %}
+    {% endblock %}
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
   </head>
 
   <body>
 
     {% include 'header.html' %}
+<<<<<<< HEAD
 {#    <div class="m-b">#}
 {#      <nav class="navbar navbar-dark navbar-static-top bg-inverse">#}
 {#        <div class="container">#}
@@ -144,6 +169,8 @@
 {#        </div>#}
 {#      </nav>#}
 {#    </div>#}
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     <div class="container">
 
@@ -168,6 +195,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     {% block javascript %}
+<<<<<<< HEAD
       <!-- Latest JQuery -->
       <script src="{% static 'js/jquery.min.js' %}"></script>
 
@@ -176,11 +204,24 @@
 
       <!-- Latest compiled and minified JavaScript -->
       <script src="{% static 'js/bootstrap.js' %}"></script>
+=======
+      <!-- Required by Bootstrap v4 Alpha 4 -->
+      <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
       <!-- Your stuff: Third-party javascript libraries go here -->
 
       <!-- place project specific Javascript in this file -->
+<<<<<<< HEAD
       <script src="{% static 'js/project.js' %}"></script>
+=======
+{#      {% compress js %}#}
+      <script src="{% static 'js/project.js' %}"></script>
+{#      {% endcompress %}#}
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     {% endblock javascript %}
     {% block extra_js %}
     {% endblock %}

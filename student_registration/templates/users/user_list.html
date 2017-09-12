@@ -3,6 +3,7 @@
 {% block title %}Members{% endblock %}
 
 {% block content %}
+<<<<<<< HEAD
 
 <div class="container">
 
@@ -19,4 +20,17 @@
 
 </div>
 
+=======
+<div class="container">
+  <h2>Users</h2>
+
+  <div class="list-group">
+    {% for user in user_list %}
+      <a href="{% url 'users:detail' user.username %}" class="list-group-item">
+        <h4 class="list-group-item-heading">{{ user.username }}</h4>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 {% endblock content %}

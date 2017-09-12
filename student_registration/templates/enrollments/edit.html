@@ -1,11 +1,18 @@
 {% extends "base.html" %}
 {% load staticfiles i18n %}
+<<<<<<< HEAD
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
+=======
+{% load crispy_forms_tags %}
+
+{% block head_title %}Registration{% endblock %}
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 {% block extra_head %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+<<<<<<< HEAD
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
@@ -175,11 +182,40 @@
 
             </section>
          </section>
+=======
+
+{% endblock %}
+
+{% block content %}
+
+    <div id="resume" class="inner-content">
+
+        <section id="page-title" class="inner-section ui-menu-color02">
+            <div class="container-fluid nopadding">
+                <h2 class="font-accident-two-light color01 uppercase"
+                    data-animation-origin="right"
+                    data-animation-duration="400"
+                    data-animation-delay="100"
+                    data-animation-distance="50px">{% trans "Registration" %}</h2>
+
+            </div>
+        </section>
+
+        <section class="inner-section light bg-color01">
+            <div class="container-fluid nopadding">
+                {{ form.errors }}
+                {% crispy form %}
+            </div>
+        </section>
+
+    </div>
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 {% endblock %}
 
 {% block extra_js %}
 
+<<<<<<< HEAD
     {% get_user_token request.user.id as user_token %}
     <script type="text/javascript">
         var oTable = null;
@@ -850,5 +886,9 @@
         }
 
     </script>
+=======
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 {% endblock %}

@@ -8,5 +8,9 @@ before_install:
   - sudo apt-get install -qq libsqlite3-dev libxml2 libxml2-dev libssl-dev libbz2-dev wget curl llvm
 language: python
 python:
+<<<<<<< HEAD
 
   - "2.7"
+=======
+  - "3.5"
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1

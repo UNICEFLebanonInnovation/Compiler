@@ -62,7 +62,11 @@ def get_app_collection(bulk_name):
         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
     ).json()
 
+<<<<<<< HEAD
     if data and '_rev' in data:
+=======
+    if data['_rev']:
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         return data['_rev']
     return 0
 
@@ -277,7 +281,10 @@ def set_app_users():
         docs.append(doc)
 
     response = set_docs(docs)
+<<<<<<< HEAD
     print response
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     if response.status_code in [requests.codes.ok, requests.codes.created]:
         return response.text
 
@@ -297,7 +304,11 @@ def import_docs(**kwargs):
             if re.match('^\d+-\d+-\d+(-alp)?$', row["id"]):
                 ids.append(row["id"])
 
+<<<<<<< HEAD
         batches = [ids[x: x + 1000] for x in xrange(0, len(ids), 1000)]
+=======
+        batches = [ids[x: x + 1000] for x in range(0, len(ids), 1000)]
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
         database = client.get_default_database()
         database.attendances.drop()

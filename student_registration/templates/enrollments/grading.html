@@ -1,11 +1,16 @@
 {% extends "base.html" %}
 {% load staticfiles i18n %}
+<<<<<<< HEAD
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
+=======
+{% load crispy_forms_tags %}
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 {% block extra_head %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+<<<<<<< HEAD
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
@@ -151,11 +156,47 @@
 
             </section>
          </section>
+=======
+
+{% endblock %}
+
+{% block content %}
+
+    <div id="resume" class="inner-content">
+
+        <section class="inner-section light bg-color01">
+            <div class="container-fluid nopadding">
+                <fieldset class="bd-callout bd-callout-warning'">
+                        <h4 id="alternatives-to-hidden-labels">{% trans "Student" %}</h4>
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Student fullname" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.student }}</div>
+                        </div>
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Current situation" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.classroom }} - {{ form.instance.section }}</div>
+                        </div>
+                        {% if form.fields.term.initial == '2' %}
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Previows situation" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.exam_total }} - {{ form.instance.exam_result }}</div>
+                        </div>
+                        {% endif %}
+                </fieldset>
+
+                {{ form.errors }}
+                {% crispy form %}
+            </div>
+        </section>
+
+    </div>
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 {% endblock %}
 
 {% block extra_js %}
 
+<<<<<<< HEAD
     {% get_user_token request.user.id as user_token %}
     <script type="text/javascript">
         var oTable = null;
@@ -340,4 +381,6 @@
 
     </script>
 
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 {% endblock %}

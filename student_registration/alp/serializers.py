@@ -9,6 +9,7 @@ from student_registration.students.models import (
 )
 
 
+<<<<<<< HEAD
 def update_student(student_data, student):
 
     if 'first_name' in student_data:
@@ -49,6 +50,8 @@ def update_student(student_data, student):
     return student
 
 
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 class OutreachSerializer(serializers.ModelSerializer):
 
     original_id = serializers.IntegerField(source='id', read_only=True)
@@ -98,20 +101,45 @@ class OutreachSerializer(serializers.ModelSerializer):
     posttest_total = serializers.CharField(read_only=True)
     next_level = serializers.CharField(read_only=True)
 
+<<<<<<< HEAD
     def create(self, validated_data):
         from student_registration.students.serializers import StudentSerializer
         student_data = validated_data.pop('student', None)
         if 'id' in student_data and student_data['id']:
             student = update_student(student_data, Student.objects.get(id=student_data['id']))
+=======
+    csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
+    save = serializers.IntegerField(source='owner.id', read_only=True)
+    enrollment_id = serializers.IntegerField(source='id', read_only=True)
+    search_student = serializers.CharField(source='student.full_name', read_only=True)
+    search_school = serializers.CharField(source='school.name', read_only=True)
+    search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
+
+    def create(self, validated_data):
+        from student_registration.students.serializers import StudentSerializer
+        student_data = validated_data.pop('student', None)
+
+        if 'id' in student_data and student_data['id']:
+            student_serializer = StudentSerializer(Student.objects.get(id=student_data['id']), data=student_data)
+            student_serializer.is_valid(raise_exception=True)
+            student_serializer.instance = student_serializer.save()
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         else:
             student_serializer = StudentSerializer(data=student_data)
             student_serializer.is_valid(raise_exception=True)
             student_serializer.instance = student_serializer.save()
+<<<<<<< HEAD
             student = student_serializer.instance
 
         try:
             instance = Outreach.objects.create(**validated_data)
             instance.student = student
+=======
+
+        try:
+            instance = Outreach.objects.create(**validated_data)
+            instance.student = student_serializer.instance
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             instance.save()
 
         except Exception as ex:
@@ -122,6 +150,7 @@ class OutreachSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
 
         try:
+<<<<<<< HEAD
 
             student_data = validated_data.pop('student', None)
             student = update_student(student_data, instance.student)
@@ -150,6 +179,20 @@ class OutreachSerializer(serializers.ModelSerializer):
                 instance.level = validated_data['level']
             # if 'modified_by' in validated_data:
             #     instance.modified_by_id = validated_data['modified_by']
+=======
+            student_data = validated_data.pop('student', None)
+
+            if student_data:
+                from student_registration.students.serializers import StudentSerializer
+
+                student_serializer = StudentSerializer(instance.student, data=student_data)
+                student_serializer.is_valid(raise_exception=True)
+                student_serializer.instance = student_serializer.save()
+
+            for key in validated_data:
+                if hasattr(instance, key):
+                    setattr(instance, key, validated_data[key])
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
             instance.save()
 
@@ -199,7 +242,10 @@ class OutreachSerializer(serializers.ModelSerializer):
             'last_education_level',
             'last_education_year',
             'owner',
+<<<<<<< HEAD
             # 'modified_by',
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             'governorate_name',
             'location',
             'student_nationality_id',
@@ -223,7 +269,11 @@ class OutreachSerializer(serializers.ModelSerializer):
         )
 
 
+<<<<<<< HEAD
 class OutreachExamSerializer(serializers.ModelSerializer):
+=======
+class GradingSerializer(serializers.ModelSerializer):
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     class Meta:
         model = Outreach
@@ -234,6 +284,7 @@ class OutreachExamSerializer(serializers.ModelSerializer):
             'exam_result_math',
             'exam_result_science',
             'level',
+<<<<<<< HEAD
             # 'exam_corrector_arabic',
             # 'exam_corrector_language',
             # 'exam_corrector_math',
@@ -243,21 +294,31 @@ class OutreachExamSerializer(serializers.ModelSerializer):
             'assigned_to_level',
             # 'not_enrolled_in_this_school',
             # 'exam_not_exist_in_school',
+=======
+            'registered_in_level',
+            'section',
+            'assigned_to_level',
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             'post_exam_result_arabic',
             'post_exam_language',
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',
+<<<<<<< HEAD
             # 'post_exam_corrector_arabic',
             # 'post_exam_corrector_language',
             # 'post_exam_corrector_math',
             # 'post_exam_corrector_science',
             'refer_to_level',
             'modified_by',
+=======
+            'refer_to_level',
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         )
 
 
 class OutreachSmallSerializer(serializers.ModelSerializer):
+<<<<<<< HEAD
     original_id = serializers.IntegerField(source='id', read_only=True)
     student_id = serializers.IntegerField(source='student.id', read_only=True)
     student_id_type_id = serializers.CharField(source='student.id_type_id', read_only=True)
@@ -266,6 +327,11 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
     location = serializers.IntegerField(source='school.location_id', read_only=True)
     governorate_name = serializers.CharField(source='school.location.parent.name', read_only=True)
     school_number = serializers.CharField(source='school.number', read_only=True)
+=======
+    student_id_type_id = serializers.CharField(source='student.id_type_id', read_only=True)
+    student_nationality_id = serializers.CharField(source='student.nationality_id', read_only=True)
+    student_mother_nationality_id = serializers.CharField(source='student.mother_nationality_id', read_only=True)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     student_first_name = serializers.CharField(source='student.first_name')
     student_father_name = serializers.CharField(source='student.father_name')
@@ -306,6 +372,7 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
         try:
 
             student_data = validated_data.pop('student', None)
+<<<<<<< HEAD
             student = update_student(student_data, instance.student)
 
             if 'level' in validated_data:
@@ -335,6 +402,19 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
 
             if 'modified_by' in validated_data:
                 instance.modified_by = validated_data['modified_by']
+=======
+
+            if student_data:
+                from student_registration.students.serializers import StudentSerializer
+
+                student_serializer = StudentSerializer(instance.student, data=student_data)
+                student_serializer.is_valid(raise_exception=True)
+                student_serializer.instance = student_serializer.save()
+
+            for key in validated_data:
+                if hasattr(instance, key):
+                    setattr(instance, key, validated_data[key])
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
             instance.save()
 
@@ -346,9 +426,12 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
     class Meta:
         model = Outreach
         fields = (
+<<<<<<< HEAD
             'id',
             'original_id',
             'student_id',
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             'student_first_name',
             'student_father_name',
             'student_last_name',
@@ -368,17 +451,21 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'student_id_type',
             'student_address',
             'school',
+<<<<<<< HEAD
             'owner',
             'modified_by',
             'location',
             'governorate_name',
             'school_number',
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             'exam_result_arabic',
             'exam_language',
             'exam_result_language',
             'exam_result_math',
             'exam_result_science',
             'level',
+<<<<<<< HEAD
             # 'exam_corrector_arabic',
             # 'exam_corrector_language',
             # 'exam_corrector_math',
@@ -398,4 +485,6 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             # 'post_exam_corrector_science',
             'refer_to_level',
             'alp_round',
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         )

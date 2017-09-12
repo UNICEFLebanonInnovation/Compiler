@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+<<<<<<< HEAD
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
@@ -36,6 +37,16 @@ class UserResource(resources.ModelResource):
 
 class UserAdmin(ImportExportModelAdmin):
     resource_class = UserResource
+=======
+from django.contrib import admin
+from django.utils.translation import gettext, gettext_lazy as _
+from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
+from .models import User
+
+
+class UserAdmin(AuthUserAdmin):
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     filter_horizontal = ('groups', 'user_permissions', 'locations', 'schools')
     list_display = (
         'username',
@@ -62,6 +73,7 @@ class UserAdmin(ImportExportModelAdmin):
     )
     actions = ('activate', 'disable',)
 
+<<<<<<< HEAD
     def activate(self, request, queryset):
         queryset.update(is_active=True)
         # for user in queryset:
@@ -74,6 +86,32 @@ class UserAdmin(ImportExportModelAdmin):
         #     user.is_active = True
         #     user.save()
 
+=======
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
+                                       'groups', 'user_permissions')}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        (None, {'fields': ('partner', 'location', 'school', 'locations', 'schools')})
+    )
+
+    add_fieldsets = (
+        (None, {'fields': ('username', 'password1', 'password2')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
+                                       'groups', 'user_permissions')}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        (None, {'fields': ('partner', 'location', 'school', 'locations', 'schools')})
+    )
+
+    def activate(self, request, queryset):
+        queryset.update(is_active=True)
+
+    def disable(self, request, queryset):
+        queryset.update(is_active=False)
+        return False
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 admin.site.register(User, UserAdmin)
 

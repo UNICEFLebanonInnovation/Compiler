@@ -7,6 +7,10 @@
         <option name="settingsModule" value="config/settings/local.py" />
         <option name="manageScript" value="manage.py" />
         <option name="environment" value="&lt;map/&gt;" />
+<<<<<<< HEAD
+=======
+        <option name="commandsToSkip" value="" />
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
       </configuration>
     </facet>
   </component>

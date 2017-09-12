@@ -16,6 +16,7 @@ from student_registration.schools.models import (
     ClassLevel,
     ClassRoom,
 )
+<<<<<<< HEAD
 from student_registration.students.models import (
     Student,
     IDType,
@@ -23,6 +24,9 @@ from student_registration.students.models import (
 )
 
 from student_registration.registrations.models import Registration, RegisteringAdult
+=======
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 from student_registration.enrollments.models import Enrollment
 from student_registration.alp.models import Outreach, ALPRound
 from student_registration.users.models import User
@@ -30,6 +34,7 @@ import datetime
 from django.db.models import Q
 
 
+<<<<<<< HEAD
 class RegistrationsPilotView(LoginRequiredMixin,
                              SuperuserRequiredMixin,
                              TemplateView):
@@ -109,6 +114,8 @@ class RegistrationsPilotView(LoginRequiredMixin,
         }
 
 
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 class Registrations2ndShiftView(LoginRequiredMixin,
                                 GroupRequiredMixin,
                                 TemplateView):
@@ -132,6 +139,7 @@ class Registrations2ndShiftView(LoginRequiredMixin,
         # Also schools by governate
         governorates = Location.objects.exclude(parent__isnull=False)
 
+<<<<<<< HEAD
         students_per_gov = {}
         schools_per_gov = {}
         students_per_school = {}
@@ -238,6 +246,15 @@ class Registrations2ndShiftView(LoginRequiredMixin,
                 'students_by_idtype': students_by_idtype,
                 'students_by_nationality': students_by_nationality,
                 'schools_per_gov': schools_per_gov,
+=======
+        education_levels = ClassRoom.objects.all()
+
+        return {
+                'schools': 0,
+                'registrations': self.queryset.count(),
+                'males': self.queryset.filter(student__sex='Male').count(),
+                'females': self.queryset.filter(student__sex='Female').count(),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
                 'education_levels': education_levels,
                 'governorates': governorates,
                 'enrollments': self.queryset,
@@ -268,6 +285,7 @@ class Registrations2ndShiftOverallView(LoginRequiredMixin,
         education_levels = ClassRoom.objects.all()
         level_by_age = {}
 
+<<<<<<< HEAD
         # for level in education_levels:
         #     ages = (str(x) for x in range(1, 20))
         #     for age in ages:
@@ -276,6 +294,8 @@ class Registrations2ndShiftOverallView(LoginRequiredMixin,
         #         level_by_age[str(level.id) + '-' + str(age)] = by_age.filter(classroom_id=level.id).count()
         #     level_by_age[str(level.id) + '-0'] = self.queryset.filter(classroom_id=level.id).count()
 
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         return {
                 'registrations': self.queryset.count(),
                 'males': self.queryset.filter(student__sex='Male').count(),
@@ -312,6 +332,7 @@ class RegistrationsALPView(LoginRequiredMixin,
         alp_round = ALPRound.objects.get(current_round=True)
         self.queryset = self.queryset.filter(alp_round=alp_round)
 
+<<<<<<< HEAD
         students_per_gov = {}
         schools_per_gov = {}
         students_per_school = {}
@@ -362,6 +383,14 @@ class RegistrationsALPView(LoginRequiredMixin,
                 'students_by_idtype': students_by_idtype,
                 'students_by_nationality': students_by_nationality,
                 'schools_per_gov': schools_per_gov,
+=======
+        education_levels = EducationLevel.objects.all()
+
+        return {
+                'registrations': self.queryset.count(),
+                'males': self.queryset.filter(student__sex='Male').count(),
+                'females': self.queryset.filter(student__sex='Female').count(),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
                 'enrollments': self.queryset,
                 'governorates': governorates,
                 'education_levels': education_levels,
@@ -521,6 +550,7 @@ class RegistrationsALPOutreachView(LoginRequiredMixin,
         users = User.objects.filter(groups__name__in=['PARTNER'])
         self.queryset = self.queryset.filter(alp_round=alp_round, owner__in=users)
 
+<<<<<<< HEAD
         students_per_gov = {}
         schools_per_gov = {}
         students_per_school = {}
@@ -569,6 +599,13 @@ class RegistrationsALPOutreachView(LoginRequiredMixin,
                 'students_by_idtype': students_by_idtype,
                 'students_by_nationality': students_by_nationality,
                 'schools_per_gov': schools_per_gov,
+=======
+        return {
+                'schools': 0,
+                'registrations': self.queryset.count(),
+                'males': self.queryset.filter(student__sex='Male').count(),
+                'females': self.queryset.filter(student__sex='Female').count(),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         }
 
 
@@ -599,6 +636,7 @@ class RegistrationsALPPreTestView(LoginRequiredMixin,
             assigned_to_level__isnull=False,
         )
 
+<<<<<<< HEAD
         students_per_gov = {}
         schools_per_gov = {}
         students_per_school = {}
@@ -647,6 +685,13 @@ class RegistrationsALPPreTestView(LoginRequiredMixin,
                 'students_by_idtype': students_by_idtype,
                 'students_by_nationality': students_by_nationality,
                 'schools_per_gov': schools_per_gov,
+=======
+        return {
+                'schools': 0,
+                'registrations': self.queryset.count(),
+                'males': self.queryset.filter(student__sex='Male').count(),
+                'females': self.queryset.filter(student__sex='Female').count(),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
                 'enrollments': self.queryset,
                 'governorates': governorates,
                 'education_levels': EducationLevel.objects.all(),
@@ -675,6 +720,7 @@ class RegistrationsALPPostTestView(LoginRequiredMixin,
         self.queryset = self.queryset.filter(
             alp_round=alp_round,
             registered_in_level__isnull=False,
+<<<<<<< HEAD
             # section__isnull=False,
             refer_to_level__isnull=False
         )
@@ -727,10 +773,21 @@ class RegistrationsALPPostTestView(LoginRequiredMixin,
                 'students_by_idtype': students_by_idtype,
                 'students_by_nationality': students_by_nationality,
                 'schools_per_gov': schools_per_gov,
+=======
+            refer_to_level__isnull=False
+        )
+
+        return {
+                'schools': 0,
+                'registrations': self.queryset.count(),
+                'males': self.queryset.filter(student__sex='Male').count(),
+                'females': self.queryset.filter(student__sex='Female').count(),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
                 'enrollments': self.queryset,
                 'governorates': governorates,
                 'education_levels': ClassLevel.objects.all()
         }
+<<<<<<< HEAD
 
 
 class AttendanceView(LoginRequiredMixin, ListView):
@@ -744,3 +801,5 @@ class AttendanceView(LoginRequiredMixin, ListView):
         return {
 
         }
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1

@@ -1,24 +1,40 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+<<<<<<< HEAD
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
+=======
+from django.views.generic import DetailView, ListView, RedirectView, UpdateView, FormView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework import viewsets, mixins, permissions
+from braces.views import GroupRequiredMixin
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 from .models import (
     School,
     ClassRoom,
     Section,
+<<<<<<< HEAD
     Grade
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 )
 
 from .serializers import (
     SchoolSerializer,
     ClassRoomSerializer,
     SectionSerializer,
+<<<<<<< HEAD
     GradeSerializer
 )
+=======
+)
+from .forms import ProfileForm
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 
 class SchoolViewSet(mixins.ListModelMixin,
@@ -48,6 +64,7 @@ class SectionViewSet(mixins.ListModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
 
+<<<<<<< HEAD
 class GradeViewSet(mixins.ListModelMixin,
                    viewsets.GenericViewSet):
 
@@ -55,3 +72,32 @@ class GradeViewSet(mixins.ListModelMixin,
     queryset = Grade.objects.all()
     serializer_class = GradeSerializer
     permission_classes = (permissions.IsAuthenticated,)
+=======
+class ProfileView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+
+    template_name = 'schools/profile.html'
+    form_class = ProfileForm
+    success_url = '/schools/profile/'
+    group_required = [u"SCHOOL"]
+
+    def get_context_data(self, **kwargs):
+        # force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(ProfileView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = School.objects.get(id=self.request.user.school_id)
+        if self.request.method == "POST":
+            return ProfileForm(self.request.POST, instance=instance)
+        else:
+            return ProfileForm(instance=instance)
+
+    def form_valid(self, form):
+        instance = School.objects.get(id=self.request.user.school_id)
+        form.save(request=self.request, instance=instance)
+        return super(ProfileView, self).form_valid(form)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1

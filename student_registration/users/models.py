@@ -38,11 +38,14 @@ class User(AbstractUser):
         blank=True, null=True,
         related_name='+',
     )
+<<<<<<< HEAD
     governante = models.ForeignKey(
         Location,
         blank=True, null=True,
         related_name='+',
     )
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     locations = models.ManyToManyField(Location, blank=True)
     schools = models.ManyToManyField(School, blank=True)
 
@@ -54,6 +57,7 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse('users:detail', kwargs={'username': self.username})
+<<<<<<< HEAD
 
     def save(self, **kwargs):
         """
@@ -66,3 +70,5 @@ class User(AbstractUser):
         elif self.password and not self.password.startswith("pbkdf2_"):
             self.set_password(self.password)
         super(AbstractUser, self).save(**kwargs)
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1

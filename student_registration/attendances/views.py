@@ -16,11 +16,17 @@ from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from student_registration.schools.models import (
     School,
+<<<<<<< HEAD
     Grade,
     Section
 )
 from student_registration.locations.models import Location
 from student_registration.registrations.models import Registration
+=======
+    Section
+)
+from student_registration.locations.models import Location
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 from .models import Attendance, Absentee
 from .serializers import AttendanceSerializer, AbsenteeSerializer
 from student_registration.attendances.tasks import set_app_attendances
@@ -134,7 +140,10 @@ class AttendanceView(LoginRequiredMixin, ListView):
             'selected_school': selected_school,
             'locations': Location.objects.all(),
             'schools': School.objects.all(),
+<<<<<<< HEAD
             'grades': Grade.objects.all(),
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             'sections': Section.objects.all()
         }
 
@@ -175,8 +184,12 @@ class AbsenteeView(ListAPIView):
     """
     API endpoint for validated absentees
     """
+<<<<<<< HEAD
     queryset = Absentee.objects.filter(
         school__location__pilot_in_use=True
     )
+=======
+    queryset = Absentee.objects.all()
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     serializer_class = AbsenteeSerializer
     permission_classes = (permissions.IsAdminUser,)

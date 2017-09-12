@@ -11,8 +11,13 @@ from .models import (
     Student,
     StudentMatching,
     Nationality,
+<<<<<<< HEAD
     Language,
     IDType,
+=======
+    IDType,
+    Labour,
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 )
 from .forms import StudentEnrollmentForm
 from student_registration.schools.models import (
@@ -60,7 +65,11 @@ class EnrollmentInline(admin.TabularInline):
     model = Enrollment
     extra = 0
     fields = (
+<<<<<<< HEAD
         # 'education_year',
+=======
+        'education_year',
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         'school',
         'section',
         'classroom',
@@ -614,7 +623,11 @@ class StudentAdmin(ImportExportModelAdmin):
         'father_name',
         'last_name',
         'mother_fullname',
+<<<<<<< HEAD
         'calc_age',
+=======
+        'age',
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         'sex',
         'nationality',
         'mother_nationality',
@@ -691,6 +704,12 @@ class StudentMatchingAdmin(ImportExportModelAdmin):
 
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Nationality, NationalityAdmin)
+<<<<<<< HEAD
 admin.site.register(Language)
 admin.site.register(StudentMatching, StudentMatchingAdmin)
 admin.site.register(IDType, IDTypeAdmin)
+=======
+admin.site.register(StudentMatching, StudentMatchingAdmin)
+admin.site.register(IDType, IDTypeAdmin)
+admin.site.register(Labour)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1

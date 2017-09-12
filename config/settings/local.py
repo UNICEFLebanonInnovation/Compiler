@@ -3,12 +3,23 @@
 Local settings
 
 - Run in Debug mode
+<<<<<<< HEAD
 - Use console backend for emails
 - Add Django Debug Toolbar
 - Add django-extensions as app
 """
 import os
 from .common import *  # noqa
+=======
+
+- Use console backend for emails
+
+- Add Django Debug Toolbar
+- Add django-extensions as app
+"""
+
+from .base import *  # noqa
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 # DEBUG
 # ------------------------------------------------------------------------------
@@ -23,9 +34,19 @@ SECRET_KEY = env('DJANGO_SECRET_KEY', default='u1zvr)oodenne1(e9^6gp1r_9yt+yj0t4
 
 # Mail settings
 # ------------------------------------------------------------------------------
+<<<<<<< HEAD
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
 
+=======
+
+EMAIL_PORT = 1025
+
+EMAIL_HOST = 'localhost'
+EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND',
+                    default='django.core.mail.backends.console.EmailBackend')
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 # CACHING
 # ------------------------------------------------------------------------------
@@ -38,10 +59,25 @@ CACHES = {
 
 # django-debug-toolbar
 # ------------------------------------------------------------------------------
+<<<<<<< HEAD
 MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
 INSTALLED_APPS += ('debug_toolbar', )
 
 INTERNAL_IPS = ('127.0.0.1', '10.0.2.2',)
+=======
+MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware', ]
+INSTALLED_APPS += ['debug_toolbar', ]
+
+INTERNAL_IPS = ['127.0.0.1', '10.0.2.2', ]
+
+
+import socket
+import os
+# tricks to have debug toolbar when developing with docker
+if os.environ.get('USE_DOCKER') == 'yes':
+    ip = socket.gethostbyname(socket.gethostname())
+    INTERNAL_IPS += [ip[:-1] + '1']
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 DEBUG_TOOLBAR_CONFIG = {
     'DISABLE_PANELS': [
@@ -52,7 +88,11 @@ DEBUG_TOOLBAR_CONFIG = {
 
 # django-extensions
 # ------------------------------------------------------------------------------
+<<<<<<< HEAD
 INSTALLED_APPS += ('django_extensions', )
+=======
+INSTALLED_APPS += ['django_extensions', ]
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 # TESTING
 # ------------------------------------------------------------------------------

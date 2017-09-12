@@ -1,17 +1,26 @@
+<<<<<<< HEAD
 {% extends "base.online.html" %}
 {% load humanize %}
+=======
+{% extends "base.html" %}
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 {% load staticfiles i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
 
 {% block extra_head %}
+<<<<<<< HEAD
     <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome/css/font-awesome.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+=======
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 {% endblock %}
 
 {% block content %}
 
 <section class="main-content-wrapper">
+<<<<<<< HEAD
             <section id="main-content">
                 <div class="title_left">
                     <h3 style="color:#73879C;">{% trans 'Registrations 2nd Shift' %}</h3>
@@ -1580,4 +1589,20 @@
 
 
     </script>
+=======
+    <section id="main-content">
+        <div class="title_left">
+            <h3 style="color:#73879C;">{% trans 'Registrations 2nd Shift' %}</h3>
+            <a class="export-link" href="{% url "enrollments:enrollment_export_by_school" %}" target="_blank">Export number of student by school</a>
+            <br>
+            <a class="export-link" href="{% url "enrollments:enrollment_export_by_cycle" %}" target="_blank">Export number of student by cycle</a>
+        </div>
+    </section>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 {% endblock %}

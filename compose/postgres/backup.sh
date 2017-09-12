@@ -16,7 +16,12 @@ export PGPASSWORD=$POSTGRES_PASSWORD
 echo "creating backup"
 echo "---------------"
 
+<<<<<<< HEAD
 FILENAME=backup_$(date +'%Y_%m_%dT%H_%M_%S').sql
 pg_dump -h postgres -U $POSTGRES_USER >> /backups/$FILENAME
+=======
+FILENAME=backup_$(date +'%Y_%m_%dT%H_%M_%S').sql.gz
+pg_dump -h postgres -U $POSTGRES_USER | gzip > /backups/$FILENAME
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 echo "successfully created backup $FILENAME"

@@ -7,27 +7,48 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import detail_route, list_route
+<<<<<<< HEAD
 from dal import autocomplete
 from django.db.models import Q
 from django.http import JsonResponse
 from rest_framework.response import Response
 from django.core import serializers
+=======
+from rest_framework.response import Response
+from dal import autocomplete
+from django.db.models import Q
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 from .models import (
     Student,
 )
+<<<<<<< HEAD
 
 from .serializers import (
     StudentSerializer,
 )
 from student_registration.alp.models import ALPRound
 from student_registration.schools.models import EducationYear
+=======
+from .serializers import (
+    StudentSerializer,
+)
+from student_registration.enrollments.models import (
+    EducationYear
+)
+from student_registration.alp.models import ALPRound
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 
 class StudentViewSet(mixins.RetrieveModelMixin,
                      mixins.ListModelMixin,
+<<<<<<< HEAD
                      # mixins.CreateModelMixin,
                      # mixins.UpdateModelMixin,
+=======
+                     mixins.CreateModelMixin,
+                     mixins.UpdateModelMixin,
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
                      viewsets.GenericViewSet):
 
     model = Student
@@ -36,6 +57,7 @@ class StudentViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+<<<<<<< HEAD
         alp_round = ALPRound.objects.get(current_round=True)
         education_year = EducationYear.objects.get(current_year=True)
         qs = self.queryset.filter(
@@ -54,12 +76,35 @@ class StudentViewSet(mixins.RetrieveModelMixin,
             qs = qs.filter(id_number=self.request.GET.get('case_number', None))
         if self.request.GET.get('name', None):
             for term in self.request.GET.get('name', None).split():
+=======
+        if self.request.method in ["PATCH", "POST", "PUT"]:
+            return self.queryset
+        terms = self.request.GET.get('term', 0)
+        school_type = self.request.GET.get('school_type', '2ndshift')
+        user_school = self.request.user.school_id
+        school = int(self.request.GET.get('school', 0))
+        if terms:
+            if school_type == 'alp':
+                alp_round = ALPRound.objects.get(current_round=True)
+                qs = Student.alp.filter(
+                    alp_enrollment__school_id__in=[school, user_school],
+                    alp_enrollment__alp_round__lt=alp_round.id
+                )
+            else:
+                education_year = EducationYear.objects.get(current_year=True)
+                qs = Student.second_shift.filter(
+                    student_enrollment__school_id__in=[school, user_school],
+                    student_enrollment__education_year__lt=education_year.id
+                )
+            for term in terms.split():
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
                 qs = qs.filter(
                     Q(first_name__contains=term) |
                     Q(father_name__contains=term) |
                     Q(last_name__contains=term) |
                     Q(id_number__contains=term)
                 ).distinct()
+<<<<<<< HEAD
         try:
             if self.request.GET.get('individual_number', None):
                 qs = qs.filter(id_number=self.request.GET.get('individual_number', None))
@@ -68,6 +113,13 @@ class StudentViewSet(mixins.RetrieveModelMixin,
             return []
 
         return qs
+=======
+            return qs
+
+    @list_route()
+    def by_barcode(self, request):
+        return Response(request.GET)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 
 class StudentAutocomplete(autocomplete.Select2QuerySetView):

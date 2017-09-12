@@ -1,5 +1,9 @@
 Student Registration
+<<<<<<< HEAD
 ==============================
+=======
+====================
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 Simple, interactive and online student registration.
 
@@ -8,11 +12,19 @@ Simple, interactive and online student registration.
      :alt: Built with Cookiecutter Django
 
 
+<<<<<<< HEAD
 LICENSE: MIT
 
 
 Settings
 ------------
+=======
+:License: GPLv3
+
+
+Settings
+--------
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 Moved to settings_.
 
@@ -42,7 +54,11 @@ To run the tests, check your test coverage, and generate an HTML coverage report
     $ open htmlcov/index.html
 
 Running tests with py.test
+<<<<<<< HEAD
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=======
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 ::
 
@@ -75,6 +91,7 @@ Please note: For Celery's import magic to work, it is important *where* the cele
 
 
 
+<<<<<<< HEAD
 Email Server
 ^^^^^^^^^^^^
 
@@ -101,17 +118,30 @@ Sentry
 ^^^^^^
 
 Sentry is an error logging aggregator service. You can sign up for a free account at http://getsentry.com or download and host it yourself.
+=======
+Sentry
+^^^^^^
+
+Sentry is an error logging aggregator service. You can sign up for a free account at  https://sentry.io/signup/?code=cookiecutter  or download and host it yourself.
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 The system is setup with reasonable defaults, including 404 logging and integration with the WSGI application.
 
 You must set the DSN url in production.
 
 
+<<<<<<< HEAD
 
 
 Deployment
 ----------
 
 
+=======
+Deployment
+----------
+
+The following details how to deploy this application.
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 
 

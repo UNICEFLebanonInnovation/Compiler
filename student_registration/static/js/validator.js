@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * Created by Ali on 2016-09-12.
  */
@@ -335,6 +336,9 @@ function validate_child_age(form,errorID, isValid)
 }
 
 function checkArabicOnly(field)
+=======
+
+function checkArabicOnly(field)
 {
     checkFieldCharacters
     (
@@ -343,6 +347,24 @@ function checkArabicOnly(field)
         {
             var c = ch.charCodeAt(0);
             return !((c < 1536 || c > 1791) && ch != " ");
+        }
+    );
+}
+
+function checkIsNumber(field)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
+{
+    checkFieldCharacters
+    (
+        field,
+        function(ch)
+        {
+<<<<<<< HEAD
+            var c = ch.charCodeAt(0);
+            return !((c < 1536 || c > 1791) && ch != " ");
+=======
+            return checkCharacterIsNumber(ch);
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         }
     );
 }
@@ -371,6 +393,7 @@ function checkFieldCharacters(field,characterCheck)
     }
 }
 
+<<<<<<< HEAD
 function checkIsNumber(field)
 {
     checkFieldCharacters
@@ -392,3 +415,9 @@ function checkCharacterIsNumber(fieldValue)
 
 
 
+=======
+function checkCharacterIsNumber(fieldValue)
+{
+    return /^[0-9]+$/.test(fieldValue);
+}
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1

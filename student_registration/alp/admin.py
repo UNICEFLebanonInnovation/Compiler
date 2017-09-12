@@ -6,7 +6,11 @@ from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import *
+<<<<<<< HEAD
 from .forms import OutreachForm
+=======
+from .forms import OutreachAdminForm
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 from .models import (
     Outreach,
     ALPRound,
@@ -586,7 +590,11 @@ class ToAgeFilter(admin.SimpleListFilter):
 
 class OutreachAdmin(ImportExportModelAdmin):
     resource_class = OutreachResource
+<<<<<<< HEAD
     form = OutreachForm
+=======
+    form = OutreachAdminForm
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     fieldsets = (
         (None, {
             'fields': ('student', 'school', 'owner', 'modified_by')
@@ -868,7 +876,10 @@ class CurrentRoundAdmin(OutreachAdmin):
 
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_round=True)
+<<<<<<< HEAD
         print alp_round
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         qs = super(CurrentRoundAdmin, self).get_queryset(request)
         return qs.filter(
             alp_round=alp_round,

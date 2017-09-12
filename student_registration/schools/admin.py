@@ -9,16 +9,25 @@ from import_export.admin import ImportExportModelAdmin
 
 from .models import (
     School,
+<<<<<<< HEAD
     Course,
     EducationLevel,
     ClassLevel,
     Grade,
+=======
+    EducationLevel,
+    ClassLevel,
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     Section,
     ClassRoom,
     PartnerOrganization,
     ALPReferMatrix,
     EducationYear,
     ALPAssignmentMatrix,
+<<<<<<< HEAD
+=======
+    EducationalLevel,
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 )
 from student_registration.locations.models import Location
 from student_registration.attendances.tasks import set_app_attendances
@@ -188,6 +197,7 @@ class ClassLevelAdmin(ImportExportModelAdmin):
     resource_class = ClassLevelResource
 
 
+<<<<<<< HEAD
 class GradeResource(resources.ModelResource):
     class Meta:
         model = Grade
@@ -202,6 +212,8 @@ class GradeAdmin(ImportExportModelAdmin):
     resource_class = GradeResource
 
 
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 class SectionResource(resources.ModelResource):
     class Meta:
         model = Section
@@ -287,15 +299,24 @@ class ALPAssignmentMatrixAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(School, SchoolAdmin)
+<<<<<<< HEAD
 # admin.site.register(Course)
 admin.site.register(EducationLevel, EducationLevelAdmin)
 admin.site.register(ClassLevel, ClassLevelAdmin)
 # admin.site.register(Grade, GradeAdmin)
+=======
+admin.site.register(EducationLevel, EducationLevelAdmin)
+admin.site.register(ClassLevel, ClassLevelAdmin)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 admin.site.register(Section, SectionAdmin)
 admin.site.register(ClassRoom, ClassRoomAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
 admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
 admin.site.register(EducationYear)
+<<<<<<< HEAD
+=======
+admin.site.register(EducationalLevel)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
 
 

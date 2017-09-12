@@ -1,5 +1,18 @@
+<<<<<<< HEAD
 // project specific CSS goes here
 
+=======
+
+
+
+
+// project specific CSS goes here
+
+////////////////////////////////
+		//Variables//
+////////////////////////////////
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 // Alert colors
 
 $white: #fff;
@@ -9,6 +22,13 @@ $pink: #f2dede;
 $dark-pink: #eed3d7;
 $red: #b94a48;
 
+<<<<<<< HEAD
+=======
+////////////////////////////////
+		//Alerts//
+////////////////////////////////
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 // bootstrap alert CSS, translated to the django-standard levels of
 // debug, info, success, warning, error
 
@@ -24,8 +44,21 @@ $red: #b94a48;
   color: $red;
 }
 
+<<<<<<< HEAD
 // This is a fix for the bootstrap4 alpha release
 
+=======
+////////////////////////////////
+		//Navbar//
+////////////////////////////////
+
+// This is a fix for the bootstrap4 alpha release
+
+.navbar {
+  border-radius: 0px;
+}
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 @media (max-width: 47.9em) {
   .navbar-nav .nav-item {
     display: inline-block;
@@ -42,6 +75,13 @@ $red: #b94a48;
   }
 }
 
+<<<<<<< HEAD
+=======
+////////////////////////////////
+		//Django Toolbar//
+////////////////////////////////
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 // Display django-debug-toolbar.
 // See https://github.com/django-debug-toolbar/django-debug-toolbar/issues/742
 // and https://github.com/pydanny/cookiecutter-django/issues/317

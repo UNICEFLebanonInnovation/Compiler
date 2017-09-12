@@ -9,7 +9,10 @@ from django.contrib.postgres.fields import JSONField
 from student_registration.students.models import (
     Person,
     Student,
+<<<<<<< HEAD
     Language,
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 )
 from student_registration.schools.models import (
     School,
@@ -18,14 +21,21 @@ from student_registration.schools.models import (
     PartnerOrganization,
     ClassRoom,
     Section,
+<<<<<<< HEAD
     Grade
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 )
 from student_registration.locations.models import Location
 from student_registration.alp.utils import refer_to_level, assign_to_level
 
 
 class ALPRound(models.Model):
+<<<<<<< HEAD
     name = models.CharField(max_length=45L, unique=True)
+=======
+    name = models.CharField(max_length=45, unique=True)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     current_round = models.BooleanField(blank=True, default=False)
     current_pre_test = models.BooleanField(blank=True, default=False)
     current_post_test = models.BooleanField(blank=True, default=False)
@@ -97,11 +107,14 @@ class Outreach(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
+<<<<<<< HEAD
     preferred_language = models.ForeignKey(
         Language,
         blank=True, null=True,
         related_name='+',
     )
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     last_class_level = models.ForeignKey(
         ClassLevel,
         blank=True, null=True,
@@ -146,11 +159,14 @@ class Outreach(TimeStampedModel):
         related_name='+',
         verbose_name='Current Section',
     )
+<<<<<<< HEAD
     grade = models.ForeignKey(
         Grade,
         blank=True, null=True,
         related_name='+',
     )
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     classroom = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
@@ -359,6 +375,33 @@ class Outreach(TimeStampedModel):
         verbose_name='Post-test result',
     )
     dropout_status = models.BooleanField(blank=True, default=False)
+<<<<<<< HEAD
+=======
+    outreach_barcode = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    new_registry = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+    student_outreached = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+    have_barcode = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     objects = OutreachManager()
     drop_objects = OutreachDropoutManager()
@@ -426,7 +469,11 @@ class Outreach(TimeStampedModel):
     @property
     def student_age(self):
         if self.student:
+<<<<<<< HEAD
             return self.student.calc_age
+=======
+            return self.student.age
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         return 0
 
     @property
@@ -447,11 +494,21 @@ class Outreach(TimeStampedModel):
             return self.student.nationality
         return ''
 
+<<<<<<< HEAD
+=======
+    def calculate_pre_result(self):
+        self.assigned_to_level = assign_to_level(self.level, self.exam_total)
+
+    def calculate_post_result(self):
+        self.refer_to_level = refer_to_level(self.student_age, self.registered_in_level, self.post_exam_total)
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     def __unicode__(self):
         if self.student:
             return self.student.__unicode__()
         return str(self.id)
 
+<<<<<<< HEAD
     def save(self, **kwargs):
         # if self.exam_total and self.level and not self.registered_in_level:
         #     self.assigned_to_level = assign_to_level(self.level, self.exam_total)
@@ -470,3 +527,13 @@ class ExtraColumn(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
+=======
+    # def save(self, **kwargs):
+        # if self.exam_total and self.level and not self.registered_in_level:
+        #     self.assigned_to_level = assign_to_level(self.level, self.exam_total)
+        # if self.post_exam_total:
+        #     self.refer_to_level = refer_to_level(self.student_age, self.registered_in_level, self.post_exam_total)
+        # else:
+        #     self.refer_to_level = None
+        # super(Outreach, self).save(**kwargs)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1

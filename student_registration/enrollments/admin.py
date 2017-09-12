@@ -9,13 +9,20 @@ from import_export.widgets import *
 import datetime
 
 from .models import Enrollment, StudentMove, LoggingStudentMove
+<<<<<<< HEAD
 from .forms import EnrollmentForm, LoggingStudentMoveForm
 from student_registration.students.models import Student
+=======
+from .forms import EnrollmentAdminForm, LoggingStudentMoveForm
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 from student_registration.schools.models import (
     School,
 )
 from student_registration.locations.models import Location
+<<<<<<< HEAD
 from student_registration.attendances.tasks import set_app_attendances
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 
 class EnrollmentResource(resources.ModelResource):
@@ -33,7 +40,11 @@ class EnrollmentResource(resources.ModelResource):
 
     class Meta:
         model = Enrollment
+<<<<<<< HEAD
         form = EnrollmentForm
+=======
+        form = EnrollmentAdminForm
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         fields = (
             'id',
             'student__id',
@@ -187,7 +198,11 @@ class ToAgeFilter(admin.SimpleListFilter):
 
 class EnrollmentAdmin(ImportExportModelAdmin):
     resource_class = EnrollmentResource
+<<<<<<< HEAD
     form = EnrollmentForm
+=======
+    form = EnrollmentAdminForm
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     fields = (
         'student',
         'school',
@@ -195,7 +210,11 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'classroom',
         'owner',
         'status',
+<<<<<<< HEAD
         'year',
+=======
+        'education_year',
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         'enrolled_in_this_school',
         'registered_in_unhcr',
         'last_education_level',

@@ -1,5 +1,6 @@
 __author__ = 'achamseddine'
 
+<<<<<<< HEAD
 import json
 import os
 
@@ -7,10 +8,15 @@ from datetime import datetime
 from django.db.models import Q
 from student_registration.taskapp.celery import app
 from student_registration.registrations.utils import get_unhcr_individuals
+=======
+from django.db.models import Q
+from student_registration.taskapp.celery import app
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 from student_registration.students.utils import generate_id
 
 
 @app.task
+<<<<<<< HEAD
 def synchronize_child_age():
     from student_registration.registrations.models import RegisteringAdult
     from student_registration.students.models import Student
@@ -79,6 +85,8 @@ def generate_child_unique_number():
 
 
 @app.task
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 def generate_2ndshift_unique_number(offset=0):
     from student_registration.enrollments.models import Enrollment
     limit = offset + 50000
@@ -97,10 +105,17 @@ def generate_2ndshift_unique_number(offset=0):
             student.number_part2 = generate_id(student.first_name, student.father_name, student.last_name,
                                                '', '',
                                                student.birthday_day, student.birthday_month, student.birthday_year)
+<<<<<<< HEAD
             print student.number, student.id
             student.save()
         except Exception as ex:
             print ex.message
+=======
+            print(student.number, student.id)  #TODO: use logging instead
+            student.save()
+        except Exception as ex:
+            print(ex.message)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             continue
 
 
@@ -123,10 +138,17 @@ def generate_alp_unique_number():
             student.number_part2 = generate_id(student.first_name, student.father_name, student.last_name,
                                                '', '',
                                                student.birthday_day, student.birthday_month, student.birthday_year)
+<<<<<<< HEAD
             print student.number, student.id
             student.save()
         except Exception as ex:
             print ex.message
+=======
+            print(student.number, student.id)
+            student.save()
+        except Exception as ex:
+            print(ex.message)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             continue
 
 
@@ -140,13 +162,20 @@ def disable_duplicate_enrolments(offset=None, school_number=None):
         registrations = queryset.order_by('-id', 'student__number', 'school__number')[offset:limit]
     elif school_number:
         registrations = queryset.filter(school__number=school_number).order_by('-id', 'student__number', 'school__number')
+<<<<<<< HEAD
     print len(registrations)
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     students = {}
     students2 = {}
     duplicates = []
 
+<<<<<<< HEAD
     print "Start find duplicates"
+=======
+    print("Start find duplicates")
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     for registry in registrations:
         student = registry.student
         if student.number not in students:
@@ -160,17 +189,29 @@ def disable_duplicate_enrolments(offset=None, school_number=None):
             else:
                 duplicates.append(registry)
 
+<<<<<<< HEAD
     print "End find duplicates"
 
     print "duplicates: ", len(duplicates)
 
     print "Start disable duplicates"
+=======
+    print("End find duplicates")
+
+    print("duplicates: ", len(duplicates))
+
+    print("Start disable duplicates")
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     for registry in duplicates:
         registry.deleted = True
         registry.save()
 
+<<<<<<< HEAD
     print "End disable duplicates"
+=======
+    print("End disable duplicates")
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 
 @app.task
@@ -179,16 +220,25 @@ def disable_duplicate_outreaches(school_number=None):
     alp_round = ALPRound.objects.get(current_round=True)
     registrations = Outreach.objects.filter(alp_round=alp_round).order_by('-id')
     if school_number:
+<<<<<<< HEAD
         print school_number
         registrations = registrations.filter(school__number=school_number)
 
     print len(registrations)
 
+=======
+        registrations = registrations.filter(school__number=school_number)
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     students = {}
     students2 = {}
     duplicates = []
 
+<<<<<<< HEAD
     print "Start find duplicates"
+=======
+    print("Start find duplicates")
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     for registry in registrations:
 
         student = registry.student
@@ -202,16 +252,25 @@ def disable_duplicate_outreaches(school_number=None):
         else:
             duplicates.append(registry)
 
+<<<<<<< HEAD
     print "End find duplicates"
 
     print "duplicates: ", len(duplicates)
 
     print "Start disable duplicates"
+=======
+    print("End find duplicates")
+
+    print("duplicates: ", len(duplicates))
+
+    print("Start disable duplicates")
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     for registry in duplicates:
         registry.deleted = True
         registry.save()
 
+<<<<<<< HEAD
     print "End disable duplicates"
 
 
@@ -316,3 +375,6 @@ def find_matching_2():
         if enrollment:
             e_student = enrollment.student
             StudentMatching.objects.get_or_create(registry=e_student, enrolment=r_student)
+=======
+    print("End disable duplicates")
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1

@@ -1,20 +1,29 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
+<<<<<<< HEAD
 from django.core.urlresolvers import reverse
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 from django.utils.translation import ugettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from django.conf import settings
 from student_registration.students.models import Student
+<<<<<<< HEAD
 from student_registration.registrations.models import RegisteringAdult
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 from student_registration.schools.models import (
     School,
     EducationLevel,
     ClassLevel,
     ClassRoom,
     Section,
+<<<<<<< HEAD
     Grade,
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     EducationYear,
 )
 from student_registration.locations.models import Location
@@ -78,17 +87,27 @@ class Enrollment(TimeStampedModel):
     SCHOOL_SHIFT = Choices(
         ('first', _('First shift')),
         ('second', _('Second shift')),
+<<<<<<< HEAD
+=======
+        ('alp', _('ALP')),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     )
 
     YEARS = ((str(x), x) for x in range(2016, 2051))
 
+<<<<<<< HEAD
     EDUCATION_YEARS = ((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+=======
+    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2021))
+    EDUCATION_YEARS.append(('n/a', 'N/A'))
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
         related_name='student_enrollment',
     )
+<<<<<<< HEAD
 
     registering_adult = models.ForeignKey(
         RegisteringAdult,
@@ -101,6 +120,8 @@ class Enrollment(TimeStampedModel):
         null=True,
         choices=RELATION_TYPE
     )
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     enrolled_last_year = models.CharField(
         max_length=50,
         blank=True,
@@ -130,23 +151,29 @@ class Enrollment(TimeStampedModel):
         related_name='+',
         verbose_name=_('Current Section')
     )
+<<<<<<< HEAD
     grade = models.ForeignKey(
         Grade,
         blank=True, null=True,
         related_name='+',
     )
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     classroom = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
         related_name='+',
         verbose_name=_('Current Class')
     )
+<<<<<<< HEAD
     year = models.CharField(
         max_length=4,
         blank=True,
         null=True,
         choices=YEARS
     )
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     education_year = models.ForeignKey(
         EducationYear,
         blank=True, null=True,
@@ -176,7 +203,11 @@ class Enrollment(TimeStampedModel):
         max_length=10,
         blank=True,
         null=True,
+<<<<<<< HEAD
         choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+=======
+        choices=EDUCATION_YEARS
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     )
     last_year_result = models.CharField(
         max_length=50,
@@ -381,13 +412,90 @@ class Enrollment(TimeStampedModel):
         verbose_name=_('Student status')
     )
 
+<<<<<<< HEAD
     deleted = models.BooleanField(blank=True, default=False)
     dropout_status = models.BooleanField(blank=True, default=False)
     moved = models.BooleanField(blank=True, default=False)
+=======
+    exam_result_arabic_cmplt = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Arabic Term 2')
+    )
+
+    exam_result_language_cmplt = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Foreign language Term 2')
+    )
+
+    exam_result_math_cmplt = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        default=None,
+        verbose_name=_('Arabic Term 2')
+    )
+
+    exam_total_cmplt = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        verbose_name=_('Final Grade Term 2')
+    )
+
+    exam_result_final = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=EXAM_RESULT,
+        verbose_name=_('Final Student status')
+    )
+
+    deleted = models.BooleanField(blank=True, default=False)
+    dropout_status = models.BooleanField(blank=True, default=False)
+    moved = models.BooleanField(blank=True, default=False)
+    outreach_barcode = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    new_registry = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+    student_outreached = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+    have_barcode = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+    registration_date = models.DateField(
+        blank=True,
+        null=True,
+    )
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     @property
     def student_fullname(self):
         if self.student:
@@ -397,11 +505,24 @@ class Enrollment(TimeStampedModel):
     @property
     def student_age(self):
         if self.student:
+<<<<<<< HEAD
             return self.student.calc_age
         return 0
 
     def __unicode__(self):
         return self.student.__unicode__()
+=======
+            return self.student.age
+        return 0
+
+    def get_absolute_url(self):
+        return '/enrollments/edit/%d/' % self.pk
+
+    def __unicode__(self):
+        if self.student:
+            return self.student.__unicode__()
+        return str(self.id)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 
 class StudentMove(models.Model):

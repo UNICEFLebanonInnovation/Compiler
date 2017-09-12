@@ -19,6 +19,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='beneficiary',
             name='case_number',
+<<<<<<< HEAD
             field=models.CharField(max_length=45L, primary_key=True, serialize=False, unique=True),
+=======
+            field=models.CharField(max_length=45, primary_key=True, serialize=False, unique=True),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         ),
     ]

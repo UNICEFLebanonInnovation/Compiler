@@ -6,11 +6,14 @@ from . import views
 
 urlpatterns = [
     url(
+<<<<<<< HEAD
         regex=r'^registrations-pilot/$',
         view=views.RegistrationsPilotView.as_view(),
         name='registrations-pilot'
     ),
     url(
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         regex=r'^registrations-2ndshift/$',
         view=views.Registrations2ndShiftView.as_view(),
         name='registrations-2ndshift'
@@ -45,9 +48,12 @@ urlpatterns = [
         view=views.RegistrationsALPPostTestView.as_view(),
         name='registrations-alp-post-test'
     ),
+<<<<<<< HEAD
     url(
         regex=r'^attendances/$',
         view=views.AttendanceView.as_view(),
         name='attendances'
     ),
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 ]

@@ -6,8 +6,12 @@ PROJECT_DIR="$(dirname "$WORK_DIR")"
 pip --version >/dev/null 2>&1 || {
     echo >&2 -e "\npip is required but it's not installed."
     echo >&2 -e "You can install it by running the following command:\n"
+<<<<<<< HEAD
 
     echo >&2 "wget https://bootstrap.pypa.io/get-pip.py --output-document=get-pip.py; chmod +x get-pip.py; sudo -H python2 get-pip.py"
+=======
+    echo >&2 "wget https://bootstrap.pypa.io/get-pip.py --output-document=get-pip.py; chmod +x get-pip.py; sudo -H python3 get-pip.py"
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     echo >&2 -e "\n"
     echo >&2 -e "\nFor more information, see pip documentation: https://pip.pypa.io/en/latest/"
     exit 1;
@@ -16,8 +20,12 @@ pip --version >/dev/null 2>&1 || {
 virtualenv --version >/dev/null 2>&1 || {
     echo >&2 -e "\nvirtualenv is required but it's not installed."
     echo >&2 -e "You can install it by running the following command:\n"
+<<<<<<< HEAD
 
     echo >&2 "sudo -H pip2 install virtualenv"
+=======
+    echo >&2 "sudo -H pip3 install virtualenv"
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     echo >&2 -e "\n"
     echo >&2 -e "\nFor more information, see virtualenv documentation: https://virtualenv.pypa.io/en/latest/"
     exit 1;
@@ -26,8 +34,12 @@ virtualenv --version >/dev/null 2>&1 || {
 if [ -z "$VIRTUAL_ENV" ]; then
     echo >&2 -e "\nYou need activate a virtualenv first"
     echo >&2 -e 'If you do not have a virtualenv created, run the following command to create and automatically activate a new virtualenv named "venv" on current folder:\n'
+<<<<<<< HEAD
 
     echo >&2 -e "virtualenv venv --python=\`which python2\`"
+=======
+    echo >&2 -e "virtualenv venv --python=\`which python3\`"
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     echo >&2 -e "\nTo leave/disable the currently active virtualenv, run the following command:\n"
     echo >&2  "deactivate"
     echo >&2 -e "\nTo activate the virtualenv again, run the following command:\n"
@@ -39,6 +51,11 @@ else
 
     pip install -r $PROJECT_DIR/requirements/local.txt
     pip install -r $PROJECT_DIR/requirements/test.txt
+<<<<<<< HEAD
     
 fi
 
+=======
+
+fi
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1

@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='student',
             name='number',
+<<<<<<< HEAD
             field=models.CharField(blank=True, max_length=45L, null=True),
+=======
+            field=models.CharField(blank=True, max_length=45, null=True),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         ),
     ]

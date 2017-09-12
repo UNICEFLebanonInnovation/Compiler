@@ -25,8 +25,13 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
+<<<<<<< HEAD
                 ('name', models.CharField(blank=True, max_length=64L, null=True)),
                 ('label', models.CharField(blank=True, max_length=64L, null=True)),
+=======
+                ('name', models.CharField(blank=True, max_length=64, null=True)),
+                ('label', models.CharField(blank=True, max_length=64, null=True)),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             ],
             options={
                 'abstract': False,

@@ -5,11 +5,15 @@ from django import forms
 from student_registration.students.models import (
     Student
 )
+<<<<<<< HEAD
 from student_registration.registrations.models import Registration
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 from student_registration.locations.models import Location
 from student_registration.schools.models import School
 
 
+<<<<<<< HEAD
 class StudentForm(forms.ModelForm):
 
     YESNO_CHOICES = ((0, _('No')), (1, _('Yes')))
@@ -49,6 +53,8 @@ class StudentForm(forms.ModelForm):
         fields = '__all__'
 
 
+=======
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 class StudentEnrollmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):

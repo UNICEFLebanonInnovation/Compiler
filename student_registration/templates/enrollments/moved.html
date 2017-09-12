@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% load crispy_forms_tags %}
+
+{% block extra_head %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+    <div id="resume" class="inner-content">
+
+        <section class="inner-section light bg-color01">
+            <div class="container-fluid nopadding">
+                <fieldset class="bd-callout bd-callout-warning'">
+                        <h4 id="alternatives-to-hidden-labels">{% trans "Student" %}</h4>
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Student fullname" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.student }}</div>
+                        </div>
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Student mother fullname" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.student.mother_fullname }}</div>
+                        </div>
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Student sex" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.student.sex }}</div>
+                        </div>
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Student age" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.student.age }} - {{ from.instance.student.birthday }}</div>
+                        </div>
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Previous school" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.school }}</div>
+                        </div>
+                        <div class="row">
+                            <label class="col-md-4"><strong>{% trans "Previous situation" %}</strong></label>
+                            <div class="col-md-4">{{ form.instance.classroom }} - {{ form.instance.section }}</div>
+                        </div>
+                </fieldset>
+
+                {{ form.errors }}
+                {% crispy form %}
+            </div>
+        </section>
+
+    </div>
+
+{% endblock %}

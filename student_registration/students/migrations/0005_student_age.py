@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='student',
             name='age',
+<<<<<<< HEAD
             field=models.CharField(blank=True, max_length=4L, null=True),
+=======
+            field=models.CharField(blank=True, max_length=4, null=True),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         ),
     ]

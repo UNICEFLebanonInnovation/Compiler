@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 FROM postgres:9.5
+=======
+FROM postgres:9.6
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 # add backup scripts
 ADD backup.sh /usr/local/bin/backup

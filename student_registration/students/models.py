@@ -1,20 +1,58 @@
 from __future__ import unicode_literals, absolute_import, division
 
+<<<<<<< HEAD
 from django.contrib.gis.db import models
 from django.db.models.signals import pre_save
 from django.db import models
 from django.utils.translation import ugettext as _
+=======
+from django.db import models
+from django.utils.translation import ugettext as _
+from django.contrib.postgres.fields import ArrayField
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from .utils import *
 from datetime import date
 import datetime
+<<<<<<< HEAD
 import math
 
 
 class Nationality(models.Model):
     name = models.CharField(max_length=45L, unique=True)
     code = models.CharField(max_length=5L, null=True)
+=======
+
+
+class StudentManager(models.Manager):
+    def get_queryset(self):
+        return super(StudentManager, self).get_queryset()
+
+
+class Student2ndShiftManager(models.Manager):
+    def get_queryset(self):
+        return super(Student2ndShiftManager, self).get_queryset().filter(
+            student_enrollment__isnull=False,
+            student_enrollment__deleted=False,
+            student_enrollment__dropout_status=False,
+        )
+
+
+class StudentALPManager(models.Manager):
+    def get_queryset(self):
+        return super(StudentALPManager, self).get_queryset().filter(
+            alp_enrollment__isnull=False,
+            alp_enrollment__deleted=False,
+            alp_enrollment__dropout_status=False
+        )
+
+
+class Nationality(models.Model):
+    name = models.CharField(max_length=45, unique=True)
+    code = models.CharField(max_length=5, null=True)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     class Meta:
         ordering = ['id']
@@ -24,16 +62,26 @@ class Nationality(models.Model):
         return self.name
 
 
+<<<<<<< HEAD
 class Language(models.Model):
     name = models.CharField(max_length=45L, unique=True)
 
     class Meta:
         ordering = ['name']
+=======
+class IDType(models.Model):
+    name = models.CharField(max_length=45, unique=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "ID Type"
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     def __unicode__(self):
         return self.name
 
 
+<<<<<<< HEAD
 class IDType(models.Model):
     name = models.CharField(max_length=45L, unique=True)
     inuse = models.BooleanField(default=True)
@@ -41,6 +89,14 @@ class IDType(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "ID Type"
+=======
+class Labour(models.Model):
+    name = models.CharField(max_length=45, unique=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Labour"
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     def __unicode__(self):
         return self.name
@@ -67,6 +123,7 @@ class Person(TimeStampedModel):
         ('Male', _('Male')),
         ('Female', _('Female')),
     )
+<<<<<<< HEAD
 
     first_name = models.CharField(max_length=64L, blank=True, null=True)
     last_name = models.CharField(max_length=64L, blank=True, null=True)
@@ -75,14 +132,35 @@ class Person(TimeStampedModel):
     mother_fullname = models.CharField(max_length=64L, blank=True, null=True)
     mother_firstname = models.CharField(max_length=64L, blank=True, null=True)
     mother_lastname = models.CharField(max_length=64L, blank=True, null=True)
+=======
+    FAMILY_STATUS = Choices(
+        ('married', _('Married')),
+        ('engaged', _('Engaged')),
+        ('divorced', _('Divorced')),
+        ('widower', _('Widower')),
+        ('single', _('Single')),
+    )
+
+    first_name = models.CharField(max_length=64, blank=True, null=True)
+    last_name = models.CharField(max_length=64, blank=True, null=True)
+    father_name = models.CharField(max_length=64, blank=True, null=True)
+    # full_name = models.CharField(max_length=225L, blank=True, null=True)
+    mother_fullname = models.CharField(max_length=64, blank=True, null=True)
+    mother_firstname = models.CharField(max_length=64, blank=True, null=True)
+    mother_lastname = models.CharField(max_length=64, blank=True, null=True)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     sex = models.CharField(
         max_length=50,
         blank=True,
         null=True,
+<<<<<<< HEAD
         choices=Choices(
             ('Male', _('Male')),
             ('Female', _('Female')),
         )
+=======
+        choices=GENDER
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     )
     birthday_year = models.CharField(
         max_length=4,
@@ -105,11 +183,35 @@ class Person(TimeStampedModel):
         default=0,
         choices=((str(x), x) for x in range(1, 33))
     )
+<<<<<<< HEAD
     age = models.CharField(max_length=4L, blank=True, null=True)
     phone = models.CharField(max_length=64L, blank=True, null=True)
     phone_prefix = models.CharField(max_length=10L, blank=True, null=True)
     id_number = models.CharField(max_length=45L, blank=True, null=True)
     id_number_duplicate = models.CharField(max_length=45L, blank=True, null=True)
+=======
+    family_status = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=FAMILY_STATUS
+    )
+    have_children = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+    phone = models.CharField(max_length=64, blank=True, null=True)
+    phone_prefix = models.CharField(max_length=10, blank=True, null=True)
+    registered_in_unhcr = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=Choices((1, _("Yes")), (0, _("No")))
+    )
+    id_number = models.CharField(max_length=45, blank=True, null=True)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     id_type = models.ForeignKey(
         IDType,
         blank=True, null=True,
@@ -128,11 +230,22 @@ class Person(TimeStampedModel):
         blank=True,
         null=True
     )
+<<<<<<< HEAD
     number = models.CharField(max_length=45L, blank=True, null=True)
     number_part1 = models.CharField(max_length=45L, blank=True, null=True)
     number_part2 = models.CharField(max_length=45L, blank=True, null=True)
     old_id_number = models.CharField(max_length=45L, blank=True, null=True)
     old_id_type = models.IntegerField(blank=True, null=True)
+=======
+    p_code = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    number = models.CharField(max_length=45, blank=True, null=True)
+    number_part1 = models.CharField(max_length=45, blank=True, null=True)
+    number_part2 = models.CharField(max_length=45, blank=True, null=True)
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     def __unicode__(self):
         if not self.first_name:
@@ -144,6 +257,17 @@ class Person(TimeStampedModel):
             self.last_name,
         )
 
+<<<<<<< HEAD
+=======
+    @property
+    def full_name(self):
+        return u'{} {} {}'.format(
+            self.first_name,
+            self.father_name,
+            self.last_name,
+        )
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     def nationality_name(self):
         if self.nationality:
             return self.nationality.name
@@ -158,6 +282,7 @@ class Person(TimeStampedModel):
             self.birthday_year,
         )
 
+<<<<<<< HEAD
     def get_age(self):
         if self.age:
             return self.age
@@ -166,6 +291,10 @@ class Person(TimeStampedModel):
 
     @property
     def calc_age(self):
+=======
+    @property
+    def age(self):
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         current_year = datetime.datetime.now().year
         if self.birthday_year:
             return int(current_year)-int(self.birthday_year)
@@ -179,6 +308,13 @@ class Person(TimeStampedModel):
         elapsed_years = years_difference - int(is_before_birthday)
         return elapsed_years
 
+<<<<<<< HEAD
+=======
+    @property
+    def phone_number(self):
+        return '{}-{}'.format(self.phone_prefix, self.phone)
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
     class Meta:
         abstract = True
 
@@ -204,6 +340,7 @@ class Person(TimeStampedModel):
 
 
 class Student(Person):
+<<<<<<< HEAD
 
     status = models.BooleanField(default=True)
     hh_barcode = models.CharField(max_length=45, blank=True, null=True)
@@ -227,6 +364,23 @@ class Student(Person):
 
         alp_round = ALPRound.objects.get(current_round=True)
         return self.alp_enrollment.filter(alp_round=alp_round)
+=======
+    from student_registration.outreach.models import Child
+
+    status = models.BooleanField(default=True)
+    outreach_child = models.ForeignKey(
+        Child,
+        blank=True, null=True,
+    )
+
+    objects = StudentManager()
+    second_shift = Student2ndShiftManager()
+    alp = StudentALPManager()
+
+    @property
+    def last_enrollment(self):
+        return self.student_enrollment.all().last
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
     @property
     def last_alp_registration(self):
@@ -267,6 +421,36 @@ class Student(Person):
             attendances[item.attendance_date] = item.status
         return attendances
 
+<<<<<<< HEAD
+=======
+    def get_absolute_url(self):
+        return 'student/%d' % self.pk
+
+    # @classmethod
+    # def create(cls, data):
+    #     instance = cls(
+    #         first_name=data['student_first_name'],
+    #         father_name=data['student_father_name'],
+    #         last_name=data['student_last_name'],
+    #         mother_fullname=data['student_mother_fullname'],
+    #         sex=data['student_sex'],
+    #         birthday_day=data['student_birthday_day'],
+    #         birthday_month=data['student_birthday_month'],
+    #         birthday_year=data['student_birthday_year'],
+    #         nationality_id=data['student_nationality'],
+    #         mother_nationality_id=data['student_mother_nationality'],
+    #         phone=data['student_phone'],
+    #         phone_prefix=data['student_phone_prefix'],
+    #         address=data['student_address'],
+    #         registered_in_unhcr=data['registered_in_unhcr'],
+    #         id_type_id=data['student_id_type'],
+    #         id_number=data['student_id_number'],
+    #         outreach_child_id=data['child_id'] if 'child_id' in data else None
+    #     )
+    #     instance.save()
+    #     return instance
+
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
 
 class StudentMatching(models.Model):
 

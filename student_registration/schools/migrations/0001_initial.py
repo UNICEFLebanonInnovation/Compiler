@@ -19,21 +19,33 @@ class Migration(migrations.Migration):
             name='ClassLevel',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+<<<<<<< HEAD
                 ('name', models.CharField(max_length=45L, unique=True)),
+=======
+                ('name', models.CharField(max_length=45, unique=True)),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             ],
         ),
         migrations.CreateModel(
             name='ClassRoom',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+<<<<<<< HEAD
                 ('name', models.CharField(max_length=45L, unique=True)),
+=======
+                ('name', models.CharField(max_length=45, unique=True)),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             ],
         ),
         migrations.CreateModel(
             name='Course',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+<<<<<<< HEAD
                 ('name', models.CharField(max_length=45L, unique=True)),
+=======
+                ('name', models.CharField(max_length=45, unique=True)),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             ],
             options={
                 'ordering': ['name'],
@@ -43,29 +55,46 @@ class Migration(migrations.Migration):
             name='EducationLevel',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+<<<<<<< HEAD
                 ('name', models.CharField(max_length=45L, unique=True)),
+=======
+                ('name', models.CharField(max_length=45, unique=True)),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             ],
         ),
         migrations.CreateModel(
             name='Grade',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+<<<<<<< HEAD
                 ('name', models.CharField(max_length=45L, unique=True)),
+=======
+                ('name', models.CharField(max_length=45, unique=True)),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             ],
         ),
         migrations.CreateModel(
             name='PartnerOrganization',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+<<<<<<< HEAD
                 ('name', models.CharField(max_length=100L, unique=True)),
+=======
+                ('name', models.CharField(max_length=100, unique=True)),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
             ],
         ),
         migrations.CreateModel(
             name='School',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+<<<<<<< HEAD
                 ('name', models.CharField(max_length=555L)),
                 ('number', models.CharField(max_length=45L, unique=True)),
+=======
+                ('name', models.CharField(max_length=255)),
+                ('number', models.CharField(max_length=45, unique=True)),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
                 ('location', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='locations.Location')),
             ],
             options={
@@ -76,6 +105,7 @@ class Migration(migrations.Migration):
             name='Section',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+<<<<<<< HEAD
                 ('name', models.CharField(max_length=45L, unique=True)),
             ],
         ),
@@ -84,6 +114,16 @@ class Migration(migrations.Migration):
             name='grade',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.Grade'),
         ),
+=======
+                ('name', models.CharField(max_length=45, unique=True)),
+            ],
+        ),
+        # migrations.AddField(
+        #     model_name='classroom',
+        #     name='grade',
+        #     field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.Grade'),
+        # ),
+>>>>>>> 3b9073c012bcdfc49afcb1d105deb56123ab5be1
         migrations.AddField(
             model_name='classroom',
             name='school',
