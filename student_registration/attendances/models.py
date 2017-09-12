@@ -35,6 +35,8 @@ class Attendance(TimeStampedModel):
         ('weekly_holiday', _('Weekly Holiday')),
     )
 
+    DEFAULT_ATTENDANCE_RANGE = 10
+
     student = models.ForeignKey(
         Student,
         blank=True, null=True,

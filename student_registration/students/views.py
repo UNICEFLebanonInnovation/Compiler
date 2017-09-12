@@ -59,7 +59,6 @@ class StudentViewSet(mixins.RetrieveModelMixin,
             if self.request.GET.get('individual_number', None):
                 qs = qs.filter(id_number=self.request.GET.get('individual_number', None))
         except Exception as ex:
-            print ex.message
             return []
 
         return qs
