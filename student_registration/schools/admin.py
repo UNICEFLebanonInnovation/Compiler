@@ -128,6 +128,7 @@ class SchoolAdmin(ImportExportModelAdmin):
         'number_students_2nd_shift',
         'is_alp',
         'number_students_alp',
+        'attendance_range',
     )
     search_fields = (
         'name',
