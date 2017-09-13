@@ -212,7 +212,7 @@ class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
             return self.queryset
         terms = self.request.GET.get('term', 0)
         if terms:
-            qs = self.queryset.exclude(enrolment__dropout_status=True).filter(to_school__isnull=True)
+            qs = self.queryset.exclude(enrolment__dropout_status=True).filter(school_to__isnull=True)
             for term in terms.split():
                 qs = qs.filter(
                     Q(student__first_name__contains=term) |

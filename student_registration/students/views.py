@@ -87,7 +87,8 @@ class StudentSearchViewSet(mixins.RetrieveModelMixin,
                 alp_round = ALPRound.objects.get(current_round=True)
                 qs = Student.alp.filter(
                     alp_enrollment__school_id__in=[school, user_school],
-                    alp_enrollment__alp_round__lt=alp_round.id
+                    alp_enrollment__alp_round__lte=alp_round.id,
+                    alp_enrollment__registered_in_level__isnull=False,
                 )
             else:
                 education_year = EducationYear.objects.get(current_year=True)

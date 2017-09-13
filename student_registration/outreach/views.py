@@ -24,20 +24,11 @@ class HouseHoldViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        terms = self.request.GET.get('term', 0)
-        if terms:
-            qs = self.queryset
-            for term in terms.split():
-                qs = qs.filter(
-                    Q(barcode_number=term) |
-                    Q(children__barcode_number=term) |
-                    Q(children__first_name__contains=term) |
-                    Q(children__father_name__contains=term) |
-                    Q(children__last_name__contains=term) |
-                    Q(children__id_number__contains=term)
-                ).distinct()
+        term = self.request.GET.get('term', 0)
+        if term:
+            qs = self.queryset.filter(barcode_number=term).distinct()
             return qs
-        return self.queryset
+        return []
 
 
 class ChildViewSet(mixins.RetrieveModelMixin,
@@ -52,16 +43,8 @@ class ChildViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        terms = self.request.GET.get('term', 0)
-        if terms:
-            qs = self.queryset
-            for term in terms.split():
-                qs = qs.filter(
-                    Q(barcode_subset__contains=term) |
-                    Q(first_name__contains=term) |
-                    Q(father_name__contains=term) |
-                    Q(last_name__contains=term) |
-                    Q(id_number__contains=term)
-                ).distinct()
+        term = self.request.GET.get('term', 0)
+        if term:
+            qs = self.queryset.filter(barcode_subset__contains=term).distinct()
             return qs
-        return self.queryset
+        return []

@@ -119,7 +119,7 @@ class AddView(LoginRequiredMixin,
     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -153,7 +153,7 @@ class EditView(LoginRequiredMixin,
     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -189,6 +189,7 @@ class SchoolView(LoginRequiredMixin,
     filterset_class = SchoolFilter
 
     def get_queryset(self):
+        force_default_language(self.request)
         alp_round = ALPRound.objects.get(current_round=True)
         return Outreach.objects.filter(alp_round=alp_round, school=self.request.user.school_id)
 
@@ -209,6 +210,7 @@ class PreTestView(LoginRequiredMixin,
     filterset_class = PreTestFilter
 
     def get_queryset(self):
+        force_default_language(self.request)
         alp_round = ALPRound.objects.get(current_pre_test=True)
         return Outreach.objects.filter(alp_round=alp_round)
 
@@ -223,7 +225,7 @@ class PreTestAddView(LoginRequiredMixin,
     group_required = [u"TEST_MANAGER"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -244,7 +246,7 @@ class PreTestEditView(LoginRequiredMixin,
     group_required = [u"TEST_MANAGER"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -274,7 +276,7 @@ class PreTestGradingView(LoginRequiredMixin,
     group_required = [u"TEST_MANAGER"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -310,6 +312,7 @@ class PostTestView(LoginRequiredMixin,
     filterset_class = PostTestFilter
 
     def get_queryset(self):
+        force_default_language(self.request)
         alp_round = ALPRound.objects.get(current_post_test=True)
         return Outreach.objects.filter(alp_round=alp_round)
 
@@ -324,7 +327,7 @@ class PostTestGradingView(LoginRequiredMixin,
     group_required = [u"TEST_MANAGER"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -360,6 +363,7 @@ class OutreachView(LoginRequiredMixin,
     filterset_class = OutreachFilter
 
     def get_queryset(self):
+        force_default_language(self.request)
         alp_round = ALPRound.objects.get(current_pre_test=True)
         return Outreach.objects.filter(alp_round=alp_round, owner=self.request.user)
 
@@ -374,7 +378,7 @@ class OutreachAddView(LoginRequiredMixin,
     group_required = [u"PARTNER"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -395,7 +399,7 @@ class OutreachEditView(LoginRequiredMixin,
     group_required = [u"PARTNER"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
