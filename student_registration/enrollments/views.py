@@ -25,9 +25,9 @@ from .tables import BootstrapTable, EnrollmentTable
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.schools.models import ClassRoom
-from .models import Enrollment, LoggingStudentMove, EducationYear
+from .models import Enrollment, LoggingStudentMove, EducationYear, LoggingProgramMove
 from .forms import EnrollmentForm, GradingTerm1Form, GradingTerm2Form, StudentMovedForm
-from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
+from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer, LoggingProgramMoveSerializer
 from student_registration.users.utils import force_default_language
 
 
@@ -196,6 +196,16 @@ class GradingView(LoginRequiredMixin,
 
 
 ####################### API VIEWS #############################
+
+
+class LoggingProgramMoveViewSet(mixins.RetrieveModelMixin,
+                                mixins.ListModelMixin,
+                                viewsets.GenericViewSet):
+
+    model = LoggingProgramMove
+    queryset = LoggingProgramMove.objects.all()
+    serializer_class = LoggingProgramMoveSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,

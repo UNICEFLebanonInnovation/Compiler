@@ -535,13 +535,6 @@ class LoggingProgramMove(TimeStampedModel):
         related_name='+',
         verbose_name='Student',
     )
-    enrolment = models.ForeignKey(
-        Outreach,
-        blank=False,
-        null=False,
-        related_name='+',
-        verbose_name='Enrollment',
-    )
     school = models.ForeignKey(
         School,
         blank=False,
