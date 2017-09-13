@@ -15,7 +15,7 @@ from student_registration.schools.models import (
     EducationYear,
 )
 from student_registration.locations.models import Location
-from student_registration.alp.models import ALPRound
+from student_registration.alp.models import ALPRound, Outreach
 
 
 class EnrollmentManager(models.Manager):
@@ -521,6 +521,39 @@ class LoggingStudentMove(TimeStampedModel):
         ordering = ['id']
         verbose_name = "Student moves logs"
         verbose_name_plural = "Student moves logs"
+
+    def __unicode__(self):
+        return str(self.id)
+
+
+class LoggingProgramMove(TimeStampedModel):
+
+    student = models.ForeignKey(
+        Student,
+        blank=False,
+        null=False,
+        related_name='+',
+        verbose_name='Student',
+    )
+    enrolment = models.ForeignKey(
+        Outreach,
+        blank=False,
+        null=False,
+        related_name='+',
+        verbose_name='Enrollment',
+    )
+    school = models.ForeignKey(
+        School,
+        blank=False,
+        null=False,
+        related_name='+',
+        verbose_name='From school',
+    )
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Student moves from ALP"
+        verbose_name_plural = "Student moves from ALP"
 
     def __unicode__(self):
         return str(self.id)
