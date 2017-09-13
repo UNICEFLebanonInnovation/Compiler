@@ -369,7 +369,7 @@ class EnrollmentForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">'+('Current situation')+'</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current situation') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),

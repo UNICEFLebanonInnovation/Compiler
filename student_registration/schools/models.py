@@ -11,6 +11,12 @@ class School(models.Model):
 
     name = models.CharField(max_length=255)
     number = models.CharField(max_length=45, unique=True)
+    director_name = models.CharField(max_length=100, blank=True, null=True)
+    land_phone_number = models.CharField(max_length=100, blank=True, null=True)
+    director_phone_number = models.CharField(max_length=100, blank=True, null=True)
+    it_name = models.CharField(max_length=100, blank=True, null=True)
+    it_phone_number = models.CharField(max_length=100, blank=True, null=True)
+    field_coordinator_name = models.CharField(max_length=100, blank=True, null=True)
     is_2nd_shift = models.BooleanField(blank=True, default=False)
     number_students_2nd_shift = models.IntegerField(blank=True, null=True)
     is_alp = models.BooleanField(blank=True, default=False)
