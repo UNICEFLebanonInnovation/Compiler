@@ -58,7 +58,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     student_phone_prefix = serializers.CharField(source='student.phone_prefix')
     student_id_number = serializers.CharField(source='student.id_number')
     student_registered_in_unhcr = serializers.CharField(source='student.registered_in_unhcr')
-    student_id_type = serializers.CharField(source='student.id_type.id')
+    student_id_type = serializers.CharField(source='student.id_type')
     student_id_type_name = serializers.CharField(source='student.id_type.name', read_only=True)
     student_number = serializers.CharField(source='student.number', read_only=True)
     student_nationality = serializers.CharField(source='student.nationality')
@@ -134,77 +134,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
             for key in validated_data:
                 if hasattr(instance, key):
-                    instance.setattr(key, validated_data[key])
-
-            # if 'school' in validated_data:
-            #     instance.school = validated_data['school']
-            # if 'education_year' in validated_data:
-            #     instance.education_year_id = validated_data['education_year']
-            # if 'registered_in_unhcr' in validated_data:
-            #     instance.registered_in_unhcr = validated_data['registered_in_unhcr']
-            # if 'participated_in_alp' in validated_data:
-            #     instance.participated_in_alp = validated_data['participated_in_alp']
-            # if 'last_informal_edu_level' in validated_data:
-            #     instance.last_informal_edu_level = validated_data['last_informal_edu_level']
-            # if 'last_informal_edu_round' in validated_data:
-            #     instance.last_informal_edu_round = validated_data['last_informal_edu_round']
-            # if 'last_informal_edu_final_result' in validated_data:
-            #     instance.last_informal_edu_final_result = validated_data['last_informal_edu_final_result']
-            # if 'section' in validated_data:
-            #     instance.section = validated_data['section']
-            # if 'classroom' in validated_data:
-            #     instance.classroom = validated_data['classroom']
-            # if 'last_year_result' in validated_data:
-            #     instance.last_year_result = validated_data['last_year_result']
-            # if 'last_school_type' in validated_data:
-            #     instance.last_school_type = validated_data['last_school_type']
-            # if 'last_school_shift' in validated_data:
-            #     instance.last_school_shift = validated_data['last_school_shift']
-            # if 'last_school' in validated_data:
-            #     instance.last_school = validated_data['last_school']
-            # if 'last_education_level' in validated_data:
-            #     instance.last_education_level = validated_data['last_education_level']
-            # if 'last_education_year' in validated_data:
-            #     instance.last_education_year = validated_data['last_education_year']
-            # if 'exam_result_arabic' in validated_data:
-            #     instance.exam_result_arabic = validated_data['exam_result_arabic']
-            # if 'exam_result_language' in validated_data:
-            #     instance.exam_result_language = validated_data['exam_result_language']
-            # if 'exam_result_education' in validated_data:
-            #     instance.exam_result_education = validated_data['exam_result_education']
-            # if 'exam_result_geo' in validated_data:
-            #     instance.exam_result_geo = validated_data['exam_result_geo']
-            # if 'exam_result_history' in validated_data:
-            #     instance.exam_result_history = validated_data['exam_result_history']
-            # if 'exam_result_math' in validated_data:
-            #     instance.exam_result_math = validated_data['exam_result_math']
-            # if 'exam_result_science' in validated_data:
-            #     instance.exam_result_science = validated_data['exam_result_science']
-            # if 'exam_result_physic' in validated_data:
-            #     instance.exam_result_physic = validated_data['exam_result_physic']
-            # if 'exam_result_chemistry' in validated_data:
-            #     instance.exam_result_chemistry = validated_data['exam_result_chemistry']
-            # if 'exam_result_bio' in validated_data:
-            #     instance.exam_result_bio = validated_data['exam_result_bio']
-            # if 'exam_result_linguistic_ar' in validated_data:
-            #     instance.exam_result_linguistic_ar = validated_data['exam_result_linguistic_ar']
-            # if 'exam_result_linguistic_en' in validated_data:
-            #     instance.exam_result_linguistic_en = validated_data['exam_result_linguistic_en']
-            # if 'exam_result_sociology' in validated_data:
-            #     instance.exam_result_sociology = validated_data['exam_result_sociology']
-            # if 'exam_result_physical' in validated_data:
-            #     instance.exam_result_physical = validated_data['exam_result_physical']
-            # if 'exam_result_artistic' in validated_data:
-            #     instance.exam_result_artistic = validated_data['exam_result_artistic']
-            # if 'exam_result_mathematics' in validated_data:
-            #     instance.exam_result_mathematics = validated_data['exam_result_mathematics']
-            # if 'exam_result_sciences' in validated_data:
-            #     instance.exam_result_sciences = validated_data['exam_result_sciences']
-
-            # if 'exam_total' in validated_data:
-            #     instance.exam_total = validated_data['exam_total']
-            # if 'exam_result' in validated_data:
-            #     instance.exam_result = validated_data['exam_result']
+                    setattr(instance, key, validated_data[key])
 
             instance.save()
 

@@ -246,7 +246,7 @@ function reorganizeForm()
     var family_status = $('#id_student_family_status').val();
     var have_labour = $('input[name=have_labour]:checked').val();
 
-    if(urlParam('child_id') || urlParam('enrollment_id')) {
+    if(urlParam('child_id') || urlParam('enrollment_id') || $('#registry_block').hasClass('d-none')) {
         $('#registry_block').addClass('d-none');
         $('#register_by_barcode').addClass('d-none');
         $('#search_options').addClass('d-none');
@@ -273,30 +273,50 @@ function reorganizeForm()
         $('div#labour_hours').prev().addClass('d-none');
     }
 
-    if(new_registry == '1' && outreached == '1' && (have_barcode == '1' || have_barcode == '0')){
+
+    if(outreached == '0'){
+        $('input[name=have_barcode]').val('0');
+        $('#have_barcode_option').addClass('d-none');
+        $('#have_barcode_option').prev().addClass('d-none');
+    }else{
         $('#have_barcode_option').removeClass('d-none');
         $('#have_barcode_option').prev().removeClass('d-none');
+    }
+    if(have_barcode == '0'){
+        $('#block_id_outreach_barcode').addClass('d-none');
+        $('#block_id_outreach_barcode').prev().addClass('d-none');
+    }else{
+        $('#block_id_outreach_barcode').removeClass('d-none');
+        $('#block_id_outreach_barcode').prev().removeClass('d-none');
+    }
 
+    if(new_registry == '1' && outreached == '1' && have_barcode == '1'){
         $('#register_by_barcode').removeClass('d-none');
         $('#search_options').addClass('d-none');
         $('.child_data').addClass('d-none');
         return true;
     }
 
-    if(new_registry == '1' && outreached == '0'){
-        $('#have_barcode_option').addClass('d-none');
-        $('#have_barcode_option').prev().addClass('d-none');
-
+    if(new_registry == '1' && outreached == '1' && have_barcode == '0'){
         $('#register_by_barcode').addClass('d-none');
         $('#search_options').addClass('d-none');
         $('.child_data').removeClass('d-none');
         return true;
     }
 
-    if(new_registry == '0' && outreached == '0'){
+    if(new_registry == '1' && outreached == '0'){
 
-        $('#have_barcode_option').addClass('d-none');
-        $('#have_barcode_option').prev().addClass('d-none');
+        $('#div_id_search_student').addClass('d-none');
+        $('#div_id_search_student').prev().addClass('d-none');
+
+        $('#register_by_barcode').addClass('d-none');
+        $('#search_options').addClass('d-none');
+        $('.child_data').removeClass('d-none');
+
+        return true;
+    }
+
+    if(new_registry == '0' && outreached == '0'){
 
         $('#register_by_barcode').addClass('d-none');
         $('#search_options').removeClass('d-none');
@@ -305,8 +325,6 @@ function reorganizeForm()
     }
 
     if(new_registry == '0' && outreached == '1' && have_barcode == '1'){
-        $('#have_barcode_option').removeClass('d-none');
-        $('#have_barcode_option').prev().removeClass('d-none');
 
         $('#register_by_barcode').addClass('d-none');
         $('#search_options').removeClass('d-none');
