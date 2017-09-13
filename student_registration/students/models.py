@@ -2,7 +2,6 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.contrib.postgres.fields import ArrayField
 
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
@@ -258,6 +257,8 @@ class Student(Person):
     from student_registration.outreach.models import Child
 
     status = models.BooleanField(default=True)
+    hh_barcode = models.CharField(max_length=45, blank=True, null=True)
+
     outreach_child = models.ForeignKey(
         Child,
         blank=True, null=True,
@@ -270,6 +271,26 @@ class Student(Person):
     @property
     def last_enrollment(self):
         return self.student_enrollment.all().last
+
+    @property
+    def secondshift_registrations(self):
+        return self.student_enrollment.all()
+
+    def current_secondshift_registration(self):
+        from student_registration.schools.models import EducationYear
+
+        education_year = EducationYear.objects.get(current_year=True)
+        return self.student_enrollment.filter(education_year=education_year)
+
+    @property
+    def alp_registrations(self):
+        return self.alp_enrollment.all()
+
+    def current_alp_registration(self):
+        from student_registration.alp.models import ALPRound
+
+        alp_round = ALPRound.objects.get(current_round=True)
+        return self.alp_enrollment.filter(alp_round=alp_round)
 
     @property
     def last_alp_registration(self):
@@ -309,33 +330,6 @@ class Student(Person):
         for item in self.attendances.all():
             attendances[item.attendance_date] = item.status
         return attendances
-
-    def get_absolute_url(self):
-        return 'student/%d' % self.pk
-
-    # @classmethod
-    # def create(cls, data):
-    #     instance = cls(
-    #         first_name=data['student_first_name'],
-    #         father_name=data['student_father_name'],
-    #         last_name=data['student_last_name'],
-    #         mother_fullname=data['student_mother_fullname'],
-    #         sex=data['student_sex'],
-    #         birthday_day=data['student_birthday_day'],
-    #         birthday_month=data['student_birthday_month'],
-    #         birthday_year=data['student_birthday_year'],
-    #         nationality_id=data['student_nationality'],
-    #         mother_nationality_id=data['student_mother_nationality'],
-    #         phone=data['student_phone'],
-    #         phone_prefix=data['student_phone_prefix'],
-    #         address=data['student_address'],
-    #         registered_in_unhcr=data['registered_in_unhcr'],
-    #         id_type_id=data['student_id_type'],
-    #         id_number=data['student_id_number'],
-    #         outreach_child_id=data['child_id'] if 'child_id' in data else None
-    #     )
-    #     instance.save()
-    #     return instance
 
 
 class StudentMatching(models.Model):
