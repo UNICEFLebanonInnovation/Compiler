@@ -24,6 +24,31 @@ class ProfileForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Contact information') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('land_phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('director_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('director_phone_number', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('it_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('it_phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('field_coordinator_name', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current academic year') + '</h4>')
                 ),
                 Div(
@@ -51,6 +76,12 @@ class ProfileForm(forms.ModelForm):
             'academic_year_start',
             'academic_year_end',
             'academic_year_exam_end',
+            'director_name',
+            'land_phone_number',
+            'director_phone_number',
+            'it_name',
+            'it_phone_number',
+            'field_coordinator_name',
         )
         initial_fields = fields
         widgets = {}
