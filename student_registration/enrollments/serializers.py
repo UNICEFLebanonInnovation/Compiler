@@ -14,7 +14,7 @@ class LoggingStudentMoveSerializer(serializers.ModelSerializer):
     student_full_name = serializers.CharField(source='student', read_only=True)
     student_mother_fullname = serializers.CharField(source='student.mother_fullname', read_only=True)
     student_sex = serializers.CharField(source='student.sex', read_only=True)
-    student_age = serializers.CharField(source='student.calc_age', read_only=True)
+    student_age = serializers.CharField(source='student.age', read_only=True)
     school_name = serializers.CharField(source='enrolment.school.name', read_only=True)
     school_number = serializers.CharField(source='enrolment.school.number', read_only=True)
     section_name = serializers.CharField(source='enrolment.section.name', read_only=True)
