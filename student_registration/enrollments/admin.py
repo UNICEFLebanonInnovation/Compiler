@@ -228,6 +228,9 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'deleted',
         'moved',
         'dropout_status',
+        'new_registry',
+        'student_outreached',
+        'have_barcode',
     )
     list_display = (
         'student',
