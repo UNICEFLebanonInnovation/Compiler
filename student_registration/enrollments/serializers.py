@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Enrollment, LoggingStudentMove
+from .models import Enrollment, LoggingStudentMove, LoggingProgramMove
 
 
 class LoggingStudentMoveSerializer(serializers.ModelSerializer):
@@ -285,4 +285,15 @@ class GradingSerializer(serializers.ModelSerializer):
             'exam_result_final',
             'csrfmiddlewaretoken',
             'save',
+        )
+
+
+class LoggingProgramMoveSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = LoggingProgramMove
+        fields = (
+            'student',
+            'school',
         )
