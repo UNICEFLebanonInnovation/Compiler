@@ -15,6 +15,12 @@ class StudentSerializer(serializers.ModelSerializer):
     registration = OutreachSerializer(source='last_alp_registration', read_only=True)
     enrollment = EnrollmentSerializer(source='last_enrollment', read_only=True)
 
+    alp_registrations = OutreachSerializer(read_only=True, many=True)
+    secondshift_registrations = EnrollmentSerializer(read_only=True, many=True)
+
+    current_alp_registration = OutreachSerializer(read_only=True, many=True)
+    current_secondshift_registration = EnrollmentSerializer(read_only=True, many=True)
+
     def create(self, validated_data):
 
         try:
@@ -51,6 +57,11 @@ class StudentSerializer(serializers.ModelSerializer):
             'family_status',
             'address',
             'number',
+            'hh_barcode',
             'registration',
             'enrollment',
+            'alp_registrations',
+            'secondshift_registrations',
+            'current_alp_registration',
+            'current_secondshift_registration',
         )
