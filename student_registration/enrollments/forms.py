@@ -51,6 +51,9 @@ class EnrollmentAdminForm(forms.ModelForm):
     class Meta:
         model = Enrollment
         fields = '__all__'
+        exclude = (
+            'registered_in_unhcr',
+        )
 
 
 class EnrollmentForm(forms.ModelForm):

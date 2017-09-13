@@ -64,8 +64,18 @@ $(document).ready(function(){
             minLength: 3,
             select: function (event, ui) {
                 var registry_id = 0;
-                if($('#id_school_type').val() == undefined){
+                var eligibility = true;
+                if($('#id_school_type').val() == undefined || $('#id_school_type').val() == 'alp'){
                     registry_id = ui.item.registration.id;
+                    var refer_to_level = ui.item.registration.refer_to_level;
+                    if($.inArray(refer_to_level, [1, 10, 11, 12, 13, 14, 15, 16, 17])){
+                        if(confirm("This student is eligible to go into 2nd shift program, are you sure you want to register this student")){
+                            eligibility = false;
+                        }else{
+                            return false;
+                        }
+                    }
+                    log_student_program_move(ui.item.registration, eligibility);
                 }else{
                     registry_id = ui.item.enrollment.id;
                 }
@@ -89,15 +99,20 @@ $(document).ready(function(){
         };
 
         $("#id_search_student").autocomplete("instance")._renderItem = function (ul, item) {
-            var registry = null;
-            if($('#id_school_type').val() == undefined){ registry = item.registration; }
-            else { registry = item.enrollment; }
+            var registry = item.enrollment;
+            if(registry){
+                var education_year_name = registry.education_year_name;
+            }
+            if($('#id_school_type').val() == undefined || $('#id_school_type').val() == 'alp'){
+                registry = item.registration;
+                education_year_name = registry.alp_round_name;
+            }
 
             return $("<li>")
                 .append("<div style='border: 1px solid;'>"
                     + "<b>Base Data:</b> " + item.full_name + " - " + item.mother_fullname + " - " + item.id_number
                     + "<br/> <b>Gender - Birthday:</b> " + item.sex + " - " + item.birthday
-                    + "<br/> <b>Last education year:</b> " + registry.education_year_name
+                    + "<br/> <b>Last education year:</b> " + education_year_name
                     + "<br/> <b>Last education school:</b> " + registry.school_name + " - " + registry.school_number
                     + "<br/> <b>Class / Section:</b> " + registry.classroom_name + " / " + registry.section_name
                     + "</div>")
@@ -120,7 +135,7 @@ $(document).ready(function(){
                     }
                 });
             },
-            minLength: 3,
+            minLength: 10,
             select: function (event, ui) {
 
                 var params = {
@@ -337,7 +352,7 @@ function reorganizeForm()
 
 function moved_student(item)
 {
-    data = {moved: item};
+    var data = {moved: item};
 
     $.ajax({
         type: "POST",
@@ -363,6 +378,32 @@ function delete_student(item)
     $.ajax({
         type: "DELETE",
         url: url+'/',
+        cache: false,
+        async: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            console.log(response);
+        },
+        error: function(response) {
+            console.log(response);
+        }
+    });
+}
+
+// log student move from ALP to 2nd shift
+function log_student_program_move(item, eligibility)
+{
+    var data = {
+        student: item.student_id,
+        school: item.school_id,
+        eligibility: eligibility
+    };
+
+    $.ajax({
+        type: "POST",
+        url: '/api/logging-student-program-move/',
+        data: data,
         cache: false,
         async: false,
         headers: getHeader(),
