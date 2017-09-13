@@ -62,7 +62,7 @@ def get_app_collection(bulk_name):
         auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
     ).json()
 
-    if data['_rev']:
+    if data and '_rev' in data:
         return data['_rev']
     return 0
 
