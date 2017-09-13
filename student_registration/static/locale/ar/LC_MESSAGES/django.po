@@ -1051,7 +1051,7 @@ msgstr "كود الرقم (رقمين)"
 msgid "Phone prefix"
 msgstr "كود الرقم"
 
-msgid "Last student education"
+msgid "Last student formal education"
 msgstr "معلومات سابقة للتعليم النظامي للتلميذ"
 
 msgid "Last student informal education"
