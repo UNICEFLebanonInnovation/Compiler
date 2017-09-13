@@ -29,14 +29,13 @@ from .serializers import EnrollmentSerializer
 YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
 
 EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
-EDUCATION_YEARS.append(('0', _('Last education year')))
-EDUCATION_YEARS.append(('n/a', 'N/A'))
+EDUCATION_YEARS.append(('na', 'n/a'))
 
 YEARS = list(((str(x), x) for x in range(1930, 2051)))
-YEARS.append(('', _('Birthday Year')))
+YEARS.append(('', _('---------')))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
-DAYS.append(('', _('Birthday Day')))
+DAYS.append(('', _('--------')))
 
 
 class EnrollmentAdminForm(forms.ModelForm):
@@ -81,7 +80,7 @@ class EnrollmentForm(forms.ModelForm):
     search_student = forms.CharField(widget=forms.TextInput, required=False)
     search_school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
-        empty_label=_('Search by school'),
+        empty_label=_('-------'),
         required=False, to_field_name='id',
         initial=0
     )
@@ -95,16 +94,6 @@ class EnrollmentForm(forms.ModelForm):
     )
 
     registration_date = forms.DateField(
-        # widget=DateTimePicker(
-        #     options={
-        #         "viewMode": "years",
-        #         "format": "mm/dd/yyyy",
-        #         "pickTime": False,
-        #         "stepping": 0,
-        #         "showClear": True,
-        #         "showClose": True,
-        #         "disabledHours": True,
-        #     }),
         required=True
     )
 
@@ -114,7 +103,7 @@ class EnrollmentForm(forms.ModelForm):
     student_sex = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=(
-            ('', _('Gender')),
+            ('', _('--------')),
             ('Male', _('Male')),
             ('Female', _('Female')),
         )
@@ -126,7 +115,7 @@ class EnrollmentForm(forms.ModelForm):
     student_birthday_month = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=(
-            ('', _('Birthday Month')),
+            ('', _('-------')),
             ('1', _('January')),
             ('2', _('February')),
             ('3', _('March')),
@@ -158,12 +147,9 @@ class EnrollmentForm(forms.ModelForm):
         empty_label=_('Mather nationality'),
         required=True, to_field_name='id',
     )
-    student_registered_in_unhcr = forms.TypedChoiceField(
-        label=_("Registered in UNHCR?"),
+    student_registered_in_unhcr = forms.ChoiceField(
+        widget=forms.Select, required=True,
         choices=YES_NO_CHOICE,
-        coerce=lambda x: bool(int(x)),
-        widget=forms.RadioSelect,
-        required=True,
     )
     student_id_type = forms.ModelChoiceField(
         queryset=IDType.objects.all(), widget=forms.Select,
@@ -176,7 +162,7 @@ class EnrollmentForm(forms.ModelForm):
     student_address = forms.CharField(widget=forms.TextInput, required=True)
 
     classroom = forms.ModelChoiceField(
-        queryset=ClassRoom.objects.all(), widget=forms.Select,
+        queryset=ClassRoom.objects.exclude(name='n/a'), widget=forms.Select,
         required=True, to_field_name='id',
     )
     section = forms.ModelChoiceField(
@@ -192,20 +178,11 @@ class EnrollmentForm(forms.ModelForm):
     )
     last_school_type = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=(
-            ('', _('School type')),
-            ('out_the_country', _('School out of the country')),
-            ('public_in_country', _('Public school in the country')),
-            ('private_in_country', _('Private school in the country')),
-        )
+        choices=Enrollment.SCHOOL_TYPE
     )
     last_school_shift = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=(
-            ('', _('School shift')),
-            ('first', _('First shift')),
-            ('second', _('Second shift')),
-        )
+        choices=Enrollment.SCHOOL_SHIFT
     )
     last_school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
@@ -215,12 +192,12 @@ class EnrollmentForm(forms.ModelForm):
     last_education_year = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=EDUCATION_YEARS,
-        initial='0',
+        initial='na',
     )
     last_year_result = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=(
-            ('', _('Result')),
+            ('na', _('n/a')),
             ('graduated', _('Graduated')),
             ('failed', _('Failed'))
         )
@@ -228,7 +205,7 @@ class EnrollmentForm(forms.ModelForm):
     participated_in_alp = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=(
-            ('', _('Participated in ALP')),
+            ('na', _('n/a')),
             ('yes', _('Yes')),
             ('no', _('No')),
         )
@@ -255,22 +232,24 @@ class EnrollmentForm(forms.ModelForm):
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
 
-        self.fields['classroom'].empty_label = _('Current Class')
-        self.fields['section'].empty_label = _('Current Section')
+        self.fields['classroom'].empty_label = _('-------')
+        self.fields['section'].empty_label = _('-------')
 
-        self.fields['last_education_level'].empty_label = _('Last education level')
-        self.fields['last_school_type'].empty_label = _('School type')
-        self.fields['last_school_shift'].empty_label = _('School shift')
-        self.fields['last_school'].empty_label = _('School')
-        self.fields['last_education_year'].empty_label = _('Education year')
-        self.fields['last_year_result'].empty_label = _('Result')
-        self.fields['last_informal_edu_level'].empty_label = _('ALP level')
-        self.fields['last_informal_edu_round'].empty_label = _('ALP round')
-        self.fields['last_informal_edu_final_result'].empty_label = _('ALP result')
+        self.fields['last_education_level'].empty_label = _('-------')
+        self.fields['last_school_type'].empty_label = _('-------')
+        self.fields['last_school_shift'].empty_label = _('-------')
+        self.fields['last_school'].empty_label = _('-------')
+        self.fields['last_education_year'].empty_label = _('-------')
+        self.fields['last_year_result'].empty_label = _('-------')
+        self.fields['last_informal_edu_level'].empty_label = _('-------')
+        self.fields['last_informal_edu_round'].empty_label = _('-------')
+        self.fields['last_informal_edu_final_result'].empty_label = _('-------')
 
+        display_registry = ''
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         if instance:
+            display_registry = ' d-none'
             self.helper.form_action = reverse('enrollments:edit', kwargs={'pk': instance.id})
         else:
             self.helper.form_action = reverse('enrollments:add')
@@ -293,19 +272,19 @@ class EnrollmentForm(forms.ModelForm):
                     Div(InlineRadios('have_barcode'), css_class='col-md-3', css_id='have_barcode_option'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning', css_id='registry_block'
+                css_class='bd-callout bd-callout-warning'+display_registry, css_id='registry_block'
             ),
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode or Child name')+'</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('search_barcode', css_class='col-md-4'),
                     css_class='row',
                 ),
-                css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'
+                css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
             ),
             Fieldset(
                 None,
@@ -321,7 +300,7 @@ class EnrollmentForm(forms.ModelForm):
                     Div('search_student', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning'
+                css_id='search_options', css_class='bd-callout bd-callout-warning'+display_registry
             ),
             Fieldset(
                 None,
@@ -332,7 +311,7 @@ class EnrollmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('registration_date', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('outreach_barcode', css_class='col-md-3'),
+                    Div('outreach_barcode', css_class='col-md-3', css_id='block_id_outreach_barcode'),
                     css_class='row',
                 ),
                 Div(
@@ -369,7 +348,7 @@ class EnrollmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">13</span>'),
-                    Div(InlineRadios('student_registered_in_unhcr'), css_class='col-md-3'),
+                    Div('student_registered_in_unhcr', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('student_id_type', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">15</span>'),

@@ -32,16 +32,6 @@ class Enrollment(TimeStampedModel):
     """
     Captures the details of the child in the cash pilot
     """
-    EAV_TYPE = 'enrollment'
-
-    RELATION_TYPE = Choices(
-        ('child', _('Son/Daughter')),
-        ('grandchild', _('Grandchild')),
-        ('nibling', _('Niece/Nephew')),
-        ('relative', _('Other Relative')),
-        ('other', _('Other non-Relative')),
-    )
-
     ENROLLMENT_TYPE = Choices(
         ('no', _('No')),
         ('second', _('Yes - in 2nd shift')),
@@ -51,11 +41,13 @@ class Enrollment(TimeStampedModel):
     )
 
     RESULT = Choices(
+        ('na', 'n/a'),
         ('graduated', _('Graduated')),
         ('failed', _('Failed'))
     )
 
     EXAM_RESULT = Choices(
+        ('na', _('n/a')),
         ('graduated', _('Graduated')),
         ('failed', _('Failed')),
         ('uncompleted', _('Uncompleted')),
@@ -67,12 +59,14 @@ class Enrollment(TimeStampedModel):
     )
 
     SCHOOL_TYPE = Choices(
+        ('na', 'n/a'),
         ('out_the_country', _('School out of the country')),
         ('public_in_country', _('Public school in the country')),
         ('private_in_country', _('Private school in the country')),
     )
 
     SCHOOL_SHIFT = Choices(
+        ('na', 'n/a'),
         ('first', _('First shift')),
         ('second', _('Second shift')),
         ('alp', _('ALP')),
@@ -170,7 +164,11 @@ class Enrollment(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        choices=YES_NO
+        choices=Choices(
+            ('na', 'n/a'),
+            ('yes', _('Yes')),
+            ('no', _('No')),
+        )
     )
     last_informal_edu_level = models.ForeignKey(
         EducationLevel,
