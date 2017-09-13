@@ -35,7 +35,7 @@ class AddView(LoginRequiredMixin,
               GroupRequiredMixin,
               FormView):
 
-    template_name = 'enrollments/new.html'
+    template_name = 'bootstrap4/common_form.html'
     form_class = EnrollmentForm
     success_url = '/enrollments/list/'
     group_required = [u"ENROL_CREATE"]
@@ -79,7 +79,7 @@ class EditView(LoginRequiredMixin,
                GroupRequiredMixin,
                FormView):
 
-    template_name = 'enrollments/edit.html'
+    template_name = 'bootstrap4/common_form.html'
     form_class = EnrollmentForm
     success_url = '/enrollments/list/'
     group_required = [u"ENROL_EDIT"]

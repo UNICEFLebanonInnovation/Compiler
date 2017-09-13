@@ -113,7 +113,7 @@ class AddView(LoginRequiredMixin,
               GroupRequiredMixin,
               FormView):
 
-    template_name = 'alp/registration.html'
+    template_name = 'bootstrap4/common_form.html'
     form_class = RegistrationForm
     success_url = '/alp/list/'
     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
@@ -147,7 +147,7 @@ class EditView(LoginRequiredMixin,
                GroupRequiredMixin,
                FormView):
 
-    template_name = 'alp/registration.html'
+    template_name = 'bootstrap4/common_form.html'
     form_class = RegistrationForm
     success_url = '/alp/list/'
     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
@@ -217,7 +217,7 @@ class PreTestAddView(LoginRequiredMixin,
                      GroupRequiredMixin,
                      FormView):
 
-    template_name = 'alp/registration.html'
+    template_name = 'bootstrap4/common_form.html'
     form_class = PreTestForm
     success_url = '/alp/pre-test/'
     group_required = [u"TEST_MANAGER"]
@@ -238,7 +238,7 @@ class PreTestEditView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
 
-    template_name = 'alp/registration.html'
+    template_name = 'bootstrap4/common_form.html'
     form_class = PreTestForm
     success_url = '/alp/pre-test/'
     group_required = [u"TEST_MANAGER"]
@@ -368,7 +368,7 @@ class OutreachAddView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
 
-    template_name = 'alp/registration.html'
+    template_name = 'bootstrap4/common_form.html'
     form_class = OutreachForm
     success_url = '/alp/outreach/'
     group_required = [u"PARTNER"]
@@ -389,7 +389,7 @@ class OutreachEditView(LoginRequiredMixin,
                        GroupRequiredMixin,
                        FormView):
 
-    template_name = 'alp/registration.html'
+    template_name = 'bootstrap4/common_form.html'
     form_class = OutreachForm
     success_url = '/alp/outreach/'
     group_required = [u"PARTNER"]
@@ -413,169 +413,6 @@ class OutreachEditView(LoginRequiredMixin,
         instance = Outreach.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(OutreachEditView, self).form_valid(form)
-
-
-# class OutreachView(LoginRequiredMixin,
-#                    GroupRequiredMixin,
-#                    TemplateView):
-#     model = Outreach
-#     template_name = 'alp/index.html'
-#
-#     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
-#
-#     def handle_no_permission(self, request):
-#         return HttpResponseForbidden()
-#
-#     def get_context_data(self, **kwargs):
-#         data = []
-#         school = 0
-#         location = 0
-#         location_parent = 0
-#         school_id = int(self.request.GET.get("school", 0))
-#         alp_round = ALPRound.objects.get(current_round=True)
-#
-#         if has_group(self.request.user, 'ALP_SCHOOL'):
-#             school_id = self.request.user.school_id
-#         if school_id:
-#             school = School.objects.get(id=school_id)
-#         if school and school.location:
-#             location = school.location
-#         if location and location.parent:
-#             location_parent = location.parent
-#
-#         force_default_language(self.request)
-#
-#         return {
-#             'data': data,
-#             'schools': School.objects.all().order_by('name'),
-#             'locations': Location.objects.filter(type_id=2),
-#             'partners': PartnerOrganization.objects.all(),
-#             'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km',),
-#             'months': Person.MONTHS,
-#             'genders': Person.GENDER,
-#             'idtypes': IDType.objects.all(),
-#             'education_levels': ClassRoom.objects.all(),
-#             'education_results': Outreach.RESULT,
-#             'informal_educations': EducationLevel.objects.all(),
-#             'alp_rounds': ALPRound.objects.all(),
-#             'education_final_results': ClassLevel.objects.all(),
-#             'classrooms': ClassRoom.objects.all(),
-#             'sections': Section.objects.all(),
-#             'nationalities': Nationality.objects.exclude(id=5),
-#             'nationalities2': Nationality.objects.all(),
-#             'school_id': school_id,
-#             'school': school,
-#             'location': location,
-#             'location_parent': location_parent,
-#             'alp_round': alp_round.id,
-#         }
-
-
-# class CurrentRoundView(LoginRequiredMixin,
-#                        GroupRequiredMixin,
-#                        TemplateView):
-#     model = Outreach
-#     template_name = 'alp/current.html'
-#
-#     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
-#
-#     def handle_no_permission(self, request):
-#         return HttpResponseForbidden()
-#
-#     def get_context_data(self, **kwargs):
-#         data = []
-#         school = 0
-#         location = 0
-#         location_parent = 0
-#         total = 0
-#         school_id = int(self.request.GET.get("school", 0))
-#         round_id = int(self.request.GET.get("round_id", 0))
-#         if round_id:
-#             alp_round = ALPRound.objects.get(id=round_id)
-#         else:
-#             alp_round = ALPRound.objects.get(current_pre_test=True)
-#
-#         if has_group(self.request.user, 'ALP_SCHOOL'):
-#             school_id = self.request.user.school_id
-#         if school_id:
-#             school = School.objects.get(id=school_id)
-#             total = self.model.objects.filter(school_id=school_id, alp_round=alp_round).count()
-#         if school and school.location:
-#             location = school.location
-#         if location and location.parent:
-#             location_parent = location.parent
-#
-#         force_default_language(self.request)
-#
-#         return {
-#             'data': data,
-#             'total': total,
-#             'schools': School.objects.all().order_by('name'),
-#             'locations': Location.objects.filter(type_id=2),
-#             'partners': PartnerOrganization.objects.all(),
-#             'distances': (u'<= 2.5km', u'> 2.5km', u'> 10km',),
-#             'months': Person.MONTHS,
-#             'genders': Person.GENDER,
-#             'idtypes': IDType.objects.all(),
-#             'education_levels': ClassRoom.objects.all(),
-#             'education_results': Outreach.RESULT,
-#             'informal_educations': EducationLevel.objects.all(),
-#             'alp_rounds': ALPRound.objects.all(),
-#             'education_final_results': ClassLevel.objects.all(),
-#             'classrooms': ClassRoom.objects.all(),
-#             'sections': Section.objects.all(),
-#             'nationalities': Nationality.objects.exclude(id=5),
-#             'nationalities2': Nationality.objects.all(),
-#             'school_id': school_id,
-#             'school': school,
-#             'location': location,
-#             'location_parent': location_parent,
-#             'alp_round': alp_round.id,
-#         }
-
-
-# class DataCollectingView(LoginRequiredMixin,
-#                          GroupRequiredMixin,
-#                          TemplateView):
-#     model = Outreach
-#     template_name = 'alp/outreach.html'
-#
-#     group_required = [u"PARTNER"]
-#
-#     def handle_no_permission(self, request):
-#         return HttpResponseForbidden()
-#
-#     def get_context_data(self, **kwargs):
-#         data = []
-#         school = 0
-#         location = 0
-#         location_parent = 0
-#         alp_round = ALPRound.objects.get(current_pre_test=True)
-#
-#         force_default_language(self.request)
-#
-#         return {
-#             'data': data,
-#             'schools': School.objects.all().order_by('name'),
-#             # 'languages': Language.objects.all(),
-#             'locations': Location.objects.filter(type_id=2),
-#             'months': Person.MONTHS,
-#             'genders': Person.GENDER,
-#             'idtypes': IDType.objects.all(),
-#             'education_levels': ClassRoom.objects.all(),
-#             'education_results': Outreach.RESULT,
-#             'informal_educations': EducationLevel.objects.all(),
-#             'alp_rounds': ALPRound.objects.all(),
-#             'education_final_results': ClassLevel.objects.all(),
-#             'classrooms': ClassRoom.objects.all(),
-#             'sections': Section.objects.all(),
-#             'nationalities': Nationality.objects.exclude(id=5),
-#             'nationalities2': Nationality.objects.all(),
-#             'school': school,
-#             'location': location,
-#             'location_parent': location_parent,
-#             'alp_round': alp_round.id
-#         }
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):
