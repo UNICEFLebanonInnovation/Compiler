@@ -28,6 +28,7 @@ from student_registration.schools.models import ClassRoom
 from .models import Enrollment, LoggingStudentMove, EducationYear
 from .forms import EnrollmentForm, GradingTerm1Form, GradingTerm2Form, StudentMovedForm
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer
+from student_registration.users.utils import force_default_language
 
 
 class AddView(LoginRequiredMixin,
@@ -40,7 +41,7 @@ class AddView(LoginRequiredMixin,
     group_required = [u"ENROL_CREATE"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -52,9 +53,15 @@ class AddView(LoginRequiredMixin,
         if self.request.GET.get('enrollment_id'):
             instance = Enrollment.objects.get(id=self.request.GET.get('enrollment_id'))
             data = EnrollmentSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            data['student_mother_nationality'] = data['student_mother_nationality_id']
+            data['student_id_type'] = data['student_id_type_id']
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            data['student_mother_nationality'] = data['student_mother_nationality_id']
+            data['student_id_type'] = data['student_id_type_id']
         if data:
             data['new_registry'] = self.request.GET.get('new_registry')
             data['student_outreached'] = self.request.GET.get('student_outreached')
@@ -78,7 +85,7 @@ class EditView(LoginRequiredMixin,
     group_required = [u"ENROL_EDIT"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -90,6 +97,9 @@ class EditView(LoginRequiredMixin,
             return EnrollmentForm(self.request.POST, instance=instance)
         else:
             data = EnrollmentSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            data['student_mother_nationality'] = data['student_mother_nationality_id']
+            data['student_id_type'] = data['student_id_type_id']
             return EnrollmentForm(data, instance=instance)
 
     def form_valid(self, form):
@@ -108,7 +118,7 @@ class MovedView(LoginRequiredMixin,
     group_required = [u"SCHOOL"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -145,9 +155,9 @@ class ListingView(LoginRequiredMixin,
     group_required = [u"SCHOOL"]
 
     def get_queryset(self):
+        force_default_language(self.request)
         education_year = EducationYear.objects.get(current_year=True)
-        # return Enrollment.objects.exclude(moved=True).filter(education_year=education_year, school=self.request.user.school_id)
-        return Enrollment.objects.exclude(moved=True).filter(school=self.request.user.school_id)
+        return Enrollment.objects.exclude(moved=True).filter(education_year=education_year, school=self.request.user.school_id)
 
 
 class GradingView(LoginRequiredMixin,
@@ -160,7 +170,7 @@ class GradingView(LoginRequiredMixin,
     group_required = [u"ENROL_GRADING"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
