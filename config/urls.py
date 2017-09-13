@@ -31,13 +31,14 @@ from student_registration.winterization.views import (
     BeneficiaryViewSet
 )
 from student_registration.users.views import LoginRedirectView, PasswordChangeView, PasswordChangeDoneView
-from student_registration.enrollments.views import EnrollmentViewSet, LoggingStudentMoveViewSet
+from student_registration.enrollments.views import EnrollmentViewSet, LoggingStudentMoveViewSet, LoggingProgramMoveViewSet
 from student_registration.outreach.views import HouseHoldViewSet, ChildViewSet
 
 api = routers.SimpleRouter()
 api.register(r'outreach', OutreachViewSet, base_name='outreach')
 api.register(r'enrollments', EnrollmentViewSet, base_name='enrollments')
 api.register(r'logging-student-move', LoggingStudentMoveViewSet, base_name='logging_student_move')
+api.register(r'logging-student-program-move', LoggingProgramMoveViewSet, base_name='logging_student_ptogram_move')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
 api.register(r'beneficiary', BeneficiaryViewSet, base_name='beneficiary')
 
