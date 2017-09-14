@@ -295,5 +295,7 @@ class LoggingProgramMoveSerializer(serializers.ModelSerializer):
         model = LoggingProgramMove
         fields = (
             'student',
-            'school',
+            'school_from',
+            'school_to',
+            'eligibility',
         )

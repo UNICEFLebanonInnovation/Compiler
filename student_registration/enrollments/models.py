@@ -376,7 +376,7 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Arabic Term 2')
+        verbose_name=_('Math Term 2')
     )
 
     exam_total_cmplt = models.CharField(
@@ -427,8 +427,6 @@ class Enrollment(TimeStampedModel):
 
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
-
-
 
     @property
     def student_fullname(self):
@@ -535,13 +533,20 @@ class LoggingProgramMove(TimeStampedModel):
         related_name='+',
         verbose_name='Student',
     )
-    school = models.ForeignKey(
+    school_from = models.ForeignKey(
         School,
         blank=False,
         null=False,
         related_name='+',
         verbose_name='From school',
     )
+    school_to = models.ForeignKey(
+        School,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name='To school',
+    )
+    eligibility = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['id']
