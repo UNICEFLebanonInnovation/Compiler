@@ -6,6 +6,7 @@ var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_studen
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
 var moved_student_path = host+'/api/logging-student-move/';
+var current_school = null;
 
 $(document).ready(function(){
 
@@ -68,8 +69,8 @@ $(document).ready(function(){
                 if($('#id_school_type').val() == undefined || $('#id_school_type').val() == 'alp'){
                     registry_id = ui.item.registration.id;
                     var refer_to_level = ui.item.registration.refer_to_level;
-                    if($.inArray(refer_to_level, [1, 10, 11, 12, 13, 14, 15, 16, 17])){
-                        if(confirm("This student is eligible to go into 2nd shift program, are you sure you want to register this student")){
+                    if(!$.inArray(refer_to_level, [1, 10, 11, 12, 13, 14, 15, 16, 17])){
+                        if(confirm("This student is not eligible to go into 2nd shift program, are you sure you want to register this student")){
                             eligibility = false;
                         }else{
                             return false;
@@ -182,8 +183,9 @@ $(document).ready(function(){
                     }
                 });
             },
-            minLength: 3,
+            minLength: 10,
             select: function (event, ui) {
+                console.log(ui.item);
                 $('#id_outreach_barcode').val(ui.item.barcode_subset);
                 return false;
             }
@@ -306,6 +308,9 @@ function reorganizeForm()
     }
 
     if(new_registry == '1' && outreached == '1' && have_barcode == '1'){
+        $('#block_id_outreach_barcode').addClass('d-none');
+        $('#block_id_outreach_barcode').prev().addClass('d-none');
+
         $('#register_by_barcode').removeClass('d-none');
         $('#search_options').addClass('d-none');
         $('.child_data').addClass('d-none');
@@ -320,9 +325,6 @@ function reorganizeForm()
     }
 
     if(new_registry == '1' && outreached == '0'){
-
-        $('#div_id_search_student').addClass('d-none');
-        $('#div_id_search_student').prev().addClass('d-none');
 
         $('#register_by_barcode').addClass('d-none');
         $('#search_options').addClass('d-none');
@@ -396,7 +398,8 @@ function log_student_program_move(item, eligibility)
 {
     var data = {
         student: item.student_id,
-        school: item.school_id,
+        school_from: item.school,
+        school_to: current_school,
         eligibility: eligibility
     };
 
