@@ -25,7 +25,7 @@
         {% endif %}
         {% if request.user|has_group:"SCHOOL" or request.user|has_group:"DIRECTOR" %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'enrollments:list' %}">{% trans "Registration" %}</a>
+                <a class="nav-link" href="{% url 'enrollments:list' %}">{% trans "2nd shift Registration" %}</a>
               </li>
         {% endif %}
         {% if request.user|has_group:"TEST_MANAGER" %}

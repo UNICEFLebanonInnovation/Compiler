@@ -49,7 +49,11 @@ class AddView(LoginRequiredMixin,
 
     def get_initial(self):
         initial = super(AddView, self).get_initial()
-        data = []
+        data = {
+            'new_registry': self.request.GET.get('new_registry', '0'),
+            'student_outreached': self.request.GET.get('student_outreached', '1'),
+            'have_barcode': self.request.GET.get('have_barcode', '1')
+        }
         if self.request.GET.get('enrollment_id'):
             instance = Enrollment.objects.get(id=self.request.GET.get('enrollment_id'))
             data = EnrollmentSerializer(instance).data
@@ -59,16 +63,18 @@ class AddView(LoginRequiredMixin,
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            data['student_mother_nationality'] = data['student_mother_nationality_id']
-            data['student_id_type'] = data['student_id_type_id']
-        if data:
-            data['new_registry'] = self.request.GET.get('new_registry')
-            data['student_outreached'] = self.request.GET.get('student_outreached')
-            data['have_barcode'] = self.request.GET.get('have_barcode')
-            initial = data
+            # data['student_nationality'] = data['student_nationality_id']
+            # data['student_mother_nationality'] = data['student_mother_nationality_id']
+            # data['student_id_type'] = data['student_id_type_id']
+        initial = data
 
         return initial
+
+    # def get_form(self, form_class=None):
+    #     if self.request.method == "POST":
+    #         return EnrollmentForm(self.request.POST, request=self.request)
+    #     else:
+    #         return EnrollmentForm(self.get_initial())
 
     def form_valid(self, form):
         form.save(self.request)
@@ -199,7 +205,7 @@ class GradingView(LoginRequiredMixin,
 
 
 class LoggingProgramMoveViewSet(mixins.RetrieveModelMixin,
-                                mixins.ListModelMixin,
+                                mixins.CreateModelMixin,
                                 viewsets.GenericViewSet):
 
     model = LoggingProgramMove
