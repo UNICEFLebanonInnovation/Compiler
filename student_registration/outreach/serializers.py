@@ -59,4 +59,5 @@ class ChildSerializer(serializers.ModelSerializer):
             'student_nationality',
             'student_mother_nationality',
             'student_address',
+            'barcode_subset',
         )

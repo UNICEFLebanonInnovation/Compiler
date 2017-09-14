@@ -231,6 +231,7 @@ class EnrollmentForm(forms.ModelForm):
     student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super(EnrollmentForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
@@ -248,14 +249,36 @@ class EnrollmentForm(forms.ModelForm):
         self.fields['last_informal_edu_round'].empty_label = _('-------')
         self.fields['last_informal_edu_final_result'].empty_label = _('-------')
 
+        form_action = ''
         display_registry = ''
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         if instance:
             display_registry = ' d-none'
-            self.helper.form_action = reverse('enrollments:edit', kwargs={'pk': instance.id})
+            form_action = reverse('enrollments:edit', kwargs={'pk': instance.id})
         else:
-            self.helper.form_action = reverse('enrollments:add')
+            form_action = reverse('enrollments:add')
+
+        if self.request:
+            search_id = ''
+            search_parameter = ''
+            if self.request.GET.get('enrollment_id', ''):
+                search_parameter = 'enrollment_id'
+                search_id = self.request.GET.get('enrollment_id')
+            elif self.request.GET.get('child_id', 0):
+                search_parameter = 'child_id'
+                search_id = self.request.GET.get('child_id')
+
+            self.helper.form_action = '{form_action}?{search_parameter}={search_id}&new_registry={new_registry}&student_outreached={student_outreached}&have_barcode={have_barcode}'.format(
+                form_action=form_action,
+                search_parameter=search_parameter,
+                search_id=search_id,
+                new_registry=self.request.GET.get('new_registry'),
+                student_outreached=self.request.GET.get('student_outreached'),
+                have_barcode=self.request.GET.get('have_barcode')
+            )
+        else:
+            self.helper.form_action = form_action
 
         self.helper.layout = Layout(
             Fieldset(
@@ -431,8 +454,8 @@ class EnrollmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                Button('cancel', _('Cancel')),
-                HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                # Button('cancel', _('Cancel')),
+                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -558,8 +581,8 @@ class GradingTerm1Form(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    Button('cancel', _('Cancel')),
-                    HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                    # Button('cancel', _('Cancel')),
+                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
                 )
             )
 
@@ -610,8 +633,8 @@ class GradingTerm1Form(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    Button('cancel', _('Cancel')),
-                    HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                    # Button('cancel', _('Cancel')),
+                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
                 )
             )
 
@@ -668,8 +691,8 @@ class GradingTerm1Form(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    Button('cancel', _('Cancel')),
-                    HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                    # Button('cancel', _('Cancel')),
+                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
                 )
             )
 
@@ -725,8 +748,8 @@ class GradingTerm1Form(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    Button('cancel', _('Cancel')),
-                    HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                    # Button('cancel', _('Cancel')),
+                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
                 )
             )
 
@@ -784,16 +807,16 @@ class GradingTerm2Form(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('exam_result_arabic_cmplt', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('exam_result_language_cmplt', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('exam_result_math_cmplt', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('exam_total_cmplt', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('exam_result_final', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -801,8 +824,8 @@ class GradingTerm2Form(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                Button('cancel', _('Cancel')),
-                HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                # Button('cancel', _('Cancel')),
+                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -854,8 +877,8 @@ class StudentMovedForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                Button('cancel', _('Cancel')),
-                HTML('<a class="btn btn-info" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                # Button('cancel', _('Cancel')),
+                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
             )
         )
 
