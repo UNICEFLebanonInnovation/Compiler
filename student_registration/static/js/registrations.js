@@ -38,6 +38,13 @@ $(document).ready(function(){
             item.parents('tr').remove();
         }
     });
+    $(document).on('click', '.cancel-button', function(e){
+        e.preventDefault();
+        var item = $(this);
+        if(confirm("Are you sure you want to cancel this registration?")) {
+            window.location = item.attr('href');
+        }
+    });
 
     if($(document).find('#id_search_student').length == 1) {
 
@@ -398,6 +405,7 @@ function log_student_program_move(item, eligibility)
 {
     var data = {
         student: item.student_id,
+        registry: item.id,
         school_from: item.school,
         school_to: current_school,
         eligibility: eligibility

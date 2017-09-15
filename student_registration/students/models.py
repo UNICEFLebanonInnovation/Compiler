@@ -1,13 +1,13 @@
 from __future__ import unicode_literals, absolute_import, division
 
+import datetime
+
 from django.db import models
 from django.utils.translation import ugettext as _
 
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from .utils import *
-from datetime import date
-import datetime
 
 
 class StudentManager(models.Manager):
@@ -69,6 +69,8 @@ class Labour(models.Model):
 
 class Person(TimeStampedModel):
 
+    CURRENT_YEAR = datetime.datetime.now().year
+
     MONTHS = Choices(
         ('1', _('January')),
         ('2', _('February')),
@@ -114,7 +116,7 @@ class Person(TimeStampedModel):
         blank=True,
         null=True,
         default=0,
-        choices=((str(x), x) for x in range(1930, 2051))
+        choices=((str(x), x) for x in range(1990, CURRENT_YEAR))
     )
     birthday_month = models.CharField(
         max_length=2,
@@ -128,7 +130,7 @@ class Person(TimeStampedModel):
         blank=True,
         null=True,
         default=0,
-        choices=((str(x), x) for x in range(1, 33))
+        choices=((str(x), x) for x in range(1, 21))
     )
     family_status = models.CharField(
         max_length=50,
@@ -212,18 +214,17 @@ class Person(TimeStampedModel):
 
     @property
     def age(self):
-        current_year = datetime.datetime.now().year
         if self.birthday_year:
-            return int(current_year)-int(self.birthday_year)
+            return int(self.CURRENT_YEAR)-int(self.birthday_year)
         return 0
-
-    @property
-    def calculate_age(self):
-        today = date.today()
-        years_difference = today.year - int(self.birthday_year)
-        is_before_birthday = (today.month, today.day) < (int(self.birthday_month), int(self.birthday_day))
-        elapsed_years = years_difference - int(is_before_birthday)
-        return elapsed_years
+    #
+    # @property
+    # def calculate_age(self):
+    #     today = date.today()
+    #     years_difference = today.year - int(self.birthday_year)
+    #     is_before_birthday = (today.month, today.day) < (int(self.birthday_month), int(self.birthday_day))
+    #     elapsed_years = years_difference - int(is_before_birthday)
+    #     return elapsed_years
 
     @property
     def phone_number(self):

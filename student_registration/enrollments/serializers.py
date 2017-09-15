@@ -290,11 +290,25 @@ class GradingSerializer(serializers.ModelSerializer):
 
 class LoggingProgramMoveSerializer(serializers.ModelSerializer):
 
+    def create(self, validated_data):
+        from student_registration.schools.models import EducationYear
+
+        try:
+            current_year = EducationYear.objects.get(education_year=True)
+            instance = LoggingStudentMove.objects.create(**validated_data)
+            instance.education_year = current_year
+            instance.save()
+
+        except Exception as ex:
+            raise serializers.ValidationError({'LoggingStudentMove instance': ex.message})
+
+        return instance
 
     class Meta:
         model = LoggingProgramMove
         fields = (
             'student',
+            'registry',
             'school_from',
             'school_to',
             'eligibility',

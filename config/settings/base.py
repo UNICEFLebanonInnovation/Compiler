@@ -398,7 +398,7 @@ SUIT_CONFIG = {
             'enrollments.enrollment',
             'enrollments.dropout',
             'enrollments.LoggingStudentMove',
-            'enrollments.StudentMove',
+            'enrollments.LoggingProgramMove',
         )},
         {'label': 'Students', 'icon': 'icon-th-list', 'models': (
             'students.Student',

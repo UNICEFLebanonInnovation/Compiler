@@ -163,7 +163,10 @@ class ListingView(LoginRequiredMixin,
     def get_queryset(self):
         force_default_language(self.request)
         education_year = EducationYear.objects.get(current_year=True)
-        return Enrollment.objects.exclude(moved=True).filter(education_year=education_year, school=self.request.user.school_id)
+        return Enrollment.objects.exclude(moved=True).filter(
+            education_year=education_year,
+            school=self.request.user.school_id
+        )
 
 
 class GradingView(LoginRequiredMixin,
@@ -227,8 +230,12 @@ class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
         if self.request.method in ["PATCH", "POST", "PUT"]:
             return self.queryset
         terms = self.request.GET.get('term', 0)
+        current_year = EducationYear.objects.get(current_year=True)
         if terms:
-            qs = self.queryset.exclude(enrolment__dropout_status=True).filter(school_to__isnull=True)
+            qs = self.queryset.filter(
+                school_to__isnull=True,
+                education_year=current_year
+            ).exclude(enrolment__dropout_status=True)
             for term in terms.split():
                 qs = qs.filter(
                     Q(student__first_name__contains=term) |
@@ -242,12 +249,14 @@ class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
     def post(self, request, *args, **kwargs):
         if request.POST.get('moved', 0):
             enrollment = Enrollment.objects.get(id=request.POST.get('moved', 0))
+            current_year = EducationYear.objects.get(current_year=True)
             enrollment.moved = True
             enrollment.save()
             LoggingStudentMove.objects.get_or_create(
                 enrolment_id=enrollment.id,
                 student_id=enrollment.student_id,
-                school_from_id=enrollment.school_id
+                school_from_id=enrollment.school_id,
+                education_year=current_year
             )
         return JsonResponse({'status': status.HTTP_200_OK})
 
