@@ -194,7 +194,7 @@ class ALPhaseFilter(admin.SimpleListFilter):
                 alp_enrollment__owner__in=users,
             )
         if self.value() and self.value() == 'pretest':
-            not_schools = User.objects.filter(groups__name__in=['PARTNER', 'CERD'])
+            not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER'])
             return queryset.filter(
                 alp_enrollment__owner__in=not_schools,
                 alp_enrollment__level__isnull=False,

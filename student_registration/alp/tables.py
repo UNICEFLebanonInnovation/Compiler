@@ -118,7 +118,7 @@ class PostTestTable(CommonTable):
                                         attrs={'url': '/alp/post-test-grading/'})
     current_level = tables.Column(verbose_name=_('Current Level'), accessor='registered_in_level')
     current_section = tables.Column(verbose_name=_('Current Section'), accessor='section')
-    created_by = tables.Column(verbose_name=_('Created By'), accessor='owner')
+    created_by = tables.Column(verbose_name=_('Created by'), accessor='owner')
 
     class Meta:
         model = Outreach
