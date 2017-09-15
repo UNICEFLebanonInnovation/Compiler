@@ -31,10 +31,32 @@ EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range
 EDUCATION_YEARS.append(('na', 'n/a'))
 
 YEARS = list(((str(x), x) for x in range(1990, Person.CURRENT_YEAR)))
-YEARS.append(('', _('-------')))
+YEARS.append(('', '----------'))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
-DAYS.append(('', _('------')))
+DAYS.append(('', '----------'))
+
+GENDER = (('', '----------'),('Male', _('Male')),('Female', _('Female')))
+MONTHS = (
+            ('', '----------'),
+            ('1', _('January')),
+            ('2', _('February')),
+            ('3', _('March')),
+            ('4', _('April')),
+            ('5', _('May')),
+            ('6', _('June')),
+            ('7', _('July')),
+            ('8', _('August')),
+            ('9', _('September')),
+            ('10', _('October')),
+            ('11', _('November')),
+            ('12', _('December')),
+        )
+EXAM_LANGUAGES = (
+            ('', _('Exam language')),
+            ('english', _('English')),
+            ('french', _('French'))
+        )
 
 
 class OutreachAdminForm(forms.ModelForm):
@@ -95,9 +117,7 @@ class OutreachForm(forms.ModelForm):
 
     school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
-        empty_label=_('School'),
         required=True, to_field_name='id',
-        initial=0
     )
 
     student_first_name = forms.CharField(widget=forms.TextInput, required=True)
@@ -105,11 +125,7 @@ class OutreachForm(forms.ModelForm):
     student_last_name = forms.CharField(widget=forms.TextInput, required=True)
     student_sex = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=(
-            ('', _('Gender')),
-            ('Male', _('Male')),
-            ('Female', _('Female')),
-        )
+        choices=GENDER
     )
     student_birthday_year = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -117,21 +133,7 @@ class OutreachForm(forms.ModelForm):
     )
     student_birthday_month = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=(
-            ('', _('Birthday Month')),
-            ('1', _('January')),
-            ('2', _('February')),
-            ('3', _('March')),
-            ('4', _('April')),
-            ('5', _('May')),
-            ('6', _('June')),
-            ('7', _('July')),
-            ('8', _('August')),
-            ('9', _('September')),
-            ('10', _('October')),
-            ('11', _('November')),
-            ('12', _('December')),
-        )
+        choices=MONTHS
     )
     student_birthday_day = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -140,14 +142,12 @@ class OutreachForm(forms.ModelForm):
 
     student_nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select,
-        empty_label=_('Student nationality'),
         required=True, to_field_name='id',
     )
 
     student_mother_fullname = forms.CharField(widget=forms.TextInput, required=True)
     student_mother_nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select,
-        empty_label=_('Mather nationality'),
         required=True, to_field_name='id',
     )
     student_registered_in_unhcr = forms.ChoiceField(
@@ -156,7 +156,7 @@ class OutreachForm(forms.ModelForm):
     )
     student_id_type = forms.ModelChoiceField(
         queryset=IDType.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id', empty_label=_('Student ID Type')
+        required=True, to_field_name='id'
     )
     student_id_number = forms.CharField(widget=forms.TextInput, required=True)
 
@@ -168,7 +168,6 @@ class OutreachForm(forms.ModelForm):
         super(OutreachForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
-        self.fields['school'].empty_label = _('School')
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -184,56 +183,56 @@ class OutreachForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('school', css_class='col-md-3'),
+                    Div('school', css_class='col-md-6'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('student_first_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('student_father_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('student_last_name', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('student_birthday_year', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('student_birthday_month', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('student_birthday_day', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('student_sex', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('student_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('student_mother_fullname', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('student_mother_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('student_registered_in_unhcr', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('student_id_type', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('student_id_number', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('student_phone_prefix', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('student_phone', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">17</span>'),
                     Div('student_address', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -258,7 +257,7 @@ class OutreachForm(forms.ModelForm):
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.school = request.user.school
                 instance.owner = request.user
-                instance.alp_round = ALPRound.objects.get(current_round=True)
+                instance.alp_round = ALPRound.objects.get(current_pre_test=True)
                 instance.save()
 
     class Meta:
@@ -295,13 +294,11 @@ class PreTestForm(forms.ModelForm):
 
     school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
-        empty_label=_('School'),
         required=True, to_field_name='id',
         initial=0
     )
     level = forms.ModelChoiceField(
         queryset=EducationLevel.objects.all(), widget=forms.Select,
-        empty_label=_('Entrance Test (Pre-Test)'),
         required=True, to_field_name='id',
         initial=0
     )
@@ -310,11 +307,7 @@ class PreTestForm(forms.ModelForm):
     student_last_name = forms.CharField(widget=forms.TextInput, required=True)
     student_sex = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=(
-            ('', _('Gender')),
-            ('Male', _('Male')),
-            ('Female', _('Female')),
-        )
+        choices=GENDER
     )
     exam_result_arabic = forms.FloatField(
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
@@ -323,11 +316,7 @@ class PreTestForm(forms.ModelForm):
     )
     exam_language = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=(
-            ('', _('Exam language')),
-            ('english', _('English')),
-            ('french', _('French'))
-        )
+        choices=EXAM_LANGUAGES
     )
     exam_result_language = forms.FloatField(
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
@@ -349,8 +338,6 @@ class PreTestForm(forms.ModelForm):
         super(PreTestForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
-        self.fields['level'].empty_label = _('Entrance Test (Pre-Test)')
-        self.fields['school'].empty_label = _('School')
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -429,7 +416,7 @@ class PreTestForm(forms.ModelForm):
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.owner = request.user
-                instance.alp_round = ALPRound.objects.get(current_round=True)
+                instance.alp_round = ALPRound.objects.get(current_pre_test=True)
                 instance.calculate_pre_result()
                 instance.save()
 
@@ -486,7 +473,6 @@ class RegistrationForm(forms.ModelForm):
     search_student = forms.CharField(widget=forms.TextInput, required=False)
     search_school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
-        empty_label=_('Search by school'),
         required=False, to_field_name='id',
         initial=0
     )
@@ -496,11 +482,7 @@ class RegistrationForm(forms.ModelForm):
     student_last_name = forms.CharField(widget=forms.TextInput, required=True)
     student_sex = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=(
-            ('', _('------')),
-            ('Male', _('Male')),
-            ('Female', _('Female')),
-        )
+        choices=GENDER
     )
     student_birthday_year = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -509,21 +491,7 @@ class RegistrationForm(forms.ModelForm):
     student_birthday_month = forms.ChoiceField(
         widget=forms.Select, required=True,
         initial='',
-        choices=(
-            ('', _('------')),
-            ('1', _('January')),
-            ('2', _('February')),
-            ('3', _('March')),
-            ('4', _('April')),
-            ('5', _('May')),
-            ('6', _('June')),
-            ('7', _('July')),
-            ('8', _('August')),
-            ('9', _('September')),
-            ('10', _('October')),
-            ('11', _('November')),
-            ('12', _('December')),
-        )
+        choices=MONTHS
     )
     student_birthday_day = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -532,14 +500,12 @@ class RegistrationForm(forms.ModelForm):
 
     student_nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select,
-        empty_label=_('------'),
         required=True, to_field_name='id',
     )
 
     student_mother_fullname = forms.CharField(widget=forms.TextInput, required=True)
     student_mother_nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select,
-        empty_label=_('------'),
         required=True, to_field_name='id',
     )
     student_registered_in_unhcr = forms.ChoiceField(
@@ -548,7 +514,7 @@ class RegistrationForm(forms.ModelForm):
     )
     student_id_type = forms.ModelChoiceField(
         queryset=IDType.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id', empty_label=_('------')
+        required=True, to_field_name='id'
     )
     student_id_number = forms.CharField(widget=forms.TextInput, required=True)
 
@@ -604,16 +570,6 @@ class RegistrationForm(forms.ModelForm):
         super(RegistrationForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
-
-        self.fields['registered_in_level'].empty_label = _('--------')
-        self.fields['section'].empty_label = _('--------')
-
-        self.fields['last_education_level'].empty_label = _('--------')
-        self.fields['last_education_year'].empty_label = _('--------')
-
-        self.fields['last_informal_edu_level'].empty_label = _('--------')
-        self.fields['last_informal_edu_round'].empty_label = _('--------')
-        self.fields['last_informal_edu_final_result'].empty_label = _('--------')
 
         display_registry = ''
         self.helper = FormHelper()
@@ -853,11 +809,7 @@ class PreTestGradingForm(forms.ModelForm):
     )
     exam_language = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=(
-            ('', _('Exam language')),
-            ('english', _('English')),
-            ('french', _('French'))
-        )
+        choices=EXAM_LANGUAGES
     )
     exam_result_language = forms.FloatField(
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
@@ -879,8 +831,6 @@ class PreTestGradingForm(forms.ModelForm):
         super(PreTestGradingForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance']
-
-        self.fields['level'].empty_label = _('--------')
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -959,11 +909,7 @@ class PostTestGradingForm(forms.ModelForm):
     )
     post_exam_language = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=(
-            ('', _('Exam language')),
-            ('english', _('English')),
-            ('french', _('French'))
-        )
+        choices=EXAM_LANGUAGES
     )
     post_exam_result_language = forms.FloatField(
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
