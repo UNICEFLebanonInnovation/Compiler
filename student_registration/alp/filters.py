@@ -20,6 +20,8 @@ class PreTestFilter(FilterSet):
         model = Outreach
         fields = {
             'school': ['exact'],
+            'level': ['exact'],
+            'pre_test_room': ['exact'],
             'student__first_name': ['contains'],
             'student__father_name': ['contains'],
             'student__last_name': ['contains'],
@@ -31,6 +33,7 @@ class PostTestFilter(FilterSet):
         model = Outreach
         fields = {
             'school': ['exact'],
+            'post_test_room': ['exact'],
             'registered_in_level': ['exact'],
             'student__first_name': ['contains'],
             'student__father_name': ['contains'],

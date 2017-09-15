@@ -295,13 +295,13 @@ class PreTestForm(forms.ModelForm):
     school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
-        initial=0
     )
     level = forms.ModelChoiceField(
         queryset=EducationLevel.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
-        initial=0
     )
+    pre_test_room = forms.CharField(widget=forms.TextInput, required=True)
+
     student_first_name = forms.CharField(widget=forms.TextInput, required=True)
     student_father_name = forms.CharField(widget=forms.TextInput, required=True)
     student_last_name = forms.CharField(widget=forms.TextInput, required=True)
@@ -311,7 +311,7 @@ class PreTestForm(forms.ModelForm):
     )
     exam_result_arabic = forms.FloatField(
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
+        max_value=90, min_value=0,
         required=True
     )
     exam_language = forms.ChoiceField(
@@ -320,17 +320,17 @@ class PreTestForm(forms.ModelForm):
     )
     exam_result_language = forms.FloatField(
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
+        max_value=90, min_value=0,
         required=True
     )
     exam_result_math = forms.FloatField(
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
+        max_value=90, min_value=0,
         required=True
     )
     exam_result_science = forms.FloatField(
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
+        max_value=90, min_value=0,
         required=True
     )
 
@@ -349,26 +349,35 @@ class PreTestForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Basic Data') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Entrance test') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('school', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('level', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('pre_test_room', css_class='col-md-3'),
                     css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Basic Data') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('student_first_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('student_father_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('student_last_name', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('student_sex', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -382,16 +391,16 @@ class PreTestForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('exam_result_arabic', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('exam_language', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('exam_result_language', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('exam_result_math', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('exam_result_science', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -434,6 +443,7 @@ class PreTestForm(forms.ModelForm):
             'exam_result_science',
             'level',
             'school',
+            'pre_test_room',
         )
         initial_fields = fields
 
@@ -802,6 +812,16 @@ class RegistrationForm(forms.ModelForm):
 
 class PreTestGradingForm(forms.ModelForm):
 
+    school = forms.ModelChoiceField(
+        queryset=School.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    level = forms.ModelChoiceField(
+        queryset=EducationLevel.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    pre_test_room = forms.CharField(widget=forms.TextInput, required=True)
+
     exam_result_arabic = forms.FloatField(
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         max_value=60, min_value=0,
@@ -839,11 +859,15 @@ class PreTestGradingForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Entrance Test') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Entrance test') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
+                    Div('school', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('level', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('pre_test_room', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
@@ -856,16 +880,16 @@ class PreTestGradingForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('exam_result_arabic', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('exam_language', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('exam_result_language', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('exam_result_math', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('exam_result_science', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -892,6 +916,8 @@ class PreTestGradingForm(forms.ModelForm):
             'exam_result_math',
             'exam_result_science',
             'level',
+            'school',
+            'pre_test_room',
         )
 
     class Media:
@@ -902,9 +928,10 @@ class PreTestGradingForm(forms.ModelForm):
 
 class PostTestGradingForm(forms.ModelForm):
 
+    post_test_room = forms.CharField(widget=forms.TextInput, required=True)
     post_exam_result_arabic = forms.FloatField(
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
+        max_value=20, min_value=0,
         required=True
     )
     post_exam_language = forms.ChoiceField(
@@ -913,17 +940,17 @@ class PostTestGradingForm(forms.ModelForm):
     )
     post_exam_result_language = forms.FloatField(
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
+        max_value=20, min_value=0,
         required=True
     )
     post_exam_result_math = forms.FloatField(
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
+        max_value=20, min_value=0,
         required=True
     )
     post_exam_result_science = forms.FloatField(
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
+        max_value=20, min_value=0,
         required=True
     )
 
@@ -939,21 +966,33 @@ class PostTestGradingForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Post-test') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('post_test_room', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Post-test Grades') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('post_exam_result_arabic', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('post_exam_language', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('post_exam_result_language', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('post_exam_result_math', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('post_exam_result_science', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -974,6 +1013,7 @@ class PostTestGradingForm(forms.ModelForm):
     class Meta:
         model = Outreach
         fields = (
+            'post_test_room',
             'post_exam_result_arabic',
             'post_exam_language',
             'post_exam_result_language',
