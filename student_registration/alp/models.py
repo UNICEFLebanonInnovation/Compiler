@@ -150,6 +150,16 @@ class Outreach(TimeStampedModel):
         blank=True,
         null=True,
     )
+    pre_test_room = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+    )
+    post_test_room = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+    )
     status = models.BooleanField(blank=True, default=True)
     enrolled_in_this_school = models.BooleanField(blank=True, default=True)
     not_enrolled_in_this_school = models.BooleanField(blank=True, default=False)
