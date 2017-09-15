@@ -130,7 +130,7 @@ class Person(TimeStampedModel):
         blank=True,
         null=True,
         default=0,
-        choices=((str(x), x) for x in range(1, 21))
+        choices=((str(x), x) for x in range(1, 32))
     )
     family_status = models.CharField(
         max_length=50,
