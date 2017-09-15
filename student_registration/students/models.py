@@ -98,83 +98,94 @@ class Person(TimeStampedModel):
         ('single', _('Single')),
     )
 
-    first_name = models.CharField(max_length=64, blank=True, null=True)
-    last_name = models.CharField(max_length=64, blank=True, null=True)
-    father_name = models.CharField(max_length=64, blank=True, null=True)
-    # full_name = models.CharField(max_length=225L, blank=True, null=True)
-    mother_fullname = models.CharField(max_length=64, blank=True, null=True)
+    first_name = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('First name'))
+    last_name = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('Last name'))
+    father_name = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('Father Name'))
+    mother_fullname = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('Mother fullname'))
     mother_firstname = models.CharField(max_length=64, blank=True, null=True)
     mother_lastname = models.CharField(max_length=64, blank=True, null=True)
     sex = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=GENDER
+        choices=GENDER,
+        verbose_name=_('Sex')
     )
     birthday_year = models.CharField(
         max_length=4,
         blank=True,
         null=True,
         default=0,
-        choices=((str(x), x) for x in range(1990, CURRENT_YEAR))
+        choices=((str(x), x) for x in range(1990, CURRENT_YEAR)),
+        verbose_name=_('Birthday year')
     )
     birthday_month = models.CharField(
         max_length=2,
         blank=True,
         null=True,
         default=0,
-        choices=MONTHS
+        choices=MONTHS,
+        verbose_name=_('Birthday month')
     )
     birthday_day = models.CharField(
         max_length=2,
         blank=True,
         null=True,
         default=0,
-        choices=((str(x), x) for x in range(1, 32))
+        choices=((str(x), x) for x in range(1, 32)),
+        verbose_name=_('Birthday day')
     )
     family_status = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=FAMILY_STATUS
+        choices=FAMILY_STATUS,
+        verbose_name=_('Family status')
     )
     have_children = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices((1, _("Yes")), (0, _("No")))
+        choices=Choices((1, _("Yes")), (0, _("No"))),
+        verbose_name=_('Have children')
     )
-    phone = models.CharField(max_length=64, blank=True, null=True)
-    phone_prefix = models.CharField(max_length=10, blank=True, null=True)
+    phone = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('Phone number'))
+    phone_prefix = models.CharField(max_length=10, blank=True, null=True, verbose_name=_('Phone prefix'))
     registered_in_unhcr = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices((1, _("Yes")), (0, _("No")))
+        choices=Choices((1, _("Yes")), (0, _("No"))),
+        verbose_name=_('Registered in UNHCR')
     )
-    id_number = models.CharField(max_length=45, blank=True, null=True)
+    id_number = models.CharField(max_length=45, blank=True, null=True, verbose_name=_('ID number'))
     id_type = models.ForeignKey(
         IDType,
         blank=True, null=True,
+        verbose_name=_('ID type')
     )
     nationality = models.ForeignKey(
         Nationality,
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        verbose_name=_('Nationality')
     )
     mother_nationality = models.ForeignKey(
         Nationality,
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        verbose_name=_('Mother nationality')
     )
     address = models.TextField(
         blank=True,
-        null=True
+        null=True,
+        verbose_name=_('Address')
     )
     p_code = models.CharField(
         max_length=50,
         blank=True,
         null=True,
+        verbose_name=_('P-code')
     )
     number = models.CharField(max_length=45, blank=True, null=True)
     number_part1 = models.CharField(max_length=45, blank=True, null=True)
@@ -217,14 +228,6 @@ class Person(TimeStampedModel):
         if self.birthday_year:
             return int(self.CURRENT_YEAR)-int(self.birthday_year)
         return 0
-    #
-    # @property
-    # def calculate_age(self):
-    #     today = date.today()
-    #     years_difference = today.year - int(self.birthday_year)
-    #     is_before_birthday = (today.month, today.day) < (int(self.birthday_month), int(self.birthday_day))
-    #     elapsed_years = years_difference - int(is_before_birthday)
-    #     return elapsed_years
 
     @property
     def phone_number(self):

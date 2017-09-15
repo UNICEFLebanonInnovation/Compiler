@@ -250,7 +250,7 @@ class OwnerFilter(admin.SimpleListFilter):
         human-readable name for the option that will appear
         in the right sidebar.
         """
-        return ((l.id, l.username) for l in User.objects.filter(groups__name__in=['PARTNER', 'SCHOOL', 'DIRECTOR', 'ALP_SCHOOL', 'ALP_DIRECTOR', 'CERD']))
+        return ((l.id, l.username) for l in User.objects.filter(groups__name__in=['PARTNER', 'SCHOOL', 'DIRECTOR', 'ALP_SCHOOL', 'ALP_DIRECTOR', 'TEST_MANAGER']))
 
     def queryset(self, request, queryset):
         """
@@ -279,7 +279,7 @@ class ModifiedByFilter(admin.SimpleListFilter):
         human-readable name for the option that will appear
         in the right sidebar.
         """
-        return ((l.id, l.username) for l in User.objects.filter(groups__name__in=['PARTNER', 'SCHOOL', 'DIRECTOR', 'ALP_SCHOOL', 'ALP_DIRECTOR', 'CERD']))
+        return ((l.id, l.username) for l in User.objects.filter(groups__name__in=['PARTNER', 'SCHOOL', 'DIRECTOR', 'ALP_SCHOOL', 'ALP_DIRECTOR', 'TEST_MANAGER']))
 
     def queryset(self, request, queryset):
         """
@@ -506,7 +506,7 @@ class PassedTestFilter(admin.SimpleListFilter):
         """
         if self.value() and self.value() == 'pre':
             pre_test_round = ALPRound.objects.get(current_pre_test=True)
-            not_schools = User.objects.filter(groups__name__in=['PARTNER', 'CERD'])
+            not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER'])
             return queryset.filter(
                 alp_round=pre_test_round,
                 owner__in=not_schools,
@@ -795,7 +795,7 @@ class PreTestAdmin(OutreachAdmin):
 
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_pre_test=True)
-        not_schools = User.objects.filter(groups__name__in=['PARTNER', 'CERD'])
+        not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER'])
         qs = super(PreTestAdmin, self).get_queryset(request)
         return qs.filter(
             alp_round=alp_round,

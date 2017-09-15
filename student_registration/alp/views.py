@@ -364,7 +364,7 @@ class OutreachView(LoginRequiredMixin,
                    SingleTableView,
                    RequestConfig):
 
-    group_required = [u"ALP_OUTREACH"]
+    group_required = [u"PARTNER"]
     table_class = OutreachTable
     model = Outreach
     template_name = 'alp/outreach.html'
@@ -385,7 +385,7 @@ class OutreachAddView(LoginRequiredMixin,
     template_name = 'bootstrap4/common_form.html'
     form_class = OutreachForm
     success_url = '/alp/outreach/'
-    group_required = [u"ALP_OUTREACH"]
+    group_required = [u"PARTNER"]
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -406,7 +406,7 @@ class OutreachEditView(LoginRequiredMixin,
     template_name = 'bootstrap4/common_form.html'
     form_class = OutreachForm
     success_url = '/alp/outreach/'
-    group_required = [u"ALP_OUTREACH"]
+    group_required = [u"PARTNER"]
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
