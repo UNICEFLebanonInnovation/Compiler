@@ -63,9 +63,6 @@ class AddView(LoginRequiredMixin,
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
-            # data['student_nationality'] = data['student_nationality_id']
-            # data['student_mother_nationality'] = data['student_mother_nationality_id']
-            # data['student_id_type'] = data['student_id_type_id']
         initial = data
 
         return initial

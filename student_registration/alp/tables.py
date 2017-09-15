@@ -153,7 +153,7 @@ class SchoolTable(CommonTable):
 
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
                                         template_name='django_tables2/edit_column.html',
-                                        attrs={'url': '/enrollments/edit/'})
+                                        attrs={'url': '/alp/edit/'})
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': 'api/alp/'})
