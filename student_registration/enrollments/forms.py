@@ -32,10 +32,10 @@ EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range
 EDUCATION_YEARS.append(('na', 'n/a'))
 
 YEARS = list(((str(x), x) for x in range(1930, Person.CURRENT_YEAR)))
-YEARS.append(('', _('---------')))
+YEARS.append(('', '----------'))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
-DAYS.append(('', _('--------')))
+DAYS.append(('', '----------'))
 
 
 class EnrollmentAdminForm(forms.ModelForm):
@@ -83,7 +83,6 @@ class EnrollmentForm(forms.ModelForm):
     search_student = forms.CharField(widget=forms.TextInput, required=False)
     search_school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
-        empty_label=_('-------'),
         required=False, to_field_name='id',
         initial=0
     )
@@ -106,7 +105,7 @@ class EnrollmentForm(forms.ModelForm):
     student_sex = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=(
-            ('', _('--------')),
+            ('', '----------'),
             ('Male', _('Male')),
             ('Female', _('Female')),
         )
@@ -118,7 +117,7 @@ class EnrollmentForm(forms.ModelForm):
     student_birthday_month = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=(
-            ('', _('-------')),
+            ('', '----------'),
             ('1', _('January')),
             ('2', _('February')),
             ('3', _('March')),
@@ -140,14 +139,12 @@ class EnrollmentForm(forms.ModelForm):
 
     student_nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select,
-        empty_label=_('Student nationality'),
         required=True, to_field_name='id',
     )
 
     student_mother_fullname = forms.CharField(widget=forms.TextInput, required=True)
     student_mother_nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select,
-        empty_label=_('Mather nationality'),
         required=True, to_field_name='id',
     )
     student_registered_in_unhcr = forms.ChoiceField(
@@ -156,7 +153,7 @@ class EnrollmentForm(forms.ModelForm):
     )
     student_id_type = forms.ModelChoiceField(
         queryset=IDType.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id', empty_label=_('Student ID Type')
+        required=True, to_field_name='id'
     )
     student_id_number = forms.CharField(widget=forms.TextInput, required=True)
 
@@ -235,19 +232,6 @@ class EnrollmentForm(forms.ModelForm):
         super(EnrollmentForm, self).__init__(*args, **kwargs)
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
-
-        self.fields['classroom'].empty_label = _('-------')
-        self.fields['section'].empty_label = _('-------')
-
-        self.fields['last_education_level'].empty_label = _('-------')
-        self.fields['last_school_type'].empty_label = _('-------')
-        self.fields['last_school_shift'].empty_label = _('-------')
-        self.fields['last_school'].empty_label = _('-------')
-        self.fields['last_education_year'].empty_label = _('-------')
-        self.fields['last_year_result'].empty_label = _('-------')
-        self.fields['last_informal_edu_level'].empty_label = _('-------')
-        self.fields['last_informal_edu_round'].empty_label = _('-------')
-        self.fields['last_informal_edu_final_result'].empty_label = _('-------')
 
         form_action = ''
         display_registry = ''
