@@ -25,7 +25,7 @@
                 <h2>{% trans 'ALP overall' %}
                     <select name="alp_round" id="alp_round">
                         {% for round in alp_rounds %}
-                            <option value="{{ round.id }}" {% if round.id == alp_round.id %}selected="selected"{% endif %}>{{ round }}</option>
+                            <option value="{% url 'dashboard:alp-overall' %}?alp_round={{ round.id }}" {% if round.id == alp_round.id %}selected="selected"{% endif %}>{{ round }}</option>
                         {% endfor %}
                     </select>
                 </h2>
@@ -190,6 +190,13 @@
     <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
     <script>
     $(document).ready(function(){
+
+        $('#alp_round').change(function(){
+            if($(this).val()) {
+                window.location = $(this).val();
+            }
+        });
+
         $('#export1').click(function(){
             $("#exporttable1").table2excel({
                 exclude: ".noExl",

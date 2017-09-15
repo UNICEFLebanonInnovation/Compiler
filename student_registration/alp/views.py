@@ -127,12 +127,19 @@ class AddView(LoginRequiredMixin,
 
     def get_initial(self):
         initial = super(AddView, self).get_initial()
-        data = []
+        data = {
+            'new_registry': self.request.GET.get('new_registry', '0'),
+            'student_outreached': self.request.GET.get('student_outreached', '1'),
+            'have_barcode': self.request.GET.get('have_barcode', '1')
+        }
         if self.request.GET.get('enrollment_id'):
             instance = Outreach.objects.get(id=self.request.GET.get('enrollment_id'))
             data = OutreachSerializer(instance).data
-        if self.request.GET.get('student_outreach_child'):
-            instance = Child.objects.get(id=int(self.request.GET.get('student_outreach_child')))
+            data['student_nationality'] = data['student_nationality_id']
+            data['student_mother_nationality'] = data['student_mother_nationality_id']
+            data['student_id_type'] = data['student_id_type_id']
+        if self.request.GET.get('child_id'):
+            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         initial = data
 
@@ -165,6 +172,9 @@ class EditView(LoginRequiredMixin,
             return RegistrationForm(self.request.POST, instance=instance)
         else:
             data = OutreachSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            data['student_mother_nationality'] = data['student_mother_nationality_id']
+            data['student_id_type'] = data['student_id_type_id']
             return RegistrationForm(data, instance=instance)
 
     def form_valid(self, form):
@@ -354,7 +364,7 @@ class OutreachView(LoginRequiredMixin,
                    SingleTableView,
                    RequestConfig):
 
-    group_required = [u"PARTNER"]
+    group_required = [u"ALP_OUTREACH"]
     table_class = OutreachTable
     model = Outreach
     template_name = 'alp/outreach.html'
@@ -375,7 +385,7 @@ class OutreachAddView(LoginRequiredMixin,
     template_name = 'bootstrap4/common_form.html'
     form_class = OutreachForm
     success_url = '/alp/outreach/'
-    group_required = [u"PARTNER"]
+    group_required = [u"ALP_OUTREACH"]
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -396,7 +406,7 @@ class OutreachEditView(LoginRequiredMixin,
     template_name = 'bootstrap4/common_form.html'
     form_class = OutreachForm
     success_url = '/alp/outreach/'
-    group_required = [u"PARTNER"]
+    group_required = [u"ALP_OUTREACH"]
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
