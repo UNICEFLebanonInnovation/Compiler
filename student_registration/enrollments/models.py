@@ -366,7 +366,7 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Arabic Term 2')
+        verbose_name=_('Arabic')
     )
 
     exam_result_language_cmplt = models.CharField(
@@ -374,7 +374,7 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Foreign language Term 2')
+        verbose_name=_('Foreign language')
     )
 
     exam_result_math_cmplt = models.CharField(
@@ -382,14 +382,14 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Math Term 2')
+        verbose_name=_('Math')
     )
 
     exam_total_cmplt = models.CharField(
         max_length=20,
         blank=True,
         null=True,
-        verbose_name=_('Final Grade Term 2')
+        verbose_name=_('Final Grade')
     )
 
     exam_result_final = models.CharField(

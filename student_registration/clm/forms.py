@@ -33,10 +33,10 @@ from .serializers import BLNSerializer, RSSerializer, CBECESerializer
 YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
 
 YEARS = list(((str(x), x) for x in range(1990, 2017)))
-YEARS.append(('', _('---------')))
+YEARS.append(('', '---------'))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
-DAYS.append(('', _('---------')))
+DAYS.append(('', '---------'))
 
 
 class CommonForm(forms.ModelForm):
@@ -171,14 +171,6 @@ class CommonForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)
-
-        self.fields['cycle'].empty_label = _('-----------')
-        self.fields['governorate'].empty_label = _('-----------')
-        self.fields['district'].empty_label = _('-----------')
-        self.fields['student_sex'].empty_label = _('-----------')
-        self.fields['student_nationality'].empty_label = _('-----------')
-        self.fields['disability'].empty_label = _('-----------')
-        self.fields['hh_educational_level'].empty_label = _('-----------')
 
     def save(self, request=None, instance=None, serializer=None):
         if instance:
