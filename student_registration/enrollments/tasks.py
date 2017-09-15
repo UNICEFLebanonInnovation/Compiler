@@ -29,12 +29,15 @@ def assign_section(section):
 
 @app.task
 def assign_education_year(year):
-    from student_registration.enrollments.models import Enrollment
+    from student_registration.enrollments.models import Enrollment, LoggingStudentMove
     registrations = Enrollment.objects.filter(education_year__isnull=True)
+    logging = LoggingStudentMove.objects.filter(education_year__isnull=True)
 
     print(registrations.count(), " registrations found")
+    print(logging.count(), " logging found")
     print("Start assignment")
     registrations.update(education_year_id=year)
+    logging.update(education_year_id=year)
     print("End assignment")
 
 

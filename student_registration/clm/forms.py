@@ -473,8 +473,7 @@ class BLNForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                Button('cancel', _('Cancel')),
-                HTML('<a class="btn btn-info" href="/clm/bln-list/">Back to list</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/">Back to list</a>'),
             )
         )
 
