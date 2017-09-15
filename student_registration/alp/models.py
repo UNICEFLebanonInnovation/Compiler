@@ -61,6 +61,7 @@ class Outreach(TimeStampedModel):
     )
 
     YES_NO = Choices(
+        ('na', _('n/a')),
         ('yes', _('Yes')),
         ('no', _('No'))
     )
@@ -370,7 +371,6 @@ class Outreach(TimeStampedModel):
         null=True,
         choices=Choices((1, _("Yes")), (0, _("No")))
     )
-
 
     objects = OutreachManager()
     drop_objects = OutreachDropoutManager()
