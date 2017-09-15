@@ -89,7 +89,7 @@ class EnrollmentForm(forms.ModelForm):
     school_type = forms.ChoiceField(
         widget=forms.Select, required=False,
         choices=(
-            ('', _('School type')),
+            ('', '----------'),
             ('alp', _('ALP')),
             ('2ndshift', _('2nd Shift')),
         )
@@ -842,7 +842,7 @@ class StudentMovedForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Registration') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current situation') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
