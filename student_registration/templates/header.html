@@ -30,13 +30,13 @@
         {% endif %}
         {% if request.user|has_group:"TEST_MANAGER" %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'alp:post_test' %}">{% trans "ALP Post Test" %}</a>
+                <a class="nav-link" href="{% url 'alp:post_test' %}">{% trans "ALP Post-Test" %}</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'alp:pre_test' %}">{% trans "ALP Pre Test" %}</a>
+                <a class="nav-link" href="{% url 'alp:pre_test' %}">{% trans "ALP Pre-Test" %}</a>
             </li>
         {% endif %}
-        {% if request.user|has_group:"ALP_OUTREACH" %}
+        {% if request.user|has_group:"PARTNER" %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'alp:outreach' %}">{% trans "ALP data collecting" %}</a>
               </li>

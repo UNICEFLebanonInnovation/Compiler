@@ -110,6 +110,7 @@ class Enrollment(TimeStampedModel):
         School,
         blank=False, null=True,
         related_name='ndshift_school',
+        verbose_name=_('School')
     )
     section = models.ForeignKey(
         Section,
@@ -127,11 +128,13 @@ class Enrollment(TimeStampedModel):
         EducationYear,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('Education year')
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
         related_name='+',
+        verbose_name=_('Created by')
     )
     status = models.BooleanField(blank=True, default=True)
     out_of_school_two_years = models.BooleanField(blank=True, default=False)
@@ -143,22 +146,26 @@ class Enrollment(TimeStampedModel):
         null=True,
         choices=YES_NO
     )
+
     last_education_level = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
-        related_name='+'
+        related_name='+',
+        verbose_name=_('Last Education level')
     )
     last_education_year = models.CharField(
         max_length=10,
         blank=True,
         null=True,
-        choices=EDUCATION_YEARS
+        choices=EDUCATION_YEARS,
+        verbose_name=_('Last Education year')
     )
     last_year_result = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=RESULT
+        choices=RESULT,
+        verbose_name=_('Last Education result')
     )
     result = models.CharField(
         max_length=50,
@@ -174,51 +181,60 @@ class Enrollment(TimeStampedModel):
             ('na', 'n/a'),
             ('yes', _('Yes')),
             ('no', _('No')),
-        )
+        ),
+        verbose_name=_('Participated in ALP')
     )
     last_informal_edu_level = models.ForeignKey(
         EducationLevel,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('Last informal education level')
     )
     last_informal_edu_year = models.CharField(
         max_length=10,
         blank=True,
         null=True,
-        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, CURRENT_YEAR))
+        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, CURRENT_YEAR)),
+        verbose_name=_('Last informal education year')
     )
     last_informal_edu_result = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=RESULT
+        choices=RESULT,
+        verbose_name=_('Last informal education result')
     )
     last_informal_edu_round = models.ForeignKey(
         ALPRound,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('Last informal education round'),
     )
     last_informal_edu_final_result = models.ForeignKey(
         ClassLevel,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('Last informal education status'),
     )
     last_school_type = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=SCHOOL_TYPE
+        choices=SCHOOL_TYPE,
+        verbose_name=_('Last school type'),
     )
     last_school_shift = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=SCHOOL_SHIFT
+        choices=SCHOOL_SHIFT,
+        verbose_name=_('Last school shift'),
     )
     last_school = models.ForeignKey(
         School,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('Last school'),
     )
 
     exam_result_arabic = models.CharField(
@@ -232,7 +248,7 @@ class Enrollment(TimeStampedModel):
         max_length=4,
         blank=True,
         null=True,
-        verbose_name=_('Foreign language')
+        verbose_name=_('Foreign Language')
     )
 
     exam_result_education = models.CharField(
@@ -374,7 +390,7 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         default=None,
-        verbose_name=_('Foreign language')
+        verbose_name=_('Foreign Language')
     )
 
     exam_result_math_cmplt = models.CharField(
@@ -498,27 +514,27 @@ class LoggingStudentMove(TimeStampedModel):
         blank=False,
         null=False,
         related_name='+',
-        verbose_name='Student',
+        verbose_name=_('Student'),
     )
     enrolment = models.ForeignKey(
         Enrollment,
         blank=False,
         null=False,
         related_name='+',
-        verbose_name='Enrollment',
+        verbose_name=_('Enrollment'),
     )
     school_from = models.ForeignKey(
         School,
         blank=False,
         null=False,
         related_name='+',
-        verbose_name='From school',
+        verbose_name=_('From school'),
     )
     school_to = models.ForeignKey(
         School,
         blank=True, null=True,
         related_name='+',
-        verbose_name='To school',
+        verbose_name=_('To school'),
     )
     education_year = models.ForeignKey(
         EducationYear,
