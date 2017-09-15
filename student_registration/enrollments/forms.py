@@ -8,9 +8,9 @@ from django.core.urlresolvers import reverse
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
-from bootstrap3_datetime.widgets import DateTimePicker
 
 from student_registration.students.models import (
+    Person,
     Student,
     IDType,
     Nationality,
@@ -28,10 +28,10 @@ from .serializers import EnrollmentSerializer
 
 YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
 
-EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, Person.CURRENT_YEAR))
 EDUCATION_YEARS.append(('na', 'n/a'))
 
-YEARS = list(((str(x), x) for x in range(1930, 2051)))
+YEARS = list(((str(x), x) for x in range(1930, Person.CURRENT_YEAR)))
 YEARS.append(('', _('---------')))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
@@ -454,7 +454,6 @@ class EnrollmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                # Button('cancel', _('Cancel')),
                 HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
             )
         )
@@ -581,7 +580,6 @@ class GradingTerm1Form(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    # Button('cancel', _('Cancel')),
                     HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
                 )
             )
@@ -633,7 +631,6 @@ class GradingTerm1Form(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    # Button('cancel', _('Cancel')),
                     HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
                 )
             )
@@ -691,7 +688,6 @@ class GradingTerm1Form(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    # Button('cancel', _('Cancel')),
                     HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
                 )
             )
@@ -748,7 +744,6 @@ class GradingTerm1Form(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    # Button('cancel', _('Cancel')),
                     HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
                 )
             )
@@ -824,7 +819,6 @@ class GradingTerm2Form(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                # Button('cancel', _('Cancel')),
                 HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
             )
         )
@@ -877,7 +871,6 @@ class StudentMovedForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                # Button('cancel', _('Cancel')),
                 HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
             )
         )
@@ -915,6 +908,7 @@ class LoggingStudentMoveForm(forms.ModelForm):
     class Meta:
         model = LoggingStudentMove
         fields = (
+            'education_year',
             'student',
             'school_from',
             'school_to',

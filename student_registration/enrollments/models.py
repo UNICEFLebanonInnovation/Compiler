@@ -1,10 +1,14 @@
 from __future__ import unicode_literals, absolute_import, division
 
+import datetime
+
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext as _
+
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django.conf import settings
+
 from student_registration.students.models import Student
 from student_registration.schools.models import (
     School,
@@ -72,9 +76,11 @@ class Enrollment(TimeStampedModel):
         ('alp', _('ALP')),
     )
 
-    YEARS = ((str(x), x) for x in range(2016, 2051))
+    CURRENT_YEAR = datetime.datetime.now().year
 
-    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2021))
+    YEARS = ((str(x), x) for x in range(2016, CURRENT_YEAR))
+
+    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, CURRENT_YEAR))
     EDUCATION_YEARS.append(('n/a', 'N/A'))
 
     student = models.ForeignKey(
@@ -179,7 +185,7 @@ class Enrollment(TimeStampedModel):
         max_length=10,
         blank=True,
         null=True,
-        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, CURRENT_YEAR))
     )
     last_informal_edu_result = models.CharField(
         max_length=50,
@@ -514,6 +520,11 @@ class LoggingStudentMove(TimeStampedModel):
         related_name='+',
         verbose_name='To school',
     )
+    education_year = models.ForeignKey(
+        EducationYear,
+        blank=True, null=True,
+        related_name='+',
+    )
 
     class Meta:
         ordering = ['id']
@@ -533,6 +544,11 @@ class LoggingProgramMove(TimeStampedModel):
         related_name='+',
         verbose_name='Student',
     )
+    registry = models.ForeignKey(
+        Outreach,
+        blank=True, null=True,
+        related_name='+',
+    )
     school_from = models.ForeignKey(
         School,
         blank=False,
@@ -545,6 +561,11 @@ class LoggingProgramMove(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
         verbose_name='To school',
+    )
+    education_year = models.ForeignKey(
+        EducationYear,
+        blank=True, null=True,
+        related_name='+',
     )
     eligibility = models.BooleanField(default=True)
 

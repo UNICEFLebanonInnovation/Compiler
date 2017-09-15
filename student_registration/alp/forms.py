@@ -12,6 +12,7 @@ from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HT
 from .models import Outreach, ALPRound
 from .serializers import OutreachSerializer, OutreachSmallSerializer
 from student_registration.students.models import (
+    Person,
     Student,
     Nationality,
     IDType
@@ -26,11 +27,11 @@ from student_registration.schools.models import (
 
 YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
 
-EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021))
+EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, Person.CURRENT_YEAR))
 EDUCATION_YEARS.append(('0', _('Last education year')))
 EDUCATION_YEARS.append(('n/a', 'N/A'))
 
-YEARS = list(((str(x), x) for x in range(1930, 2051)))
+YEARS = list(((str(x), x) for x in range(1930, Person.CURRENT_YEAR)))
 YEARS.append(('', _('Birthday Year')))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
@@ -244,8 +245,7 @@ class OutreachForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                Button('cancel', _('Cancel')),
-                HTML('<a class="btn btn-info" href="/alp/outreach/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/alp/outreach/">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -416,8 +416,7 @@ class PreTestForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                Button('cancel', _('Cancel')),
-                HTML('<a class="btn btn-info" href="/alp/pre-test/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/alp/pre-test/">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -787,8 +786,7 @@ class RegistrationForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                Button('cancel', _('Cancel')),
-                HTML('<a class="btn btn-info" href="/alp/list/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/alp/list/">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -929,8 +927,7 @@ class PreTestGradingForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                Button('cancel', _('Cancel')),
-                HTML('<a class="btn btn-info" href="/alp/pre-test/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/alp/pre-test/">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -1022,8 +1019,7 @@ class PostTestGradingForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                Button('cancel', _('Cancel')),
-                HTML('<a class="btn btn-info" href="/alp/post-test/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/alp/post-test/">' + _('Back to list') + '</a>'),
             )
         )
 

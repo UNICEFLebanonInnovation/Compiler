@@ -238,6 +238,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'governorate',
         'classroom',
         'section',
+        'education_year',
         'created',
         'modified',
     )
@@ -367,6 +368,7 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
     )
 
     list_display = (
+        'education_year',
         'registered',
         'student',
         'school_from',
@@ -377,6 +379,7 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
     )
 
     list_filter = (
+        'education_year',
         'school_from',
         'school_to',
     )
@@ -411,6 +414,7 @@ class LoggingProgramMoveResource(resources.ModelResource):
     class Meta:
         model = LoggingProgramMove
         fields = (
+            'education_year',
             'student__first_name',
             'student__father_name',
             'student__last_name',
@@ -428,6 +432,7 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
     fields = ()
 
     list_display = (
+        'education_year',
         'student',
         'school_from',
         'school_to',
@@ -435,6 +440,7 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
     )
 
     list_filter = (
+        'education_year',
         'school_from',
         'school_to',
         'eligibility',
