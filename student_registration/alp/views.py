@@ -324,7 +324,7 @@ class PostTestView(LoginRequiredMixin,
     def get_queryset(self):
         force_default_language(self.request)
         alp_round = ALPRound.objects.get(current_post_test=True)
-        return Outreach.objects.filter(alp_round=alp_round)
+        return Outreach.objects.filter(alp_round=alp_round, registered_in_level__isnull=False)
 
 
 class PostTestGradingView(LoginRequiredMixin,
@@ -421,6 +421,9 @@ class OutreachEditView(LoginRequiredMixin,
             return OutreachForm(self.request.POST, instance=instance)
         else:
             data = OutreachSmallSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            data['student_mother_nationality'] = data['student_mother_nationality_id']
+            data['student_id_type'] = data['student_id_type_id']
             return OutreachForm(data, instance=instance)
 
     def form_valid(self, form):
