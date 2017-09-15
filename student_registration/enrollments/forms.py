@@ -877,7 +877,7 @@ class StudentMovedForm(forms.ModelForm):
 
     def save(self, instance=None, request=None):
         instance = super(StudentMovedForm, self).save()
-
+        instance.owner = request.user
         instance.school = request.user.school
         instance.moved = False
         instance.save()

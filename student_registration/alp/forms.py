@@ -28,14 +28,13 @@ from student_registration.schools.models import (
 YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
 
 EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, Person.CURRENT_YEAR))
-EDUCATION_YEARS.append(('0', _('Last education year')))
-EDUCATION_YEARS.append(('n/a', 'N/A'))
+EDUCATION_YEARS.append(('na', 'n/a'))
 
-YEARS = list(((str(x), x) for x in range(1930, Person.CURRENT_YEAR)))
-YEARS.append(('', _('Birthday Year')))
+YEARS = list(((str(x), x) for x in range(1990, Person.CURRENT_YEAR)))
+YEARS.append(('', _('-------')))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
-DAYS.append(('', _('Birthday Day')))
+DAYS.append(('', _('------')))
 
 
 class OutreachAdminForm(forms.ModelForm):
@@ -114,7 +113,7 @@ class OutreachForm(forms.ModelForm):
     )
     student_birthday_year = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=YEARS
+        choices=YEARS, initial=''
     )
     student_birthday_month = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -151,12 +150,9 @@ class OutreachForm(forms.ModelForm):
         empty_label=_('Mather nationality'),
         required=True, to_field_name='id',
     )
-    student_registered_in_unhcr = forms.TypedChoiceField(
-        label=_("Registered in UNHCR?"),
+    student_registered_in_unhcr = forms.ChoiceField(
+        widget=forms.Select, required=True,
         choices=YES_NO_CHOICE,
-        coerce=lambda x: bool(int(x)),
-        widget=forms.RadioSelect,
-        required=True,
     )
     student_id_type = forms.ModelChoiceField(
         queryset=IDType.objects.all(), widget=forms.Select,
@@ -225,7 +221,7 @@ class OutreachForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div(InlineRadios('student_registered_in_unhcr'), css_class='col-md-3'),
+                    Div('student_registered_in_unhcr', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('student_id_type', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">1</span>'),
@@ -470,21 +466,21 @@ class RegistrationForm(forms.ModelForm):
         choices=YES_NO_CHOICE,
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
-        required=True,
+        required=True, initial=0
     )
     student_outreached = forms.TypedChoiceField(
         label=_("Student outreached?"),
         choices=YES_NO_CHOICE,
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
-        required=True,
+        required=True, initial=1
     )
     have_barcode = forms.TypedChoiceField(
         label=_("Have barcode with him?"),
         choices=YES_NO_CHOICE,
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
-        required=False,
+        required=False, initial=1
     )
     search_barcode = forms.CharField(widget=forms.TextInput, required=False)
     search_student = forms.CharField(widget=forms.TextInput, required=False)
@@ -501,19 +497,20 @@ class RegistrationForm(forms.ModelForm):
     student_sex = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=(
-            ('', _('Gender')),
+            ('', _('------')),
             ('Male', _('Male')),
             ('Female', _('Female')),
         )
     )
     student_birthday_year = forms.ChoiceField(
         widget=forms.Select, required=True,
-        choices=YEARS
+        choices=YEARS, initial=''
     )
     student_birthday_month = forms.ChoiceField(
         widget=forms.Select, required=True,
+        initial='',
         choices=(
-            ('', _('Birthday Month')),
+            ('', _('------')),
             ('1', _('January')),
             ('2', _('February')),
             ('3', _('March')),
@@ -535,26 +532,23 @@ class RegistrationForm(forms.ModelForm):
 
     student_nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select,
-        empty_label=_('Student nationality'),
+        empty_label=_('------'),
         required=True, to_field_name='id',
     )
 
     student_mother_fullname = forms.CharField(widget=forms.TextInput, required=True)
     student_mother_nationality = forms.ModelChoiceField(
         queryset=Nationality.objects.all(), widget=forms.Select,
-        empty_label=_('Mather nationality'),
+        empty_label=_('------'),
         required=True, to_field_name='id',
     )
-    student_registered_in_unhcr = forms.TypedChoiceField(
-        label=_("Registered in UNHCR?"),
+    student_registered_in_unhcr = forms.ChoiceField(
+        widget=forms.Select, required=True,
         choices=YES_NO_CHOICE,
-        coerce=lambda x: bool(int(x)),
-        widget=forms.RadioSelect,
-        required=True,
     )
     student_id_type = forms.ModelChoiceField(
         queryset=IDType.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id', empty_label=_('Student ID Type')
+        required=True, to_field_name='id', empty_label=_('------')
     )
     student_id_number = forms.CharField(widget=forms.TextInput, required=True)
 
@@ -580,12 +574,12 @@ class RegistrationForm(forms.ModelForm):
     last_education_year = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=EDUCATION_YEARS,
-        initial='0',
+        initial='na',
     )
     participated_in_alp = forms.ChoiceField(
         widget=forms.Select, required=True,
         choices=(
-            ('', _('Participated in ALP')),
+            ('na', _('n/a')),
             ('yes', _('Yes')),
             ('no', _('No')),
         )
@@ -611,19 +605,21 @@ class RegistrationForm(forms.ModelForm):
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
 
-        self.fields['registered_in_level'].empty_label = _('Current Class')
-        self.fields['section'].empty_label = _('Current Section')
+        self.fields['registered_in_level'].empty_label = _('--------')
+        self.fields['section'].empty_label = _('--------')
 
-        self.fields['last_education_level'].empty_label = _('Last education level')
-        self.fields['last_education_year'].empty_label = _('Education year')
+        self.fields['last_education_level'].empty_label = _('--------')
+        self.fields['last_education_year'].empty_label = _('--------')
 
-        self.fields['last_informal_edu_level'].empty_label = _('ALP level')
-        self.fields['last_informal_edu_round'].empty_label = _('ALP round')
-        self.fields['last_informal_edu_final_result'].empty_label = _('ALP result')
+        self.fields['last_informal_edu_level'].empty_label = _('--------')
+        self.fields['last_informal_edu_round'].empty_label = _('--------')
+        self.fields['last_informal_edu_final_result'].empty_label = _('--------')
 
+        display_registry = ''
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         if instance:
+            display_registry = ' d-none'
             self.helper.form_action = reverse('alp:edit', kwargs={'pk': instance.id})
         else:
             self.helper.form_action = reverse('alp:add')
@@ -638,13 +634,13 @@ class RegistrationForm(forms.ModelForm):
                     'enrollment_id',
                     HTML('<span class="badge badge-default">1</span>'),
                     Div(InlineRadios('new_registry'), css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div(InlineRadios('student_outreached'), css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div(InlineRadios('have_barcode'), css_class='col-md-3', css_id='have_barcode_option'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning'
+                css_class='bd-callout bd-callout-warning'+display_registry
             ),
             Fieldset(
                 None,
@@ -656,7 +652,7 @@ class RegistrationForm(forms.ModelForm):
                     Div('search_barcode', css_class='col-md-4'),
                     css_class='row',
                 ),
-                css_id='register_by_barcode', css_class='d-none'
+                css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
             ),
             Fieldset(
                 None,
@@ -667,11 +663,11 @@ class RegistrationForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('search_school', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('search_student', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning'
+                css_id='search_options', css_class='bd-callout bd-callout-warning'+display_registry
             ),
             Fieldset(
                 None,
@@ -680,56 +676,56 @@ class RegistrationForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('outreach_barcode', css_class='col-md-3'),
+                    Div('outreach_barcode', css_class='col-md-3', css_id='block_id_outreach_barcode'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('student_first_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('student_father_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('student_last_name', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('student_birthday_year', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('student_birthday_month', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('student_birthday_day', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('student_sex', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('student_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('student_mother_fullname', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('student_mother_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div(InlineRadios('student_registered_in_unhcr'), css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('student_registered_in_unhcr', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('student_id_type', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('student_id_number', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('student_phone_prefix', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('student_phone', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('student_address', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -743,7 +739,7 @@ class RegistrationForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('registered_in_level', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('section', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -757,7 +753,7 @@ class RegistrationForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('last_education_level', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('last_education_year', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -771,14 +767,14 @@ class RegistrationForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('participated_in_alp', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('last_informal_edu_level', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('last_informal_edu_round', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('last_informal_edu_final_result', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -884,7 +880,7 @@ class PreTestGradingForm(forms.ModelForm):
 
         instance = kwargs['instance']
 
-        self.fields['level'].empty_label = _('Level')
+        self.fields['level'].empty_label = _('--------')
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
