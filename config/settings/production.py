@@ -117,7 +117,7 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL',
                          default='Back To School 2017 <noreply@monitoring.uniceflebanon.org>')
 EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
 MAILGUN_ACCESS_KEY = env('MAILGUN_API_KEY', default='NO_MAILGUN_API_KEY')
-MAILGUN_SERVER_NAME = env('MAILGUN_SERVER_NAME', default='NO_MAILGUN_SERVER_NAME')
+MAILGUN_SERVER_NAME = env('MAILGUN_DOMAIN', default='NO_MAILGUN_SERVER_NAME')
 EMAIL_SUBJECT_PREFIX = env('EMAIL_SUBJECT_PREFIX', default='[Student Registration] ')
 SERVER_EMAIL = env('SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
 EMAIL_HOST = env('MAILGUN_SMTP_SERVER', default='localhost')
