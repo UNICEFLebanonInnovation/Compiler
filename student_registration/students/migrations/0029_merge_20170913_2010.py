@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('students', '0028_auto_20170828_0947'),
-        ('students', '0023_student_hh_barcode'),
+        ('students', '0023_auto_20170708_1557'),
     ]
 
     operations = [
