@@ -22,6 +22,8 @@ RUN python manage.py collectstatic --noinput --settings=config.settings.test
 # uWSGI will listen on this port
 EXPOSE 2222 80
 
+RUN service ssh start
+
 # Start
 ENTRYPOINT ["/code/compose/django/entrypoint.sh"]
 
