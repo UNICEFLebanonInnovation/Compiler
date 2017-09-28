@@ -19,7 +19,7 @@ services:
       dockerfile: ./compose/django/Dockerfile
       args:
         - REQUIREMENTS_FILE=local.txt
-    command: /start-dev.sh
+    command: ./compose/django/start-dev.sh
     depends_on:
       - postgres
     environment:
@@ -28,6 +28,7 @@ services:
       - USE_DOCKER=yes
     volumes:
       - .:/code
+      - .:/home/LogFiles
     ports:
       - "8000:8000"
 
@@ -38,7 +39,7 @@ services:
       dockerfile: ./compose/django/Dockerfile
       args:
         - REQUIREMENTS_FILE=local.txt
-    command: /start-dev.sh
+    command: ./compose/django/start-dev.sh
     depends_on:
       - postgres
     environment:
@@ -46,6 +47,7 @@ services:
       - DATABASE_URL=postgres://student_registration:postgres@postgres:5432/student_registration
     volumes:
       - .:/code
+      - .:/home/LogFiles
 
 
 
