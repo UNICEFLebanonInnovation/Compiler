@@ -25,8 +25,8 @@ from .tables import BootstrapTable, EnrollmentTable
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.schools.models import ClassRoom
-from .models import Enrollment, LoggingStudentMove, EducationYear, LoggingProgramMove
-from .forms import EnrollmentForm, GradingTerm1Form, GradingTerm2Form, StudentMovedForm
+from .models import Enrollment, EnrollmentGrading, LoggingStudentMove, EducationYear, LoggingProgramMove
+from .forms import EnrollmentForm, GradingTermForm, GradingIncompleteForm, StudentMovedForm
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer, LoggingProgramMoveSerializer
 from student_registration.users.utils import force_default_language
 
@@ -171,7 +171,7 @@ class GradingView(LoginRequiredMixin,
                   FormView):
 
     template_name = 'enrollments/grading.html'
-    form_class = GradingTerm1Form
+    form_class = GradingTermForm
     success_url = '/enrollments/list/'
     group_required = [u"ENROL_GRADING"]
 
@@ -183,20 +183,20 @@ class GradingView(LoginRequiredMixin,
         return super(GradingView, self).get_context_data(**kwargs)
 
     def get_form_class(self):
-        if int(self.kwargs['term']) == 2:
-            return GradingTerm2Form
-        return GradingTerm1Form
+        if int(self.kwargs['term']) == 4:
+            return GradingIncompleteForm
+        return GradingTermForm
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        instance = EnrollmentGrading.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance)
         else:
             return form_class(instance=instance)
 
     def form_valid(self, form):
-        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        instance = EnrollmentGrading.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(GradingView, self).form_valid(form)
 

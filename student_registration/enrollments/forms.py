@@ -25,6 +25,7 @@ from student_registration.schools.models import (
 from student_registration.alp.models import ALPRound
 from .models import Enrollment, LoggingStudentMove, EducationYear
 from .serializers import EnrollmentSerializer
+from .utils import initiate_grading
 
 YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
 
@@ -460,6 +461,10 @@ class EnrollmentForm(forms.ModelForm):
                 instance.owner = request.user
                 instance.education_year = EducationYear.objects.get(current_year=True)
                 instance.save()
+                initiate_grading(enrollment=instance, term=1)
+                initiate_grading(enrollment=instance, term=2)
+                initiate_grading(enrollment=instance, term=3)
+                initiate_grading(enrollment=instance, term=4)
 
     class Meta:
         model = Enrollment
@@ -508,17 +513,17 @@ class EnrollmentForm(forms.ModelForm):
         )
 
 
-class GradingTerm1Form(forms.ModelForm):
+class GradingTermForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(GradingTerm1Form, self).__init__(*args, **kwargs)
+        super(GradingTermForm, self).__init__(*args, **kwargs)
         instance = kwargs['instance']
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
-        self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': 1})
-
-        if instance.classroom_id in [2, 3, 4]:
+        self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': instance.exam_term})
+        enrollment_classromm = instance.enrollment.classroom_id
+        if enrollment_classromm in [2, 3, 4]:
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -568,7 +573,7 @@ class GradingTerm1Form(forms.ModelForm):
                 )
             )
 
-        if instance.classroom_id in [5, 6, 7]:
+        if enrollment_classromm in [5, 6, 7]:
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -619,7 +624,7 @@ class GradingTerm1Form(forms.ModelForm):
                 )
             )
 
-        if instance.classroom_id in [8, 9, 10]:
+        if enrollment_classromm in [8, 9, 10]:
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -676,7 +681,7 @@ class GradingTerm1Form(forms.ModelForm):
                 )
             )
 
-        if instance.classroom_id == 1:
+        if enrollment_classromm == 1:
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -733,7 +738,7 @@ class GradingTerm1Form(forms.ModelForm):
             )
 
     def save(self, instance=None, request=None):
-        instance = super(GradingTerm1Form, self).save()
+        instance = super(GradingTermForm, self).save()
 
     class Meta:
         model = Enrollment
@@ -765,16 +770,17 @@ class GradingTerm1Form(forms.ModelForm):
         js = ()
 
 
-class GradingTerm2Form(forms.ModelForm):
+class GradingIncompleteForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(GradingTerm2Form, self).__init__(*args, **kwargs)
+        super(GradingIncompleteForm, self).__init__(*args, **kwargs)
         instance = kwargs['instance']
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
-        self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': 2})
-        if instance.classroom == 1:
+        self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': 4})
+        enrollment_classromm = instance.enrollment.classroom_id
+        if enrollment_classromm == 1:
             pass
 
         self.helper.layout = Layout(
@@ -785,18 +791,18 @@ class GradingTerm2Form(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_arabic_cmplt', css_class='col-md-3'),
+                    Div('exam_result_arabic', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('exam_result_language_cmplt', css_class='col-md-3'),
+                    Div('exam_result_language', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('exam_result_math_cmplt', css_class='col-md-3'),
+                    Div('exam_result_math', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('exam_total_cmplt', css_class='col-md-3'),
+                    Div('exam_total', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('exam_result_final', css_class='col-md-3'),
+                    Div('exam_result', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
@@ -808,16 +814,16 @@ class GradingTerm2Form(forms.ModelForm):
         )
 
     def save(self, instance=None, request=None):
-        instance = super(GradingTerm2Form, self).save()
+        instance = super(GradingIncompleteForm, self).save()
 
     class Meta:
         model = Enrollment
         fields = (
-            'exam_result_arabic_cmplt',
-            'exam_result_language_cmplt',
-            'exam_result_math_cmplt',
-            'exam_total_cmplt',
-            'exam_result_final',
+            'exam_result_arabic',
+            'exam_result_language',
+            'exam_result_math',
+            'exam_total',
+            'exam_result',
         )
         initial_fields = fields
         widgets = {}
