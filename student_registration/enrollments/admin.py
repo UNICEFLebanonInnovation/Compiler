@@ -455,6 +455,6 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
 
 admin.site.register(Enrollment, EnrollmentAdmin)
 admin.site.register(Dropout, DropoutAdmin)
-admin.site.register(StudentMove, StudentMoveAdmin)
+# admin.site.register(StudentMove, StudentMoveAdmin)
 admin.site.register(LoggingStudentMove, LoggingStudentMoveAdmin)
 admin.site.register(LoggingProgramMove, LoggingProgramMoveAdmin)

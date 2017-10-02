@@ -27,9 +27,9 @@ from student_registration.schools.views import (
     ClassRoomViewSet,
     SectionViewSet,
 )
-from student_registration.winterization.views import (
-    BeneficiaryViewSet
-)
+# from student_registration.winterization.views import (
+#     BeneficiaryViewSet
+# )
 from student_registration.users.views import LoginRedirectView, PasswordChangeView, PasswordChangeDoneView
 from student_registration.enrollments.views import EnrollmentViewSet, LoggingStudentMoveViewSet, LoggingProgramMoveViewSet
 from student_registration.outreach.views import HouseHoldViewSet, ChildViewSet
@@ -40,7 +40,7 @@ api.register(r'enrollments', EnrollmentViewSet, base_name='enrollments')
 api.register(r'logging-student-move', LoggingStudentMoveViewSet, base_name='logging_student_move')
 api.register(r'logging-student-program-move', LoggingProgramMoveViewSet, base_name='logging_student_ptogram_move')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
-api.register(r'beneficiary', BeneficiaryViewSet, base_name='beneficiary')
+# api.register(r'beneficiary', BeneficiaryViewSet, base_name='beneficiary')
 
 api.register(r'students', StudentViewSet, base_name='students')
 api.register(r'students-search', StudentSearchViewSet, base_name='students-search')
@@ -79,7 +79,7 @@ urlpatterns = [
     url(r'^dashboard/', include('student_registration.dashboard.urls', namespace='dashboard')),
 
     url(r'helpdesk/', include('helpdesk.urls')),
-    url(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
+    # url(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/docs/', schema_view),
