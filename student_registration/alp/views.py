@@ -211,7 +211,7 @@ class PreTestView(LoginRequiredMixin,
                   SingleTableView,
                   RequestConfig):
 
-    group_required = [u"TEST_MANAGER"]
+    group_required = [u"TEST_MANAGER", u"CERD"]
     table_class = PreTestTable
     model = Outreach
     template_name = 'alp/pre_test.html'
@@ -232,7 +232,7 @@ class PreTestAddView(LoginRequiredMixin,
     template_name = 'bootstrap4/common_form.html'
     form_class = PreTestForm
     success_url = '/alp/pre-test/'
-    group_required = [u"TEST_MANAGER"]
+    group_required = [u"TEST_MANAGER", u"CERD"]
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -253,7 +253,7 @@ class PreTestEditView(LoginRequiredMixin,
     template_name = 'bootstrap4/common_form.html'
     form_class = PreTestForm
     success_url = '/alp/pre-test/'
-    group_required = [u"TEST_MANAGER"]
+    group_required = [u"TEST_MANAGER", u"CERD"]
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -283,7 +283,7 @@ class PreTestGradingView(LoginRequiredMixin,
     template_name = 'alp/test_grading.html'
     form_class = PreTestGradingForm
     success_url = '/alp/pre-test/'
-    group_required = [u"TEST_MANAGER"]
+    group_required = [u"TEST_MANAGER", u"CERD"]
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -313,7 +313,7 @@ class PostTestView(LoginRequiredMixin,
                    SingleTableView,
                    RequestConfig):
 
-    group_required = [u"TEST_MANAGER"]
+    group_required = [u"TEST_MANAGER", u"CERD"]
     table_class = PostTestTable
     model = Outreach
     template_name = 'alp/post_test.html'
@@ -334,7 +334,7 @@ class PostTestGradingView(LoginRequiredMixin,
     template_name = 'alp/test_grading.html'
     form_class = PostTestGradingForm
     success_url = '/alp/post-test/'
-    group_required = [u"TEST_MANAGER"]
+    group_required = [u"TEST_MANAGER", u"CERD"]
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
