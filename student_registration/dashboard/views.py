@@ -163,7 +163,7 @@ class RegistrationsALPOverallView(LoginRequiredMixin,
         partners = User.objects.filter(groups__name__in=['PARTNER'])
         outreached = self.model.objects.filter(alp_round=alp_round, owner__in=partners)
 
-        not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER'])
+        not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER', 'CERD'])
         pretested = self.model.objects.filter(
             alp_round=alp_round,
             owner__in=not_schools,
@@ -312,7 +312,7 @@ class RegistrationsALPPreTestView(LoginRequiredMixin,
         governorates = Location.objects.exclude(parent__isnull=False)
 
         alp_round = ALPRound.objects.get(current_pre_test=True)
-        not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER'])
+        not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER', 'CERD'])
         self.queryset = self.queryset.filter(
             alp_round=alp_round,
             owner__in=not_schools,
