@@ -22,10 +22,14 @@ class EnrollmentTable(tables.Table):
                                           attrs={'url': '/api/enrollments/'})
     moved_column = tables.TemplateColumn(verbose_name='Student moved',
                                          template_name='django_tables2/moved_column.html')
-    grading_term1 = tables.TemplateColumn(verbose_name='Grading Term 1',
+    grading_term1 = tables.TemplateColumn(verbose_name='Term 1',
                                          template_name='django_tables2/grading_term1_column.html')
-    grading_term2 = tables.TemplateColumn(verbose_name='Grading Term 2',
+    grading_term2 = tables.TemplateColumn(verbose_name='Term 2',
                                          template_name='django_tables2/grading_term2_column.html')
+    grading_final = tables.TemplateColumn(verbose_name='Final',
+                                         template_name='django_tables2/grading_final_column.html')
+    grading_incomplete = tables.TemplateColumn(verbose_name='Incomplete?',
+                                         template_name='django_tables2/grading_incomplete_column.html')
 
     student_age = tables.Column(verbose_name='Age', accessor='student.age')
     student_birthday = tables.Column(verbose_name='Birthday', accessor='student.birthday')
@@ -42,6 +46,8 @@ class EnrollmentTable(tables.Table):
             'moved_column',
             'grading_term1',
             'grading_term2',
+            'grading_final',
+            'grading_incomplete',
             'student.first_name',
             'student.father_name',
             'student.last_name',
