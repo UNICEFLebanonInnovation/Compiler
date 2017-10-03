@@ -37,6 +37,11 @@ urlpatterns = [
         name='export'
     ),
     url(
+        regex=r'^export-grading/$',
+        view=views.ExportGradingViewSet.as_view(),
+        name='export_grading'
+    ),
+    url(
         regex=r'^enrollment-export-by-school/$',
         view=views.ExportBySchoolView.as_view(),
         name='enrollment_export_by_school'

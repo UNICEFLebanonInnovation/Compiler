@@ -24,7 +24,7 @@ class OutreachSerializer(serializers.ModelSerializer):
     student_birthday_month = serializers.CharField(source='student.birthday_month')
     student_birthday_day = serializers.CharField(source='student.birthday_day')
     student_birthday = serializers.CharField(source='student.birthday', read_only=True)
-    student_age = serializers.CharField(source='student.calc_age', read_only=True)
+    student_age = serializers.CharField(source='student.age', read_only=True)
     student_phone = serializers.CharField(source='student.phone', required=False)
     student_phone_prefix = serializers.CharField(source='student.phone_prefix', required=False)
     student_id_number = serializers.CharField(source='student.id_number')
