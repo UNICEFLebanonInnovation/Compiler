@@ -160,7 +160,7 @@ def generate_2ndshift_report(school=0, location=0, email=None, user=None):
             line.student.mother_fullname,
             line.student.nationality_name(),
 
-            line.student.calc_age,
+            line.student.age,
             line.student.birthday,
             line.student.birthday_year,
             line.student.birthday_month,

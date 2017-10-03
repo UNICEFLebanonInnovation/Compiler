@@ -524,7 +524,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 line.exam_total,
 
                 line.student.nationality_name(),
-                line.student.calc_age,
+                line.student.age,
                 line.student.birthday,
                 _(line.student.sex),
                 line.student.__unicode__(),
