@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-03 16:09+0300\n"
+"POT-Creation-Date: 2017-10-03 17:20+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -125,12 +125,12 @@ msgstr ""
 #: student_registration/alp/forms.py:750 student_registration/alp/forms.py:899
 #: student_registration/alp/forms.py:1002 student_registration/clm/forms.py:467
 #: student_registration/enrollments/forms.py:441
-#: student_registration/enrollments/forms.py:571
-#: student_registration/enrollments/forms.py:622
-#: student_registration/enrollments/forms.py:679
-#: student_registration/enrollments/forms.py:735
-#: student_registration/enrollments/forms.py:811
-#: student_registration/enrollments/forms.py:863
+#: student_registration/enrollments/forms.py:569
+#: student_registration/enrollments/forms.py:617
+#: student_registration/enrollments/forms.py:671
+#: student_registration/enrollments/forms.py:724
+#: student_registration/enrollments/forms.py:797
+#: student_registration/enrollments/forms.py:849
 #: student_registration/schools/forms.py:66
 #: student_registration/templates/attendances/school.html:169
 #: student_registration/templates/attendances/school.html:284
@@ -141,12 +141,12 @@ msgstr ""
 #: student_registration/alp/forms.py:751 student_registration/alp/forms.py:900
 #: student_registration/alp/forms.py:1003
 #: student_registration/enrollments/forms.py:442
-#: student_registration/enrollments/forms.py:572
-#: student_registration/enrollments/forms.py:623
-#: student_registration/enrollments/forms.py:680
-#: student_registration/enrollments/forms.py:736
-#: student_registration/enrollments/forms.py:812
-#: student_registration/enrollments/forms.py:864
+#: student_registration/enrollments/forms.py:570
+#: student_registration/enrollments/forms.py:618
+#: student_registration/enrollments/forms.py:672
+#: student_registration/enrollments/forms.py:725
+#: student_registration/enrollments/forms.py:798
+#: student_registration/enrollments/forms.py:850
 msgid "Back to list"
 msgstr ""
 
@@ -241,7 +241,7 @@ msgstr ""
 
 #: student_registration/alp/forms.py:703
 #: student_registration/enrollments/forms.py:383
-#: student_registration/enrollments/forms.py:851
+#: student_registration/enrollments/forms.py:837
 #: student_registration/templates/alp/test_grading.html:25
 #: student_registration/templates/enrollments/grading.html:24
 msgid "Current situation"
@@ -858,17 +858,6 @@ msgstr ""
 
 #: student_registration/enrollments/forms.py:95
 msgid "2nd Shift"
-msgstr ""
-
-#: student_registration/enrollments/forms.py:531
-#: student_registration/enrollments/forms.py:581
-#: student_registration/enrollments/forms.py:632
-#: student_registration/enrollments/forms.py:689
-msgid "Grading Term 1"
-msgstr ""
-
-#: student_registration/enrollments/forms.py:790
-msgid "Grading Term 2"
 msgstr ""
 
 #: student_registration/enrollments/models.py:41
@@ -1826,9 +1815,20 @@ msgstr ""
 msgid "Moved?"
 msgstr ""
 
-#: student_registration/templates/enrollments/grading.html:29
-#: student_registration/templates/enrollments/moved.html:40
-msgid "Previous situation"
+#: student_registration/templates/enrollments/grading.html:35
+msgid "Grading Term 1"
+msgstr ""
+
+#: student_registration/templates/enrollments/grading.html:37
+msgid "Grading Term 2"
+msgstr ""
+
+#: student_registration/templates/enrollments/grading.html:39
+msgid "Grading Final"
+msgstr ""
+
+#: student_registration/templates/enrollments/grading.html:41
+msgid "Grading Incomplete"
 msgstr ""
 
 #: student_registration/templates/enrollments/list.html:34
@@ -1861,6 +1861,10 @@ msgstr ""
 
 #: student_registration/templates/enrollments/moved.html:36
 msgid "Previous school"
+msgstr ""
+
+#: student_registration/templates/enrollments/moved.html:40
+msgid "Previous situation"
 msgstr ""
 
 #: student_registration/templates/header.html:11
