@@ -315,41 +315,16 @@ class ExportViewSet(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
         queryset = self.queryset
         school = request.GET.get('school', 0)
-        gov = request.GET.get('gov', 0)
 
         if self.request.user.school_id:
             school = self.request.user.school_id
         if school:
             queryset = queryset.filter(school_id=school)
-        elif gov:
-            queryset = queryset.filter(school__location__parent__id=gov)
         else:
             queryset = []
 
         data = tablib.Dataset()
         data.headers = [
-            _('Student status'),
-            _('Final Grade'),
-
-            _('Linguistic field/Arabic'),
-            _('Sociology field'),
-            _('Physical field'),
-            _('Artistic field'),
-            _('Linguistic field/Foreign language'),
-            _('Scientific domain/Mathematics'),
-            _('Scientific domain/Sciences'),
-
-            _('Biology'),
-            _('Chemistry'),
-            _('Physic'),
-            _('Science'),
-            _('Math'),
-            _('History'),
-            _('Geography'),
-            _('Education'),
-            _('Foreign language'),
-            _('Arabic'),
-
             _('ALP result'),
             _('ALP round'),
             _('ALP level'),
@@ -382,7 +357,6 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             _('School number'),
             _('District'),
             _('Governorate'),
-            'id'
         ]
 
         content = []
@@ -390,29 +364,6 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             if not line.student or not line.school:
                 continue
             content = [
-
-                line.exam_result,
-                line.exam_total,
-
-                line.exam_result_linguistic_ar,
-                line.exam_result_sociology,
-                line.exam_result_physical,
-                line.exam_result_artistic,
-                line.exam_result_linguistic_en,
-                line.exam_result_mathematics,
-                line.exam_result_sciences,
-
-                line.exam_result_bio,
-                line.exam_result_chemistry,
-                line.exam_result_physic,
-                line.exam_result_science,
-                line.exam_result_math,
-                line.exam_result_history,
-                line.exam_result_geo,
-                line.exam_result_education,
-                line.exam_result_language,
-                line.exam_result_arabic,
-
                 line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
                 line.last_informal_edu_round.name if line.last_informal_edu_round else '',
                 line.last_informal_edu_level.name if line.last_informal_edu_level else '',
@@ -440,7 +391,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 line.student.mother_fullname,
                 line.student.nationality_name(),
 
-                line.student.calc_age,
+                line.student.age,
                 line.student.birthday,
                 line.student.birthday_year,
                 line.student.birthday_month,
@@ -452,7 +403,6 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 line.school.number,
                 line.school.location.name,
                 line.school.location.parent.name,
-                line.id
             ]
             data.append(content)
 
@@ -462,6 +412,120 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             content_type='application/vnd.ms-excel',
         )
         response['Content-Disposition'] = 'attachment; filename=registration_list.xls'
+        return response
+
+
+class ExportGradingViewSet(LoginRequiredMixin, ListView):
+
+    model = EnrollmentGrading
+    queryset = EnrollmentGrading.objects.all()
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return self.queryset.filter(owner=self.request.user)
+        return self.queryset
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.queryset
+        school = request.GET.get('school', 0)
+
+        if self.request.user.school_id:
+            school = self.request.user.school_id
+        if school:
+            queryset = queryset.filter(enrollment__school_id=school)
+        else:
+            queryset = []
+
+        data = tablib.Dataset()
+        data.headers = [
+            _('Student status'),
+            _('Final Grade'),
+            _('Term'),
+
+            _('Linguistic field/Arabic'),
+            _('Sociology field'),
+            _('Physical field'),
+            _('Artistic field'),
+            _('Linguistic field/Foreign language'),
+            _('Scientific domain/Mathematics'),
+            _('Scientific domain/Sciences'),
+
+            _('Biology'),
+            _('Chemistry'),
+            _('Physic'),
+            _('Science'),
+            _('Math'),
+            _('History'),
+            _('Geography'),
+            _('Education'),
+            _('Foreign language'),
+            _('Arabic'),
+
+            _('Current Section'),
+            _('Current Class'),
+
+            _('Mother fullname'),
+            _('Student nationality'),
+            _('Sex'),
+            _('Student fullname'),
+            _('School'),
+            _('School number'),
+            _('District'),
+            _('Governorate'),
+        ]
+
+        content = []
+        for line in queryset:
+            enrollment = line.enrollment
+            if not enrollment.student or not enrollment.school:
+                continue
+            content = [
+
+                line.exam_result,
+                line.exam_total,
+                line.exam_term,
+
+                line.exam_result_linguistic_ar,
+                line.exam_result_sociology,
+                line.exam_result_physical,
+                line.exam_result_artistic,
+                line.exam_result_linguistic_en,
+                line.exam_result_mathematics,
+                line.exam_result_sciences,
+
+                line.exam_result_bio,
+                line.exam_result_chemistry,
+                line.exam_result_physic,
+                line.exam_result_science,
+                line.exam_result_math,
+                line.exam_result_history,
+                line.exam_result_geo,
+                line.exam_result_education,
+                line.exam_result_language,
+                line.exam_result_arabic,
+
+                enrollment.section.name if enrollment.section else '',
+                enrollment.classroom.name if enrollment.classroom else '',
+
+                enrollment.student.mother_fullname,
+                enrollment.student.nationality_name(),
+
+                _(enrollment.student.sex) if enrollment.student.sex else '',
+                enrollment.student.__unicode__(),
+
+                enrollment.school.name,
+                enrollment.school.number,
+                enrollment.school.location.name,
+                enrollment.school.location.parent.name,
+            ]
+            data.append(content)
+
+        file_format = base_formats.XLS()
+        response = HttpResponse(
+            file_format.export_data(data),
+            content_type='application/vnd.ms-excel',
+        )
+        response['Content-Disposition'] = 'attachment; filename=grading_terms.xls'
         return response
 
 

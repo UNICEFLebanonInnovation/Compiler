@@ -8,7 +8,13 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import *
 import datetime
 
-from .models import Enrollment, StudentMove, LoggingStudentMove, LoggingProgramMove
+from .models import (
+    Enrollment,
+    EnrollmentGrading,
+    StudentMove,
+    LoggingStudentMove,
+    LoggingProgramMove
+)
 from .forms import EnrollmentAdminForm, LoggingStudentMoveForm
 from student_registration.schools.models import (
     School,
@@ -67,25 +73,25 @@ class EnrollmentResource(resources.ModelResource):
             'last_informal_edu_round__name',
             'last_informal_edu_level__name',
             'last_informal_edu_final_result__name',
-            'exam_result_arabic',
-            'exam_result_language',
-            'exam_result_education',
-            'exam_result_geo',
-            'exam_result_history',
-            'exam_result_math',
-            'exam_result_science',
-            'exam_result_physic',
-            'exam_result_chemistry',
-            'exam_result_bio',
-            'exam_result_linguistic_ar',
-            'exam_result_sociology',
-            'exam_result_physical',
-            'exam_result_artistic',
-            'exam_result_linguistic_en',
-            'exam_result_mathematics',
-            'exam_result_sciences',
-            'exam_total',
-            'exam_result',
+            # 'exam_result_arabic',
+            # 'exam_result_language',
+            # 'exam_result_education',
+            # 'exam_result_geo',
+            # 'exam_result_history',
+            # 'exam_result_math',
+            # 'exam_result_science',
+            # 'exam_result_physic',
+            # 'exam_result_chemistry',
+            # 'exam_result_bio',
+            # 'exam_result_linguistic_ar',
+            # 'exam_result_sociology',
+            # 'exam_result_physical',
+            # 'exam_result_artistic',
+            # 'exam_result_linguistic_en',
+            # 'exam_result_mathematics',
+            # 'exam_result_sciences',
+            # 'exam_total',
+            # 'exam_result',
         )
         export_order = fields
 
@@ -204,25 +210,25 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_informal_edu_level',
         'last_informal_edu_round',
         'last_informal_edu_final_result',
-        'exam_result_arabic',
-        'exam_result_language',
-        'exam_result_education',
-        'exam_result_geo',
-        'exam_result_history',
-        'exam_result_math',
-        'exam_result_science',
-        'exam_result_physic',
-        'exam_result_chemistry',
-        'exam_result_bio',
-        'exam_result_linguistic_ar',
-        'exam_result_sociology',
-        'exam_result_physical',
-        'exam_result_artistic',
-        'exam_result_linguistic_en',
-        'exam_result_mathematics',
-        'exam_result_sciences',
-        'exam_total',
-        'exam_result',
+        # 'exam_result_arabic',
+        # 'exam_result_language',
+        # 'exam_result_education',
+        # 'exam_result_geo',
+        # 'exam_result_history',
+        # 'exam_result_math',
+        # 'exam_result_science',
+        # 'exam_result_physic',
+        # 'exam_result_chemistry',
+        # 'exam_result_bio',
+        # 'exam_result_linguistic_ar',
+        # 'exam_result_sociology',
+        # 'exam_result_physical',
+        # 'exam_result_artistic',
+        # 'exam_result_linguistic_en',
+        # 'exam_result_mathematics',
+        # 'exam_result_sciences',
+        # 'exam_total',
+        # 'exam_result',
         'deleted',
         'moved',
         'dropout_status',
@@ -265,7 +271,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_informal_edu_final_result',
         FromAgeFilter,
         ToAgeFilter,
-        'exam_result',
+        # 'exam_result',
         'created',
         'modified',
     )
@@ -453,8 +459,101 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
     )
 
 
+class GradingResource(resources.ModelResource):
+
+    class Meta:
+        model = EnrollmentGrading
+        fields = (
+            'enrollment',
+            'exam_term',
+            'exam_result_arabic',
+            'exam_result_language',
+            'exam_result_education',
+            'exam_result_geo',
+            'exam_result_history',
+            'exam_result_math',
+            'exam_result_science',
+            'exam_result_physic',
+            'exam_result_chemistry',
+            'exam_result_bio',
+            'exam_result_linguistic_ar',
+            'exam_result_sociology',
+            'exam_result_physical',
+            'exam_result_artistic',
+            'exam_result_linguistic_en',
+            'exam_result_mathematics',
+            'exam_result_sciences',
+            'exam_total',
+            'exam_result',
+        )
+        export_order = fields
+
+
+class GradingAdmin(ImportExportModelAdmin):
+    resource_class = GradingResource
+    fields = (
+        'exam_term',
+        'exam_result_arabic',
+        'exam_result_language',
+        'exam_result_education',
+        'exam_result_geo',
+        'exam_result_history',
+        'exam_result_math',
+        'exam_result_science',
+        'exam_result_physic',
+        'exam_result_chemistry',
+        'exam_result_bio',
+        'exam_result_linguistic_ar',
+        'exam_result_sociology',
+        'exam_result_physical',
+        'exam_result_artistic',
+        'exam_result_linguistic_en',
+        'exam_result_mathematics',
+        'exam_result_sciences',
+        'exam_total',
+        'exam_result',
+    )
+
+    list_display = (
+        'enrollment',
+        'exam_term',
+        'exam_result_arabic',
+        'exam_result_language',
+        'exam_result_education',
+        'exam_result_geo',
+        'exam_result_history',
+        'exam_result_math',
+        'exam_result_science',
+        'exam_result_physic',
+        'exam_result_chemistry',
+        'exam_result_bio',
+        'exam_result_linguistic_ar',
+        'exam_result_sociology',
+        'exam_result_physical',
+        'exam_result_artistic',
+        'exam_result_linguistic_en',
+        'exam_result_mathematics',
+        'exam_result_sciences',
+        'exam_total',
+        'exam_result',
+    )
+
+    list_filter = (
+        'exam_term',
+        'enrollment__school',
+        'enrollment__education_year'
+    )
+
+    search_fields = (
+        'enrollment__student__first_name',
+        'enrollment__student__father_name',
+        'enrollment__student__last_name',
+    )
+
+
 admin.site.register(Enrollment, EnrollmentAdmin)
 admin.site.register(Dropout, DropoutAdmin)
 # admin.site.register(StudentMove, StudentMoveAdmin)
 admin.site.register(LoggingStudentMove, LoggingStudentMoveAdmin)
 admin.site.register(LoggingProgramMove, LoggingProgramMoveAdmin)
+admin.site.register(EnrollmentGrading, GradingAdmin)
