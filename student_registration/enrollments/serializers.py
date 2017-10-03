@@ -53,7 +53,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     student_birthday_year = serializers.CharField(source='student.birthday_year')
     student_birthday_month = serializers.CharField(source='student.birthday_month')
     student_birthday_day = serializers.CharField(source='student.birthday_day')
-    student_age = serializers.CharField(source='student.calc_age', read_only=True)
+    student_age = serializers.CharField(source='student.age', read_only=True)
     student_phone = serializers.CharField(source='student.phone')
     student_phone_prefix = serializers.CharField(source='student.phone_prefix')
     student_id_number = serializers.CharField(source='student.id_number')

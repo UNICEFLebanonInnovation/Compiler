@@ -552,7 +552,7 @@ class EnrollmentGrading(models.Model):
         max_length=4,
         blank=True,
         null=True,
-        verbose_name=_('Foreign Language')
+        verbose_name=_('Foreign language')
     )
 
     exam_result_education = models.CharField(
