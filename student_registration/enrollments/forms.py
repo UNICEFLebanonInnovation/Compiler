@@ -523,13 +523,11 @@ class GradingTermForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': instance.exam_term})
         enrollment_classromm = instance.enrollment.classroom_id
+
         if enrollment_classromm in [2, 3, 4]:
             self.helper.layout = Layout(
                 Fieldset(
                     None,
-                    Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
-                    ),
                     Div(
                         HTML('<span class="badge badge-default">1</span>'),
                         Div('exam_result_arabic', css_class='col-md-2'),
@@ -578,9 +576,6 @@ class GradingTermForm(forms.ModelForm):
                 Fieldset(
                     None,
                     Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
-                    ),
-                    Div(
                         HTML('<span class="badge badge-default">1</span>'),
                         Div('exam_result_arabic', css_class='col-md-2'),
                         HTML('<span class="badge badge-default">2</span>'),
@@ -628,9 +623,6 @@ class GradingTermForm(forms.ModelForm):
             self.helper.layout = Layout(
                 Fieldset(
                     None,
-                    Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
-                    ),
                     Div(
                         HTML('<span class="badge badge-default">1</span>'),
                         Div('exam_result_arabic', css_class='col-md-2'),
@@ -685,9 +677,6 @@ class GradingTermForm(forms.ModelForm):
             self.helper.layout = Layout(
                 Fieldset(
                     None,
-                    Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
-                    ),
                     Div(
                         HTML('<span class="badge badge-default">1</span>'),
                         Div('exam_result_linguistic_ar', css_class='col-md-2'),
@@ -786,9 +775,6 @@ class GradingIncompleteForm(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 None,
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 2') + '</h4>')
-                ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('exam_result_arabic', css_class='col-md-3'),

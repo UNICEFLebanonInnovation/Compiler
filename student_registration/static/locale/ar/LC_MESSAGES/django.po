@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-03 16:09+0300\n"
+"POT-Creation-Date: 2017-10-03 17:20+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -127,12 +127,12 @@ msgstr "البيانات الأساسية"
 #: student_registration/alp/forms.py:750 student_registration/alp/forms.py:899
 #: student_registration/alp/forms.py:1002 student_registration/clm/forms.py:467
 #: student_registration/enrollments/forms.py:441
-#: student_registration/enrollments/forms.py:571
-#: student_registration/enrollments/forms.py:622
-#: student_registration/enrollments/forms.py:679
-#: student_registration/enrollments/forms.py:735
-#: student_registration/enrollments/forms.py:811
-#: student_registration/enrollments/forms.py:863
+#: student_registration/enrollments/forms.py:569
+#: student_registration/enrollments/forms.py:617
+#: student_registration/enrollments/forms.py:671
+#: student_registration/enrollments/forms.py:724
+#: student_registration/enrollments/forms.py:797
+#: student_registration/enrollments/forms.py:849
 #: student_registration/schools/forms.py:66
 #: student_registration/templates/attendances/school.html:169
 #: student_registration/templates/attendances/school.html:284
@@ -143,12 +143,12 @@ msgstr "حفظ"
 #: student_registration/alp/forms.py:751 student_registration/alp/forms.py:900
 #: student_registration/alp/forms.py:1003
 #: student_registration/enrollments/forms.py:442
-#: student_registration/enrollments/forms.py:572
-#: student_registration/enrollments/forms.py:623
-#: student_registration/enrollments/forms.py:680
-#: student_registration/enrollments/forms.py:736
-#: student_registration/enrollments/forms.py:812
-#: student_registration/enrollments/forms.py:864
+#: student_registration/enrollments/forms.py:570
+#: student_registration/enrollments/forms.py:618
+#: student_registration/enrollments/forms.py:672
+#: student_registration/enrollments/forms.py:725
+#: student_registration/enrollments/forms.py:798
+#: student_registration/enrollments/forms.py:850
 msgid "Back to list"
 msgstr "العودة الى القائمة"
 
@@ -245,7 +245,7 @@ msgstr "بحث عن التلميذ من خلال الاسم او رقم الهو
 
 #: student_registration/alp/forms.py:703
 #: student_registration/enrollments/forms.py:383
-#: student_registration/enrollments/forms.py:851
+#: student_registration/enrollments/forms.py:837
 #: student_registration/templates/alp/test_grading.html:25
 #: student_registration/templates/enrollments/grading.html:24
 msgid "Current situation"
@@ -869,17 +869,6 @@ msgstr "ALP"
 #: student_registration/enrollments/forms.py:95
 msgid "2nd Shift"
 msgstr "دوام بعد الظهر"
-
-#: student_registration/enrollments/forms.py:531
-#: student_registration/enrollments/forms.py:581
-#: student_registration/enrollments/forms.py:632
-#: student_registration/enrollments/forms.py:689
-msgid "Grading Term 1"
-msgstr "علامات الفصل الاول"
-
-#: student_registration/enrollments/forms.py:790
-msgid "Grading Term 2"
-msgstr "علامات الفصل الثاني"
 
 #: student_registration/enrollments/models.py:41
 msgid "Yes - in 2nd shift"
@@ -1850,10 +1839,21 @@ msgstr "اكمال"
 msgid "Moved?"
 msgstr "انتقل؟"
 
-#: student_registration/templates/enrollments/grading.html:29
-#: student_registration/templates/enrollments/moved.html:40
-msgid "Previous situation"
-msgstr "الوضع السابق"
+#: student_registration/templates/enrollments/grading.html:35
+msgid "Grading Term 1"
+msgstr "علامات الفصل الاول"
+
+#: student_registration/templates/enrollments/grading.html:37
+msgid "Grading Term 2"
+msgstr "علامات الفصل الثاني"
+
+#: student_registration/templates/enrollments/grading.html:39
+msgid "Grading Final"
+msgstr " علامات اخر السنة"
+
+#: student_registration/templates/enrollments/grading.html:41
+msgid "Grading Incomplete"
+msgstr "علامات الاكمال"
 
 #: student_registration/templates/enrollments/list.html:34
 msgid "Export students infos"
@@ -1887,6 +1887,10 @@ msgstr "الجنس"
 msgid "Previous school"
 msgstr "المدرسة السابقة"
 
+#: student_registration/templates/enrollments/moved.html:40
+msgid "Previous situation"
+msgstr "الوضع السابق"
+
 #: student_registration/templates/header.html:11
 msgid "Compiler"
 msgstr ""
@@ -1904,14 +1908,10 @@ msgid "2nd shift Registration"
 msgstr "تسجيل التلاميذ "
 
 #: student_registration/templates/header.html:33
-#, fuzzy
-#| msgid "ALP Post-test"
 msgid "ALP Post-Test"
 msgstr "ALP Post-test"
 
 #: student_registration/templates/header.html:36
-#, fuzzy
-#| msgid "ALP Pre-test"
 msgid "ALP Pre-Test"
 msgstr "النتيجة Pre-test"
 
