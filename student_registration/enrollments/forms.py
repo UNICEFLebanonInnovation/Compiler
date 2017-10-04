@@ -27,7 +27,7 @@ from .models import Enrollment, LoggingStudentMove, EducationYear
 from .serializers import EnrollmentSerializer
 from .utils import initiate_grading
 
-YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
+YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
 EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, Person.CURRENT_YEAR))
 EDUCATION_YEARS.append(('na', 'n/a'))
@@ -80,14 +80,24 @@ class EnrollmentForm(forms.ModelForm):
         widget=forms.RadioSelect,
         required=False, initial=1
     )
-    search_barcode = forms.CharField(widget=forms.TextInput, required=False)
-    search_student = forms.CharField(widget=forms.TextInput, required=False)
+    search_barcode = forms.CharField(
+        label=_("Search a barcode"),
+        widget=forms.TextInput,
+        required=False
+    )
+    search_student = forms.CharField(
+        label=_("Search a student"),
+        widget=forms.TextInput,
+        required=False
+    )
     search_school = forms.ModelChoiceField(
+        label=_("Search by School"),
         queryset=School.objects.all(), widget=forms.Select,
         required=False, to_field_name='id',
         initial=0
     )
     school_type = forms.ChoiceField(
+        label=_("School type"),
         widget=forms.Select, required=False,
         choices=(
             ('', '----------'),
@@ -97,13 +107,23 @@ class EnrollmentForm(forms.ModelForm):
     )
 
     registration_date = forms.DateField(
+        label=_("Registration date"),
         required=True
     )
-
-    student_first_name = forms.CharField(widget=forms.TextInput, required=True)
-    student_father_name = forms.CharField(widget=forms.TextInput, required=True)
-    student_last_name = forms.CharField(widget=forms.TextInput, required=True)
+    student_first_name = forms.CharField(
+        label=_("First name"),
+        widget=forms.TextInput, required=True
+    )
+    student_father_name = forms.CharField(
+        label=_("Father name"),
+        widget=forms.TextInput, required=True
+    )
+    student_last_name = forms.CharField(
+        label=_("Last name"),
+        widget=forms.TextInput, required=True
+    )
     student_sex = forms.ChoiceField(
+        label=_("Sex"),
         widget=forms.Select, required=True,
         choices=(
             ('', '----------'),
@@ -112,10 +132,12 @@ class EnrollmentForm(forms.ModelForm):
         )
     )
     student_birthday_year = forms.ChoiceField(
+        label=_("Birthday year"),
         widget=forms.Select, required=True,
         choices=YEARS
     )
     student_birthday_month = forms.ChoiceField(
+        label=_("Birthday month"),
         widget=forms.Select, required=True,
         choices=(
             ('', '----------'),
@@ -134,39 +156,60 @@ class EnrollmentForm(forms.ModelForm):
         )
     )
     student_birthday_day = forms.ChoiceField(
+        label=_("Birthday day"),
         widget=forms.Select, required=True,
         choices=DAYS
     )
 
     student_nationality = forms.ModelChoiceField(
+        label=_("Nationality"),
         queryset=Nationality.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
 
-    student_mother_fullname = forms.CharField(widget=forms.TextInput, required=True)
+    student_mother_fullname = forms.CharField(
+        label=_("Mother fullname"),
+        widget=forms.TextInput, required=True
+    )
     student_mother_nationality = forms.ModelChoiceField(
+        label=_("Mother nationality"),
         queryset=Nationality.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
     student_registered_in_unhcr = forms.ChoiceField(
+        label=_("Registered in UNHCR"),
         widget=forms.Select, required=True,
         choices=YES_NO_CHOICE,
     )
     student_id_type = forms.ModelChoiceField(
+        label=_("ID type"),
         queryset=IDType.objects.all(), widget=forms.Select,
         required=True, to_field_name='id'
     )
-    student_id_number = forms.CharField(widget=forms.TextInput, required=True)
-
-    student_phone_prefix = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 2})), required=True)
-    student_phone = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 6})), required=True)
-    student_address = forms.CharField(widget=forms.TextInput, required=True)
+    student_id_number = forms.CharField(
+        label=_("ID number"),
+        widget=forms.TextInput, required=True
+    )
+    student_phone_prefix = forms.CharField(
+        label=_("Phone prefix"),
+        widget=forms.TextInput(attrs=({'maxlength': 2})), required=True
+    )
+    student_phone = forms.CharField(
+        label=_("Phone number"),
+        widget=forms.TextInput(attrs=({'maxlength': 6})), required=True
+    )
+    student_address = forms.CharField(
+        label=_("Address"),
+        widget=forms.TextInput, required=True
+    )
 
     classroom = forms.ModelChoiceField(
+        label=_("Current Class"),
         queryset=ClassRoom.objects.exclude(name='n/a'), widget=forms.Select,
         required=True, to_field_name='id',
     )
     section = forms.ModelChoiceField(
+        label=_("Current Section"),
         queryset=Section.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
         initial=1
@@ -178,24 +221,28 @@ class EnrollmentForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     last_school_type = forms.ChoiceField(
+        label=_("Last school type"),
         widget=forms.Select, required=True,
         choices=Enrollment.SCHOOL_TYPE
     )
     last_school_shift = forms.ChoiceField(
+        label=_("Last school shift"),
         widget=forms.Select, required=True,
         choices=Enrollment.SCHOOL_SHIFT
     )
     last_school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
-        label=_('School'),
+        label=_('Last school'),
         required=True, to_field_name='id',
     )
     last_education_year = forms.ChoiceField(
+        label=_("Last Education year"),
         widget=forms.Select, required=True,
         choices=EDUCATION_YEARS,
         initial='na',
     )
     last_year_result = forms.ChoiceField(
+        label=_("Last Education result"),
         widget=forms.Select, required=True,
         choices=(
             ('na', _('n/a')),
@@ -204,6 +251,7 @@ class EnrollmentForm(forms.ModelForm):
         )
     )
     participated_in_alp = forms.ChoiceField(
+        label=_("Participated in ALP"),
         widget=forms.Select, required=True,
         choices=(
             ('na', _('n/a')),
@@ -212,14 +260,17 @@ class EnrollmentForm(forms.ModelForm):
         )
     )
     last_informal_edu_level = forms.ModelChoiceField(
+        label=_("Last informal education level"),
         queryset=EducationLevel.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
     last_informal_edu_round = forms.ModelChoiceField(
+        label=_("Last informal education round"),
         queryset=ALPRound.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
     last_informal_edu_final_result = forms.ModelChoiceField(
+        label=_("Last informal education status"),
         queryset=ClassLevel.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
