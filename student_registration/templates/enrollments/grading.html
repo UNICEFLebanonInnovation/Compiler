@@ -18,20 +18,31 @@
                         <h4 id="alternatives-to-hidden-labels">{% trans "Student" %}</h4>
                         <div class="row">
                             <label class="col-md-4"><strong>{% trans "Student fullname" %}</strong></label>
-                            <div class="col-md-4">{{ form.instance.student }}</div>
+                            <div class="col-md-4">{{ form.instance.enrollment.student }}</div>
                         </div>
                         <div class="row">
                             <label class="col-md-4"><strong>{% trans "Current situation" %}</strong></label>
-                            <div class="col-md-4">{{ form.instance.classroom }} - {{ form.instance.section }}</div>
+                            <div class="col-md-4">{{ form.instance.enrollment.classroom }} - {{ form.instance.enrollment.section }}</div>
                         </div>
-                        {% if form.fields.term.initial == '2' %}
-                        <div class="row">
-                            <label class="col-md-4"><strong>{% trans "Previous situation" %}</strong></label>
-                            <div class="col-md-4">{{ form.instance.exam_total }} - {{ form.instance.exam_result }}</div>
-                        </div>
-                        {% endif %}
-                </fieldset>
+                        {% if form.instance.exam_term == '4' %}
 
+                        {% endif %}
+{#                        {% if form.fields.term.initial == '4' %}#}
+{#                        <div class="row">#}
+{#                            <label class="col-md-4"><strong>{% trans "Previous situation" %}</strong></label>#}
+{#                            <div class="col-md-4">{{ form.instance.exam_total }} - {{ form.instance.exam_result }}</div>#}
+{#                        </div>#}
+{#                        {% endif %}#}
+                </fieldset>
+                {% if form.instance.exam_term == '1'  %}
+                    <h4 id="alternatives-to-hidden-labels">{% trans "Grading Term 1" %}</h4>
+                {% elif form.instance.exam_term == '2'  %}
+                    <h4 id="alternatives-to-hidden-labels">{% trans "Grading Term 2" %}</h4>
+                {% elif form.instance.exam_term == '3'  %}
+                    <h4 id="alternatives-to-hidden-labels">{% trans "Grading Final" %}</h4>
+                {% else %}
+                    <h4 id="alternatives-to-hidden-labels">{% trans "Grading Incomplete" %}</h4>
+                {% endif %}
                 {% crispy form %}
             </div>
         </section>

@@ -33,20 +33,11 @@ CACHE MANIFEST
 /static/js/bootstrap.js
 /static/js/bootstrap.min.js
 /static/js/jquery-1.12.3.min.js
-/static/js/jquery.dataTables.min.js
-/static/js/dataTables.bootstrap.min.js
 /static/js/bootstrap-switch.min.js
 /static/js/util.js
-/static/js/tooltip.js
-/static/js/bootbox.js
 /static/js/plugins.js
-/static/js/sly.min.js
-/static/js/signature_pad.js
 /static/js/indexedDB.js
-/static/js/appcache.js
-/static/js/eav.js
 /static/js/validator.js
-/static/js/jquery.quicksearch.js
 
 NETWORK:
 *
