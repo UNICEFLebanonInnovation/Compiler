@@ -403,6 +403,6 @@ class AttendanceAdmin(ImportExportModelAdmin):
     )
 
 admin.site.register(Attendance, AttendanceAdmin)
-admin.site.register(BySchoolByDay, BySchoolByDayAdmin)
+# admin.site.register(BySchoolByDay, BySchoolByDayAdmin)
 admin.site.register(Absentee, AbsenteeAdmin)
-admin.site.register(AttendanceSyncLog, AttendanceSyncLogAdmin)
+# admin.site.register(AttendanceSyncLog, AttendanceSyncLogAdmin)
