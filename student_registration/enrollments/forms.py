@@ -25,8 +25,9 @@ from student_registration.schools.models import (
 from student_registration.alp.models import ALPRound
 from .models import Enrollment, LoggingStudentMove, EducationYear
 from .serializers import EnrollmentSerializer
+from .utils import initiate_grading
 
-YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
+YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
 EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, Person.CURRENT_YEAR))
 EDUCATION_YEARS.append(('na', 'n/a'))
@@ -79,14 +80,24 @@ class EnrollmentForm(forms.ModelForm):
         widget=forms.RadioSelect,
         required=False, initial=1
     )
-    search_barcode = forms.CharField(widget=forms.TextInput, required=False)
-    search_student = forms.CharField(widget=forms.TextInput, required=False)
+    search_barcode = forms.CharField(
+        label=_("Search a barcode"),
+        widget=forms.TextInput,
+        required=False
+    )
+    search_student = forms.CharField(
+        label=_("Search a student"),
+        widget=forms.TextInput,
+        required=False
+    )
     search_school = forms.ModelChoiceField(
+        label=_("Search by School"),
         queryset=School.objects.all(), widget=forms.Select,
         required=False, to_field_name='id',
         initial=0
     )
     school_type = forms.ChoiceField(
+        label=_("School type"),
         widget=forms.Select, required=False,
         choices=(
             ('', '----------'),
@@ -96,13 +107,23 @@ class EnrollmentForm(forms.ModelForm):
     )
 
     registration_date = forms.DateField(
+        label=_("Registration date"),
         required=True
     )
-
-    student_first_name = forms.CharField(widget=forms.TextInput, required=True)
-    student_father_name = forms.CharField(widget=forms.TextInput, required=True)
-    student_last_name = forms.CharField(widget=forms.TextInput, required=True)
+    student_first_name = forms.CharField(
+        label=_("First name"),
+        widget=forms.TextInput, required=True
+    )
+    student_father_name = forms.CharField(
+        label=_("Father name"),
+        widget=forms.TextInput, required=True
+    )
+    student_last_name = forms.CharField(
+        label=_("Last name"),
+        widget=forms.TextInput, required=True
+    )
     student_sex = forms.ChoiceField(
+        label=_("Sex"),
         widget=forms.Select, required=True,
         choices=(
             ('', '----------'),
@@ -111,10 +132,12 @@ class EnrollmentForm(forms.ModelForm):
         )
     )
     student_birthday_year = forms.ChoiceField(
+        label=_("Birthday year"),
         widget=forms.Select, required=True,
         choices=YEARS
     )
     student_birthday_month = forms.ChoiceField(
+        label=_("Birthday month"),
         widget=forms.Select, required=True,
         choices=(
             ('', '----------'),
@@ -133,39 +156,60 @@ class EnrollmentForm(forms.ModelForm):
         )
     )
     student_birthday_day = forms.ChoiceField(
+        label=_("Birthday day"),
         widget=forms.Select, required=True,
         choices=DAYS
     )
 
     student_nationality = forms.ModelChoiceField(
+        label=_("Nationality"),
         queryset=Nationality.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
 
-    student_mother_fullname = forms.CharField(widget=forms.TextInput, required=True)
+    student_mother_fullname = forms.CharField(
+        label=_("Mother fullname"),
+        widget=forms.TextInput, required=True
+    )
     student_mother_nationality = forms.ModelChoiceField(
+        label=_("Mother nationality"),
         queryset=Nationality.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
     student_registered_in_unhcr = forms.ChoiceField(
+        label=_("Registered in UNHCR"),
         widget=forms.Select, required=True,
         choices=YES_NO_CHOICE,
     )
     student_id_type = forms.ModelChoiceField(
+        label=_("ID type"),
         queryset=IDType.objects.all(), widget=forms.Select,
         required=True, to_field_name='id'
     )
-    student_id_number = forms.CharField(widget=forms.TextInput, required=True)
-
-    student_phone_prefix = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 2})), required=True)
-    student_phone = forms.CharField(widget=forms.TextInput(attrs=({'maxlength': 6})), required=True)
-    student_address = forms.CharField(widget=forms.TextInput, required=True)
+    student_id_number = forms.CharField(
+        label=_("ID number"),
+        widget=forms.TextInput, required=True
+    )
+    student_phone_prefix = forms.CharField(
+        label=_("Phone prefix"),
+        widget=forms.TextInput(attrs=({'maxlength': 2})), required=True
+    )
+    student_phone = forms.CharField(
+        label=_("Phone number"),
+        widget=forms.TextInput(attrs=({'maxlength': 6})), required=True
+    )
+    student_address = forms.CharField(
+        label=_("Address"),
+        widget=forms.TextInput, required=True
+    )
 
     classroom = forms.ModelChoiceField(
+        label=_("Current Class"),
         queryset=ClassRoom.objects.exclude(name='n/a'), widget=forms.Select,
         required=True, to_field_name='id',
     )
     section = forms.ModelChoiceField(
+        label=_("Current Section"),
         queryset=Section.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
         initial=1
@@ -177,24 +221,28 @@ class EnrollmentForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     last_school_type = forms.ChoiceField(
+        label=_("Last school type"),
         widget=forms.Select, required=True,
         choices=Enrollment.SCHOOL_TYPE
     )
     last_school_shift = forms.ChoiceField(
+        label=_("Last school shift"),
         widget=forms.Select, required=True,
         choices=Enrollment.SCHOOL_SHIFT
     )
     last_school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
-        label=_('School'),
+        label=_('Last school'),
         required=True, to_field_name='id',
     )
     last_education_year = forms.ChoiceField(
+        label=_("Last Education year"),
         widget=forms.Select, required=True,
         choices=EDUCATION_YEARS,
         initial='na',
     )
     last_year_result = forms.ChoiceField(
+        label=_("Last Education result"),
         widget=forms.Select, required=True,
         choices=(
             ('na', _('n/a')),
@@ -203,6 +251,7 @@ class EnrollmentForm(forms.ModelForm):
         )
     )
     participated_in_alp = forms.ChoiceField(
+        label=_("Participated in ALP"),
         widget=forms.Select, required=True,
         choices=(
             ('na', _('n/a')),
@@ -211,14 +260,17 @@ class EnrollmentForm(forms.ModelForm):
         )
     )
     last_informal_edu_level = forms.ModelChoiceField(
+        label=_("Last informal education level"),
         queryset=EducationLevel.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
     last_informal_edu_round = forms.ModelChoiceField(
+        label=_("Last informal education round"),
         queryset=ALPRound.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
     last_informal_edu_final_result = forms.ModelChoiceField(
+        label=_("Last informal education status"),
         queryset=ClassLevel.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
@@ -460,6 +512,10 @@ class EnrollmentForm(forms.ModelForm):
                 instance.owner = request.user
                 instance.education_year = EducationYear.objects.get(current_year=True)
                 instance.save()
+                initiate_grading(enrollment=instance, term=1)
+                initiate_grading(enrollment=instance, term=2)
+                initiate_grading(enrollment=instance, term=3)
+                initiate_grading(enrollment=instance, term=4)
 
     class Meta:
         model = Enrollment
@@ -508,23 +564,21 @@ class EnrollmentForm(forms.ModelForm):
         )
 
 
-class GradingTerm1Form(forms.ModelForm):
+class GradingTermForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(GradingTerm1Form, self).__init__(*args, **kwargs)
+        super(GradingTermForm, self).__init__(*args, **kwargs)
         instance = kwargs['instance']
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
-        self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': 1})
+        self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': instance.exam_term})
+        enrollment_classromm = instance.enrollment.classroom_id
 
-        if instance.classroom_id in [2, 3, 4]:
+        if enrollment_classromm in [2, 3, 4]:
             self.helper.layout = Layout(
                 Fieldset(
                     None,
-                    Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
-                    ),
                     Div(
                         HTML('<span class="badge badge-default">1</span>'),
                         Div('exam_result_arabic', css_class='col-md-2'),
@@ -537,11 +591,11 @@ class GradingTerm1Form(forms.ModelForm):
                         css_class='row',
                     ),
                     Div(
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">5</span>'),
                         Div('exam_result_math', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">6</span>'),
                         Div('exam_result_science', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">6</span>'),
                         Div('exam_result', css_class='col-md-2'),
                         css_class='row',
                     ),
@@ -568,13 +622,10 @@ class GradingTerm1Form(forms.ModelForm):
                 )
             )
 
-        if instance.classroom_id in [5, 6, 7]:
+        if enrollment_classromm in [5, 6, 7]:
             self.helper.layout = Layout(
                 Fieldset(
                     None,
-                    Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
-                    ),
                     Div(
                         HTML('<span class="badge badge-default">1</span>'),
                         Div('exam_result_arabic', css_class='col-md-2'),
@@ -587,13 +638,13 @@ class GradingTerm1Form(forms.ModelForm):
                         css_class='row',
                     ),
                     Div(
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">5</span>'),
                         Div('exam_result_math', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">6</span>'),
                         Div('exam_result_science', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">7</span>'),
                         Div('exam_total', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">8</span>'),
                         Div('exam_result', css_class='col-md-2'),
                         css_class='row',
                     ),
@@ -619,13 +670,10 @@ class GradingTerm1Form(forms.ModelForm):
                 )
             )
 
-        if instance.classroom_id in [8, 9, 10]:
+        if enrollment_classromm in [8, 9, 10]:
             self.helper.layout = Layout(
                 Fieldset(
                     None,
-                    Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
-                    ),
                     Div(
                         HTML('<span class="badge badge-default">1</span>'),
                         Div('exam_result_arabic', css_class='col-md-2'),
@@ -638,22 +686,22 @@ class GradingTerm1Form(forms.ModelForm):
                         css_class='row',
                     ),
                     Div(
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">5</span>'),
                         Div('exam_result_history', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">6</span>'),
                         Div('exam_result_math', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">7</span>'),
                         Div('exam_result_physic', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">8</span>'),
                         Div('exam_result_chemistry', css_class='col-md-2'),
                         css_class='row',
                     ),
                     Div(
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">9</span>'),
                         Div('exam_result_bio', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">10</span>'),
                         Div('exam_total', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">11</span>'),
                         Div('exam_result', css_class='col-md-2'),
                         css_class='row',
                     ),
@@ -676,38 +724,35 @@ class GradingTerm1Form(forms.ModelForm):
                 )
             )
 
-        if instance.classroom_id == 1:
+        if enrollment_classromm == 1:
             self.helper.layout = Layout(
                 Fieldset(
                     None,
                     Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 1') + '</h4>')
-                    ),
-                    Div(
                         HTML('<span class="badge badge-default">1</span>'),
                         Div('exam_result_linguistic_ar', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">2</span>'),
                         Div('exam_result_linguistic_en', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">3</span>'),
                         Div('exam_result_sociology', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">4</span>'),
                         Div('exam_result_physical', css_class='col-md-2'),
                         css_class='row',
                     ),
                     Div(
 
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">5</span>'),
                         Div('exam_result_artistic', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">6</span>'),
                         Div('exam_result_mathematics', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">7</span>'),
                         Div('exam_result_sciences', css_class='col-md-2'),
                         css_class='row',
                     ),
                     Div(
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">8</span>'),
                         Div('exam_total', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">1</span>'),
+                        HTML('<span class="badge badge-default">9</span>'),
                         Div('exam_result', css_class='col-md-2'),
                         css_class='row',
                     ),
@@ -733,7 +778,7 @@ class GradingTerm1Form(forms.ModelForm):
             )
 
     def save(self, instance=None, request=None):
-        instance = super(GradingTerm1Form, self).save()
+        instance = super(GradingTermForm, self).save()
 
     class Meta:
         model = Enrollment
@@ -765,38 +810,36 @@ class GradingTerm1Form(forms.ModelForm):
         js = ()
 
 
-class GradingTerm2Form(forms.ModelForm):
+class GradingIncompleteForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(GradingTerm2Form, self).__init__(*args, **kwargs)
+        super(GradingIncompleteForm, self).__init__(*args, **kwargs)
         instance = kwargs['instance']
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
-        self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': 2})
-        if instance.classroom == 1:
+        self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': 4})
+        enrollment_classromm = instance.enrollment.classroom_id
+        if enrollment_classromm == 1:
             pass
 
         self.helper.layout = Layout(
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grading Term 2') + '</h4>')
-                ),
-                Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('exam_result_arabic_cmplt', css_class='col-md-3'),
+                    Div('exam_result_arabic', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('exam_result_language_cmplt', css_class='col-md-3'),
+                    Div('exam_result_language', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('exam_result_math_cmplt', css_class='col-md-3'),
+                    Div('exam_result_math', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('exam_total_cmplt', css_class='col-md-3'),
+                    Div('exam_total', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('exam_result_final', css_class='col-md-3'),
+                    Div('exam_result', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
@@ -808,16 +851,16 @@ class GradingTerm2Form(forms.ModelForm):
         )
 
     def save(self, instance=None, request=None):
-        instance = super(GradingTerm2Form, self).save()
+        instance = super(GradingIncompleteForm, self).save()
 
     class Meta:
         model = Enrollment
         fields = (
-            'exam_result_arabic_cmplt',
-            'exam_result_language_cmplt',
-            'exam_result_math_cmplt',
-            'exam_total_cmplt',
-            'exam_result_final',
+            'exam_result_arabic',
+            'exam_result_language',
+            'exam_result_math',
+            'exam_total',
+            'exam_result',
         )
         initial_fields = fields
         widgets = {}
