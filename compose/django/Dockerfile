@@ -11,7 +11,7 @@ ARG REQUIREMENTS_FILE=production.txt
 
 RUN mkdir /code/
 WORKDIR /code/
-ADD requirements /code/requirements
+COPY requirements /code/requirements
 RUN pip install -r /code/requirements/$REQUIREMENTS_FILE
 
 ADD . /code/
