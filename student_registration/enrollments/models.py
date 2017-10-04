@@ -416,35 +416,49 @@ class Enrollment(TimeStampedModel):
         verbose_name=_('Final Student status')
     )
 
-    deleted = models.BooleanField(blank=True, default=False)
-    dropout_status = models.BooleanField(blank=True, default=False)
-    moved = models.BooleanField(blank=True, default=False)
+    deleted = models.BooleanField(
+        blank=True, default=False,
+        verbose_name=_('deleted')
+    )
+    dropout_status = models.BooleanField(
+        blank=True, default=False,
+        verbose_name=_('Dropout status')
+    )
+    moved = models.BooleanField(
+        blank=True, default=False,
+        verbose_name=_('moved')
+    )
     outreach_barcode = models.CharField(
         max_length=50,
         blank=True,
         null=True,
+        verbose_name=_('Outreach barcode')
     )
     new_registry = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices((1, _("Yes")), (0, _("No")))
+        choices=Choices((1, _("Yes")), (0, _("No"))),
+        verbose_name=_('First time registered?')
     )
     student_outreached = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices((1, _("Yes")), (0, _("No")))
+        choices=Choices((1, _("Yes")), (0, _("No"))),
+        verbose_name=_('Student outreached?')
     )
     have_barcode = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices((1, _("Yes")), (0, _("No")))
+        choices=Choices((1, _("Yes")), (0, _("No"))),
+        verbose_name=_('Have barcode with him?')
     )
     registration_date = models.DateField(
         blank=True,
         null=True,
+        verbose_name=_('Registration date')
     )
 
     objects = EnrollmentManager()

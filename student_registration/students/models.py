@@ -100,7 +100,7 @@ class Person(TimeStampedModel):
 
     first_name = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('First name'))
     last_name = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('Last name'))
-    father_name = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('Father Name'))
+    father_name = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('Father name'))
     mother_fullname = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('Mother fullname'))
     mother_firstname = models.CharField(max_length=64, blank=True, null=True)
     mother_lastname = models.CharField(max_length=64, blank=True, null=True)
