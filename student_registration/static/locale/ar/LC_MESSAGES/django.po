@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-04 11:17+0300\n"
+"POT-Creation-Date: 2017-10-05 13:59+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -134,8 +134,8 @@ msgstr "البيانات الأساسية"
 #: student_registration/enrollments/forms.py:848
 #: student_registration/enrollments/forms.py:900
 #: student_registration/schools/forms.py:66
-#: student_registration/templates/attendances/school.html:169
-#: student_registration/templates/attendances/school.html:284
+#: student_registration/templates/attendances/school.html:171
+#: student_registration/templates/attendances/school.html:289
 msgid "Save"
 msgstr "حفظ"
 
@@ -655,17 +655,17 @@ msgid "# Students reported by the Director"
 msgstr "عدد التلاميذ المصرح عنهم من قبل المدير"
 
 #: student_registration/attendances/models.py:25
-#: student_registration/templates/attendances/school.html:273
+#: student_registration/templates/attendances/school.html:278
 msgid "Sick"
 msgstr "مرض"
 
 #: student_registration/attendances/models.py:26
-#: student_registration/templates/attendances/school.html:274
+#: student_registration/templates/attendances/school.html:279
 msgid "No reason"
 msgstr "لا سبب"
 
 #: student_registration/attendances/models.py:27
-#: student_registration/templates/attendances/school.html:275
+#: student_registration/templates/attendances/school.html:280
 msgid "No transport"
 msgstr "لا وسائل النقل"
 
@@ -674,27 +674,27 @@ msgstr "لا وسائل النقل"
 #: student_registration/clm/models.py:143
 #: student_registration/outreach/models.py:102
 #: student_registration/outreach/models.py:168
-#: student_registration/templates/attendances/school.html:276
+#: student_registration/templates/attendances/school.html:281
 msgid "Other"
 msgstr "آخر"
 
 #: student_registration/attendances/models.py:32
-#: student_registration/templates/attendances/school.html:186
+#: student_registration/templates/attendances/school.html:188
 msgid "Public Holiday"
 msgstr "عطلة رسمية"
 
 #: student_registration/attendances/models.py:33
-#: student_registration/templates/attendances/school.html:187
+#: student_registration/templates/attendances/school.html:189
 msgid "School Holiday"
 msgstr "العطل المدرسية "
 
 #: student_registration/attendances/models.py:34
-#: student_registration/templates/attendances/school.html:188
+#: student_registration/templates/attendances/school.html:190
 msgid "Strike"
 msgstr "اضراب"
 
 #: student_registration/attendances/models.py:35
-#: student_registration/templates/attendances/school.html:189
+#: student_registration/templates/attendances/school.html:191
 msgid "Weekly Holiday"
 msgstr "عطلة نهاية الاسبوع"
 
@@ -944,7 +944,7 @@ msgstr "نوع البطاقة"
 #: student_registration/enrollments/forms.py:190
 #: student_registration/students/models.py:161
 msgid "ID number"
-msgstr "رقم ابطاقة"
+msgstr "رقم البطاقة"
 
 #: student_registration/enrollments/forms.py:202
 #: student_registration/students/models.py:182
@@ -1755,28 +1755,57 @@ msgstr "ALP Post-test"
 msgid "ALP Pre-test"
 msgstr "النتيجة Pre-test"
 
-#: student_registration/templates/attendances/school.html:155
-#: student_registration/templates/attendances/school.html:283
+#: student_registration/templates/attendances/school.html:161
+#: student_registration/templates/attendances/school.html:288
 msgid "Back to "
 msgstr "العودة الى"
 
-#: student_registration/templates/attendances/school.html:156
+#: student_registration/templates/attendances/school.html:162
+msgid "Are you sure that the students of this class are away for a reason?"
+msgstr "هل أنت متأكد من أن الطلاب هذاالصف لم يحضرو المدرسة بسبب حصل امتحانات في المدرسة ؟"
+
+#: student_registration/templates/attendances/school.html:162
 msgid "Exam day"
 msgstr "يوم امتحان في المدرسة"
 
-#: student_registration/templates/attendances/school.html:168
+#: student_registration/templates/attendances/school.html:170
 msgid "Total students"
 msgstr "مجموع التلاميذ"
 
+#: student_registration/templates/attendances/school.html:171
+#: student_registration/templates/attendances/school.html:289
+msgid "Are you sure you want to save the attendance for this class?"
+msgstr "هل تريد بالتأكيد حفظ الحضور لهذا الصف؟"
+
+#: student_registration/templates/attendances/school.html:188
+msgid "Are you sure that the school is closed today for a public holiday?"
+msgstr "هل أنت متأكد من أن المدرسة مغلقة اليوم لعطلة رسمية؟"
+
+#: student_registration/templates/attendances/school.html:189
+msgid "Are you sure that the school is closed today for a school holiday?"
+msgstr "هل أنت متأكد من أن المدرسة مغلقة اليوم لقضاء عطلة مدرسية؟"
+
 #: student_registration/templates/attendances/school.html:190
+msgid "Are you sure that the school is closed today for a strike?"
+msgstr "هل أنت متأكد من أن المدرسة مغلقة اليوم بسبب الإضراب؟"
+
+#: student_registration/templates/attendances/school.html:191
+msgid "Are you sure that the school is closed today for a weekly holiday?"
+msgstr "هل أنت متأكد من أن المدرسة مغلقة اليوم لقضاء عطلة أسبوعية؟"
+
+#: student_registration/templates/attendances/school.html:194
+msgid "Are you sure you want to validate all attendances?"
+msgstr "هل تريد  التصديق من صحة جميع الحضور؟"
+
+#: student_registration/templates/attendances/school.html:194
 msgid "Validate all"
 msgstr "التصديق على الحضور"
 
-#: student_registration/templates/attendances/school.html:270
+#: student_registration/templates/attendances/school.html:275
 msgid "Present"
 msgstr "حاضر"
 
-#: student_registration/templates/attendances/school.html:270
+#: student_registration/templates/attendances/school.html:275
 msgid "Absent"
 msgstr "غائب"
 

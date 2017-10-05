@@ -124,6 +124,12 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
+                            <div class="alert alert-success d-none" role="alert">
+                              <strong>Well done!</strong> You successfully read this important alert message.
+                            </div>
+                            <div class="alert alert-danger d-none" role="alert">
+                              <strong>Oh snap!</strong> Change a few things up and try submitting again.
+                            </div>
 {#                          <div class="panel-heading" id="header">#}
 {#                            <ol class="breadcrumb">#}
 {#                                <li><h3 class="panel-title">{% trans "Attendance" %}</h3></li>#}
@@ -153,12 +159,8 @@
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item">
                                     <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to " %} {{ selected_date_view }}</a>
-                                    <a type="button" class="btn btn-warning absolute-right-30" href="#">{% trans "Exam day" %}</a>
+                                    <button type="button" class="btn btn-warning absolute-right-30" id="exam_day" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}">{% trans "Exam day" %}</button>
                                 </li>
-{#                                <li class="breadcrumb-item">#}
-{#                                    {{ level.name }} - {{ section.name }}#}
-{#                                    <span class="badge">{{ total_students }}</span>#}
-{#                                </li>#}
                             </ol>
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item">
@@ -166,7 +168,7 @@
                                 </li>
                                 <li class="breadcrumb-item">
                                     {% trans "Total students" %} <span class="badge badge-default">{{ total_students }}</span>
-                                    <a href="#" class="btn btn-success absolute-right-30" id="save_attendances">{% trans "Save" %}</a>
+                                    <a href="#" class="btn btn-success absolute-right-30" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
                                 </li>
                             </ol>
                                 {% endif %}
@@ -183,11 +185,14 @@
                                     </div>
                                 </li>
                                 <li class="breadcrumb-item">
-                                      <button type="button" class="closing-reason-b btn btn-primary" itemref="public_holiday">{% trans "Public Holiday" %}</button>
-                                      <button type="button" class="closing-reason-b btn btn-warning" itemref="school_holiday">{% trans "School Holiday" %}</button>
-                                      <button type="button" class="closing-reason-b btn btn-danger" itemref="strike">{% trans "Strike" %}</button>
-                                      <button type="button" class="closing-reason-b btn btn-info" itemref="weekly_holiday">{% trans "Weekly Holiday" %}</button>
-                                      <button type="button" class="btn btn-success absolute-right-30" id="attendance_validate">{% trans "Validate all" %}</button>
+                                      <button type="button" class="closing-reason-b btn btn-primary" itemref="public_holiday" translation="{% trans 'Are you sure that the school is closed today for a public holiday?' %}">{% trans "Public Holiday" %}</button>
+                                      <button type="button" class="closing-reason-b btn btn-warning" itemref="school_holiday" translation="{% trans 'Are you sure that the school is closed today for a school holiday?' %}">{% trans "School Holiday" %}</button>
+                                      <button type="button" class="closing-reason-b btn btn-danger" itemref="strike" translation="{% trans 'Are you sure that the school is closed today for a strike?' %}">{% trans "Strike" %}</button>
+                                      <button type="button" class="closing-reason-b btn btn-info" itemref="weekly_holiday" translation="{% trans 'Are you sure that the school is closed today for a weekly holiday?' %}">{% trans "Weekly Holiday" %}</button>
+{#       if director and attendance has been taken for this day                             #}
+{#                                        {% if request.user|has_group:"DIRECTOR" or request.user|has_group:"ALP_DIRECTOR" %}#}
+                                      <button type="button" class="btn btn-success absolute-right-30" id="attendance_validate" translation="{% trans 'Are you sure you want to validate all attendances?' %}">{% trans "Validate all" %}</button>
+{#                                        {% endif %}#}
                                 </li>
                             </ol>
                                 {% endif %}
@@ -209,11 +214,11 @@
                     </div>
                     <div class="col-xs-3 col-sm-3 col-md-3 s-col">
                         {% if row.validation_date %}
-                            <span class="icon-2-check"></span>
+                            <span class="attendance-status icon-2-check"></span>
                         {% elif row.total_attend or row.total_absent %}
-                            <span class="icon-check"></span>
+                            <span class="attendance-status icon-check"></span>
                         {% else %}
-                            <span class="icon-pending-check"></span>
+                            <span class="attendance-status icon-pending-check"></span>
                         {% endif %}
                     </div>
                     <div class="col-xs-3 col-sm-3 col-md-3 s-progs s-col">
@@ -269,7 +274,7 @@
                         <div class="col-xs-6 col-sm-2 col-md-2 s-col">
                             <input type="checkbox" name="status[]" id="status_{{ line.id }}" checked="checked" itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" value="" />
                         </div>
-                        <div class="col-sm-8 absence-reasons" style="display: none;" id="reasons-{{ line.id }}">
+                        <div class="col-sm-8 absence-reasons d-none" id="reasons-{{ line.id }}">
                             <label class="radio-inline"><input type="radio" value="sick" name="absence_reason[]" class="absence_reason_{{ line.id }}" />{% trans "Sick" %}</label>
                             <label class="radio-inline"><input type="radio" value="no_reason" name="absence_reason[]" class="absence_reason_{{ line.id }}" />{% trans "No reason" %}</label>
                             <label class="radio-inline"><input type="radio" value="no_transport" name="absence_reason[]" class="absence_reason_{{ line.id }}" />{% trans "No transport" %}</label>
@@ -281,7 +286,7 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to " %} {{ selected_date_view }}</a>
-                            <a href="#" class="btn btn-success absolute-right-30" id="save_attendances">{% trans "Save" %}</a>
+                            <a href="#" class="btn btn-success absolute-right-30" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
                         </li>
                     </ol>
                 </form>
@@ -313,7 +318,7 @@
             $('[data-toggle="tooltip"]').tooltip();
 
             $(document).on('click', '.closing-reason-b', function () {
-                if(confirm('Are you sure that the school is closed today?')){
+                if(confirm($(this).attr('translation'))){
                     var data = {
                         owner: $('input#owner').val(),
                         attendance_date: $('select#dates').val(),
@@ -322,8 +327,7 @@
                         students: {}
                     };
                     set_attendances(data);
-                    $('.closing-reason-b').attr('disabled', 'disabled');
-                    $('.row-class').addClass('disabled');
+                    disable_attendance();
                     $('.closing-reason-b').hide();
                     $(this).show();
                 }
@@ -340,35 +344,34 @@
 {#                var form_data = form.serialize();#}
                 var students = new Array();
 
-                $('.enrollment_id').each(function (i, item) {
-                    var enrollment_id = $(item).val();
-                    students.push({
-                        student_id: $('#student_id_'+enrollment_id).val(),
-                        student_fullname: $('#student_fullname_'+enrollment_id).val(),
-                        student_sex: $('#student_sex_'+enrollment_id).val(),
-                        student_age: $('#student_age_'+enrollment_id).val(),
-                        student_birthday: $('#student_birthday_'+enrollment_id).val(),
-                        section: $('#section_'+enrollment_id).val(),
-                        section_name: $('#section_name_'+enrollment_id).val(),
-                        level: $('#level_'+enrollment_id).val(),
-                        level_name: $('#level_name_'+enrollment_id).val(),
-                        status: $('#status_'+enrollment_id).val(),
-                        absence_reason: $('#absence_reason_'+enrollment_id).val()
-                    })
-                });
-
-                var level_section = {
-                    level_section: $('#level').val() + "-" + $('#section').val(),
-                    students: students
-                };
-
-                var data = {
-                        owner: $('input#owner').val(),
-                        attendance_date: $('input#attendance_date').val(),
-                        school: $('input#school').val()
-                };
-
-                set_attendances(data, level_section);
+                if(confirm($(this).attr('translation'))) {
+                    $('.enrollment_id').each(function (i, item) {
+                        var enrollment_id = $(item).val();
+                        students.push({
+                            student_id: $('#student_id_'+enrollment_id).val(),
+                            student_fullname: $('#student_fullname_'+enrollment_id).val(),
+                            student_sex: $('#student_sex_'+enrollment_id).val(),
+                            student_age: $('#student_age_'+enrollment_id).val(),
+                            student_birthday: $('#student_birthday_'+enrollment_id).val(),
+                            section: $('#section_'+enrollment_id).val(),
+                            section_name: $('#section_name_'+enrollment_id).val(),
+                            level: $('#level_'+enrollment_id).val(),
+                            level_name: $('#level_name_'+enrollment_id).val(),
+                            status: $('#status_'+enrollment_id).val(),
+                            absence_reason: $('#absence_reason_'+enrollment_id).val()
+                        })
+                    });
+                    var level_section = {
+                        level_section: $('#level').val() + "-" + $('#section').val(),
+                        students: students
+                    };
+                    var data = {
+                            owner: $('input#owner').val(),
+                            attendance_date: $('input#attendance_date').val(),
+                            school: $('input#school').val()
+                    };
+                    set_attendances(data, level_section);
+                }
             });
 
             $(document).on('click', '#attendance_validate', function(){
@@ -376,7 +379,7 @@
                 var dd = today.getDate();
                 var mm = today.getMonth()+1; //January is 0!
                 var yyyy = today.getFullYear();
-                if(confirm('Are you sure you want to validate all attendances?')) {
+                if(confirm($(this).attr('translation'))) {
                     var data = {
                         validation_owner: $('input#owner').val(),
                         attendance_date: $('input#attendance_date').val(),
@@ -384,7 +387,30 @@
                         validation_status: true,
                         validation_date: yyyy+'-'+mm+'-'+dd
                     };
-                    set_attendances(data);
+                    set_attendances(data, null);
+                    disable_attendance();
+                    $('.attendance-status').removeClass('icon-pending-check');
+                    $('.attendance-status').removeClass('icon-check');
+                    $('.attendance-status').addClass('icon-2-check');
+                }
+            });
+
+            $(document).on('click', '#exam_day', function(){
+
+                if(confirm($(this).attr('translation'))) {
+                    var level_section = {
+                        level_section: $('#level').val() + "-" + $('#section').val(),
+                        students: {},
+                        exam_day: true
+                    };
+                    var data = {
+                            owner: $('input#owner').val(),
+                            attendance_date: $('input#attendance_date').val(),
+                            school: $('input#school').val()
+                    };
+                    set_attendances(data, level_section);
+                    $('#save_attendances').remove();
+                    $("[class='toggle-status']").remove();
                 }
             });
 
@@ -400,7 +426,13 @@
             });
         });
 
-        function set_attendances(data, callback)
+        function disable_attendance()
+        {
+            $('.closing-reason-b').attr('disabled', 'disabled');
+            $('.row-class').addClass('disabled');
+        }
+
+        function set_attendances(data, patch_data)
         {
             $.ajax({
                 type: "POST",
@@ -411,13 +443,15 @@
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
-
-                    if(response.data){
-                        update_attendances(response.data, callback);
+                    if(response.data && patch_data){
+                        update_attendances(response.data, patch_data);
+                    }else{
+                        display_feedback(true);
                     }
                 },
                 error: function (response) {
-
+                    console.log(response);
+                    display_feedback(false);
                 }
             });
         }
@@ -433,12 +467,25 @@
                 headers: getHeader(),
                 dataType: 'json',
                 success: function (response, result, jqXHR) {
-
+                    if(response.data){
+                        display_feedback(true);
+                    }
                 },
                 error: function (response) {
-
+                    display_feedback(false);
                 }
             });
+        }
+
+        function display_feedback(status)
+        {
+            $('.alert').addClass('d-none');
+
+            if(status){
+                $('.alert-success').removeClass('d-none');
+            }else{
+                $('.alert-danger').removeClass('d-none');
+            }
         }
 
     </script>

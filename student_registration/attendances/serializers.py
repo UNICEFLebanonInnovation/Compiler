@@ -6,9 +6,9 @@ from .models import Attendance, Absentee
 class AttendanceSerializer(serializers.ModelSerializer):
 
     close_reason = serializers.CharField(required=False)
-    validation_status = serializers.CharField(required=False)
+    validation_status = serializers.BooleanField(required=False)
     validation_date = serializers.DateField(required=False)
-    validation_owner = serializers.IntegerField(required=False)
+    validation_owner = serializers.IntegerField(source='validation_owner_id', required=False)
     # students = serializers.JSONField(required=False)
 
     class Meta:
