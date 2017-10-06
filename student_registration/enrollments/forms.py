@@ -372,8 +372,8 @@ class EnrollmentForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('registration_date', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('outreach_barcode', css_class='col-md-3', css_id='block_id_outreach_barcode'),
+                    HTML('<span class="badge badge-default '+display_registry+'">2</span>'),
+                    Div('outreach_barcode', css_class='col-md-3 '+display_registry, css_id='block_id_outreach_barcode'),
                     css_class='row',
                 ),
                 Div(

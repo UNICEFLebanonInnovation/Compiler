@@ -49,6 +49,7 @@ class EnrollmentTable(tables.Table):
             'grading_term2',
             'grading_final',
             'grading_incomplete',
+            'registration_date',
             'student.first_name',
             'student.father_name',
             'student.last_name',
@@ -75,4 +76,7 @@ class EnrollmentTable(tables.Table):
             'last_informal_edu_level',
             'last_informal_edu_round',
             'last_informal_edu_final_result',
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
         )

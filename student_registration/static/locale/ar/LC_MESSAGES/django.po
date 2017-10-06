@@ -901,7 +901,7 @@ msgstr "دوام بعد الظهر"
 #: student_registration/enrollments/forms.py:110
 #: student_registration/enrollments/models.py:461
 msgid "Registration date"
-msgstr "التسجيل"
+msgstr "تاريخ التسجيل"
 
 #: student_registration/enrollments/forms.py:114
 #: student_registration/students/models.py:101
