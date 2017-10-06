@@ -9,35 +9,86 @@ from student_registration.locations.models import Location
 
 class School(models.Model):
 
-    name = models.CharField(max_length=255)
-    number = models.CharField(max_length=45, unique=True)
-    director_name = models.CharField(max_length=100, blank=True, null=True)
-    land_phone_number = models.CharField(max_length=100, blank=True, null=True)
-    director_phone_number = models.CharField(max_length=100, blank=True, null=True)
-    it_name = models.CharField(max_length=100, blank=True, null=True)
-    it_phone_number = models.CharField(max_length=100, blank=True, null=True)
-    field_coordinator_name = models.CharField(max_length=100, blank=True, null=True)
-    is_2nd_shift = models.BooleanField(blank=True, default=False)
-    number_students_2nd_shift = models.IntegerField(blank=True, null=True)
-    is_alp = models.BooleanField(blank=True, default=False)
-    number_students_alp = models.IntegerField(blank=True, null=True)
-    attendance_range = models.IntegerField(blank=True, null=True)
+    name = models.CharField(
+        max_length=255,
+        verbose_name=_('School name')
+    )
+    number = models.CharField(
+        max_length=45,
+        unique=True,
+        verbose_name=_('CERD')
+    )
+    director_name = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School director name')
+    )
+    land_phone_number = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School land phone number')
+    )
+    director_phone_number = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School director cell phone')
+    )
+    it_name = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School IT name')
+    )
+    it_phone_number = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School IT phone number')
+    )
+    field_coordinator_name = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('Field coordinator name')
+    )
+    is_2nd_shift = models.BooleanField(
+        blank=True,
+        default=False,
+        verbose_name=_('School is 2nd shift?')
+    )
+    number_students_2nd_shift = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of students in 2nd shift')
+    )
+    is_alp = models.BooleanField(
+        blank=True,
+        default=False,
+        verbose_name=_('School is ALP?')
+    )
+    number_students_alp = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of students in ALP')
+    )
+    attendance_range = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Attendance day range')
+    )
     academic_year_start = models.DateField(
         blank=True,
         null=True,
+        verbose_name=_('School year start date')
     )
     academic_year_end = models.DateField(
         blank=True,
         null=True,
+        verbose_name=_('School year end date')
     )
     academic_year_exam_end = models.DateField(
         blank=True,
         null=True,
+        verbose_name=_('Exam end date')
     )
-
     location = models.ForeignKey(
         Location,
         blank=False, null=True,
+        verbose_name=_('School location'),
         related_name='+',
     )
 
