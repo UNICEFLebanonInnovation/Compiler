@@ -64,13 +64,13 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.instance = serializer.save()
-            return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.instance})
+            return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.instance.id})
 
     def update(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
         instance.students = request.data.keys()[0]
         instance.save()
-        return JsonResponse({'status': status.HTTP_200_OK})
+        return JsonResponse({'status': status.HTTP_200_OK, 'data': instance.id})
 
     @list_route(methods=['get'], url_path='push-by-school/(?P<school>\d+)')
     def push_by_school(self, request, *args, **kwargs):
@@ -91,8 +91,6 @@ class AttendanceView(LoginRequiredMixin,
         level = 0
         section = 0
         school = 0
-        location = 0
-        location_parent = 0
         levels_by_sections = []
         students = []
         date_format = '%Y-%m-%d'
@@ -101,10 +99,6 @@ class AttendanceView(LoginRequiredMixin,
         # if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
         if self.request.user.school:
             school = self.request.user.school
-        if school and school.location:
-            location = school.location
-        if location and location.parent:
-            location_parent = location.parent
 
         # if not school.have_academic_year_dates:
             # return reverse('schools:profile', kwargs={})
@@ -181,8 +175,6 @@ class AttendanceView(LoginRequiredMixin,
             'total_students': students.count() if students else 0,
             'students': students,
             'school': school,
-            'location': location,
-            'location_parent': location_parent,
             'level': level,
             'section': section,
             'dates': dates,
