@@ -45,35 +45,13 @@ def assign_education_year(year):
 def generate_2ndshift_report(school=0, location=0, email=None, user=None):
     from student_registration.enrollments.models import Enrollment
 
-    offset = 120000
-    limit = 180000
-    # queryset = Enrollment.objects.all()[offset:limit]
+    # import subprocess
+    # subprocess.Popen(["python manage.py export_2ndshift_data", ], shell=True)
+
     queryset = Enrollment.objects.all()
 
     data = tablib.Dataset()
     data.headers = [
-
-        _('Student status'),
-        _('Final Grade'),
-
-        _('Linguistic field/Arabic'),
-        _('Sociology field'),
-        _('Physical field'),
-        _('Artistic field'),
-        _('Linguistic field/Foreign language'),
-        _('Scientific domain/Mathematics'),
-        _('Scientific domain/Sciences'),
-
-        _('Biology'),
-        _('Chemistry'),
-        _('Physic'),
-        _('Science'),
-        _('Math'),
-        _('History'),
-        _('Geography'),
-        _('Education'),
-        _('Foreign language'),
-        _('Arabic'),
 
         _('ALP result'),
         _('ALP round'),
@@ -112,28 +90,6 @@ def generate_2ndshift_report(school=0, location=0, email=None, user=None):
         if not line.student or not line.school:
             continue
         content = [
-
-            line.exam_result,
-            line.exam_total,
-
-            line.exam_result_linguistic_ar,
-            line.exam_result_sociology,
-            line.exam_result_physical,
-            line.exam_result_artistic,
-            line.exam_result_linguistic_en,
-            line.exam_result_mathematics,
-            line.exam_result_sciences,
-
-            line.exam_result_bio,
-            line.exam_result_chemistry,
-            line.exam_result_physic,
-            line.exam_result_science,
-            line.exam_result_math,
-            line.exam_result_history,
-            line.exam_result_geo,
-            line.exam_result_education,
-            line.exam_result_language,
-            line.exam_result_arabic,
 
             line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
             line.last_informal_edu_round.name if line.last_informal_edu_round else '',
@@ -213,3 +169,36 @@ def track_student_moves():
             print(match_records)
             for item in match_records:
                 StudentMove.objects.get_or_create(enrolment1=registry, enrolment2=item, school1=registry.school, school2=item.school)
+
+
+@app.task
+def migrate_gradings():
+    from .models import Enrollment, EnrollmentGrading
+
+    registrations = Enrollment.objects.all()
+
+    for registry in registrations:
+        instance = EnrollmentGrading.objects.create(
+            enrollment=registry,
+            exam_term=3,
+            exam_result_arabic=registry.exam_result_arabic,
+            exam_result_language=registry.exam_result_language,
+            exam_result_education=registry.exam_result_education,
+            exam_result_geo=registry.exam_result_geo,
+            exam_result_history=registry.exam_result_history,
+            exam_result_math=registry.exam_result_math,
+            exam_result_science=registry.exam_result_science,
+            exam_result_physic=registry.exam_result_physic,
+            exam_result_chemistry=registry.exam_result_chemistry,
+            exam_result_bio=registry.exam_result_bio,
+            exam_result_linguistic_ar=registry.exam_result_linguistic_ar,
+            exam_result_sociology=registry.exam_result_sociology,
+            exam_result_physical=registry.exam_result_physical,
+            exam_result_artistic=registry.exam_result_artistic,
+            exam_result_linguistic_en=registry.exam_result_linguistic_en,
+            exam_result_mathematics=registry.exam_result_mathematics,
+            exam_result_sciences=registry.exam_result_sciences,
+            exam_total=registry.exam_total,
+            exam_result=registry.exam_result,
+        )
+        instance.save()
