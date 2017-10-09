@@ -405,7 +405,9 @@ class AttendanceAdmin(ImportExportModelAdmin):
         'total_absent_male',
         'total_absent_female',
         'validation_date',
-        'validation_status'
+        'validation_status',
+        'created',
+        'modified'
     )
     list_filter = (
         'school',
