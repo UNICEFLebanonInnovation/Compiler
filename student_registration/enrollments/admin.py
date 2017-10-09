@@ -287,6 +287,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'classroom__name',
         'owner__username',
     )
+    date_hierarchy = 'registration_date'
 
     def caza(self, obj):
         if obj.school and obj.school.location:

@@ -110,7 +110,29 @@ class Attendance(TimeStampedModel):
         return self.student.sex
 
     def __unicode__(self):
-        return self.student_fullname
+        return self.school.__unicode__()
+
+    def save(self, **kwargs):
+        """
+        """
+        if self.students:
+            self.total_enrolled = 0
+            self.total_attended = 0
+            self.total_absences = 0
+            self.total_attended_male = 0
+            self.total_attended_female = 0
+            self.total_absent_male = 0
+            self.total_absent_female = 0
+            for level_section in self.students:
+                self.total_enrolled += self.students[level_section]['total_enrolled']
+                self.total_attended += self.students[level_section]['total_attended']
+                self.total_absences += self.students[level_section]['total_absences']
+                self.total_attended_male += self.students[level_section]['total_attended_male']
+                self.total_attended_female += self.students[level_section]['total_attended_female']
+                self.total_absent_male += self.students[level_section]['total_absent_male']
+                self.total_absent_female += self.students[level_section]['total_absent_female']
+
+        super(Attendance, self).save(**kwargs)
 
 
 class BySchoolByDay(models.Model):
