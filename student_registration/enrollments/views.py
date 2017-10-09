@@ -353,6 +353,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             _('day'),
             _('Sex'),
             _('Student fullname'),
+            _('Registration date'),
             _('School'),
             _('School number'),
             _('District'),
@@ -399,6 +400,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
                 _(line.student.sex) if line.student.sex else '',
                 line.student.__unicode__(),
 
+                line.registration_date,
                 line.school.name,
                 line.school.number,
                 line.school.location.name,
@@ -468,6 +470,7 @@ class ExportGradingViewSet(LoginRequiredMixin, ListView):
             _('Student nationality'),
             _('Sex'),
             _('Student fullname'),
+            _('Registration date'),
             _('School'),
             _('School number'),
             _('District'),
@@ -513,6 +516,7 @@ class ExportGradingViewSet(LoginRequiredMixin, ListView):
                 _(enrollment.student.sex) if enrollment.student.sex else '',
                 enrollment.student.__unicode__(),
 
+                enrollment.registration_date,
                 enrollment.school.name,
                 enrollment.school.number,
                 enrollment.school.location.name,

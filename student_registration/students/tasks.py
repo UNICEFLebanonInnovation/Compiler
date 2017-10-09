@@ -136,3 +136,41 @@ def disable_duplicate_outreaches(school_number=None):
         registry.save()
 
     print("End disable duplicates")
+
+
+@app.task
+def cleanup_registry_duplications(registry_type='alp'):
+    from student_registration.alp.models import Outreach
+    from student_registration.enrollments.models import Enrollment
+
+    model = Outreach if registry_type == 'alp' else Enrollment
+
+    registrations = model.objects.filter(deleted=True)
+    print(registrations.count())
+    # registrations.delete()
+
+
+@app.task
+def cleanup_duplications():
+    from .models import Student
+
+    registrations = Student.objects.filter(
+        student_enrollment__isnull=True,
+        alp_enrollment__isnull=True,
+    )
+    print(registrations.count())
+    # registrations.delete()
+
+
+@app.task
+def move_data_from_registry_to_students(registry_type='alp'):
+    from student_registration.alp.models import Outreach
+    from student_registration.enrollments.models import Enrollment
+
+    model = Outreach if registry_type == 'alp' else Enrollment
+    registrations = model.objects.all()
+
+    for registry in registrations:
+        student = registry.student
+        student.registered_in_unhcr = registry.registered_in_unhcr
+        student.save()
