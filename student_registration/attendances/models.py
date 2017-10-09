@@ -91,6 +91,14 @@ class Attendance(TimeStampedModel):
 
     students = JSONField(blank=True, null=True)
 
+    total_enrolled = models.IntegerField(blank=True, null=True)
+    total_attended = models.IntegerField(blank=True, null=True)
+    total_absences = models.IntegerField(blank=True, null=True)
+    total_attended_male = models.IntegerField(blank=True, null=True)
+    total_attended_female = models.IntegerField(blank=True, null=True)
+    total_absent_male = models.IntegerField(blank=True, null=True)
+    total_absent_female = models.IntegerField(blank=True, null=True)
+
     @property
     def student_fullname(self):
         if self.student:
