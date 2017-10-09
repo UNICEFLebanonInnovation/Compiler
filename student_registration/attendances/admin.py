@@ -395,12 +395,25 @@ class AttendanceAdmin(ImportExportModelAdmin):
         'owner',
     )
     list_display = (
-        'id',
         'school',
+        'attendance_date',
+        'total_enrolled',
+        'total_attended',
+        'total_attended_male',
+        'total_attended_female',
+        'total_absences',
+        'total_absent_male',
+        'total_absent_female',
+        'validation_date',
+        'validation_status'
     )
     list_filter = (
         'school',
+        'attendance_date',
+        'validation_date',
+        'validation_status'
     )
+    date_hierarchy = 'attendance_date'
 
 admin.site.register(Attendance, AttendanceAdmin)
 # admin.site.register(BySchoolByDay, BySchoolByDayAdmin)
