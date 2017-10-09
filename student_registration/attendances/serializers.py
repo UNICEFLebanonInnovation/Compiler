@@ -21,6 +21,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
             'validation_date',
             'validation_owner',
             'close_reason',
+            'total_enrolled',
             'students',
             'owner',
         )

@@ -721,7 +721,7 @@ def find_attendances_gap_grouped(days):
     file_object.close()
 
 
-app.task
+@app.task
 def dropout_students():
 
     pass
