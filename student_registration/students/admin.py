@@ -122,7 +122,6 @@ class RegisteredInFilter(admin.SimpleListFilter):
         in the right sidebar.
         """
         return (
-            ('pilot', 'PILOT'),
             ('alp', 'ALP'),
             ('2ndshift', '2nd-shift'),
         )
@@ -133,8 +132,6 @@ class RegisteredInFilter(admin.SimpleListFilter):
         provided in the query string and retrievable via
         `self.value()`.
         """
-        if self.value() and self.value() == 'pilot':
-            return queryset.filter(student_registration__isnull=False)
         if self.value() and self.value() == 'alp':
             return queryset.filter(
                 alp_enrollment__isnull=False,
@@ -658,7 +655,6 @@ class StudentMatchingAdmin(ImportExportModelAdmin):
     resource_class = StudentMatching
     list_display = (
         'id',
-        'pilot_id',
         'registry',
         'enrolled_id',
         'enrolment',
@@ -677,11 +673,6 @@ class StudentMatchingAdmin(ImportExportModelAdmin):
         'enrolment__id_number',
         'enrolment__number',
     )
-
-    def pilot_id(self, obj):
-        if obj.registry:
-            return obj.registry.id
-        return ''
 
     def enrolled_id(self, obj):
         if obj.enrolment:
