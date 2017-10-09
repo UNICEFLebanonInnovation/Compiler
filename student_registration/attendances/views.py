@@ -68,9 +68,21 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
 
     def update(self, request, *args, **kwargs):
         instance = self.model.objects.get(id=kwargs['pk'])
-        instance.students = request.data.keys()[0]
+        data = json.loads(request.data.keys()[0], "utf-8")
+        level_section = data.keys()[0]
+        if not instance.students:
+            instance.students = data
+        else:
+            instance.students[level_section] = data[level_section]
         instance.save()
         return JsonResponse({'status': status.HTTP_200_OK, 'data': instance.id})
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        instance.save()
+
+    def partial_update(self, request, *args, **kwargs):
+        return super(AttendanceViewSet, self).partial_update(request)
 
     @list_route(methods=['get'], url_path='push-by-school/(?P<school>\d+)')
     def push_by_school(self, request, *args, **kwargs):
@@ -110,10 +122,14 @@ class AttendanceView(LoginRequiredMixin,
         selected_date = self.request.GET.get('date', current_date)
         selected_date_view = datetime.datetime.strptime(selected_date, date_format).strftime(date_format_display)
 
-        attendances = Attendance.objects.filter(
-            school_id=school,
-            attendance_date=datetime.datetime.strptime(selected_date, date_format)
-        )
+        try:
+            attendance = Attendance.objects.get(
+                school_id=school.id,
+                attendance_date=selected_date
+                # attendance_date=datetime.datetime.strptime(selected_date, date_format)
+            )
+        except Attendance.DoesNotExist:
+            attendance = ''
 
         if self.request.GET.get('level', 0):
             level = ClassRoom.objects.get(id=int(self.request.GET.get('level', 0)))
@@ -140,23 +156,15 @@ class AttendanceView(LoginRequiredMixin,
             ).order_by('student__first_name')
 
         for registry in registrations:
-            attendances = attendances.filter(
-                classroom_id=registry['classroom_id'],
-                section_id=registry['section_id']
-            )
-            validation_date = ''
-            validation = attendances.filter(validation_date__isnull=False)
-            if validation.count():
-                validation_date = validation[0]
             levels_by_sections.append({
                 'level_name': registry['classroom__name'],
                 'level': registry['classroom_id'],
                 'section_name': registry['section__name'],
                 'section': registry['section_id'],
                 'total': queryset.filter(classroom_id=registry['classroom_id'], section_id=registry['section_id']).count(),
-                'total_attend': attendances.filter(status=True).count(),
-                'total_absent': attendances.filter(status=False).count(),
-                'validation_date': validation_date
+                'total_attend': 0,
+                'total_absent': 0,
+                'validation_date': ''
             })
 
         base = datetime.datetime.now()
@@ -171,6 +179,7 @@ class AttendanceView(LoginRequiredMixin,
             })
 
         return {
+            'attendance': attendance,
             'total': queryset.count(),
             'total_students': students.count() if students else 0,
             'students': students,
