@@ -343,42 +343,8 @@
             });
 
             $(document).on('click', '#save_attendances', function(){
-                var students = new Array();
-                var total_absence = 0;
-                var total_attend = 0;
                 if(confirm($(this).attr('translation'))) {
-                    $('.enrollment_id').each(function (i, item) {
-                        var enrollment_id = $(item).val();
-                        var status = false;
-                        if($('#status_'+enrollment_id).val() == '' || $('#status_'+enrollment_id).val() == true){
-                            status = true;
-                            total_attend = total_attend + 1;
-                        }else{
-                            total_absence = total_absence + 1;
-                        }
-                        students.push({
-                            student_id: $('#student_id_'+enrollment_id).val(),
-                            student_fullname: $('#student_fullname_'+enrollment_id).val(),
-                            student_sex: $('#student_sex_'+enrollment_id).val(),
-                            student_age: $('#student_age_'+enrollment_id).val(),
-                            student_birthday: $('#student_birthday_'+enrollment_id).val(),
-                            section: $('#section_'+enrollment_id).val(),
-                            section_name: $('#section_name_'+enrollment_id).val(),
-                            level: $('#level_'+enrollment_id).val(),
-                            level_name: $('#level_name_'+enrollment_id).val(),
-                            status: status,
-                            absence_reason: $('#absence_reason_'+enrollment_id).val()
-                        })
-                    });
-                    var level_section_name = $('#level').val() + "-" + $('#section').val();
-                    var level_section = {};
-                    level_section[level_section_name] = {
-                        students: students,
-                        total: students.length,
-                        total_absence: total_absence,
-                        total_attend: total_attend,
-                        exam_day: false
-                    };
+                    var level_section = get_level_section_attendances(false);
 
                     var data = {
                             owner: $('input#owner').val(),
@@ -411,42 +377,8 @@
             });
 
             $(document).on('click', '#exam_day', function(){
-                var students = new Array();
-                var total_absence = 0;
-                var total_attend = 0;
                 if(confirm($(this).attr('translation'))) {
-                    $('.enrollment_id').each(function (i, item) {
-                        var enrollment_id = $(item).val();
-                        var status = false;
-                        if($('#status_'+enrollment_id).val() == '' || $('#status_'+enrollment_id).val() == true){
-                            status = true;
-                            total_attend = total_attend + 1;
-                        }else{
-                            total_absence = total_absence + 1;
-                        }
-                        students.push({
-                            student_id: $('#student_id_'+enrollment_id).val(),
-                            student_fullname: $('#student_fullname_'+enrollment_id).val(),
-                            student_sex: $('#student_sex_'+enrollment_id).val(),
-                            student_age: $('#student_age_'+enrollment_id).val(),
-                            student_birthday: $('#student_birthday_'+enrollment_id).val(),
-                            section: $('#section_'+enrollment_id).val(),
-                            section_name: $('#section_name_'+enrollment_id).val(),
-                            level: $('#level_'+enrollment_id).val(),
-                            level_name: $('#level_name_'+enrollment_id).val(),
-                            status: status,
-                            absence_reason: $('#absence_reason_'+enrollment_id).val()
-                        })
-                    });
-                    var level_section_name = $('#level').val() + "-" + $('#section').val();
-                    var level_section = {};
-                    level_section[level_section_name] = {
-                        students: students,
-                        total: students.length,
-                        total_absence: total_absence,
-                        total_attend: total_attend,
-                        exam_day: true
-                    };
+                    var level_section = get_level_section_attendances(true);
 
                     var data = {
                             owner: $('input#owner').val(),
@@ -471,6 +403,69 @@
                 }
             });
         });
+
+        function get_level_section_attendances(exam_day)
+        {
+            var students = new Array();
+            var level_section = {};
+            var total_absences = 0;
+            var total_attended = 0;
+            var total_attended_male = 0;
+            var total_attended_female = 0;
+            var total_absent_male = 0;
+            var total_absent_female = 0;
+            $('.enrollment_id').each(function (i, item) {
+                var enrollment_id = $(item).val();
+                var status = null;
+                var sex = $('#student_sex_'+enrollment_id).val();
+
+                if($('#status_'+enrollment_id).val() == '' || $('#status_'+enrollment_id).val() == true){
+                    status = true;
+                    if(sex == 'Male'){
+                        total_attended_male = total_attended_male + 1;
+                    }else{
+                        total_attended_female = total_attended_female + 1;
+                    }
+                }else{
+                    status = false;
+                    if(sex == 'Male'){
+                        total_absent_male = total_absent_male + 1;
+                    }else{
+                        total_absent_female = total_absent_female + 1;
+                    }
+                }
+
+                total_attended = total_attended_male + total_attended_female;
+                total_absences = total_absent_male + total_absent_female;
+
+                students.push({
+                    student_id: $('#student_id_'+enrollment_id).val(),
+                    student_fullname: $('#student_fullname_'+enrollment_id).val(),
+                    student_sex: sex,
+                    student_age: $('#student_age_'+enrollment_id).val(),
+                    student_birthday: $('#student_birthday_'+enrollment_id).val(),
+                    section: $('#section_'+enrollment_id).val(),
+                    section_name: $('#section_name_'+enrollment_id).val(),
+                    level: $('#level_'+enrollment_id).val(),
+                    level_name: $('#level_name_'+enrollment_id).val(),
+                    status: status,
+                    absence_reason: $('#absence_reason_'+enrollment_id).val()
+                })
+            });
+            var level_section_name = $('#level').val() + "-" + $('#section').val();
+            level_section[level_section_name] = {
+                students: students,
+                total_enrolled: students.length,
+                total_absences: total_absences,
+                total_attended: total_attended,
+                total_attended_male: total_attended_male,
+                total_attended_female: total_attended_female,
+                total_absent_male: total_absent_male,
+                total_absent_female: total_absent_female,
+                exam_day: exam_day
+            };
+            return level_section;
+        }
 
         function disable_attendance()
         {
