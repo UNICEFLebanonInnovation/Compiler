@@ -125,35 +125,26 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="alert alert-success d-none" role="alert">
-                              <strong>Well done!</strong> You successfully read this important alert message.
+                                {% trans 'Your data has been sent successfully to the server' %}
                             </div>
                             <div class="alert alert-danger d-none" role="alert">
-                              <strong>Oh snap!</strong> Change a few things up and try submitting again.
+                                {% trans 'En error has been occurred please contact the admin or try later' %}
                             </div>
-{#                          <div class="panel-heading" id="header">#}
-{#                            <ol class="breadcrumb">#}
-{#                                <li><h3 class="panel-title">{% trans "Attendance" %}</h3></li>#}
-{#                                <li>#}
-{#                                    <a class="btn btn-info" id="registration-export" href="{% url "enrollments:enrollment_export" %}" target="_blank">#}
-{#                                        <i class="icon-export-sign icon-white"></i>&nbsp;#}
-{#                                            {% trans "Export" %}#}
-{#                                    </a>#}
-{#                                </li>#}
-{#                            </ol>#}
-{#                            <div class="actions pull-right">#}
-{#                                <i class="fa fa-chevron-down"></i>#}
-{#                                <i class="fa fa-times"></i>#}
-{#                            </div>#}
-{#                          </div>#}
-{#                          <div class="panel-heading">#}
-{#                            <span class="col-sm-2 icon-school"></span>#}
-{#                            <ol class="breadcrumb">#}
-{#                                <li>{{ school }}</li>#}
-{#                                <li>{{ location }}</li>#}
-{#                                <li>{{ location_parent }}</li>#}
-{#                                <li>{% trans "Total students" %} <span class="badge ttl_students">{{ total }}</span></li>#}
-{#                            </ol>#}
-{#                          </div>#}
+                        {% if not level %}
+                          <div class="panel-heading">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <select name="dates" id="dates" class="form-control">
+                                        {% for date in dates %}
+                                            <option value="{{ date.value }}" {% if date.value == selected_date %}selected="selected"{% endif %} data-action="{% url "attendances:attendance" %}?date={{ date.value }}">{{ date.label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </li>
+                                <li class="breadcrumb-item" style="font-size: 20px"><span>{{ school }}</span></li>
+                                <li class="absolute-right-30" style="font-size: 20px"><span class="badge badge-primary">{{ total }}</span></li>
+                            </ol>
+                          </div>
+                        {% endif %}
                           <div class="panel-heading">
                                 {% if level %}
                             <ol class="breadcrumb">
@@ -167,7 +158,7 @@
                                     {{ level.name }} - {{ section.name }}
                                 </li>
                                 <li class="breadcrumb-item">
-                                    {% trans "Total students" %} <span class="badge badge-default">{{ total_students }}</span>
+                                    {% trans "Total students" %} <span class="badge badge-primary">{{ total_students }}</span>
                                     <a href="#" class="btn btn-success absolute-right-30" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
                                 </li>
                             </ol>
@@ -175,17 +166,7 @@
                                 {% if not level %}
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item">
-                                    <div class="form-group">
-{#                                        <span class="col-sm-2 icon-date-time"></span>#}
-                                        <select name="dates" id="dates" class="form-control">
-                                            {% for date in dates %}
-                                                <option value="{{ date.value }}" {% if date.value == selected_date %}selected="selected"{% endif %} data-action="{% url "attendances:attendance" %}?date={{ date.value }}">{{ date.label }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </li>
-                                <li class="breadcrumb-item">
-                                    {% if not attendance %}
+                                    {% if not attendance or attendance.close_reason %}
                                       <button type="button" class="closing-reason-b btn btn-primary" itemref="public_holiday" translation="{% trans 'Are you sure that the school is closed today for a public holiday?' %}">{% trans "Public Holiday" %}</button>
                                       <button type="button" class="closing-reason-b btn btn-warning" itemref="school_holiday" translation="{% trans 'Are you sure that the school is closed today for a school holiday?' %}">{% trans "School Holiday" %}</button>
                                       <button type="button" class="closing-reason-b btn btn-danger" itemref="strike" translation="{% trans 'Are you sure that the school is closed today for a strike?' %}">{% trans "Strike" %}</button>
@@ -308,13 +289,7 @@
     <script type="text/javascript" src="{% static 'js/bootstrap-switch.min.js' %}"></script>
     <script type="text/javascript">
         var user_token = '{{ user_token }}';
-
-{#        var protocol = 'http://';#}
-{#        {% if request.is_secure %}#}
-{#            protocol = 'https://';#}
-{#        {% endif %}#}
-{#        var host = '{{ request.get_host }}';#}
-{#        var synchro_path = protocol+host+'/api/attendances/';#}
+        var total_enrolled = {{ total }};
 
         $(document).ready(function(){
 
@@ -330,7 +305,6 @@
                         students: {}
                     };
                     set_attendances(data);
-                    disable_attendance();
                     $('.closing-reason-b').hide();
                     $(this).show();
                 }
@@ -349,7 +323,8 @@
                     var data = {
                             owner: $('input#owner').val(),
                             attendance_date: $('input#attendance_date').val(),
-                            school: $('input#school').val()
+                            school: $('input#school').val(),
+                            total_enrolled: total_enrolled
                     };
                     set_attendances(data, level_section);
                 }
@@ -364,8 +339,6 @@
                 if(confirm($(this).attr('translation'))) {
                     var data = {
                         validation_owner: $('input#owner').val(),
-{#                        attendance_date: $('input#attendance_date').val(),#}
-{#                        school: $('input#school').val(),#}
                         validation_status: true,
                         validation_date: yyyy+'-'+mm+'-'+dd
                     };
@@ -383,7 +356,8 @@
                     var data = {
                             owner: $('input#owner').val(),
                             attendance_date: $('input#attendance_date').val(),
-                            school: $('input#school').val()
+                            school: $('input#school').val(),
+                            total_enrolled: total_enrolled
                     };
                     set_attendances(data, level_section);
                     $('#save_attendances').remove();
