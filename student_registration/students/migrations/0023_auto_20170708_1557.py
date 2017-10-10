@@ -36,4 +36,9 @@ class Migration(migrations.Migration):
             name='registered_in_unhcr',
             field=models.CharField(blank=True, choices=[('yes', '\u0646\u0639\u0645'), ('no', '\u0643\u0644\u0627')], max_length=50, null=True),
         ),
+        migrations.AddField(
+            model_name='student',
+            name='hh_barcode',
+            field=models.CharField(blank=True, max_length=45, null=True),
+        ),
     ]
