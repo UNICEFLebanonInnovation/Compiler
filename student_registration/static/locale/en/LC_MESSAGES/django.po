@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-09 17:01+0300\n"
+"POT-Creation-Date: 2017-10-10 13:40+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -132,8 +132,8 @@ msgstr ""
 #: student_registration/enrollments/forms.py:848
 #: student_registration/enrollments/forms.py:900
 #: student_registration/schools/forms.py:66
-#: student_registration/templates/attendances/school.html:157
-#: student_registration/templates/attendances/school.html:277
+#: student_registration/templates/attendances/school.html:162
+#: student_registration/templates/attendances/school.html:273
 msgid "Save"
 msgstr ""
 
@@ -652,17 +652,17 @@ msgid "# Students reported by the Director"
 msgstr ""
 
 #: student_registration/attendances/models.py:25
-#: student_registration/templates/attendances/school.html:266
+#: student_registration/templates/attendances/school.html:262
 msgid "Sick"
 msgstr ""
 
 #: student_registration/attendances/models.py:26
-#: student_registration/templates/attendances/school.html:267
+#: student_registration/templates/attendances/school.html:263
 msgid "No reason"
 msgstr ""
 
 #: student_registration/attendances/models.py:27
-#: student_registration/templates/attendances/school.html:268
+#: student_registration/templates/attendances/school.html:264
 msgid "No transport"
 msgstr ""
 
@@ -671,27 +671,27 @@ msgstr ""
 #: student_registration/clm/models.py:143
 #: student_registration/outreach/models.py:102
 #: student_registration/outreach/models.py:168
-#: student_registration/templates/attendances/school.html:269
+#: student_registration/templates/attendances/school.html:265
 msgid "Other"
 msgstr ""
 
 #: student_registration/attendances/models.py:32
-#: student_registration/templates/attendances/school.html:174
+#: student_registration/templates/attendances/school.html:170
 msgid "Public Holiday"
 msgstr ""
 
 #: student_registration/attendances/models.py:33
-#: student_registration/templates/attendances/school.html:175
+#: student_registration/templates/attendances/school.html:171
 msgid "School Holiday"
 msgstr ""
 
 #: student_registration/attendances/models.py:34
-#: student_registration/templates/attendances/school.html:176
+#: student_registration/templates/attendances/school.html:172
 msgid "Strike"
 msgstr ""
 
 #: student_registration/attendances/models.py:35
-#: student_registration/templates/attendances/school.html:177
+#: student_registration/templates/attendances/school.html:173
 msgid "Weekly Holiday"
 msgstr ""
 
@@ -1787,14 +1787,24 @@ msgid "Add new Student"
 msgstr ""
 
 #: student_registration/templates/alp/list.html:31
+#: student_registration/templates/dashboard/exporter.html:27
+#: student_registration/templates/dashboard/exporter.html:37
+#: student_registration/templates/dashboard/exporter.html:47
+#: student_registration/templates/dashboard/exporter.html:57
+#: student_registration/templates/dashboard/exporter.html:67
+#: student_registration/templates/dashboard/exporter.html:77
+#: student_registration/templates/dashboard/exporter.html:87
+#: student_registration/templates/dashboard/exporter.html:97
 msgid "Export"
 msgstr ""
 
 #: student_registration/templates/alp/post_test.html:15
+#: student_registration/templates/dashboard/exporter.html:85
 msgid "ALP Post-test"
 msgstr ""
 
 #: student_registration/templates/alp/pre_test.html:15
+#: student_registration/templates/dashboard/exporter.html:65
 msgid "ALP Pre-test"
 msgstr ""
 
@@ -1803,60 +1813,60 @@ msgid "Your data has been sent successfully to the server"
 msgstr ""
 
 #: student_registration/templates/attendances/school.html:131
-msgid "En error has been occured please contact the admin or try later"
+msgid "En error has been occurred please contact the admin or try later"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:147
-#: student_registration/templates/attendances/school.html:276
+#: student_registration/templates/attendances/school.html:152
+#: student_registration/templates/attendances/school.html:272
 msgid "Back to "
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:148
+#: student_registration/templates/attendances/school.html:153
 msgid "Are you sure that the students of this class are away for a reason?"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:148
+#: student_registration/templates/attendances/school.html:153
 msgid "Exam day"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:156
+#: student_registration/templates/attendances/school.html:161
 msgid "Total students"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:157
-#: student_registration/templates/attendances/school.html:277
+#: student_registration/templates/attendances/school.html:162
+#: student_registration/templates/attendances/school.html:273
 msgid "Are you sure you want to save the attendance for this class?"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:174
+#: student_registration/templates/attendances/school.html:170
 msgid "Are you sure that the school is closed today for a public holiday?"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:175
+#: student_registration/templates/attendances/school.html:171
 msgid "Are you sure that the school is closed today for a school holiday?"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:176
+#: student_registration/templates/attendances/school.html:172
 msgid "Are you sure that the school is closed today for a strike?"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:177
+#: student_registration/templates/attendances/school.html:173
 msgid "Are you sure that the school is closed today for a weekly holiday?"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:181
+#: student_registration/templates/attendances/school.html:177
 msgid "Are you sure you want to validate all attendances?"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:181
+#: student_registration/templates/attendances/school.html:177
 msgid "Validate all"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:263
+#: student_registration/templates/attendances/school.html:259
 msgid "Present"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:263
+#: student_registration/templates/attendances/school.html:259
 msgid "Absent"
 msgstr ""
 
@@ -1909,6 +1919,74 @@ msgstr ""
 
 #: student_registration/templates/dashboard/attendance.html:16
 msgid "Attendance Dashboard"
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:17
+msgid "Full data export"
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:25
+msgid "2nd shift registration"
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:26
+msgid "Export data for 2nd shift registration of the current school year."
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:35
+msgid "2nd shift gradings"
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:36
+msgid "Export data for 2nd shift gradings of the current school year."
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:45
+msgid "2nd shift registration full data"
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:46
+msgid "Export the full data for 2nd shift registration for all school years."
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:55
+msgid "ALP Pre-test outreach"
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:56
+msgid ""
+"Export the data entered by the partner during the pre-test of the current "
+"pre-test round."
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:66
+msgid ""
+"Export Pre-test gradings data entered by the partner for the current pre-"
+"test round."
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:75
+msgid "ALP school registration"
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:76
+msgid ""
+"Export school registration data entered by the school IT for the current "
+"round."
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:86
+msgid ""
+"Export Post-test gradings data entered by the partner for the curent post-"
+"test round."
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:95
+msgid "ALP full data"
+msgstr ""
+
+#: student_registration/templates/dashboard/exporter.html:96
+msgid "Export ALP full data for all rounds."
 msgstr ""
 
 #: student_registration/templates/dashboard/registrations-alp-outreach.html:16
