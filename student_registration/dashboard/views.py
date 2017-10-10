@@ -24,6 +24,18 @@ import datetime
 from django.db.models import Q
 
 
+class ExporterView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   TemplateView):
+
+    template_name = 'dashboard/exporter.html'
+
+    group_required = [u"MEHE"]
+
+    def handle_no_permission(self, request):
+        return HttpResponseForbidden()
+
+
 class Registrations2ndShiftView(LoginRequiredMixin,
                                 GroupRequiredMixin,
                                 TemplateView):

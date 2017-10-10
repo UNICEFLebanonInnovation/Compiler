@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{#{% load util_tags %}#}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% load util_tags %}
+<section class="main-content-wrapper">
+    <section id="main-content">
+        <div class="title_left">
+            <h3 style="color:#73879C;">{% trans 'Full data export' %}</h3>
+        </div>
+        <hr>
+
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">{% trans '2nd shift registration' %}</h3>
+                <p class="card-text">{% trans 'Export data for 2nd shift registration of the current school year.' %}</p>
+                <a href="#" class="btn btn-primary">{% trans 'Export' %}</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">{% trans '2nd shift gradings' %}</h3>
+                <p class="card-text">{% trans 'Export data for 2nd shift gradings of the current school year.' %}</p>
+                <a href="#" class="btn btn-primary">{% trans 'Export' %}</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">{% trans '2nd shift registration full data' %}</h3>
+                <p class="card-text">{% trans 'Export the full data for 2nd shift registration for all school years.' %}</p>
+                <a href="#" class="btn btn-primary">{% trans 'Export' %}</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">{% trans 'ALP Pre-test outreach' %}</h3>
+                <p class="card-text">{% trans 'Export the data entered by the partner during the pre-test of the current pre-test round.' %}</p>
+                <a href="#" class="btn btn-primary">{% trans 'Export' %}</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">{% trans 'ALP Pre-test' %}</h3>
+                <p class="card-text">{% trans 'Export Pre-test gradings data entered by the partner for the current pre-test round.' %}</p>
+                <a href="#" class="btn btn-primary">{% trans 'Export' %}</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">{% trans 'ALP school registration' %}</h3>
+                <p class="card-text">{% trans 'Export school registration data entered by the school IT for the current round.' %}</p>
+                <a href="#" class="btn btn-primary">{% trans 'Export' %}</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">{% trans 'ALP Post-test' %}</h3>
+                <p class="card-text">{% trans 'Export Post-test gradings data entered by the partner for the curent post-test round.' %}</p>
+                <a href="#" class="btn btn-primary">{% trans 'Export' %}</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">{% trans 'ALP full data' %}</h3>
+                <p class="card-text">{% trans 'Export ALP full data for all rounds.' %}</p>
+                <a href="#" class="btn btn-primary">{% trans 'Export' %}</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+    </section>
+</section>
+{% endblock %}

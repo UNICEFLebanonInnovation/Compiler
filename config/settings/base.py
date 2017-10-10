@@ -374,6 +374,7 @@ SUIT_CONFIG = {
         {'app': 'helpdesk', 'label': 'HelpDesk Config', 'icon': 'icon-info-sign'},
         {'label': 'HelpDesk Public', 'icon': 'icon-info-sign', 'url': '/helpdesk/dashboard/'},
         {'label': 'Dashboard', 'icon': 'icon-home', 'models': [
+            {'url': '/dashboard/exporter/', 'label': 'Full data export'},
             {'url': '/dashboard/registrations-2ndshift/', 'label': '2nd Shift'},
             {'url': '/dashboard/2ndshift-overall/', 'label': '2nd Shift Overall'},
             {'url': '/dashboard/alp-overall/', 'label': 'ALP Overall'},

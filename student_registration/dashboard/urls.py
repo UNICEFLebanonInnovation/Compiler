@@ -6,6 +6,11 @@ from . import views
 
 urlpatterns = [
     url(
+        regex=r'^exporter/$',
+        view=views.ExporterView.as_view(),
+        name='exporter'
+    ),
+    url(
         regex=r'^registrations-2ndshift/$',
         view=views.Registrations2ndShiftView.as_view(),
         name='registrations-2ndshift'
