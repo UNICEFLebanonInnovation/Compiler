@@ -723,5 +723,12 @@ def find_attendances_gap_grouped(days):
 
 @app.task
 def dropout_students():
+    from .models import Attendance
 
-    pass
+    absentees = Attendance.objects.exclude(total_absences=0)
+    print(absentees.count())
+    absentees = absentees.filter(students__1_1__students__0__contained_by={'status':'true'})
+    print(absentees.count())
+    # absentees = absentees.filter(students__search={'status': 'false'})
+    absentees = absentees.filter(students__search='status')
+    print(absentees.count())
