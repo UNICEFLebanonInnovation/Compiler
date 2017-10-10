@@ -19,8 +19,7 @@ APPS_DIR = ROOT_DIR.path('student_registration')
 env = environ.Env()
 
 #Version
-COMPILER_VERSION = '1.1'
-PILOT_VERSION = '1.7'
+COMPILER_VERSION = '2.0'
 
 # .env file, should load only in development environment
 READ_DOT_ENV_FILE = env.bool('DJANGO_READ_DOT_ENV_FILE', default=False)
