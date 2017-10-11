@@ -99,6 +99,8 @@ class AttendanceView(LoginRequiredMixin,
         section = 0
         school = 0
         levels_by_sections = []
+        attendance_students = []
+        attendance_status = {}
         students = []
         date_format = '%Y-%m-%d'
         date_format_display = '%A %d/%m/%Y'
@@ -106,12 +108,6 @@ class AttendanceView(LoginRequiredMixin,
         # if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
         if self.request.user.school:
             school = self.request.user.school
-
-        # if not school.have_academic_year_dates:
-            # return reverse('schools:profile', kwargs={})
-
-        # attqs = Attendance.objects.filter(school=14, students__level_section='1-1')
-        # print attqs.count()
 
         current_date = datetime.datetime.now().strftime(date_format)
         selected_date = self.request.GET.get('date', current_date)
@@ -143,17 +139,14 @@ class AttendanceView(LoginRequiredMixin,
             'section_id'
         ).order_by('classroom_id')
 
-        if level:
-            students = queryset.filter(
-                classroom_id=level.id,
-                section_id=section.id,
-                # registration_date__lte=selected_date
-            ).order_by('student__first_name')
-
         for registry in registrations:
             level_section = '{}-{}'.format(registry['classroom_id'], registry['section_id'])
             attendances = attendance.students[level_section] if attendance and attendance.students and level_section in attendance.students else ''
             total = queryset.filter(classroom_id=registry['classroom_id'], section_id=registry['section_id']).count()
+
+            if attendances:
+                for value in attendances['students']:
+                    attendance_status[value['student_id']] = value
 
             levels_by_sections.append({
                 'level_name': registry['classroom__name'],
@@ -161,11 +154,23 @@ class AttendanceView(LoginRequiredMixin,
                 'section_name': registry['section__name'],
                 'section': registry['section_id'],
                 'total': attendances['total_enrolled'] if attendances else total,
-                'total_attended': attendances['total_enrolled'] if attendances else 0,
+                'total_attended': attendances['total_attended'] if attendances else 0,
                 'total_absences': attendances['total_absences'] if attendances else 0,
                 'exam_day': attendances['exam_day'] if attendances else False,
-                'validation_date': attendance.validation_date if attendance else ''
+                'validation_date': attendance.validation_date if attendance else '',
             })
+
+        if level and section:
+            students = queryset.filter(classroom_id=level.id,section_id=section.id,
+                                       # registration_date__lte=selected_date
+            ).order_by('student__first_name')
+            for line in students:
+                student = line.student
+                if str(student.id) in attendance_status:
+                    student_status = attendance_status[str(student.id)]
+                    line.status = student_status['status'] if 'status' in student_status else True
+                    line.absence_reason = student_status['absence_reason'] if 'absence_reason' in student_status else ''
+                    attendance_students.append(line)
 
         base = datetime.datetime.now()
         dates = []
