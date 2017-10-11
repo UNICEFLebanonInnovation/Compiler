@@ -75,6 +75,15 @@
   background-size: 70px 70px;
   background-repeat: no-repeat;
 }
+.icon-exam-check {
+  background-position: 0px 0px;
+  width: 70px;
+  height: 70px;
+  vertical-align: middle;
+  background-image: url("../images/icon-exam-check.png");
+  background-size: 70px 70px;
+  background-repeat: no-repeat;
+}
 .icon-2-check {
   background-position: 0px 0px;
   width: 70px;
