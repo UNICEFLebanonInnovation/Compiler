@@ -38,6 +38,12 @@
             color: #5cb85c !important;
             border: 1px solid #5cb85c;
         }
+        .progress-bar.progress-bar-success {
+            background: #5cb85c;
+        }
+        .progress-bar.progress-bar-danger {
+            background: #d9534f;
+        }
         .row-class .progress-danger {
             color: #d9534f !important;
             border: 1px solid #d9534f;
@@ -166,15 +172,17 @@
                                 {% if not level %}
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item">
-                                    {% if not attendance or attendance.close_reason %}
-                                      <button type="button" class="closing-reason-b btn btn-primary" itemref="public_holiday" translation="{% trans 'Are you sure that the school is closed today for a public holiday?' %}">{% trans "Public Holiday" %}</button>
-                                      <button type="button" class="closing-reason-b btn btn-warning" itemref="school_holiday" translation="{% trans 'Are you sure that the school is closed today for a school holiday?' %}">{% trans "School Holiday" %}</button>
-                                      <button type="button" class="closing-reason-b btn btn-danger" itemref="strike" translation="{% trans 'Are you sure that the school is closed today for a strike?' %}">{% trans "Strike" %}</button>
-                                      <button type="button" class="closing-reason-b btn btn-info" itemref="weekly_holiday" translation="{% trans 'Are you sure that the school is closed today for a weekly holiday?' %}">{% trans "Weekly Holiday" %}</button>
+                                    {% if attendance and attendance.close_reason %}
+                                        <button class="btn btn-default"><b>{% trans 'School is closed for: ' %}{{ attendance.close_reason }}</b></button>
+                                    {% else %}
+                                      <button type="button" class="closing-reason-b btn btn-primary {% if attendance.validation_date %}disabled{% endif %}" itemref="public_holiday" translation="{% trans 'Are you sure that the school is closed today for a public holiday?' %}">{% trans "Public Holiday" %}</button>
+                                      <button type="button" class="closing-reason-b btn btn-warning {% if attendance.validation_date %}disabled{% endif %}" itemref="school_holiday" translation="{% trans 'Are you sure that the school is closed today for a school holiday?' %}">{% trans "School Holiday" %}</button>
+                                      <button type="button" class="closing-reason-b btn btn-danger {% if attendance.validation_date %}disabled{% endif %}" itemref="strike" translation="{% trans 'Are you sure that the school is closed today for a strike?' %}">{% trans "Strike" %}</button>
+                                      <button type="button" class="closing-reason-b btn btn-info {% if attendance.validation_date %}disabled{% endif %}" itemref="weekly_holiday" translation="{% trans 'Are you sure that the school is closed today for a weekly holiday?' %}">{% trans "Weekly Holiday" %}</button>
                                     {% endif %}
                                     {% if attendance %}
 {#                                        {% if request.user|has_group:"DIRECTOR" or request.user|has_group:"ALP_DIRECTOR" %}#}
-                                      <button type="button" itemref="{{ attendance.id }}" class="btn btn-success absolute-right-30" id="attendance_validate" translation="{% trans 'Are you sure you want to validate all attendances?' %}">{% trans "Validate all" %}</button>
+                                      <button type="button" itemref="{{ attendance.id }}" class="btn btn-success absolute-right-30 {% if attendance.validation_date %}disabled{% endif %}" id="attendance_validate" translation="{% trans 'Are you sure you want to validate all attendances?' %}">{% trans "Validate all" %}</button>
 {#                                        {% endif %}#}
                                     {% endif %}
                                 </li>
@@ -197,23 +205,25 @@
                         <div>{{ row.section_name }}</div>
                     </div>
                     <div class="col-xs-3 col-sm-3 col-md-3 s-col">
-                        {% if attendance and attendance.validation_date %}
+                        {% if row.validation_date %}
                             <span class="attendance-status icon-2-check"></span>
-                        {% elif row.total_attend or row.total_absent %}
+                        {% elif row.total_attended or row.total_absences %}
                             <span class="attendance-status icon-check"></span>
+                        {% elif row.exam_day %}
+                            <span class="attendance-status icon-exam-check"></span>
                         {% else %}
                             <span class="attendance-status icon-pending-check"></span>
                         {% endif %}
                     </div>
                     <div class="col-xs-3 col-sm-3 col-md-3 s-progs s-col">
                         <div class="progress progress-success">
-                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ row.total_attend }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_attend|percentage:row.total }}%">
-                               {{ row.total_attend }} ({{ row.total_attend|percentage:row.total }})%
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ row.total_attended }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_attended|percentage:row.total }}%">
+                               {{ row.total_attended }} ({{ row.total_attended|percentage_int:row.total }})%
                             </div>
                          </div>
                         <div class="progress progress-danger">
-                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ row.total_absent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_absent|percentage:row.total }}%">
-                               {{ row.total_absent }} ({{ row.total_absent|percentage:row.total }})%
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ row.total_absences }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_absences|percentage:row.total }}%">
+                               {{ row.total_absences }} ({{ row.total_absences|percentage_int:row.total }})%
                             </div>
                          </div>
                     </div>
@@ -306,6 +316,7 @@
                     };
                     set_attendances(data);
                     $('.closing-reason-b').hide();
+                    $('.closing-reason-b').addClass('disabled');
                     $(this).show();
                 }
             });
@@ -343,6 +354,7 @@
                         validation_date: yyyy+'-'+mm+'-'+dd
                     };
                     patch_attendances(attendance, data);
+                    $(this).addClass('disabled');
                     $('.attendance-status').removeClass('icon-pending-check');
                     $('.attendance-status').removeClass('icon-check');
                     $('.attendance-status').addClass('icon-2-check');

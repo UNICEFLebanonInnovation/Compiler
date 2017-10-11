@@ -107,6 +107,13 @@ def percentage(number, total):
     return 0
 
 
+@register.filter(name='percentage_int')
+def percentage_int(number, total):
+    if number:
+        return int(round((number*100.0)/total, 2))
+    return 0
+
+
 @register.assignment_tag
 def enrollment_by_gov_by_grade(registrations, gov, level):
     if not gov:

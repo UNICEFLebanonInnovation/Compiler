@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 import datetime
-import tablib
 import json
 
 from django.views import View
@@ -13,7 +12,6 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from braces.views import GroupRequiredMixin
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.generics import ListAPIView
-from rest_framework.decorators import detail_route, list_route
 from rest_framework import status
 
 from django.utils.translation import ugettext as _
@@ -23,9 +21,9 @@ from student_registration.schools.models import (
     Section,
     ClassRoom
 )
+from student_registration.users.utils import force_default_language
 from .models import Attendance, Absentee
 from .serializers import AttendanceSerializer, AbsenteeSerializer
-from student_registration.attendances.tasks import set_app_attendances
 from student_registration.enrollments.models import (
     Enrollment,
     EducationYear,
@@ -67,6 +65,8 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
             return JsonResponse({'status': status.HTTP_201_CREATED, 'data': serializer.instance.id})
 
     def update(self, request, *args, **kwargs):
+        if 'pk' not in kwargs:
+            return super(AttendanceViewSet, self).update(request)
         instance = self.model.objects.get(id=kwargs['pk'])
         data = json.loads(request.data.keys()[0], "utf-8")
         level_section = data.keys()[0]
@@ -84,12 +84,6 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
     def partial_update(self, request, *args, **kwargs):
         return super(AttendanceViewSet, self).partial_update(request)
 
-    @list_route(methods=['get'], url_path='push-by-school/(?P<school>\d+)')
-    def push_by_school(self, request, *args, **kwargs):
-        school = School.objects.get(id=kwargs.get('school', False))
-        set_app_attendances.delay(school_number=school.number)
-        return JsonResponse({'status': status.HTTP_200_OK})
-
 
 class AttendanceView(LoginRequiredMixin,
                      GroupRequiredMixin,
@@ -100,6 +94,7 @@ class AttendanceView(LoginRequiredMixin,
     group_required = [u"ATTENDANCE"]
 
     def get_context_data(self, **kwargs):
+        force_default_language(self.request)
         level = 0
         section = 0
         school = 0
@@ -156,15 +151,20 @@ class AttendanceView(LoginRequiredMixin,
             ).order_by('student__first_name')
 
         for registry in registrations:
+            level_section = '{}-{}'.format(registry['classroom_id'], registry['section_id'])
+            attendances = attendance.students[level_section] if attendance and attendance.students and level_section in attendance.students else ''
+            total = queryset.filter(classroom_id=registry['classroom_id'], section_id=registry['section_id']).count()
+
             levels_by_sections.append({
                 'level_name': registry['classroom__name'],
                 'level': registry['classroom_id'],
                 'section_name': registry['section__name'],
                 'section': registry['section_id'],
-                'total': queryset.filter(classroom_id=registry['classroom_id'], section_id=registry['section_id']).count(),
-                'total_attend': 0,
-                'total_absent': 0,
-                'validation_date': ''
+                'total': attendances['total_enrolled'] if attendances else total,
+                'total_attended': attendances['total_enrolled'] if attendances else 0,
+                'total_absences': attendances['total_absences'] if attendances else 0,
+                'exam_day': attendances['exam_day'] if attendances else False,
+                'validation_date': attendance.validation_date if attendance else ''
             })
 
         base = datetime.datetime.now()
