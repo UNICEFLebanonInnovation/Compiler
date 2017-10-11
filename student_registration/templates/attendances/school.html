@@ -12,6 +12,9 @@
 {#    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-button-group.css' %}">#}
 {#    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">#}
     <style>
+        .breadcrumb {
+            position: relative;
+        }
         .row-class  {
             max-height:75px;
             border-radius: 0 8px 8px 0;
@@ -103,6 +106,14 @@
         .breadcrumb li:first-child {
             padding-left: 10px;
         }
+        .absolute-top-7 {
+            position: absolute;
+            top: 7px;
+        }
+        .absolute-top-15 {
+            position: absolute;
+            top: 15px;
+        }
         .absolute-right-30 {
             position: absolute;
             right: 30px;
@@ -147,7 +158,7 @@
                                     </select>
                                 </li>
                                 <li class="breadcrumb-item" style="font-size: 20px"><span>{{ school }}</span></li>
-                                <li class="absolute-right-30" style="font-size: 20px"><span class="badge badge-primary">{{ total }}</span></li>
+                                <li class="absolute-right-30 absolute-top-15" style="font-size: 20px"><span class="badge badge-primary">{{ total }}</span></li>
                             </ol>
                           </div>
                         {% endif %}
@@ -156,7 +167,7 @@
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item">
                                     <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to " %} {{ selected_date_view }}</a>
-                                    <button type="button" class="btn btn-warning absolute-right-30" id="exam_day" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}">{% trans "Exam day" %}</button>
+                                    <button type="button" class="btn btn-warning absolute-right-30 absolute-top-15" id="exam_day" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}">{% trans "Exam day" %}</button>
                                 </li>
                             </ol>
                             <ol class="breadcrumb">
@@ -165,7 +176,7 @@
                                 </li>
                                 <li class="breadcrumb-item">
                                     {% trans "Total students" %} <span class="badge badge-primary">{{ total_students }}</span>
-                                    <a href="#" class="btn btn-success absolute-right-30" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
+                                    <a href="#" class="btn btn-success absolute-right-30 absolute-top-7" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
                                 </li>
                             </ol>
                                 {% endif %}
@@ -182,7 +193,11 @@
                                     {% endif %}
                                     {% if attendance %}
 {#                                        {% if request.user|has_group:"DIRECTOR" or request.user|has_group:"ALP_DIRECTOR" %}#}
-                                      <button type="button" itemref="{{ attendance.id }}" class="btn btn-success absolute-right-30 {% if attendance.validation_date %}disabled{% endif %}" id="attendance_validate" translation="{% trans 'Are you sure you want to validate all attendances?' %}">{% trans "Validate all" %}</button>
+                                        {% if attendance.validation_date %}
+                                            <button class="btn btn-default absolute-right-30 absolute-top-15"><b>{% trans 'Attendances validated on: ' %}{{ attendance.validation_date }}</b></button>
+                                        {% else %}
+                                            <button type="button" itemref="{{ attendance.id }}" class="btn btn-success absolute-right-30 absolute-top-15" id="attendance_validate" translation="{% trans 'Are you sure you want to validate all attendances?' %}">{% trans "Validate all" %}</button>
+                                        {% endif %}
 {#                                        {% endif %}#}
                                     {% endif %}
                                 </li>
@@ -217,12 +232,12 @@
                     </div>
                     <div class="col-xs-3 col-sm-3 col-md-3 s-progs s-col">
                         <div class="progress progress-success">
-                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ row.total_attended }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_attended|percentage:row.total }}%">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ row.total_attended }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_attended|percentage_int:row.total }}%">
                                {{ row.total_attended }} ({{ row.total_attended|percentage_int:row.total }})%
                             </div>
                          </div>
                         <div class="progress progress-danger">
-                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ row.total_absences }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_absences|percentage:row.total }}%">
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ row.total_absences }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_absences|percentage_int:row.total }}%">
                                {{ row.total_absences }} ({{ row.total_absences|percentage_int:row.total }})%
                             </div>
                          </div>
@@ -280,7 +295,7 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to " %} {{ selected_date_view }}</a>
-                            <a href="#" class="btn btn-success absolute-right-30" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
+                            <a href="#" class="btn btn-success absolute-right-30 absolute-top-7" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
                         </li>
                     </ol>
                 </form>
@@ -383,9 +398,9 @@
                 var itemid = $(event.target).attr('itemid');
                 $(event.target).val(state);
                 if(state == false){
-                    $('#reasons-'+itemid).show();
+                    $('#reasons-'+itemid).removeClass('d-none');
                 }else{
-                    $('#reasons-'+itemid).hide();
+                    $('#reasons-'+itemid).addClass('d-none');
                 }
             });
         });
@@ -404,9 +419,11 @@
                 var enrollment_id = $(item).val();
                 var status = null;
                 var sex = $('#student_sex_'+enrollment_id).val();
+                var absence_reason = null;
 
                 if($('#status_'+enrollment_id).val() == '' || $('#status_'+enrollment_id).val() == true){
                     status = true;
+                    absence_reason  = '';
                     if(sex == 'Male'){
                         total_attended_male = total_attended_male + 1;
                     }else{
@@ -414,6 +431,7 @@
                     }
                 }else{
                     status = false;
+                    absence_reason  = $('.absence_reason_' + enrollment_id+':checked').val();
                     if(sex == 'Male'){
                         total_absent_male = total_absent_male + 1;
                     }else{
@@ -423,21 +441,24 @@
 
                 total_attended = total_attended_male + total_attended_female;
                 total_absences = total_absent_male + total_absent_female;
+                var student_id = $('#student_id_' + enrollment_id).val();
 
                 students.push({
-                    student_id: $('#student_id_'+enrollment_id).val(),
-                    student_fullname: $('#student_fullname_'+enrollment_id).val(),
+                    student_id: student_id,
+                    student_fullname: $('#student_fullname_' + enrollment_id).val(),
                     student_sex: sex,
-                    student_age: $('#student_age_'+enrollment_id).val(),
-                    student_birthday: $('#student_birthday_'+enrollment_id).val(),
-                    section: $('#section_'+enrollment_id).val(),
-                    section_name: $('#section_name_'+enrollment_id).val(),
-                    level: $('#level_'+enrollment_id).val(),
-                    level_name: $('#level_name_'+enrollment_id).val(),
+                    student_age: $('#student_age_' + enrollment_id).val(),
+                    student_birthday: $('#student_birthday_' + enrollment_id).val(),
+                    section: $('#section_' + enrollment_id).val(),
+                    section_name: $('#section_name_' + enrollment_id).val(),
+                    level: $('#level_' + enrollment_id).val(),
+                    level_name: $('#level_name_' + enrollment_id).val(),
                     status: status,
-                    absence_reason: $('#absence_reason_'+enrollment_id).val()
-                })
+                    absence_reason: absence_reason
+                });
+
             });
+
             var level_section_name = $('#level').val() + "-" + $('#section').val();
             level_section[level_section_name] = {
                 students: students,
