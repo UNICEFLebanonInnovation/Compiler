@@ -142,7 +142,6 @@ class AttendanceView(LoginRequiredMixin,
         current_level_section = ''
         disable_attendance = False
         for registry in registrations:
-            # disable_attendance = False
             exam_day = False
             school_closed = False
             validation_date = ''
