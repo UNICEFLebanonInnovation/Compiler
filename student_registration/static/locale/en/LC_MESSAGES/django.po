@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-12 16:06+0300\n"
+"POT-Creation-Date: 2017-10-12 16:36+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1826,7 +1826,7 @@ msgid "Are you sure that the students of this class are away for a reason?"
 msgstr ""
 
 #: student_registration/templates/attendances/school.html:170
-msgid "Exam day?"
+msgid "Exam day"
 msgstr ""
 
 #: student_registration/templates/attendances/school.html:178
@@ -1867,7 +1867,7 @@ msgid "Are you sure that the school is closed today for a weekly holiday?"
 msgstr ""
 
 #: student_registration/templates/attendances/school.html:199
-msgid "Attendances validated on: "
+msgid "Attendances validated on"
 msgstr ""
 
 #: student_registration/templates/attendances/school.html:201
