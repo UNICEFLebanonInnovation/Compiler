@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-11 16:28+0300\n"
+"POT-Creation-Date: 2017-10-12 16:06+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -132,8 +132,8 @@ msgstr ""
 #: student_registration/enrollments/forms.py:848
 #: student_registration/enrollments/forms.py:900
 #: student_registration/schools/forms.py:66
-#: student_registration/templates/attendances/school.html:179
-#: student_registration/templates/attendances/school.html:298
+#: student_registration/templates/attendances/school.html:181
+#: student_registration/templates/attendances/school.html:303
 msgid "Save"
 msgstr ""
 
@@ -652,17 +652,17 @@ msgid "# Students reported by the Director"
 msgstr ""
 
 #: student_registration/attendances/models.py:25
-#: student_registration/templates/attendances/school.html:287
+#: student_registration/templates/attendances/school.html:292
 msgid "Sick"
 msgstr ""
 
 #: student_registration/attendances/models.py:26
-#: student_registration/templates/attendances/school.html:288
+#: student_registration/templates/attendances/school.html:293
 msgid "No reason"
 msgstr ""
 
 #: student_registration/attendances/models.py:27
-#: student_registration/templates/attendances/school.html:289
+#: student_registration/templates/attendances/school.html:294
 msgid "No transport"
 msgstr ""
 
@@ -671,27 +671,27 @@ msgstr ""
 #: student_registration/clm/models.py:143
 #: student_registration/outreach/models.py:102
 #: student_registration/outreach/models.py:168
-#: student_registration/templates/attendances/school.html:290
+#: student_registration/templates/attendances/school.html:295
 msgid "Other"
 msgstr ""
 
 #: student_registration/attendances/models.py:32
-#: student_registration/templates/attendances/school.html:189
+#: student_registration/templates/attendances/school.html:191
 msgid "Public Holiday"
 msgstr ""
 
 #: student_registration/attendances/models.py:33
-#: student_registration/templates/attendances/school.html:190
+#: student_registration/templates/attendances/school.html:192
 msgid "School Holiday"
 msgstr ""
 
 #: student_registration/attendances/models.py:34
-#: student_registration/templates/attendances/school.html:191
+#: student_registration/templates/attendances/school.html:193
 msgid "Strike"
 msgstr ""
 
 #: student_registration/attendances/models.py:35
-#: student_registration/templates/attendances/school.html:192
+#: student_registration/templates/attendances/school.html:194
 msgid "Weekly Holiday"
 msgstr ""
 
@@ -1817,7 +1817,7 @@ msgid "En error has been occurred please contact the admin or try later"
 msgstr ""
 
 #: student_registration/templates/attendances/school.html:169
-#: student_registration/templates/attendances/school.html:297
+#: student_registration/templates/attendances/school.html:302
 msgid "Back to "
 msgstr ""
 
@@ -1826,7 +1826,7 @@ msgid "Are you sure that the students of this class are away for a reason?"
 msgstr ""
 
 #: student_registration/templates/attendances/school.html:170
-msgid "Exam day"
+msgid "Exam day?"
 msgstr ""
 
 #: student_registration/templates/attendances/school.html:178
@@ -1834,47 +1834,55 @@ msgid "Total students"
 msgstr ""
 
 #: student_registration/templates/attendances/school.html:179
-#: student_registration/templates/attendances/school.html:298
+msgid "Total attended"
+msgstr ""
+
+#: student_registration/templates/attendances/school.html:180
+msgid "Total absences"
+msgstr ""
+
+#: student_registration/templates/attendances/school.html:181
+#: student_registration/templates/attendances/school.html:303
 msgid "Are you sure you want to save the attendance for this class?"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:187
+#: student_registration/templates/attendances/school.html:189
 msgid "School is closed for: "
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:189
+#: student_registration/templates/attendances/school.html:191
 msgid "Are you sure that the school is closed today for a public holiday?"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:190
+#: student_registration/templates/attendances/school.html:192
 msgid "Are you sure that the school is closed today for a school holiday?"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:191
+#: student_registration/templates/attendances/school.html:193
 msgid "Are you sure that the school is closed today for a strike?"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:192
+#: student_registration/templates/attendances/school.html:194
 msgid "Are you sure that the school is closed today for a weekly holiday?"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:197
+#: student_registration/templates/attendances/school.html:199
 msgid "Attendances validated on: "
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:199
+#: student_registration/templates/attendances/school.html:201
 msgid "Are you sure you want to validate all attendances?"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:199
+#: student_registration/templates/attendances/school.html:201
 msgid "Validate all"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:284
+#: student_registration/templates/attendances/school.html:289
 msgid "Present"
 msgstr ""
 
-#: student_registration/templates/attendances/school.html:284
+#: student_registration/templates/attendances/school.html:289
 msgid "Absent"
 msgstr ""
 
