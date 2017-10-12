@@ -45,9 +45,6 @@ def assign_education_year(year):
 def generate_2ndshift_report(school=0, location=0, email=None, user=None):
     from student_registration.enrollments.models import Enrollment
 
-    # import subprocess
-    # subprocess.Popen(["python manage.py export_2ndshift_data", ], shell=True)
-
     queryset = Enrollment.objects.all()
 
     data = tablib.Dataset()

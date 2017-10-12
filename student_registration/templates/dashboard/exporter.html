@@ -24,7 +24,7 @@
               <div class="card-block">
                 <h3 class="card-title">{% trans '2nd shift registration' %}</h3>
                 <p class="card-text">{% trans 'Export data for 2nd shift registration of the current school year.' %}</p>
-                <a href="#" class="btn btn-primary">{% trans 'Export' %}</a>
+                <a href="{% url 'dashboard:exporter' %}?report=export_2ndshift_data" class="btn btn-primary">{% trans 'Export' %}</a>
               </div>
             </div>
           </div>
@@ -54,7 +54,7 @@
               <div class="card-block">
                 <h3 class="card-title">{% trans 'ALP Pre-test outreach' %}</h3>
                 <p class="card-text">{% trans 'Export the data entered by the partner during the pre-test of the current pre-test round.' %}</p>
-                <a href="#" class="btn btn-primary">{% trans 'Export' %}</a>
+                <a href="/?export=alp_" class="btn btn-primary">{% trans 'Export' %}</a>
               </div>
             </div>
           </div>

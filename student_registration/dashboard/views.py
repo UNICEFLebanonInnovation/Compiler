@@ -2,16 +2,17 @@
 # from django.template import loader
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-from django.core.urlresolvers import reverse
+import datetime
 from django.http import HttpResponseForbidden
 from django.views.generic import ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+
+from .utils import export_full_data
 from student_registration.locations.models import (
     Location,
 )
 from student_registration.schools.models import (
-    School,
     EducationLevel,
     ClassLevel,
     ClassRoom,
@@ -20,8 +21,6 @@ from student_registration.schools.models import (
 from student_registration.enrollments.models import Enrollment
 from student_registration.alp.models import Outreach, ALPRound
 from student_registration.users.models import User
-import datetime
-from django.db.models import Q
 
 
 class ExporterView(LoginRequiredMixin,
@@ -34,6 +33,11 @@ class ExporterView(LoginRequiredMixin,
 
     def handle_no_permission(self, request):
         return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+        if self.request.GET.get('report', None):
+            export_full_data(self.request.GET)
+        return {}
 
 
 class Registrations2ndShiftView(LoginRequiredMixin,
