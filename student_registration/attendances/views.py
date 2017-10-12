@@ -139,36 +139,58 @@ class AttendanceView(LoginRequiredMixin,
             'section_id'
         ).order_by('classroom_id')
 
+        current_level_section = ''
+        disable_attendance = False
         for registry in registrations:
+            # disable_attendance = False
+            exam_day = False
+            school_closed = False
+            validation_date = ''
+            total_attended = 0
+            total_absences = 0
             level_section = '{}-{}'.format(registry['classroom_id'], registry['section_id'])
             attendances = attendance.students[level_section] if attendance and attendance.students and level_section in attendance.students else ''
             total = queryset.filter(classroom_id=registry['classroom_id'], section_id=registry['section_id']).count()
 
             if attendances:
+                total = attendances['total_enrolled']
+                total_attended = attendances['total_attended']
+                total_absences = attendances['total_absences']
+                exam_day = attendances['exam_day']
+                validation_date = attendance.validation_date
+                school_closed = attendance.close_reason
                 for value in attendances['students']:
                     attendance_status[value['student_id']] = value
 
-            levels_by_sections.append({
+            level_by_section = {
                 'level_name': registry['classroom__name'],
                 'level': registry['classroom_id'],
                 'section_name': registry['section__name'],
                 'section': registry['section_id'],
-                'total': attendances['total_enrolled'] if attendances else total,
-                'total_attended': attendances['total_attended'] if attendances else 0,
-                'total_absences': attendances['total_absences'] if attendances else 0,
-                'exam_day': attendances['exam_day'] if attendances else False,
-                'validation_date': attendance.validation_date if attendance else '',
-            })
+                'total': total,
+                'total_attended': total_attended,
+                'total_absences': total_absences,
+                'exam_day': exam_day,
+                'validation_date': validation_date,
+                'disable_attendance': disable_attendance
+            }
+
+            if level and section and level.id == registry['classroom_id'] and section.id == registry['section_id']:
+                current_level_section = level_by_section
+                if exam_day or (attendance and attendance.validation_date) or school_closed:
+                    disable_attendance = True
+
+            levels_by_sections.append(level_by_section)
 
         if level and section:
             students = queryset.filter(classroom_id=level.id,section_id=section.id,
                                        # registration_date__lte=selected_date
-            ).order_by('student__first_name')
+                                      ).order_by('student__first_name')
             for line in students:
                 student = line.student
                 if str(student.id) in attendance_status:
                     student_status = attendance_status[str(student.id)]
-                    line.status = student_status['status'] if 'status' in student_status else True
+                    line.attendance_status = student_status['status'] if 'status' in student_status else True
                     line.absence_reason = student_status['absence_reason'] if 'absence_reason' in student_status else ''
                     attendance_students.append(line)
 
@@ -185,6 +207,8 @@ class AttendanceView(LoginRequiredMixin,
 
         return {
             'attendance': attendance,
+            'disable_attendance': disable_attendance,
+            'current_level_section': current_level_section,
             'total': queryset.count(),
             'total_students': students.count() if students else 0,
             'students': students,
