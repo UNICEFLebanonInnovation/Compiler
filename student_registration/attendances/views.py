@@ -90,7 +90,7 @@ class AttendanceView(LoginRequiredMixin,
                      ListView):
 
     model = Attendance
-    template_name = 'attendances/school.html'
+    template_name = 'attendances/school_day.html'
     group_required = [u"ATTENDANCE"]
 
     def get_context_data(self, **kwargs):
@@ -124,6 +124,7 @@ class AttendanceView(LoginRequiredMixin,
 
         if self.request.GET.get('level', 0):
             level = ClassRoom.objects.get(id=int(self.request.GET.get('level', 0)))
+            self.template_name = 'attendances/level_section.html'
         if self.request.GET.get('section', 0):
             section = Section.objects.get(id=int(self.request.GET.get('section', 0)))
 

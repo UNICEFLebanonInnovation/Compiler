@@ -6,127 +6,8 @@
 
 {% block extra_head %}
 
-{#    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-badge.css' %}">#}
-{#    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-progressbars.css' %}">#}
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-switch.min.css' %}">
-{#    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-button-group.css' %}">#}
-{#    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">#}
-    <style>
-        .breadcrumb {
-            position: relative;
-        }
-        .row-class  {
-            max-height:75px;
-            border-radius: 0 8px 8px 0;
-            margin: 15px 0px;
-            cursor: pointer;
-            background: #f5f5f5; /* For browsers that do not support gradients */
-            background: -webkit-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Safari 5.1 to 6.0 */
-            background: -o-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Opera 11.1 to 12.0 */
-            background: -moz-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Firefox 3.6 to 15 */
-            background: linear-gradient(left top, #f5f5f5, #EDEFF1); /* Standard syntax */
-            box-shadow: 1px 1px 5px #888888;
-        }
-        .row-class:hover {
-            text-decoration: none;
-        }
-        .row-class div {
-{#            border: 1px solid;#}
-        }
-        .row-class .s-col {
-            height: 75px;
-            max-height: 75px;
-        }
-        .row-class .progress-success {
-            color: #5cb85c !important;
-            border: 1px solid #5cb85c;
-        }
-        .progress-bar.progress-bar-success {
-            background: #5cb85c;
-        }
-        .progress-bar.progress-bar-danger {
-            background: #d9534f;
-        }
-        .row-class .progress-danger {
-            color: #d9534f !important;
-            border: 1px solid #d9534f;
-        }
-        .row-class .progress .progress-bar {
-{#            color: #2aabd2 !important;#}
-            color: #0b0b0b;
-        }
-        .row-class.disabled {
-            pointer-events: none;
-            cursor: not-allowed !important;
-            opacity: .65;
-        }
-        .row-student  {
-            border-radius: 0 8px 8px 0;
-            margin: 15px 0px;
-            background: #f5f5f5; /* For browsers that do not support gradients */
-            background: -webkit-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Safari 5.1 to 6.0 */
-            background: -o-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Opera 11.1 to 12.0 */
-            background: -moz-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Firefox 3.6 to 15 */
-            background: linear-gradient(left top, #f5f5f5, #EDEFF1); /* Standard syntax */
-            box-shadow: 1px 1px 5px #888888;
-        }
-        .row-student .s-col {
-            padding-top: 15px;
-        }
-        .row-student div {
-{#            border: 1px solid;#}
-        }
-        .row-student .absence-reasons label {
-            font-style: italic;
-            padding-right: 5px;
-        }
-        .row-student .absence-reasons input {
-            margin-right: 10px;
-        }
-        .btn-attendance-day.active {
-            background-color: #2aabd2;
-            color: red;
-        }
-        .s-lft {
-        }
-        .s-lft div {
-            padding-top: 5px;
-            margin-top: 5px;
-        }
-        .s-rgt {
-            border-radius: 0 8px 8px 0;
-            background: #2aabd2;
-        }
-        .row-class .s-progs {
-            padding-top: 5px;
-        }
-        .s-progs .progress {
-            margin-top: 10px;
-        }
-        .breadcrumb li:first-child {
-            padding-left: 10px;
-        }
-        .absolute-top-7 {
-            position: absolute;
-            top: 7px;
-        }
-        .absolute-top-15 {
-            position: absolute;
-            top: 15px;
-        }
-        .absolute-right-30 {
-            position: absolute;
-            right: 30px;
-        }
-    </style>
-{% endblock %}
 
-{% block header %}
-      <li class="nav-item">
-        <a class="nav-link" href="">{{ school }} - {{ location }} - {{ location_parent }}
-            - <span class="badge">{{ total }}</span>
-        </a>
-      </li>
 {% endblock %}
 
 {% block content-full-page %}
@@ -158,7 +39,7 @@
                                     </select>
                                 </li>
                                 <li class="breadcrumb-item" style="font-size: 20px"><span>{{ school }}</span></li>
-                                <li class="absolute-right-30 absolute-top-15" style="font-size: 20px"><span class="badge badge-primary">{{ total }}</span></li>
+                                <li class="absolute-right-15 absolute-top-15" style="font-size: 20px"><span class="badge badge-primary">{{ total }}</span></li>
                             </ol>
                           </div>
                         {% endif %}
@@ -167,7 +48,7 @@
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item">
                                     <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to " %} {{ selected_date_view }}</a>
-                                    <button type="button" class="btn btn-warning absolute-right-30 absolute-top-15" id="exam_day" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}" {% if disable_attendance %}disabled{% endif %}>{% trans "Exam day" %}</button>
+                                    <button type="button" class="btn btn-warning absolute-right-15 absolute-top-15" id="exam_day" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}" {% if disable_attendance %}disabled{% endif %}>{% trans "Exam day" %}</button>
                                 </li>
                             </ol>
                             <ol class="breadcrumb">
@@ -178,7 +59,7 @@
                                     <span class="badge badge-primary">{{ current_level_section.total }}: {% trans "Total students" %}</span> -
                                     <span class="badge badge-success">{{ current_level_section.total_attended }}: {% trans "Total attended" %}</span> -
                                     <span class="badge badge-danger">{{ current_level_section.total_absences }}: {% trans "Total absences" %}</span>
-                                    <a href="#" class="btn btn-success absolute-right-30 absolute-top-7 {% if disable_attendance %}disabled{% endif %}" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
+                                    <a href="#" class="btn btn-success absolute-right-15 absolute-top-7 {% if disable_attendance %}disabled{% endif %}" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
                                 </li>
                             </ol>
                                 {% endif %}
@@ -196,9 +77,9 @@
                                     {% if attendance %}
 {#                                        {% if request.user|has_group:"DIRECTOR" or request.user|has_group:"ALP_DIRECTOR" %}#}
                                         {% if attendance.validation_date %}
-                                            <button class="btn btn-default absolute-right-30 absolute-top-15"><b>{% trans 'Attendances validated on' %}: {{ attendance.validation_date }}</b></button>
+                                            <button class="btn btn-default absolute-right-15 absolute-top-15"><b>{% trans 'Attendances validated on' %}: {{ attendance.validation_date }}</b></button>
                                         {% else %}
-                                            <button type="button" itemref="{{ attendance.id }}" class="btn btn-success absolute-right-30 absolute-top-15" id="attendance_validate" translation="{% trans 'Are you sure you want to validate all attendances?' %}">{% trans "Validate all" %}</button>
+                                            <button type="button" itemref="{{ attendance.id }}" class="btn btn-success absolute-right-15 absolute-top-15" id="attendance_validate" translation="{% trans 'Are you sure you want to validate all attendances?' %}">{% trans "Validate all" %}</button>
                                         {% endif %}
 {#                                        {% endif %}#}
                                     {% endif %}
@@ -300,7 +181,7 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to " %} {{ selected_date_view }}</a>
-                            <a href="#" class="btn btn-success absolute-right-30 absolute-top-7 {% if disable_attendance %}disabled{% endif %}" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
+                            <a href="#" class="btn btn-success absolute-right-15 absolute-top-7 {% if disable_attendance %}disabled{% endif %}" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
                         </li>
                     </ol>
                 </form>
@@ -322,8 +203,6 @@
         var total_enrolled = {{ total }};
 
         $(document).ready(function(){
-
-            $('[data-toggle="tooltip"]').tooltip();
 
             $(document).on('click', '.closing-reason-b', function () {
                 if(confirm($(this).attr('translation'))){
