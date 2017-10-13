@@ -116,7 +116,7 @@ class Person(TimeStampedModel):
         blank=True,
         null=True,
         default=0,
-        choices=((str(x), x) for x in range(1990, CURRENT_YEAR)),
+        choices=((str(x), x) for x in range(1990, 2050)),
         verbose_name=_('Birthday year')
     )
     birthday_month = models.CharField(
