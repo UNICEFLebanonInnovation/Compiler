@@ -27,6 +27,9 @@ from student_registration.schools.views import (
     ClassRoomViewSet,
     SectionViewSet,
 )
+from student_registration.clm.views import (
+    BLNViewSet
+)
 # from student_registration.winterization.views import (
 #     BeneficiaryViewSet
 # )
@@ -49,6 +52,7 @@ api.register(r'child', ChildViewSet, base_name='child')
 api.register(r'schools', SchoolViewSet, base_name='schools')
 api.register(r'classrooms', ClassRoomViewSet, base_name='classrooms')
 api.register(r'sections', SectionViewSet, base_name='sections')
+api.register(r'clm-bln', BLNViewSet, base_name='clm-bln')
 
 schema_view = get_swagger_view(title='Compiler API')
 

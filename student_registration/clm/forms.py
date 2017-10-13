@@ -28,7 +28,7 @@ from .models import (
     Site,
     Assessment
 )
-from .serializers import BLNSerializer, RSSerializer, CBECESerializer
+from .serializers import BLNSerializer
 
 YES_NO_CHOICE = ((1, "Yes"), (0, "No"))
 
