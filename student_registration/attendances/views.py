@@ -57,7 +57,7 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
         try:
             instance = Attendance.objects.get(school=int(request.POST.get('school')),
                                               attendance_date=request.POST.get('attendance_date'))
-            return JsonResponse({'status': status.HTTP_201_CREATED, 'data': instance.id})
+            return JsonResponse({'status': status.HTTP_200_OK, 'data': instance.id})
         except Attendance.DoesNotExist:
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
@@ -144,8 +144,8 @@ class AttendanceView(LoginRequiredMixin,
         disable_attendance = False
         for registry in registrations:
             exam_day = False
-            school_closed = False
-            validation_date = ''
+            school_closed = attendance.close_reason if attendance else False
+            validation_date = attendance.validation_date if attendance else ''
             total_attended = 0
             total_absences = 0
             level_section = '{}-{}'.format(registry['classroom_id'], registry['section_id'])
@@ -157,8 +157,6 @@ class AttendanceView(LoginRequiredMixin,
                 total_attended = attendances['total_attended']
                 total_absences = attendances['total_absences']
                 exam_day = attendances['exam_day']
-                validation_date = attendance.validation_date
-                school_closed = attendance.close_reason
                 for value in attendances['students']:
                     attendance_status[value['student_id']] = value
 
@@ -181,6 +179,9 @@ class AttendanceView(LoginRequiredMixin,
                     disable_attendance = True
 
             levels_by_sections.append(level_by_section)
+
+        if attendance and (attendance.validation_date or attendance.close_reason):
+            disable_attendance = True
 
         if level and section:
             students = queryset.filter(classroom_id=level.id,section_id=section.id,
