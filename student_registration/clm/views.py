@@ -36,6 +36,25 @@ from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer
 
 
+class BLNViewSet(mixins.RetrieveModelMixin,
+                 mixins.ListModelMixin,
+                 mixins.CreateModelMixin,
+                 mixins.UpdateModelMixin,
+                 viewsets.GenericViewSet):
+
+    model = BLN
+    queryset = BLN.objects.all()
+    serializer_class = BLNSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        qs = self.queryset
+        if self.request.GET.get('school', None):
+            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+
+        return qs
+
+
 class CLMView(LoginRequiredMixin,
             # GroupRequiredMixin,
             TemplateView):

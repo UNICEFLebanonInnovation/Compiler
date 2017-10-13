@@ -61,6 +61,8 @@ class StudentViewSet(mixins.RetrieveModelMixin,
             qs = qs.filter(birthday_month=self.request.GET.get('birthday_month', None))
         if self.request.GET.get('birthday_year', None):
             qs = qs.filter(birthday_year=self.request.GET.get('birthday_year', None))
+        if self.request.GET.get('gender', None):
+            qs = qs.filter(sex=self.request.GET.get('gender', None))
         if self.request.GET.get('name', None):
             for term in self.request.GET.get('name', None).split():
                 qs = qs.filter(
