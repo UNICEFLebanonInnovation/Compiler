@@ -130,6 +130,9 @@ class Attendance(TimeStampedModel):
                 self.total_absent_male += self.students[level_section]['total_absent_male']
                 self.total_absent_female += self.students[level_section]['total_absent_female']
 
+        if self.close_reason:
+            self.students = {}
+
         super(Attendance, self).save(**kwargs)
 
 
