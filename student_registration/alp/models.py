@@ -389,6 +389,7 @@ class Outreach(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
+        verbose_name=_('Outreach barcode')
     )
     new_registry = models.CharField(
         max_length=50,
