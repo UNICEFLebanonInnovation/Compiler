@@ -163,6 +163,10 @@ class SchoolTable(CommonTable):
     student_phone_number = tables.Column(verbose_name=_('Phone number'), accessor='student.phone_number')
     student_registered_in_unhcr = tables.Column(verbose_name=_('Registered in UNHCR'),
                                                 accessor='student.registered_in_unhcr')
+    pre_test_total = tables.Column(verbose_name=_('Pre-test total'),
+                                   accessor='pretest_total')
+    post_test_total = tables.Column(verbose_name=_('Post-test total'),
+                                    accessor='posttest_total')
 
     class Meta:
         model = Outreach
@@ -177,7 +181,7 @@ class SchoolTable(CommonTable):
             'student_age',
             'student_birthday',
             'level',
-            'pretest_total',
+            'pre_test_total',
             'assigned_to_level',
             'current_level',
             'current_section',
@@ -186,7 +190,7 @@ class SchoolTable(CommonTable):
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',
-            'posttest_total',
+            'post_test_total',
             'refer_to_level',
             'student.nationality',
             'student.mother_fullname',
