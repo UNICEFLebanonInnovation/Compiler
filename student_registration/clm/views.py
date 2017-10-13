@@ -9,18 +9,8 @@ from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
-from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404
-from django.utils.translation import ugettext as _
-from django.db.models import Q
 
-import tablib
-from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
-from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
-from import_export.formats import base_formats
-
-from student_registration.alp.templatetags.util_tags import has_group
 
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
@@ -31,9 +21,9 @@ from .tables import BootstrapTable, BLNTable, RSTable, CBECETable
 
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
-from .models import BLN, RS, CBECE
+from .models import BLN, RS, CBECE, SelfPerceptionGrades
 from .forms import BLNForm, RSForm, CBECEForm
-from .serializers import BLNSerializer, RSSerializer, CBECESerializer
+from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 
 
 class BLNViewSet(mixins.RetrieveModelMixin,
@@ -53,6 +43,18 @@ class BLNViewSet(mixins.RetrieveModelMixin,
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
         return qs
+
+
+class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
+                                 mixins.ListModelMixin,
+                                 mixins.CreateModelMixin,
+                                 mixins.UpdateModelMixin,
+                                 viewsets.GenericViewSet):
+
+    model = SelfPerceptionGrades
+    queryset = SelfPerceptionGrades.objects.all()
+    serializer_class = SelfPerceptionGradesSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class CLMView(LoginRequiredMixin,

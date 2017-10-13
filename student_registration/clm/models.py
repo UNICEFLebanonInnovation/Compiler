@@ -434,3 +434,32 @@ class CBECE(CLM):
         blank=True,
         null=True,
     )
+
+
+class SelfPerceptionGrades(models.Model):
+
+    enrollment = models.ForeignKey(
+        BLN,
+        blank=True, null=True,
+        related_name='+',
+    )
+    assessment_type = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    assessment_date = models.DateTimeField(
+        blank=True,
+        null=True
+    )
+    answers = JSONField(
+        blank=True,
+        null=True,
+        default={}
+    )
+
+    class Meta:
+        ordering = ['pk']
+
+    def __unicode__(self):
+        return self.enrollment
