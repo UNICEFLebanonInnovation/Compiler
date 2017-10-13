@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-12 16:36+0300\n"
+"POT-Creation-Date: 2017-10-13 11:35+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,44 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: student_registration/alp/forms.py:28 student_registration/alp/forms.py:600
+#: student_registration/alp/models.py:65 student_registration/alp/models.py:397
+#: student_registration/alp/models.py:403
+#: student_registration/alp/models.py:409
+#: student_registration/clm/models.py:107
+#: student_registration/enrollments/forms.py:30
+#: student_registration/enrollments/forms.py:258
+#: student_registration/enrollments/models.py:61
+#: student_registration/enrollments/models.py:182
+#: student_registration/enrollments/models.py:441
+#: student_registration/enrollments/models.py:448
+#: student_registration/enrollments/models.py:455
+#: student_registration/outreach/models.py:153
+#: student_registration/students/models.py:149
+#: student_registration/students/models.py:158
+msgid "Yes"
+msgstr "نعم"
+
+#: student_registration/alp/forms.py:28 student_registration/alp/forms.py:601
+#: student_registration/alp/models.py:66 student_registration/alp/models.py:397
+#: student_registration/alp/models.py:403
+#: student_registration/alp/models.py:409
+#: student_registration/clm/models.py:108
+#: student_registration/clm/models.py:132
+#: student_registration/enrollments/forms.py:30
+#: student_registration/enrollments/forms.py:259
+#: student_registration/enrollments/models.py:40
+#: student_registration/enrollments/models.py:62
+#: student_registration/enrollments/models.py:183
+#: student_registration/enrollments/models.py:441
+#: student_registration/enrollments/models.py:448
+#: student_registration/enrollments/models.py:455
+#: student_registration/outreach/models.py:154
+#: student_registration/students/models.py:149
+#: student_registration/students/models.py:158
+msgid "No"
+msgstr "كلا"
 
 #: student_registration/alp/forms.py:39
 #: student_registration/enrollments/forms.py:130
@@ -118,14 +156,14 @@ msgid "French"
 msgstr "الفرنسية"
 
 #: student_registration/alp/forms.py:182 student_registration/alp/forms.py:368
-#: student_registration/alp/forms.py:641
+#: student_registration/alp/forms.py:685
 #: student_registration/enrollments/forms.py:370
 msgid "Basic Data"
 msgstr "البيانات الأساسية"
 
 #: student_registration/alp/forms.py:242 student_registration/alp/forms.py:410
-#: student_registration/alp/forms.py:750 student_registration/alp/forms.py:899
-#: student_registration/alp/forms.py:1002 student_registration/clm/forms.py:467
+#: student_registration/alp/forms.py:794 student_registration/alp/forms.py:943
+#: student_registration/alp/forms.py:1046 student_registration/clm/forms.py:467
 #: student_registration/enrollments/forms.py:492
 #: student_registration/enrollments/forms.py:620
 #: student_registration/enrollments/forms.py:668
@@ -134,14 +172,16 @@ msgstr "البيانات الأساسية"
 #: student_registration/enrollments/forms.py:848
 #: student_registration/enrollments/forms.py:900
 #: student_registration/schools/forms.py:66
-#: student_registration/templates/attendances/school.html:181
-#: student_registration/templates/attendances/school.html:303
+#: student_registration/templates/attendances/level_section.html:46
+#: student_registration/templates/attendances/level_section.html:102
+#: student_registration/templates/attendances/school.html:62
+#: student_registration/templates/attendances/school.html:184
 msgid "Save"
 msgstr "حفظ"
 
 #: student_registration/alp/forms.py:243 student_registration/alp/forms.py:411
-#: student_registration/alp/forms.py:751 student_registration/alp/forms.py:900
-#: student_registration/alp/forms.py:1003
+#: student_registration/alp/forms.py:795 student_registration/alp/forms.py:944
+#: student_registration/alp/forms.py:1047
 #: student_registration/enrollments/forms.py:493
 #: student_registration/enrollments/forms.py:621
 #: student_registration/enrollments/forms.py:669
@@ -152,11 +192,11 @@ msgstr "حفظ"
 msgid "Back to list"
 msgstr "العودة الى القائمة"
 
-#: student_registration/alp/forms.py:352 student_registration/alp/forms.py:862
+#: student_registration/alp/forms.py:352 student_registration/alp/forms.py:906
 msgid "Entrance test"
 msgstr "امتحان الدخول"
 
-#: student_registration/alp/forms.py:389 student_registration/alp/forms.py:878
+#: student_registration/alp/forms.py:389 student_registration/alp/forms.py:922
 msgid "Grades"
 msgstr "العلامات"
 
@@ -178,14 +218,176 @@ msgstr "تم التواصل مع التلميذ من قبل؟"
 msgid "Have barcode with him?"
 msgstr "لدية الباركود؟"
 
-#: student_registration/alp/forms.py:546 student_registration/alp/views.py:463
+#: student_registration/alp/forms.py:483
+#: student_registration/enrollments/forms.py:84
+msgid "Search a barcode"
+msgstr "ابحث عن باركود"
+
+#: student_registration/alp/forms.py:488
+#: student_registration/enrollments/forms.py:89
+msgid "Search a student"
+msgstr "ابحث عن تلميذ"
+
+#: student_registration/alp/forms.py:493
+#: student_registration/enrollments/forms.py:94
+msgid "Search by School"
+msgstr " ابحث في مدرسة محددة"
+
+#: student_registration/alp/forms.py:499
+#: student_registration/enrollments/forms.py:114
+#: student_registration/students/models.py:101
+msgid "First name"
+msgstr "الاسم الاول"
+
+#: student_registration/alp/forms.py:503
+#: student_registration/enrollments/forms.py:118
+#: student_registration/students/models.py:103
+msgid "Father name"
+msgstr "اسم الاب"
+
+#: student_registration/alp/forms.py:507
+#: student_registration/enrollments/forms.py:122
+#: student_registration/students/models.py:102
+msgid "Last name"
+msgstr "الشهرة"
+
+#: student_registration/alp/forms.py:511 student_registration/alp/views.py:486
+#: student_registration/enrollments/forms.py:126
+#: student_registration/enrollments/tasks.py:80
+#: student_registration/enrollments/views.py:354
+#: student_registration/enrollments/views.py:471
+#: student_registration/students/models.py:112
+msgid "Sex"
+msgstr "الجنس"
+
+#: student_registration/alp/forms.py:516
+#: student_registration/enrollments/forms.py:135
+#: student_registration/students/models.py:120
+msgid "Birthday year"
+msgstr "تاريخ الولادة - السنة"
+
+#: student_registration/alp/forms.py:521
+#: student_registration/enrollments/forms.py:140
+#: student_registration/students/models.py:128
+msgid "Birthday month"
+msgstr "تاريخ الولادة - الشهر"
+
+#: student_registration/alp/forms.py:526
+#: student_registration/enrollments/forms.py:159
+#: student_registration/students/models.py:136
+msgid "Birthday day"
+msgstr "تاريخ الولادة - اليوم"
+
+#: student_registration/alp/forms.py:532
+#: student_registration/enrollments/forms.py:165
+#: student_registration/students/models.py:171
+msgid "Nationality"
+msgstr " الجنسية"
+
+#: student_registration/alp/forms.py:538 student_registration/alp/views.py:474
+#: student_registration/enrollments/forms.py:171
+#: student_registration/enrollments/tasks.py:73
+#: student_registration/enrollments/views.py:347
+#: student_registration/enrollments/views.py:469
+#: student_registration/students/models.py:104
+msgid "Mother fullname"
+msgstr "اسم الأم وشهرتها (بالعربي)"
+
+#: student_registration/alp/forms.py:542 student_registration/alp/views.py:473
+#: student_registration/enrollments/forms.py:175
+#: student_registration/enrollments/tasks.py:72
+#: student_registration/enrollments/views.py:346
+#: student_registration/students/models.py:177
+msgid "Mother nationality"
+msgstr "جنسية الأم"
+
+#: student_registration/alp/forms.py:547 student_registration/alp/tables.py:164
+#: student_registration/alp/views.py:471
+#: student_registration/enrollments/forms.py:180
+#: student_registration/enrollments/tables.py:38
+#: student_registration/enrollments/tasks.py:71
+#: student_registration/enrollments/views.py:345
+#: student_registration/students/models.py:159
+msgid "Registered in UNHCR"
+msgstr "مسجل لدى المفوضية"
+
+#: student_registration/alp/forms.py:552
+#: student_registration/enrollments/forms.py:185
+#: student_registration/students/models.py:165
+msgid "ID type"
+msgstr "نوع البطاقة"
+
+#: student_registration/alp/forms.py:557
+#: student_registration/enrollments/forms.py:190
+#: student_registration/students/models.py:161
+msgid "ID number"
+msgstr "رقم البطاقة"
+
+#: student_registration/alp/forms.py:561 student_registration/alp/views.py:465
+#: student_registration/enrollments/forms.py:194
+#: student_registration/enrollments/tasks.py:66
+#: student_registration/enrollments/views.py:340
+#: student_registration/students/models.py:153
+msgid "Phone prefix"
+msgstr "كود الرقم"
+
+#: student_registration/alp/forms.py:565 student_registration/alp/tables.py:163
+#: student_registration/alp/views.py:466
+#: student_registration/enrollments/forms.py:198
+#: student_registration/enrollments/tables.py:37
+#: student_registration/enrollments/tasks.py:67
+#: student_registration/enrollments/views.py:341
+#: student_registration/students/models.py:152
+#: student_registration/users/models.py:26
+msgid "Phone number"
+msgstr "الهاتف"
+
+#: student_registration/alp/forms.py:569
+#: student_registration/enrollments/forms.py:202
+#: student_registration/students/models.py:182
+msgid "Address"
+msgstr "العنوان"
+
+#: student_registration/alp/forms.py:573
+#: student_registration/enrollments/forms.py:207
+#: student_registration/enrollments/models.py:125
+#: student_registration/enrollments/tasks.py:65
+#: student_registration/enrollments/views.py:339
+#: student_registration/enrollments/views.py:467
+msgid "Current Class"
+msgstr "الصف الحالي"
+
+#: student_registration/alp/forms.py:578 student_registration/alp/models.py:145
+#: student_registration/alp/tables.py:120
+#: student_registration/alp/tables.py:161 student_registration/alp/views.py:476
+#: student_registration/enrollments/forms.py:212
+#: student_registration/enrollments/models.py:119
+#: student_registration/enrollments/tasks.py:64
+#: student_registration/enrollments/views.py:338
+#: student_registration/enrollments/views.py:466
+msgid "Current Section"
+msgstr "الشعبة الحالية"
+
+#: student_registration/alp/forms.py:585 student_registration/alp/views.py:463
 #: student_registration/enrollments/forms.py:219
 #: student_registration/enrollments/tasks.py:63
 #: student_registration/enrollments/views.py:337
 msgid "Last education level"
 msgstr " أعلى مستوى تعليم وصل إليه التلميذ"
 
-#: student_registration/alp/forms.py:558 student_registration/alp/models.py:64
+#: student_registration/alp/forms.py:590 student_registration/alp/models.py:192
+#: student_registration/enrollments/forms.py:239
+#: student_registration/enrollments/models.py:161
+msgid "Last Education year"
+msgstr " آخر سنة دراسية"
+
+#: student_registration/alp/forms.py:596 student_registration/alp/models.py:206
+#: student_registration/enrollments/forms.py:254
+#: student_registration/enrollments/models.py:185
+msgid "Participated in ALP"
+msgstr "انتسب من قبل الى برنامج ALP"
+
+#: student_registration/alp/forms.py:599 student_registration/alp/models.py:64
 #: student_registration/enrollments/forms.py:248
 #: student_registration/enrollments/forms.py:257
 #: student_registration/enrollments/models.py:54
@@ -193,60 +395,40 @@ msgstr " أعلى مستوى تعليم وصل إليه التلميذ"
 msgid "n/a"
 msgstr ""
 
-#: student_registration/alp/forms.py:559 student_registration/alp/models.py:65
-#: student_registration/alp/models.py:397
-#: student_registration/alp/models.py:403
-#: student_registration/alp/models.py:409
-#: student_registration/clm/models.py:107
-#: student_registration/enrollments/forms.py:30
-#: student_registration/enrollments/forms.py:258
-#: student_registration/enrollments/models.py:61
-#: student_registration/enrollments/models.py:182
-#: student_registration/enrollments/models.py:441
-#: student_registration/enrollments/models.py:448
-#: student_registration/enrollments/models.py:455
-#: student_registration/outreach/models.py:153
-#: student_registration/students/models.py:149
-#: student_registration/students/models.py:158
-msgid "Yes"
-msgstr "نعم"
+#: student_registration/alp/forms.py:605 student_registration/alp/models.py:212
+#: student_registration/enrollments/forms.py:263
+#: student_registration/enrollments/models.py:191
+msgid "Last informal education level"
+msgstr " أعلى مستوى تعليم وصل إليه التلميذ"
 
-#: student_registration/alp/forms.py:560 student_registration/alp/models.py:66
-#: student_registration/alp/models.py:397
-#: student_registration/alp/models.py:403
-#: student_registration/alp/models.py:409
-#: student_registration/clm/models.py:108
-#: student_registration/clm/models.py:132
-#: student_registration/enrollments/forms.py:30
-#: student_registration/enrollments/forms.py:259
-#: student_registration/enrollments/models.py:40
-#: student_registration/enrollments/models.py:62
-#: student_registration/enrollments/models.py:183
-#: student_registration/enrollments/models.py:441
-#: student_registration/enrollments/models.py:448
-#: student_registration/enrollments/models.py:455
-#: student_registration/outreach/models.py:154
-#: student_registration/students/models.py:149
-#: student_registration/students/models.py:158
-msgid "No"
-msgstr "كلا"
+#: student_registration/alp/forms.py:610 student_registration/alp/models.py:232
+#: student_registration/enrollments/forms.py:268
+#: student_registration/enrollments/models.py:211
+msgid "Last informal education round"
+msgstr "معلومات سابقة للتعليم غير نظامي للتلميذ"
 
-#: student_registration/alp/forms.py:596
+#: student_registration/alp/forms.py:615 student_registration/alp/models.py:238
+#: student_registration/enrollments/forms.py:273
+#: student_registration/enrollments/models.py:217
+msgid "Last informal education status"
+msgstr "معلومات سابقة للتعليم غير نظامي للتلميذ"
+
+#: student_registration/alp/forms.py:640
 #: student_registration/enrollments/forms.py:323
 msgid "Registry"
 msgstr " سجل التلميذ "
 
-#: student_registration/alp/forms.py:614
+#: student_registration/alp/forms.py:658
 #: student_registration/enrollments/forms.py:342
 msgid "Register by Barcode"
 msgstr "تسجيل التلميذ من خلال الباركود"
 
-#: student_registration/alp/forms.py:627
+#: student_registration/alp/forms.py:671
 #: student_registration/enrollments/forms.py:354
 msgid "Search old student (fullname Or ID number)"
 msgstr "بحث عن التلميذ من خلال الاسم او رقم الهوية"
 
-#: student_registration/alp/forms.py:703
+#: student_registration/alp/forms.py:747
 #: student_registration/enrollments/forms.py:434
 #: student_registration/enrollments/forms.py:888
 #: student_registration/templates/alp/test_grading.html:25
@@ -254,21 +436,21 @@ msgstr "بحث عن التلميذ من خلال الاسم او رقم الهو
 msgid "Current situation"
 msgstr "الوضع الحالي"
 
-#: student_registration/alp/forms.py:717
+#: student_registration/alp/forms.py:761
 #: student_registration/enrollments/forms.py:448
 msgid "Last student formal education"
 msgstr "معلومات سابقة للتعليم النظامي للتلميذ"
 
-#: student_registration/alp/forms.py:731
+#: student_registration/alp/forms.py:775
 #: student_registration/enrollments/forms.py:473
 msgid "Last student informal education"
 msgstr "معلومات سابقة للتعليم غير نظامي للتلميذ"
 
-#: student_registration/alp/forms.py:969
+#: student_registration/alp/forms.py:1013
 msgid "Post-test"
 msgstr "مجموع علامات ال Post-test"
 
-#: student_registration/alp/forms.py:981
+#: student_registration/alp/forms.py:1025
 msgid "Post-test Grades"
 msgstr "نتيجة ال Post-test"
 
@@ -313,17 +495,6 @@ msgstr "المدرسة"
 msgid "Location"
 msgstr "الموقع"
 
-#: student_registration/alp/models.py:145
-#: student_registration/alp/tables.py:120
-#: student_registration/alp/tables.py:161 student_registration/alp/views.py:476
-#: student_registration/enrollments/forms.py:212
-#: student_registration/enrollments/models.py:119
-#: student_registration/enrollments/tasks.py:64
-#: student_registration/enrollments/views.py:338
-#: student_registration/enrollments/views.py:466
-msgid "Current Section"
-msgstr "الشعبة الحالية"
-
 #: student_registration/alp/models.py:161
 msgid "Pre-test room"
 msgstr "غرفة امتحان الدخول"
@@ -337,29 +508,11 @@ msgstr "غرفة امتحان الدخول"
 msgid "Last Education level"
 msgstr " أعلى مستوى تعليم وصل إليه التلميذ"
 
-#: student_registration/alp/models.py:192
-#: student_registration/enrollments/forms.py:239
-#: student_registration/enrollments/models.py:161
-msgid "Last Education year"
-msgstr " آخر سنة دراسية"
-
 #: student_registration/alp/models.py:199
 #: student_registration/enrollments/forms.py:245
 #: student_registration/enrollments/models.py:168
 msgid "Last Education result"
 msgstr "آخر نتيجة حصل عليها "
-
-#: student_registration/alp/models.py:206
-#: student_registration/enrollments/forms.py:254
-#: student_registration/enrollments/models.py:185
-msgid "Participated in ALP"
-msgstr "انتسب من قبل الى برنامج ALP"
-
-#: student_registration/alp/models.py:212
-#: student_registration/enrollments/forms.py:263
-#: student_registration/enrollments/models.py:191
-msgid "Last informal education level"
-msgstr " أعلى مستوى تعليم وصل إليه التلميذ"
 
 #: student_registration/alp/models.py:219
 #: student_registration/enrollments/models.py:198
@@ -369,18 +522,6 @@ msgstr "معلومات سابقة للتعليم غير نظامي للتلمي�
 #: student_registration/alp/models.py:226
 #: student_registration/enrollments/models.py:205
 msgid "Last informal education result"
-msgstr "معلومات سابقة للتعليم غير نظامي للتلميذ"
-
-#: student_registration/alp/models.py:232
-#: student_registration/enrollments/forms.py:268
-#: student_registration/enrollments/models.py:211
-msgid "Last informal education round"
-msgstr "معلومات سابقة للتعليم غير نظامي للتلميذ"
-
-#: student_registration/alp/models.py:238
-#: student_registration/enrollments/forms.py:273
-#: student_registration/enrollments/models.py:217
-msgid "Last informal education status"
 msgstr "معلومات سابقة للتعليم غير نظامي للتلميذ"
 
 #: student_registration/alp/models.py:244
@@ -467,24 +608,13 @@ msgstr "وضع العلامات"
 msgid "Created By"
 msgstr "انشأ من قبل"
 
-#: student_registration/alp/tables.py:163 student_registration/alp/views.py:466
-#: student_registration/enrollments/forms.py:198
-#: student_registration/enrollments/tables.py:37
-#: student_registration/enrollments/tasks.py:67
-#: student_registration/enrollments/views.py:341
-#: student_registration/students/models.py:152
-#: student_registration/users/models.py:26
-msgid "Phone number"
-msgstr "الهاتف"
+#: student_registration/alp/tables.py:166
+msgid "Pre-test total"
+msgstr "مجموع امتحان الدخول"
 
-#: student_registration/alp/tables.py:164 student_registration/alp/views.py:471
-#: student_registration/enrollments/forms.py:180
-#: student_registration/enrollments/tables.py:38
-#: student_registration/enrollments/tasks.py:71
-#: student_registration/enrollments/views.py:345
-#: student_registration/students/models.py:159
-msgid "Registered in UNHCR"
-msgstr "مسجل لدى المفوضية"
+#: student_registration/alp/tables.py:168
+msgid "Post-test total"
+msgstr " مجموع امتحان اخر الدورة"
 
 #: student_registration/alp/views.py:457
 #: student_registration/enrollments/tasks.py:56
@@ -515,14 +645,6 @@ msgstr "هل انتسب التلميذ الى برنامج التعليم الم
 msgid "Education year"
 msgstr "السنة الدراسية"
 
-#: student_registration/alp/views.py:465
-#: student_registration/enrollments/forms.py:194
-#: student_registration/enrollments/tasks.py:66
-#: student_registration/enrollments/views.py:340
-#: student_registration/students/models.py:153
-msgid "Phone prefix"
-msgstr "كود الرقم"
-
 #: student_registration/alp/views.py:467
 #: student_registration/enrollments/tasks.py:68
 #: student_registration/enrollments/views.py:342
@@ -540,23 +662,6 @@ msgstr "رقم البطاقة الخاصة بالتلميذ"
 #: student_registration/enrollments/views.py:344
 msgid "Student ID Type"
 msgstr "نوع البطاقة الخاصة بالتلميذ"
-
-#: student_registration/alp/views.py:473
-#: student_registration/enrollments/forms.py:175
-#: student_registration/enrollments/tasks.py:72
-#: student_registration/enrollments/views.py:346
-#: student_registration/students/models.py:177
-msgid "Mother nationality"
-msgstr "جنسية الأم"
-
-#: student_registration/alp/views.py:474
-#: student_registration/enrollments/forms.py:171
-#: student_registration/enrollments/tasks.py:73
-#: student_registration/enrollments/views.py:347
-#: student_registration/enrollments/views.py:469
-#: student_registration/students/models.py:104
-msgid "Mother fullname"
-msgstr "اسم الأم وشهرتها (بالعربي)"
 
 #: student_registration/alp/views.py:480
 msgid "Assigned to level"
@@ -581,15 +686,6 @@ msgstr "عمر التلميذ"
 #: student_registration/enrollments/views.py:350
 msgid "Student birthday"
 msgstr "تاريخ ميلاد التلميذ"
-
-#: student_registration/alp/views.py:486
-#: student_registration/enrollments/forms.py:126
-#: student_registration/enrollments/tasks.py:80
-#: student_registration/enrollments/views.py:354
-#: student_registration/enrollments/views.py:471
-#: student_registration/students/models.py:112
-msgid "Sex"
-msgstr "الجنس"
 
 #: student_registration/alp/views.py:487
 #: student_registration/enrollments/tasks.py:81
@@ -654,17 +750,20 @@ msgid "# Students reported by the Director"
 msgstr "عدد التلاميذ المصرح عنهم من قبل المدير"
 
 #: student_registration/attendances/models.py:25
-#: student_registration/templates/attendances/school.html:292
+#: student_registration/templates/attendances/level_section.html:91
+#: student_registration/templates/attendances/school.html:173
 msgid "Sick"
 msgstr "مرض"
 
 #: student_registration/attendances/models.py:26
-#: student_registration/templates/attendances/school.html:293
+#: student_registration/templates/attendances/level_section.html:92
+#: student_registration/templates/attendances/school.html:174
 msgid "No reason"
 msgstr "لا سبب"
 
 #: student_registration/attendances/models.py:27
-#: student_registration/templates/attendances/school.html:294
+#: student_registration/templates/attendances/level_section.html:93
+#: student_registration/templates/attendances/school.html:175
 msgid "No transport"
 msgstr "لا وسائل النقل"
 
@@ -673,27 +772,32 @@ msgstr "لا وسائل النقل"
 #: student_registration/clm/models.py:143
 #: student_registration/outreach/models.py:102
 #: student_registration/outreach/models.py:168
-#: student_registration/templates/attendances/school.html:295
+#: student_registration/templates/attendances/level_section.html:94
+#: student_registration/templates/attendances/school.html:176
 msgid "Other"
 msgstr "آخر"
 
 #: student_registration/attendances/models.py:32
-#: student_registration/templates/attendances/school.html:191
+#: student_registration/templates/attendances/school.html:72
+#: student_registration/templates/attendances/school_day.html:50
 msgid "Public Holiday"
 msgstr "عطلة رسمية"
 
 #: student_registration/attendances/models.py:33
-#: student_registration/templates/attendances/school.html:192
+#: student_registration/templates/attendances/school.html:73
+#: student_registration/templates/attendances/school_day.html:51
 msgid "School Holiday"
 msgstr "العطل المدرسية "
 
 #: student_registration/attendances/models.py:34
-#: student_registration/templates/attendances/school.html:193
+#: student_registration/templates/attendances/school.html:74
+#: student_registration/templates/attendances/school_day.html:52
 msgid "Strike"
 msgstr "اضراب"
 
 #: student_registration/attendances/models.py:35
-#: student_registration/templates/attendances/school.html:194
+#: student_registration/templates/attendances/school.html:75
+#: student_registration/templates/attendances/school_day.html:53
 msgid "Weekly Holiday"
 msgstr "عطلة نهاية الاسبوع"
 
@@ -866,18 +970,6 @@ msgstr "غائب"
 msgid "Pre-assessment"
 msgstr ""
 
-#: student_registration/enrollments/forms.py:84
-msgid "Search a barcode"
-msgstr "ابحث عن باركود"
-
-#: student_registration/enrollments/forms.py:89
-msgid "Search a student"
-msgstr "ابحث عن تلميذ"
-
-#: student_registration/enrollments/forms.py:94
-msgid "Search by School"
-msgstr " ابحث في مدرسة محددة"
-
 #: student_registration/enrollments/forms.py:100
 #: student_registration/enrollments/views.py:334
 msgid "School type"
@@ -901,64 +993,6 @@ msgstr "دوام بعد الظهر"
 #: student_registration/enrollments/views.py:473
 msgid "Registration date"
 msgstr "تاريخ التسجيل"
-
-#: student_registration/enrollments/forms.py:114
-#: student_registration/students/models.py:101
-msgid "First name"
-msgstr "الاسم الاول"
-
-#: student_registration/enrollments/forms.py:118
-#: student_registration/students/models.py:103
-msgid "Father name"
-msgstr "اسم الاب"
-
-#: student_registration/enrollments/forms.py:122
-#: student_registration/students/models.py:102
-msgid "Last name"
-msgstr "الشهرة"
-
-#: student_registration/enrollments/forms.py:135
-#: student_registration/students/models.py:120
-msgid "Birthday year"
-msgstr "تاريخ الولادة - السنة"
-
-#: student_registration/enrollments/forms.py:140
-#: student_registration/students/models.py:128
-msgid "Birthday month"
-msgstr "تاريخ الولادة - الشهر"
-
-#: student_registration/enrollments/forms.py:159
-#: student_registration/students/models.py:136
-msgid "Birthday day"
-msgstr "تاريخ الولادة - اليوم"
-
-#: student_registration/enrollments/forms.py:165
-#: student_registration/students/models.py:171
-msgid "Nationality"
-msgstr " الجنسية"
-
-#: student_registration/enrollments/forms.py:185
-#: student_registration/students/models.py:165
-msgid "ID type"
-msgstr "نوع البطاقة"
-
-#: student_registration/enrollments/forms.py:190
-#: student_registration/students/models.py:161
-msgid "ID number"
-msgstr "رقم البطاقة"
-
-#: student_registration/enrollments/forms.py:202
-#: student_registration/students/models.py:182
-msgid "Address"
-msgstr "العنوان"
-
-#: student_registration/enrollments/forms.py:207
-#: student_registration/enrollments/models.py:125
-#: student_registration/enrollments/tasks.py:65
-#: student_registration/enrollments/views.py:339
-#: student_registration/enrollments/views.py:467
-msgid "Current Class"
-msgstr "الصف الحالي"
 
 #: student_registration/enrollments/forms.py:224
 #: student_registration/enrollments/models.py:224
@@ -1810,85 +1844,108 @@ msgstr "ALP Post-test"
 msgid "ALP Pre-test"
 msgstr "النتيجة Pre-test"
 
-#: student_registration/templates/attendances/school.html:145
+#: student_registration/templates/attendances/level_section.html:26
+#: student_registration/templates/attendances/school.html:26
+#: student_registration/templates/attendances/school_day.html:26
 msgid "Your data has been sent successfully to the server"
 msgstr "تم ارسال البيانات بنجاح"
 
-#: student_registration/templates/attendances/school.html:148
+#: student_registration/templates/attendances/level_section.html:29
+#: student_registration/templates/attendances/school.html:29
+#: student_registration/templates/attendances/school_day.html:29
 msgid "En error has been occurred please contact the admin or try later"
 msgstr "حدث خطأ، يرجى الاتصال بالمشرف أو المحاولة لاحقا"
 
-#: student_registration/templates/attendances/school.html:169
-#: student_registration/templates/attendances/school.html:302
+#: student_registration/templates/attendances/level_section.html:34
+#: student_registration/templates/attendances/level_section.html:101
+#: student_registration/templates/attendances/school.html:50
+#: student_registration/templates/attendances/school.html:183
 msgid "Back to "
 msgstr "العودة الى"
 
-#: student_registration/templates/attendances/school.html:170
+#: student_registration/templates/attendances/level_section.html:35
+#: student_registration/templates/attendances/school.html:51
 msgid "Are you sure that the students of this class are away for a reason?"
 msgstr ""
 "هل أنت متأكد من أن الطلاب هذاالصف لم يحضرو المدرسة بسبب حصل امتحانات في "
 "المدرسة ؟"
 
-#: student_registration/templates/attendances/school.html:170
+#: student_registration/templates/attendances/level_section.html:35
+#: student_registration/templates/attendances/school.html:51
 msgid "Exam day"
 msgstr "يوم امتحان في المدرسة"
 
-#: student_registration/templates/attendances/school.html:178
+#: student_registration/templates/attendances/level_section.html:43
+#: student_registration/templates/attendances/school.html:59
 msgid "Total students"
 msgstr "مجموع التلاميذ"
 
-#: student_registration/templates/attendances/school.html:179
+#: student_registration/templates/attendances/level_section.html:44
+#: student_registration/templates/attendances/school.html:60
 msgid "Total attended"
 msgstr "مجموع الحضور"
 
-#: student_registration/templates/attendances/school.html:180
+#: student_registration/templates/attendances/level_section.html:45
+#: student_registration/templates/attendances/school.html:61
 msgid "Total absences"
 msgstr "مجموع الغياب"
 
-#: student_registration/templates/attendances/school.html:181
-#: student_registration/templates/attendances/school.html:303
+#: student_registration/templates/attendances/level_section.html:46
+#: student_registration/templates/attendances/level_section.html:102
+#: student_registration/templates/attendances/school.html:62
+#: student_registration/templates/attendances/school.html:184
 msgid "Are you sure you want to save the attendance for this class?"
 msgstr "هل تريد بالتأكيد حفظ الحضور لهذا الصف؟"
 
-#: student_registration/templates/attendances/school.html:189
-msgid "School is closed for: "
-msgstr ""
-
-#: student_registration/templates/attendances/school.html:191
-msgid "Are you sure that the school is closed today for a public holiday?"
-msgstr "هل أنت متأكد من أن المدرسة مغلقة اليوم لعطلة رسمية؟"
-
-#: student_registration/templates/attendances/school.html:192
-msgid "Are you sure that the school is closed today for a school holiday?"
-msgstr "هل أنت متأكد من أن المدرسة مغلقة اليوم لقضاء عطلة مدرسية؟"
-
-#: student_registration/templates/attendances/school.html:193
-msgid "Are you sure that the school is closed today for a strike?"
-msgstr "هل أنت متأكد من أن المدرسة مغلقة اليوم بسبب الإضراب؟"
-
-#: student_registration/templates/attendances/school.html:194
-msgid "Are you sure that the school is closed today for a weekly holiday?"
-msgstr "هل أنت متأكد من أن المدرسة مغلقة اليوم لقضاء عطلة أسبوعية؟"
-
-#: student_registration/templates/attendances/school.html:199
-msgid "Attendances validated on"
-msgstr "تم التصديق في"
-
-#: student_registration/templates/attendances/school.html:201
-msgid "Are you sure you want to validate all attendances?"
-msgstr "هل تريد  التصديق من صحة جميع الحضور؟"
-
-#: student_registration/templates/attendances/school.html:201
-msgid "Validate all"
-msgstr "التصديق على الحضور"
-
-#: student_registration/templates/attendances/school.html:289
+#: student_registration/templates/attendances/level_section.html:88
+#: student_registration/templates/attendances/school.html:170
 msgid "Present"
 msgstr "حاضر"
 
-#: student_registration/templates/attendances/school.html:289
+#: student_registration/templates/attendances/level_section.html:88
+#: student_registration/templates/attendances/school.html:170
 msgid "Absent"
 msgstr "غائب"
+
+#: student_registration/templates/attendances/school.html:70
+#: student_registration/templates/attendances/school_day.html:48
+msgid "School is closed for: "
+msgstr ""
+
+#: student_registration/templates/attendances/school.html:72
+#: student_registration/templates/attendances/school_day.html:50
+msgid "Are you sure that the school is closed today for a public holiday?"
+msgstr "هل أنت متأكد من أن المدرسة مغلقة اليوم لعطلة رسمية؟"
+
+#: student_registration/templates/attendances/school.html:73
+#: student_registration/templates/attendances/school_day.html:51
+msgid "Are you sure that the school is closed today for a school holiday?"
+msgstr "هل أنت متأكد من أن المدرسة مغلقة اليوم لقضاء عطلة مدرسية؟"
+
+#: student_registration/templates/attendances/school.html:74
+#: student_registration/templates/attendances/school_day.html:52
+msgid "Are you sure that the school is closed today for a strike?"
+msgstr "هل أنت متأكد من أن المدرسة مغلقة اليوم بسبب الإضراب؟"
+
+#: student_registration/templates/attendances/school.html:75
+#: student_registration/templates/attendances/school_day.html:53
+msgid "Are you sure that the school is closed today for a weekly holiday?"
+msgstr "هل أنت متأكد من أن المدرسة مغلقة اليوم لقضاء عطلة أسبوعية؟"
+
+#: student_registration/templates/attendances/school.html:80
+#: student_registration/templates/attendances/school_day.html:58
+msgid "Attendances validated on"
+msgstr "تم التصديق في"
+
+#: student_registration/templates/attendances/school.html:82
+#: student_registration/templates/attendances/school_day.html:60
+msgid "Are you sure you want to validate all attendances?"
+msgstr "هل تريد  التصديق من صحة جميع الحضور؟"
+
+#: student_registration/templates/attendances/school.html:82
+#: student_registration/templates/attendances/school_day.html:60
+msgid "Validate all"
+msgstr "التصديق على الحضور"
 
 #: student_registration/templates/clm/bln_add.html:24
 #: student_registration/templates/clm/bln_edit.html:23
