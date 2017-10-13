@@ -47,6 +47,20 @@ class StudentViewSet(mixins.RetrieveModelMixin,
             qs = qs.filter(hh_barcode=self.request.GET.get('barcode', None))
         if self.request.GET.get('case_number', None):
             qs = qs.filter(id_number=self.request.GET.get('case_number', None))
+        if self.request.GET.get('first_name', None):
+            qs = qs.filter(first_name=self.request.GET.get('first_name', None))
+        if self.request.GET.get('last_name', None):
+            qs = qs.filter(last_name=self.request.GET.get('last_name', None))
+        if self.request.GET.get('father_name', None):
+            qs = qs.filter(father_name=self.request.GET.get('father_name', None))
+        if self.request.GET.get('mother_fullname', None):
+            qs = qs.filter(mother_fullname=self.request.GET.get('mother_fullname', None))
+        if self.request.GET.get('birthday_day', None):
+            qs = qs.filter(birthday_day=self.request.GET.get('birthday_day', None))
+        if self.request.GET.get('birthday_month', None):
+            qs = qs.filter(birthday_month=self.request.GET.get('birthday_month', None))
+        if self.request.GET.get('birthday_year', None):
+            qs = qs.filter(birthday_year=self.request.GET.get('birthday_year', None))
         if self.request.GET.get('name', None):
             for term in self.request.GET.get('name', None).split():
                 qs = qs.filter(
