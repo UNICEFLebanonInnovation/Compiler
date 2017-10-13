@@ -214,3 +214,101 @@
 tr.odd {
     background-color: #eceeef;
 }
+.absolute-top-7 {
+    position: absolute;
+    top: 7px;
+}
+.absolute-top-15 {
+    position: absolute;
+    top: 15px;
+}
+.absolute-right-30 {
+    position: absolute;
+    right: 30px;
+}
+.absolute-right-15 {
+    position: absolute;
+    right: 15px;
+}
+.breadcrumb {
+    position: relative;
+}
+.row-class  {
+    max-height:75px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0px;
+    cursor: pointer;
+    background: #f5f5f5; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(left top, #f5f5f5, #EDEFF1); /* Standard syntax */
+    box-shadow: 1px 1px 5px #888888;
+}
+.row-class:hover {
+    text-decoration: none;
+}
+.row-class .s-col {
+    height: 75px;
+    max-height: 75px;
+}
+.row-class .progress-success {
+    color: #5cb85c !important;
+    border: 1px solid #5cb85c;
+}
+.progress-bar.progress-bar-success {
+    background: #5cb85c;
+}
+.progress-bar.progress-bar-danger {
+    background: #d9534f;
+}
+.row-class .progress-danger {
+    color: #d9534f !important;
+    border: 1px solid #d9534f;
+}
+.row-class .progress .progress-bar {
+    color: #0b0b0b;
+}
+.row-class.disabled {
+    pointer-events: none;
+    cursor: not-allowed !important;
+    opacity: .65;
+}
+.row-student  {
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0px;
+    background: #f5f5f5; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(left top, #f5f5f5, #EDEFF1); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(left top, #f5f5f5, #EDEFF1); /* Standard syntax */
+    box-shadow: 1px 1px 5px #888888;
+}
+.row-student .s-col {
+    padding-top: 15px;
+}
+.row-student .absence-reasons label {
+    font-style: italic;
+    padding-right: 5px;
+}
+.row-student .absence-reasons input {
+    margin-right: 10px;
+}
+.btn-attendance-day.active {
+    background-color: #2aabd2;
+    color: red;
+}
+.s-lft div {
+    padding-top: 5px;
+    margin-top: 5px;
+}
+.s-rgt {
+    border-radius: 0 8px 8px 0;
+    background: #2aabd2;
+}
+.row-class .s-progs {
+    padding-top: 5px;
+}
+.s-progs .progress {
+    margin-top: 10px;
+}
