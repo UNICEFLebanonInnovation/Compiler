@@ -55,7 +55,7 @@ class ProfileView(LoginRequiredMixin,
     template_name = 'schools/profile.html'
     form_class = ProfileForm
     success_url = '/schools/profile/'
-    group_required = [u"SCHOOL"]
+    group_required = [u"SCHOOL", u"ALP_SCHOOL"]
 
     def get_context_data(self, **kwargs):
         # force_default_language(self.request)

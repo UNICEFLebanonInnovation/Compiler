@@ -188,8 +188,14 @@ function set_attendances(data, patch_data)
         headers: getHeader(),
         dataType: 'json',
         success: function (response, result, jqXHR) {
-            if(response.data && patch_data){
-                update_attendances(response.data, patch_data);
+            if(response.data){
+                console.log(response.status);
+                console.log(patch_data);
+                if(response.status == 200 && patch_data == undefined){
+                    patch_attendances(response.data, data);
+                }else{
+                    update_attendances(response.data, patch_data);
+                }
             }else{
                 display_feedback(true);
             }
