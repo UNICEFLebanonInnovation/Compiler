@@ -2,7 +2,7 @@
 import json
 
 from rest_framework import serializers
-from .models import CLM, BLN, RS, CBECE
+from .models import CLM, BLN, RS, CBECE, SelfPerceptionGrades
 
 
 def create_instance(validated_data, model):
@@ -205,3 +205,10 @@ class CBECESerializer(CLMSerializer):
             'referral',
             'child_muac',
         )
+
+
+class SelfPerceptionGradesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SelfPerceptionGrades
+        fields = '__all__'
