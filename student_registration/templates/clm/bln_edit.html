@@ -14,17 +14,6 @@
 
     <div id="resume" class="inner-content">
 
-        <section id="page-title" class="inner-section ui-menu-color02">
-            <div class="container-fluid nopadding">
-                <h2 class="font-accident-two-light color01 uppercase"
-                    data-animation-origin="right"
-                    data-animation-duration="400"
-                    data-animation-delay="100"
-                    data-animation-distance="50px">{% trans "Registration" %}</h2>
-
-            </div>
-        </section>
-
         <section class="inner-section light bg-color01">
             <div class="container-fluid nopadding">
                 {{ form.errors }}
@@ -38,4 +27,10 @@
 
 {% block extra_js %}
 
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>
+    <script>
+        var current_school = '{{ request.user.school_id }}';
+    </script>
 {% endblock %}

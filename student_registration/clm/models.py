@@ -122,7 +122,7 @@ class CLM(TimeStampedModel):
     )
     BARRIERS = Choices(
         ('seasonal_work', _('Seasonal work')),
-        ('transportation', 'Transportation'),
+        ('transportation', _('Transportation')),
         ('weather', _('Weather')),
         ('sickness', _('Sickness')),
         ('security', _('Security')),
