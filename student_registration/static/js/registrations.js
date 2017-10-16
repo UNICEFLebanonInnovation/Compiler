@@ -16,7 +16,11 @@ $(document).ready(function(){
 
     reorganizeForm();
 
-    $(document).on('click', 'input[name=new_registry], input[name=student_outreached], input[name=have_barcode], #id_student_family_status, input[name=have_labour]:checked', function(){
+    $(document).on('click', 'input[name=new_registry], input[name=student_outreached], input[name=have_barcode], input[name=have_labour]', function(){
+        reorganizeForm();
+    });
+
+    $(document).on('change', '#id_student_family_status', function(){
         reorganizeForm();
     });
 
@@ -276,6 +280,7 @@ function reorganizeForm()
         $('#search_options').addClass('d-none');
         return true;
     }
+    console.log(family_status);
 
     if(family_status == 'married' || family_status == 'divorced'){
         $('div#student_have_children').removeClass('d-none');
