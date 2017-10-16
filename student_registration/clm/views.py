@@ -16,6 +16,7 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
+from student_registration.users.utils import force_default_language
 from .filters import BLNFilter, RSFilter, CBECEFilter
 from .tables import BootstrapTable, BLNTable, RSTable, CBECETable
 
@@ -26,15 +27,15 @@ from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 
 
-class BLNViewSet(mixins.RetrieveModelMixin,
-                 mixins.ListModelMixin,
-                 mixins.CreateModelMixin,
-                 mixins.UpdateModelMixin,
-                 viewsets.GenericViewSet):
+class RSViewSet(mixins.RetrieveModelMixin,
+                mixins.ListModelMixin,
+                mixins.CreateModelMixin,
+                mixins.UpdateModelMixin,
+                viewsets.GenericViewSet):
 
-    model = BLN
-    queryset = BLN.objects.all()
-    serializer_class = BLNSerializer
+    model = RS
+    queryset = RS.objects.all()
+    serializer_class = RSSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
@@ -46,10 +47,10 @@ class BLNViewSet(mixins.RetrieveModelMixin,
 
 
 class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
-                                 mixins.ListModelMixin,
-                                 mixins.CreateModelMixin,
-                                 mixins.UpdateModelMixin,
-                                 viewsets.GenericViewSet):
+                                  mixins.ListModelMixin,
+                                  mixins.CreateModelMixin,
+                                  mixins.UpdateModelMixin,
+                                  viewsets.GenericViewSet):
 
     model = SelfPerceptionGrades
     queryset = SelfPerceptionGrades.objects.all()
@@ -78,7 +79,7 @@ class BLNAddView(LoginRequiredMixin,
     success_url = '/clm/bln-list/'
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
