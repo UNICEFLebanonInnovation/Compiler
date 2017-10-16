@@ -821,27 +821,27 @@ msgstr "عطلة نهاية الاسبوع"
 #: student_registration/clm/forms.py:59
 #: student_registration/students/models.py:94
 msgid "Married"
-msgstr "متزوج"
+msgstr "متزوج / متزوجة"
 
 #: student_registration/clm/forms.py:60
 #: student_registration/students/models.py:95
 msgid "Engaged"
-msgstr "مرتبط"
+msgstr "مخطوب / مخطوبة"
 
 #: student_registration/clm/forms.py:61
 #: student_registration/students/models.py:96
 msgid "Divorced"
-msgstr "مطلق"
+msgstr "مطلق / مطلقة"
 
 #: student_registration/clm/forms.py:62
 #: student_registration/students/models.py:97
 msgid "Widower"
-msgstr "ارملة"
+msgstr "ارمل / ارملة"
 
 #: student_registration/clm/forms.py:63
 #: student_registration/students/models.py:98
 msgid "Single"
-msgstr "اعزب"
+msgstr "أعزب / عزباء"
 
 #: student_registration/clm/forms.py:114
 msgid "The language supported in the program"
