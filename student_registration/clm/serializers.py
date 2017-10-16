@@ -123,7 +123,6 @@ class CLMSerializer(serializers.ModelSerializer):
             'student_outreached',
             'new_registry',
             'have_barcode',
-            # 'search_student',
             'search_barcode',
             'csrfmiddlewaretoken',
             'save',

@@ -24,7 +24,7 @@ class CommonTable(tables.Table):
     pre_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
                                            template_name='django_tables2/clm_assessment.html',
                                            attrs={'url': ''})
-    post_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
+    post_assessment = tables.TemplateColumn(verbose_name=_('Post-assessment'),
                                             template_name='django_tables2/clm_assessment.html',
                                             attrs={'url': ''})
 
