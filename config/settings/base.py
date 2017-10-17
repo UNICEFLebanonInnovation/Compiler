@@ -88,6 +88,7 @@ LOCAL_APPS = [
     'student_registration.locations',  # custom locations app
     'student_registration.dashboard',  # custom dashboard app
     'student_registration.winterization',  # custom winterization app
+    'student_registration.backends',  # custom storage app
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
