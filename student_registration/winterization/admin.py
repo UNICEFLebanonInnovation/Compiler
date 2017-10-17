@@ -74,6 +74,11 @@ class BeneficiaryAdmin(ImportExportModelAdmin):
         'card_loaded'
     )
 
+    def get_queryset(self, request):
+        if request.user.id == 1:
+            return super(BeneficiaryAdmin, self).get_queryset(request)
+        return Beneficiary.objects.none()
+
 
 admin.site.register(Beneficiary, BeneficiaryAdmin)
 

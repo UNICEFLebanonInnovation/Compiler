@@ -85,7 +85,7 @@ urlpatterns = [
     url(r'^dashboard/', include('student_registration.dashboard.urls', namespace='dashboard')),
 
     url(r'helpdesk/', include('helpdesk.urls')),
-    # url(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
+    url(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/docs/', schema_view),
