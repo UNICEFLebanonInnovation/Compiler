@@ -1,0 +1,45 @@
+
+
+def get_default_provider():
+    from .providers.azure import Azure
+
+    return Azure()
+
+
+def store_file(data, file_name):
+
+    # provider = get_default_provider()
+    # file_link = provider.send_file(data)
+    # send_email(file_link)
+
+    from django.conf import settings
+    from azure.storage import CloudStorageAccount
+    from azure.storage.file import ContentSettings
+
+    file_settings = ContentSettings(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                    content_language='ar')
+
+    storage_client = CloudStorageAccount(settings.AZURE_ACCOUNT_NAME,
+                                         settings.AZURE_ACCOUNT_KEY)
+    blob_service = storage_client.create_block_blob_service()
+
+    blob_service.create_blob_from_bytes(
+        settings.AZURE_CONTAINER,
+        file_name,
+        data,
+        content_settings=file_settings
+    )
+
+    file_link = blob_service.make_blob_url(settings.AZURE_CONTAINER, file_name)
+    send_email(file_link, file_name)
+
+
+def send_email(url, file_name):
+    from django.core.mail import send_mail
+    send_mail(
+        file_name+' extraction',
+        url,
+        'achamseddine@unicef.org',
+        ['achamseddine@unicef.org'],
+        fail_silently=False,
+    )
