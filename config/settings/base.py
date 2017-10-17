@@ -57,6 +57,7 @@ DJANGO_APPS = [
     'bootstrapform',  # Required for nicer formatting of forms with the default templates
     'helpdesk',  # This is us!
     'rangefilter',
+    'storages',
 ]
 THIRD_PARTY_APPS = [
     'crispy_forms',  # Form layouts
@@ -432,3 +433,7 @@ HELPDESK_ENABLE_PER_QUEUE_PERMISSION = True
 HELPDESK_VIEW_A_TICKET_PUBLIC = False
 HELPDESK_SUBMIT_A_TICKET_PUBLIC = False
 
+DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='NO_AZURE_ACCOUNT_NAME')
+AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='NO_AZURE_ACCOUNT_KEY')
+AZURE_CONTAINER = env('AZURE_CONTAINER', default='NO_AZURE_CONTAINER')
