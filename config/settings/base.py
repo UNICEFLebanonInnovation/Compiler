@@ -86,7 +86,7 @@ LOCAL_APPS = [
     'student_registration.schools',  # custom schools app
     'student_registration.locations',  # custom locations app
     'student_registration.dashboard',  # custom dashboard app
-    # 'student_registration.winterization',  # custom winterization app
+    'student_registration.winterization',  # custom winterization app
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -418,7 +418,7 @@ SUIT_CONFIG = {
             'schools.Section',
         )},
         {'app': 'attendances', 'label': 'Attendances', 'icon': 'icon-th-list'},
-        # {'app': 'winterization', 'label': 'Winterization', 'icon': 'icon-th-list'},
+        {'app': 'winterization', 'label': 'Winterization', 'icon': 'icon-th-list'},
         {'app': 'locations', 'label': 'Locations', 'icon': 'icon-globe'},
     )
 }
