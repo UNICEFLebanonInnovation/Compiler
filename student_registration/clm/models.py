@@ -149,6 +149,7 @@ class CLM(TimeStampedModel):
         ('referred_to_another_program', _('Referred to another program')),
         ('dropout', _('Dropout from school'))
     )
+
     governorate = models.ForeignKey(
         Location,
         blank=True, null=True,
@@ -324,22 +325,42 @@ class BLN(CLM):
 
 class RS(CLM):
 
-    SCHOOL_SHIFT = Choices(
+    SCHOOL_SHIFTS = Choices(
         ('first', _('First shift')),
         ('second', _('Second shift')),
     )
+    TYPES = Choices(
+        ('homework_support', _('Homework Support')),
+        ('remedial_support', _('Remedial Support')),
+    )
+    SITES = Choices(
+        ('in_school', _('Inside the school')),
+        ('out_school', _('Outside the school')),
+    )
 
+    type = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=TYPES
+    )
     cycle = models.ForeignKey(
         RSCycle,
         blank=True, null=True,
         related_name='+',
     )
-    site = models.ForeignKey(
-        Site,
-        blank=True, null=True,
-        related_name='+',
+    site = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=SITES
     )
     school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+    )
+    registered_in_school = models.ForeignKey(
         School,
         blank=False, null=True,
         related_name='+',
@@ -348,7 +369,7 @@ class RS(CLM):
         max_length=50,
         blank=True,
         null=True,
-        choices=SCHOOL_SHIFT
+        choices=SCHOOL_SHIFTS
     )
 
 
@@ -362,16 +383,21 @@ class CBECE(CLM):
         ('academic', _('Academic')),
         ('absence', _('Absence'))
     )
+    SITES = Choices(
+        ('in_school', _('Inside the school')),
+        ('out_school', _('Outside the school')),
+    )
 
     cycle = models.ForeignKey(
         Cycle,
         blank=True, null=True,
         related_name='+',
     )
-    site = models.ForeignKey(
-        Site,
-        blank=True, null=True,
-        related_name='+',
+    site = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=SITES
     )
     school = models.ForeignKey(
         School,
@@ -439,7 +465,7 @@ class CBECE(CLM):
 class SelfPerceptionGrades(models.Model):
 
     enrollment = models.ForeignKey(
-        BLN,
+        RS,
         blank=True, null=True,
         related_name='+',
     )
