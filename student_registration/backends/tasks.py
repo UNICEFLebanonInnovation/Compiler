@@ -374,3 +374,50 @@ def export_alp(params=None):
 
     file_format = base_formats.XLS()
     return file_format.export_data(data)
+
+
+def export_attendance(params=None):
+    from student_registration.attendances.models import Attendance
+
+    queryset = Attendance.objects.all()
+    if 'school' in params:
+        queryset = queryset.filter(school_id=params['school'])
+    if 'date' in params:
+        queryset = queryset.filter(attendance_date=params['date'])
+
+    data = tablib.Dataset()
+
+    data.headers = [
+        _('School number'),
+        _('School'),
+        _('District'),
+        _('Governorate'),
+        _('Attendance date'),
+        _('Validation status'),
+        _('Validation date'),
+        _('Validated by'),
+        _('Close reason'),
+        _('Level'),
+        _('Section'),
+        _('Student fullname'),
+        _('Sex'),
+        _('Status'),
+        _('Absence reason'),
+    ]
+
+    content = []
+    for line in queryset:
+        if not line.students:
+            continue
+        # for level_section in
+        content = [
+            line.school.number,
+            line.school.name,
+            line.school.location.name,
+            line.school.location.parent.name,
+
+        ]
+        data.append(content)
+
+    file_format = base_formats.XLS()
+    return file_format.export_data(data)
