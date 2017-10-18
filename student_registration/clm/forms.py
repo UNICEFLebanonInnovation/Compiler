@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
+from dal import autocomplete
 
 from student_registration.students.models import (
     Student,
@@ -14,6 +15,7 @@ from student_registration.students.models import (
 )
 from student_registration.schools.models import (
     School,
+    ClassRoom,
     EducationalLevel,
 )
 from student_registration.locations.models import Location
@@ -23,9 +25,7 @@ from .models import (
     RS,
     CBECE,
     Cycle,
-    RSCycle,
     Disability,
-    Site,
     Assessment
 )
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer
@@ -507,7 +507,7 @@ class BLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School Readiness') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -588,6 +588,18 @@ class RSForm(CommonForm):
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
         required=False,
+    )
+    grade = forms.ModelChoiceField(
+        queryset=ClassRoom.objects.all(), widget=forms.Select,
+        label=_('Class'),
+        required=True, to_field_name='id',
+        initial=0
+    )
+    referral = forms.MultipleChoiceField(
+        label=_('Reason for referral of the child'),
+        choices=RS.REFER_SEASON,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
     )
 
     def __init__(self, *args, **kwargs):
@@ -700,13 +712,6 @@ class RSForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child Information') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('registered_in_school', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('shift', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('student_first_name', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
@@ -772,6 +777,75 @@ class RSForm(CommonForm):
             Fieldset(
                 None,
                 Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Academic data') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('registered_in_school', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('shift', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('grade', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('referral', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<div class="p-3"></div>'),
+                    css_class='row'
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Academic data when entering the program') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('pre_test_arabic', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('pre_test_language', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('pre_test_math', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('pre_test_science', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Academic data in the end of the program') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('post_test_arabic', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('post_test_language', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('post_test_math', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('post_test_science', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            Fieldset(
+                None,
+                Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment') + '</h4>')
                 ),
                 Div(
@@ -788,7 +862,7 @@ class RSForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School Readiness') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -817,9 +891,19 @@ class RSForm(CommonForm):
             'site',
             'school',
             'shift',
+            'grade',
+            'referral',
             'registered_in_school',
             'student_family_status',
             'student_have_children',
+            'pre_test_arabic',
+            'pre_test_language',
+            'pre_test_math',
+            'pre_test_science',
+            'post_test_arabic',
+            'post_test_language',
+            'post_test_math',
+            'post_test_science',
         )
 
 
@@ -1051,7 +1135,7 @@ class CBECEForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School Readiness') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -1082,3 +1166,48 @@ class CBECEForm(CommonForm):
             'referral',
             'child_muac',
         )
+
+
+class BLNAdminForm(forms.ModelForm):
+
+    student = forms.ModelChoiceField(
+        queryset=Student.objects.all(),
+        widget=autocomplete.ModelSelect2(url='student_autocomplete')
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(BLNAdminForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = BLN
+        fields = '__all__'
+
+
+class RSAdminForm(forms.ModelForm):
+
+    student = forms.ModelChoiceField(
+        queryset=Student.objects.all(),
+        widget=autocomplete.ModelSelect2(url='student_autocomplete')
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(RSAdminForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = RS
+        fields = '__all__'
+
+
+class CBECEAdminForm(forms.ModelForm):
+
+    student = forms.ModelChoiceField(
+        queryset=Student.objects.all(),
+        widget=autocomplete.ModelSelect2(url='student_autocomplete')
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(CBECEAdminForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = CBECE
+        fields = '__all__'
