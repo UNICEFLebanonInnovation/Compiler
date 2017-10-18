@@ -28,7 +28,7 @@ from .models import (
     Site,
     Assessment
 )
-from .serializers import BLNSerializer
+from .serializers import BLNSerializer, RSSerializer, CBECESerializer
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
@@ -177,19 +177,6 @@ class CommonForm(forms.ModelForm):
         required=True, to_field_name='id',
         initial=1
     )
-    student_family_status = forms.ChoiceField(
-        label=_('What is the family status of the child?'),
-        widget=forms.Select, required=True,
-        choices=Student.FAMILY_STATUS,
-        initial='single'
-    )
-    student_have_children = forms.TypedChoiceField(
-        label=_("Does the child have children?"),
-        choices=YES_NO_CHOICE,
-        coerce=lambda x: bool(int(x)),
-        widget=forms.RadioSelect,
-        required=False,
-    )
 
     have_labour = forms.MultipleChoiceField(
         label=_('Does the child participate in work?'),
@@ -279,8 +266,6 @@ class CommonForm(forms.ModelForm):
             'student_address',
             'student_p_code',
             'disability',
-            'student_family_status',
-            'student_have_children',
             'have_labour',
             'labours',
             'labour_hours',
@@ -318,6 +303,19 @@ class BLNForm(CommonForm):
         choices=CLM.REFERRAL,
         widget=forms.CheckboxSelectMultiple,
         required=True,
+    )
+    student_family_status = forms.ChoiceField(
+        label=_('What is the family status of the child?'),
+        widget=forms.Select, required=True,
+        choices=Student.FAMILY_STATUS,
+        initial='single'
+    )
+    student_have_children = forms.TypedChoiceField(
+        label=_("Does the child have children?"),
+        choices=YES_NO_CHOICE,
+        coerce=lambda x: bool(int(x)),
+        widget=forms.RadioSelect,
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):
@@ -381,14 +379,6 @@ class BLNForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _(
                         'This option not available') + '</h4>')
                 ),
-                # Div(
-                #     HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                #         'Search old student') + '</h4>')
-                # ),
-                # Div(
-                #     Div('search_student', css_class='col-md-3'),
-                #     css_class='row',
-                # ),
                 css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
             ),
             Fieldset(
@@ -544,6 +534,8 @@ class BLNForm(CommonForm):
         fields = CommonForm.Meta.fields + (
             'cycle',
             'referral',
+            'student_family_status',
+            'student_have_children',
         )
 
     class Media:
@@ -557,40 +549,277 @@ class BLNForm(CommonForm):
 
 class RSForm(CommonForm):
 
-    cycle = forms.ModelChoiceField(
-        queryset=RSCycle.objects.all(), widget=forms.Select,
-        label=_('Programme Cycle'),
-        required=True, to_field_name='id',
-        initial=0
+    type = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        label=_('Select the program type'),
+        choices=RS.TYPES
     )
-
-    site = forms.ModelChoiceField(
-        queryset=Site.objects.all(), widget=forms.Select,
-        label=_('Programme Site'),
-        required=False, to_field_name='id',
-        initial=0
+    site = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        label=_('Where is the program?'),
+        choices=RS.SITES
     )
     school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
-        label=_('School'),
-        required=False, to_field_name='id',
+        label=_('The school where the child is attending the program'),
+        required=True, to_field_name='id',
+        initial=0
+    )
+    registered_in_school = forms.ModelChoiceField(
+        queryset=School.objects.all(), widget=forms.Select,
+        label=_('The school where the child is registered'),
+        required=True, to_field_name='id',
         initial=0
     )
     shift = forms.ChoiceField(
-        widget=forms.Select, required=False,
-        choices=RS.SCHOOL_SHIFT
+        label=_('Shift'),
+        widget=forms.Select, required=True,
+        choices=RS.SCHOOL_SHIFTS
+    )
+    student_family_status = forms.ChoiceField(
+        label=_('What is the family status of the child?'),
+        widget=forms.Select, required=True,
+        choices=Student.FAMILY_STATUS,
+        initial='single'
+    )
+    student_have_children = forms.TypedChoiceField(
+        label=_("Does the child have children?"),
+        choices=YES_NO_CHOICE,
+        coerce=lambda x: bool(int(x)),
+        widget=forms.RadioSelect,
+        required=False,
     )
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(RSForm, self).__init__(*args, **kwargs)
+
+        pre_test = ''
+        post_test = ''
+        display_assessment = ' d-none'
+        display_registry = ''
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        form_action = reverse('clm:rs_add')
+
+        if instance:
+            form_action = reverse('clm:rs_edit', kwargs={'pk': instance.id})
+            assessment_pre = Assessment.objects.get(slug='rs_pre_test')
+            assessment_post = Assessment.objects.get(slug='rs_post_test')
+            display_assessment = ''
+            display_registry = ' d-none'
+            pre_test = '{form}?d[status]={status}&returnURL={callback}'.format(
+                form=assessment_pre.assessment_form,
+                status='pre_test',
+                callback=self.request.build_absolute_uri(
+                    reverse('clm:rs_assessment', kwargs={'pk': instance.id})
+                )
+            )
+            post_test = '{form}?d[status]={status}&returnURL={callback}'.format(
+                form=assessment_post.assessment_form,
+                status='post_test',
+                callback=self.request.build_absolute_uri(
+                    reverse('clm:rs_assessment', kwargs={'pk': instance.id})
+                )
+            )
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Registry') + '</h4>')
+                ),
+                Div(
+                    'student_id',
+                    'enrollment_id',
+                    'student_outreach_child',
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div(InlineRadios('new_registry'), css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div(InlineRadios('student_outreached'), css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div(InlineRadios('have_barcode'), css_class='col-md-3', css_id='have_barcode_option'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'+display_registry, css_id='registry_block'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'This option not available') + '</h4>')
+                ),
+                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
+                ),
+                Div(
+                    Div('search_barcode', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Program Information') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('type', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('site', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('school', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('governorate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('district', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('location', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('language', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child Information') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('registered_in_school', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('shift', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('student_first_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('student_father_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('student_mother_fullname', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('student_last_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('student_sex', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('student_nationality', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('student_birthday_year', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('student_birthday_month', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('student_birthday_day', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('student_address', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('student_p_code', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('disability', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Family Status') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('hh_educational_level', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('student_family_status', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('student_have_children', css_class='col-md-3', css_id='student_have_children'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('have_labour', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('labours', css_class='col-md-3', css_id='labours'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment') + '</h4>')
+                ),
+                Div(
+                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">'+_('Pre-assessment')+'</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+post_test+'">'+_('Post-assessment')+'</a></div>'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<div class="p-3"></div>'),
+                    css_class='row'
+                ),
+                css_class='bd-callout bd-callout-warning'+display_assessment
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School Readiness') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('participation', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('barriers', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('learning_result', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'+display_assessment
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/">' + _('Back to list') + '</a>'),
+            )
+        )
+
     def save(self, request=None, instance=None, serializer=None):
-        super(RSForm, self).save()
+        super(RSForm, self).save(request=request, instance=instance, serializer=RSSerializer)
 
     class Meta:
         model = RS
         fields = CommonForm.Meta.fields + (
-            'cycle',
+            'type',
             'site',
             'school',
             'shift',
+            'registered_in_school',
+            'student_family_status',
+            'student_have_children',
         )
 
 
@@ -598,34 +827,251 @@ class CBECEForm(CommonForm):
 
     cycle = forms.ModelChoiceField(
         queryset=Cycle.objects.all(), widget=forms.Select,
-        label=_('Programme Cycle'),
+        label=_('In which cycle is this child registered?'),
         required=False, to_field_name='id',
         initial=0
     )
-    site = forms.ModelChoiceField(
-        queryset=Site.objects.all(), widget=forms.Select,
-        label=_('Programme Site'),
-        required=False, to_field_name='id',
-        initial=0
+    site = forms.ChoiceField(
+        widget=forms.Select, required=True,
+        label=_('Where is the program?'),
+        choices=CBECE.SITES
     )
     school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
-        label=_('School'),
-        required=False, to_field_name='id',
+        label=_('The school where the child is attending the program'),
+        required=True, to_field_name='id',
         initial=0
     )
     referral = forms.MultipleChoiceField(
+        label=_('Where was the child referred?'),
         choices=CLM.REFERRAL,
         widget=forms.CheckboxSelectMultiple,
         required=True,
     )
     child_muac = forms.ChoiceField(
+        label=_("What is the measurement of the child's arm circumference? (Centimeter)"),
         widget=forms.Select, required=True,
         choices=CBECE.MUAC
     )
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(CBECEForm, self).__init__(*args, **kwargs)
+
+        pre_test = ''
+        post_test = ''
+        display_assessment = ' d-none'
+        display_registry = ''
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        form_action = reverse('clm:cbece_add')
+
+        if instance:
+            form_action = reverse('clm:cbece_edit', kwargs={'pk': instance.id})
+            assessment_pre = Assessment.objects.get(slug='cbece_pre_test')
+            assessment_post = Assessment.objects.get(slug='cbece_post_test')
+            display_assessment = ''
+            display_registry = ' d-none'
+            pre_test = '{form}?d[status]={status}&returnURL={callback}'.format(
+                form=assessment_pre.assessment_form,
+                status='pre_test',
+                callback=self.request.build_absolute_uri(
+                    reverse('clm:bln_assessment', kwargs={'pk': instance.id})
+                )
+            )
+            post_test = '{form}?d[status]={status}&returnURL={callback}'.format(
+                form=assessment_post.assessment_form,
+                status='post_test',
+                callback=self.request.build_absolute_uri(
+                    reverse('clm:bln_assessment', kwargs={'pk': instance.id})
+                )
+            )
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Registry') + '</h4>')
+                ),
+                Div(
+                    'student_id',
+                    'enrollment_id',
+                    'student_outreach_child',
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div(InlineRadios('new_registry'), css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div(InlineRadios('student_outreached'), css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div(InlineRadios('have_barcode'), css_class='col-md-3', css_id='have_barcode_option'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'+display_registry, css_id='registry_block'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'This option not available') + '</h4>')
+                ),
+                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
+                ),
+                Div(
+                    Div('search_barcode', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Program Information') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('cycle', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('site', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('school', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('governorate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('district', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('location', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('language', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child Information') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('referral', css_class='col-md-9'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('student_first_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('student_father_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('student_mother_fullname', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('student_last_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('student_sex', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('student_nationality', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('student_birthday_year', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('student_birthday_month', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('student_birthday_day', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('student_address', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('student_p_code', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('disability', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('child_muac', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Family Status') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('hh_educational_level', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('have_labour', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('labours', css_class='col-md-3', css_id='labours'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment') + '</h4>')
+                ),
+                Div(
+                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">'+_('Pre-assessment')+'</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+post_test+'">'+_('Post-assessment')+'</a></div>'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<div class="p-3"></div>'),
+                    css_class='row'
+                ),
+                css_class='bd-callout bd-callout-warning'+display_assessment
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School Readiness') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('participation', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('barriers', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('learning_result', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'+display_assessment
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/">' + _('Back to list') + '</a>'),
+            )
+        )
+
     def save(self, request=None, instance=None, serializer=None):
-        super(CBECEForm, self).save()
+        super(CBECEForm, self).save(request=request, instance=instance, serializer=CBECESerializer)
 
     class Meta:
         model = CBECE

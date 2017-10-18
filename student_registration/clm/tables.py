@@ -68,11 +68,24 @@ class BLNTable(CommonTable):
 
 class RSTable(CommonTable):
 
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+                                        template_name='django_tables2/edit_column.html',
+                                        attrs={'url': '/clm/rs-edit/'})
+    # delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
+    #                                       template_name='django_tables2/delete_column.html',
+    #                                       attrs={'url': 'api/clm-bln/'})
+
     class Meta:
         model = RS
+        fields = CommonTable.Meta.fields
 
 
 class CBECETable(CommonTable):
 
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+                                        template_name='django_tables2/edit_column.html',
+                                        attrs={'url': '/clm/cbece-edit/'})
+
     class Meta:
         model = CBECE
+        fields = CommonTable.Meta.fields
