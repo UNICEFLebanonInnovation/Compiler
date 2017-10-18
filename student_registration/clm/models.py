@@ -41,6 +41,8 @@ class Cycle(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name = "Program cycle"
+        verbose_name_plural = "Program cycles"
 
     def __unicode__(self):
         return self.name
@@ -65,6 +67,8 @@ class Site(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name = "Program site"
+        verbose_name_plural = "Program sites"
 
     def __unicode__(self):
         return self.name
@@ -76,6 +80,8 @@ class Referral(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name = "Referral"
+        verbose_name_plural = "Referrals"
 
     def __unicode__(self):
         return self.name
@@ -87,6 +93,8 @@ class Disability(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name = "Disability"
+        verbose_name_plural = "Disabilities"
 
     def __unicode__(self):
         return self.name
@@ -322,6 +330,11 @@ class BLN(CLM):
         null=True,
     )
 
+    class Meta:
+        ordering = ['id']
+        verbose_name = "BLN"
+        verbose_name_plural = "BLN"
+
 
 class RS(CLM):
 
@@ -431,6 +444,11 @@ class RS(CLM):
         choices=((x, x) for x in range(0, 21))
     )
 
+    class Meta:
+        ordering = ['id']
+        verbose_name = "RS"
+        verbose_name_plural = "RS"
+
 
 class CBECE(CLM):
 
@@ -515,6 +533,11 @@ class CBECE(CLM):
         choices=((x, x) for x in range(0, 21))
     )
 
+    class Meta:
+        ordering = ['id']
+        verbose_name = "CB-ECE"
+        verbose_name_plural = "CB-ECE"
+
 
 class SelfPerceptionGrades(models.Model):
 
@@ -539,7 +562,9 @@ class SelfPerceptionGrades(models.Model):
     )
 
     class Meta:
-        ordering = ['pk']
+        ordering = ['id']
+        verbose_name = "Child perception grade"
+        verbose_name_plural = "Child perception grades"
 
     def __unicode__(self):
         return self.enrollment
