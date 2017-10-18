@@ -70,6 +70,7 @@ class RSTable(CommonTable):
 
     class Meta:
         model = RS
+        fields = CommonTable.Meta.fields
 
 
 class CBECETable(CommonTable):
