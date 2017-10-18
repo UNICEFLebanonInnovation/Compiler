@@ -47,8 +47,8 @@ class CommonTable(tables.Table):
             'student_birthday',
             'student.nationality',
             'student.mother_fullname',
-            'student.address',
-            'student.p_code',
+            'participation',
+            'learning_result',
         )
 
 

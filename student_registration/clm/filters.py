@@ -11,6 +11,8 @@ class BLNFilter(FilterSet):
             'student__father_name': ['contains'],
             'student__last_name': ['contains'],
             'student__mother_fullname': ['contains'],
+            # 'participation': ['exact'],
+            # 'learning_result': ['exact'],
         }
 
 
@@ -22,6 +24,8 @@ class RSFilter(FilterSet):
             'student__father_name': ['contains'],
             'student__last_name': ['contains'],
             'student__mother_fullname': ['contains'],
+            # 'participation': ['exact'],
+            # 'learning_result': ['exact'],
         }
 
 
@@ -33,4 +37,6 @@ class CBECEFilter(FilterSet):
             'student__father_name': ['contains'],
             'student__last_name': ['contains'],
             'student__mother_fullname': ['contains'],
+            # 'participation': ['exact'],
+            # 'learning_result': ['exact'],
         }
