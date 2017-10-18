@@ -8,18 +8,18 @@ from django.db.models import Q
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from student_registration.taskapp.celery import app
-from .file import store_file
 
 
 @app.task
 def export_2ndshift(params=None):
     from student_registration.enrollments.models import Enrollment
     from student_registration.schools.models import EducationYear
-    current = EducationYear.objects.get(current_year=True)
 
     queryset = Enrollment.objects.all()
     if 'current' in params:
-        queryset = queryset.filter(education_year=current)
+        queryset = queryset.filter(education_year__current_year=True)
+    if 'school' in params:
+        queryset = queryset.filter(school_id=params['school'])
 
     data = tablib.Dataset()
     data.headers = [
@@ -110,8 +110,7 @@ def export_2ndshift(params=None):
         data.append(content)
 
     file_format = base_formats.XLSX()
-    content = file_format.export_data(data)
-    store_file(content, '2ndshift_extraction.xlsx')
+    return file_format.export_data(data)
 
 
 @app.task
@@ -121,6 +120,8 @@ def export_2ndshift_gradings(params=None):
     current = EducationYear.objects.get(current_year=True)
 
     queryset = EnrollmentGrading.objects.filter(enrollment__education_year=current)
+    if 'school' in params:
+        queryset = queryset.filter(enrollment__school_id=params['school'])
 
     data = tablib.Dataset()
     data.headers = [
@@ -210,8 +211,7 @@ def export_2ndshift_gradings(params=None):
         data.append(content)
 
     file_format = base_formats.XLSX()
-    content = file_format.export_data(data)
-    store_file(content, '2ndshift_gradings_extraction.xlsx')
+    return file_format.export_data(data)
 
 
 @app.task
@@ -221,25 +221,24 @@ def export_alp(params=None):
     queryset = Outreach.objects.all()
 
     if 'pre_test' in params:
-        alp_round = ALPRound.objects.get(current_pre_test=True)
         queryset = queryset.filter(
             alp_round__current_pre_test=True,
             level__isnull=False,
             assigned_to_level__isnull=False
         )
     if 'post_test' in params:
-        alp_round = ALPRound.objects.get(current_post_test=True)
         queryset = queryset.filter(
             alp_round__current_post_test=True,
             registered_in_level__isnull=False,
             refer_to_level__isnull=False
         )
     if 'current' in params:
-        alp_round = ALPRound.objects.get(current_round=True)
         queryset = queryset.filter(
             alp_round__current_round=True,
             registered_in_level__isnull=False,
         )
+    if 'school' in params:
+        queryset = queryset.filter(school_id=params['school'])
 
     data = tablib.Dataset()
 
@@ -374,5 +373,4 @@ def export_alp(params=None):
         data.append(content)
 
     file_format = base_formats.XLS()
-    content = file_format.export_data(data)
-    store_file(content, 'alp_extraction.xlsx')
+    return file_format.export_data(data)

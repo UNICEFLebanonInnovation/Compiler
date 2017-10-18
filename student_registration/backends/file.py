@@ -16,8 +16,10 @@ def store_file(data, file_name):
     from azure.storage import CloudStorageAccount
     from azure.storage.file import ContentSettings
 
-    file_settings = ContentSettings(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                    content_language='ar')
+    file_name = '{}.{}'.format(file_name, settings.DEFAULT_FILE_FORMAT)
+
+    file_settings = ContentSettings(content_type=settings.DEFAULT_FILE_CONTENT_TYPE,
+                                    content_language=settings.DEFAULT_FILE_CONTENT_LANGUAGE)
 
     storage_client = CloudStorageAccount(settings.AZURE_ACCOUNT_NAME,
                                          settings.AZURE_ACCOUNT_KEY)
