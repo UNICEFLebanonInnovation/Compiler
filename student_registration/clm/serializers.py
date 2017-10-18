@@ -159,6 +159,16 @@ class RSSerializer(CLMSerializer):
             'cycle',
             'site',
             'school',
+            'grade',
+            'referral',
+            'pre_test_arabic',
+            'pre_test_language',
+            'pre_test_math',
+            'pre_test_science',
+            'post_test_arabic',
+            'post_test_language',
+            'post_test_math',
+            'post_test_science',
             'shift',
         )
 
