@@ -57,6 +57,7 @@ DJANGO_APPS = [
     'bootstrapform',  # Required for nicer formatting of forms with the default templates
     'helpdesk',  # This is us!
     'rangefilter',
+    'storages',
 ]
 THIRD_PARTY_APPS = [
     'crispy_forms',  # Form layouts
@@ -87,6 +88,7 @@ LOCAL_APPS = [
     'student_registration.locations',  # custom locations app
     'student_registration.dashboard',  # custom dashboard app
     'student_registration.winterization',  # custom winterization app
+    'student_registration.backends',  # custom storage app
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -432,3 +434,11 @@ HELPDESK_ENABLE_PER_QUEUE_PERMISSION = True
 HELPDESK_VIEW_A_TICKET_PUBLIC = False
 HELPDESK_SUBMIT_A_TICKET_PUBLIC = False
 
+DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+DEFAULT_FILE_FORMAT = 'xlsx'
+DEFAULT_FILE_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+DEFAULT_FILE_CONTENT_LANGUAGE = 'ar'
+
+AZURE_ACCOUNT_NAME = env('AZURE_ACCOUNT_NAME', default='NO_AZURE_ACCOUNT_NAME')
+AZURE_ACCOUNT_KEY = env('AZURE_ACCOUNT_KEY', default='NO_AZURE_ACCOUNT_KEY')
+AZURE_CONTAINER = env('AZURE_CONTAINER', default='NO_AZURE_CONTAINER')
