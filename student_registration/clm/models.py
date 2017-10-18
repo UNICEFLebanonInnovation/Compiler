@@ -337,6 +337,10 @@ class RS(CLM):
         ('in_school', _('Inside the school')),
         ('out_school', _('Outside the school')),
     )
+    REFER_SEASON = Choices(
+        ('academic', _('Academic')),
+        ('absence', _('Absence'))
+    )
 
     type = models.CharField(
         max_length=50,
@@ -370,6 +374,61 @@ class RS(CLM):
         blank=True,
         null=True,
         choices=SCHOOL_SHIFTS
+    )
+    grade = models.ForeignKey(
+        ClassRoom,
+        blank=True, null=True,
+        related_name='+',
+    )
+    referral = ArrayField(
+        models.CharField(
+            choices=CLM.REFERRAL,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+    )
+    pre_test_arabic = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 21))
+    )
+    pre_test_language = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 21))
+    )
+    pre_test_math = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 21))
+    )
+    pre_test_science = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 21))
+    )
+    post_test_arabic = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 21))
+    )
+    post_test_language = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 21))
+    )
+    post_test_math = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 21))
+    )
+    post_test_science = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 21))
     )
 
 
@@ -438,27 +497,22 @@ class CBECE(CLM):
     pre_test_arabic = models.IntegerField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(1, 20))
+        choices=((x, x) for x in range(0, 21))
     )
     pre_test_language = models.FloatField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(1, 20))
+        choices=((x, x) for x in range(0, 21))
     )
     pre_test_math = models.FloatField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(1, 20))
+        choices=((x, x) for x in range(0, 21))
     )
     pre_test_science = models.FloatField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(1, 20))
-    )
-    school_readiness = models.CharField(
-        max_length=500,
-        blank=True,
-        null=True,
+        choices=((x, x) for x in range(0, 21))
     )
 
 
