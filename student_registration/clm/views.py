@@ -194,6 +194,7 @@ class RSEditView(LoginRequiredMixin,
             RSForm(self.request.POST, instance=instance)
         else:
             data = RSSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
             return RSForm(data, instance=instance)
 
     def form_valid(self, form):
@@ -273,6 +274,7 @@ class CBECEEditView(LoginRequiredMixin,
             CBECEForm(self.request.POST, instance=instance)
         else:
             data = CBECESerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
             return CBECEForm(data, instance=instance)
 
     def form_valid(self, form):
@@ -292,7 +294,7 @@ class CBECEListView(LoginRequiredMixin,
     template_name = 'clm/cbece_list.html'
     table = BootstrapTable(CBECE.objects.all(), order_by='id')
 
-    filtecbeceet_class = CBECEFilter
+    filterset_class = CBECEFilter
 
     def get_queryset(self):
         return CBECE.objects.filter(owner=self.request.user)
