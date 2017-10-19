@@ -1,5 +1,12 @@
 FROM python:2.7
 
+# SSH support on Azure
+ENV SSH_PASSWD "root:Docker!"
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends openssh-server \
+	&& echo "$SSH_PASSWD" | chpasswd
+COPY ./compose/django/sshd_config /etc/ssh/
+
 ARG REQUIREMENTS_FILE=production.txt
 
 RUN mkdir /code/
@@ -14,13 +21,6 @@ RUN python manage.py collectstatic --noinput --settings=config.settings.test
 
 # uWSGI will listen on this port
 EXPOSE 2222 80
-
-# SSH support on Azure
-ENV SSH_PASSWD "root:Docker!"
-RUN apt-get update \
-	&& apt-get install -y --no-install-recommends openssh-server \
-	&& echo "$SSH_PASSWD" | chpasswd
-COPY ./compose/django/sshd_config /etc/ssh/
 
 RUN service ssh start
 
