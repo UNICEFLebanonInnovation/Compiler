@@ -27,37 +27,6 @@ from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 
 
-class RSViewSet(mixins.RetrieveModelMixin,
-                mixins.ListModelMixin,
-                mixins.CreateModelMixin,
-                mixins.UpdateModelMixin,
-                viewsets.GenericViewSet):
-
-    model = RS
-    queryset = RS.objects.all()
-    serializer_class = RSSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get_queryset(self):
-        qs = self.queryset
-        if self.request.GET.get('school', None):
-            return self.queryset.filter(school_id=self.request.GET.get('school', None))
-
-        return qs
-
-
-class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
-                                  mixins.ListModelMixin,
-                                  mixins.CreateModelMixin,
-                                  mixins.UpdateModelMixin,
-                                  viewsets.GenericViewSet):
-
-    model = SelfPerceptionGrades
-    queryset = SelfPerceptionGrades.objects.all()
-    serializer_class = SelfPerceptionGradesSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-
 class CLMView(LoginRequiredMixin,
             # GroupRequiredMixin,
             TemplateView):
@@ -74,7 +43,7 @@ class BLNAddView(LoginRequiredMixin,
                      # GroupRequiredMixin,
                      FormView):
 
-    template_name = 'clm/bln_add.html'
+    template_name = 'clm/common_form.html'
     form_class = BLNForm
     success_url = '/clm/bln-list/'
 
@@ -107,7 +76,7 @@ class BLNEditView(LoginRequiredMixin,
                          # GroupRequiredMixin,
                          FormView):
 
-    template_name = 'clm/bln_edit.html'
+    template_name = 'clm/common_form.html'
     form_class = BLNForm
     success_url = '/clm/bln-list/'
 
@@ -175,7 +144,7 @@ class RSAddView(LoginRequiredMixin,
                 # GroupRequiredMixin,
                 FormView):
 
-    template_name = 'clm/rs_add.html'
+    template_name = 'clm/common_form.html'
     form_class = RSForm
     success_url = '/clm/rs-list/'
 
@@ -208,7 +177,7 @@ class RSEditView(LoginRequiredMixin,
                  # GroupRequiredMixin,
                  FormView):
 
-    template_name = 'clm/rs_edit.html'
+    template_name = 'clm/common_form.html'
     form_class = RSForm
     success_url = '/clm/rs-list/'
 
@@ -225,6 +194,7 @@ class RSEditView(LoginRequiredMixin,
             RSForm(self.request.POST, instance=instance)
         else:
             data = RSSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
             return RSForm(data, instance=instance)
 
     def form_valid(self, form):
@@ -254,7 +224,7 @@ class CBECEAddView(LoginRequiredMixin,
                    # GroupRequiredMixin,
                    FormView):
 
-    template_name = 'clm/cbece_add.html'
+    template_name = 'clm/common_form.html'
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
 
@@ -287,7 +257,7 @@ class CBECEEditView(LoginRequiredMixin,
                     # GroupRequiredMixin,
                     FormView):
 
-    template_name = 'clm/cbece_edit.html'
+    template_name = 'clm/common_form.html'
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
 
@@ -304,6 +274,7 @@ class CBECEEditView(LoginRequiredMixin,
             CBECEForm(self.request.POST, instance=instance)
         else:
             data = CBECESerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
             return CBECEForm(data, instance=instance)
 
     def form_valid(self, form):
@@ -323,10 +294,41 @@ class CBECEListView(LoginRequiredMixin,
     template_name = 'clm/cbece_list.html'
     table = BootstrapTable(CBECE.objects.all(), order_by='id')
 
-    filtecbeceet_class = CBECEFilter
+    filterset_class = CBECEFilter
 
     def get_queryset(self):
         return CBECE.objects.filter(owner=self.request.user)
 
 
 ####################### API VIEWS #############################
+
+
+class RSViewSet(mixins.RetrieveModelMixin,
+                mixins.ListModelMixin,
+                mixins.CreateModelMixin,
+                mixins.UpdateModelMixin,
+                viewsets.GenericViewSet):
+
+    model = RS
+    queryset = RS.objects.all()
+    serializer_class = RSSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        qs = self.queryset
+        if self.request.GET.get('school', None):
+            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+
+        return qs
+
+
+class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
+                                  mixins.ListModelMixin,
+                                  mixins.CreateModelMixin,
+                                  mixins.UpdateModelMixin,
+                                  viewsets.GenericViewSet):
+
+    model = SelfPerceptionGrades
+    queryset = SelfPerceptionGrades.objects.all()
+    serializer_class = SelfPerceptionGradesSerializer
+    permission_classes = (permissions.IsAuthenticated,)
