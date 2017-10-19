@@ -22,6 +22,7 @@ from student_registration.schools.models import (
     ClassRoom
 )
 from student_registration.users.utils import force_default_language
+from .utils import find_attendances
 from .models import Attendance, Absentee
 from .serializers import AttendanceSerializer, AbsenteeSerializer
 from student_registration.enrollments.models import (
@@ -42,6 +43,13 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+        if self.request.GET.get('from_date', None) and self.request.GET.get('to_date', None):
+            data = find_attendances(governorate=self.request.GET.get('governorate', None),
+                                    student=self.request.GET.get('student', None),
+                                    from_date=self.request.GET.get('from_date', None),
+                                    to_date=self.request.GET.get('to_date', None)
+                                    )
+            return JsonResponse(json.dumps(data), safe=False)
         if not self.request.user.is_superuser:
             if self.request.user.school:
                 return self.queryset.filter(school_id=self.request.user.school.id)
