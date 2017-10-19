@@ -29,6 +29,7 @@ from student_registration.students.models import (
     Student,
 )
 from student_registration.alp.templatetags.util_tags import has_group
+from student_registration.backends.tasks import export_alp
 
 
 class OutreachViewSet(mixins.RetrieveModelMixin,
@@ -436,112 +437,21 @@ class ExportViewSet(LoginRequiredMixin, ListView):
     model = Outreach
 
     def get(self, request, *args, **kwargs):
-        queryset = self.model.objects.all()
+        data = ''
         school = int(request.GET.get('school', 0))
-        location = int(request.GET.get('location', 0))
-        alp_round = ALPRound.objects.get(current_round=True)
 
         if has_group(self.request.user, 'PARTNER'):
-            alp_round = ALPRound.objects.get(current_pre_test=True)
-            queryset = queryset.filter(owner=self.request.user, alp_round=alp_round)
+            data = export_alp({'pre_test': 'true'})
         if has_group(self.request.user, 'ALP_SCHOOL') and self.request.user.school_id:
             school = self.request.user.school_id
         if school:
-            queryset = queryset.filter(school_id=school, alp_round=alp_round).order_by('id')
-        if location:
-            queryset = queryset.filter(school__location_id=location, alp_round=alp_round).order_by('id')
+            data = export_alp({'current': 'true', 'school': school})
 
-        data = tablib.Dataset()
-
-        data.headers = [
-            _('ALP result'),
-            _('ALP round'),
-            _('ALP level'),
-            _('Is the child participated in an ALP program'),
-
-            _('Education year'),
-            _('Last education level'),
-
-            _('Phone prefix'),
-            _('Phone number'),
-            _('Student living address'),
-
-            _('Student ID Number'),
-            _('Student ID Type'),
-            _('Registered in UNHCR'),
-
-            _('Mother nationality'),
-            _('Mother fullname'),
-
-            _('Current Section'),
-            _('Current Level'),
-
-            _('Post-test result'),
-            _('Assigned to level'),
-            _('Pre-test result'),
-
-            _('Student nationality'),
-            _('Student age'),
-            _('Student birthday'),
-            _('Sex'),
-            _('Student fullname'),
-
-            _('School'),
-            _('School number'),
-            _('District'),
-            _('Governorate'),
-        ]
-
-        content = []
-        for line in queryset:
-            if not line.student or not line.school:
-                continue
-            content = [
-                line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
-                line.last_informal_edu_round.name if line.last_informal_edu_round else '',
-                line.last_informal_edu_level.name if line.last_informal_edu_level else '',
-                _(line.participated_in_alp) if line.participated_in_alp else '',
-
-                line.last_education_year,
-                line.last_education_level.name if line.last_education_level else '',
-
-                line.student.phone_prefix,
-                line.student.phone,
-                line.student.address,
-
-                line.student.id_number,
-                line.student.id_type.name if line.student.id_type else '',
-                _(line.registered_in_unhcr) if line.registered_in_unhcr else '',
-
-                line.student.mother_nationality.name if line.student.mother_nationality else '',
-                line.student.mother_fullname,
-
-                line.section.name if line.section else '',
-                line.registered_in_level.name if line.registered_in_level else '',
-
-                line.post_exam_total,
-                line.assigned_to_level.name if line.assigned_to_level else '',
-                line.exam_total,
-
-                line.student.nationality_name(),
-                line.student.age,
-                line.student.birthday,
-                _(line.student.sex),
-                line.student.__unicode__(),
-
-                line.school.name,
-                line.school.number,
-                line.school.location.name,
-                line.school.location.parent.name,
-            ]
-            data.append(content)
-
-        file_format = base_formats.XLS()
         response = HttpResponse(
-            file_format.export_data(data),
-            content_type='application/application/ms-excel',
+            data,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         )
-        response['Content-Disposition'] = 'attachment; filename=outreach_list.xls'
+        response['Content-Disposition'] = 'attachment; filename=registration_list.xlsx'
         return response
 
 
