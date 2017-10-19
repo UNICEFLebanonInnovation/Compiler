@@ -132,31 +132,7 @@ class CLMSerializer(serializers.ModelSerializer):
 class BLNSerializer(CLMSerializer):
 
     def create(self, validated_data):
-        from student_registration.students.serializers import StudentSerializer
-        from student_registration.students.models import Student
-
-        student_data = validated_data.pop('student', None)
-
-        if 'id' in student_data and student_data['id']:
-            student_serializer = StudentSerializer(Student.objects.get(id=student_data['id']), data=student_data)
-            student_serializer.is_valid(raise_exception=True)
-            student_serializer.instance = student_serializer.save()
-        else:
-            student_serializer = StudentSerializer(data=student_data)
-            student_serializer.is_valid(raise_exception=True)
-            student_serializer.instance = student_serializer.save()
-            # print student_serializer.instance
-
-        try:
-            instance = BLN.objects.create(**validated_data)
-            instance.student = student_serializer.instance
-            instance.save()
-
-        except Exception as ex:
-            raise serializers.ValidationError({'Enrollment instance': ex.message})
-
-        return instance
-        # create_instance(validated_data=validated_data, model=BLN)
+        create_instance(validated_data=validated_data, model=self.Meta.model)
 
     def update(self, instance, validated_data):
         update_instance(instance=instance, validated_data=validated_data)
@@ -183,6 +159,16 @@ class RSSerializer(CLMSerializer):
             'cycle',
             'site',
             'school',
+            'grade',
+            'referral',
+            'pre_test_arabic',
+            'pre_test_language',
+            'pre_test_math',
+            'pre_test_science',
+            'post_test_arabic',
+            'post_test_language',
+            'post_test_math',
+            'post_test_science',
             'shift',
         )
 
