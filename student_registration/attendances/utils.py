@@ -2,9 +2,10 @@
 
 def find_attendances(governorate=None, student_id=None, from_date=None, to_date=None):
     from student_registration.enrollments.models import Enrollment
-    from student_registration.alp.models import Outreach
+    from student_registration.alp.models import Outreach, ALPRound
     from .models import Attendance
 
+    alp_round = ''
     queryset = Attendance.objects.all()
 
     if governorate:
@@ -14,6 +15,17 @@ def find_attendances(governorate=None, student_id=None, from_date=None, to_date=
             education_year__current_year=True,
             student_id=int(student_id)
         ).first()
+        if not enrollment:
+            alp_round = ALPRound.objects.get(current_round=True).name
+            enrollment = Outreach.objects.filter(
+                alp_round__current_round=True,
+                registered_in_level__isnull=False,
+                student_id=student_id
+            ).first()
+
+        if not enrollment:
+            return []
+
         queryset = queryset.filter(school_id=enrollment.school_id)
 
     if from_date and to_date:
@@ -54,6 +66,7 @@ def find_attendances(governorate=None, student_id=None, from_date=None, to_date=
                     'student_age': student['student_age'],
                     'attendance_status': student['status'],
                     'absence_reason': student['absence_reason'] if 'absence_reason' in student else '',
+                    'alp_round': alp_round
                 }
                 data.append(content)
 
