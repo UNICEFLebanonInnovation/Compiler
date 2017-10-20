@@ -54,7 +54,7 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
     def list(self, request, *args, **kwargs):
         if self.request.GET.get('from_date', None) and self.request.GET.get('to_date', None):
             data = find_attendances(governorate=self.request.GET.get('governorate', None),
-                                    student=self.request.GET.get('student', None),
+                                    student_id=self.request.GET.get('student', None),
                                     from_date=self.request.GET.get('from_date', None),
                                     to_date=self.request.GET.get('to_date', None)
                                     )
