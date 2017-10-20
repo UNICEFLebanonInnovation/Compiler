@@ -10,13 +10,13 @@ echo "$(date) Container started" >> /home/LogFiles/node_${WEBSITE_ROLE_INSTANCE_
 #done
 #
 #>&2 echo "Postgres is up - continuing"
-#
-#if [ "x$DJANGO_MIGRATE" = 'xon' ]; then
-#    /venv/bin/python manage.py migrate --noinput
-#fi
-#
-#if [ "x$DJANGO_COLLECTSTATIC" = 'xon' ]; then
-#    /venv/bin/python manage.py collectstatic --noinput
-#fi
+
+if [ "x$DJANGO_MIGRATE" = 'xon' ]; then
+    python manage.py migrate --noinput
+fi
+
+if [ "x$DJANGO_COLLECTSTATIC" = 'xon' ]; then
+    python manage.py collectstatic --noinput
+fi
 
 exec "$@"
