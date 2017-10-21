@@ -409,6 +409,7 @@ def export_attendance(params=None):
         _('Age'),
         _('Attendance status'),
         _('Absence reason'),
+        _('Dropout')
     ]
 
     content = []
@@ -440,6 +441,7 @@ def export_attendance(params=None):
                     student['student_age'],
                     student['status'],
                     student['absence_reason'] if 'absence_reason' in student else '',
+                    student['dropout'] if 'dropout' in student else '',
                 ]
                 data.append(content)
 
