@@ -151,7 +151,8 @@ function get_level_section_attendances(exam_day)
             level: $('#level_' + enrollment_id).val(),
             level_name: $('#level_name_' + enrollment_id).val(),
             status: status,
-            absence_reason: absence_reason
+            absence_reason: absence_reason,
+            dropout: $('#student_dropout_' + enrollment_id).val(),
         });
 
     });
