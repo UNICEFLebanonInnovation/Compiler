@@ -52,3 +52,11 @@ function checkCharacterIsNumber(fieldValue)
 {
     return /^[0-9]+$/.test(fieldValue);
 }
+function check_unhcr_number(id_number)
+{
+    return /^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(LEB))-1[1-7][C]\d{5}$/i.text(id_number);
+}
+function check_national_id(id_number)
+{
+    return /^[0-9]{11}$/i.test(id_number);
+}
