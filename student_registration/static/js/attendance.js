@@ -118,7 +118,7 @@ function get_level_section_attendances(exam_day)
         var sex = $('#student_sex_'+enrollment_id).val();
         var absence_reason = null;
 
-        if($('#status_'+enrollment_id).val() == '' || $('#status_'+enrollment_id).val() == 'True'){
+        if($('#status_'+enrollment_id).val() == '' || $('#status_'+enrollment_id).val() == 'True' || $('#status_'+enrollment_id).val() == 'true'){
             status = 'True';
             absence_reason  = '';
             if(sex == 'Male'){

@@ -71,3 +71,31 @@ def find_attendances(governorate=None, student_id=None, from_date=None, to_date=
                 data.append(content)
 
     return data
+
+
+def calculate_absentees(attendance, students):
+    from .models import Absentee
+
+    for student in students:
+        try:
+            absentee = Absentee.objects.get(student_id=student['student_id'])
+        except Absentee.DoesNotExist:
+            absentee = Absentee.objects.create(
+                student_id=student['student_id'],
+                school=attendance.school,
+                absent_days=0
+            )
+
+        if student['status'] == 'True' and not attendance.attendance_date == absentee.last_attendance_date:
+            if absentee.absent_days > 0:
+                absentee.absent_days -= 1
+            else:
+                absentee.absent_days = 0
+            absentee.last_attendance_date = attendance.attendance_date
+            absentee.last_absent_date = None
+        elif student['status'] == 'False' and not attendance.attendance_date == absentee.last_absent_date:
+            absentee.last_absent_date = attendance.attendance_date
+            absentee.last_attendance_date = None
+            absentee.absent_days += 1
+
+        absentee.save()
