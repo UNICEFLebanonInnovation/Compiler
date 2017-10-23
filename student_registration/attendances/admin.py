@@ -276,10 +276,11 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         'district',
         'student',
         'last_attendance_date',
+        'last_absent_date',
         'absent_days',
-        'reattend_date',
-        'validation_status',
-        'dropout_status',
+        # 'reattend_date',
+        # 'validation_status',
+        # 'dropout_status',
     )
     list_filter = (
         # 'school__location',
