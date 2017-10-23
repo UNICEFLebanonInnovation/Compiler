@@ -22,7 +22,7 @@ from student_registration.schools.models import (
     ClassRoom
 )
 from student_registration.users.utils import force_default_language
-from .utils import find_attendances
+from .utils import find_attendances, calculate_absentees
 from .models import Attendance, Absentee
 from .serializers import AttendanceSerializer, AbsenteeSerializer
 from student_registration.enrollments.models import (
@@ -87,6 +87,7 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
         else:
             instance.students[level_section] = data[level_section]
         instance.save()
+        calculate_absentees(instance, data[level_section]['students'])
         return JsonResponse({'status': status.HTTP_200_OK, 'data': instance.id})
 
     def perform_update(self, serializer):
