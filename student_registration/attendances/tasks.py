@@ -740,3 +740,20 @@ def dropout_students(from_date, to_date):
             for student in students:
                 continue
 
+
+@app.task
+def calculate_attendances_by_student():
+    from .utils import calculate_absentees
+    from .models import Attendance, Absentee
+
+    Absentee.objects.all().delete()
+    queryset = Attendance.objects.all()
+
+    for line in queryset:
+        if not line.students:
+            continue
+        for level_section in line.students:
+            attendances = line.students[level_section]
+            students = attendances['students']
+            calculate_absentees(attendance=line, students=students)
+

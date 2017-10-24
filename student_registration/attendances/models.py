@@ -100,7 +100,7 @@ class Attendance(TimeStampedModel):
     total_absent_female = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        ordering = ['attendance_date']
+        # ordering = ['attendance_date']
         verbose_name = "Attendances by School by Day"
 
     @property
