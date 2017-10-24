@@ -105,11 +105,11 @@ class CommonForm(forms.ModelForm):
         required=True, to_field_name='id',
         initial=0
     )
-    location = forms.CharField(
-        label=_('Location'),
-        widget=forms.TextInput,
-        required=True
-    )
+    # location = forms.CharField(
+    #     label=_('Location'),
+    #     widget=forms.TextInput,
+    #     required=True
+    # )
     language = forms.MultipleChoiceField(
         label=_('The language supported in the program'),
         choices=CLM.LANGUAGES,
@@ -841,7 +841,7 @@ class RSForm(CommonForm):
                     Div('post_test_science', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning child_data'
+                css_class='bd-callout bd-callout-warning'+display_assessment
             ),
             Fieldset(
                 None,

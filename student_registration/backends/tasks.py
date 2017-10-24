@@ -372,10 +372,11 @@ def export_alp(params=None):
         ]
         data.append(content)
 
-    file_format = base_formats.XLS()
+    file_format = base_formats.XLSX()
     return file_format.export_data(data)
 
 
+@app.task
 def export_attendance(params=None):
     from student_registration.attendances.models import Attendance
 
@@ -392,32 +393,57 @@ def export_attendance(params=None):
         _('School'),
         _('District'),
         _('Governorate'),
+
         _('Attendance date'),
         _('Validation status'),
         _('Validation date'),
         _('Validated by'),
         _('Close reason'),
+        _('Exam day'),
+
         _('Level'),
         _('Section'),
+
         _('Student fullname'),
         _('Sex'),
-        _('Status'),
+        _('Age'),
+        _('Attendance status'),
         _('Absence reason'),
+        _('Dropout')
     ]
 
     content = []
     for line in queryset:
         if not line.students:
             continue
-        # for level_section in
-        content = [
-            line.school.number,
-            line.school.name,
-            line.school.location.name,
-            line.school.location.parent.name,
+        for level_section in line.students:
+            attendances = line.students[level_section]
+            students = attendances['students']
+            for student in students:
+                content = [
+                    line.school.number,
+                    line.school.name,
+                    line.school.location.name,
+                    line.school.location.parent.name,
 
-        ]
-        data.append(content)
+                    line.attendance_date,
+                    line.validation_date,
+                    line.validation_status,
+                    line.validation_owner.username if line.validation_owner else '',
+                    line.close_reason,
+                    attendances['exam_day'],
 
-    file_format = base_formats.XLS()
+                    student['level_name'],
+                    student['section_name'],
+
+                    student['student_fullname'],
+                    student['student_sex'],
+                    student['student_age'],
+                    student['status'],
+                    student['absence_reason'] if 'absence_reason' in student else '',
+                    student['dropout'] if 'dropout' in student else '',
+                ]
+                data.append(content)
+
+    file_format = base_formats.XLSX()
     return file_format.export_data(data)

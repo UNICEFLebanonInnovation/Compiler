@@ -28,6 +28,21 @@ $(document).ready(function(){
         checkArabicOnly($(this));
     });
 
+    $(document).on('blur', '#id_student_id_number', function(){
+        var result = true;
+        var type = $('#id_student_id_type').val();
+        var value = $(this).val();
+        if(type == 1){
+            result = check_unhcr_number(value);
+        }
+        if(type == 3) {
+            result = check_national_id(value);
+        }
+        if(!result){
+            $(this).val('');
+        }
+    });
+
     $(document).on('click', '.moved-button', function(){
         var item = $(this);
         if(confirm("Are you sure you want to tag this student as moved?")) {
