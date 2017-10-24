@@ -15,27 +15,27 @@ class BootstrapTable(tables.Table):
 
 class EnrollmentTable(tables.Table):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/edit_column.html',
                                         attrs={'url': '/enrollments/edit/'})
-    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
+    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': '/api/enrollments/'})
-    moved_column = tables.TemplateColumn(verbose_name=_('Student moved'),
+    moved_column = tables.TemplateColumn(verbose_name=_('Student moved'), orderable=False,
                                          template_name='django_tables2/moved_column.html')
-    grading_term1 = tables.TemplateColumn(verbose_name=_('Term 1'),
+    grading_term1 = tables.TemplateColumn(verbose_name=_('Term 1'), orderable=False,
                                           template_name='django_tables2/grading_term1_column.html')
-    grading_term2 = tables.TemplateColumn(verbose_name=_('Term 2'),
+    grading_term2 = tables.TemplateColumn(verbose_name=_('Term 2'), orderable=False,
                                           template_name='django_tables2/grading_term2_column.html')
-    grading_final = tables.TemplateColumn(verbose_name=_('Final'),
+    grading_final = tables.TemplateColumn(verbose_name=_('Final'), orderable=False,
                                           template_name='django_tables2/grading_final_column.html')
-    grading_incomplete = tables.TemplateColumn(verbose_name=_('Incomplete?'),
+    grading_incomplete = tables.TemplateColumn(verbose_name=_('Incomplete?'), orderable=False,
                                                template_name='django_tables2/grading_incomplete_column.html')
 
-    student_age = tables.Column(verbose_name=_('Age'), accessor='student.age')
-    student_birthday = tables.Column(verbose_name=_('Birthday'), accessor='student.birthday')
-    student_phone_number = tables.Column(verbose_name=_('Phone number'), accessor='student.phone_number')
-    student_registered_in_unhcr = tables.Column(verbose_name=_('Registered in UNHCR'),
+    student_age = tables.Column(verbose_name=_('Age'), accessor='student.age', orderable=False,)
+    student_birthday = tables.Column(verbose_name=_('Birthday'), accessor='student.birthday', orderable=False,)
+    student_phone_number = tables.Column(verbose_name=_('Phone number'), accessor='student.phone_number', orderable=False,)
+    student_registered_in_unhcr = tables.Column(verbose_name=_('Registered in UNHCR'), orderable=False,
                                                 accessor='student.registered_in_unhcr')
 
     class Meta:
