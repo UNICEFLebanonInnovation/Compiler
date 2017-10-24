@@ -490,7 +490,7 @@ class EnrollmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -618,7 +618,7 @@ class GradingTermForm(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 )
             )
 
@@ -666,7 +666,7 @@ class GradingTermForm(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 )
             )
 
@@ -720,7 +720,7 @@ class GradingTermForm(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 )
             )
 
@@ -773,7 +773,7 @@ class GradingTermForm(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 )
             )
 
@@ -846,7 +846,7 @@ class GradingIncompleteForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -898,7 +898,7 @@ class StudentMovedForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
