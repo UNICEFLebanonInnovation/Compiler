@@ -74,10 +74,17 @@ class RSTable(CommonTable):
     # delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
     #                                       template_name='django_tables2/delete_column.html',
     #                                       attrs={'url': 'api/clm-bln/'})
+    pre_test_total = tables.Column(verbose_name=_('Pre-test total'),
+                                   accessor='pretest_result')
+    post_test_total = tables.Column(verbose_name=_('Post-test total'),
+                                    accessor='posttest_result')
 
     class Meta:
         model = RS
-        fields = CommonTable.Meta.fields
+        fields = CommonTable.Meta.fields + (
+            'pre_test_total',
+            'post_test_total',
+        )
 
 
 class CBECETable(CommonTable):
