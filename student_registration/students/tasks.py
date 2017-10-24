@@ -147,7 +147,7 @@ def cleanup_registry_duplications(registry_type='alp'):
 
     registrations = model.objects.filter(deleted=True)
     print(registrations.count())
-    # registrations.delete()
+    registrations.delete()
 
 
 @app.task
@@ -159,7 +159,7 @@ def cleanup_duplications():
         alp_enrollment__isnull=True,
     )
     print(registrations.count())
-    # registrations.delete()
+    registrations.delete()
 
 
 @app.task

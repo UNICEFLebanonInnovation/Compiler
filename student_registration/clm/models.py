@@ -162,16 +162,19 @@ class CLM(TimeStampedModel):
         Location,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('Governorate')
     )
     district = models.ForeignKey(
         Location,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('District')
     )
     location = models.CharField(
         max_length=50,
         blank=True,
         null=True,
+        verbose_name=_('Location')
     )
     language = ArrayField(
         models.CharField(
@@ -182,16 +185,19 @@ class CLM(TimeStampedModel):
         ),
         blank=True,
         null=True,
+        verbose_name=_('The language supported in the program')
     )
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
         related_name='+',
+        verbose_name=_('Student')
     )
     disability = models.ForeignKey(
         Disability,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('Disability')
     )
     have_labour = ArrayField(
         models.CharField(
@@ -202,6 +208,7 @@ class CLM(TimeStampedModel):
         ),
         blank=True,
         null=True,
+        verbose_name=_('Does the child participate in work?')
     )
     labours = ArrayField(
         models.CharField(
@@ -212,15 +219,18 @@ class CLM(TimeStampedModel):
         ),
         blank=True,
         null=True,
+        verbose_name=_('What is the type of work ?')
     )
     labour_hours = models.IntegerField(
         blank=True,
         null=True,
+        verbose_name=_('How many hours does this child work in a day?')
     )
     hh_educational_level = models.ForeignKey(
         EducationalLevel,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('What is the educational level of a person who is valuable to the child?')
     )
 
     status = models.CharField(max_length=50, choices=STATUS, default=STATUS.enrolled)
@@ -233,7 +243,8 @@ class CLM(TimeStampedModel):
         max_length=100,
         blank=True,
         null=True,
-        choices=PARTICIPATION
+        choices=PARTICIPATION,
+        verbose_name=_('Participation')
     )
     barriers = ArrayField(
         models.CharField(
@@ -244,12 +255,14 @@ class CLM(TimeStampedModel):
         ),
         blank=True,
         null=True,
+        verbose_name=_('Barriers')
     )
     learning_result = models.CharField(
         max_length=100,
         blank=True,
         null=True,
-        choices=LEARNING_RESULT
+        choices=LEARNING_RESULT,
+        verbose_name=_('Learning result')
     )
 
     owner = models.ForeignKey(
@@ -264,28 +277,33 @@ class CLM(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
+        verbose_name=_('Outreach barcode')
     )
     new_registry = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=YES_NO,
+        verbose_name=_('First time registered?')
     )
     student_outreached = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=YES_NO,
+        verbose_name=_('Student outreached?')
     )
     have_barcode = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         choices=YES_NO,
+        verbose_name=_('Have barcode with him?')
     )
     registration_date = models.DateField(
         blank=True,
         null=True,
+        verbose_name=_('Registration date')
     )
 
     @property
@@ -318,6 +336,7 @@ class BLN(CLM):
         Cycle,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('Cycle')
     )
     referral = ArrayField(
         models.CharField(
@@ -328,6 +347,7 @@ class BLN(CLM):
         ),
         blank=True,
         null=True,
+        verbose_name=_('Referral')
     )
 
     class Meta:
@@ -359,39 +379,40 @@ class RS(CLM):
         max_length=50,
         blank=True,
         null=True,
-        choices=TYPES
-    )
-    cycle = models.ForeignKey(
-        RSCycle,
-        blank=True, null=True,
-        related_name='+',
+        choices=TYPES,
+        verbose_name=_('Program type')
     )
     site = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=SITES
+        choices=SITES,
+        verbose_name=_('Program site')
     )
     school = models.ForeignKey(
         School,
         blank=False, null=True,
         related_name='+',
+        verbose_name=_('Attending in school')
     )
     registered_in_school = models.ForeignKey(
         School,
         blank=False, null=True,
         related_name='+',
+        verbose_name=_('Registered in school')
     )
     shift = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=SCHOOL_SHIFTS
+        choices=SCHOOL_SHIFTS,
+        verbose_name=_('Shift')
     )
     grade = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('Class')
     )
     referral = ArrayField(
         models.CharField(
@@ -402,52 +423,91 @@ class RS(CLM):
         ),
         blank=True,
         null=True,
+        verbose_name=_('Reason of referral')
     )
     pre_test_arabic = models.IntegerField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 21))
+        default=0,
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Arabic')
     )
     pre_test_language = models.IntegerField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 21))
+        default=0,
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Foreign Language')
     )
     pre_test_math = models.IntegerField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 21))
+        default=0,
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Math')
     )
     pre_test_science = models.IntegerField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 21))
+        default=0,
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Science')
     )
     post_test_arabic = models.IntegerField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 21))
+        default=0,
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Arabic')
     )
     post_test_language = models.IntegerField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 21))
+        default=0,
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Foreign Language')
     )
     post_test_math = models.IntegerField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 21))
+        default=0,
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Math')
     )
     post_test_science = models.IntegerField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 21))
+        default=0,
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Science')
     )
 
     class Meta:
         ordering = ['id']
         verbose_name = "RS"
         verbose_name_plural = "RS"
+
+    @property
+    def pretest_total(self):
+        return self.pre_test_arabic + self.pre_test_language + self.pre_test_math + self.pre_test_science
+
+    @property
+    def pretest_result(self):
+        return '{}/{}'.format(
+            str(self.pretest_total()),
+            '80'
+        )
+
+    @property
+    def posttest_total(self):
+        return self.post_test_arabic+self.post_test_language+self.post_test_math+self.post_test_science
+
+    @property
+    def posttest_result(self):
+        return '{}/{}'.format(
+            str(self.posttest_total),
+            '80'
+        )
 
 
 class CBECE(CLM):
@@ -469,17 +529,20 @@ class CBECE(CLM):
         Cycle,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('Cycle')
     )
     site = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=SITES
+        choices=SITES,
+        verbose_name=_('Program site')
     )
     school = models.ForeignKey(
         School,
         blank=False, null=True,
         related_name='+',
+        verbose_name=_('Attending in school')
     )
     referral = ArrayField(
         models.CharField(
@@ -490,47 +553,38 @@ class CBECE(CLM):
         ),
         blank=True,
         null=True,
+        verbose_name=_('Reason of referral')
     )
     child_muac = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=MUAC
-    )
-    grade = models.ForeignKey(
-        ClassRoom,
-        blank=True, null=True,
-        related_name='+',
-    )
-    referral_reasons = ArrayField(
-        models.CharField(
-            choices=REFER_SEASON,
-            max_length=100,
-            blank=True,
-            null=True,
-        ),
-        blank=True,
-        null=True,
+        choices=MUAC,
+        verbose_name=_('Child MUAC')
     )
     pre_test_arabic = models.IntegerField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 21))
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Arabic')
     )
     pre_test_language = models.FloatField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 21))
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Foreign Language')
     )
     pre_test_math = models.FloatField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 21))
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Math')
     )
     pre_test_science = models.FloatField(
         blank=True,
         null=True,
-        choices=((x, x) for x in range(0, 21))
+        choices=((x, x) for x in range(0, 21)),
+        verbose_name=_('Science')
     )
 
     class Meta:
@@ -545,20 +599,24 @@ class SelfPerceptionGrades(models.Model):
         RS,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('Enrollment')
     )
     assessment_type = models.CharField(
         max_length=50,
         blank=True,
         null=True,
+        verbose_name=_('Assessment type')
     )
     assessment_date = models.DateTimeField(
         blank=True,
-        null=True
+        null=True,
+        verbose_name=_('Assessment date')
     )
     answers = JSONField(
         blank=True,
         null=True,
-        default={}
+        default={},
+        verbose_name=_('Assessment answers')
     )
 
     class Meta:

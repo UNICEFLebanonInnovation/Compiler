@@ -276,10 +276,11 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         'district',
         'student',
         'last_attendance_date',
+        'last_absent_date',
         'absent_days',
-        'reattend_date',
-        'validation_status',
-        'dropout_status',
+        # 'reattend_date',
+        # 'validation_status',
+        # 'dropout_status',
     )
     list_filter = (
         # 'school__location',
@@ -299,6 +300,7 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super(AbsenteeAdmin, self).get_queryset(request)
+        qs = qs.filter(absent_days__gt=0)
         if has_group(request.user, 'COORDINATOR'):
             return qs.filter(school_id__in=request.user.schools.all())
 
@@ -340,39 +342,66 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
                 enrollment.save()
 
 
-class AttendanceSyncLogResource(resources.ModelResource):
+class AttendedDays(Absentee):
     class Meta:
-        model = AttendanceSyncLog
-        fields = (
-            'school__number',
-            'school__name',
-            'school_type',
-            'total_records',
-            'successful',
-            'response_message',
-            'processed_date',
-            'processed_by'
-        )
-        export_order = fields
+        proxy = True
 
 
-class AttendanceSyncLogAdmin(ImportExportModelAdmin):
-    resource_class = AttendanceSyncLogResource
+class AttendedDaysAdmin(AbsenteeAdmin):
     list_display = (
         'school',
-        'school_type',
-        'total_records',
-        'successful',
-        'response_message',
-        'processed_date',
-        'processed_by'
+        'student_number',
+        'district',
+        'student',
+        'last_attendance_date',
+        'attended_days',
     )
     list_filter = (
-        'school',
+        SchoolFilter,
         SchoolTypeFilter,
-        'school_type',
-        'successful',
+        LocationFilter,
+        GovernorateFilter,
+        'last_attendance_date',
+        'validation_status',
+        'dropout_status',
     )
+    date_hierarchy = 'last_attendance_date'
+    ordering = ('-attended_days',)
+
+    def get_queryset(self, request):
+        qs = super(AbsenteeAdmin, self).get_queryset(request)
+        qs = qs.filter(attended_days__gt=0)
+        if has_group(request.user, 'COORDINATOR'):
+            return qs.filter(school_id__in=request.user.schools.all())
+
+        return qs
+
+
+class AttendanceByStudent(Absentee):
+    class Meta:
+        proxy = True
+
+
+class AttendanceByStudentAdmin(AbsenteeAdmin):
+    list_display = (
+        'school',
+        'student_number',
+        'district',
+        'student',
+        'last_attendance_date',
+        'attended_days',
+        'last_absent_date',
+        'absent_days',
+    )
+    date_hierarchy = 'last_attendance_date'
+    ordering = ('-attended_days',)
+
+    def get_queryset(self, request):
+        qs = super(AbsenteeAdmin, self).get_queryset(request)
+        if has_group(request.user, 'COORDINATOR'):
+            return qs.filter(school_id__in=request.user.schools.all())
+
+        return qs
 
 
 class AttendanceResource(resources.ModelResource):
@@ -420,4 +449,5 @@ class AttendanceAdmin(ImportExportModelAdmin):
 admin.site.register(Attendance, AttendanceAdmin)
 # admin.site.register(BySchoolByDay, BySchoolByDayAdmin)
 admin.site.register(Absentee, AbsenteeAdmin)
-# admin.site.register(AttendanceSyncLog, AttendanceSyncLogAdmin)
+admin.site.register(AttendedDays, AttendedDaysAdmin)
+admin.site.register(AttendanceByStudent, AttendanceByStudentAdmin)
