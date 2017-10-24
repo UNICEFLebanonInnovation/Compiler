@@ -522,7 +522,7 @@ class BLNForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -877,7 +877,7 @@ class RSForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -1150,7 +1150,7 @@ class CBECEForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 

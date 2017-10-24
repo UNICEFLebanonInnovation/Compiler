@@ -45,14 +45,14 @@ $(document).ready(function(){
 
     $(document).on('click', '.moved-button', function(){
         var item = $(this);
-        if(confirm("Are you sure you want to tag this student as moved?")) {
+        if(confirm($(this).attr('translation'))) {
             moved_student(item.attr('itemscope'));
             item.parents('tr').remove();
         }
     });
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
-        if(confirm("Are you sure you want to delete this student?")) {
+        if(confirm($(this).attr('translation'))) {
             delete_student(item);
             item.parents('tr').remove();
         }
@@ -60,7 +60,7 @@ $(document).ready(function(){
     $(document).on('click', '.cancel-button', function(e){
         e.preventDefault();
         var item = $(this);
-        if(confirm("Are you sure you want to cancel this registration?")) {
+        if(confirm($(this).attr('translation'))) {
             window.location = item.attr('href');
         }
     });
