@@ -156,11 +156,15 @@ class RSSerializer(CLMSerializer):
     class Meta:
         model = RS
         fields = CLMSerializer.Meta.fields + (
-            'cycle',
+            'type',
             'site',
             'school',
+            'shift',
             'grade',
             'referral',
+            'registered_in_school',
+            'student_family_status',
+            'student_have_children',
             'pre_test_arabic',
             'pre_test_language',
             'pre_test_math',
@@ -169,7 +173,6 @@ class RSSerializer(CLMSerializer):
             'post_test_language',
             'post_test_math',
             'post_test_science',
-            'shift',
         )
 
 

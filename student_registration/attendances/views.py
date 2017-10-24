@@ -22,6 +22,7 @@ from student_registration.schools.models import (
     ClassRoom
 )
 from student_registration.users.utils import force_default_language
+from .utils import find_attendances, calculate_absentees
 from .models import Attendance, Absentee
 from .serializers import AttendanceSerializer, AbsenteeSerializer
 from student_registration.enrollments.models import (
@@ -50,6 +51,17 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
 
         return self.queryset
 
+    def list(self, request, *args, **kwargs):
+        if self.request.GET.get('from_date', None) and self.request.GET.get('to_date', None):
+            data = find_attendances(governorate=self.request.GET.get('governorate', None),
+                                    student_id=self.request.GET.get('student', None),
+                                    from_date=self.request.GET.get('from_date', None),
+                                    to_date=self.request.GET.get('to_date', None)
+                                    )
+            return JsonResponse(json.dumps(data), safe=False)
+
+        return JsonResponse({'status': status.HTTP_200_OK})
+
     def create(self, request, *args, **kwargs):
         """
         :return: JSON
@@ -75,6 +87,7 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
         else:
             instance.students[level_section] = data[level_section]
         instance.save()
+        calculate_absentees(instance, data[level_section]['students'])
         return JsonResponse({'status': status.HTTP_200_OK, 'data': instance.id})
 
     def perform_update(self, serializer):
