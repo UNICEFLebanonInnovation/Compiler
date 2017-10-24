@@ -14,7 +14,7 @@ def store_file(data, file_name):
 
     from django.conf import settings
     from azure.storage import CloudStorageAccount
-    from azure.storage.file import ContentSettings
+    from azure.storage.blob import ContentSettings
 
     file_name = '{}.{}'.format(file_name, settings.DEFAULT_FILE_FORMAT)
 
