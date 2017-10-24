@@ -91,11 +91,16 @@ def calculate_absentees(attendance, students):
                 absentee.absent_days -= 1
             else:
                 absentee.absent_days = 0
+            absentee.attended_days += 1
             absentee.last_attendance_date = attendance.attendance_date
             absentee.last_absent_date = None
         elif student['status'] == 'False' and not attendance.attendance_date == absentee.last_absent_date:
             absentee.last_absent_date = attendance.attendance_date
             absentee.last_attendance_date = None
             absentee.absent_days += 1
+            if absentee.attended_days > 0:
+                absentee.attended_days -= 1
+            else:
+                absentee.attended_days = 0
 
         absentee.save()
