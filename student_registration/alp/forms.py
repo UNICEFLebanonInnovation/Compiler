@@ -268,7 +268,7 @@ class OutreachForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/alp/outreach/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/alp/outreach/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -446,7 +446,7 @@ class PreTestForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/alp/pre-test/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/alp/pre-test/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -831,7 +831,7 @@ class RegistrationForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/alp/list/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/alp/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -982,7 +982,7 @@ class PreTestGradingForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/alp/pre-test/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/alp/pre-test/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -1085,7 +1085,7 @@ class PostTestGradingForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/alp/post-test/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/alp/post-test/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
