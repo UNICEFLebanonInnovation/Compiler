@@ -10,6 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
 
+from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
 
 from django_filters.views import FilterView
@@ -303,6 +304,30 @@ class CBECEListView(LoginRequiredMixin,
 ####################### API VIEWS #############################
 
 
+class BLNViewSet(mixins.RetrieveModelMixin,
+                 mixins.ListModelMixin,
+                 mixins.CreateModelMixin,
+                 mixins.UpdateModelMixin,
+                 viewsets.GenericViewSet):
+
+    model = BLN
+    queryset = BLN.objects.all()
+    serializer_class = BLNSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        qs = self.queryset
+        if self.request.GET.get('school', None):
+            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+
+        return qs
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+
 class RSViewSet(mixins.RetrieveModelMixin,
                 mixins.ListModelMixin,
                 mixins.CreateModelMixin,
@@ -320,6 +345,35 @@ class RSViewSet(mixins.RetrieveModelMixin,
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
         return qs
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+
+class CBECEViewSet(mixins.RetrieveModelMixin,
+                   mixins.ListModelMixin,
+                   mixins.CreateModelMixin,
+                   mixins.UpdateModelMixin,
+                   viewsets.GenericViewSet):
+
+    model = CBECE
+    queryset = CBECE.objects.all()
+    serializer_class = CBECESerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        qs = self.queryset
+        if self.request.GET.get('school', None):
+            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+
+        return qs
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
 
 
 class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
