@@ -83,7 +83,8 @@ def calculate_absentees(attendance, students):
             absentee = Absentee.objects.create(
                 student_id=student['student_id'],
                 school=attendance.school,
-                absent_days=0
+                absent_days=0,
+                attended_days=0
             )
 
         if student['status'] == 'True' and not attendance.attendance_date == absentee.last_attendance_date:
