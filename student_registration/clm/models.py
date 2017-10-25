@@ -8,6 +8,7 @@ from django.contrib.postgres.fields import ArrayField, JSONField
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
+from student_registration.users.models import PartnerOrganization
 from student_registration.students.models import Student, Labour
 from student_registration.locations.models import Location
 from student_registration.schools.models import (
@@ -304,6 +305,12 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Registration date')
+    )
+    partner = models.ForeignKey(
+        PartnerOrganization,
+        blank=True, null=True,
+        verbose_name=_('Partner'),
+        related_name='+'
     )
 
     @property

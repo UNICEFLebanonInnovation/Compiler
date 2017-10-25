@@ -234,6 +234,7 @@ class CommonForm(forms.ModelForm):
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.owner = request.user
+                instance.partner = request.user.partner
                 instance.save()
             else:
                 # print serializer.errors
