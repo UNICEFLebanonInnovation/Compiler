@@ -132,10 +132,10 @@ class CLMSerializer(serializers.ModelSerializer):
 class BLNSerializer(CLMSerializer):
 
     def create(self, validated_data):
-        create_instance(validated_data=validated_data, model=self.Meta.model)
+        return create_instance(validated_data=validated_data, model=self.Meta.model)
 
     def update(self, instance, validated_data):
-        update_instance(instance=instance, validated_data=validated_data)
+        return update_instance(instance=instance, validated_data=validated_data)
 
     class Meta:
         model = BLN
@@ -148,10 +148,10 @@ class BLNSerializer(CLMSerializer):
 class RSSerializer(CLMSerializer):
 
     def create(self, validated_data):
-        create_instance(validated_data=validated_data, model=self.Meta.model)
+        return create_instance(validated_data=validated_data, model=self.Meta.model)
 
     def update(self, instance, validated_data):
-        update_instance(instance=instance, validated_data=validated_data)
+        return update_instance(instance=instance, validated_data=validated_data)
 
     class Meta:
         model = RS
@@ -179,10 +179,10 @@ class RSSerializer(CLMSerializer):
 class CBECESerializer(CLMSerializer):
 
     def create(self, validated_data):
-        create_instance(validated_data=validated_data, model=self.Meta.model)
+        return create_instance(validated_data=validated_data, model=self.Meta.model)
 
     def update(self, instance, validated_data):
-        update_instance(instance=instance, validated_data=validated_data)
+        return update_instance(instance=instance, validated_data=validated_data)
 
     class Meta:
         model = CBECE
