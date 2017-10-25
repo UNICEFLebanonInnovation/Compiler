@@ -37,7 +37,10 @@
                                         {% endfor %}
                                     </select>
                                 </li>
-                                <li class="breadcrumb-item" style="font-size: 20px"><span>{{ school }}</span></li>
+                                <li class="breadcrumb-item"><span style="margin-top: 5px;display: inline-block;">{{ school }}</span></li>
+                                <li class="breadcrumb-item">
+                                    <a href="{% url 'attendances:export' %}?date={{ selected_date }}" class="btn btn-success">{% trans "Export attendance" %}</a>
+                                </li>
                                 <li class="absolute-right-15 absolute-top-15" style="font-size: 20px"><span class="badge badge-primary">{{ total }}</span></li>
                             </ol>
                           </div>
