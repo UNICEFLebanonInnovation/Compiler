@@ -22,10 +22,10 @@ class CommonTable(tables.Table):
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': ''})
     pre_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
-                                           template_name='django_tables2/clm_assessment.html',
+                                           template_name='django_tables2/clm_pre_assessment.html',
                                            attrs={'url': ''})
     post_assessment = tables.TemplateColumn(verbose_name=_('Post-assessment'),
-                                            template_name='django_tables2/clm_assessment.html',
+                                            template_name='django_tables2/clm_post_assessment.html',
                                             attrs={'url': ''})
 
     student_age = tables.Column(verbose_name=_('Age'), accessor='student.age')
@@ -54,12 +54,18 @@ class CommonTable(tables.Table):
 
 class BLNTable(CommonTable):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/edit_column.html',
                                         attrs={'url': '/clm/bln-edit/'})
-    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
+    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/delete_column.html',
-                                          attrs={'url': 'api/clm-bln/'})
+                                          attrs={'url': '/api/clm-bln/'})
+    pre_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
+                                           template_name='django_tables2/clm_pre_assessment.html',
+                                           attrs={'url': ''})
+    post_assessment = tables.TemplateColumn(verbose_name=_('Post-assessment'),
+                                            template_name='django_tables2/clm_post_assessment.html',
+                                            attrs={'url': ''})
 
     class Meta:
         model = BLN
@@ -68,16 +74,24 @@ class BLNTable(CommonTable):
 
 class RSTable(CommonTable):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/edit_column.html',
                                         attrs={'url': '/clm/rs-edit/'})
-    # delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
-    #                                       template_name='django_tables2/delete_column.html',
-    #                                       attrs={'url': 'api/clm-bln/'})
-    pre_test_total = tables.Column(verbose_name=_('Pre-test total'),
+    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
+                                          template_name='django_tables2/delete_column.html',
+                                          attrs={'url': '/api/clm-bln/'})
+
+    pre_test_total = tables.Column(verbose_name=_('Pre-test total'), orderable=False,
                                    accessor='pretest_result')
-    post_test_total = tables.Column(verbose_name=_('Post-test total'),
+    post_test_total = tables.Column(verbose_name=_('Post-test total'), orderable=False,
                                     accessor='posttest_result')
+
+    pre_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
+                                           template_name='django_tables2/clm_pre_assessment.html',
+                                           attrs={'url': ''})
+    post_assessment = tables.TemplateColumn(verbose_name=_('Post-assessment'),
+                                            template_name='django_tables2/clm_post_assessment.html',
+                                            attrs={'url': ''})
 
     class Meta:
         model = RS
@@ -89,9 +103,18 @@ class RSTable(CommonTable):
 
 class CBECETable(CommonTable):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/edit_column.html',
                                         attrs={'url': '/clm/cbece-edit/'})
+    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
+                                          template_name='django_tables2/delete_column.html',
+                                          attrs={'url': '/api/clm-cbece/'})
+    pre_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
+                                           template_name='django_tables2/clm_pre_assessment.html',
+                                           attrs={'url': ''})
+    post_assessment = tables.TemplateColumn(verbose_name=_('Post-assessment'),
+                                            template_name='django_tables2/clm_post_assessment.html',
+                                            attrs={'url': ''})
 
     class Meta:
         model = CBECE

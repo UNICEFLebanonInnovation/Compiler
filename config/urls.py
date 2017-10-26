@@ -28,7 +28,9 @@ from student_registration.schools.views import (
     SectionViewSet,
 )
 from student_registration.clm.views import (
+    BLNViewSet,
     RSViewSet,
+    CBECEViewSet,
     SelfPerceptionGradesViewSet
 )
 # from student_registration.winterization.views import (
@@ -53,7 +55,9 @@ api.register(r'child', ChildViewSet, base_name='child')
 api.register(r'schools', SchoolViewSet, base_name='schools')
 api.register(r'classrooms', ClassRoomViewSet, base_name='classrooms')
 api.register(r'sections', SectionViewSet, base_name='sections')
+api.register(r'clm-bln', BLNViewSet, base_name='clm-bln')
 api.register(r'clm-rs', RSViewSet, base_name='clm-rs')
+api.register(r'clm-cbece', CBECEViewSet, base_name='clm-cbece')
 api.register(r'self-perception-grads', SelfPerceptionGradesViewSet, base_name='self-perception-grads')
 
 schema_view = get_swagger_view(title='Compiler API')
