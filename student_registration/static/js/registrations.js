@@ -187,7 +187,7 @@ $(document).ready(function(){
         $("#id_search_barcode").autocomplete("instance")._renderItem = function (ul, item) {
             return $("<li>")
                 .append("<div style='border: 1px solid;'>"
-                    + "<b>Base Data:</b> " + item.student_full_name + " - " + item.stduent_mother_fullname + " - " + item.student_id_number
+                    + "<b>Base Data:</b> " + item.student_full_name + " - " + item.student_mother_fullname + " - " + item.student_id_number
                     + "<br/> <b>Gender - Birthday:</b> " + item.student_sex + " - " + item.student_birthday
                     + "</div>")
                 .appendTo(ul);
