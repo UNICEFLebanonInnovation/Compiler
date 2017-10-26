@@ -12,6 +12,7 @@ from django.views.generic.detail import SingleObjectMixin
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
+from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
@@ -29,24 +30,26 @@ from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerce
 
 
 class CLMView(LoginRequiredMixin,
-            # GroupRequiredMixin,
-            TemplateView):
+              GroupRequiredMixin,
+              TemplateView):
 
     template_name = 'clm/index.html'
 
-    # group_required = [u"ENROL_EDIT"]
+    group_required = [u"CLM"]
 
     def get_context_data(self, **kwargs):
+        force_default_language(self.request)
         return {}
 
 
 class BLNAddView(LoginRequiredMixin,
-                     # GroupRequiredMixin,
-                     FormView):
+                 GroupRequiredMixin,
+                 FormView):
 
     template_name = 'clm/common_form.html'
     form_class = BLNForm
     success_url = '/clm/bln-list/'
+    group_required = [u"CLM_BLN"]
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -61,8 +64,8 @@ class BLNAddView(LoginRequiredMixin,
         if self.request.GET.get('enrollment_id'):
             instance = BLN.objects.get(id=self.request.GET.get('enrollment_id'))
             data = BLNSerializer(instance).data
-        if self.request.GET.get('student_outreach_child'):
-            instance = Child.objects.get(id=int(self.request.GET.get('student_outreach_child')))
+        if self.request.GET.get('child_id'):
+            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         initial = data
 
@@ -74,15 +77,16 @@ class BLNAddView(LoginRequiredMixin,
 
 
 class BLNEditView(LoginRequiredMixin,
-                         # GroupRequiredMixin,
-                         FormView):
+                  GroupRequiredMixin,
+                  FormView):
 
     template_name = 'clm/common_form.html'
     form_class = BLNForm
     success_url = '/clm/bln-list/'
+    group_required = [u"CLM_BLN"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -110,21 +114,49 @@ class BLNAssessmentSubmission(SingleObjectMixin, View):
     slug_url_kwarg = 'status'
 
     def post(self, request, *args, **kwargs):
+        print(request.body)
 
         if 'status' not in request.body:
             return HttpResponseBadRequest()
 
         payload = json.loads(request.body.decode('utf-8'))
 
-        enrollment = BLN.objects.get(id=self.kwargs['pk'])
+        # enrollment = BLN.objects.get(id=self.kwargs['pk'])
+        #
+        # enrollment.status = payload['status']
+        # setattr(enrollment, payload['status'], payload)
 
-        enrollment.status = payload['status']
+        return HttpResponse()
+
+
+# @method_decorator(csrf_exempt, name='dispatch')
+class AssessmentSubmission(SingleObjectMixin, View):
+
+    model = BLN
+    # slug_url_kwarg = 'status'
+
+    def get(self, request, *args, **kwargs):
+        print(request.body)
+
+    def post(self, request, *args, **kwargs):
+
+        print(request.body)
+
+        if 'status' not in request.body:
+            return HttpResponseBadRequest()
+
+        payload = json.loads(request.body.decode('utf-8'))
+
+        enrollment = RS.objects.get(id=self.kwargs['pk'])
+
+        # enrollment.status = payload['status']
         setattr(enrollment, payload['status'], payload)
 
         return HttpResponse()
 
 
 class BLNListView(LoginRequiredMixin,
+                  GroupRequiredMixin,
                   FilterView,
                   ExportMixin,
                   SingleTableView,
@@ -134,23 +166,26 @@ class BLNListView(LoginRequiredMixin,
     model = BLN
     template_name = 'clm/bln_list.html'
     table = BootstrapTable(BLN.objects.all(), order_by='id')
+    group_required = [u"CLM_BLN"]
 
     filterset_class = BLNFilter
 
     def get_queryset(self):
+        force_default_language(self.request)
         return BLN.objects.filter(owner=self.request.user)
 
 
 class RSAddView(LoginRequiredMixin,
-                # GroupRequiredMixin,
+                GroupRequiredMixin,
                 FormView):
 
     template_name = 'clm/common_form.html'
     form_class = RSForm
     success_url = '/clm/rs-list/'
+    group_required = [u"CLM_RS"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -162,8 +197,8 @@ class RSAddView(LoginRequiredMixin,
         if self.request.GET.get('enrollment_id'):
             instance = RS.objects.get(id=self.request.GET.get('enrollment_id'))
             data = RSSerializer(instance).data
-        if self.request.GET.get('student_outreach_child'):
-            instance = Child.objects.get(id=int(self.request.GET.get('student_outreach_child')))
+        if self.request.GET.get('child_id'):
+            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         initial = data
 
@@ -175,15 +210,16 @@ class RSAddView(LoginRequiredMixin,
 
 
 class RSEditView(LoginRequiredMixin,
-                 # GroupRequiredMixin,
+                 GroupRequiredMixin,
                  FormView):
 
     template_name = 'clm/common_form.html'
     form_class = RSForm
     success_url = '/clm/rs-list/'
+    group_required = [u"CLM_RS"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -196,7 +232,7 @@ class RSEditView(LoginRequiredMixin,
         else:
             data = RSSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
-            return RSForm(data, instance=instance)
+            return RSForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
         instance = RS.objects.get(id=self.kwargs['pk'])
@@ -205,6 +241,7 @@ class RSEditView(LoginRequiredMixin,
 
 
 class RSListView(LoginRequiredMixin,
+                 GroupRequiredMixin,
                  FilterView,
                  ExportMixin,
                  SingleTableView,
@@ -214,23 +251,26 @@ class RSListView(LoginRequiredMixin,
     model = RS
     template_name = 'clm/rs_list.html'
     table = BootstrapTable(RS.objects.all(), order_by='id')
+    group_required = [u"CLM_RS"]
 
     filterset_class = RSFilter
 
     def get_queryset(self):
+        force_default_language(self.request)
         return RS.objects.filter(owner=self.request.user)
 
 
 class CBECEAddView(LoginRequiredMixin,
-                   # GroupRequiredMixin,
+                   GroupRequiredMixin,
                    FormView):
 
     template_name = 'clm/common_form.html'
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
+    group_required = [u"CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -242,8 +282,8 @@ class CBECEAddView(LoginRequiredMixin,
         if self.request.GET.get('enrollment_id'):
             instance = CBECE.objects.get(id=self.request.GET.get('enrollment_id'))
             data = CBECESerializer(instance).data
-        if self.request.GET.get('student_outreach_child'):
-            instance = Child.objects.get(id=int(self.request.GET.get('student_outreach_child')))
+        if self.request.GET.get('child_id'):
+            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         initial = data
 
@@ -255,15 +295,16 @@ class CBECEAddView(LoginRequiredMixin,
 
 
 class CBECEEditView(LoginRequiredMixin,
-                    # GroupRequiredMixin,
+                    GroupRequiredMixin,
                     FormView):
 
     template_name = 'clm/common_form.html'
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
+    group_required = [u"CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -276,7 +317,7 @@ class CBECEEditView(LoginRequiredMixin,
         else:
             data = CBECESerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
-            return CBECEForm(data, instance=instance)
+            return CBECEForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):
         instance = CBECE.objects.get(id=self.kwargs['pk'])
@@ -285,6 +326,7 @@ class CBECEEditView(LoginRequiredMixin,
 
 
 class CBECEListView(LoginRequiredMixin,
+                    GroupRequiredMixin,
                     FilterView,
                     ExportMixin,
                     SingleTableView,
@@ -294,10 +336,12 @@ class CBECEListView(LoginRequiredMixin,
     model = CBECE
     template_name = 'clm/cbece_list.html'
     table = BootstrapTable(CBECE.objects.all(), order_by='id')
+    group_required = [u"CLM_CBECE"]
 
     filterset_class = CBECEFilter
 
     def get_queryset(self):
+        force_default_language(self.request)
         return CBECE.objects.filter(owner=self.request.user)
 
 
