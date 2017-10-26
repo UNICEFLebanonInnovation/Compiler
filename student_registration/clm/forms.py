@@ -114,7 +114,8 @@ class CommonForm(forms.ModelForm):
         label=_('The language supported in the program'),
         choices=CLM.LANGUAGES,
         widget=forms.CheckboxSelectMultiple,
-        required=True
+        required=True,
+        initial='english_arabic'
     )
 
     student_first_name = forms.CharField(
@@ -234,6 +235,7 @@ class CommonForm(forms.ModelForm):
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.owner = request.user
+                instance.partner = request.user.partner
                 instance.save()
             else:
                 # print serializer.errors
@@ -330,25 +332,30 @@ class BLNForm(CommonForm):
         form_action = reverse('clm:bln_add')
 
         if instance:
-            form_action = reverse('clm:bln_edit', kwargs={'pk': instance.id})
-            assessment_pre = Assessment.objects.get(slug='bln_pre_test')
-            assessment_post = Assessment.objects.get(slug='bln_post_test')
             display_assessment = ''
             display_registry = ' d-none'
-            pre_test = '{form}?d[status]={status}&returnURL={callback}'.format(
-                form=assessment_pre.assessment_form,
-                status='pre_test',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:bln_assessment', kwargs={'pk': instance.id})
+            form_action = reverse('clm:bln_edit', kwargs={'pk': instance.id})
+            try:
+                assessment_pre = Assessment.objects.get(slug='bln_pre_test')
+                assessment_post = Assessment.objects.get(slug='bln_post_test')
+                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[model]=BLN&returnURL={callback}'.format(
+                    form=assessment_pre.assessment_form,
+                    status='pre_test',
+                    enrollment_id=instance.id,
+                    callback=self.request.build_absolute_uri(
+                        reverse('clm:bln_edit', kwargs={'pk': instance.id})
+                    )
                 )
-            )
-            post_test = '{form}?d[status]={status}&returnURL={callback}'.format(
-                form=assessment_post.assessment_form,
-                status='post_test',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:bln_assessment', kwargs={'pk': instance.id})
+                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[model]=BLN&returnURL={callback}'.format(
+                    form=assessment_post.assessment_form,
+                    status='post_test',
+                    enrollment_id=instance.id,
+                    callback=self.request.build_absolute_uri(
+                        reverse('clm:bln_edit', kwargs={'pk': instance.id})
+                    )
                 )
-            )
+            except Assessment.DoesNotExist:
+                pass
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -522,7 +529,7 @@ class BLNForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -599,7 +606,8 @@ class RSForm(CommonForm):
         label=_('Reason for referral of the child'),
         choices=RS.REFER_SEASON,
         widget=forms.CheckboxSelectMultiple,
-        required=True
+        required=True,
+        initial='academic'
     )
 
     def __init__(self, *args, **kwargs):
@@ -614,25 +622,30 @@ class RSForm(CommonForm):
         form_action = reverse('clm:rs_add')
 
         if instance:
-            form_action = reverse('clm:rs_edit', kwargs={'pk': instance.id})
-            assessment_pre = Assessment.objects.get(slug='rs_pre_test')
-            assessment_post = Assessment.objects.get(slug='rs_post_test')
             display_assessment = ''
             display_registry = ' d-none'
-            pre_test = '{form}?d[status]={status}&returnURL={callback}'.format(
-                form=assessment_pre.assessment_form,
-                status='pre_test',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:rs_assessment', kwargs={'pk': instance.id})
+            form_action = reverse('clm:rs_edit', kwargs={'pk': instance.id})
+            try:
+                assessment_pre = Assessment.objects.get(slug='rs_pre_test')
+                assessment_post = Assessment.objects.get(slug='rs_post_test')
+                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[model]=RS&returnURL={callback}'.format(
+                    form=assessment_pre.assessment_form,
+                    status='pre_test',
+                    enrollment_id=instance.id,
+                    callback=self.request.build_absolute_uri(
+                        reverse('clm:rs_edit', kwargs={'pk': instance.id})
+                    )
                 )
-            )
-            post_test = '{form}?d[status]={status}&returnURL={callback}'.format(
-                form=assessment_post.assessment_form,
-                status='post_test',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:rs_assessment', kwargs={'pk': instance.id})
+                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[model]=RS&&returnURL={callback}'.format(
+                    form=assessment_post.assessment_form,
+                    status='post_test',
+                    enrollment_id=instance.id,
+                    callback=self.request.build_absolute_uri(
+                        reverse('clm:rs_edit', kwargs={'pk': instance.id})
+                    )
                 )
-            )
+            except Assessment.DoesNotExist:
+                pass
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -877,7 +890,7 @@ class RSForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -950,25 +963,30 @@ class CBECEForm(CommonForm):
         form_action = reverse('clm:cbece_add')
 
         if instance:
-            form_action = reverse('clm:cbece_edit', kwargs={'pk': instance.id})
-            assessment_pre = Assessment.objects.get(slug='cbece_pre_test')
-            assessment_post = Assessment.objects.get(slug='cbece_post_test')
             display_assessment = ''
             display_registry = ' d-none'
-            pre_test = '{form}?d[status]={status}&returnURL={callback}'.format(
-                form=assessment_pre.assessment_form,
-                status='pre_test',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:bln_assessment', kwargs={'pk': instance.id})
+            form_action = reverse('clm:cbece_edit', kwargs={'pk': instance.id})
+            try:
+                assessment_pre = Assessment.objects.get(slug='cbece_pre_test')
+                assessment_post = Assessment.objects.get(slug='cbece_post_test')
+                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[model]=CBECE&returnURL={callback}'.format(
+                    form=assessment_pre.assessment_form,
+                    status='pre_test',
+                    enrollment_id=instance.id,
+                    callback=self.request.build_absolute_uri(
+                        reverse('clm:cbece_edit', kwargs={'pk': instance.id})
+                    )
                 )
-            )
-            post_test = '{form}?d[status]={status}&returnURL={callback}'.format(
-                form=assessment_post.assessment_form,
-                status='post_test',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:bln_assessment', kwargs={'pk': instance.id})
+                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[model]=CBECE&returnURL={callback}'.format(
+                    form=assessment_post.assessment_form,
+                    status='post_test',
+                    enrollment_id=instance.id,
+                    callback=self.request.build_absolute_uri(
+                        reverse('clm:cbece_edit', kwargs={'pk': instance.id})
+                    )
                 )
-            )
+            except Assessment.DoesNotExist:
+                pass
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -1150,7 +1168,7 @@ class CBECEForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 

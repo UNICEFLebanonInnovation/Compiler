@@ -36,6 +36,7 @@ class BLNAdmin(ImportExportModelAdmin):
         'student',
         'governorate',
         'district',
+        'partner',
         'created',
         'modified',
     )
@@ -69,6 +70,7 @@ class RSAdmin(ImportExportModelAdmin):
         'student',
         'governorate',
         'district',
+        'partner',
         'created',
         'modified',
     )
@@ -102,6 +104,7 @@ class CBECEAdmin(ImportExportModelAdmin):
         'student',
         'governorate',
         'district',
+        'partner',
         'created',
         'modified',
     )

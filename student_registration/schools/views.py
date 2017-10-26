@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin
 
-
+from student_registration.users.utils import force_default_language
 from .models import (
     School,
     ClassRoom,
@@ -58,7 +58,7 @@ class ProfileView(LoginRequiredMixin,
     group_required = [u"SCHOOL", u"ALP_SCHOOL"]
 
     def get_context_data(self, **kwargs):
-        # force_default_language(self.request)
+        force_default_language(self.request)
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()

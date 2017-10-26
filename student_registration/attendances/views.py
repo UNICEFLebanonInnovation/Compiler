@@ -29,6 +29,7 @@ from student_registration.enrollments.models import (
     Enrollment,
     EducationYear,
 )
+from student_registration.backends.tasks import export_attendance
 
 
 class AttendanceViewSet(mixins.RetrieveModelMixin,
@@ -247,3 +248,25 @@ class AbsenteeView(ListAPIView):
     )
     serializer_class = AbsenteeSerializer
     permission_classes = (permissions.IsAdminUser,)
+
+
+class ExportView(LoginRequiredMixin, ListView):
+
+    model = Attendance
+    queryset = Attendance.objects.all()
+
+    def get(self, request, *args, **kwargs):
+
+        date_format = '%Y-%m-%d'
+        current_date = datetime.datetime.now().strftime(date_format)
+        selected_date = self.request.GET.get('date', current_date)
+
+        school = self.request.user.school_id
+        data = export_attendance({'date': selected_date, 'school': school})
+
+        response = HttpResponse(
+            data,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        response['Content-Disposition'] = 'attachment; filename=attendance_'+selected_date+'.xlsx'
+        return response
