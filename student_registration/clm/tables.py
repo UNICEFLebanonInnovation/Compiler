@@ -80,10 +80,12 @@ class RSTable(CommonTable):
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': '/api/clm-bln/'})
+
     pre_test_total = tables.Column(verbose_name=_('Pre-test total'), orderable=False,
                                    accessor='pretest_result')
     post_test_total = tables.Column(verbose_name=_('Post-test total'), orderable=False,
                                     accessor='posttest_result')
+
     pre_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
                                            template_name='django_tables2/clm_pre_assessment.html',
                                            attrs={'url': ''})

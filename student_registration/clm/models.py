@@ -423,7 +423,7 @@ class RS(CLM):
     )
     referral = ArrayField(
         models.CharField(
-            choices=CLM.REFERRAL,
+            choices=REFER_SEASON,
             max_length=100,
             blank=True,
             null=True,
@@ -501,7 +501,7 @@ class RS(CLM):
     @property
     def pretest_result(self):
         return '{}/{}'.format(
-            str(self.pretest_total()),
+            str(self.pretest_total),
             '80'
         )
 
@@ -553,7 +553,7 @@ class CBECE(CLM):
     )
     referral = ArrayField(
         models.CharField(
-            choices=CLM.REFERRAL,
+            choices=REFER_SEASON,
             max_length=100,
             blank=True,
             null=True,
