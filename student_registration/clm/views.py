@@ -108,49 +108,27 @@ class BLNEditView(LoginRequiredMixin,
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class BLNAssessmentSubmission(SingleObjectMixin, View):
+class AssessmentSubmission(SingleObjectMixin, View):
 
-    model = BLN
+    model = RS
     slug_url_kwarg = 'status'
 
     def post(self, request, *args, **kwargs):
-        print(request.body)
 
-        if 'status' not in request.body:
+        if 'status' not in request.body and \
+                'enrollment_id' not in request.body and \
+                'model' not in request.body:
             return HttpResponseBadRequest()
 
         payload = json.loads(request.body.decode('utf-8'))
+        status = payload['status']
+        enrollment_id = payload['enrollment_id']
+        model = payload['model']
 
-        # enrollment = BLN.objects.get(id=self.kwargs['pk'])
-        #
-        # enrollment.status = payload['status']
-        # setattr(enrollment, payload['status'], payload)
-
-        return HttpResponse()
-
-
-# @method_decorator(csrf_exempt, name='dispatch')
-class AssessmentSubmission(SingleObjectMixin, View):
-
-    model = BLN
-    # slug_url_kwarg = 'status'
-
-    def get(self, request, *args, **kwargs):
-        print(request.body)
-
-    def post(self, request, *args, **kwargs):
-
-        print(request.body)
-
-        if 'status' not in request.body:
-            return HttpResponseBadRequest()
-
-        payload = json.loads(request.body.decode('utf-8'))
-
-        enrollment = RS.objects.get(id=self.kwargs['pk'])
+        enrollment = model.objects.get(id=int(enrollment_id))
 
         # enrollment.status = payload['status']
-        setattr(enrollment, payload['status'], payload)
+        setattr(enrollment, status, payload)
 
         return HttpResponse()
 
