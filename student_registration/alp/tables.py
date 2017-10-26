@@ -15,15 +15,15 @@ class BootstrapTable(tables.Table):
 
 class CommonTable(tables.Table):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/edit_column.html',
                                         attrs={'url': ''})
-    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
+    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': 'api/alp/'})
 
-    student_age = tables.Column(verbose_name=_('Age'), accessor='student.age')
-    student_birthday = tables.Column(verbose_name=_('Birthday'), accessor='student.birthday')
+    student_age = tables.Column(verbose_name=_('Age'), accessor='student.age', orderable=False,)
+    student_birthday = tables.Column(verbose_name=_('Birthday'), accessor='student.birthday', orderable=False,)
 
     class Meta:
         model = Outreach
@@ -40,7 +40,7 @@ class CommonTable(tables.Table):
 
 class OutreachTable(CommonTable):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/edit_column.html',
                                         attrs={'url': '/alp/outreach-edit/'})
 
@@ -73,13 +73,13 @@ class OutreachTable(CommonTable):
 
 class PreTestTable(CommonTable):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/edit_column.html',
                                         attrs={'url': '/alp/pre-test-edit/'})
-    grading = tables.TemplateColumn(verbose_name=_('Grading'),
+    grading = tables.TemplateColumn(verbose_name=_('Grading'), orderable=False,
                                         template_name='django_tables2/edit_column.html',
                                         attrs={'url': '/alp/pre-test-grading/'})
-    created_by = tables.Column(verbose_name=_('Created By'), accessor='owner')
+    created_by = tables.Column(verbose_name=_('Created By'), accessor='owner', orderable=False,)
 
     class Meta:
         model = Outreach
@@ -110,15 +110,18 @@ class PreTestTable(CommonTable):
 
 class PostTestTable(CommonTable):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/edit_column.html',
                                         attrs={'url': ''})
-    grading = tables.TemplateColumn(verbose_name=_('Grading'),
+    grading = tables.TemplateColumn(verbose_name=_('Grading'), orderable=False,
                                         template_name='django_tables2/edit_column.html',
                                         attrs={'url': '/alp/post-test-grading/'})
-    current_level = tables.Column(verbose_name=_('Current Level'), accessor='registered_in_level')
-    current_section = tables.Column(verbose_name=_('Current Section'), accessor='section')
-    created_by = tables.Column(verbose_name=_('Created by'), accessor='owner')
+    current_level = tables.Column(verbose_name=_('Current Level'), orderable=False,
+                                  accessor='registered_in_level')
+    current_section = tables.Column(verbose_name=_('Current Section'), orderable=False,
+                                    accessor='section')
+    created_by = tables.Column(verbose_name=_('Created by'), orderable=False,
+                               accessor='owner')
 
     class Meta:
         model = Outreach
@@ -151,21 +154,24 @@ class PostTestTable(CommonTable):
 
 class SchoolTable(CommonTable):
 
-    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'),
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/edit_column.html',
                                         attrs={'url': '/alp/edit/'})
-    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
+    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': 'api/alp/'})
-    current_level = tables.Column(verbose_name=_('Current Level'), accessor='registered_in_level')
-    current_section = tables.Column(verbose_name=_('Current Section'), accessor='section')
+    current_level = tables.Column(verbose_name=_('Current Level'), orderable=False,
+                                  accessor='registered_in_level')
+    current_section = tables.Column(verbose_name=_('Current Section'), orderable=False,
+                                    accessor='section')
 
-    student_phone_number = tables.Column(verbose_name=_('Phone number'), accessor='student.phone_number')
-    student_registered_in_unhcr = tables.Column(verbose_name=_('Registered in UNHCR'),
+    student_phone_number = tables.Column(verbose_name=_('Phone number'), orderable=False,
+                                         accessor='student.phone_number')
+    student_registered_in_unhcr = tables.Column(verbose_name=_('Registered in UNHCR'), orderable=False,
                                                 accessor='student.registered_in_unhcr')
-    pre_test_total = tables.Column(verbose_name=_('Pre-test total'),
+    pre_test_total = tables.Column(verbose_name=_('Pre-test total'), orderable=False,
                                    accessor='pretest_total')
-    post_test_total = tables.Column(verbose_name=_('Post-test total'),
+    post_test_total = tables.Column(verbose_name=_('Post-test total'), orderable=False,
                                     accessor='posttest_total')
 
     class Meta:
