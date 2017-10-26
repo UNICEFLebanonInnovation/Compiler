@@ -342,7 +342,7 @@ class BLNForm(CommonForm):
             try:
                 assessment_pre = Assessment.objects.get(slug='bln_pre_test')
                 assessment_post = Assessment.objects.get(slug='bln_post_test')
-                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[model]=BLN&returnURL={callback}'.format(
+                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=BLN&returnURL={callback}'.format(
                     form=assessment_pre.assessment_form,
                     status='pre_test',
                     enrollment_id=instance.id,
@@ -350,7 +350,7 @@ class BLNForm(CommonForm):
                         reverse('clm:bln_edit', kwargs={'pk': instance.id})
                     )
                 )
-                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[model]=BLN&returnURL={callback}'.format(
+                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=BLN&returnURL={callback}'.format(
                     form=assessment_post.assessment_form,
                     status='post_test',
                     enrollment_id=instance.id,
@@ -636,7 +636,7 @@ class RSForm(CommonForm):
             try:
                 assessment_pre = Assessment.objects.get(slug='rs_pre_test')
                 assessment_post = Assessment.objects.get(slug='rs_post_test')
-                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[model]=RS&returnURL={callback}'.format(
+                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=RS&returnURL={callback}'.format(
                     form=assessment_pre.assessment_form,
                     status='pre_test',
                     enrollment_id=instance.id,
@@ -644,7 +644,7 @@ class RSForm(CommonForm):
                         reverse('clm:rs_edit', kwargs={'pk': instance.id})
                     )
                 )
-                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[model]=RS&&returnURL={callback}'.format(
+                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=RS&&returnURL={callback}'.format(
                     form=assessment_post.assessment_form,
                     status='post_test',
                     enrollment_id=instance.id,
@@ -981,7 +981,7 @@ class CBECEForm(CommonForm):
             try:
                 assessment_pre = Assessment.objects.get(slug='cbece_pre_test')
                 assessment_post = Assessment.objects.get(slug='cbece_post_test')
-                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[model]=CBECE&returnURL={callback}'.format(
+                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=CBECE&returnURL={callback}'.format(
                     form=assessment_pre.assessment_form,
                     status='pre_test',
                     enrollment_id=instance.id,
@@ -989,7 +989,7 @@ class CBECEForm(CommonForm):
                         reverse('clm:cbece_edit', kwargs={'pk': instance.id})
                     )
                 )
-                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[model]=CBECE&returnURL={callback}'.format(
+                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=CBECE&returnURL={callback}'.format(
                     form=assessment_post.assessment_form,
                     status='post_test',
                     enrollment_id=instance.id,
