@@ -326,6 +326,7 @@ class BLNForm(CommonForm):
 
         pre_test = ''
         post_test = ''
+        post_test_permission = 'disabled'
         display_assessment = ' d-none'
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
@@ -335,6 +336,9 @@ class BLNForm(CommonForm):
             display_assessment = ''
             display_registry = ' d-none'
             form_action = reverse('clm:bln_edit', kwargs={'pk': instance.id})
+            if instance.pre_test:
+                post_test_permission = ''
+
             try:
                 assessment_pre = Assessment.objects.get(slug='bln_pre_test')
                 assessment_post = Assessment.objects.get(slug='bln_post_test')
@@ -502,7 +506,7 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">'+_('Pre-assessment')+'</a></div>'),
-                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+post_test+'">'+_('Post-assessment')+'</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn btn-success '+post_test_permission+'" href="'+post_test+'">'+_('Post-assessment')+'</a></div>'),
                     css_class='row',
                 ),
                 Div(
@@ -618,6 +622,7 @@ class RSForm(CommonForm):
         post_test = ''
         display_assessment = ' d-none'
         display_registry = ''
+        post_test_permission = 'disabled'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:rs_add')
 
@@ -625,6 +630,9 @@ class RSForm(CommonForm):
             display_assessment = ''
             display_registry = ' d-none'
             form_action = reverse('clm:rs_edit', kwargs={'pk': instance.id})
+            if instance.pre_test:
+                post_test_permission = ''
+
             try:
                 assessment_pre = Assessment.objects.get(slug='rs_pre_test')
                 assessment_post = Assessment.objects.get(slug='rs_post_test')
@@ -863,7 +871,7 @@ class RSForm(CommonForm):
                 ),
                 Div(
                     HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">'+_('Pre-assessment')+'</a></div>'),
-                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+post_test+'">'+_('Post-assessment')+'</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn btn-success '+post_test_permission+'" href="'+post_test+'">'+_('Post-assessment')+'</a></div>'),
                     css_class='row',
                 ),
                 Div(
@@ -959,6 +967,7 @@ class CBECEForm(CommonForm):
         post_test = ''
         display_assessment = ' d-none'
         display_registry = ''
+        post_test_permission = 'disabled'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:cbece_add')
 
@@ -966,6 +975,9 @@ class CBECEForm(CommonForm):
             display_assessment = ''
             display_registry = ' d-none'
             form_action = reverse('clm:cbece_edit', kwargs={'pk': instance.id})
+            if instance.pre_test:
+                post_test_permission = ''
+
             try:
                 assessment_pre = Assessment.objects.get(slug='cbece_pre_test')
                 assessment_post = Assessment.objects.get(slug='cbece_post_test')
@@ -1141,7 +1153,7 @@ class CBECEForm(CommonForm):
                 ),
                 Div(
                     HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">'+_('Pre-assessment')+'</a></div>'),
-                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+post_test+'">'+_('Post-assessment')+'</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn btn-success '+post_test_permission+'" href="'+post_test+'">'+_('Post-assessment')+'</a></div>'),
                     css_class='row',
                 ),
                 Div(
