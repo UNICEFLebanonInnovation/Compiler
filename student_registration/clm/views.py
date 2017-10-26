@@ -117,13 +117,13 @@ class AssessmentSubmission(SingleObjectMixin, View):
 
         if 'status' not in request.body and \
                 'enrollment_id' not in request.body and \
-                'model' not in request.body:
+                'enrollment_model' not in request.body:
             return HttpResponseBadRequest()
 
         payload = json.loads(request.body.decode('utf-8'))
         status = payload['status']
         enrollment_id = payload['enrollment_id']
-        model = payload['model']
+        model = payload['enrollment_model']
 
         enrollment = model.objects.get(id=int(enrollment_id))
 
