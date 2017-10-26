@@ -114,7 +114,8 @@ class CommonForm(forms.ModelForm):
         label=_('The language supported in the program'),
         choices=CLM.LANGUAGES,
         widget=forms.CheckboxSelectMultiple,
-        required=True
+        required=True,
+        initial='english_arabic'
     )
 
     student_first_name = forms.CharField(
@@ -331,25 +332,28 @@ class BLNForm(CommonForm):
         form_action = reverse('clm:bln_add')
 
         if instance:
-            form_action = reverse('clm:bln_edit', kwargs={'pk': instance.id})
-            assessment_pre = Assessment.objects.get(slug='bln_pre_test')
-            assessment_post = Assessment.objects.get(slug='bln_post_test')
             display_assessment = ''
             display_registry = ' d-none'
-            pre_test = '{form}?d[status]={status}&returnURL={callback}'.format(
-                form=assessment_pre.assessment_form,
-                status='pre_test',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:bln_assessment', kwargs={'pk': instance.id})
+            form_action = reverse('clm:bln_edit', kwargs={'pk': instance.id})
+            try:
+                assessment_pre = Assessment.objects.get(slug='bln_pre_test')
+                assessment_post = Assessment.objects.get(slug='bln_post_test')
+                pre_test = '{form}?d[status]={status}&returnURL={callback}'.format(
+                    form=assessment_pre.assessment_form,
+                    status='pre_test',
+                    callback=self.request.build_absolute_uri(
+                        reverse('clm:assessment', kwargs={'pk': instance.id})
+                    )
                 )
-            )
-            post_test = '{form}?d[status]={status}&returnURL={callback}'.format(
-                form=assessment_post.assessment_form,
-                status='post_test',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:bln_assessment', kwargs={'pk': instance.id})
+                post_test = '{form}?d[status]={status}&returnURL={callback}'.format(
+                    form=assessment_post.assessment_form,
+                    status='post_test',
+                    callback=self.request.build_absolute_uri(
+                        reverse('clm:assessment', kwargs={'pk': instance.id})
+                    )
                 )
-            )
+            except Assessment.DoesNotExist:
+                pass
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -600,7 +604,8 @@ class RSForm(CommonForm):
         label=_('Reason for referral of the child'),
         choices=RS.REFER_SEASON,
         widget=forms.CheckboxSelectMultiple,
-        required=True
+        required=True,
+        initial='academic'
     )
 
     def __init__(self, *args, **kwargs):
@@ -615,25 +620,28 @@ class RSForm(CommonForm):
         form_action = reverse('clm:rs_add')
 
         if instance:
-            form_action = reverse('clm:rs_edit', kwargs={'pk': instance.id})
-            assessment_pre = Assessment.objects.get(slug='rs_pre_test')
-            assessment_post = Assessment.objects.get(slug='rs_post_test')
             display_assessment = ''
             display_registry = ' d-none'
-            pre_test = '{form}?d[status]={status}&returnURL={callback}'.format(
-                form=assessment_pre.assessment_form,
-                status='pre_test',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:rs_assessment', kwargs={'pk': instance.id})
+            form_action = reverse('clm:rs_edit', kwargs={'pk': instance.id})
+            try:
+                assessment_pre = Assessment.objects.get(slug='rs_pre_test')
+                assessment_post = Assessment.objects.get(slug='rs_post_test')
+                pre_test = '{form}?d[status]={status}&returnURL={callback}'.format(
+                    form=assessment_pre.assessment_form,
+                    status='pre_test',
+                    callback=self.request.build_absolute_uri(
+                        reverse('clm:assessment', kwargs={'pk': instance.id})
+                    )
                 )
-            )
-            post_test = '{form}?d[status]={status}&returnURL={callback}'.format(
-                form=assessment_post.assessment_form,
-                status='post_test',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:rs_assessment', kwargs={'pk': instance.id})
+                post_test = '{form}?d[status]={status}&returnURL={callback}'.format(
+                    form=assessment_post.assessment_form,
+                    status='post_test',
+                    callback=self.request.build_absolute_uri(
+                        reverse('clm:assessment', kwargs={'pk': instance.id})
+                    )
                 )
-            )
+            except Assessment.DoesNotExist:
+                pass
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -951,25 +959,28 @@ class CBECEForm(CommonForm):
         form_action = reverse('clm:cbece_add')
 
         if instance:
-            form_action = reverse('clm:cbece_edit', kwargs={'pk': instance.id})
-            assessment_pre = Assessment.objects.get(slug='cbece_pre_test')
-            assessment_post = Assessment.objects.get(slug='cbece_post_test')
             display_assessment = ''
             display_registry = ' d-none'
-            pre_test = '{form}?d[status]={status}&returnURL={callback}'.format(
-                form=assessment_pre.assessment_form,
-                status='pre_test',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:bln_assessment', kwargs={'pk': instance.id})
+            form_action = reverse('clm:cbece_edit', kwargs={'pk': instance.id})
+            try:
+                assessment_pre = Assessment.objects.get(slug='cbece_pre_test')
+                assessment_post = Assessment.objects.get(slug='cbece_post_test')
+                pre_test = '{form}?d[status]={status}&returnURL={callback}'.format(
+                    form=assessment_pre.assessment_form,
+                    status='pre_test',
+                    callback=self.request.build_absolute_uri(
+                        reverse('clm:assessment', kwargs={'pk': instance.id})
+                    )
                 )
-            )
-            post_test = '{form}?d[status]={status}&returnURL={callback}'.format(
-                form=assessment_post.assessment_form,
-                status='post_test',
-                callback=self.request.build_absolute_uri(
-                    reverse('clm:bln_assessment', kwargs={'pk': instance.id})
+                post_test = '{form}?d[status]={status}&returnURL={callback}'.format(
+                    form=assessment_post.assessment_form,
+                    status='post_test',
+                    callback=self.request.build_absolute_uri(
+                        reverse('clm:assessment', kwargs={'pk': instance.id})
+                    )
                 )
-            )
+            except Assessment.DoesNotExist:
+                pass
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
