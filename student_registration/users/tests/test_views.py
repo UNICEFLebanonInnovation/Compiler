@@ -38,6 +38,7 @@ class TestUserRedirectView(BaseUserTestCase):
 class TestUserUpdateView(BaseUserTestCase):
 
     def setUp(self):
+        pass
         # call BaseUserTestCase.setUp()
         super(TestUserUpdateView, self).setUp()
         # Instantiate the view directly. Never do this outside a test!
