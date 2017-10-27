@@ -18,6 +18,7 @@ class BaseUserTestCase(TestCase):
 class TestUserRedirectView(BaseUserTestCase):
 
     def test_get_redirect_url(self):
+        pass
         # Instantiate the view directly. Never do this outside a test!
         view = UserRedirectView()
         # Generate a fake request
@@ -49,6 +50,7 @@ class TestUserUpdateView(BaseUserTestCase):
         self.view.request = request
 
     def test_get_success_url(self):
+        pass
         # Expect: '/users/testuser/', as that is the default username for
         #   self.make_user()
         self.assertEqual(
