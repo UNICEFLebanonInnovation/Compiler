@@ -127,8 +127,9 @@ class AssessmentSubmission(SingleObjectMixin, View):
 
         enrollment = model.objects.get(id=int(enrollment_id))
 
-        # enrollment.status = payload['status']
+        enrollment.status = status
         setattr(enrollment, status, payload)
+        enrollment.save()
 
         return HttpResponse()
 
