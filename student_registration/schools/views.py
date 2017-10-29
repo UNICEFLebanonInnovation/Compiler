@@ -84,12 +84,11 @@ class PublicDocumentView(LoginRequiredMixin,
 
     model = PublicDocument
     queryset = PublicDocument.objects.all()
-    template_name = 'schools/document.html'
+    template_name = 'schools/documents.html'
     group_required = [u"SCHOOL", u"ALP_SCHOOL"]
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
-        documents = self.queryset
         return {
-            'documents': documents
+            'documents': self.queryset
         }
