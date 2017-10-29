@@ -21,11 +21,11 @@ urlpatterns = [
     ),
 
     # URL pattern for the UserDetailView
-    # url(
-    #     regex=r'^(?P<username>[\w.@+-]+)/$',
-    #     view=views.UserDetailView.as_view(),
-    #     name='detail'
-    # ),
+    url(
+        regex=r'^(?P<username>[\w.@+-]+)/$',
+        view=views.UserDetailView.as_view(),
+        name='detail'
+    ),
 
     # URL pattern for the UserUpdateView
     # url(
