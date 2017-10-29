@@ -52,6 +52,11 @@
                   <a class="nav-link" href="{% url 'attendances:attendance' %}">{% trans "Attendance" %}</a>
               </li>
         {% endif %}
+        {% if request.user|has_group:"SCHOOL" or request.user|has_group:"ALP_SCHOOL" %}
+              <li class="nav-item">
+                  <a class="nav-link" href="/helpdesk/dashboard/">{% trans "Helpdesk" %}</a>
+              </li>
+        {% endif %}
     </ul>
   {% endif %}
 
@@ -60,6 +65,9 @@
         {% if request.user|has_group:"SCHOOL" or request.user|has_group:"ALP_SCHOOL" %}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'schools:profile' %}">{% trans "Profile" %}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'schools:documents' %}">{% trans "Public documents" %}</a>
         </li>
         {% endif %}
         <li class="nav-item">
