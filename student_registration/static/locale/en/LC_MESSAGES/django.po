@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-28 17:16+0300\n"
+"POT-Creation-Date: 2017-10-30 00:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -145,7 +145,7 @@ msgid "Exam language"
 msgstr ""
 
 #: student_registration/alp/forms.py:57 student_registration/alp/models.py:59
-#: student_registration/templates/header.html:79
+#: student_registration/templates/header.html:82
 msgid "English"
 msgstr ""
 
@@ -562,7 +562,7 @@ msgstr ""
 #: student_registration/enrollments/models.py:244
 #: student_registration/enrollments/models.py:385
 #: student_registration/enrollments/models.py:562
-#: student_registration/templates/header.html:84
+#: student_registration/templates/header.html:87
 msgid "Arabic"
 msgstr ""
 
@@ -673,14 +673,14 @@ msgstr ""
 #: student_registration/alp/views.py:473
 #: student_registration/enrollments/views.py:373
 #: student_registration/enrollments/views.py:417
-#: student_registration/schools/models.py:19
+#: student_registration/schools/models.py:21
 msgid "CERD"
 msgstr ""
 
 #: student_registration/alp/views.py:474
 #: student_registration/enrollments/views.py:374
 #: student_registration/enrollments/views.py:418
-#: student_registration/schools/models.py:14
+#: student_registration/schools/models.py:16
 msgid "School name"
 msgstr ""
 
@@ -1809,63 +1809,63 @@ msgstr ""
 msgid "Current academic year"
 msgstr ""
 
-#: student_registration/schools/models.py:24
+#: student_registration/schools/models.py:26
 msgid "School director name"
 msgstr ""
 
-#: student_registration/schools/models.py:29
+#: student_registration/schools/models.py:31
 msgid "School land phone number"
 msgstr ""
 
-#: student_registration/schools/models.py:34
+#: student_registration/schools/models.py:36
 msgid "School director cell phone"
 msgstr ""
 
-#: student_registration/schools/models.py:39
+#: student_registration/schools/models.py:41
 msgid "School IT name"
 msgstr ""
 
-#: student_registration/schools/models.py:44
+#: student_registration/schools/models.py:46
 msgid "School IT phone number"
 msgstr ""
 
-#: student_registration/schools/models.py:49
+#: student_registration/schools/models.py:51
 msgid "Field coordinator name"
 msgstr ""
 
-#: student_registration/schools/models.py:54
+#: student_registration/schools/models.py:56
 msgid "School is 2nd shift?"
 msgstr ""
 
-#: student_registration/schools/models.py:58
+#: student_registration/schools/models.py:60
 msgid "Number of students in 2nd shift"
 msgstr ""
 
-#: student_registration/schools/models.py:63
+#: student_registration/schools/models.py:65
 msgid "School is ALP?"
 msgstr ""
 
-#: student_registration/schools/models.py:67
+#: student_registration/schools/models.py:69
 msgid "Number of students in ALP"
 msgstr ""
 
-#: student_registration/schools/models.py:71
+#: student_registration/schools/models.py:73
 msgid "Attendance day range"
 msgstr ""
 
-#: student_registration/schools/models.py:76
+#: student_registration/schools/models.py:78
 msgid "School year start date"
 msgstr ""
 
-#: student_registration/schools/models.py:81
+#: student_registration/schools/models.py:83
 msgid "School year end date"
 msgstr ""
 
-#: student_registration/schools/models.py:86
+#: student_registration/schools/models.py:88
 msgid "Exam end date"
 msgstr ""
 
-#: student_registration/schools/models.py:91
+#: student_registration/schools/models.py:93
 msgid "School location"
 msgstr ""
 
@@ -2447,16 +2447,25 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
-#: student_registration/templates/header.html:71
-msgid "Change password"
+#: student_registration/templates/header.html:70
+#: student_registration/templates/schools/documents.html:15
+msgid "Public documents"
 msgstr ""
 
 #: student_registration/templates/header.html:74
+msgid "Change password"
+msgstr ""
+
+#: student_registration/templates/header.html:77
 msgid "Logout"
 msgstr ""
 
-#: student_registration/templates/header.html:91
+#: student_registration/templates/header.html:94
 msgid "Log In"
+msgstr ""
+
+#: student_registration/templates/schools/documents.html:26
+msgid "Download file"
 msgstr ""
 
 #: student_registration/users/admin.py:52
