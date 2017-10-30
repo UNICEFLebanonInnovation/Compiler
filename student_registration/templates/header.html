@@ -54,7 +54,7 @@
         {% endif %}
         {% if request.user|has_group:"SCHOOL" or request.user|has_group:"ALP_SCHOOL" %}
               <li class="nav-item">
-                  <a class="nav-link" href="/helpdesk/dashboard/">{% trans "Helpdesk" %}</a>
+                  <a class="nav-link" href="/helpdesk/tickets/submit/">{% trans "Helpdesk" %}</a>
               </li>
         {% endif %}
     </ul>
