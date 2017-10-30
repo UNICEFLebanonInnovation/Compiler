@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView, FormView
+from django.views.generic import DetailView, ListView, RedirectView, UpdateView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin
@@ -11,6 +11,7 @@ from .models import (
     School,
     ClassRoom,
     Section,
+    PublicDocument
 )
 
 from .serializers import (
@@ -75,3 +76,19 @@ class ProfileView(LoginRequiredMixin,
         instance = School.objects.get(id=self.request.user.school_id)
         form.save(request=self.request, instance=instance)
         return super(ProfileView, self).form_valid(form)
+
+
+class PublicDocumentView(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         TemplateView):
+
+    model = PublicDocument
+    queryset = PublicDocument.objects.all()
+    template_name = 'schools/documents.html'
+    group_required = [u"SCHOOL", u"ALP_SCHOOL"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        return {
+            'documents': self.queryset
+        }
