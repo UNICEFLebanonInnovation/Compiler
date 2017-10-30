@@ -319,7 +319,7 @@ function reorganizeForm()
 
 
     if(outreached == '0'){
-        $('input[name=have_barcode]').removeAttr('checked');
+        $('input[name=have_barcode]').val('0');
         $('#have_barcode_option').addClass('d-none');
         $('#have_barcode_option').prev().addClass('d-none');
     }else{
