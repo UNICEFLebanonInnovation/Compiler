@@ -11,5 +11,10 @@ urlpatterns = [
         view=views.ProfileView.as_view(),
         name='profile'
     ),
+    url(
+        regex=r'^documents/$',
+        view=views.PublicDocumentView.as_view(),
+        name='documents'
+    ),
 
 ]

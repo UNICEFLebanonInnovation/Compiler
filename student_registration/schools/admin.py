@@ -18,7 +18,8 @@ from .models import (
     EducationYear,
     ALPAssignmentMatrix,
     EducationalLevel,
-    Holiday
+    Holiday,
+    PublicDocument
 )
 from student_registration.locations.models import Location
 from student_registration.attendances.tasks import set_app_attendances
@@ -282,6 +283,7 @@ admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
 admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
 admin.site.register(EducationYear)
 admin.site.register(Holiday)
+admin.site.register(PublicDocument)
 admin.site.register(EducationalLevel)
 admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
 
