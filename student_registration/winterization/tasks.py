@@ -1,4 +1,13 @@
 
+import datetime
+import json
+import os
+from datetime import datetime
+
+import requests
+from django.conf import settings
+from django.db import connection
+from requests.auth import HTTPBasicAuth
 from student_registration.taskapp.celery import app
 
 
@@ -9,3 +18,58 @@ def cleanup_old_data():
     registrations = Beneficiary.objects.all()
     print(registrations.count())
     registrations.delete()
+
+
+def set_docs(docs):
+
+    payload_json = json.dumps(
+        {
+            'docs': docs,
+            'all_or_nothing': True
+        }
+    )
+    path = os.path.join(settings.COUCHBASE_URL, '_bulk_docs')
+    response = requests.post(
+        path,
+        headers={'content-type': 'application/json'},
+        auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS),
+        data=payload_json,
+    )
+    return response
+
+
+@app.task
+def set_app_user(username, password):
+
+    user_docs = []
+    user_docs.append(
+        {
+            "_id": username,
+            "type": "user",
+            "username": username,
+            "password": password,
+            "organisation": username,
+        }
+    )
+
+    response = set_docs(user_docs)
+    return response.text
+
+
+@app.task
+def import_docs(**kwargs):
+    """
+    Imports docs from couch base
+    """
+    from student_registration.winterization.models import Beneficiary
+
+    data = requests.get(
+        os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
+        auth=HTTPBasicAuth(settings.COUCHBASE_USER, settings.COUCHBASE_PASS)
+    ).json()
+
+    for row in data['rows']:
+        if 'beneficiary' in row['doc']:
+            beneficiaries = row['doc']['beneficiary']
+            for key in beneficiaries.keys():
+                beneficiary = beneficiaries[key]
