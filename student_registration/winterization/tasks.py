@@ -61,7 +61,8 @@ def import_docs(**kwargs):
     """
     Imports docs from couch base
     """
-    from student_registration.winterization.models import Beneficiary
+    from .models import Beneficiary
+    from .serializers import BeneficiarySerializer
 
     data = requests.get(
         os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
@@ -69,7 +70,14 @@ def import_docs(**kwargs):
     ).json()
 
     for row in data['rows']:
-        if 'beneficiary' in row['doc']:
-            beneficiaries = row['doc']['beneficiary']
-            for key in beneficiaries.keys():
-                beneficiary = beneficiaries[key]
+        if 'doc' in row:
+            doc = row['doc']
+            doc['site_type'] = doc['site-type'] if 'site-type' in doc else ''
+            # todo assistance_type fix the return type
+            serializer = BeneficiarySerializer(data=doc)
+            if serializer.is_valid():
+                instance = serializer.create(validated_data=serializer.validated_data)
+                instance.save()
+            else:
+                print(serializer.errors)
+                print(json.dumps(doc))
