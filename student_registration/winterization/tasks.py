@@ -61,8 +61,8 @@ def import_docs(**kwargs):
     """
     Imports docs from couch base
     """
-    from .models import Beneficiary
-    from .serializers import BeneficiarySerializer
+    from .models import Assessment
+    from .serializers import AssessmentSerializer
 
     data = requests.get(
         os.path.join(settings.COUCHBASE_URL, '_all_docs?include_docs=true'),
@@ -74,7 +74,7 @@ def import_docs(**kwargs):
             doc = row['doc']
             doc['site_type'] = doc['site-type'] if 'site-type' in doc else ''
             # todo assistance_type fix the return type
-            serializer = BeneficiarySerializer(data=doc)
+            serializer = AssessmentSerializer(data=doc)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.save()
