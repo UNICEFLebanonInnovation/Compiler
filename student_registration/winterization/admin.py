@@ -12,66 +12,21 @@ class BeneficiaryResource(resources.ModelResource):
     class Meta:
         model = Beneficiary
         fields = (
-            'case_number',
-            'registration_status',
-            'location_type',
-            'governorate',
-            'district',
-            'cadastral',
-            'phone_number',
-            'total_children',
-            'card_distributed',
-            'card_loaded'
+
         )
-        export_order = (
-            'case_number',
-            'registration_status',
-            'location_type',
-            'governorate',
-            'district',
-            'cadastral',
-            'phone_number',
-            'total_children',
-            'card_distributed',
-            'card_loaded'
-        )
+        export_order = fields
 
 
 class BeneficiaryAdmin(ImportExportModelAdmin):
     resource_class = BeneficiaryResource
     list_display = (
-        'case_number',
-        'registration_status',
-        'location_type',
-        'governorate',
-        'district',
-        'cadastral',
-        'phone_number',
-        'total_children',
-        'amount',
-        'card_distributed',
-        'card_loaded',
+        '_id',
     )
     list_filter = (
-        'registration_status',
-        'location_type',
-        'governorate',
-        'district',
-        'cadastral',
-        'card_distributed',
-        'card_loaded'
+        'assistance_type',
     )
     search_fields = (
-        'case_number',
-        'registration_status',
-        'location_type',
-        'governorate',
-        'district',
-        'cadastral',
-        'phone_number',
-        'total_children',
-        'card_distributed',
-        'card_loaded'
+        'id_type',
     )
 
     def get_queryset(self, request):

@@ -7,4 +7,4 @@ class BeneficiarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Beneficiary
-        fields = ()
+        fields = '__all__'
