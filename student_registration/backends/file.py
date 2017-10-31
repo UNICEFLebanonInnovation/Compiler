@@ -33,7 +33,14 @@ def store_file(data, file_name):
     )
 
     file_link = blob_service.make_blob_url(settings.AZURE_CONTAINER, file_name)
-    send_email(file_link, file_name)
+    # send_email(file_link, file_name)
+    create_record(file_link, file_name)
+
+
+def create_record(url, file_name):
+    from .models import Exporter
+    instance = Exporter.objects.create(name=file_name, file_url=url)
+    instance.save()
 
 
 def send_email(url, file_name):
