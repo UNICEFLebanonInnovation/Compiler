@@ -16,7 +16,17 @@ $(document).ready(function(){
 
     reorganizeForm();
 
-    $(document).on('click', 'input[name=new_registry], input[name=student_outreached], input[name=have_barcode], input[name=have_labour]', function(){
+    $(document).on('click', 'input[name=have_labour]', function(){
+        reorganizeForm();
+    });
+
+    $(document).on('change', 'select#id_new_registry', function(){
+        reorganizeForm();
+    });
+    $(document).on('change', 'select#id_student_outreached', function(){
+        reorganizeForm();
+    });
+    $(document).on('change', 'select#id_have_barcode', function(){
         reorganizeForm();
     });
 
@@ -108,9 +118,9 @@ $(document).ready(function(){
                 }
                 var params = {
                     enrollment_id: registry_id,
-                    new_registry: $('input[name=new_registry]:checked').val(),
-                    student_outreached: $('input[name=student_outreached]:checked').val(),
-                    have_barcode: $('input[name=have_barcode]:checked').val()
+                    new_registry: $('select#id_new_registry').val(),
+                    student_outreached: $('select#id_student_outreached').val(),
+                    have_barcode: $('select#id_have_barcode').val()
                 };
                 var str = '?'+jQuery.param( params );
 
@@ -167,9 +177,9 @@ $(document).ready(function(){
 
                 var params = {
                     child_id: ui.item.child_id,
-                    new_registry: $('input[name=new_registry]:checked').val(),
-                    student_outreached: $('input[name=student_outreached]:checked').val(),
-                    have_barcode: $('input[name=have_barcode]:checked').val()
+                    new_registry: $('select#id_new_registry').val(),
+                    student_outreached: $('select#id_student_outreached').val(),
+                    have_barcode: $('select#id_have_barcode').val()
                 };
                 var str = '?'+jQuery.param( params );
 
@@ -283,10 +293,10 @@ function urlParam(name){
 
 function reorganizeForm()
 {
-    var new_registry = $('input[name=new_registry]:checked').val();
-    var outreached = $('input[name=student_outreached]:checked').val();
-    var have_barcode = $('input[name=have_barcode]:checked').val();
-    var family_status = $('#id_student_family_status').val();
+    var new_registry = $('select#id_new_registry').val();
+    var outreached = $('select#id_student_outreached').val();
+    var have_barcode = $('select#id_have_barcode').val();
+    var family_status = $('select#id_student_family_status').val();
     var have_labour = $('input[name=have_labour]:checked').val();
 
     if(urlParam('child_id') || urlParam('enrollment_id') || $('#registry_block').hasClass('d-none')) {
@@ -295,7 +305,6 @@ function reorganizeForm()
         $('#search_options').addClass('d-none');
         return true;
     }
-    console.log(family_status);
 
     if(family_status == 'married' || family_status == 'divorced'){
         $('div#student_have_children').removeClass('d-none');
@@ -318,15 +327,17 @@ function reorganizeForm()
     }
 
 
-    if(outreached == '0'){
-        $('input[name=have_barcode]').val('0');
+    if(outreached == 'no'){
+        // $('#id_have_barcode').val('0');
+        // $("#id_have_barcode_2").attr('checked', 'checked');
+
         $('#have_barcode_option').addClass('d-none');
         $('#have_barcode_option').prev().addClass('d-none');
     }else{
         $('#have_barcode_option').removeClass('d-none');
         $('#have_barcode_option').prev().removeClass('d-none');
     }
-    if(have_barcode == '0'){
+    if(have_barcode == 'no'){
         $('#block_id_outreach_barcode').addClass('d-none');
         $('#block_id_outreach_barcode').prev().addClass('d-none');
     }else{
@@ -334,7 +345,7 @@ function reorganizeForm()
         $('#block_id_outreach_barcode').prev().removeClass('d-none');
     }
 
-    if(new_registry == '1' && outreached == '1' && have_barcode == '1'){
+    if(new_registry == 'yes' && outreached == 'yes' && have_barcode == 'yes'){
         $('#block_id_outreach_barcode').addClass('d-none');
         $('#block_id_outreach_barcode').prev().addClass('d-none');
 
@@ -344,14 +355,14 @@ function reorganizeForm()
         return true;
     }
 
-    if(new_registry == '1' && outreached == '1' && have_barcode == '0'){
+    if(new_registry == 'yes' && outreached == 'yes' && have_barcode == 'no'){
         $('#register_by_barcode').addClass('d-none');
         $('#search_options').addClass('d-none');
         $('.child_data').removeClass('d-none');
         return true;
     }
 
-    if(new_registry == '1' && outreached == '0'){
+    if(new_registry == 'yes' && outreached == 'no'){
 
         $('#register_by_barcode').addClass('d-none');
         $('#search_options').addClass('d-none');
@@ -360,7 +371,7 @@ function reorganizeForm()
         return true;
     }
 
-    if(new_registry == '0' && outreached == '0'){
+    if(new_registry == 'no' && outreached == 'no'){
 
         $('#register_by_barcode').addClass('d-none');
         $('#search_options').removeClass('d-none');
@@ -368,7 +379,14 @@ function reorganizeForm()
         return true;
     }
 
-    if(new_registry == '0' && outreached == '1' && have_barcode == '1'){
+    if(new_registry == 'no' && outreached == 'yes' && have_barcode == 'yes'){
+
+        $('#register_by_barcode').addClass('d-none');
+        $('#search_options').removeClass('d-none');
+        $('.child_data').addClass('d-none');
+        return true;
+    }
+    if(new_registry == 'no' && outreached == 'yes' && have_barcode == 'no'){
 
         $('#register_by_barcode').addClass('d-none');
         $('#search_options').removeClass('d-none');

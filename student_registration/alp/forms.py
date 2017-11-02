@@ -496,26 +496,23 @@ class PreTestForm(forms.ModelForm):
 
 class RegistrationForm(forms.ModelForm):
 
-    new_registry = forms.TypedChoiceField(
+    new_registry = forms.ChoiceField(
         label=_("First time registered?"),
-        choices=YES_NO_CHOICE,
-        coerce=lambda x: bool(int(x)),
-        widget=forms.RadioSelect,
-        required=True, initial=0
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='no'
     )
-    student_outreached = forms.TypedChoiceField(
+    student_outreached = forms.ChoiceField(
         label=_("Student outreached?"),
-        choices=YES_NO_CHOICE,
-        coerce=lambda x: bool(int(x)),
-        widget=forms.RadioSelect,
-        required=True, initial=1
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
     )
-    have_barcode = forms.TypedChoiceField(
+    have_barcode = forms.ChoiceField(
         label=_("Have barcode with him?"),
-        choices=YES_NO_CHOICE,
-        coerce=lambda x: bool(int(x)),
-        widget=forms.RadioSelect,
-        required=False, initial=1
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
     )
     search_barcode = forms.CharField(
         label=_("Search a barcode"),
@@ -682,11 +679,11 @@ class RegistrationForm(forms.ModelForm):
                     'student_id',
                     'enrollment_id',
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div(InlineRadios('new_registry'), css_class='col-md-3'),
+                    Div('new_registry', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div(InlineRadios('student_outreached'), css_class='col-md-3'),
+                    Div('student_outreached', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div(InlineRadios('have_barcode'), css_class='col-md-3', css_id='have_barcode_option'),
+                    Div('have_barcode', css_class='col-md-3', css_id='have_barcode_option'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'+display_registry
@@ -883,6 +880,9 @@ class RegistrationForm(forms.ModelForm):
             'last_education_level',
             'last_education_year',
             'outreach_barcode',
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
         )
         initial_fields = fields
 
