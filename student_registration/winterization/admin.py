@@ -52,6 +52,10 @@ class AssessmentAdmin(ImportExportModelAdmin):
     list_filter = (
         'assistance_type',
         'location_type',
+        'partner_name',
+        'gender',
+        'family_count',
+        'marital_status',
     )
     search_fields = (
         'id_type',
@@ -83,7 +87,7 @@ class AssessmentAdmin(ImportExportModelAdmin):
         return ''
 
     def get_queryset(self, request):
-        if request.user.id == 1:
+        if request.user.id == 1 or request.user.id == 936:
             return super(AssessmentAdmin, self).get_queryset(request)
         return Assessment.objects.none()
 
