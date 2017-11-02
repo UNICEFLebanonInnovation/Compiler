@@ -45,6 +45,8 @@ class UserAdmin(AuthUserAdmin):
         'deny_enroll_edit',
         'deny_enroll_grading',
         'deny_attendance',
+        'allow_helpdesk',
+        'deny_helpdesk',
     )
 
     fieldsets = (
@@ -111,6 +113,18 @@ class UserAdmin(AuthUserAdmin):
         group = Group.objects.get(name='ATTENDANCE')
         for user in queryset:
             user.groups.remove(group)
+
+    def allow_helpdesk(self, request, queryset):
+        group = Group.objects.get(name='HELPDESK')
+        for user in queryset:
+            user.groups.add(group)
+        queryset.update(is_admin=True)
+
+    def deny_helpdesk(self, request, queryset):
+        group = Group.objects.get(name='HELPDESK')
+        for user in queryset:
+            user.groups.remove(group)
+        queryset.update(is_admin=False)
 
 admin.site.register(User, UserAdmin)
 
