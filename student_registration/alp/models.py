@@ -395,19 +395,22 @@ class Outreach(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices((1, _("Yes")), (0, _("No")))
+        choices=Choices(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('First time registered?')
     )
     student_outreached = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices((1, _("Yes")), (0, _("No")))
+        choices=Choices(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('Student outreached?')
     )
     have_barcode = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        choices=Choices((1, _("Yes")), (0, _("No")))
+        choices=Choices(('yes', _("Yes")), ('no', _("No"))),
+        verbose_name=_('Have barcode with him?')
     )
 
     objects = OutreachManager()
