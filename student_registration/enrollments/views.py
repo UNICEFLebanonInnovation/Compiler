@@ -22,6 +22,8 @@ from django_tables2.export.views import ExportMixin
 from .filters import EnrollmentFilter
 from .tables import BootstrapTable, EnrollmentTable
 
+from student_registration.alp.models import Outreach
+from student_registration.alp.serializers import OutreachSerializer
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.schools.models import ClassRoom
@@ -56,8 +58,12 @@ class AddView(LoginRequiredMixin,
             'have_barcode': self.request.GET.get('have_barcode', '1')
         }
         if self.request.GET.get('enrollment_id'):
-            instance = Enrollment.objects.get(id=self.request.GET.get('enrollment_id'))
-            data = EnrollmentSerializer(instance).data
+            if self.request.GET.get('school_type', None) == 'alp':
+                instance = Outreach.objects.get(id=self.request.GET.get('enrollment_id'))
+                data = OutreachSerializer(instance).data
+            else:
+                instance = Enrollment.objects.get(id=self.request.GET.get('enrollment_id'))
+                data = EnrollmentSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
             data['student_mother_nationality'] = data['student_mother_nationality_id']
             data['student_id_type'] = data['student_id_type_id']
