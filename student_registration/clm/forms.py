@@ -32,11 +32,11 @@ from .serializers import BLNSerializer, RSSerializer, CBECESerializer
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
-YEARS = list(((str(x), x) for x in range(1990, 2017)))
-YEARS.append(('', '---------'))
+YEARS = list(((str(x), x) for x in range(1990, 2050)))
+YEARS.insert(0, ('', '---------'))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
-DAYS.append(('', '---------'))
+DAYS.insert(0, ('', '---------'))
 
 MONTHS = (
             ('', '----------'),
@@ -990,17 +990,19 @@ class CBECEForm(CommonForm):
             try:
                 assessment_pre = Assessment.objects.get(slug='cbece_pre_test')
                 assessment_post = Assessment.objects.get(slug='cbece_post_test')
-                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=CBECE&returnURL={callback}'.format(
+                pre_test = '{form}?d[status]={status}&d[programmecycle]={programmecycle}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=CBECE&returnURL={callback}'.format(
                     form=assessment_pre.assessment_form,
                     status='pre_test',
+                    programmecycle=instance.cycle_id,
                     enrollment_id=instance.id,
                     callback=self.request.build_absolute_uri(
                         reverse('clm:cbece_edit', kwargs={'pk': instance.id})
                     )
                 )
-                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=CBECE&returnURL={callback}'.format(
+                post_test = '{form}?d[status]={status}&d[programmecycle]={programmecycle}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=CBECE&returnURL={callback}'.format(
                     form=assessment_post.assessment_form,
                     status='post_test',
+                    programmecycle=instance.cycle_id,
                     enrollment_id=instance.id,
                     callback=self.request.build_absolute_uri(
                         reverse('clm:cbece_edit', kwargs={'pk': instance.id})
