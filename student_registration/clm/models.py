@@ -236,8 +236,19 @@ class CLM(TimeStampedModel):
 
     status = models.CharField(max_length=50, choices=STATUS, default=STATUS.enrolled)
     pre_test = JSONField(blank=True, null=True)
+    pre_test_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Pre-test score')
+    )
     post_test = JSONField(blank=True, null=True)
-
+    post_test_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Pre-test score')
+    )
     scores = JSONField(blank=True, null=True, default=dict)
 
     participation = models.CharField(
@@ -333,6 +344,13 @@ class CLM(TimeStampedModel):
             return self.student.__unicode__()
         return str(self.id)
 
+    def score(self, keys, stage):
+        assessment = getattr(self, stage, 'pre_test')
+        score = stage+'_score'
+        marks = {key: int(assessment.get(key, 0)) for key in keys}
+        total = sum(marks.values())
+        setattr(self, score, total)
+
     class Meta:
         abstract = True
 
@@ -357,24 +375,14 @@ class BLN(CLM):
         verbose_name=_('Referral')
     )
 
-    def score(self, stage):
+    def calculate_score(self, stage):
         keys = [
             'BLN_ASSESSMENT/arabic',
             'BLN_ASSESSMENT/math',
             'BLN_ASSESSMENT/english',
             'BLN_ASSESSMENT/french'
         ]
-        assessment = getattr(self, stage, 'pre_test')
-        marks = {key: int(assessment.get(key, 0)) for key in keys}
-        total = sum(marks.values())
-        return total
-
-    @property
-    def pre_test_score(self):
-        return self.score('pre_test')
-
-    def post_test_score(self):
-        return self.score('post_test')
+        super(BLN, self).score(keys, stage)
 
     class Meta:
         ordering = ['id']
@@ -535,6 +543,15 @@ class RS(CLM):
             '80'
         )
 
+    def calculate_score(self, stage):
+        keys = [
+            'BLN_ASSESSMENT/arabic',
+            'BLN_ASSESSMENT/math',
+            'BLN_ASSESSMENT/english',
+            'BLN_ASSESSMENT/french'
+        ]
+        super(RS, self).score(keys, stage)
+
 
 class CBECE(CLM):
 
@@ -612,6 +629,15 @@ class CBECE(CLM):
         choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Science')
     )
+
+    def calculate_score(self, stage):
+        keys = [
+            'BLN_ASSESSMENT/arabic',
+            'BLN_ASSESSMENT/math',
+            'BLN_ASSESSMENT/english',
+            'BLN_ASSESSMENT/french'
+        ]
+        super(CBECE, self).score(keys, stage)
 
     class Meta:
         ordering = ['id']
