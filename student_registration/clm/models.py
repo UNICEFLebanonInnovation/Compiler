@@ -357,6 +357,25 @@ class BLN(CLM):
         verbose_name=_('Referral')
     )
 
+    def score(self, stage):
+        keys = [
+            'BLN_ASSESSMENT/arabic',
+            'BLN_ASSESSMENT/math',
+            'BLN_ASSESSMENT/english',
+            'BLN_ASSESSMENT/french'
+        ]
+        assessment = getattr(self, stage, 'pre_test')
+        marks = {key: int(assessment.get(key, 0)) for key in keys}
+        total = sum(marks.values())
+        return total
+
+    @property
+    def pre_test_score(self):
+        return self.score('pre_test')
+
+    def post_test_score(self):
+        return self.score('post_test')
+
     class Meta:
         ordering = ['id']
         verbose_name = "BLN"
