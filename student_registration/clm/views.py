@@ -134,6 +134,7 @@ class AssessmentSubmission(SingleObjectMixin, View):
 
         enrollment.status = status
         setattr(enrollment, status, payload)
+        enrollment.calculate_score(status)
         enrollment.save()
 
         return HttpResponse()
