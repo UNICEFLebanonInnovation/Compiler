@@ -102,7 +102,8 @@ $(document).ready(function(){
             select: function (event, ui) {
                 var registry_id = 0;
                 var eligibility = true;
-                if($('#id_school_type').val() == undefined || $('#id_school_type').val() == 'alp'){
+                var school_type = $('#id_school_type').val();
+                if(school_type == undefined || school_type == 'alp'){
                     registry_id = ui.item.registration.id;
                     var refer_to_level = ui.item.registration.refer_to_level;
                     if(!$.inArray(refer_to_level, [1, 10, 11, 12, 13, 14, 15, 16, 17])){
@@ -120,7 +121,8 @@ $(document).ready(function(){
                     enrollment_id: registry_id,
                     new_registry: $('select#id_new_registry').val(),
                     student_outreached: $('select#id_student_outreached').val(),
-                    have_barcode: $('select#id_have_barcode').val()
+                    have_barcode: $('select#id_have_barcode').val(),
+                    school_type: school_type
                 };
                 var str = '?'+jQuery.param( params );
 
