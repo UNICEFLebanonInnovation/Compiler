@@ -63,6 +63,23 @@ FAMILY_STATUS = (
     ('single', _('Single')),
 )
 
+PARTICIPATION = (
+    ('', '----------'),
+    ('less_than_5days', _('Less than 5 absence days')),
+    ('5_10_days', _('5 to 10 absence days')),
+    ('10_15_days', _('10 to 15 absence days')),
+    ('more_than_15days', _('More than 15 absence days'))
+)
+
+LEARNING_RESULT = (
+    ('', '----------'),
+    ('graduated_next_level', _('Graduated to the next level')),
+    ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
+    ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
+    ('referred_to_another_program', _('Referred to another program')),
+    ('dropout', _('Dropout from school'))
+)
+
 
 class CommonForm(forms.ModelForm):
 
@@ -210,7 +227,8 @@ class CommonForm(forms.ModelForm):
     participation = forms.ChoiceField(
         label=_('How was the level of child participation in the program?'),
         widget=forms.Select, required=False,
-        choices=CLM.PARTICIPATION
+        choices=PARTICIPATION,
+        initial=''
     )
     barriers = forms.MultipleChoiceField(
         label=_('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
@@ -221,7 +239,8 @@ class CommonForm(forms.ModelForm):
     learning_result = forms.ChoiceField(
         label=_('Based on the overall score, what is the recommended learning path?'),
         widget=forms.Select, required=False,
-        choices=CLM.LEARNING_RESULT
+        choices=LEARNING_RESULT,
+        initial=''
     )
 
     def __init__(self, *args, **kwargs):
@@ -338,27 +357,16 @@ class BLNForm(CommonForm):
             if instance.pre_test:
                 post_test_permission = ''
 
-            try:
-                assessment_pre = Assessment.objects.get(slug='bln_pre_test')
-                assessment_post = Assessment.objects.get(slug='bln_post_test')
-                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=BLN&returnURL={callback}'.format(
-                    form=assessment_pre.assessment_form,
-                    status='pre_test',
-                    enrollment_id=instance.id,
-                    callback=self.request.build_absolute_uri(
-                        reverse('clm:bln_edit', kwargs={'pk': instance.id})
-                    )
-                )
-                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=BLN&returnURL={callback}'.format(
-                    form=assessment_post.assessment_form,
-                    status='post_test',
-                    enrollment_id=instance.id,
-                    callback=self.request.build_absolute_uri(
-                        reverse('clm:bln_edit', kwargs={'pk': instance.id})
-                    )
-                )
-            except Assessment.DoesNotExist:
-                pass
+            pre_test = instance.assessment_form(
+                stage='pre_test',
+                assessment_slug='bln_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:bln_edit', kwargs={'pk': instance.id}))
+             )
+            post_test = instance.assessment_form(
+                stage='post_test',
+                assessment_slug='bln_post_test',
+                callback=self.request.build_absolute_uri(reverse('clm:bln_edit', kwargs={'pk': instance.id}))
+             )
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -637,27 +645,16 @@ class RSForm(CommonForm):
             if instance.pre_test:
                 post_test_permission = ''
 
-            try:
-                assessment_pre = Assessment.objects.get(slug='rs_pre_test')
-                assessment_post = Assessment.objects.get(slug='rs_post_test')
-                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=RS&returnURL={callback}'.format(
-                    form=assessment_pre.assessment_form,
-                    status='pre_test',
-                    enrollment_id=instance.id,
-                    callback=self.request.build_absolute_uri(
-                        reverse('clm:rs_edit', kwargs={'pk': instance.id})
-                    )
-                )
-                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=RS&&returnURL={callback}'.format(
-                    form=assessment_post.assessment_form,
-                    status='post_test',
-                    enrollment_id=instance.id,
-                    callback=self.request.build_absolute_uri(
-                        reverse('clm:rs_edit', kwargs={'pk': instance.id})
-                    )
-                )
-            except Assessment.DoesNotExist:
-                pass
+            pre_test = instance.assessment_form(
+                stage='pre_test',
+                assessment_slug='rs_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+             )
+            post_test = instance.assessment_form(
+                stage='post_test',
+                assessment_slug='rs_post_test',
+                callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+             )
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -987,29 +984,16 @@ class CBECEForm(CommonForm):
             if instance.pre_test:
                 post_test_permission = ''
 
-            try:
-                assessment_pre = Assessment.objects.get(slug='cbece_pre_test')
-                assessment_post = Assessment.objects.get(slug='cbece_post_test')
-                pre_test = '{form}?d[status]={status}&d[programmecycle]={programmecycle}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=CBECE&returnURL={callback}'.format(
-                    form=assessment_pre.assessment_form,
-                    status='pre_test',
-                    programmecycle=instance.cycle_id,
-                    enrollment_id=instance.id,
-                    callback=self.request.build_absolute_uri(
-                        reverse('clm:cbece_edit', kwargs={'pk': instance.id})
-                    )
-                )
-                post_test = '{form}?d[status]={status}&d[programmecycle]={programmecycle}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=CBECE&returnURL={callback}'.format(
-                    form=assessment_post.assessment_form,
-                    status='post_test',
-                    programmecycle=instance.cycle_id,
-                    enrollment_id=instance.id,
-                    callback=self.request.build_absolute_uri(
-                        reverse('clm:cbece_edit', kwargs={'pk': instance.id})
-                    )
-                )
-            except Assessment.DoesNotExist:
-                pass
+            pre_test = instance.assessment_form(
+                stage='pre_test',
+                assessment_slug='cbece_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:cbece_edit', kwargs={'pk': instance.id}))
+             )
+            post_test = instance.assessment_form(
+                stage='post_test',
+                assessment_slug='cbece_post_test',
+                callback=self.request.build_absolute_uri(reverse('clm:cbece_edit', kwargs={'pk': instance.id}))
+             )
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True

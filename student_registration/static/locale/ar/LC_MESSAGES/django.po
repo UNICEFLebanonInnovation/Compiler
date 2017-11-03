@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-03 11:34+0200\n"
+"POT-Creation-Date: 2017-11-03 14:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -308,7 +308,7 @@ msgstr "البيانات الأساسية"
 #: student_registration/alp/forms.py:270 student_registration/alp/forms.py:448
 #: student_registration/alp/forms.py:830 student_registration/alp/forms.py:984
 #: student_registration/alp/forms.py:1087 student_registration/clm/forms.py:539
-#: student_registration/clm/forms.py:909 student_registration/clm/forms.py:1196
+#: student_registration/clm/forms.py:909 student_registration/clm/forms.py:1198
 #: student_registration/enrollments/forms.py:470
 #: student_registration/enrollments/forms.py:601
 #: student_registration/enrollments/forms.py:649
@@ -327,7 +327,7 @@ msgstr "حفظ"
 #: student_registration/alp/forms.py:271 student_registration/alp/forms.py:449
 #: student_registration/alp/forms.py:831 student_registration/alp/forms.py:985
 #: student_registration/alp/forms.py:1088 student_registration/clm/forms.py:540
-#: student_registration/clm/forms.py:910 student_registration/clm/forms.py:1197
+#: student_registration/clm/forms.py:910 student_registration/clm/forms.py:1199
 #: student_registration/enrollments/forms.py:471
 #: student_registration/enrollments/forms.py:602
 #: student_registration/enrollments/forms.py:650
@@ -341,7 +341,7 @@ msgstr "هل متأكد انك تريد إلغاء هذا التسجيل؟"
 #: student_registration/alp/forms.py:271 student_registration/alp/forms.py:449
 #: student_registration/alp/forms.py:831 student_registration/alp/forms.py:985
 #: student_registration/alp/forms.py:1088 student_registration/clm/forms.py:540
-#: student_registration/clm/forms.py:910 student_registration/clm/forms.py:1197
+#: student_registration/clm/forms.py:910 student_registration/clm/forms.py:1199
 #: student_registration/enrollments/forms.py:471
 #: student_registration/enrollments/forms.py:602
 #: student_registration/enrollments/forms.py:650
@@ -461,13 +461,13 @@ msgid "Last informal education status"
 msgstr "معلومات سابقة للتعليم غير نظامي للتلميذ"
 
 #: student_registration/alp/forms.py:676 student_registration/clm/forms.py:370
-#: student_registration/clm/forms.py:669 student_registration/clm/forms.py:1019
+#: student_registration/clm/forms.py:669 student_registration/clm/forms.py:1021
 #: student_registration/enrollments/forms.py:301
 msgid "Registry"
 msgstr " سجل التلميذ "
 
 #: student_registration/alp/forms.py:694 student_registration/clm/forms.py:389
-#: student_registration/clm/forms.py:688 student_registration/clm/forms.py:1038
+#: student_registration/clm/forms.py:688 student_registration/clm/forms.py:1040
 #: student_registration/enrollments/forms.py:320
 msgid "Register by Barcode"
 msgstr "تسجيل التلميذ من خلال الباركود"
@@ -1125,48 +1125,50 @@ msgid "Does the child have children?"
 msgstr " هل لدى الطفل المشترك أطفال؟"
 
 #: student_registration/clm/forms.py:401 student_registration/clm/forms.py:700
-#: student_registration/clm/forms.py:1050
+#: student_registration/clm/forms.py:1052
 #, fuzzy
 #| msgid "Search moved student"
 msgid "Search old student"
 msgstr "ابحث عن تلميذ منتقل من مدرسة اخرى"
 
 #: student_registration/clm/forms.py:413 student_registration/clm/forms.py:712
-#: student_registration/clm/forms.py:1062
+#: student_registration/clm/forms.py:1064
 msgid "Program Information"
 msgstr "معلومات عامة"
 
 #: student_registration/clm/forms.py:436 student_registration/clm/forms.py:742
-#: student_registration/clm/forms.py:1092
+#: student_registration/clm/forms.py:1094
 msgid "Child Information"
 msgstr "المعلومات الشخصية للطفل"
 
 #: student_registration/clm/forms.py:484 student_registration/clm/forms.py:785
-#: student_registration/clm/forms.py:1145
+#: student_registration/clm/forms.py:1147
 msgid "Family Status"
 msgstr "الوضع الحالي للطفل"
 
 #: student_registration/clm/forms.py:509 student_registration/clm/forms.py:879
-#: student_registration/clm/forms.py:1166
+#: student_registration/clm/forms.py:1168
 msgid "Assessment"
 msgstr "التقييم"
 
 #: student_registration/clm/forms.py:512 student_registration/clm/forms.py:882
-#: student_registration/clm/forms.py:1169 student_registration/clm/tables.py:24
+#: student_registration/clm/forms.py:1171
+#: student_registration/clm/models.py:243 student_registration/clm/tables.py:24
 #: student_registration/clm/tables.py:65 student_registration/clm/tables.py:91
 #: student_registration/clm/tables.py:114
 msgid "Pre-assessment"
 msgstr "التقييم عند الدخول الى البرنامج"
 
 #: student_registration/clm/forms.py:513 student_registration/clm/forms.py:883
-#: student_registration/clm/forms.py:1170 student_registration/clm/tables.py:27
+#: student_registration/clm/forms.py:1172
+#: student_registration/clm/models.py:250 student_registration/clm/tables.py:27
 #: student_registration/clm/tables.py:68 student_registration/clm/tables.py:94
 #: student_registration/clm/tables.py:117
 msgid "Post-assessment"
 msgstr " التقييم في آخر البرنامج"
 
 #: student_registration/clm/forms.py:525 student_registration/clm/forms.py:895
-#: student_registration/clm/forms.py:1182
+#: student_registration/clm/forms.py:1184
 msgid "School evaluation"
 msgstr " تققيم المدرسة "
 
@@ -1351,13 +1353,6 @@ msgstr "التلميذ"
 #: student_registration/clm/models.py:201
 msgid "Disability"
 msgstr "احتياجات خاصة"
-
-#: student_registration/clm/models.py:243
-#: student_registration/clm/models.py:250
-#, fuzzy
-#| msgid "Pre-test result"
-msgid "Pre-test score"
-msgstr "نتيجة ال Pre-test"
 
 #: student_registration/clm/models.py:259
 msgid "Participation"
@@ -2523,6 +2518,31 @@ msgstr ""
 #: student_registration/users/views.py:207
 msgid "Password change successful"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Pre-assessment"
+#~ msgid "Pre-Assessment"
+#~ msgstr "التقييم عند الدخول الى البرنامج"
+
+#, fuzzy
+#~| msgid "Post-assessment"
+#~ msgid "Post-Assessment"
+#~ msgstr " التقييم في آخر البرنامج"
+
+#, fuzzy
+#~| msgid "Pre-assessment"
+#~ msgid "Pre-Assessment score"
+#~ msgstr "التقييم عند الدخول الى البرنامج"
+
+#, fuzzy
+#~| msgid "Post-assessment"
+#~ msgid "Post-Assessment score"
+#~ msgstr " التقييم في آخر البرنامج"
+
+#, fuzzy
+#~| msgid "Pre-test result"
+#~ msgid "Pre-test score"
+#~ msgstr "نتيجة ال Pre-test"
 
 #~ msgid "The area where the child resides"
 #~ msgstr "المنطقة المقيم فيها الطفل"
