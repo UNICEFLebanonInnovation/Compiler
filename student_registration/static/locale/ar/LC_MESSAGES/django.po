@@ -524,7 +524,7 @@ msgstr "المدرسة"
 #: student_registration/alp/models.py:101
 #: student_registration/clm/models.py:178
 msgid "Location"
-msgstr "الموقع"
+msgstr "الموقع/مركز"
 
 #: student_registration/alp/models.py:161
 msgid "Pre-test room"
@@ -1108,7 +1108,7 @@ msgstr "من أين تم إحالة الطفل؟"
 
 #: student_registration/clm/forms.py:310 student_registration/clm/forms.py:591
 msgid "What is the family status of the child?"
-msgstr "ما هو الوضع العائلي للطفل؟"
+msgstr "الوضع الحالي للطفل؟"
 
 #: student_registration/clm/forms.py:316 student_registration/clm/forms.py:597
 msgid "Does the child have children?"
@@ -1132,7 +1132,7 @@ msgstr "المعلومات الشخصية للطفل"
 #: student_registration/clm/forms.py:480 student_registration/clm/forms.py:776
 #: student_registration/clm/forms.py:1131
 msgid "Family Status"
-msgstr "الوضع العائلي للطفل"
+msgstr "الوضع الحالي للطفل"
 
 #: student_registration/clm/forms.py:505 student_registration/clm/forms.py:870
 #: student_registration/clm/forms.py:1152

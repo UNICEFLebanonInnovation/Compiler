@@ -70,7 +70,7 @@ class CommonForm(forms.ModelForm):
         label=_("First time registered?"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='no'
+        initial='yes'
     )
     student_outreached = forms.ChoiceField(
         label=_("Student outreached?"),
@@ -83,6 +83,11 @@ class CommonForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
+    )
+    search_student = forms.CharField(
+        label=_("Search a student"),
+        widget=forms.TextInput,
+        required=False
     )
     search_barcode = forms.CharField(
         label=_("Search a barcode"),
@@ -160,10 +165,10 @@ class CommonForm(forms.ModelForm):
         label=_("Mother fullname"),
         widget=forms.TextInput, required=True
     )
-    student_address = forms.CharField(
-        label=_("The area where the child resides"),
-        widget=forms.TextInput, required=True
-    )
+    # student_address = forms.CharField(
+    #     label=_("The area where the child resides"),
+    #     widget=forms.TextInput, required=True
+    # )
     student_p_code = forms.CharField(
         label=_('P-Code If a child lives in a tent / Brax in a random camp'),
         widget=forms.TextInput, required=False
@@ -259,7 +264,7 @@ class CommonForm(forms.ModelForm):
             'student_birthday_day',
             'student_nationality',
             'student_mother_fullname',
-            'student_address',
+            # 'student_address',
             'student_p_code',
             'disability',
             'have_labour',
@@ -294,12 +299,12 @@ class BLNForm(CommonForm):
         required=True, to_field_name='id',
         initial=0
     )
-    referral = forms.MultipleChoiceField(
-        label=_('Where was the child referred?'),
-        choices=CLM.REFERRAL,
-        widget=forms.CheckboxSelectMultiple,
-        required=True,
-    )
+    # referral = forms.MultipleChoiceField(
+    #     label=_('Where was the child referred?'),
+    #     choices=CLM.REFERRAL,
+    #     widget=forms.CheckboxSelectMultiple,
+    #     required=True,
+    # )
     student_family_status = forms.ChoiceField(
         label=_('What is the family status of the child?'),
         widget=forms.Select, required=True,
@@ -381,14 +386,6 @@ class BLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'This option not available') + '</h4>')
-                ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
-            ),
-            Fieldset(
-                None,
-                Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
                 ),
                 Div(
@@ -396,6 +393,19 @@ class BLNForm(CommonForm):
                     css_class='row',
                 ),
                 css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Search old student') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('search_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
             ),
             Fieldset(
                 None,
@@ -425,11 +435,11 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child Information') + '</h4>')
                 ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('referral', css_class='col-md-9'),
-                    css_class='row',
-                ),
+                # Div(
+                #     HTML('<span class="badge badge-default">1</span>'),
+                #     Div('referral', css_class='col-md-9'),
+                #     css_class='row',
+                # ),
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('student_first_name', css_class='col-md-3'),
@@ -458,11 +468,11 @@ class BLNForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
+                    # HTML('<span class="badge badge-default">11</span>'),
+                    # Div('student_address', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">11</span>'),
-                    Div('student_address', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">12</span>'),
                     Div('student_p_code', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('disability', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -538,7 +548,7 @@ class BLNForm(CommonForm):
         model = BLN
         fields = CommonForm.Meta.fields + (
             'cycle',
-            'referral',
+            # 'referral',
             'student_family_status',
             'student_have_children',
         )
@@ -675,14 +685,6 @@ class RSForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'This option not available') + '</h4>')
-                ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
-            ),
-            Fieldset(
-                None,
-                Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
                 ),
                 Div(
@@ -690,6 +692,19 @@ class RSForm(CommonForm):
                     css_class='row',
                 ),
                 css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Search old student') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('search_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
             ),
             Fieldset(
                 None,
@@ -754,11 +769,11 @@ class RSForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
-                    Div('student_address', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    # HTML('<span class="badge badge-default">12</span>'),
+                    # Div('student_address', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('student_p_code', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('disability', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1020,14 +1035,6 @@ class CBECEForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'This option not available') + '</h4>')
-                ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
-            ),
-            Fieldset(
-                None,
-                Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
                 ),
                 Div(
@@ -1035,6 +1042,19 @@ class CBECEForm(CommonForm):
                     css_class='row',
                 ),
                 css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Search old student') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('search_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
             ),
             Fieldset(
                 None,
@@ -1104,11 +1124,11 @@ class CBECEForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
+                    # HTML('<span class="badge badge-default">11</span>'),
+                    # Div('student_address', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">11</span>'),
-                    Div('student_address', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">12</span>'),
                     Div('student_p_code', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('disability', css_class='col-md-3'),
                     css_class='row',
                 ),
