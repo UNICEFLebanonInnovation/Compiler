@@ -19,6 +19,7 @@ from .models import (
     ALPAssignmentMatrix,
     EducationalLevel,
     Holiday,
+    CLMRound,
     PublicDocument
 )
 from student_registration.locations.models import Location
@@ -300,7 +301,8 @@ admin.site.register(ClassRoom, ClassRoomAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
 admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
 admin.site.register(EducationYear)
-admin.site.register(Holiday)
+# admin.site.register(Holiday)
+admin.site.register(CLMRound)
 admin.site.register(PublicDocument)
 admin.site.register(EducationalLevel)
 admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)

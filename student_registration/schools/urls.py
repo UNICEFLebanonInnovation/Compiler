@@ -12,6 +12,11 @@ urlpatterns = [
         name='profile'
     ),
     url(
+        regex=r'^partner/$',
+        view=views.PartnerView.as_view(),
+        name='partner'
+    ),
+    url(
         regex=r'^documents/$',
         view=views.PublicDocumentView.as_view(),
         name='documents'
