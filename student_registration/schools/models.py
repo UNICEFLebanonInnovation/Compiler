@@ -168,8 +168,36 @@ class ClassRoom(models.Model):
         return self.name
 
 
+class CLMRound(models.Model):
+    name = models.CharField(max_length=45, unique=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "CLM Round"
+
+    def __unicode__(self):
+        return self.name
+
+
 class PartnerOrganization(models.Model):
+
     name = models.CharField(max_length=100, unique=True)
+
+    bln_round = models.ForeignKey(
+        CLMRound,
+        blank=True, null=True,
+        related_name='+',
+    )
+    rs_round = models.ForeignKey(
+        CLMRound,
+        blank=True, null=True,
+        related_name='+',
+    )
+    cbece_round = models.ForeignKey(
+        CLMRound,
+        blank=True, null=True,
+        related_name='+',
+    )
 
     class Meta:
         ordering = ['name']
