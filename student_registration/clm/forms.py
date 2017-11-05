@@ -32,11 +32,11 @@ from .serializers import BLNSerializer, RSSerializer, CBECESerializer
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
-YEARS = list(((str(x), x) for x in range(1990, 2017)))
-YEARS.append(('', '---------'))
+YEARS = list(((str(x), x) for x in range(1990, 2050)))
+YEARS.insert(0, ('', '---------'))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
-DAYS.append(('', '---------'))
+DAYS.insert(0, ('', '---------'))
 
 MONTHS = (
             ('', '----------'),
@@ -63,6 +63,23 @@ FAMILY_STATUS = (
     ('single', _('Single')),
 )
 
+PARTICIPATION = (
+    ('', '----------'),
+    ('less_than_5days', _('Less than 5 absence days')),
+    ('5_10_days', _('5 to 10 absence days')),
+    ('10_15_days', _('10 to 15 absence days')),
+    ('more_than_15days', _('More than 15 absence days'))
+)
+
+LEARNING_RESULT = (
+    ('', '----------'),
+    ('graduated_next_level', _('Graduated to the next level')),
+    ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
+    ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
+    ('referred_to_another_program', _('Referred to another program')),
+    ('dropout', _('Dropout from school'))
+)
+
 
 class CommonForm(forms.ModelForm):
 
@@ -70,7 +87,7 @@ class CommonForm(forms.ModelForm):
         label=_("First time registered?"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='no'
+        initial='yes'
     )
     student_outreached = forms.ChoiceField(
         label=_("Student outreached?"),
@@ -83,6 +100,11 @@ class CommonForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
+    )
+    search_student = forms.CharField(
+        label=_("Search a student"),
+        widget=forms.TextInput,
+        required=False
     )
     search_barcode = forms.CharField(
         label=_("Search a barcode"),
@@ -160,10 +182,10 @@ class CommonForm(forms.ModelForm):
         label=_("Mother fullname"),
         widget=forms.TextInput, required=True
     )
-    student_address = forms.CharField(
-        label=_("The area where the child resides"),
-        widget=forms.TextInput, required=True
-    )
+    # student_address = forms.CharField(
+    #     label=_("The area where the child resides"),
+    #     widget=forms.TextInput, required=True
+    # )
     student_p_code = forms.CharField(
         label=_('P-Code If a child lives in a tent / Brax in a random camp'),
         widget=forms.TextInput, required=False
@@ -205,7 +227,8 @@ class CommonForm(forms.ModelForm):
     participation = forms.ChoiceField(
         label=_('How was the level of child participation in the program?'),
         widget=forms.Select, required=False,
-        choices=CLM.PARTICIPATION
+        choices=PARTICIPATION,
+        initial=''
     )
     barriers = forms.MultipleChoiceField(
         label=_('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
@@ -216,7 +239,8 @@ class CommonForm(forms.ModelForm):
     learning_result = forms.ChoiceField(
         label=_('Based on the overall score, what is the recommended learning path?'),
         widget=forms.Select, required=False,
-        choices=CLM.LEARNING_RESULT
+        choices=LEARNING_RESULT,
+        initial=''
     )
 
     def __init__(self, *args, **kwargs):
@@ -259,7 +283,7 @@ class CommonForm(forms.ModelForm):
             'student_birthday_day',
             'student_nationality',
             'student_mother_fullname',
-            'student_address',
+            # 'student_address',
             'student_p_code',
             'disability',
             'have_labour',
@@ -294,12 +318,12 @@ class BLNForm(CommonForm):
         required=True, to_field_name='id',
         initial=0
     )
-    referral = forms.MultipleChoiceField(
-        label=_('Where was the child referred?'),
-        choices=CLM.REFERRAL,
-        widget=forms.CheckboxSelectMultiple,
-        required=True,
-    )
+    # referral = forms.MultipleChoiceField(
+    #     label=_('Where was the child referred?'),
+    #     choices=CLM.REFERRAL,
+    #     widget=forms.CheckboxSelectMultiple,
+    #     required=True,
+    # )
     student_family_status = forms.ChoiceField(
         label=_('What is the family status of the child?'),
         widget=forms.Select, required=True,
@@ -333,27 +357,16 @@ class BLNForm(CommonForm):
             if instance.pre_test:
                 post_test_permission = ''
 
-            try:
-                assessment_pre = Assessment.objects.get(slug='bln_pre_test')
-                assessment_post = Assessment.objects.get(slug='bln_post_test')
-                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=BLN&returnURL={callback}'.format(
-                    form=assessment_pre.assessment_form,
-                    status='pre_test',
-                    enrollment_id=instance.id,
-                    callback=self.request.build_absolute_uri(
-                        reverse('clm:bln_edit', kwargs={'pk': instance.id})
-                    )
-                )
-                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=BLN&returnURL={callback}'.format(
-                    form=assessment_post.assessment_form,
-                    status='post_test',
-                    enrollment_id=instance.id,
-                    callback=self.request.build_absolute_uri(
-                        reverse('clm:bln_edit', kwargs={'pk': instance.id})
-                    )
-                )
-            except Assessment.DoesNotExist:
-                pass
+            pre_test = instance.assessment_form(
+                stage='pre_test',
+                assessment_slug='bln_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:bln_edit', kwargs={'pk': instance.id}))
+             )
+            post_test = instance.assessment_form(
+                stage='post_test',
+                assessment_slug='bln_post_test',
+                callback=self.request.build_absolute_uri(reverse('clm:bln_edit', kwargs={'pk': instance.id}))
+             )
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -381,14 +394,6 @@ class BLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'This option not available') + '</h4>')
-                ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
-            ),
-            Fieldset(
-                None,
-                Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
                 ),
                 Div(
@@ -396,6 +401,19 @@ class BLNForm(CommonForm):
                     css_class='row',
                 ),
                 css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Search old student') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('search_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
             ),
             Fieldset(
                 None,
@@ -425,11 +443,11 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child Information') + '</h4>')
                 ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('referral', css_class='col-md-9'),
-                    css_class='row',
-                ),
+                # Div(
+                #     HTML('<span class="badge badge-default">1</span>'),
+                #     Div('referral', css_class='col-md-9'),
+                #     css_class='row',
+                # ),
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('student_first_name', css_class='col-md-3'),
@@ -458,11 +476,11 @@ class BLNForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
+                    # HTML('<span class="badge badge-default">11</span>'),
+                    # Div('student_address', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">11</span>'),
-                    Div('student_address', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">12</span>'),
                     Div('student_p_code', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('disability', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -538,7 +556,7 @@ class BLNForm(CommonForm):
         model = BLN
         fields = CommonForm.Meta.fields + (
             'cycle',
-            'referral',
+            # 'referral',
             'student_family_status',
             'student_have_children',
         )
@@ -627,27 +645,16 @@ class RSForm(CommonForm):
             if instance.pre_test:
                 post_test_permission = ''
 
-            try:
-                assessment_pre = Assessment.objects.get(slug='rs_pre_test')
-                assessment_post = Assessment.objects.get(slug='rs_post_test')
-                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=RS&returnURL={callback}'.format(
-                    form=assessment_pre.assessment_form,
-                    status='pre_test',
-                    enrollment_id=instance.id,
-                    callback=self.request.build_absolute_uri(
-                        reverse('clm:rs_edit', kwargs={'pk': instance.id})
-                    )
-                )
-                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=RS&&returnURL={callback}'.format(
-                    form=assessment_post.assessment_form,
-                    status='post_test',
-                    enrollment_id=instance.id,
-                    callback=self.request.build_absolute_uri(
-                        reverse('clm:rs_edit', kwargs={'pk': instance.id})
-                    )
-                )
-            except Assessment.DoesNotExist:
-                pass
+            pre_test = instance.assessment_form(
+                stage='pre_test',
+                assessment_slug='rs_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+             )
+            post_test = instance.assessment_form(
+                stage='post_test',
+                assessment_slug='rs_post_test',
+                callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+             )
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -675,14 +682,6 @@ class RSForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'This option not available') + '</h4>')
-                ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
-            ),
-            Fieldset(
-                None,
-                Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
                 ),
                 Div(
@@ -690,6 +689,19 @@ class RSForm(CommonForm):
                     css_class='row',
                 ),
                 css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Search old student') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('search_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
             ),
             Fieldset(
                 None,
@@ -754,11 +766,11 @@ class RSForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
-                    Div('student_address', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    # HTML('<span class="badge badge-default">12</span>'),
+                    # Div('student_address', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('student_p_code', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('disability', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -972,27 +984,16 @@ class CBECEForm(CommonForm):
             if instance.pre_test:
                 post_test_permission = ''
 
-            try:
-                assessment_pre = Assessment.objects.get(slug='cbece_pre_test')
-                assessment_post = Assessment.objects.get(slug='cbece_post_test')
-                pre_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=CBECE&returnURL={callback}'.format(
-                    form=assessment_pre.assessment_form,
-                    status='pre_test',
-                    enrollment_id=instance.id,
-                    callback=self.request.build_absolute_uri(
-                        reverse('clm:cbece_edit', kwargs={'pk': instance.id})
-                    )
-                )
-                post_test = '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=CBECE&returnURL={callback}'.format(
-                    form=assessment_post.assessment_form,
-                    status='post_test',
-                    enrollment_id=instance.id,
-                    callback=self.request.build_absolute_uri(
-                        reverse('clm:cbece_edit', kwargs={'pk': instance.id})
-                    )
-                )
-            except Assessment.DoesNotExist:
-                pass
+            pre_test = instance.assessment_form(
+                stage='pre_test',
+                assessment_slug='cbece_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:cbece_edit', kwargs={'pk': instance.id}))
+             )
+            post_test = instance.assessment_form(
+                stage='post_test',
+                assessment_slug='cbece_post_test',
+                callback=self.request.build_absolute_uri(reverse('clm:cbece_edit', kwargs={'pk': instance.id}))
+             )
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -1020,14 +1021,6 @@ class CBECEForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'This option not available') + '</h4>')
-                ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
-            ),
-            Fieldset(
-                None,
-                Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
                 ),
                 Div(
@@ -1035,6 +1028,19 @@ class CBECEForm(CommonForm):
                     css_class='row',
                 ),
                 css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Search old student') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('search_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
             ),
             Fieldset(
                 None,
@@ -1104,11 +1110,11 @@ class CBECEForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
+                    # HTML('<span class="badge badge-default">11</span>'),
+                    # Div('student_address', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">11</span>'),
-                    Div('student_address', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">12</span>'),
                     Div('student_p_code', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('disability', css_class='col-md-3'),
                     css_class='row',
                 ),
