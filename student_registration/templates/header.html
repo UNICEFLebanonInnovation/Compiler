@@ -62,6 +62,11 @@
 
     <ul class="navbar-nav pull-xs-right">
       {% if request.user.is_authenticated %}
+        {% if request.user|has_group:"CLM" %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'schools:partner' %}">{% trans "Profile" %}</a>
+        </li>
+        {% endif %}
         {% if request.user|has_group:"SCHOOL" or request.user|has_group:"ALP_SCHOOL" %}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'schools:profile' %}">{% trans "Profile" %}</a>
