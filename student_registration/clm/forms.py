@@ -246,7 +246,7 @@ class CommonForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)
 
-    def save(self, request=None, instance=None, serializer=None):
+    def save(self, request=None, instance=None, serializer=None, clm_round=None):
         if instance:
             serializer = serializer(instance, data=request.POST)
             if serializer.is_valid():
@@ -257,6 +257,7 @@ class CommonForm(forms.ModelForm):
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.owner = request.user
                 instance.partner = request.user.partner
+                instance.round = clm_round
                 instance.save()
             else:
                 # print serializer.errors
@@ -549,8 +550,9 @@ class BLNForm(CommonForm):
             )
         )
 
-    def save(self, request=None, instance=None, serializer=None):
-        super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
+    def save(self, request=None, instance=None, serializer=None, clm_round=None):
+        clm_round = request.user.partner.bln_round
+        super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer, clm_round=clm_round)
 
     class Meta:
         model = BLN
@@ -908,8 +910,9 @@ class RSForm(CommonForm):
             )
         )
 
-    def save(self, request=None, instance=None, serializer=None):
-        super(RSForm, self).save(request=request, instance=instance, serializer=RSSerializer)
+    def save(self, request=None, instance=None, serializer=None, clm_round=None):
+        clm_round = request.user.partner.rs_round
+        super(RSForm, self).save(request=request, instance=instance, serializer=RSSerializer, clm_round=clm_round)
 
     class Meta:
         model = RS
@@ -1184,8 +1187,9 @@ class CBECEForm(CommonForm):
             )
         )
 
-    def save(self, request=None, instance=None, serializer=None):
-        super(CBECEForm, self).save(request=request, instance=instance, serializer=CBECESerializer)
+    def save(self, request=None, instance=None, serializer=None, clm_round=None):
+        clm_round = request.user.partner.cbece_round
+        super(CBECEForm, self).save(request=request, instance=instance, serializer=CBECESerializer, clm_round=clm_round)
 
     class Meta:
         model = CBECE
