@@ -4,18 +4,31 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.postgres.fields import ArrayField, JSONField
+from django.core.urlresolvers import reverse
 
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
-from student_registration.users.models import PartnerOrganization
 from student_registration.students.models import Student, Labour
 from student_registration.locations.models import Location
 from student_registration.schools.models import (
     School,
     ClassRoom,
+    CLMRound,
     EducationalLevel,
+    PartnerOrganization,
 )
+
+
+# class CLMRound(models.Model):
+#     name = models.CharField(max_length=45, unique=True)
+#
+#     class Meta:
+#         ordering = ['name']
+#         verbose_name = "CLM Round"
+#
+#     def __unicode__(self):
+#         return self.name
 
 
 class Assessment(models.Model):
@@ -124,6 +137,7 @@ class CLM(TimeStampedModel):
         ('from_displaced_community', _('Referral from the displaced community')),
     )
     PARTICIPATION = Choices(
+        ('', _('Participation')),
         ('less_than_5days', _('Less than 5 absence days')),
         ('5_10_days', _('5 to 10 absence days')),
         ('10_15_days', _('10 to 15 absence days')),
@@ -152,11 +166,18 @@ class CLM(TimeStampedModel):
         ('other', _('Other')),
     )
     LEARNING_RESULT = Choices(
+        ('', _('Learning result')),
         ('graduated_next_level', _('Graduated to the next level')),
         ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
         ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
         ('referred_to_another_program', _('Referred to another program')),
         ('dropout', _('Dropout from school'))
+    )
+
+    round = models.ForeignKey(
+        CLMRound,
+        blank=True, null=True,
+        related_name='+',
     )
 
     governorate = models.ForeignKey(
@@ -236,8 +257,19 @@ class CLM(TimeStampedModel):
 
     status = models.CharField(max_length=50, choices=STATUS, default=STATUS.enrolled)
     pre_test = JSONField(blank=True, null=True)
+    pre_test_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Pre-assessment')
+    )
     post_test = JSONField(blank=True, null=True)
-
+    post_test_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Post-assessment')
+    )
     scores = JSONField(blank=True, null=True, default=dict)
 
     participation = models.CharField(
@@ -333,6 +365,13 @@ class CLM(TimeStampedModel):
             return self.student.__unicode__()
         return str(self.id)
 
+    def score(self, keys, stage):
+        assessment = getattr(self, stage, 'pre_test')
+        score = stage+'_score'
+        marks = {key: int(assessment.get(key, 0)) for key in keys}
+        total = sum(marks.values())
+        setattr(self, score, total)
+
     class Meta:
         abstract = True
 
@@ -357,6 +396,33 @@ class BLN(CLM):
         verbose_name=_('Referral')
     )
 
+    def calculate_score(self, stage):
+        keys = [
+            'BLN_ASSESSMENT/arabic',
+            'BLN_ASSESSMENT/math',
+            'BLN_ASSESSMENT/english',
+            'BLN_ASSESSMENT/french'
+        ]
+        super(BLN, self).score(keys, stage)
+
+    def assessment_form(self, stage, assessment_slug, callback=''):
+        try:
+            assessment = Assessment.objects.get(slug=assessment_slug)
+            return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=BLN&returnURL={callback}'.format(
+                form=assessment.assessment_form,
+                status=stage,
+                enrollment_id=self.id,
+                callback=callback
+            )
+        except Assessment.DoesNotExist as ex:
+            return ''
+
+    def pre_assessment_form(self):
+        return self.assessment_form(stage='pre_test', assessment_slug='bln_pre_test')
+
+    def post_assessment_form(self):
+        return self.assessment_form(stage='post_test', assessment_slug='bln_post_test')
+
     class Meta:
         ordering = ['id']
         verbose_name = "BLN"
@@ -366,14 +432,17 @@ class BLN(CLM):
 class RS(CLM):
 
     SCHOOL_SHIFTS = Choices(
+        ('', _('Shift')),
         ('first', _('First shift')),
         ('second', _('Second shift')),
     )
     TYPES = Choices(
+        ('', _('Program type')),
         ('homework_support', _('Homework Support')),
         ('remedial_support', _('Remedial Support')),
     )
     SITES = Choices(
+        ('', _('Program site')),
         ('in_school', _('Inside the school')),
         ('out_school', _('Outside the school')),
     )
@@ -516,10 +585,40 @@ class RS(CLM):
             '80'
         )
 
+    def assessment_form(self, stage, assessment_slug, callback=''):
+        try:
+            assessment = Assessment.objects.get(slug=assessment_slug)
+            return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=RS&returnURL={callback}'.format(
+                form=assessment.assessment_form,
+                status=stage,
+                enrollment_id=self.id,
+                callback=callback
+            )
+        except Assessment.DoesNotExist:
+            return ''
+
+    @property
+    def pre_assessment_form(self):
+        return self.assessment_form(stage='pre_test', assessment_slug='rs_pre_test')
+
+    @property
+    def post_assessment_form(self):
+        return self.assessment_form(stage='post_test', assessment_slug='rs_post_test')
+
+    def calculate_score(self, stage):
+        keys = [
+            'BLN_ASSESSMENT/arabic',
+            'BLN_ASSESSMENT/math',
+            'BLN_ASSESSMENT/english',
+            'BLN_ASSESSMENT/french'
+        ]
+        super(RS, self).score(keys, stage)
+
 
 class CBECE(CLM):
 
     MUAC = Choices(
+        ('', _('MUAC')),
         ('1', _('< 11.5 CM (severe malnutrition)')),
         ('2', _('< 12.5 CM (moderate malnutrition)')),
     )
@@ -528,6 +627,7 @@ class CBECE(CLM):
         ('absence', _('Absence'))
     )
     SITES = Choices(
+        ('', _('Program site')),
         ('in_school', _('Inside the school')),
         ('out_school', _('Outside the school')),
     )
@@ -593,6 +693,36 @@ class CBECE(CLM):
         choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Science')
     )
+
+    def assessment_form(self, stage, assessment_slug, callback=''):
+        try:
+            assessment = Assessment.objects.get(slug=assessment_slug)
+            return '{form}?d[status]={status}&d[programmecycle]={programmecycle}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=CBECE&returnURL={callback}'.format(
+                form=assessment.assessment_form,
+                status=stage,
+                programmecycle=self.cycle_id,
+                enrollment_id=self.id,
+                callback=callback
+            )
+        except Assessment.DoesNotExist:
+            return ''
+
+    @property
+    def pre_assessment_form(self):
+        return self.assessment_form(stage='pre_test', assessment_slug='cbece_pre_test')
+
+    @property
+    def post_assessment_form(self):
+        return self.assessment_form(stage='post_test', assessment_slug='cbece_post_test')
+
+    def calculate_score(self, stage):
+        keys = [
+            'BLN_ASSESSMENT/arabic',
+            'BLN_ASSESSMENT/math',
+            'BLN_ASSESSMENT/english',
+            'BLN_ASSESSMENT/french'
+        ]
+        super(CBECE, self).score(keys, stage)
 
     class Meta:
         ordering = ['id']

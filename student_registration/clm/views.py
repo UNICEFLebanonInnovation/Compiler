@@ -125,10 +125,16 @@ class AssessmentSubmission(SingleObjectMixin, View):
         enrollment_id = payload['enrollment_id']
         model = payload['enrollment_model']
 
-        enrollment = model.objects.get(id=int(enrollment_id))
+        if model == 'BLN':
+            enrollment = BLN.objects.get(id=int(enrollment_id))
+        elif model == 'RS':
+            enrollment = RS.objects.get(id=int(enrollment_id))
+        else:
+            enrollment = CBECE.objects.get(id=int(enrollment_id))
 
         enrollment.status = status
         setattr(enrollment, status, payload)
+        enrollment.calculate_score(status)
         enrollment.save()
 
         return HttpResponse()
@@ -207,7 +213,7 @@ class RSEditView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         instance = RS.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            RSForm(self.request.POST, instance=instance)
+            RSForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = RSSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
@@ -292,7 +298,7 @@ class CBECEEditView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         instance = CBECE.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            CBECEForm(self.request.POST, instance=instance)
+            CBECEForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = CBECESerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
