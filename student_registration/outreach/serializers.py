@@ -38,6 +38,20 @@ class ChildSerializer(serializers.ModelSerializer):
     student_mother_nationality = serializers.CharField(source='mother_nationality.id', read_only=True)
     student_address = serializers.CharField(source='address', read_only=True)
 
+    first_name = serializers.CharField(required=False)
+    father_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+    mother_fullname = serializers.CharField(required=False)
+    sex = serializers.CharField(required=False)
+    birthday_year = serializers.CharField(required=False)
+    birthday_month = serializers.CharField(required=False)
+    birthday_day = serializers.CharField(required=False)
+    id_number = serializers.CharField(required=False)
+    id_type = serializers.CharField(required=False)
+    nationality = serializers.CharField(required=False)
+    mother_nationality = serializers.CharField(required=False)
+    barcode_subset = serializers.CharField(required=False)
+
     class Meta:
         model = Child
         fields = (
@@ -59,5 +73,18 @@ class ChildSerializer(serializers.ModelSerializer):
             'student_nationality',
             'student_mother_nationality',
             'student_address',
+            'barcode_subset',
+            'first_name',
+            'father_name',
+            'last_name',
+            'mother_fullname',
+            'mother_nationality',
+            'nationality',
+            'birthday_year',
+            'birthday_month',
+            'birthday_day',
+            'sex',
+            'id_type',
+            'id_number',
             'barcode_subset',
         )

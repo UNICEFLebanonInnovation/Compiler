@@ -43,6 +43,8 @@ class ChildViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+        if self.request.method in ["PATCH", "POST", "PUT"]:
+            return self.queryset
         term = self.request.GET.get('term', 0)
         if term:
             qs = self.queryset.filter(barcode_subset__contains=term).distinct()
