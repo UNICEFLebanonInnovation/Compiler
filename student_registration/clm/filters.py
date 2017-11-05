@@ -7,6 +7,7 @@ class BLNFilter(FilterSet):
     class Meta:
         model = BLN
         fields = {
+            'round': ['exact'],
             'student__first_name': ['contains'],
             'student__father_name': ['contains'],
             'student__last_name': ['contains'],
@@ -24,6 +25,7 @@ class RSFilter(FilterSet):
     class Meta:
         model = RS
         fields = {
+            'round': ['exact'],
             'student__first_name': ['contains'],
             'student__father_name': ['contains'],
             'student__last_name': ['contains'],
@@ -46,6 +48,7 @@ class CBECEFilter(FilterSet):
     class Meta:
         model = CBECE
         fields = {
+            'round': ['exact'],
             'student__first_name': ['contains'],
             'student__father_name': ['contains'],
             'student__last_name': ['contains'],
