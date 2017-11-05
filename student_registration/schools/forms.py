@@ -8,7 +8,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
 
-from .models import School
+from .models import School, PartnerOrganization
 
 
 class ProfileForm(forms.ModelForm):
@@ -82,6 +82,54 @@ class ProfileForm(forms.ModelForm):
             'it_name',
             'it_phone_number',
             'field_coordinator_name',
+        )
+        initial_fields = fields
+        widgets = {}
+
+    class Media:
+        js = ()
+
+
+class PartnerForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(PartnerForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = reverse('schools:partner', kwargs={})
+
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('CLM round') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('bln_round', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('rs_round', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('cbece_round', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+            )
+        )
+
+    def save(self, instance=None, request=None):
+        instance = super(PartnerForm, self).save()
+
+    class Meta:
+        model = PartnerOrganization
+        fields = (
+            'bln_round',
+            'rs_round',
+            'cbece_round',
         )
         initial_fields = fields
         widgets = {}
