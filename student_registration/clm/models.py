@@ -9,14 +9,26 @@ from django.core.urlresolvers import reverse
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
-from student_registration.users.models import PartnerOrganization
 from student_registration.students.models import Student, Labour
 from student_registration.locations.models import Location
 from student_registration.schools.models import (
     School,
     ClassRoom,
+    CLMRound,
     EducationalLevel,
+    PartnerOrganization,
 )
+
+
+# class CLMRound(models.Model):
+#     name = models.CharField(max_length=45, unique=True)
+#
+#     class Meta:
+#         ordering = ['name']
+#         verbose_name = "CLM Round"
+#
+#     def __unicode__(self):
+#         return self.name
 
 
 class Assessment(models.Model):
@@ -160,6 +172,12 @@ class CLM(TimeStampedModel):
         ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
         ('referred_to_another_program', _('Referred to another program')),
         ('dropout', _('Dropout from school'))
+    )
+
+    round = models.ForeignKey(
+        CLMRound,
+        blank=True, null=True,
+        related_name='+',
     )
 
     governorate = models.ForeignKey(

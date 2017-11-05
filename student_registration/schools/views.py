@@ -11,7 +11,8 @@ from .models import (
     School,
     ClassRoom,
     Section,
-    PublicDocument
+    PublicDocument,
+    PartnerOrganization,
 )
 
 from .serializers import (
@@ -19,7 +20,7 @@ from .serializers import (
     ClassRoomSerializer,
     SectionSerializer,
 )
-from .forms import ProfileForm
+from .forms import ProfileForm, PartnerForm
 
 
 class SchoolViewSet(mixins.ListModelMixin,
@@ -76,6 +77,35 @@ class ProfileView(LoginRequiredMixin,
         instance = School.objects.get(id=self.request.user.school_id)
         form.save(request=self.request, instance=instance)
         return super(ProfileView, self).form_valid(form)
+
+
+class PartnerView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+
+    template_name = 'schools/partner.html'
+    form_class = PartnerForm
+    success_url = '/schools/partner/'
+    group_required = [u"CLM"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(PartnerView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = PartnerOrganization.objects.get(id=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return PartnerForm(self.request.POST, instance=instance)
+        else:
+            return PartnerForm(instance=instance)
+
+    def form_valid(self, form):
+        instance = PartnerOrganization.objects.get(id=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(PartnerView, self).form_valid(form)
 
 
 class PublicDocumentView(LoginRequiredMixin,
