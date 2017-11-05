@@ -1,5 +1,5 @@
 {% load staticfiles i18n %}
-<a class="btn btn-info" href="https://ee.kobotoolbox.org/::Yndj?d[status]=pre_test">
+<a class="btn btn-info" href="{{ record.pre_assessment_form }}{{ request.get_host }}{{ column.attrs.url }}">
     <i class="icon-synch-sign icon-white"></i>
     {% trans "fill in" %}
 </a>

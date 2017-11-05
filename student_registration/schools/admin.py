@@ -19,6 +19,7 @@ from .models import (
     ALPAssignmentMatrix,
     EducationalLevel,
     Holiday,
+    CLMRound,
     PublicDocument
 )
 from student_registration.locations.models import Location
@@ -142,7 +143,10 @@ class SchoolAdmin(ImportExportModelAdmin):
     )
 
     actions = ('push_attendances_2ndshift', 'push_attendances_2ndshift_delay',
-               'push_attendances_alp', 'push_attendances_alp_delay',)
+               'push_attendances_alp', 'push_attendances_alp_delay',
+               'open_attendance_90_days', 'open_attendance_60_days',
+               'open_attendance_30_days', 'open_attendance_20_days',
+               'open_attendance_10_days', )
 
     def push_attendances_2ndshift(self, request, queryset):
         for school in queryset:
@@ -159,6 +163,21 @@ class SchoolAdmin(ImportExportModelAdmin):
     def push_attendances_alp_delay(self, request, queryset):
         for school in queryset:
             set_app_attendances.delay(school_number=school.number, school_type='alp')
+
+    def open_attendance_90_days(self, request, queryset):
+        queryset.update(attendance_range=90)
+
+    def open_attendance_60_days(self, request, queryset):
+        queryset.update(attendance_range=60)
+
+    def open_attendance_30_days(self, request, queryset):
+        queryset.update(attendance_range=30)
+
+    def open_attendance_20_days(self, request, queryset):
+        queryset.update(attendance_range=20)
+
+    def open_attendance_10_days(self, request, queryset):
+        queryset.update(attendance_range=10)
 
 
 class EducationLevelResource(resources.ModelResource):
@@ -282,7 +301,8 @@ admin.site.register(ClassRoom, ClassRoomAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
 admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
 admin.site.register(EducationYear)
-admin.site.register(Holiday)
+# admin.site.register(Holiday)
+admin.site.register(CLMRound)
 admin.site.register(PublicDocument)
 admin.site.register(EducationalLevel)
 admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
