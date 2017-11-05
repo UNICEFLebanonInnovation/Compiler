@@ -39,16 +39,6 @@ class CommonTable(tables.Table):
             'delete_column',
             'pre_assessment',
             'post_assessment',
-            'student.first_name',
-            'student.father_name',
-            'student.last_name',
-            'student.sex',
-            'student_age',
-            'student_birthday',
-            'student.nationality',
-            'student.mother_fullname',
-            'participation',
-            'learning_result',
         )
 
 
@@ -62,14 +52,34 @@ class BLNTable(CommonTable):
                                           attrs={'url': '/api/clm-bln/'})
     pre_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
                                            template_name='django_tables2/clm_pre_assessment.html',
-                                           attrs={'url': ''})
+                                           attrs={'url': '/clm/bln-list/'})
     post_assessment = tables.TemplateColumn(verbose_name=_('Post-assessment'),
                                             template_name='django_tables2/clm_post_assessment.html',
-                                            attrs={'url': ''})
+                                            attrs={'url': '/clm/bln-list/'})
 
     class Meta:
         model = BLN
-        fields = CommonTable.Meta.fields
+        fields = (
+            'edit_column',
+            'delete_column',
+            'pre_assessment',
+            'post_assessment',
+            'cycle',
+            'governorate',
+            'district',
+            'student.first_name',
+            'student.father_name',
+            'student.last_name',
+            'student.sex',
+            'student_age',
+            'student_birthday',
+            'student.nationality',
+            'student.mother_fullname',
+            'pre_test_score',
+            'post_test_score',
+            'participation',
+            'learning_result',
+        )
 
 
 class RSTable(CommonTable):
@@ -88,16 +98,40 @@ class RSTable(CommonTable):
 
     pre_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
                                            template_name='django_tables2/clm_pre_assessment.html',
-                                           attrs={'url': ''})
+                                           attrs={'url': '/clm/rs-list/'})
     post_assessment = tables.TemplateColumn(verbose_name=_('Post-assessment'),
                                             template_name='django_tables2/clm_post_assessment.html',
-                                            attrs={'url': ''})
+                                            attrs={'url': '/clm/rs-list/'})
 
     class Meta:
         model = RS
-        fields = CommonTable.Meta.fields + (
+        fields = (
+            'edit_column',
+            'delete_column',
+            'pre_assessment',
+            'post_assessment',
+            'type',
+            'site',
+            'school',
+            'governorate',
+            'district',
+            'student.first_name',
+            'student.father_name',
+            'student.last_name',
+            'student.sex',
+            'student_age',
+            'student_birthday',
+            'student.nationality',
+            'student.mother_fullname',
+            'registered_in_school',
+            'shift',
+            'grade',
             'pre_test_total',
             'post_test_total',
+            'pre_test_score',
+            'post_test_score',
+            'participation',
+            'learning_result',
         )
 
 
@@ -111,11 +145,33 @@ class CBECETable(CommonTable):
                                           attrs={'url': '/api/clm-cbece/'})
     pre_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
                                            template_name='django_tables2/clm_pre_assessment.html',
-                                           attrs={'url': ''})
+                                           attrs={'url': '/clm/cbece-list/'})
     post_assessment = tables.TemplateColumn(verbose_name=_('Post-assessment'),
                                             template_name='django_tables2/clm_post_assessment.html',
-                                            attrs={'url': ''})
+                                            attrs={'url': '/clm/cbece-list/'})
 
     class Meta:
         model = CBECE
-        fields = CommonTable.Meta.fields
+        fields = (
+            'edit_column',
+            'delete_column',
+            'pre_assessment',
+            'post_assessment',
+            'cycle',
+            'site',
+            'school',
+            'governorate',
+            'district',
+            'student.first_name',
+            'student.father_name',
+            'student.last_name',
+            'student.sex',
+            'student_age',
+            'student_birthday',
+            'student.nationality',
+            'student.mother_fullname',
+            'pre_test_score',
+            'post_test_score',
+            'participation',
+            'learning_result',
+        )

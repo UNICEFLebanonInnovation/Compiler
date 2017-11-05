@@ -125,10 +125,16 @@ class AssessmentSubmission(SingleObjectMixin, View):
         enrollment_id = payload['enrollment_id']
         model = payload['enrollment_model']
 
-        enrollment = model.objects.get(id=int(enrollment_id))
+        if model == 'BLN':
+            enrollment = BLN.objects.get(id=int(enrollment_id))
+        elif model == 'RS':
+            enrollment = RS.objects.get(id=int(enrollment_id))
+        else:
+            enrollment = CBECE.objects.get(id=int(enrollment_id))
 
         enrollment.status = status
         setattr(enrollment, status, payload)
+        enrollment.calculate_score(status)
         enrollment.save()
 
         return HttpResponse()
