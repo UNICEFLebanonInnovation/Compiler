@@ -178,6 +178,7 @@ class CLM(TimeStampedModel):
         CLMRound,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('Round')
     )
 
     governorate = models.ForeignKey(
@@ -622,10 +623,6 @@ class CBECE(CLM):
         ('1', _('< 11.5 CM (severe malnutrition)')),
         ('2', _('< 12.5 CM (moderate malnutrition)')),
     )
-    REFER_SEASON = Choices(
-        ('academic', _('Academic')),
-        ('absence', _('Absence'))
-    )
     SITES = Choices(
         ('', _('Program site')),
         ('in_school', _('Inside the school')),
@@ -653,7 +650,7 @@ class CBECE(CLM):
     )
     referral = ArrayField(
         models.CharField(
-            choices=REFER_SEASON,
+            choices=CLM.REFERRAL,
             max_length=100,
             blank=True,
             null=True,
