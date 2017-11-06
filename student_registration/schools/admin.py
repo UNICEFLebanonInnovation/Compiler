@@ -293,6 +293,21 @@ class ALPAssignmentMatrixAdmin(ImportExportModelAdmin):
     )
 
 
+class PublicDocumentResource(resources.ModelResource):
+    class Meta:
+        model = PublicDocument
+
+
+class PublicDocumentAdmin(ImportExportModelAdmin):
+    resource_class = PublicDocumentResource
+    list_display = (
+        'name',
+        'file_url',
+        'created',
+        'modified'
+    )
+
+
 admin.site.register(School, SchoolAdmin)
 admin.site.register(EducationLevel, EducationLevelAdmin)
 admin.site.register(ClassLevel, ClassLevelAdmin)
@@ -303,7 +318,7 @@ admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
 admin.site.register(EducationYear)
 # admin.site.register(Holiday)
 admin.site.register(CLMRound)
-admin.site.register(PublicDocument)
+admin.site.register(PublicDocument, PublicDocumentAdmin)
 admin.site.register(EducationalLevel)
 admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
 
