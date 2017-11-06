@@ -6,7 +6,7 @@ from student_registration.outreach.tasks import push_children_data
 
 
 class Command(BaseCommand):
-    help = 'Read outreach file'
+    help = 'Read outreach file and push children data'
 
     def add_arguments(self, parser):
         parser.add_argument('--url', type=str, default=None)
