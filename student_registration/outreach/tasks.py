@@ -21,7 +21,7 @@ def push_household_data(base_url, token, protocol='HTTPS'):
                 continue
             data = {}
             data['form_id'] = row[0].value
-            data['partner'] = row[1].value if row[1].value else 'None'
+            data['partner_name'] = row[1].value if row[1].value else 'None'
             data['governorate'] = row[2].value if row[2].value else 'None'
             data['district'] = row[3].value if row[3].value else 'None'
             data['village'] = row[4].value if row[4].value else 'None'
@@ -33,7 +33,7 @@ def push_household_data(base_url, token, protocol='HTTPS'):
             data['number_of_children'] = row[10].value if row[10].value else '0'
             data['barcode_number'] = row[11].value if row[11].value else '0'
 
-            result = post_data(base_url, '/api/household/', token, data, protocol)
+            post_data(protocol=protocol, url=base_url, apifunc='/api/household/', token=token, data=data)
     except Exception as ex:
         print("---------------")
         print("error: ", ex.message)
@@ -72,9 +72,8 @@ def push_children_data(base_url, token, protocol='HTTPS'):
                 data['id_number'] = row[15].value
             elif row[13].value:  # UNHCR_Case_Num
                 data['id_number'] = row[13].value
-            # data = json.dumps(data, cls=DjangoJSONEncoder)
 
-            result = post_data(base_url, '/api/child/', token, data, protocol)
+            post_data(protocol=protocol, url=base_url, apifunc='/api/child/', token=token, data=data)
     except Exception as ex:
         print("---------------")
         print("error: ", ex.message)
@@ -91,6 +90,7 @@ def link_household_to_children():
     for hh in households:
         children = Child.objects.filter(form_id=hh.form_id)
         for child, key in children:
+            print('{}-{}'.format(hh.barcode_number, key))
             child.barcode_subset = '{}-{}'.format(hh.barcode_number, key)
             child.household = hh
             child.save()
