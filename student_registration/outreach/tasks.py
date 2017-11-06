@@ -83,6 +83,19 @@ def push_children_data(base_url, token, protocol='HTTPS'):
         pass
 
 
+@app.task
+def link_household_to_children():
+    from .models import HouseHold, Child
+
+    households = HouseHold.objects.all()
+    for hh in households:
+        children = Child.objects.filter(form_id=hh.form_id)
+        for child, key in children:
+            child.barcode_subset = '{}-{}'.format(hh.barcode_number, key)
+            child.household = hh
+            child.save()
+
+
 class MyEncoder(json.JSONEncoder):
 
     def default(self, obj):
