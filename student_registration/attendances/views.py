@@ -158,6 +158,7 @@ class AttendanceView(LoginRequiredMixin,
         disable_attendance = False
         for registry in registrations:
             exam_day = False
+            not_attending = False
             school_closed = attendance.close_reason if attendance else False
             validation_date = attendance.validation_date if attendance else ''
             total_attended = 0
@@ -171,6 +172,7 @@ class AttendanceView(LoginRequiredMixin,
                 total_attended = attendances['total_attended']
                 total_absences = attendances['total_absences']
                 exam_day = attendances['exam_day']
+                not_attending = attendances['not_attending']
                 for value in attendances['students']:
                     attendance_status[value['student_id']] = value
 
@@ -183,13 +185,14 @@ class AttendanceView(LoginRequiredMixin,
                 'total_attended': total_attended,
                 'total_absences': total_absences,
                 'exam_day': exam_day,
+                'not_attending': not_attending,
                 'validation_date': validation_date,
                 'disable_attendance': disable_attendance
             }
 
             if level and section and level.id == registry['classroom_id'] and section.id == registry['section_id']:
                 current_level_section = level_by_section
-                if exam_day or (attendance and attendance.validation_date) or school_closed:
+                if exam_day or not_attending or (attendance and attendance.validation_date) or school_closed:
                     disable_attendance = True
 
             levels_by_sections.append(level_by_section)
@@ -200,7 +203,7 @@ class AttendanceView(LoginRequiredMixin,
         if level and section:
             students = queryset.filter(classroom_id=level.id,section_id=section.id,
                                        # registration_date__lte=selected_date
-                                      ).order_by('student__first_name')
+                                       ).order_by('student__first_name', 'student__father_name', 'student__last_name')
             for line in students:
                 student = line.student
                 if str(student.id) in attendance_status:
