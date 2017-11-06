@@ -115,12 +115,14 @@ class CommonForm(forms.ModelForm):
     governorate = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
         label=_('Governorate'),
+        empty_label='-------',
         required=True, to_field_name='id',
         initial=0
     )
     district = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
         label=_('District'),
+        empty_label='-------',
         required=True, to_field_name='id',
         initial=0
     )
@@ -260,7 +262,7 @@ class CommonForm(forms.ModelForm):
                 instance.round = clm_round
                 instance.save()
             else:
-                # print serializer.errors
+                print(serializer.errors)
                 return False
 
         return True
@@ -948,12 +950,17 @@ class CBECEForm(CommonForm):
     site = forms.ChoiceField(
         widget=forms.Select, required=True,
         label=_('Where is the program?'),
-        choices=CBECE.SITES
+        choices=(
+            ('', '--------'),
+            ('in_school', _('Inside the school')),
+            ('out_school', _('Outside the school')),
+        )
     )
     school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
         label=_('The school where the child is attending the program'),
-        required=True, to_field_name='id',
+        empty_label='-------',
+        required=False, to_field_name='id',
         initial=0
     )
     referral = forms.MultipleChoiceField(
@@ -965,7 +972,11 @@ class CBECEForm(CommonForm):
     child_muac = forms.ChoiceField(
         label=_("What is the measurement of the child's arm circumference? (Centimeter)"),
         widget=forms.Select, required=True,
-        choices=CBECE.MUAC
+        choices=(
+            ('', '-------'),
+            ('1', _('< 11.5 CM (severe malnutrition)')),
+            ('2', _('< 12.5 CM (moderate malnutrition)')),
+        )
     )
 
     def __init__(self, *args, **kwargs):
