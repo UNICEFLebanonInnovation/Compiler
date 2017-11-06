@@ -28,7 +28,7 @@ $(document).ready(function(){
 
     $(document).on('click', '#save_attendances', function(){
         if(confirm($(this).attr('translation'))) {
-            var level_section = get_level_section_attendances(false);
+            var level_section = get_level_section_attendances(false, false);
 
             var data = {
                     owner: $('input#owner').val(),
@@ -73,7 +73,8 @@ $(document).ready(function(){
                 total_attended_female: 0,
                 total_absent_male: 0,
                 total_absent_female: 0,
-                exam_day: true
+                exam_day: true,
+                not_attending: false
             };
 
             var data = {
@@ -84,6 +85,38 @@ $(document).ready(function(){
             };
             set_attendances(data, level_section);
             $(this).remove();
+            $('#not_attending').remove();
+            $('#save_attendances').remove();
+            $("[class='toggle-status']").remove();
+        }
+    });
+
+    $(document).on('click', '#not_attending', function(){
+        if(confirm($(this).attr('translation'))) {
+            var level_section = {};
+            var level_section_name = $('#level').val() + "-" + $('#section').val();
+            level_section[level_section_name] = {
+                students: {},
+                total_enrolled: $('.enrollment_id').length,
+                total_absences: 0,
+                total_attended: 0,
+                total_attended_male: 0,
+                total_attended_female: 0,
+                total_absent_male: 0,
+                total_absent_female: 0,
+                exam_day: false,
+                not_attending: true
+            };
+
+            var data = {
+                    owner: $('input#owner').val(),
+                    attendance_date: $('input#attendance_date').val(),
+                    school: $('input#school').val(),
+                    total_enrolled: $('.enrollment_id').length
+            };
+            set_attendances(data, level_section);
+            $(this).remove();
+            $('#exam_day').remove();
             $('#save_attendances').remove();
             $("[class='toggle-status']").remove();
         }
@@ -102,7 +135,7 @@ $(document).ready(function(){
     });
 });
 
-function get_level_section_attendances(exam_day)
+function get_level_section_attendances(exam_day, not_attending)
 {
     var students = new Array();
     var level_section = {};
@@ -152,7 +185,7 @@ function get_level_section_attendances(exam_day)
             level_name: $('#level_name_' + enrollment_id).val(),
             status: status,
             absence_reason: absence_reason,
-            dropout: $('#student_dropout_' + enrollment_id).val(),
+            dropout: $('#student_dropout_' + enrollment_id).val()
         });
 
     });
@@ -167,7 +200,8 @@ function get_level_section_attendances(exam_day)
         total_attended_female: total_attended_female,
         total_absent_male: total_absent_male,
         total_absent_female: total_absent_female,
-        exam_day: exam_day
+        exam_day: exam_day,
+        not_attending: not_attending
     };
     return level_section;
 }
