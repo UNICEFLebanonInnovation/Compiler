@@ -10,7 +10,40 @@ from openpyxl import load_workbook
 
 
 @app.task
-def read_file(base_url, token, protocol='HTTPS'):
+def push_household_data(base_url, token, protocol='HTTPS'):
+
+    wb = load_workbook(filename='BTS_Outreach_form_16102017.xlsx', read_only=True)
+    ws = wb['Household']
+
+    try:
+        for row in ws.rows:
+            if row[0].value == 'FORMID':
+                continue
+            data = {}
+            data['form_id'] = row[0].value
+            data['partner'] = row[1].value if row[1].value else 'None'
+            data['governorate'] = row[2].value if row[2].value else 'None'
+            data['district'] = row[3].value if row[3].value else 'None'
+            data['village'] = row[4].value if row[4].value else 'None'
+            data['name'] = row[5].value if row[5].value else 'None'
+            data['phone_number'] = row[6].value if row[6].value else '000000'
+            data['residence_type'] = row[7].value if row[7].value else 'None'
+            data['p_code'] = row[8].value if row[8].value else 'None'
+            data['address'] = row[9].value if row[9].value else 'None'
+            data['number_of_children'] = row[10].value if row[10].value else '0'
+            data['barcode_number'] = row[11].value if row[11].value else '0'
+
+            result = post_data(base_url, '/api/household/', token, data, protocol)
+    except Exception as ex:
+        print("---------------")
+        print("error: ", ex.message)
+        print(json.dumps(data, cls=DjangoJSONEncoder))
+        print("---------------")
+        pass
+
+
+@app.task
+def push_children_data(base_url, token, protocol='HTTPS'):
 
     wb = load_workbook(filename='BTS_Outreach_form_16102017.xlsx', read_only=True)
     ws = wb['Individuals']
@@ -20,7 +53,7 @@ def read_file(base_url, token, protocol='HTTPS'):
             if row[0].value == 'FORMID':
                 continue
             data = {}
-            # data['_id'] = row[0].value
+            data['form_id'] = row[0].value
             data['first_name'] = row[1].value if row[1].value else 'None'
             data['father_name'] = row[2].value if row[2].value else 'None'
             data['last_name'] = row[3].value if row[3].value else 'None'

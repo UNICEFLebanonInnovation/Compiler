@@ -11,6 +11,7 @@ class HouseHoldSerializer(serializers.ModelSerializer):
     class Meta:
         model = HouseHold
         fields = (
+            'form_id',
             'name',
             'barcode_number',
             'children',
@@ -87,4 +88,5 @@ class ChildSerializer(serializers.ModelSerializer):
             'id_type',
             'id_number',
             'barcode_subset',
+            'form_id'
         )
