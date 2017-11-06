@@ -83,6 +83,69 @@ def import_docs(**kwargs):
                 print(json.dumps(doc))
 
 
+@app.task
+def calculate_disaggregation():
+    from .models import Assessment
+
+    queryset = Assessment.objects.filter(child_list__isnull=False)
+    print(queryset.count())
+
+    for line in queryset:
+        data = line.child_list
+        line._0_to_3_months = find_total(data=data, name='age', value='0 to 3 months')
+        line._3_to_12_months = find_total(data=data, name='age', value='3 to 12 months')
+        line._1_year_old = find_total(data=data, name='age', value='1 year old')
+        line._2_years_old = find_total(data=data, name='age', value='2 years old')
+        line._3_years_old = find_total(data=data, name='age', value='3 years old')
+        line._4_years_old = find_total(data=data, name='age', value='4 years old')
+        line._5_years_old = find_total(data=data, name='age', value='5 years old')
+        line._6_years_old = find_total(data=data, name='age', value='6 years old')
+        line._7_years_old = find_total(data=data, name='age', value='7 years old')
+        line._8_years_old = find_total(data=data, name='age', value='8 years old')
+        line._9_years_old = find_total(data=data, name='age', value='9 years old')
+        line._10_years_old = find_total(data=data, name='age', value='10 years old')
+        line._11_years_old = find_total(data=data, name='age', value='11 years old')
+        line._12_years_old = find_total(data=data, name='age', value='12 years old')
+        line._13_years_old = find_total(data=data, name='age', value='13 years old')
+        line._14_years_old = find_total(data=data, name='age', value='14 years old')
+        line.male = find_total(data=data, name='gender', value='Boy')
+        line.female = find_total(data=data, name='gender', value='Girl')
+        line._3_months_kit = find_total(data=data, name='kit', value='3 months')
+        line._12_months_kit = find_total(data=data, name='kit', value='12 months')
+        line._2_years_kit = find_total(data=data, name='kit', value='2 years')
+        line._3_years_kit = find_total(data=data, name='kit', value='3 years')
+        line._5_years_kit = find_total(data=data, name='kit', value='5 years')
+        line._7_years_kit = find_total(data=data, name='kit', value='7 years')
+        line._9_years_kit = find_total(data=data, name='kit', value='9 years')
+        line._12_years_kit = find_total(data=data, name='kit', value='12 years')
+        line._14_years_kit = find_total(data=data, name='kit', value='14 years')
+        line._3_months_kit_completed = find_total(data=data, name='kit', value='3 months', status_condition='COMPLETED')
+        line._12_months_kit_completed = find_total(data=data, name='kit', value='12 months', status_condition='COMPLETED')
+        line._2_years_kit_completed = find_total(data=data, name='kit', value='2 years', status_condition='COMPLETED')
+        line._3_years_kit_completed = find_total(data=data, name='kit', value='3 years', status_condition='COMPLETED')
+        line._5_years_kit_completed = find_total(data=data, name='kit', value='5 years', status_condition='COMPLETED')
+        line._7_years_kit_completed = find_total(data=data, name='kit', value='7 years', status_condition='COMPLETED')
+        line._9_years_kit_completed = find_total(data=data, name='kit', value='9 years', status_condition='COMPLETED')
+        line._12_years_kit_completed = find_total(data=data, name='kit', value='12 years', status_condition='COMPLETED')
+        line._14_years_kit_completed = find_total(data=data, name='kit', value='14 years', status_condition='COMPLETED')
+        line.Q1 = find_total(data=data, name='age', value='Q1')
+        line.Q2 = find_total(data=data, name='age', value='Q2')
+        line.Q3 = find_total(data=data, name='age', value='Q3')
+
+        line.save()
+
+
+def find_total(data, name, value, status_condition=None):
+    ctr = 0
+    for item in data:
+        if status_condition:
+            if item['status'] == status_condition and item[name] == value:
+                ctr += 1
+        elif item[name] == value:
+            ctr += 1
+    return ctr
+
+
 def export_data():
     from .models import Assessment
     # from student_registration.backends.
@@ -164,11 +227,12 @@ def export_data():
     for line in queryset:
         content = [
             line._id,
-            line.p_code,
-            line.p_code_name,
+            line.location_p_code,
+            line.location_p_code_name,
             line.district,
             line.cadastral,
             line.location_type,
+            line.locations_type,
             line.assistance_type,
             line.phone_number,
             line.phone_owner,
