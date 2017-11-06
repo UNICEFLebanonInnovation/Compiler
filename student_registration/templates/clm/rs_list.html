@@ -3,15 +3,19 @@
 {% load static %}
 {% load render_table from django_tables2 %}
 {% load bootstrap3 %}
+{% load util_tags %}
 {% bootstrap_css %}
 
 {% block extra_head %}
     <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
 {% endblock %}
 
-{% block content-full-page %}
+{% block content-full-page-ar %}
 
     <ol class="breadcrumb">
+      <li class="breadcrumb-item active">
+        RS
+      </li>
       <li class="breadcrumb-item active">
         {{ request.user.partner }}
       </li>
@@ -49,7 +53,11 @@
 {% endblock %}
 
 {% block extra_js %}
+    {% get_user_token request.user.id as user_token %}
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>
+    <script>
+        var user_token = '{{ user_token }}';
+    </script>
 {% endblock %}

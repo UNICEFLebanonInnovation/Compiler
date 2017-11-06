@@ -71,7 +71,7 @@ class CLMSerializer(serializers.ModelSerializer):
     student_nationality_id = serializers.CharField(source='student.nationality.id', read_only=True)
     student_address = serializers.CharField(source='student.address', required=False)
     student_p_code = serializers.CharField(source='student.p_code', required=False)
-    student_family_status = serializers.CharField(source='student.family_status')
+    student_family_status = serializers.CharField(source='student.family_status', required=False)
     student_have_children = serializers.CharField(source='student.have_children', required=False)
 
     student_outreach_child = serializers.IntegerField(source='student.outreach_child', required=False)
