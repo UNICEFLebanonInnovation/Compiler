@@ -16,6 +16,10 @@ $(document).ready(function(){
 
     reorganizeForm();
 
+    $(document).on('change', 'select#id_site', function(){
+         reorganizeForm();
+    });
+
     $(document).on('click', 'input[name=have_labour]', function(){
         reorganizeForm();
     });
@@ -300,12 +304,21 @@ function reorganizeForm()
     var have_barcode = $('select#id_have_barcode').val();
     var family_status = $('select#id_student_family_status').val();
     var have_labour = $('input[name=have_labour]:checked').val();
+    var program_site = $('select#id_site').val();
 
     if(urlParam('child_id') || urlParam('enrollment_id') || $('#registry_block').hasClass('d-none')) {
         $('#registry_block').addClass('d-none');
         $('#register_by_barcode').addClass('d-none');
         $('#search_options').addClass('d-none');
         return true;
+    }
+
+    if(program_site == 'out_school') {
+        $('div#div_id_school').parent().addClass('d-none');
+        $('div#div_id_school').parent().prev().addClass('d-none');
+    }else{
+        $('div#div_id_school').parent().removeClass('d-none');
+        $('div#div_id_school').parent().prev().removeClass('d-none');
     }
 
     if(family_status == 'married' || family_status == 'divorced'){
