@@ -459,5 +459,35 @@ class Assessment(models.Model):
     def amount(self):
         return 0
 
+    @property
+    def location_p_code(self):
+        if self.location and self.location['p_code']:
+            return self.location['p_code']
+        return self.p_code
+
+    @property
+    def location_p_code_name(self):
+        if self.location and self.location['p_code_name']:
+            return self.location['p_code_name']
+        return self.p_code_name
+
+    @property
+    def district(self):
+        if self.location and self.location['cadastral']:
+            return self.location['cadastral']
+        return ''
+
+    @property
+    def cadastral(self):
+        if self.location and self.location['cadastral']:
+            return self.location['cadastral']
+        return ''
+
+    @property
+    def locations_type(self):
+        if self.location and self.location['location_type']:
+            return self.location['location_type']
+        return ''
+
     def __unicode__(self):
         return self._id
