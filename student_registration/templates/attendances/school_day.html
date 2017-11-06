@@ -84,10 +84,10 @@
                     <div class="col-xs-3 col-sm-3 col-md-3 s-col">
                         {% if row.validation_date %}
                             <span class="attendance-status icon-2-check"></span>
-                            {% if row.exam_day %}
+                            {% if row.exam_day or row.not_attending %}
                             <span class="attendance-status icon-exam-check"></span>
                             {% endif %}
-                        {% elif row.exam_day %}
+                        {% elif row.exam_day or row.not_attending  %}
                             <span class="attendance-status icon-exam-check"></span>
                         {% elif row.total_attended or row.total_absences %}
                             <span class="attendance-status icon-check"></span>

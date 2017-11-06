@@ -33,6 +33,7 @@
                                 <li class="breadcrumb-item">
                                     <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to " %} {{ selected_date_view }}</a>
                                     <button type="button" class="btn btn-warning absolute-right-15 absolute-top-15" id="exam_day" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}" {% if disable_attendance %}disabled{% endif %}>{% trans "Exam day" %}</button>
+                                    <button type="button" class="btn btn-warning absolute-right-200 absolute-top-15" id="not_attending" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}" {% if disable_attendance %}disabled{% endif %}>{% trans "Not attending" %}</button>
                                 </li>
                             </ol>
                             <ol class="breadcrumb">
