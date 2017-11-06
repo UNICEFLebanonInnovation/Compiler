@@ -47,9 +47,9 @@ class ChildSerializer(serializers.ModelSerializer):
     birthday_month = serializers.CharField(required=False)
     birthday_day = serializers.CharField(required=False)
     id_number = serializers.CharField(required=False)
-    id_type = serializers.CharField(required=False)
-    nationality = serializers.CharField(required=False)
-    mother_nationality = serializers.CharField(required=False)
+    id_type = serializers.CharField(source='id_type_id', required=False)
+    nationality = serializers.CharField(source='nationality_id', required=False)
+    mother_nationality = serializers.CharField(source='mother_nationality_id', required=False)
     barcode_subset = serializers.CharField(required=False)
 
     class Meta:
