@@ -187,16 +187,19 @@ class PartnerOrganization(models.Model):
         CLMRound,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('BLN current round')
     )
     rs_round = models.ForeignKey(
         CLMRound,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('RS current round')
     )
     cbece_round = models.ForeignKey(
         CLMRound,
         blank=True, null=True,
         related_name='+',
+        verbose_name=_('CB-ECE current round')
     )
 
     class Meta:
