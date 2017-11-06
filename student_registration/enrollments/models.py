@@ -504,6 +504,9 @@ class Enrollment(TimeStampedModel):
     def get_absolute_url(self):
         return '/enrollments/edit/%d/' % self.pk
 
+    class Meta:
+        ordering = ['-student__first_name']
+
     def __unicode__(self):
         if self.student:
             return self.student.__unicode__()
