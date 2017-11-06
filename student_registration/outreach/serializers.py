@@ -12,7 +12,7 @@ class HouseHoldSerializer(serializers.ModelSerializer):
         model = HouseHold
         fields = (
             'form_id',
-            'partner',
+            'partner_name',
             'governorate',
             'district',
             'village',

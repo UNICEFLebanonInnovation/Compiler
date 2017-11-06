@@ -41,12 +41,12 @@ class HouseHold(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     phone_number = models.CharField(max_length=45, blank=True, null=True)
     residence_type = models.CharField(
-        max_length=50,
+        max_length=200,
         blank=True,
         null=True,
     )
-    p_code = models.CharField(max_length=45, blank=True, null=True)
-    address = models.CharField(max_length=100, blank=True, null=True)
+    p_code = models.CharField(max_length=100, blank=True, null=True)
+    address = models.CharField(max_length=200, blank=True, null=True)
     number_of_children = models.CharField(max_length=45, blank=True, null=True)
     barcode_number = models.CharField(max_length=45, blank=True, null=True)
 
