@@ -60,6 +60,10 @@
       {% block content-full-page %}
       {% endblock content-full-page %}
     </div>
+    <div class="container-full-page" {% if LANGUAGE_CODE == 'ar-ar' %}dir="rtl"{% endif %} style="position: relative;width: 100%; padding: 15px; overflow: scroll;">
+      {% block content-full-page-ar %}
+      {% endblock content-full-page-ar %}
+    </div>
 
     {% block modal %}{% endblock modal %}
 
