@@ -86,7 +86,7 @@ $(document).ready(function(){
             set_attendances(data, level_section);
             $(this).remove();
             $('#not_attending').remove();
-            $('#save_attendances').remove();
+            $('.save_attendances').remove();
             $("[class='toggle-status']").remove();
         }
     });
@@ -117,7 +117,7 @@ $(document).ready(function(){
             set_attendances(data, level_section);
             $(this).remove();
             $('#exam_day').remove();
-            $('#save_attendances').remove();
+            $('.save_attendances').remove();
             $("[class='toggle-status']").remove();
         }
     });
