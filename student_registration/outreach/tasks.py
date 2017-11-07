@@ -88,11 +88,13 @@ def link_household_to_children():
 
     households = HouseHold.objects.all()
     for hh in households:
+        ctr = 0
         children = Child.objects.filter(form_id=hh.form_id)
-        for child, key in children:
-            print('{}-{}'.format(hh.barcode_number, key))
-            child.barcode_subset = '{}-{}'.format(hh.barcode_number, key)
+        for child in children:
+            ctr += 1
+            child.barcode_subset = '{}-{}'.format(hh.barcode_number, ctr)
             child.household = hh
+            print(child.id)
             child.save()
 
 
