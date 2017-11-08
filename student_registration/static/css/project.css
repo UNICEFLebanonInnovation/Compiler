@@ -333,3 +333,22 @@ tr.odd {
 .container-full-page .breadcrumb {
     direction: ltr;
 }
+/*.table-container .table th {*/
+    /*min-width: 200px !important;*/
+/*}
+/*.table-container .table th, .table-container .table td {*/
+    /*border-left: 1px solid #eceeef;*/
+/*}
+/**/
+.list-filter .form-group {
+    margin: 5px;
+    width: 150px;
+}
+.list-filter .btn {
+    margin: 5px;
+    width: 70px;
+}
+
+.list-filter .form-group input, .list-filter .form-group select {
+    width: 150px;
+}

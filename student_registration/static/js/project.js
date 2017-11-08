@@ -134,7 +134,12 @@ function scrollToBottom()
 function getHeader()
 {
     var csrftoken = getCookie('csrftoken');
-    var header = {'Authorization': 'Token '+user_token, 'X-CSRFToken': csrftoken};
+    var header = {
+        'Authorization': 'Token '+user_token,
+        'HTTP_REFERER': $(location).attr('href'),
+        'Cookie': 'token=Token '+user_token,
+        'X-CSRFToken': csrftoken
+    };
     return header;
 }
 
