@@ -213,7 +213,7 @@ class RSEditView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         instance = RS.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            RSForm(self.request.POST, instance=instance, request=self.request)
+            return RSForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = RSSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
@@ -298,7 +298,7 @@ class CBECEEditView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         instance = CBECE.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            CBECEForm(self.request.POST, instance=instance, request=self.request)
+            return CBECEForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = CBECESerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
