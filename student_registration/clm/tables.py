@@ -92,17 +92,36 @@ class RSTable(CommonTable):
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': '/api/clm-bln/'})
 
-    pre_test_total = tables.Column(verbose_name=_('Pre-test total'), orderable=False,
-                                   accessor='pretest_result')
-    post_test_total = tables.Column(verbose_name=_('Post-test total'), orderable=False,
-                                    accessor='posttest_result')
-
-    pre_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
+    pre_assessment = tables.TemplateColumn(verbose_name=_('Strategy Evaluation - Pre'),
                                            template_name='django_tables2/clm_pre_assessment.html',
                                            attrs={'url': '/clm/rs-list/'})
-    post_assessment = tables.TemplateColumn(verbose_name=_('Post-assessment'),
+    post_assessment = tables.TemplateColumn(verbose_name=_('Strategy Evaluation - Post'),
                                             template_name='django_tables2/clm_post_assessment.html',
                                             attrs={'url': '/clm/rs-list/'})
+
+    #  Academic Result
+    pre_test_total = tables.Column(verbose_name=_('Academic Result - Pre'), orderable=False,
+                                   accessor='pretest_result')
+    post_test_total = tables.Column(verbose_name=_('Academic Result - Post'), orderable=False,
+                                    accessor='posttest_result')
+
+    # Strategy Evaluation Result
+    pre_assessment_result = tables.Column(verbose_name=_('Strategy Evaluation Result - Pre'), orderable=False,
+                                          accessor='pre_test_score')
+    post_assessment_result = tables.Column(verbose_name=_('Strategy Evaluation Result - Post'), orderable=False,
+                                           accessor='pre_post_score')
+
+    # Motivation Assessment Result
+    pre_motivation_result = tables.Column(verbose_name=_('Motivation - Pre'), orderable=False,
+                                          accessor='pre_test_score')
+    post_motivation_result = tables.Column(verbose_name=_('Motivation - Post'), orderable=False,
+                                           accessor='pre_post_score')
+
+    # Self Assessment Result
+    self_pre_assessment = tables.Column(verbose_name=_('Self Assessment - Pre'), orderable=False,
+                                        accessor='pretest_result')
+    self_post_assessment = tables.Column(verbose_name=_('Self Assessment - Post'), orderable=False,
+                                         accessor='pretest_result')
 
     class Meta:
         model = RS
@@ -130,8 +149,12 @@ class RSTable(CommonTable):
             'grade',
             'pre_test_total',
             'post_test_total',
-            'pre_test_score',
-            'post_test_score',
+            'pre_assessment_result',
+            'post_assessment_result',
+            'pre_motivation_result',
+            'post_motivation_result',
+            'self_pre_assessment',
+            'self_post_assessment',
             'participation',
             'learning_result',
         )
