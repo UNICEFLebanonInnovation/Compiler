@@ -358,6 +358,14 @@ class CLM(TimeStampedModel):
             return self.student.age
         return 0
 
+    @property
+    def assessment_improvement(self):
+        if self.pre_test and self.post_test:
+            return '{}{}'.format(
+                (abs(int(self.pre_test_score) - int(self.post_test_score)) / int(self.pre_test_score)) * 100,
+                '%')
+        return ''
+
     def get_absolute_url(self):
         return '/clm/edit/%d/' % self.pk
 
@@ -379,6 +387,17 @@ class CLM(TimeStampedModel):
 
 class BLN(CLM):
 
+    LEARNING_RESULT = Choices(
+        ('', _('Learning result')),
+        ('repeat_level', _('Repeat level')),
+        ('attended_public_school', _('Attended public school')),
+        ('referred_to_alp', _('referred to ALP')),
+        ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
+        ('reenrolled_in_alp', _('Re-register on another round of BLN')),
+        ('not_enrolled_any_program', _('Not enrolled in any educational program')),
+        ('dropout', _('Dropout from school'))
+    )
+
     cycle = models.ForeignKey(
         Cycle,
         blank=True, null=True,
@@ -395,6 +414,14 @@ class BLN(CLM):
         blank=True,
         null=True,
         verbose_name=_('Referral')
+    )
+
+    learning_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LEARNING_RESULT,
+        verbose_name=_('Learning result')
     )
 
     def calculate_score(self, stage):
@@ -431,6 +458,12 @@ class BLN(CLM):
 
 
 class RS(CLM):
+
+    LEARNING_RESULT = Choices(
+        ('', _('Learning result')),
+        ('repeat_level', _('Repeat level')),
+        ('dropout', _('Dropout from school'))
+    )
 
     SCHOOL_SHIFTS = Choices(
         ('', _('Shift')),
@@ -559,6 +592,29 @@ class RS(CLM):
         verbose_name=_('Science')
     )
 
+    pre_self_assessment = JSONField(blank=True, null=True)
+    pre_self_assessment_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Self-assessment - Pre')
+    )
+    post_self_assessment = JSONField(blank=True, null=True)
+    post_self_assessment_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Self-assessment - Post')
+    )
+
+    learning_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LEARNING_RESULT,
+        verbose_name=_('Learning result')
+    )
+
     class Meta:
         ordering = ['id']
         verbose_name = "RS"
@@ -586,6 +642,23 @@ class RS(CLM):
             '80'
         )
 
+    @property
+    def academic_test_improvement(self):
+        if self.pretest_total and self.posttest_total:
+            return '{}{}'.format(
+                (abs(int(self.pretest_total) + int(self.posttest_total)) / int(self.pretest_total)) * 100,
+                '%')
+        return ''
+
+    @property
+    def self_assessment_improvement(self):
+        if self.pre_self_assessment and self.post_self_assessment:
+            return '{}{}'.format(
+                (abs(int(self.pre_self_assessment_score) - int(self.post_self_assessment_score)) /
+                    int(self.pre_self_assessment_score)) * 100,
+                '%')
+        return ''
+
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
             assessment = Assessment.objects.get(slug=assessment_slug)
@@ -607,12 +680,34 @@ class RS(CLM):
         return self.assessment_form(stage='post_test', assessment_slug='rs_post_test')
 
     def calculate_score(self, stage):
-        keys = [
-            'BLN_ASSESSMENT/arabic',
-            'BLN_ASSESSMENT/math',
-            'BLN_ASSESSMENT/english',
-            'BLN_ASSESSMENT/french'
-        ]
+        if stage == 'pre_test':
+            keys = [
+                'RS_ASSESSMENT/FL1',
+                'RS_ASSESSMENT/FL2',
+                'RS_ASSESSMENT/FL3',
+                'RS_ASSESSMENT/FL4',
+                'RS_ASSESSMENT/FL5',
+                'RS_ASSESSMENT/FL6',
+                'RS_ASSESSMENT/FL7',
+                'RS_ASSESSMENT/FL8',
+            ]
+        else:
+            keys = [
+                'SELF_ASSESSMENT/assessment_1',
+                'SELF_ASSESSMENT/assessment_2',
+                'SELF_ASSESSMENT/assessment_3',
+                'SELF_ASSESSMENT/assessment_4',
+                'SELF_ASSESSMENT/assessment_5',
+                'SELF_ASSESSMENT/assessment_6',
+                'SELF_ASSESSMENT/assessment_7',
+                'SELF_ASSESSMENT/assessment_8',
+                'SELF_ASSESSMENT/assessment_9',
+                'SELF_ASSESSMENT/assessment_10',
+                'SELF_ASSESSMENT/assessment_11',
+                'SELF_ASSESSMENT/assessment_12',
+                'SELF_ASSESSMENT/assessment_13',
+                'SELF_ASSESSMENT/assessment_14',
+            ]
         super(RS, self).score(keys, stage)
 
 
@@ -627,6 +722,15 @@ class CBECE(CLM):
         ('', _('Program site')),
         ('in_school', _('Inside the school')),
         ('out_school', _('Outside the school')),
+    )
+    LEARNING_RESULT = Choices(
+        ('', _('Learning result')),
+        ('repeat_level', _('Repeat level')),
+        ('graduated_next_level', _('Graduated to the next level')),
+        ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
+        ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
+        ('referred_to_another_program', _('Referred to another program')),
+        ('dropout', _('Dropout from school'))
     )
 
     cycle = models.ForeignKey(
@@ -691,6 +795,14 @@ class CBECE(CLM):
         verbose_name=_('Science')
     )
 
+    learning_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LEARNING_RESULT,
+        verbose_name=_('Learning result')
+    )
+
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
             assessment = Assessment.objects.get(slug=assessment_slug)
@@ -713,12 +825,16 @@ class CBECE(CLM):
         return self.assessment_form(stage='post_test', assessment_slug='cbece_post_test')
 
     def calculate_score(self, stage):
+        program_site = self.site_id
         keys = [
-            'BLN_ASSESSMENT/arabic',
-            'BLN_ASSESSMENT/math',
-            'BLN_ASSESSMENT/english',
-            'BLN_ASSESSMENT/french'
+            'CBECE_ASSESSMENT/LanguageArtDomain'+program_site,
+            'CBECE_ASSESSMENT/CognitiveDomianMathematics'+program_site,
+            'CBECE_ASSESSMENT/CognitiveDomianScience'+program_site,
+            'CBECE_ASSESSMENT/SocialEmotionalDomain'+program_site,
+            'CBECE_ASSESSMENT/PsychomotorDomain'+program_site,
+            'CBECE_ASSESSMENT/ArtisticDomain'+program_site,
         ]
+
         super(CBECE, self).score(keys, stage)
 
     class Meta:
