@@ -13,9 +13,9 @@ from student_registration.taskapp.celery import app
 
 @app.task
 def cleanup_old_data():
-    from .models import Beneficiary
+    from .models import Assessment
 
-    registrations = Beneficiary.objects.all()
+    registrations = Assessment.objects.all()
     print(registrations.count())
     registrations.delete()
 
