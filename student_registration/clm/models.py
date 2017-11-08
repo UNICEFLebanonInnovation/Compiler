@@ -387,6 +387,17 @@ class CLM(TimeStampedModel):
 
 class BLN(CLM):
 
+    LEARNING_RESULT = Choices(
+        ('', _('Learning result')),
+        ('repeat_level', _('Repeat level')),
+        ('attended_public_school', _('Attended public school')),
+        ('referred_to_alp', _('referred to ALP')),
+        ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
+        ('reenrolled_in_alp', _('Re-register on another round of BLN')),
+        ('not_enrolled_any_program', _('Not enrolled in any educational program')),
+        ('dropout', _('Dropout from school'))
+    )
+
     cycle = models.ForeignKey(
         Cycle,
         blank=True, null=True,
@@ -403,6 +414,14 @@ class BLN(CLM):
         blank=True,
         null=True,
         verbose_name=_('Referral')
+    )
+
+    learning_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LEARNING_RESULT,
+        verbose_name=_('Learning result')
     )
 
     def calculate_score(self, stage):
@@ -439,6 +458,12 @@ class BLN(CLM):
 
 
 class RS(CLM):
+
+    LEARNING_RESULT = Choices(
+        ('', _('Learning result')),
+        ('repeat_level', _('Repeat level')),
+        ('dropout', _('Dropout from school'))
+    )
 
     SCHOOL_SHIFTS = Choices(
         ('', _('Shift')),
@@ -582,6 +607,14 @@ class RS(CLM):
         verbose_name=_('Self-assessment - Post')
     )
 
+    learning_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LEARNING_RESULT,
+        verbose_name=_('Learning result')
+    )
+
     class Meta:
         ordering = ['id']
         verbose_name = "RS"
@@ -690,6 +723,15 @@ class CBECE(CLM):
         ('in_school', _('Inside the school')),
         ('out_school', _('Outside the school')),
     )
+    LEARNING_RESULT = Choices(
+        ('', _('Learning result')),
+        ('repeat_level', _('Repeat level')),
+        ('graduated_next_level', _('Graduated to the next level')),
+        ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
+        ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
+        ('referred_to_another_program', _('Referred to another program')),
+        ('dropout', _('Dropout from school'))
+    )
 
     cycle = models.ForeignKey(
         Cycle,
@@ -751,6 +793,14 @@ class CBECE(CLM):
         null=True,
         choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Science')
+    )
+
+    learning_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LEARNING_RESULT,
+        verbose_name=_('Learning result')
     )
 
     def assessment_form(self, stage, assessment_slug, callback=''):
