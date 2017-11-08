@@ -73,6 +73,7 @@ PARTICIPATION = (
 
 LEARNING_RESULT = (
     ('', '----------'),
+    ('repeat_level', _('Repeat level')),
     ('graduated_next_level', _('Graduated to the next level')),
     ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
     ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
@@ -241,7 +242,15 @@ class CommonForm(forms.ModelForm):
     learning_result = forms.ChoiceField(
         label=_('Based on the overall score, what is the recommended learning path?'),
         widget=forms.Select, required=False,
-        choices=LEARNING_RESULT,
+        choices=(
+            ('', '----------'),
+            ('repeat_level', _('Repeat level')),
+            ('graduated_next_level', _('Graduated to the next level')),
+            ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
+            ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
+            ('referred_to_another_program', _('Referred to another program')),
+            ('dropout', _('Dropout from school'))
+        ),
         initial=''
     )
 
@@ -339,6 +348,21 @@ class BLNForm(CommonForm):
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
         required=False,
+    )
+    learning_result = forms.ChoiceField(
+        label=_('Based on the overall score, what is the recommended learning path?'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('repeat_level', _('Repeat level')),
+            ('attended_public_school', _('Attended public school')),
+            ('referred_to_alp', _('referred to ALP')),
+            ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
+            ('reenrolled_in_alp', _('Re-register on another round of BLN')),
+            ('not_enrolled_any_program', _('Not enrolled in any educational program')),
+            ('dropout', _('Dropout from school'))
+        ),
+        initial=''
     )
 
     def __init__(self, *args, **kwargs):
@@ -517,18 +541,21 @@ class BLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Strategy Evaluation') + '</h4>')
                 ),
                 Div(
-                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">'+_('Pre-assessment')+'</a></div>'),
-                    HTML('<div class="col-md-3"><a class="btn btn-success '+post_test_permission+'" href="'+post_test+'">'+_('Post-assessment')+'</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn btn-success" href="' + pre_test + '">' + _(
+                        'Pre-assessment') + '</a></div>'),
+                    HTML(
+                        '<div class="col-md-3"><a class="btn btn-success ' + post_test_permission + '" href="' + post_test + '">' + _(
+                            'Post-assessment') + '</a></div>'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<div class="p-3"></div>'),
                     css_class='row'
                 ),
-                css_class='bd-callout bd-callout-warning'+display_assessment
+                css_class='bd-callout bd-callout-warning' + display_assessment
             ),
             Fieldset(
                 None,
@@ -629,6 +656,16 @@ class RSForm(CommonForm):
         required=True,
         initial='academic'
     )
+    learning_result = forms.ChoiceField(
+        label=_('Based on the overall score, what is the recommended learning path?'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('repeat_level', _('Repeat level')),
+            ('dropout', _('Dropout from school'))
+        ),
+        initial=''
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -636,9 +673,11 @@ class RSForm(CommonForm):
 
         pre_test = ''
         post_test = ''
-        display_assessment = ' d-none'
-        display_registry = ''
+        pre_self_assessment = ''
+        post_self_assessment = ''
         post_test_permission = 'disabled'
+        post_self_permission = 'disabled'
+        display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:rs_add')
 
@@ -648,6 +687,8 @@ class RSForm(CommonForm):
             form_action = reverse('clm:rs_edit', kwargs={'pk': instance.id})
             if instance.pre_test:
                 post_test_permission = ''
+            if instance.pre_self_assessment:
+                post_self_permission = ''
 
             pre_test = instance.assessment_form(
                 stage='pre_test',
@@ -657,6 +698,16 @@ class RSForm(CommonForm):
             post_test = instance.assessment_form(
                 stage='post_test',
                 assessment_slug='rs_post_test',
+                callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+             )
+            pre_self_assessment = instance.assessment_form(
+                stage='pre_self_assessment',
+                assessment_slug='rs_self_assessment_pre',
+                callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+             )
+            post_self_assessment = instance.assessment_form(
+                stage='post_self_assessment',
+                assessment_slug='rs_post_self_assessment',
                 callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
              )
 
@@ -880,8 +931,10 @@ class RSForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment') + '</h4>')
                 ),
                 Div(
-                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">'+_('Pre-assessment')+'</a></div>'),
-                    HTML('<div class="col-md-3"><a class="btn btn-success '+post_test_permission+'" href="'+post_test+'">'+_('Post-assessment')+'</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">' +
+                         _('Pre-assessment')+'</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn btn-success '+post_test_permission+'" href="' +
+                         post_test + '">'+_('Post-assessment')+'</a></div>'),
                     css_class='row',
                 ),
                 Div(
@@ -889,6 +942,25 @@ class RSForm(CommonForm):
                     css_class='row'
                 ),
                 css_class='bd-callout bd-callout-warning'+display_assessment
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Self-Perception') + '</h4>')
+                ),
+                Div(
+                    HTML('<div class="col-md-3"><a class="btn btn-success" href="' + pre_self_assessment + '">' + _(
+                        'Pre-assessment') + '</a></div>'),
+                    HTML(
+                        '<div class="col-md-3"><a class="btn btn-success ' + post_self_permission + '" href="' +
+                        post_self_assessment + '">' + _('Post-assessment') + '</a></div>'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<div class="p-3"></div>'),
+                    css_class='row'
+                ),
+                css_class='bd-callout bd-callout-warning' + display_assessment
             ),
             Fieldset(
                 None,
