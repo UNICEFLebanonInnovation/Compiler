@@ -608,10 +608,14 @@ class RS(CLM):
 
     def calculate_score(self, stage):
         keys = [
-            'BLN_ASSESSMENT/arabic',
-            'BLN_ASSESSMENT/math',
-            'BLN_ASSESSMENT/english',
-            'BLN_ASSESSMENT/french'
+            'RS_ASSESSMENT/FL1',
+            'RS_ASSESSMENT/FL2',
+            'RS_ASSESSMENT/FL3',
+            'RS_ASSESSMENT/FL4',
+            'RS_ASSESSMENT/FL5',
+            'RS_ASSESSMENT/FL6',
+            'RS_ASSESSMENT/FL7',
+            'RS_ASSESSMENT/FL8',
         ]
         super(RS, self).score(keys, stage)
 
@@ -713,12 +717,16 @@ class CBECE(CLM):
         return self.assessment_form(stage='post_test', assessment_slug='cbece_post_test')
 
     def calculate_score(self, stage):
+        program_site = self.site_id
         keys = [
-            'BLN_ASSESSMENT/arabic',
-            'BLN_ASSESSMENT/math',
-            'BLN_ASSESSMENT/english',
-            'BLN_ASSESSMENT/french'
+            'CBECE_ASSESSMENT/LanguageArtDomain'+program_site,
+            'CBECE_ASSESSMENT/CognitiveDomianMathematics'+program_site,
+            'CBECE_ASSESSMENT/CognitiveDomianScience'+program_site,
+            'CBECE_ASSESSMENT/SocialEmotionalDomain'+program_site,
+            'CBECE_ASSESSMENT/PsychomotorDomain'+program_site,
+            'CBECE_ASSESSMENT/ArtisticDomain'+program_site,
         ]
+
         super(CBECE, self).score(keys, stage)
 
     class Meta:
