@@ -73,6 +73,7 @@ PARTICIPATION = (
 
 LEARNING_RESULT = (
     ('', '----------'),
+    ('repeat_level', _('Repeat level')),
     ('graduated_next_level', _('Graduated to the next level')),
     ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
     ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
@@ -241,7 +242,15 @@ class CommonForm(forms.ModelForm):
     learning_result = forms.ChoiceField(
         label=_('Based on the overall score, what is the recommended learning path?'),
         widget=forms.Select, required=False,
-        choices=LEARNING_RESULT,
+        choices=(
+            ('', '----------'),
+            ('repeat_level', _('Repeat level')),
+            ('graduated_next_level', _('Graduated to the next level')),
+            ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
+            ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
+            ('referred_to_another_program', _('Referred to another program')),
+            ('dropout', _('Dropout from school'))
+        ),
         initial=''
     )
 
@@ -339,6 +348,21 @@ class BLNForm(CommonForm):
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
         required=False,
+    )
+    learning_result = forms.ChoiceField(
+        label=_('Based on the overall score, what is the recommended learning path?'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('repeat_level', _('Repeat level')),
+            ('attended_public_school', _('Attended public school')),
+            ('referred_to_alp', _('referred to ALP')),
+            ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
+            ('reenrolled_in_alp', _('Re-register on another round of BLN')),
+            ('not_enrolled_any_program', _('Not enrolled in any educational program')),
+            ('dropout', _('Dropout from school'))
+        ),
+        initial=''
     )
 
     def __init__(self, *args, **kwargs):
@@ -631,6 +655,16 @@ class RSForm(CommonForm):
         widget=forms.CheckboxSelectMultiple,
         required=True,
         initial='academic'
+    )
+    learning_result = forms.ChoiceField(
+        label=_('Based on the overall score, what is the recommended learning path?'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('repeat_level', _('Repeat level')),
+            ('dropout', _('Dropout from school'))
+        ),
+        initial=''
     )
 
     def __init__(self, *args, **kwargs):
