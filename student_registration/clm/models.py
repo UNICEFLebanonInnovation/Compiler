@@ -358,6 +358,14 @@ class CLM(TimeStampedModel):
             return self.student.age
         return 0
 
+    @property
+    def assessment_improvement(self):
+        if self.pre_test and self.post_test:
+            return '{}{}'.format(
+                (abs(int(self.pre_test_score) - int(self.post_test_score)) / int(self.pre_test_score)) * 100,
+                '%')
+        return ''
+
     def get_absolute_url(self):
         return '/clm/edit/%d/' % self.pk
 
@@ -559,6 +567,21 @@ class RS(CLM):
         verbose_name=_('Science')
     )
 
+    pre_self_assessment = JSONField(blank=True, null=True)
+    pre_self_assessment_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Self-assessment - Pre')
+    )
+    post_self_assessment = JSONField(blank=True, null=True)
+    post_self_assessment_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Self-assessment - Post')
+    )
+
     class Meta:
         ordering = ['id']
         verbose_name = "RS"
@@ -586,6 +609,23 @@ class RS(CLM):
             '80'
         )
 
+    @property
+    def academic_test_improvement(self):
+        if self.pretest_total and self.posttest_total:
+            return '{}{}'.format(
+                (abs(int(self.pretest_total) + int(self.posttest_total)) / int(self.pretest_total)) * 100,
+                '%')
+        return ''
+
+    @property
+    def self_assessment_improvement(self):
+        if self.pre_self_assessment and self.post_self_assessment:
+            return '{}{}'.format(
+                (abs(int(self.pre_self_assessment_score) - int(self.post_self_assessment_score)) /
+                    int(self.pre_self_assessment_score)) * 100,
+                '%')
+        return ''
+
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
             assessment = Assessment.objects.get(slug=assessment_slug)
@@ -607,16 +647,34 @@ class RS(CLM):
         return self.assessment_form(stage='post_test', assessment_slug='rs_post_test')
 
     def calculate_score(self, stage):
-        keys = [
-            'RS_ASSESSMENT/FL1',
-            'RS_ASSESSMENT/FL2',
-            'RS_ASSESSMENT/FL3',
-            'RS_ASSESSMENT/FL4',
-            'RS_ASSESSMENT/FL5',
-            'RS_ASSESSMENT/FL6',
-            'RS_ASSESSMENT/FL7',
-            'RS_ASSESSMENT/FL8',
-        ]
+        if stage == 'pre_test':
+            keys = [
+                'RS_ASSESSMENT/FL1',
+                'RS_ASSESSMENT/FL2',
+                'RS_ASSESSMENT/FL3',
+                'RS_ASSESSMENT/FL4',
+                'RS_ASSESSMENT/FL5',
+                'RS_ASSESSMENT/FL6',
+                'RS_ASSESSMENT/FL7',
+                'RS_ASSESSMENT/FL8',
+            ]
+        else:
+            keys = [
+                'SELF_ASSESSMENT/assessment_1',
+                'SELF_ASSESSMENT/assessment_2',
+                'SELF_ASSESSMENT/assessment_3',
+                'SELF_ASSESSMENT/assessment_4',
+                'SELF_ASSESSMENT/assessment_5',
+                'SELF_ASSESSMENT/assessment_6',
+                'SELF_ASSESSMENT/assessment_7',
+                'SELF_ASSESSMENT/assessment_8',
+                'SELF_ASSESSMENT/assessment_9',
+                'SELF_ASSESSMENT/assessment_10',
+                'SELF_ASSESSMENT/assessment_11',
+                'SELF_ASSESSMENT/assessment_12',
+                'SELF_ASSESSMENT/assessment_13',
+                'SELF_ASSESSMENT/assessment_14',
+            ]
         super(RS, self).score(keys, stage)
 
 
