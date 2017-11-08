@@ -2218,7 +2218,7 @@ msgstr ""
 
 #: student_registration/templates/attendances/level_section.html:36
 msgid "Not attending"
-msgstr " "
+msgstr "لم يحضرون المدرسة"
 
 #: student_registration/templates/attendances/level_section.html:44
 #: student_registration/templates/attendances/school.html:63
