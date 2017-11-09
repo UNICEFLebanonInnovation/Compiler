@@ -673,10 +673,14 @@ class RSForm(CommonForm):
 
         pre_test = ''
         post_test = ''
+        pre_motivation = ''
+        post_motivation = ''
         pre_self_assessment = ''
         post_self_assessment = ''
         post_test_permission = 'disabled'
         post_self_permission = 'disabled'
+        post_motivation_permission = 'disabled'
+        display_assessment = ' d-none'
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:rs_add')
@@ -689,7 +693,10 @@ class RSForm(CommonForm):
                 post_test_permission = ''
             if instance.pre_self_assessment:
                 post_self_permission = ''
+            if instance.pre_motivation:
+                post_motivation_permission = ''
 
+            #  Strategy Evaluation
             pre_test = instance.assessment_form(
                 stage='pre_test',
                 assessment_slug='rs_pre_test',
@@ -700,6 +707,20 @@ class RSForm(CommonForm):
                 assessment_slug='rs_post_test',
                 callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
              )
+
+            #  Motivation Assessment
+            pre_motivation = instance.assessment_form(
+                stage='pre_motivation',
+                assessment_slug='rs_pre_motivation',
+                callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+             )
+            post_motivation = instance.assessment_form(
+                stage='post_motivation',
+                assessment_slug='rs_post_motivation',
+                callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+             )
+
+            #  Self-Assessment
             pre_self_assessment = instance.assessment_form(
                 stage='pre_self_assessment',
                 assessment_slug='rs_self_assessment_pre',
@@ -942,6 +963,24 @@ class RSForm(CommonForm):
                     css_class='row'
                 ),
                 css_class='bd-callout bd-callout-warning'+display_assessment
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Motivation') + '</h4>')
+                ),
+                Div(
+                    HTML('<div class="col-md-3"><a class="btn btn-success" href="' + pre_motivation + '">' +
+                         _('Pre-assessment') + '</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn btn-success ' + post_motivation_permission + '" href="' +
+                         post_motivation + '">' + _('Post-assessment') + '</a></div>'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<div class="p-3"></div>'),
+                    css_class='row'
+                ),
+                css_class='bd-callout bd-callout-warning' + display_assessment
             ),
             Fieldset(
                 None,
