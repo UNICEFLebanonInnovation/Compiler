@@ -19,6 +19,7 @@ Issues with the above approach:
 */
 $('.form-group').removeClass('row');
 var user_token = null;
+var csrftoken = getCookie('csrftoken');
 var db = null;
 
 hashCode = function(str){
@@ -133,7 +134,6 @@ function scrollToBottom()
 
 function getHeader()
 {
-    var csrftoken = getCookie('csrftoken');
     var header = {
         'Authorization': 'Token '+user_token,
         'HTTP_REFERER': $(location).attr('href'),
