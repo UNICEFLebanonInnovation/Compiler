@@ -333,3 +333,29 @@ tr.odd {
 .container-full-page .breadcrumb {
     direction: ltr;
 }
+.table-container .table th {
+    background-color: #025aa5;
+    color: #EBFFD8 !important;
+    opacity: 0.8;
+}
+.table-container .table th a {
+    color: white !important;
+}
+.table-container .table th {
+    border-left: 1px solid red
+}
+.table-container .table td {
+    border-left: 1px solid #eceeef;
+}
+.list-filter .form-group {
+    margin: 5px;
+    width: 150px;
+}
+.list-filter .btn {
+    margin: 5px;
+    width: 70px;
+}
+
+.list-filter .form-group input, .list-filter .form-group select {
+    width: 150px;
+}
