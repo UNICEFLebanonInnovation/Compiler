@@ -53,6 +53,7 @@
             </form>
         </div>
         <div class="col-sm-10">
+            {% csrf_token %}
             {% render_table table 'django_tables2/bootstrap.html' %}
         </div>
 
@@ -65,5 +66,6 @@
     <script type="text/javascript" src="{% static 'js/registrations.js' %}"></script>
     <script>
         var user_token = '{{ user_token }}';
+        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
     </script>
 {% endblock %}
