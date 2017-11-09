@@ -102,7 +102,7 @@ class CommonForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    search_student = forms.CharField(
+    search_clm_student = forms.CharField(
         label=_("Search a student"),
         widget=forms.TextInput,
         required=False
@@ -226,6 +226,7 @@ class CommonForm(forms.ModelForm):
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
     student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     participation = forms.ChoiceField(
         label=_('How was the level of child participation in the program?'),
@@ -376,6 +377,7 @@ class BLNForm(CommonForm):
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:bln_add')
+        self.fields['clm_type'].initial = 'BLN'
 
         if instance:
             display_assessment = ''
@@ -405,6 +407,7 @@ class BLNForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Registry') + '</h4>')
                 ),
                 Div(
+                    'clm_type',
                     'student_id',
                     'enrollment_id',
                     'student_outreach_child',
@@ -433,11 +436,11 @@ class BLNForm(CommonForm):
                 None,
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'Search old student') + '</h4>')
+                        'Search CLM student') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('search_student', css_class='col-md-3'),
+                    Div('search_clm_student', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
@@ -684,6 +687,7 @@ class RSForm(CommonForm):
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:rs_add')
+        self.fields['clm_type'].initial = 'RS'
 
         if instance:
             display_assessment = ''
@@ -723,7 +727,7 @@ class RSForm(CommonForm):
             #  Self-Assessment
             pre_self_assessment = instance.assessment_form(
                 stage='pre_self_assessment',
-                assessment_slug='rs_self_assessment_pre',
+                assessment_slug='rs_pre_self_assessment',
                 callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
              )
             post_self_assessment = instance.assessment_form(
@@ -742,6 +746,7 @@ class RSForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Registry') + '</h4>')
                 ),
                 Div(
+                    'clm_type',
                     'student_id',
                     'enrollment_id',
                     'student_outreach_child',
@@ -770,11 +775,11 @@ class RSForm(CommonForm):
                 None,
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'Search old student') + '</h4>')
+                        'Search CLM student') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('search_student', css_class='col-md-3'),
+                    Div('search_clm_student', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
@@ -1101,6 +1106,7 @@ class CBECEForm(CommonForm):
         post_test_permission = 'disabled'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:cbece_add')
+        self.fields['clm_type'].initial = 'CBECE'
 
         if instance:
             display_assessment = ''
@@ -1130,6 +1136,7 @@ class CBECEForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Registry') + '</h4>')
                 ),
                 Div(
+                    'clm_type',
                     'student_id',
                     'enrollment_id',
                     'student_outreach_child',
@@ -1158,11 +1165,11 @@ class CBECEForm(CommonForm):
                 None,
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'Search old student') + '</h4>')
+                        'Search CLM student') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('search_student', css_class='col-md-3'),
+                    Div('search_clm_student', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
