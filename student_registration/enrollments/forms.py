@@ -554,9 +554,9 @@ class GradingTermForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': instance.exam_term})
-        enrollment_classromm = instance.enrollment.classroom_id
+        enrollment_classroom = instance.enrollment.classroom_id
 
-        if enrollment_classromm in [2, 3, 4]:
+        if enrollment_classroom in [2, 3, 4]:
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -603,7 +603,7 @@ class GradingTermForm(forms.ModelForm):
                 )
             )
 
-        if enrollment_classromm in [5, 6, 7]:
+        if enrollment_classroom in [5, 6, 7]:
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -651,7 +651,7 @@ class GradingTermForm(forms.ModelForm):
                 )
             )
 
-        if enrollment_classromm in [8, 9, 10]:
+        if enrollment_classroom in [8, 9, 10]:
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -705,7 +705,7 @@ class GradingTermForm(forms.ModelForm):
                 )
             )
 
-        if enrollment_classromm == 1:
+        if enrollment_classroom == 1:
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -800,8 +800,8 @@ class GradingIncompleteForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': 4})
-        enrollment_classromm = instance.enrollment.classroom_id
-        if enrollment_classromm == 1:
+        enrollment_classroom = instance.enrollment.classroom_id
+        if enrollment_classroom == 1:
             pass
 
         self.helper.layout = Layout(

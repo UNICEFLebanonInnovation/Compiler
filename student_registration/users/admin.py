@@ -118,13 +118,13 @@ class UserAdmin(AuthUserAdmin):
         group = Group.objects.get(name='HELPDESK')
         for user in queryset:
             user.groups.add(group)
-        queryset.update(is_admin=True)
+        queryset.update(is_staff=True)
 
     def deny_helpdesk(self, request, queryset):
         group = Group.objects.get(name='HELPDESK')
         for user in queryset:
             user.groups.remove(group)
-        queryset.update(is_admin=False)
+        queryset.update(is_staff=False)
 
 admin.site.register(User, UserAdmin)
 

@@ -38,6 +38,8 @@ class ChildSerializer(serializers.ModelSerializer):
     student_mother_nationality = serializers.CharField(source='mother_nationality.id', read_only=True)
     student_address = serializers.CharField(source='address', read_only=True)
 
+    outreach_barcode = serializers.CharField(source='barcode_subset', read_only=True)
+
     class Meta:
         model = Child
         fields = (
@@ -60,4 +62,5 @@ class ChildSerializer(serializers.ModelSerializer):
             'student_mother_nationality',
             'student_address',
             'barcode_subset',
+            'outreach_barcode',
         )

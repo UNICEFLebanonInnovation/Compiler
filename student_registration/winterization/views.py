@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-import json
 from django.http import HttpResponse, JsonResponse
+from django.views.generic import ListView, TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseForbidden
+
+from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from rest_framework import viewsets, mixins, permissions
-from rest_framework import status
+
 from .models import Beneficiary
 from .serializers import BeneficiarySerializer
+from student_registration.backends.exporter import export_full_data
 
 
 class BeneficiaryViewSet(mixins.ListModelMixin,
@@ -41,3 +46,21 @@ class BeneficiaryViewSet(mixins.ListModelMixin,
             })
 
         return JsonResponse({'data': data})
+
+#
+# class ExporterView(LoginRequiredMixin,
+#                    GroupRequiredMixin,
+#                    TemplateView):
+#
+#     template_name = 'dashboard/exporter.html'
+#
+#     group_required = [u"WINTER"]
+#
+#     def handle_no_permission(self, request):
+#         return HttpResponseForbidden()
+#
+#     def get_context_data(self, **kwargs):
+#         params = {}
+#         if self.request.GET.get('report', None):
+#             export_full_data(self.request.GET)
+#         return {}

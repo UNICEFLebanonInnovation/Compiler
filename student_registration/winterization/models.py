@@ -306,6 +306,151 @@ class Assessment(models.Model):
         choices=CARD_LOADED
     )
 
+    _0_to_3_months = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _3_to_12_months = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _1_year_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _2_years_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _3_years_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _4_years_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _5_years_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _6_years_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _7_years_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _8_years_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _9_years_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _10_years_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _11_years_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _12_years_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _13_years_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _14_years_old = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    male = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    female = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _3_months_kit = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _12_months_kit = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _2_years_kit = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _3_years_kit = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _5_years_kit = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _7_years_kit = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _9_years_kit = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _12_years_kit = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _14_years_kit = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _3_months_kit_completed = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _12_months_kit_completed = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _2_years_kit_completed = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _3_years_kit_completed = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _5_years_kit_completed = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _7_years_kit_completed = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _9_years_kit_completed = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _12_years_kit_completed = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+    _14_years_kit_completed  = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
     class Meta:
         ordering = ['id_type']
         verbose_name_plural = "Assessments"
@@ -313,6 +458,48 @@ class Assessment(models.Model):
     @property
     def amount(self):
         return 0
+
+    @property
+    def location_p_code(self):
+        if self.location and self.location['p_code']:
+            return self.location['p_code']
+        return self.p_code
+
+    @property
+    def location_p_code_name(self):
+        if self.location and self.location['p_code_name']:
+            return self.location['p_code_name']
+        return self.p_code_name
+
+    @property
+    def location_district(self):
+        if self.location and self.location['cadastral']:
+            return self.location['cadastral']
+        return ''
+
+    @property
+    def location_cadastral(self):
+        if self.location and self.location['cadastral']:
+            return self.location['cadastral']
+        return ''
+
+    @property
+    def location_latitude(self):
+        if self.location and self.location['latitude']:
+            return self.location['latitude']
+        return ''
+
+    @property
+    def location_longitude(self):
+        if self.location and self.location['longitude']:
+            return self.location['longitude']
+        return ''
+
+    @property
+    def locations_type(self):
+        if self.location and self.location['location_type']:
+            return self.location['location_type']
+        return ''
 
     def __unicode__(self):
         return self._id
