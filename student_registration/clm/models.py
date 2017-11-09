@@ -607,6 +607,21 @@ class RS(CLM):
         verbose_name=_('Self-assessment - Post')
     )
 
+    pre_motivation = JSONField(blank=True, null=True)
+    pre_motivation_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Motivation - Pre')
+    )
+    post_motivation = JSONField(blank=True, null=True)
+    post_motivation_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Motivation - Post')
+    )
+
     learning_result = models.CharField(
         max_length=100,
         blank=True,
@@ -659,6 +674,15 @@ class RS(CLM):
                 '%')
         return ''
 
+    @property
+    def motivation_improvement(self):
+        if self.pre_motivation and self.post_motivation:
+            return '{}{}'.format(
+                (abs(int(self.pre_motivation_score) - int(self.post_motivation_score)) /
+                    int(self.pre_motivation_score)) * 100,
+                '%')
+        return ''
+
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
             assessment = Assessment.objects.get(slug=assessment_slug)
@@ -680,18 +704,22 @@ class RS(CLM):
         return self.assessment_form(stage='post_test', assessment_slug='rs_post_test')
 
     def calculate_score(self, stage):
-        if stage == 'pre_test':
+        keys = []
+        if stage in ['pre_test', 'post_test']:
             keys = [
                 'RS_ASSESSMENT/FL1',
                 'RS_ASSESSMENT/FL2',
                 'RS_ASSESSMENT/FL3',
                 'RS_ASSESSMENT/FL4',
+            ]
+        elif stage in ['pre_motivation', 'post_motivation']:
+            keys = [
                 'RS_ASSESSMENT/FL5',
                 'RS_ASSESSMENT/FL6',
                 'RS_ASSESSMENT/FL7',
                 'RS_ASSESSMENT/FL8',
             ]
-        else:
+        elif stage in ['pre_self_assessment', 'post_self_assessment']:
             keys = [
                 'SELF_ASSESSMENT/assessment_1',
                 'SELF_ASSESSMENT/assessment_2',
