@@ -59,5 +59,6 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>
     <script>
         var user_token = '{{ user_token }}';
+        var csrftoken = '{% csrf_token %}';
     </script>
 {% endblock %}
