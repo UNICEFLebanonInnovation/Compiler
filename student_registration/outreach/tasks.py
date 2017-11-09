@@ -45,6 +45,21 @@ def push_household_data(base_url, token, protocol='HTTPS'):
 @app.task
 def push_children_data(base_url, token, protocol='HTTPS'):
 
+    NATIONALITIES = {
+        'Syria': 1,
+        'Iraq': 2,
+        'Lebanon': 5,
+        'Other': 6,
+        'Palestine': 4
+    }
+    ID_TYPES = {
+        'None': 6,
+        'UNHCR': 1,
+        'Lebanese': 5,
+        'Other': 5,
+        'Syria': 3,
+    }
+
     wb = load_workbook(filename='BTS_Outreach_form_16102017.xlsx', read_only=True)
     ws = wb['Individuals']
 
@@ -52,19 +67,25 @@ def push_children_data(base_url, token, protocol='HTTPS'):
         for row in ws.rows:
             if row[0].value == 'FORMID':
                 continue
+
             data = {}
             data['form_id'] = row[0].value
             data['first_name'] = row[1].value if row[1].value else 'None'
             data['father_name'] = row[2].value if row[2].value else 'None'
             data['last_name'] = row[3].value if row[3].value else 'None'
             data['mother_fullname'] = row[4].value if row[4].value else 'None'
-            data['mother_nationality'] = 1 if row[5].value else 6
+
+            data['mother_nationality'] = NATIONALITIES[row[5].value] if row[5].value in NATIONALITIES else 6
+
             data['birthday_year'] = row[6].value if row[6].value else '1990'
             data['birthday_month'] = row[7].value if row[7].value else '1'
             data['birthday_day'] = row[8].value if row[8].value else '1'
             data['sex'] = row[9].value if row[9].value else 'Male'
+
             data['nationality'] = row[10].value if row[10].value else 6
-            data['id_type'] = 1 if row[11].value == 'UNHCR' else 6
+
+            data['id_type'] = ID_TYPES[row[11].value] if row[11].value in ID_TYPES else 6
+
             data['id_number'] = row[12].value if row[12].value else '000000'  # ID_Num
             if row[14].value:  # Case_Individual_Num
                 data['id_number'] = row[14].value
