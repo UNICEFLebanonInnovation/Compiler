@@ -1,13 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django_datatables_view.base_datatable_view import BaseDatatableView
-from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, mixins, permissions
-from rest_framework.decorators import detail_route, list_route
-from rest_framework.response import Response
 from dal import autocomplete
 from django.db.models import Q
 
