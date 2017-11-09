@@ -44,7 +44,10 @@
                                     <span class="badge badge-primary">{{ current_level_section.total }}: {% trans "Total students" %}</span> -
                                     <span class="badge badge-success">{{ current_level_section.total_attended }}: {% trans "Total attended" %}</span> -
                                     <span class="badge badge-danger">{{ current_level_section.total_absences }}: {% trans "Total absences" %}</span>
-                                    <a href="#" class="btn btn-success absolute-right-15 absolute-top-7 {% if disable_attendance %}disabled{% endif %}" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
+                                    {% if disable_attendance %}
+                                    {% else %}
+                                    <a href="#" class="btn btn-success absolute-right-15 absolute-top-7 save_attendances" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
+                                    {% endif %}
                                 </li>
                             </ol>
                           </div>
@@ -101,7 +104,10 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to " %} {{ selected_date_view }}</a>
-                            <a href="#" class="btn btn-success absolute-right-15 absolute-top-7 {% if disable_attendance %}disabled{% endif %}" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
+                            {% if disable_attendance %}
+                            {% else %}
+                            <a href="#" class="btn btn-success absolute-right-15 absolute-top-7 save_attendances" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>
+                            {% endif %}
                         </li>
                     </ol>
                 </form>
