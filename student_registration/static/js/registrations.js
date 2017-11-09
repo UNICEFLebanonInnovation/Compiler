@@ -163,6 +163,54 @@ $(document).ready(function(){
         };
     }
 
+    if($(document).find('#id_search_clm_student').length == 1) {
+
+        $("#id_search_clm_student").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/api/clm-students/?clm_type='+$('#id_clm_type').val(),
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function (event, ui) {
+                var params = {
+                    enrollment_id: ui.item.id,
+                    new_registry: $('select#id_new_registry').val(),
+                    student_outreached: $('select#id_student_outreached').val(),
+                    have_barcode: $('select#id_have_barcode').val()
+                };
+                var str = '?'+jQuery.param( params );
+
+                window.location = $(document).find('form').attr('action')+str;
+                return false;
+            }
+        }).autocomplete("instance")._renderMenu = function (ul, items) {
+            var that = this;
+            $.each(items, function (index, item) {
+                that._renderItemData(ul, item);
+            });
+            $(ul).find("li:odd").addClass("odd");
+        };
+
+        $("#id_search_clm_student").autocomplete("instance")._renderItem = function (ul, item) {
+
+            return $("<li>")
+                .append("<div style='border: 1px solid;'>"
+                    + "<b>Base Data:</b> " + item.student_full_name + " - " + item.student_mother_fullname
+                    + "<br/> <b>Gender - Birthday:</b> " + item.student_sex + " - " + item.student_birthday
+                    + "<br/> <b>Round:</b> " + item.round_name
+                    + "</div>")
+                .appendTo(ul);
+        };
+    }
+
     if($(document).find('#id_search_barcode').length == 1) {
 
         $("#id_search_barcode").autocomplete({
