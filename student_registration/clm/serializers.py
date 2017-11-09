@@ -58,15 +58,18 @@ def update_instance(instance, validated_data):
 class CLMSerializer(serializers.ModelSerializer):
 
     original_id = serializers.IntegerField(source='id', read_only=True)
+    round_name = serializers.IntegerField(source='round.name', read_only=True)
     student_id = serializers.IntegerField(source='student.id', required=False)
     student_first_name = serializers.CharField(source='student.first_name')
     student_father_name = serializers.CharField(source='student.father_name')
     student_last_name = serializers.CharField(source='student.last_name')
+    student_full_name = serializers.CharField(source='student.full_name', read_only=True)
     student_mother_fullname = serializers.CharField(source='student.mother_fullname')
     student_sex = serializers.CharField(source='student.sex')
     student_birthday_year = serializers.CharField(source='student.birthday_year')
     student_birthday_month = serializers.CharField(source='student.birthday_month')
     student_birthday_day = serializers.CharField(source='student.birthday_day')
+    student_birthday = serializers.CharField(source='student.birthday', read_only=True)
     student_nationality = serializers.CharField(source='student.nationality')
     student_nationality_id = serializers.CharField(source='student.nationality.id', read_only=True)
     student_address = serializers.CharField(source='student.address', required=False)
@@ -80,7 +83,7 @@ class CLMSerializer(serializers.ModelSerializer):
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
     save = serializers.IntegerField(source='owner.id', read_only=True)
     enrollment_id = serializers.IntegerField(source='id', read_only=True)
-    search_student = serializers.CharField(source='student.full_name', read_only=True)
+    search_clm_student = serializers.CharField(source='student.full_name', read_only=True)
     search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
 
     class Meta:
@@ -88,6 +91,7 @@ class CLMSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'original_id',
+            'round_name',
             'enrollment_id',
             'student_id',
             'language',
@@ -96,11 +100,13 @@ class CLMSerializer(serializers.ModelSerializer):
             'student_first_name',
             'student_father_name',
             'student_last_name',
+            'student_full_name',
             'student_mother_fullname',
             'student_sex',
             'student_birthday_year',
             'student_birthday_month',
             'student_birthday_day',
+            'student_birthday',
             'student_nationality',
             'student_nationality_id',
             'student_address',
@@ -123,7 +129,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'student_outreached',
             'new_registry',
             'have_barcode',
-            'search_student',
+            'search_clm_student',
             'search_barcode',
             'csrfmiddlewaretoken',
             'save',
