@@ -354,13 +354,6 @@ function reorganizeForm()
     var have_labour = $('input[name=have_labour]:checked').val();
     var program_site = $('select#id_site').val();
 
-    if(urlParam('child_id') || urlParam('enrollment_id') || $('#registry_block').hasClass('d-none')) {
-        $('#registry_block').addClass('d-none');
-        $('#register_by_barcode').addClass('d-none');
-        $('#search_options').addClass('d-none');
-        return true;
-    }
-
     if(program_site == 'out_school') {
         $('div#div_id_school').parent().addClass('d-none');
         $('div#div_id_school').parent().prev().addClass('d-none');
@@ -389,6 +382,12 @@ function reorganizeForm()
         $('div#labour_hours').prev().addClass('d-none');
     }
 
+    if(urlParam('child_id') || urlParam('enrollment_id') || $('#registry_block').hasClass('d-none')) {
+        $('#registry_block').addClass('d-none');
+        $('#register_by_barcode').addClass('d-none');
+        $('#search_options').addClass('d-none');
+        return true;
+    }
 
     if(outreached == 'no'){
         // $('#id_have_barcode').val('0');
