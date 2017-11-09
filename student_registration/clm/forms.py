@@ -723,7 +723,7 @@ class RSForm(CommonForm):
             #  Self-Assessment
             pre_self_assessment = instance.assessment_form(
                 stage='pre_self_assessment',
-                assessment_slug='rs_self_assessment_pre',
+                assessment_slug='rs_pre_self_assessment',
                 callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
              )
             post_self_assessment = instance.assessment_form(
