@@ -853,14 +853,14 @@ class CBECE(CLM):
         return self.assessment_form(stage='post_test', assessment_slug='cbece_post_test')
 
     def calculate_score(self, stage):
-        program_site = self.site_id
+        program_cyle = self.cycle_id
         keys = [
-            'CBECE_ASSESSMENT/LanguageArtDomain'+program_site,
-            'CBECE_ASSESSMENT/CognitiveDomianMathematics'+program_site,
-            'CBECE_ASSESSMENT/CognitiveDomianScience'+program_site,
-            'CBECE_ASSESSMENT/SocialEmotionalDomain'+program_site,
-            'CBECE_ASSESSMENT/PsychomotorDomain'+program_site,
-            'CBECE_ASSESSMENT/ArtisticDomain'+program_site,
+            'CBECE_ASSESSMENT/LanguageArtDomain'+program_cyle,
+            'CBECE_ASSESSMENT/CognitiveDomianMathematics'+program_cyle,
+            'CBECE_ASSESSMENT/CognitiveDomianScience'+program_cyle,
+            'CBECE_ASSESSMENT/SocialEmotionalDomain'+program_cyle,
+            'CBECE_ASSESSMENT/PsychomotorDomain'+program_cyle,
+            'CBECE_ASSESSMENT/ArtisticDomain'+program_cyle,
         ]
 
         super(CBECE, self).score(keys, stage)
