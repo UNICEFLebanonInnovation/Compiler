@@ -78,3 +78,7 @@ staticfiles/
 
 
 *.dump
+
+celerybeat-schedule
+
+*.pid

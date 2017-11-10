@@ -73,6 +73,8 @@ THIRD_PARTY_APPS = [
     'bootstrap3_datetime',
     'import_export',
     'django_tables2',
+    'django_celery_beat',
+    'django_celery_results',
 ]
 
 # Apps specific for this project go here.
@@ -319,11 +321,7 @@ AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 
 ########## CELERY
 INSTALLED_APPS += ['student_registration.taskapp.celery.CeleryConfig']
-CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='django://')
-if CELERY_BROKER_URL == 'django://':
-    CELERY_RESULT_BACKEND = 'redis://'
-else:
-    CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
 ########## END CELERY
 
 COUCHBASE_URL = env('COUCHBASE_URL', default='NO_URL')
