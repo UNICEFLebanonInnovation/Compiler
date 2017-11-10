@@ -55,7 +55,7 @@ DJANGO_APPS = [
     'django.contrib.admin',
     'markdown_deux',  # Required for Knowledgebase item formatting
     'bootstrapform',  # Required for nicer formatting of forms with the default templates
-    'helpdesk',  # This is us!
+    # 'helpdesk',  # This is us!
     'rangefilter',
     #'storages',
 ]
@@ -89,6 +89,7 @@ LOCAL_APPS = [
     'student_registration.dashboard',  # custom dashboard app
     'student_registration.winterization',  # custom winterization app
     'student_registration.backends',  # custom storage app
+    'student_registration.helpdesk',  # custom storage app
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
