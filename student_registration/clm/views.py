@@ -158,7 +158,52 @@ class BLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return BLN.objects.filter(owner=self.request.user)
+        return BLN.objects.filter(partner=self.request.user.partner_id)
+
+
+class BLNDashboardView(LoginRequiredMixin,
+                    GroupRequiredMixin,
+                    TemplateView):
+
+    template_name = 'clm/bln_dashboard.html'
+
+    group_required = [u"CLM_BLN"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        return {
+
+        }
+
+
+class RSDashboardView(LoginRequiredMixin,
+                      GroupRequiredMixin,
+                      TemplateView):
+
+    template_name = 'clm/rs_dashboard.html'
+
+    group_required = [u"CLM_RS"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        return {
+
+        }
+
+
+class CBECEDashboardView(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         TemplateView):
+
+    template_name = 'clm/cbece_dashboard.html'
+
+    group_required = [u"CLM_CBECE"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        return {
+
+        }
 
 
 class RSAddView(LoginRequiredMixin,
@@ -243,7 +288,7 @@ class RSListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return RS.objects.filter(owner=self.request.user)
+        return RS.objects.filter(partner=self.request.user.partner_id)
 
 
 class CBECEAddView(LoginRequiredMixin,
@@ -328,7 +373,7 @@ class CBECEListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return CBECE.objects.filter(owner=self.request.user)
+        return CBECE.objects.filter(partner=self.request.user.partner_id)
 
 
 ####################### API VIEWS #############################
