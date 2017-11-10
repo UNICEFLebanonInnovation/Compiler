@@ -110,9 +110,9 @@ class RSTable(CommonTable):
 
     # Motivation Assessment Result
     pre_motivation_result = tables.Column(verbose_name=_('Motivation - Pre'), orderable=False,
-                                          accessor='pre_self_assessment_score')
+                                          accessor='pre_motivation_score')
     post_motivation_result = tables.Column(verbose_name=_('Motivation - Post'), orderable=False,
-                                           accessor='post_self_assessment_score')
+                                           accessor='post_motivation_score')
 
     motivation_improvement = tables.Column(verbose_name=_('Motivation - Improvement'), orderable=False,
                                            accessor='motivation_improvement')

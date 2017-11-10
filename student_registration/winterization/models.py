@@ -472,15 +472,27 @@ class Assessment(models.Model):
         return self.p_code_name
 
     @property
-    def district(self):
+    def location_district(self):
         if self.location and self.location['cadastral']:
             return self.location['cadastral']
         return ''
 
     @property
-    def cadastral(self):
+    def location_cadastral(self):
         if self.location and self.location['cadastral']:
             return self.location['cadastral']
+        return ''
+
+    @property
+    def location_latitude(self):
+        if self.location and self.location['latitude']:
+            return self.location['latitude']
+        return ''
+
+    @property
+    def location_longitude(self):
+        if self.location and self.location['longitude']:
+            return self.location['longitude']
         return ''
 
     @property

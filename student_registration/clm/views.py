@@ -9,6 +9,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
+from django.db.models import Q
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
@@ -415,3 +416,34 @@ class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
     queryset = SelfPerceptionGrades.objects.all()
     serializer_class = SelfPerceptionGradesSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+
+class CLMStudentViewSet(mixins.RetrieveModelMixin,
+                        mixins.ListModelMixin,
+                        viewsets.GenericViewSet):
+
+    model = BLN
+    queryset = BLN.objects.all()
+    serializer_class = BLNSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        clm_type = self.request.GET.get('clm_type', 'BLN')
+        terms = self.request.GET.get('term', 0)
+        if clm_type == 'RS':
+            self.model = RS
+            self.serializer_class = RSSerializer
+        elif clm_type == 'CBECE':
+            self.model = CBECE
+            self.serializer_class = CBECESerializer
+
+        qs = self.model.objects.all()
+
+        if terms:
+            for term in terms.split():
+                qs = qs.filter(
+                    Q(student__first_name__contains=term) |
+                    Q(student__father_name__contains=term) |
+                    Q(student__last_name__contains=term)
+                ).distinct()[:50]
+            return qs

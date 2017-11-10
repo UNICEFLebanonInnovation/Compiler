@@ -11,9 +11,19 @@ class HouseHoldSerializer(serializers.ModelSerializer):
     class Meta:
         model = HouseHold
         fields = (
+            'form_id',
+            'partner_name',
+            'governorate',
+            'district',
+            'village',
             'name',
+            'phone_number',
+            'residence_type',
+            'p_code',
+            'address',
+            'number_of_children',
             'barcode_number',
-            'children',
+            # 'children',
         )
 
 
@@ -38,7 +48,19 @@ class ChildSerializer(serializers.ModelSerializer):
     student_mother_nationality = serializers.CharField(source='mother_nationality.id', read_only=True)
     student_address = serializers.CharField(source='address', read_only=True)
 
-    outreach_barcode = serializers.CharField(source='barcode_subset', read_only=True)
+    first_name = serializers.CharField(required=False)
+    father_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+    mother_fullname = serializers.CharField(required=False)
+    sex = serializers.CharField(required=False)
+    birthday_year = serializers.CharField(required=False)
+    birthday_month = serializers.CharField(required=False)
+    birthday_day = serializers.CharField(required=False)
+    id_number = serializers.CharField(required=False)
+    id_type = serializers.CharField(source='id_type_id', required=False)
+    nationality = serializers.CharField(source='nationality_id', required=False)
+    mother_nationality = serializers.CharField(source='mother_nationality_id', required=False)
+    barcode_subset = serializers.CharField(required=False)
 
     class Meta:
         model = Child
@@ -62,5 +84,18 @@ class ChildSerializer(serializers.ModelSerializer):
             'student_mother_nationality',
             'student_address',
             'barcode_subset',
-            'outreach_barcode',
+            'first_name',
+            'father_name',
+            'last_name',
+            'mother_fullname',
+            'mother_nationality',
+            'nationality',
+            'birthday_year',
+            'birthday_month',
+            'birthday_day',
+            'sex',
+            'id_type',
+            'id_number',
+            'barcode_subset',
+            'form_id'
         )

@@ -11,9 +11,11 @@ class AssessmentResource(resources.ModelResource):
 
     location_p_code = fields.Field()
     location_p_code_name = fields.Field()
-    district = fields.Field()
-    cadastral = fields.Field()
+    location_district = fields.Field()
+    location_cadastral = fields.Field()
     locations_type = fields.Field()
+    location_latitude = fields.Field()
+    location_longitude = fields.Field()
 
     class Meta:
         model = Assessment
@@ -21,15 +23,14 @@ class AssessmentResource(resources.ModelResource):
             '_id',
             'location_p_code',
             'location_p_code_name',
-            'district',
-            'cadastral',
-            'location_type',
+            'location_district',
+            'location_cadastral',
             'locations_type',
             'assistance_type',
             'phone_number',
             'phone_owner',
-            'latitude',
-            'longitude',
+            'location_latitude',
+            'location_longitude',
             'first_name',
             'middle_name',
             'family_name',
@@ -92,14 +93,20 @@ class AssessmentResource(resources.ModelResource):
     def dehydrate_location_p_code_name(self, obj):
         return obj.location_p_code_name
 
-    def dehydrate_district(self, obj):
-        return obj.district
+    def dehydrate_location_district(self, obj):
+        return obj.location_district
 
-    def dehydrate_cadastral(self, obj):
-        return obj.cadastral
+    def dehydrate_location_cadastral(self, obj):
+        return obj.location_cadastral
 
     def dehydrate_locations_type(self, obj):
         return obj.location_type
+
+    def dehydrate_location_latitude(self, obj):
+        return obj.location_latitude
+
+    def dehydrate_location_longitude(self, obj):
+        return obj.location_longitude
 
 
 class AssessmentAdmin(ImportExportModelAdmin):
@@ -108,14 +115,14 @@ class AssessmentAdmin(ImportExportModelAdmin):
         '_id',
         'location_p_code',
         'location_p_code_name',
-        'district',
-        'cadastral',
+        'location_district',
+        'location_cadastral',
         'locations_type',
         'assistance_type',
         'phone_number',
         'phone_owner',
-        'latitude',
-        'longitude',
+        'location_latitude',
+        'location_longitude',
         'first_name',
         'middle_name',
         'family_name',
@@ -169,9 +176,6 @@ class AssessmentAdmin(ImportExportModelAdmin):
         '_9_years_kit_completed',
         '_12_years_kit_completed',
         '_14_years_kit_completed',
-        # 'Q1',
-        # 'Q2',
-        # 'Q3'
     )
     list_filter = (
         'assistance_type',
@@ -184,31 +188,6 @@ class AssessmentAdmin(ImportExportModelAdmin):
     search_fields = (
         'id_type',
     )
-    #
-    # def location_p_code(self, obj):
-    #     if obj.location and obj.location['p_code']:
-    #         return obj.location['p_code']
-    #     return obj.p_code
-    #
-    # def location_p_code_name(self, obj):
-    #     if obj.location and obj.location['p_code_name']:
-    #         return obj.location['p_code_name']
-    #     return obj.p_code_name
-    #
-    # def district(self, obj):
-    #     if obj.location:
-    #         return obj.location['district']
-    #     return ''
-    #
-    # def cadastral(self, obj):
-    #     if obj.location:
-    #         return obj.location['cadastral']
-    #     return ''
-    #
-    # def location__type(self, obj):
-    #     if obj.location:
-    #         return obj.location['location_type']
-    #     return ''
 
     def get_queryset(self, request):
         if request.user.id == 1 or request.user.id == 936:
