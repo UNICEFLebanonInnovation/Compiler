@@ -135,6 +135,12 @@ class Person(TimeStampedModel):
         choices=((str(x), x) for x in range(1, 32)),
         verbose_name=_('Birthday day')
     )
+    place_of_birth = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name=_('Place of birth')
+    )
     family_status = models.CharField(
         max_length=50,
         blank=True,
