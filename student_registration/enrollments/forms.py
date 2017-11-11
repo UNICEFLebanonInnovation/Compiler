@@ -576,8 +576,10 @@ class GradingTermForm(forms.ModelForm):
                         Div('exam_result_math', css_class='col-md-2'),
                         HTML('<span class="badge badge-default">6</span>'),
                         Div('exam_result_science', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">6</span>'),
-                        Div('exam_result', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">7</span>'),
+                        Div('exam_total', css_class='col-md-2'),
+                        HTML('<span class="badge badge-default">8</span>'),
+                        Div('exam_total', css_class='col-md-2'),
                         css_class='row',
                     ),
                     Div(
@@ -592,7 +594,6 @@ class GradingTermForm(forms.ModelForm):
                         'exam_result_artistic',
                         'exam_result_mathematics',
                         'exam_result_sciences',
-                        'exam_total',
                         css_class='d-none'
                     ),
                     css_class='bd-callout bd-callout-warning'
@@ -626,7 +627,7 @@ class GradingTermForm(forms.ModelForm):
                         HTML('<span class="badge badge-default">7</span>'),
                         Div('exam_total', css_class='col-md-2'),
                         HTML('<span class="badge badge-default">8</span>'),
-                        Div('exam_result', css_class='col-md-2'),
+                        Div('exam_total', css_class='col-md-2'),
                         css_class='row',
                     ),
                     Div(
@@ -792,6 +793,16 @@ class GradingTermForm(forms.ModelForm):
 
 
 class GradingIncompleteForm(forms.ModelForm):
+
+    exam_result = forms.ChoiceField(
+        label=_("Student status"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', _('------------')),
+            ('graduated', _('Graduated')),
+            ('failed', _('Failed')),
+        )
+    )
 
     def __init__(self, *args, **kwargs):
         super(GradingIncompleteForm, self).__init__(*args, **kwargs)

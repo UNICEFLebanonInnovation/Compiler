@@ -73,7 +73,7 @@ class Enrollment(TimeStampedModel):
         ('na', 'n/a'),
         ('first', _('First shift')),
         ('second', _('Second shift')),
-        ('alp', _('ALP')),
+        # ('alp', _('ALP')),
     )
 
     CURRENT_YEAR = datetime.datetime.now().year

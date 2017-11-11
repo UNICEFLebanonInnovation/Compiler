@@ -234,6 +234,10 @@ tr.odd {
     position: absolute;
     right: 200px;
 }
+.absolute-right-270 {
+    position: absolute;
+    right: 270px;
+}
 .breadcrumb {
     position: relative;
 }
