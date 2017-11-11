@@ -93,6 +93,13 @@ class EnrollmentForm(forms.ModelForm):
         required=False, to_field_name='id',
         initial=0
     )
+    # search_school = forms.ModelChoiceField(
+    #     label=_("Search by School"),
+    #     queryset=School.objects.all(),
+    #     widget=autocomplete.ModelSelect2(url='schools:autocomplete'),
+    #     required=False, to_field_name='id',
+    #     initial=0
+    # )
     school_type = forms.ChoiceField(
         label=_("School type"),
         widget=forms.Select, required=False,
@@ -176,7 +183,11 @@ class EnrollmentForm(forms.ModelForm):
     student_registered_in_unhcr = forms.ChoiceField(
         label=_("Registered in UNHCR"),
         widget=forms.Select, required=True,
-        choices=YES_NO_CHOICE,
+        choices=(
+            ('', '-----------'),
+            (1, _("Yes")),
+            (0, _("No"))
+        )
     )
     student_id_type = forms.ModelChoiceField(
         label=_("ID type"),
@@ -225,16 +236,19 @@ class EnrollmentForm(forms.ModelForm):
         label=_('Last education level'),
         queryset=ClassRoom.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
+        initial=11
     )
     last_school_type = forms.ChoiceField(
         label=_("Last school type"),
         widget=forms.Select, required=True,
-        choices=Enrollment.SCHOOL_TYPE
+        choices=Enrollment.SCHOOL_TYPE,
+        initial='na'
     )
     last_school_shift = forms.ChoiceField(
         label=_("Last school shift"),
         widget=forms.Select, required=True,
-        choices=Enrollment.SCHOOL_SHIFT
+        choices=Enrollment.SCHOOL_SHIFT,
+        initial='na'
     )
     last_school = forms.ModelChoiceField(
         queryset=School.objects.all(), widget=forms.Select,
@@ -254,7 +268,8 @@ class EnrollmentForm(forms.ModelForm):
             ('na', _('n/a')),
             ('graduated', _('Graduated')),
             ('failed', _('Failed'))
-        )
+        ),
+        initial='na'
     )
     participated_in_alp = forms.ChoiceField(
         label=_("Participated in ALP"),
@@ -263,22 +278,26 @@ class EnrollmentForm(forms.ModelForm):
             ('na', _('n/a')),
             ('yes', _('Yes')),
             ('no', _('No')),
-        )
+        ),
+        initial='na'
     )
     last_informal_edu_level = forms.ModelChoiceField(
         label=_("Last informal education level"),
         queryset=EducationLevel.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
+        initial=13
     )
     last_informal_edu_round = forms.ModelChoiceField(
         label=_("Last informal education round"),
         queryset=ALPRound.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
+        initial=8
     )
     last_informal_edu_final_result = forms.ModelChoiceField(
         label=_("Last informal education status"),
         queryset=ClassLevel.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
+        initial=27
     )
 
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -291,7 +310,6 @@ class EnrollmentForm(forms.ModelForm):
 
         instance = kwargs['instance'] if 'instance' in kwargs else ''
 
-        form_action = ''
         display_registry = ''
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -300,6 +318,11 @@ class EnrollmentForm(forms.ModelForm):
             form_action = reverse('enrollments:edit', kwargs={'pk': instance.id})
         else:
             form_action = reverse('enrollments:add')
+            try:
+                na_school = School.objects.get(name='n/a').id
+            except School.DoesNotExist:
+                na_school = 0
+            self.fields['last_school'].initial = na_school
 
         self.helper.form_action = form_action
 

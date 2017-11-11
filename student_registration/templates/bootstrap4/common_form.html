@@ -32,5 +32,6 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>
     <script>
         var current_school = '{{ request.user.school_id }}';
+        var eligibility_msg = '{% trans 'This student is not eligible to go into 2nd shift program, are you sure you want to register this student' %}';
     </script>
 {% endblock %}
