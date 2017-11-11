@@ -22,4 +22,10 @@ urlpatterns = [
         name='documents'
     ),
 
+    url(
+        regex=r'^autocomplete/$',
+        view=views.AutocompleteView.as_view(),
+        name='autocomplete'
+    ),
+
 ]
