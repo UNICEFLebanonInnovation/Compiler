@@ -52,6 +52,9 @@ def export_2ndshift(params=None):
         _('month'),
         _('day'),
         _('Sex'),
+        _('Student first name'),
+        _('Student father name'),
+        _('Student last name'),
         _('Student fullname'),
 
         _('Registration date'),
@@ -99,6 +102,9 @@ def export_2ndshift(params=None):
             line.student.birthday_month,
             line.student.birthday_day,
             _(line.student.sex) if line.student.sex else '',
+            line.student.first_name,
+            line.student.father_name,
+            line.student.last_name,
             line.student.__unicode__(),
 
             line.registration_date,

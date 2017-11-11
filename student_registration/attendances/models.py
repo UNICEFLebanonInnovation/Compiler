@@ -23,9 +23,8 @@ class Attendance(TimeStampedModel):
 
     ABSENCE_REASON = Choices(
         ('sick', _('Sick')),
-        ('no_reason', _('No reason')),
         ('no_transport', _('No transport')),
-        ('other', _('Other')),
+        ('other', _('Other reason')),
     )
 
     CLOSE_REASON = Choices(
