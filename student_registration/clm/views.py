@@ -28,6 +28,8 @@ from student_registration.outreach.serializers import ChildSerializer
 from .models import BLN, RS, CBECE, SelfPerceptionGrades
 from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
+from student_registration.schools.models import CLMRound
+from student_registration.locations.models import Location
 
 
 class CLMView(LoginRequiredMixin,
@@ -162,8 +164,8 @@ class BLNListView(LoginRequiredMixin,
 
 
 class BLNDashboardView(LoginRequiredMixin,
-                    GroupRequiredMixin,
-                    TemplateView):
+                       GroupRequiredMixin,
+                       TemplateView):
 
     template_name = 'clm/bln_dashboard.html'
 
@@ -171,8 +173,64 @@ class BLNDashboardView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
-        return {
 
+        per_gov = []
+        clm_round = self.request.user.partner.bln_round
+        clm_rounds = CLMRound.objects.all()
+        governorates = Location.objects.filter(parent__isnull=True)
+
+        queryset = BLN.objects.filter(round=clm_round)
+
+        referral_path = queryset.exclude(learning_result='dropout') \
+            .exclude(learning_result='repeat_level').filter(learning_result__isnull=False)
+        repeat_class = queryset.filter(learning_result='repeat_level')
+        print(repeat_class)
+        completion_male = referral_path.filter(student__sex='Male')
+        completion_female = referral_path.filter(student__sex='Female')
+        attendances_male = queryset.filter(student__sex='Male', participation__isnull=False)
+        attendances_female = queryset.filter(student__sex='Female', participation__isnull=False)
+
+        for gov in governorates:
+            referral_path = referral_path.filter(governorate=gov)
+
+            repeat_class_gov = repeat_class.filter(governorate=gov).count()
+            completion_male_gov = completion_male.filter(governorate=gov).count()
+            completion_female_gov = completion_female.filter(governorate=gov).count()
+            attendances_male = attendances_male.filter(governorate=gov)
+            attendances_female = attendances_female.filter(governorate=gov)
+
+            per_gov.append({
+                'governorate': gov.name,
+                'completion_male': completion_male_gov,
+                'completion_female': completion_female_gov,
+                'attendance_male_1': ((attendances_male.filter(
+                    participation='less_than_5days').count() / completion_male_gov) * 100) if completion_male_gov > 0 else 0,
+                'attendance_female_1': ((attendances_female.filter(
+                    participation='less_than_5days').count() / completion_female_gov) * 100) if completion_female_gov > 0 else 0,
+
+                'attendance_male_2': ((attendances_male.filter(
+                    participation='5_10_days').count() / completion_male_gov) * 100) if completion_male_gov > 0 else 0,
+                'attendance_female_2': ((attendances_female.filter(
+                    participation='5_10_days').count() / completion_female_gov) * 100) if completion_female_gov > 0 else 0,
+
+                'attendance_male_3': ((attendances_male.filter(
+                    participation='10_15_days').count() / completion_male_gov) * 100) if completion_male_gov > 0 else 0,
+                'attendance_female_3': ((attendances_female.filter(
+                    participation='10_15_days').count() / completion_female_gov) * 100) if completion_female_gov > 0 else 0,
+
+                'attendance_male_4': ((attendances_male.filter(
+                    participation='more_than_15days').count() / completion_male_gov) * 100) if completion_male_gov > 0 else 0,
+                'attendance_female_4': ((attendances_female.filter(
+                    participation='more_than_15days').count() / completion_female_gov) * 100) if completion_female_gov > 0 else 0,
+
+                'repetition_male': (completion_male_gov / repeat_class_gov) * 100 if repeat_class_gov > 0 else 0,
+                'repetition_female': (completion_female_gov / repeat_class_gov) * 100 if repeat_class_gov > 0 else 0,
+            })
+
+        return {
+            'clm_round': clm_round,
+            'clm_rounds': clm_rounds,
+            'per_gov': per_gov
         }
 
 
