@@ -572,6 +572,7 @@ class StudentResource(resources.ModelResource):
             'birthday_day',
             'birthday_month',
             'birthday_year',
+            'place_of_birth',
             'sex',
             'nationality',
             'mother_nationality',

@@ -147,6 +147,13 @@ class Enrollment(TimeStampedModel):
         choices=YES_NO
     )
 
+    number_in_previous_school = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name=_('Serial number in previous school')
+    )
+
     last_education_level = models.ForeignKey(
         ClassRoom,
         blank=True, null=True,

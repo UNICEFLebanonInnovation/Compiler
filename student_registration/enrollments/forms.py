@@ -212,6 +212,15 @@ class EnrollmentForm(forms.ModelForm):
         initial=1
     )
 
+    student_place_of_birth = forms.CharField(
+        label=_("Place of birth"),
+        widget=forms.TextInput, required=False
+    )
+    number_in_previous_school = forms.CharField(
+        label=_("Serial number in previous school"),
+        widget=forms.TextInput, required=False
+    )
+
     last_education_level = forms.ModelChoiceField(
         label=_('Last education level'),
         queryset=ClassRoom.objects.all(), widget=forms.Select,
@@ -404,6 +413,13 @@ class EnrollmentForm(forms.ModelForm):
                     Div('student_address', css_class='col-md-3'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">19</span>'),
+                    Div('student_place_of_birth', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">20</span>'),
+                    Div('number_in_previous_school', css_class='col-md-3'),
+                    css_class='row',
+                ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
             Fieldset(
@@ -508,6 +524,7 @@ class EnrollmentForm(forms.ModelForm):
             'student_birthday_year',
             'student_birthday_month',
             'student_birthday_day',
+            'student_place_of_birth',
             'student_phone',
             'student_phone_prefix',
             'student_id_number',
@@ -516,6 +533,7 @@ class EnrollmentForm(forms.ModelForm):
             'student_mother_nationality',
             'student_registered_in_unhcr',
             'participated_in_alp',
+            'number_in_previous_school',
             'last_informal_edu_level',
             'last_informal_edu_round',
             'last_informal_edu_final_result',
@@ -798,7 +816,7 @@ class GradingIncompleteForm(forms.ModelForm):
         label=_("Student status"),
         widget=forms.Select, required=True,
         choices=(
-            ('', _('------------')),
+            ('', '------------'),
             ('graduated', _('Graduated')),
             ('failed', _('Failed')),
         )
