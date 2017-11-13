@@ -58,7 +58,7 @@ def update_instance(instance, validated_data):
 class CLMSerializer(serializers.ModelSerializer):
 
     original_id = serializers.IntegerField(source='id', read_only=True)
-    round_name = serializers.IntegerField(source='round.name', read_only=True)
+    round_name = serializers.CharField(source='round.name', read_only=True)
     student_id = serializers.IntegerField(source='student.id', required=False)
     student_first_name = serializers.CharField(source='student.first_name')
     student_father_name = serializers.CharField(source='student.father_name')
@@ -94,7 +94,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'round_name',
             'enrollment_id',
             'student_id',
-            'round',
+            # 'round',
             'partner',
             'language',
             'student_outreach_child',
