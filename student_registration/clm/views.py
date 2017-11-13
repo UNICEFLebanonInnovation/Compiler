@@ -184,6 +184,9 @@ class BLNDashboardView(LoginRequiredMixin,
         total_male = queryset.filter(student__sex='Male')
         total_female = queryset.filter(student__sex='Female')
 
+        print(queryset.count())
+        print(queryset.exclude(learning_result='dropout').count())
+
         completion = queryset.exclude(learning_result='dropout') \
             .exclude(learning_result='repeat_level')
         completion_male = completion.filter(student__sex='Male')
@@ -217,8 +220,8 @@ class BLNDashboardView(LoginRequiredMixin,
 
             per_gov.append({
                 'governorate': gov.name,
-                'completion_male': round((float(completion_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
-                'completion_female': round((float(completion_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
+                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov), 2) if total_male_gov else 0,
+                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov), 2) if total_female_gov else 0,
 
                 'attendance_male_1': round((float(attendances_male_gov.filter(
                     participation='less_than_5days').count()) / float(attendance_gov)) * 100,
