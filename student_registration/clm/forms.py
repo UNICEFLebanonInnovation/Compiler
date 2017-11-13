@@ -665,7 +665,8 @@ class RSForm(CommonForm):
         choices=(
             ('', '----------'),
             ('repeat_level', _('Repeat level')),
-            ('dropout', _('Dropout from school'))
+            ('dropout', _('Dropout from school')),
+            ('graduated_next_level', _('Graduated to the next level')),
         ),
         initial=''
     )

@@ -88,7 +88,7 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
         else:
             instance.students[level_section] = data[level_section]
         instance.save()
-        calculate_absentees(instance, data[level_section]['students'])
+        # calculate_absentees(instance, data[level_section]['students'])
         return JsonResponse({'status': status.HTTP_200_OK, 'data': instance.id})
 
     def perform_update(self, serializer):

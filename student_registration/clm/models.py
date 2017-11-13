@@ -462,7 +462,8 @@ class RS(CLM):
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
         ('repeat_level', _('Repeat level')),
-        ('dropout', _('Dropout from school'))
+        ('dropout', _('Dropout from school')),
+        ('graduated_next_level', _('Graduated to the next level'))
     )
 
     SCHOOL_SHIFTS = Choices(
