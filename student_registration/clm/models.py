@@ -364,7 +364,7 @@ class CLM(TimeStampedModel):
             return '{}{}'.format(
                 round(((float(self.post_test_score) - float(self.pre_test_score)) / float(self.pre_test_score)) * 100.0, 2),
                 '%')
-        return ''
+        return 0
 
     def get_absolute_url(self):
         return '/clm/edit/%d/' % self.pk
@@ -664,7 +664,7 @@ class RS(CLM):
             return '{}{}'.format(
                 round((float(self.posttest_total) - float(self.pretest_total)) / float(self.pretest_total) * 100.0, 2),
                 '%')
-        return ''
+        return 0
 
     @property
     def self_assessment_improvement(self):
@@ -673,7 +673,7 @@ class RS(CLM):
                 (round((float(self.post_self_assessment_score) - float(self.pre_self_assessment_score)) /
                  float(self.pre_self_assessment_score)) * 100.0, 2),
                 '%')
-        return ''
+        return 0
 
     @property
     def motivation_improvement(self):
@@ -682,7 +682,7 @@ class RS(CLM):
                 (round((float(self.post_motivation_score) - float(self.pre_motivation_score)) /
                  float(self.pre_motivation_score)) * 100.0, 2),
                 '%')
-        return ''
+        return 0
 
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
@@ -845,6 +845,20 @@ class CBECE(CLM):
         except Assessment.DoesNotExist:
             return ''
 
+    def domain_improvement(self, domain_mame):
+        program_cycle = str(self.cycle_id)
+        key = '{}/{}{}'.format(
+            'CBECE_ASSESSMENT',
+            domain_mame,
+            program_cycle
+        )
+        if self.pre_test and self.post_test:
+            return '{}{}'.format(
+                round(((float(self.post_test[key]) - float(self.pre_test[key])) /
+                       float(self.pre_test[key])) * 100.0, 2),
+                '%')
+        return 0
+
     @property
     def pre_assessment_form(self):
         return self.assessment_form(stage='pre_test', assessment_slug='cbece_pre_test')
@@ -852,6 +866,30 @@ class CBECE(CLM):
     @property
     def post_assessment_form(self):
         return self.assessment_form(stage='post_test', assessment_slug='cbece_post_test')
+
+    @property
+    def art_improvement(self):
+        return self.domain_improvement('LanguageArtDomain')
+
+    @property
+    def math_improvement(self):
+        return self.domain_improvement('CognitiveDomianMathematics')
+
+    @property
+    def science_improvement(self):
+        return self.domain_improvement('CognitiveDomianScience')
+
+    @property
+    def social_improvement(self):
+        return self.domain_improvement('SocialEmotionalDomain')
+
+    @property
+    def psycho_improvement(self):
+        return self.domain_improvement('PsychomotorDomain')
+
+    @property
+    def artistic_improvement(self):
+        return self.domain_improvement('ArtisticDomain')
 
     def calculate_score(self, stage):
         program_cycle = str(self.cycle_id)

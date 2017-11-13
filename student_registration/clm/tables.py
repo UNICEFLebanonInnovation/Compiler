@@ -182,6 +182,19 @@ class CBECETable(CommonTable):
     assessment_improvement = tables.Column(verbose_name=_('Academic Result - Improvement'), orderable=False,
                                            accessor='assessment_improvement')
 
+    art_improvement = tables.Column(verbose_name=_('Language Art Domain - Improvement'), orderable=False,
+                                    accessor='art_improvement')
+    math_improvement = tables.Column(verbose_name=_('Cognitive Domain Mathematics - Improvement'), orderable=False,
+                                     accessor='math_improvement')
+    science_improvement = tables.Column(verbose_name=_('Cognitive Domain Science - Improvement'), orderable=False,
+                                        accessor='science_improvement')
+    social_improvement = tables.Column(verbose_name=_('Social Emotional Domain - Improvement'), orderable=False,
+                                       accessor='social_improvement')
+    psycho_improvement = tables.Column(verbose_name=_('Psychomotor Domain - Improvement'), orderable=False,
+                                       accessor='psycho_improvement')
+    artistic_improvement = tables.Column(verbose_name=_('Artistic Domain - Improvement'), orderable=False,
+                                         accessor='artistic_improvement')
+
     class Meta:
         model = CBECE
         fields = (
@@ -204,6 +217,12 @@ class CBECETable(CommonTable):
             'pre_assessment_result',
             'post_assessment_result',
             'assessment_improvement',
+            'art_improvement',
+            'math_improvement',
+            'science_improvement',
+            'social_improvement',
+            'psycho_improvement',
+            'artistic_improvement',
             'participation',
             'learning_result',
         )

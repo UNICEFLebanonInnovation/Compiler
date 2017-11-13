@@ -372,7 +372,8 @@ class BLNForm(CommonForm):
 
         pre_test = ''
         post_test = ''
-        post_test_permission = 'disabled'
+        pre_test_button = ' btn-outline-success '
+        post_test_button = ' btn-outline-secondary disabled'
         display_assessment = ' d-none'
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
@@ -383,19 +384,22 @@ class BLNForm(CommonForm):
             display_assessment = ''
             display_registry = ' d-none'
             form_action = reverse('clm:bln_edit', kwargs={'pk': instance.id})
-            if instance.pre_test:
-                post_test_permission = ''
 
             pre_test = instance.assessment_form(
                 stage='pre_test',
                 assessment_slug='bln_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:bln_edit', kwargs={'pk': instance.id}))
              )
-            post_test = instance.assessment_form(
-                stage='post_test',
-                assessment_slug='bln_post_test',
-                callback=self.request.build_absolute_uri(reverse('clm:bln_edit', kwargs={'pk': instance.id}))
-             )
+            if instance.pre_test:
+                pre_test_button = ' btn-success '
+                post_test_button = ' btn-outline-success '
+                post_test = instance.assessment_form(
+                    stage='post_test',
+                    assessment_slug='bln_post_test',
+                    callback=self.request.build_absolute_uri(reverse('clm:bln_edit', kwargs={'pk': instance.id}))
+                 )
+            if instance.post_test:
+                post_test_button = ' btn-success '
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -547,11 +551,11 @@ class BLNForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Academic data') + '</h4>')
                 ),
                 Div(
-                    HTML('<div class="col-md-3"><a class="btn btn-success" href="' + pre_test + '">' + _(
-                        'Pre-assessment') + '</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn ' + pre_test_button + '" href="' +
+                         pre_test + '">' + _('Pre-assessment') + '</a></div>'),
                     HTML(
-                        '<div class="col-md-3"><a class="btn btn-success ' + post_test_permission + '" href="' + post_test + '">' + _(
-                            'Post-assessment') + '</a></div>'),
+                        '<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
+                        post_test + '">' + _('Post-assessment') + '</a></div>'),
                     css_class='row',
                 ),
                 Div(
@@ -677,13 +681,16 @@ class RSForm(CommonForm):
 
         pre_test = ''
         post_test = ''
+        pre_test_button = ' btn-outline-success '
+        post_test_button = ' btn-outline-secondary disabled'
         pre_motivation = ''
         post_motivation = ''
+        pre_motivation_button = ' btn-outline-success '
+        post_motivation_button = ' btn-outline-secondary disabled'
         pre_self_assessment = ''
         post_self_assessment = ''
-        post_test_permission = 'disabled'
-        post_self_permission = 'disabled'
-        post_motivation_permission = 'disabled'
+        pre_self_button = ' btn-outline-success '
+        post_self_button = ' btn-outline-secondary disabled'
         display_assessment = ' d-none'
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
@@ -694,12 +701,6 @@ class RSForm(CommonForm):
             display_assessment = ''
             display_registry = ' d-none'
             form_action = reverse('clm:rs_edit', kwargs={'pk': instance.id})
-            if instance.pre_test:
-                post_test_permission = ''
-            if instance.pre_self_assessment:
-                post_self_permission = ''
-            if instance.pre_motivation:
-                post_motivation_permission = ''
 
             #  Strategy Evaluation
             pre_test = instance.assessment_form(
@@ -707,11 +708,16 @@ class RSForm(CommonForm):
                 assessment_slug='rs_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
              )
-            post_test = instance.assessment_form(
-                stage='post_test',
-                assessment_slug='rs_post_test',
-                callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
-             )
+            if instance.pre_test:
+                pre_test_button = ' btn-success '
+                post_test_button = ' btn-outline-success '
+                post_test = instance.assessment_form(
+                    stage='post_test',
+                    assessment_slug='rs_post_test',
+                    callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+                 )
+            if instance.post_test:
+                post_test_button = ' btn-success '
 
             #  Motivation Assessment
             pre_motivation = instance.assessment_form(
@@ -719,11 +725,16 @@ class RSForm(CommonForm):
                 assessment_slug='rs_pre_motivation',
                 callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
              )
-            post_motivation = instance.assessment_form(
-                stage='post_motivation',
-                assessment_slug='rs_post_motivation',
-                callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
-             )
+            if instance.pre_motivation:
+                pre_motivation_button = ' btn-success '
+                post_motivation_button = ' btn-outline-success '
+                post_motivation = instance.assessment_form(
+                    stage='post_motivation',
+                    assessment_slug='rs_post_motivation',
+                    callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+                 )
+            if instance.post_motivation:
+                post_motivation_button = ' btn-success '
 
             #  Self-Assessment
             pre_self_assessment = instance.assessment_form(
@@ -731,11 +742,16 @@ class RSForm(CommonForm):
                 assessment_slug='rs_pre_self_assessment',
                 callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
              )
-            post_self_assessment = instance.assessment_form(
-                stage='post_self_assessment',
-                assessment_slug='rs_post_self_assessment',
-                callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
-             )
+            if instance.pre_self_assessment:
+                pre_self_button = ' btn-success '
+                post_self_button = ' btn-outline-success '
+                post_self_assessment = instance.assessment_form(
+                    stage='post_self_assessment',
+                    assessment_slug='rs_post_self_assessment',
+                    callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+                 )
+            if instance.post_self_assessment:
+                post_self_button = ' btn-success '
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -958,10 +974,10 @@ class RSForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Strategy Evaluation') + '</h4>')
                 ),
                 Div(
-                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">' +
-                         _('Pre-assessment')+'</a></div>'),
-                    HTML('<div class="col-md-3"><a class="btn btn-success '+post_test_permission+'" href="' +
-                         post_test + '">'+_('Post-assessment')+'</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn ' + pre_test_button + '" href="' +
+                         pre_test+'">' + _('Pre-assessment') + '</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
+                         post_test + '">' + _('Post-assessment') + '</a></div>'),
                     css_class='row',
                 ),
                 Div(
@@ -976,9 +992,9 @@ class RSForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Motivation') + '</h4>')
                 ),
                 Div(
-                    HTML('<div class="col-md-3"><a class="btn btn-success" href="' + pre_motivation + '">' +
-                         _('Pre-assessment') + '</a></div>'),
-                    HTML('<div class="col-md-3"><a class="btn btn-success ' + post_motivation_permission + '" href="' +
+                    HTML('<div class="col-md-3"><a class="btn ' + pre_motivation_button + '" href="' +
+                         pre_motivation + '">' + _('Pre-assessment') + '</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn ' + post_motivation_button + '" href="' +
                          post_motivation + '">' + _('Post-assessment') + '</a></div>'),
                     css_class='row',
                 ),
@@ -994,10 +1010,10 @@ class RSForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Self-Perception') + '</h4>')
                 ),
                 Div(
-                    HTML('<div class="col-md-3"><a class="btn btn-success" href="' + pre_self_assessment + '">' + _(
-                        'Pre-assessment') + '</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn ' + pre_self_button + '" href="' +
+                         pre_self_assessment + '">' + _('Pre-assessment') + '</a></div>'),
                     HTML(
-                        '<div class="col-md-3"><a class="btn btn-success ' + post_self_permission + '" href="' +
+                        '<div class="col-md-3"><a class="btn ' + post_self_button + '" href="' +
                         post_self_assessment + '">' + _('Post-assessment') + '</a></div>'),
                     css_class='row',
                 ),
@@ -1102,9 +1118,10 @@ class CBECEForm(CommonForm):
 
         pre_test = ''
         post_test = ''
+        pre_test_button = ' btn-outline-success '
+        post_test_button = ' btn-outline-secondary disabled'
         display_assessment = ' d-none'
         display_registry = ''
-        post_test_permission = 'disabled'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:cbece_add')
         self.fields['clm_type'].initial = 'CBECE'
@@ -1113,19 +1130,23 @@ class CBECEForm(CommonForm):
             display_assessment = ''
             display_registry = ' d-none'
             form_action = reverse('clm:cbece_edit', kwargs={'pk': instance.id})
-            if instance.pre_test:
-                post_test_permission = ''
 
             pre_test = instance.assessment_form(
                 stage='pre_test',
                 assessment_slug='cbece_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:cbece_edit', kwargs={'pk': instance.id}))
              )
-            post_test = instance.assessment_form(
-                stage='post_test',
-                assessment_slug='cbece_post_test',
-                callback=self.request.build_absolute_uri(reverse('clm:cbece_edit', kwargs={'pk': instance.id}))
-             )
+
+            if instance.pre_test:
+                pre_test_button = ' btn-success '
+                post_test_button = ' btn-outline-success '
+                post_test = instance.assessment_form(
+                    stage='post_test',
+                    assessment_slug='cbece_post_test',
+                    callback=self.request.build_absolute_uri(reverse('clm:cbece_edit', kwargs={'pk': instance.id}))
+                 )
+            if instance.post_test:
+                post_test_button = ' btn-success '
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -1285,8 +1306,10 @@ class CBECEForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment') + '</h4>')
                 ),
                 Div(
-                    HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">'+_('Pre-assessment')+'</a></div>'),
-                    HTML('<div class="col-md-3"><a class="btn btn-success '+post_test_permission+'" href="'+post_test+'">'+_('Post-assessment')+'</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn ' + pre_test_button + '" href="' +
+                         pre_test+'">' + _('Pre-assessment') + '</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
+                         post_test+'">' + _('Post-assessment') + '</a></div>'),
                     css_class='row',
                 ),
                 Div(
