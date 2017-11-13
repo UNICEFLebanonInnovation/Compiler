@@ -4,14 +4,12 @@
 # Verified bug on Python 3.5.1
 wheel==0.29.0
 
-
 # Bleeding edge Django
 django==1.10.7 # pyup: >=1.10,<1.11
 
 # Configuration
 django-environ==0.4.3
 whitenoise==3.3.0
-
 
 # Forms
 django-braces==1.11.0
@@ -30,7 +28,6 @@ argon2-cffi==16.3.0
 # Well-built with regular release cycles!
 django-allauth==0.32.0
 
-
 # Python-PostgreSQL Database Adapter
 psycopg2==2.7.3
 
@@ -44,14 +41,13 @@ pytz==2017.2
 django-redis==4.8.0
 redis>=2.10.5
 
-
-celery==3.1.25
-
-
+celery==4.1.0
+django-celery-beat==1.1.0
+django-celery-results==1.0.1
+honcho==1.0.1
 
 rcssmin==1.0.6
 django-compressor==2.1.1
-
 
 # Your custom requirements go here
 django-datatables-view==1.13.0
