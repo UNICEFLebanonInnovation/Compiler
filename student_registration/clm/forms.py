@@ -544,7 +544,7 @@ class BLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Strategy Evaluation') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Academic data') + '</h4>')
                 ),
                 Div(
                     HTML('<div class="col-md-3"><a class="btn btn-success" href="' + pre_test + '">' + _(
@@ -955,7 +955,7 @@ class RSForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Strategy Evaluation') + '</h4>')
                 ),
                 Div(
                     HTML('<div class="col-md-3"><a class="btn btn-success" href="'+pre_test+'">' +
