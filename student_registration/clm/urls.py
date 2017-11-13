@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from django.conf.urls import url
 
 from . import views
+# from .views import BLN, CBECE, RS
 
 urlpatterns = [
 
@@ -10,6 +11,24 @@ urlpatterns = [
         regex=r'^index/$',
         view=views.CLMView.as_view(),
         name='index'
+    ),
+
+    url(
+        regex=r'^bln-dashboard/$',
+        view=views.BLNDashboardView.as_view(),
+        name='bln_dashboard'
+    ),
+
+    url(
+        regex=r'^rs-dashboard/$',
+        view=views.RSDashboardView.as_view(),
+        name='rs_dashboard'
+    ),
+
+    url(
+        regex=r'^cbece-dashboard/$',
+        view=views.CBECEDashboardView.as_view(),
+        name='cbece_dashboard'
     ),
 
     url(

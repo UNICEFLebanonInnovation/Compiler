@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% load static %}
+{% load util_tags %}
+
+{% block content-full-page %}
+
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item active">
+        RS
+      </li>
+      <li class="breadcrumb-item active">
+        {{ request.user.partner }}
+      </li>
+      <li class="breadcrumb-item active">
+        {{ request.user }}
+      </li>
+    </ol>
+
+    <ol class="breadcrumb">
+    </ol>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+{% endblock %}
