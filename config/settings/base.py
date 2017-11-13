@@ -322,6 +322,7 @@ AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 ########## CELERY
 INSTALLED_APPS += ['student_registration.taskapp.celery.CeleryConfig']
 CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = 'django-db'
 ########## END CELERY
 
 COUCHBASE_URL = env('COUCHBASE_URL', default='NO_URL')
