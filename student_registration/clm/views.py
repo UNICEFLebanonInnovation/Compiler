@@ -28,6 +28,8 @@ from student_registration.outreach.serializers import ChildSerializer
 from .models import BLN, RS, CBECE, SelfPerceptionGrades
 from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
+from student_registration.schools.models import CLMRound
+from student_registration.locations.models import Location
 
 
 class CLMView(LoginRequiredMixin,
@@ -158,7 +160,117 @@ class BLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return BLN.objects.filter(owner=self.request.user)
+        return BLN.objects.filter(partner=self.request.user.partner_id)
+
+
+class BLNDashboardView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       TemplateView):
+
+    template_name = 'clm/bln_dashboard.html'
+
+    group_required = [u"CLM_BLN"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+
+        per_gov = []
+        clm_round = self.request.user.partner.bln_round
+        clm_rounds = CLMRound.objects.all()
+        governorates = Location.objects.filter(parent__isnull=True)
+
+        # queryset = BLN.objects.filter(round=clm_round)
+        queryset = BLN.objects.all()
+
+        referral_path = queryset.exclude(learning_result='dropout') \
+            .exclude(learning_result='repeat_level').filter(learning_result__isnull=False)
+        repeat_class = queryset.filter(learning_result='repeat_level')
+
+        completion_male = referral_path.filter(student__sex='Male')
+        completion_female = referral_path.filter(student__sex='Female')
+        attendances_male = queryset.filter(student__sex='Male', participation__isnull=False)
+        attendances_female = queryset.filter(student__sex='Female', participation__isnull=False)
+
+        for gov in governorates:
+            referral_path = referral_path.filter(governorate=gov)
+
+            repeat_class_gov = repeat_class.filter(governorate=gov).count()
+            completion_male_gov = completion_male.filter(governorate=gov).count()
+            completion_female_gov = completion_female.filter(governorate=gov).count()
+            attendances_male_gov = attendances_male.filter(governorate=gov)
+            attendances_female_gov = attendances_female.filter(governorate=gov)
+
+            per_gov.append({
+                'governorate': gov.name,
+                'completion_male': completion_male_gov,
+                'completion_female': completion_female_gov,
+                'attendance_male_1': round((float(attendances_male_gov.filter(
+                    participation='less_than_5days').count()) / float(completion_male_gov)) * 100,
+                                           2) if completion_male_gov else 0,
+                'attendance_female_1': round((float(attendances_female_gov.filter(
+                    participation='less_than_5days').count()) / float(completion_female_gov)) * 100,
+                                             0) if completion_female_gov else 0,
+
+                'attendance_male_2': round((float(attendances_male_gov.filter(
+                    participation='5_10_days').count()) / float(completion_male_gov)) * 100,
+                                           2) if completion_male_gov else 0,
+                'attendance_female_2': round((float(attendances_female_gov.filter(
+                    participation='5_10_days').count()) / float(completion_female_gov)) * 100,
+                                             0) if completion_female_gov else 0,
+
+                'attendance_male_3': round((float(attendances_male_gov.filter(
+                    participation='10_15_days').count()) / float(completion_male_gov)) * 100,
+                                           2) if completion_male_gov else 0,
+                'attendance_female_3': round((float(attendances_female_gov.filter(
+                    participation='10_15_days').count()) / float(completion_female_gov)) * 100,
+                                             0) if completion_female_gov else 0,
+
+                'attendance_male_4': round((float(attendances_male_gov.filter(
+                    participation='more_than_15days').count()) / float(completion_male_gov)) * 100,
+                                           2) if completion_male_gov else 0,
+                'attendance_female_4': round((float(attendances_female_gov.filter(
+                    participation='more_than_15days').count()) / float(completion_female_gov)) * 100,
+                                             0) if completion_female_gov else 0,
+
+                'repetition_male': (completion_male_gov / repeat_class_gov) * 100 if repeat_class_gov else 0,
+                'repetition_female': (completion_female_gov / repeat_class_gov) * 100 if repeat_class_gov else 0,
+            })
+
+        return {
+            'clm_round': clm_round,
+            'clm_rounds': clm_rounds,
+            'per_gov': per_gov
+        }
+
+
+class RSDashboardView(LoginRequiredMixin,
+                      GroupRequiredMixin,
+                      TemplateView):
+
+    template_name = 'clm/rs_dashboard.html'
+
+    group_required = [u"CLM_RS"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        return {
+
+        }
+
+
+class CBECEDashboardView(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         TemplateView):
+
+    template_name = 'clm/cbece_dashboard.html'
+
+    group_required = [u"CLM_CBECE"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        return {
+
+        }
 
 
 class RSAddView(LoginRequiredMixin,
@@ -243,7 +355,7 @@ class RSListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return RS.objects.filter(owner=self.request.user)
+        return RS.objects.filter(partner=self.request.user.partner_id)
 
 
 class CBECEAddView(LoginRequiredMixin,
@@ -328,7 +440,7 @@ class CBECEListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return CBECE.objects.filter(owner=self.request.user)
+        return CBECE.objects.filter(partner=self.request.user.partner_id)
 
 
 ####################### API VIEWS #############################
