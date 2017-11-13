@@ -29,6 +29,9 @@ def push_bln_data(file_name, base_url, token, protocol='HTTPS'):
         for row in ws.rows:
             try:
                 data = {}
+                data['new_registry'] = 'yes'
+                data['student_outreached'] = 'no'
+                data['have_barcode'] = 'no'
                 data['partner'] = row[0].value
                 data['round_id'] = row[1].value if row[1].value else 1
                 data['student_first_name'] = row[2].value if row[2].value else 'None'
