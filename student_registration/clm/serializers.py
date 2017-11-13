@@ -94,6 +94,8 @@ class CLMSerializer(serializers.ModelSerializer):
             'round_name',
             'enrollment_id',
             'student_id',
+            'round',
+            'partner',
             'language',
             'student_outreach_child',
             'student_outreach_child_id',
