@@ -179,12 +179,13 @@ class BLNDashboardView(LoginRequiredMixin,
         clm_rounds = CLMRound.objects.all()
         governorates = Location.objects.filter(parent__isnull=True)
 
-        queryset = BLN.objects.filter(round=clm_round)
+        # queryset = BLN.objects.filter(round=clm_round)
+        queryset = BLN.objects.all()
 
         referral_path = queryset.exclude(learning_result='dropout') \
             .exclude(learning_result='repeat_level').filter(learning_result__isnull=False)
         repeat_class = queryset.filter(learning_result='repeat_level')
-        print(repeat_class)
+
         completion_male = referral_path.filter(student__sex='Male')
         completion_female = referral_path.filter(student__sex='Female')
         attendances_male = queryset.filter(student__sex='Male', participation__isnull=False)
@@ -196,35 +197,43 @@ class BLNDashboardView(LoginRequiredMixin,
             repeat_class_gov = repeat_class.filter(governorate=gov).count()
             completion_male_gov = completion_male.filter(governorate=gov).count()
             completion_female_gov = completion_female.filter(governorate=gov).count()
-            attendances_male = attendances_male.filter(governorate=gov)
-            attendances_female = attendances_female.filter(governorate=gov)
+            attendances_male_gov = attendances_male.filter(governorate=gov)
+            attendances_female_gov = attendances_female.filter(governorate=gov)
 
             per_gov.append({
                 'governorate': gov.name,
                 'completion_male': completion_male_gov,
                 'completion_female': completion_female_gov,
-                'attendance_male_1': ((attendances_male.filter(
-                    participation='less_than_5days').count() / completion_male_gov) * 100) if completion_male_gov > 0 else 0,
-                'attendance_female_1': ((attendances_female.filter(
-                    participation='less_than_5days').count() / completion_female_gov) * 100) if completion_female_gov > 0 else 0,
+                'attendance_male_1': round((float(attendances_male_gov.filter(
+                    participation='less_than_5days').count()) / float(completion_male_gov)) * 100,
+                                           2) if completion_male_gov else 0,
+                'attendance_female_1': round((float(attendances_female_gov.filter(
+                    participation='less_than_5days').count()) / float(completion_female_gov)) * 100,
+                                             0) if completion_female_gov else 0,
 
-                'attendance_male_2': ((attendances_male.filter(
-                    participation='5_10_days').count() / completion_male_gov) * 100) if completion_male_gov > 0 else 0,
-                'attendance_female_2': ((attendances_female.filter(
-                    participation='5_10_days').count() / completion_female_gov) * 100) if completion_female_gov > 0 else 0,
+                'attendance_male_2': round((float(attendances_male_gov.filter(
+                    participation='5_10_days').count()) / float(completion_male_gov)) * 100,
+                                           2) if completion_male_gov else 0,
+                'attendance_female_2': round((float(attendances_female_gov.filter(
+                    participation='5_10_days').count()) / float(completion_female_gov)) * 100,
+                                             0) if completion_female_gov else 0,
 
-                'attendance_male_3': ((attendances_male.filter(
-                    participation='10_15_days').count() / completion_male_gov) * 100) if completion_male_gov > 0 else 0,
-                'attendance_female_3': ((attendances_female.filter(
-                    participation='10_15_days').count() / completion_female_gov) * 100) if completion_female_gov > 0 else 0,
+                'attendance_male_3': round((float(attendances_male_gov.filter(
+                    participation='10_15_days').count()) / float(completion_male_gov)) * 100,
+                                           2) if completion_male_gov else 0,
+                'attendance_female_3': round((float(attendances_female_gov.filter(
+                    participation='10_15_days').count()) / float(completion_female_gov)) * 100,
+                                             0) if completion_female_gov else 0,
 
-                'attendance_male_4': ((attendances_male.filter(
-                    participation='more_than_15days').count() / completion_male_gov) * 100) if completion_male_gov > 0 else 0,
-                'attendance_female_4': ((attendances_female.filter(
-                    participation='more_than_15days').count() / completion_female_gov) * 100) if completion_female_gov > 0 else 0,
+                'attendance_male_4': round((float(attendances_male_gov.filter(
+                    participation='more_than_15days').count()) / float(completion_male_gov)) * 100,
+                                           2) if completion_male_gov else 0,
+                'attendance_female_4': round((float(attendances_female_gov.filter(
+                    participation='more_than_15days').count()) / float(completion_female_gov)) * 100,
+                                             0) if completion_female_gov else 0,
 
-                'repetition_male': (completion_male_gov / repeat_class_gov) * 100 if repeat_class_gov > 0 else 0,
-                'repetition_female': (completion_female_gov / repeat_class_gov) * 100 if repeat_class_gov > 0 else 0,
+                'repetition_male': (completion_male_gov / repeat_class_gov) * 100 if repeat_class_gov else 0,
+                'repetition_female': (completion_female_gov / repeat_class_gov) * 100 if repeat_class_gov else 0,
             })
 
         return {
