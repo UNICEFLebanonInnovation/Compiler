@@ -362,7 +362,7 @@ class CLM(TimeStampedModel):
     def assessment_improvement(self):
         if self.pre_test and self.post_test:
             return '{}{}'.format(
-                (abs(int(self.pre_test_score) - int(self.post_test_score)) / int(self.pre_test_score)) * 100,
+                round(((float(self.post_test_score) - float(self.pre_test_score)) / float(self.pre_test_score)) * 100.0, 2),
                 '%')
         return ''
 
@@ -662,7 +662,7 @@ class RS(CLM):
     def academic_test_improvement(self):
         if self.pretest_total and self.posttest_total:
             return '{}{}'.format(
-                (abs(int(self.pretest_total) + int(self.posttest_total)) / int(self.pretest_total)) * 100,
+                round((float(self.posttest_total) - float(self.pretest_total)) / float(self.pretest_total) * 100.0, 2),
                 '%')
         return ''
 
@@ -670,8 +670,8 @@ class RS(CLM):
     def self_assessment_improvement(self):
         if self.pre_self_assessment and self.post_self_assessment:
             return '{}{}'.format(
-                (abs(int(self.pre_self_assessment_score) - int(self.post_self_assessment_score)) /
-                    int(self.pre_self_assessment_score)) * 100,
+                (round((float(self.post_self_assessment_score) - float(self.pre_self_assessment_score)) /
+                 float(self.pre_self_assessment_score)) * 100.0, 2),
                 '%')
         return ''
 
@@ -679,8 +679,8 @@ class RS(CLM):
     def motivation_improvement(self):
         if self.pre_motivation and self.post_motivation:
             return '{}{}'.format(
-                (abs(int(self.pre_motivation_score) - int(self.post_motivation_score)) /
-                    int(self.pre_motivation_score)) * 100,
+                (round((float(self.post_motivation_score) - float(self.pre_motivation_score)) /
+                 float(self.pre_motivation_score)) * 100.0, 2),
                 '%')
         return ''
 
@@ -854,14 +854,14 @@ class CBECE(CLM):
         return self.assessment_form(stage='post_test', assessment_slug='cbece_post_test')
 
     def calculate_score(self, stage):
-        program_cyle = self.cycle_id
+        program_cycle = str(self.cycle_id)
         keys = [
-            'CBECE_ASSESSMENT/LanguageArtDomain'+program_cyle,
-            'CBECE_ASSESSMENT/CognitiveDomianMathematics'+program_cyle,
-            'CBECE_ASSESSMENT/CognitiveDomianScience'+program_cyle,
-            'CBECE_ASSESSMENT/SocialEmotionalDomain'+program_cyle,
-            'CBECE_ASSESSMENT/PsychomotorDomain'+program_cyle,
-            'CBECE_ASSESSMENT/ArtisticDomain'+program_cyle,
+            'CBECE_ASSESSMENT/LanguageArtDomain'+program_cycle,
+            'CBECE_ASSESSMENT/CognitiveDomianMathematics'+program_cycle,
+            'CBECE_ASSESSMENT/CognitiveDomianScience'+program_cycle,
+            'CBECE_ASSESSMENT/SocialEmotionalDomain'+program_cycle,
+            'CBECE_ASSESSMENT/PsychomotorDomain'+program_cycle,
+            'CBECE_ASSESSMENT/ArtisticDomain'+program_cycle,
         ]
 
         super(CBECE, self).score(keys, stage)
