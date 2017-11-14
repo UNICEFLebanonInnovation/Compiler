@@ -9,6 +9,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
+from django.db.models import Q
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
@@ -27,6 +28,8 @@ from student_registration.outreach.serializers import ChildSerializer
 from .models import BLN, RS, CBECE, SelfPerceptionGrades
 from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
+from student_registration.schools.models import CLMRound
+from student_registration.locations.models import Location
 
 
 class CLMView(LoginRequiredMixin,
@@ -157,7 +160,133 @@ class BLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return BLN.objects.filter(owner=self.request.user)
+        return BLN.objects.filter(partner=self.request.user.partner_id)
+
+
+class BLNDashboardView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       TemplateView):
+
+    template_name = 'clm/bln_dashboard.html'
+
+    group_required = [u"CLM_BLN"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+
+        per_gov = []
+        clm_round = self.request.user.partner.bln_round
+        clm_rounds = CLMRound.objects.all()
+        governorates = Location.objects.filter(parent__isnull=True)
+
+        # queryset = BLN.objects.filter(round=clm_round)
+        queryset = BLN.objects.all()
+        total_male = queryset.filter(student__sex='Male')
+        total_female = queryset.filter(student__sex='Female')
+
+        completion = queryset.exclude(learning_result='dropout') \
+            .exclude(learning_result='repeat_level')
+        completion_male = completion.filter(student__sex='Male')
+        completion_female = completion.filter(student__sex='Female')
+
+        attendance = queryset.exclude(learning_result='dropout')
+            # .filter(participation__isnull=False)
+        attendances_male = attendance.filter(student__sex='Male', participation__isnull=False)
+        attendances_female = attendance.filter(student__sex='Female', participation__isnull=False)
+
+        repeat_class = queryset.exclude(learning_result='dropout').filter(learning_result='repeat_level')
+        repeat_class_male = repeat_class.filter(student__sex='Male')
+        repeat_class_female = repeat_class.filter(student__sex='Female')
+
+        for gov in governorates:
+
+            total_gov = queryset.filter(governorate=gov).count()
+            total_male_gov = total_male.filter(governorate=gov).count()
+            total_female_gov = total_female.filter(governorate=gov).count()
+
+            completion_gov = completion.filter(governorate=gov).count()
+            completion_male_gov = completion_male.filter(governorate=gov).count()
+            completion_female_gov = completion_female.filter(governorate=gov).count()
+
+            attendance_gov = attendance.filter(governorate=gov).count()
+            attendances_male_gov = attendances_male.filter(governorate=gov)
+            attendances_female_gov = attendances_female.filter(governorate=gov)
+
+            repeat_class_male_gov = repeat_class_male.filter(governorate=gov).count()
+            repeat_class_female_gov = repeat_class_female.filter(governorate=gov).count()
+
+            per_gov.append({
+                'governorate': gov.name,
+                'completion_male': round((float(completion_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
+                'completion_female': round((float(completion_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
+
+                'attendance_male_1': round((float(attendances_male_gov.filter(
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100,
+                                           2) if attendance_gov else 0,
+                'attendance_female_1': round((float(attendances_female_gov.filter(
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100,
+                                             0) if attendance_gov else 0,
+
+                'attendance_male_2': round((float(attendances_male_gov.filter(
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100,
+                                           2) if attendance_gov else 0,
+                'attendance_female_2': round((float(attendances_female_gov.filter(
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100,
+                                             0) if attendance_gov else 0,
+
+                'attendance_male_3': round((float(attendances_male_gov.filter(
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100,
+                                           2) if attendance_gov else 0,
+                'attendance_female_3': round((float(attendances_female_gov.filter(
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100,
+                                             0) if attendance_gov else 0,
+
+                'attendance_male_4': round((float(attendances_male_gov.filter(
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100,
+                                           2) if attendance_gov else 0,
+                'attendance_female_4': round((float(attendances_female_gov.filter(
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100,
+                                             0) if attendance_gov else 0,
+
+                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
+                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
+            })
+
+        return {
+            'clm_round': clm_round,
+            'clm_rounds': clm_rounds,
+            'per_gov': per_gov
+        }
+
+
+class RSDashboardView(LoginRequiredMixin,
+                      GroupRequiredMixin,
+                      TemplateView):
+
+    template_name = 'clm/rs_dashboard.html'
+
+    group_required = [u"CLM_RS"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        return {
+
+        }
+
+
+class CBECEDashboardView(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         TemplateView):
+
+    template_name = 'clm/cbece_dashboard.html'
+
+    group_required = [u"CLM_CBECE"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        return {
+
+        }
 
 
 class RSAddView(LoginRequiredMixin,
@@ -242,7 +371,7 @@ class RSListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return RS.objects.filter(owner=self.request.user)
+        return RS.objects.filter(partner=self.request.user.partner_id)
 
 
 class CBECEAddView(LoginRequiredMixin,
@@ -327,7 +456,7 @@ class CBECEListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return CBECE.objects.filter(owner=self.request.user)
+        return CBECE.objects.filter(partner=self.request.user.partner_id)
 
 
 ####################### API VIEWS #############################
@@ -415,3 +544,34 @@ class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
     queryset = SelfPerceptionGrades.objects.all()
     serializer_class = SelfPerceptionGradesSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+
+class CLMStudentViewSet(mixins.RetrieveModelMixin,
+                        mixins.ListModelMixin,
+                        viewsets.GenericViewSet):
+
+    model = BLN
+    queryset = BLN.objects.all()
+    serializer_class = BLNSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        clm_type = self.request.GET.get('clm_type', 'BLN')
+        terms = self.request.GET.get('term', 0)
+        if clm_type == 'RS':
+            self.model = RS
+            self.serializer_class = RSSerializer
+        elif clm_type == 'CBECE':
+            self.model = CBECE
+            self.serializer_class = CBECESerializer
+
+        qs = self.model.objects.all()
+
+        if terms:
+            for term in terms.split():
+                qs = qs.filter(
+                    Q(student__first_name__contains=term) |
+                    Q(student__father_name__contains=term) |
+                    Q(student__last_name__contains=term)
+                ).distinct()[:50]
+            return qs
