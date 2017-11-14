@@ -219,39 +219,39 @@ class BLNDashboardView(LoginRequiredMixin,
 
             per_gov.append({
                 'governorate': gov.name,
-                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov), 2) if total_male_gov else 0,
-                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov), 2) if total_female_gov else 0,
+                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov), 2) if total_male_gov else 0.0,
+                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov), 2) if total_female_gov else 0.0,
 
                 'attendance_male_1': round((float(attendances_male_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_1': round((float(attendances_female_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
                 'attendance_male_2': round((float(attendances_male_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_2': round((float(attendances_female_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
                 'attendance_male_3': round((float(attendances_male_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_3': round((float(attendances_female_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
                 'attendance_male_4': round((float(attendances_male_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_4': round((float(attendances_female_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
-                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
-                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
+                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
+                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
             })
 
         return {
@@ -315,39 +315,39 @@ class RSDashboardView(LoginRequiredMixin,
 
             per_gov.append({
                 'governorate': gov.name,
-                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov), 2) if total_male_gov else 0,
-                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov), 2) if total_female_gov else 0,
+                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov), 2) if total_male_gov else 0.0,
+                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov), 2) if total_female_gov else 0.0,
 
                 'attendance_male_1': round((float(attendances_male_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_1': round((float(attendances_female_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
                 'attendance_male_2': round((float(attendances_male_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_2': round((float(attendances_female_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
                 'attendance_male_3': round((float(attendances_male_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_3': round((float(attendances_female_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
                 'attendance_male_4': round((float(attendances_male_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_4': round((float(attendances_female_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
-                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
-                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
+                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
+                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
             })
 
         return {
@@ -396,8 +396,8 @@ class CBECEDashboardView(LoginRequiredMixin,
         for gov in governorates:
 
             total_gov = queryset.filter(governorate=gov).count()
-            total_male_gov = total_male.filter(governorate=gov).count()
-            total_female_gov = total_female.filter(governorate=gov).count()
+            total_male_gov = total_male.filter(governorate=gov)
+            total_female_gov = total_female.filter(governorate=gov)
 
             completion_gov = completion.filter(governorate=gov).count()
             completion_male_gov = completion_male.filter(governorate=gov).count()
@@ -412,79 +412,91 @@ class CBECEDashboardView(LoginRequiredMixin,
 
             per_gov.append({
                 'governorate': gov.name,
-                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov), 2) if total_male_gov else 0,
-                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov), 2) if total_female_gov else 0,
+                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov.count()), 2) if total_male_gov.count() else 0.0,
+                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov.coun()), 2) if total_female_gov.count() else 0.0,
 
                 'attendance_male_1': round((float(attendances_male_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_1': round((float(attendances_female_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
                 'attendance_male_2': round((float(attendances_male_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_2': round((float(attendances_female_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
                 'attendance_male_3': round((float(attendances_male_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_3': round((float(attendances_female_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
                 'attendance_male_4': round((float(attendances_male_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_4': round((float(attendances_female_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
-                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
-                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
+                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
+                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
             })
 
-            d1_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'LanguageArtDomain')::float)", params=[])).aggregate(total=Avg('val'))
-            d1_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'LanguageArtDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            # d1_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'LanguageArtDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            # d1_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'LanguageArtDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            d1_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]), post=RawSQL("((scores->>'post_LanguageArtDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d1_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]), post=RawSQL("((scores->>'post_LanguageArtDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            d2_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianMathematics')::float)", params=[])).aggregate(total=Avg('val'))
-            d2_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianMathematics')::float)", params=[])).aggregate(total=Avg('val'))
+            # d2_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianMathematics')::float)", params=[])).aggregate(total=Avg('val'))
+            # d2_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianMathematics')::float)", params=[])).aggregate(total=Avg('val'))
+            d2_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomianMathematics')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomianMathematics')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d2_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomianMathematics')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomianMathematics')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            d3_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianScience')::float)", params=[])).aggregate(total=Avg('val'))
-            d3_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianScience')::float)", params=[])).aggregate(total=Avg('val'))
+            # d3_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianScience')::float)", params=[])).aggregate(total=Avg('val'))
+            # d3_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianScience')::float)", params=[])).aggregate(total=Avg('val'))
+            d3_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomianScience')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomianScience')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d3_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomianScience')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomianScience')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            d4_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'SocialEmotionalDomain')::float)", params=[])).aggregate(total=Avg('val'))
-            d4_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'SocialEmotionalDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            # d4_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'SocialEmotionalDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            # d4_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'SocialEmotionalDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            d4_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]), post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d4_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]), post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            d5_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'PsychomotorDomain')::float)", params=[])).aggregate(total=Avg('val'))
-            d5_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'PsychomotorDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            # d5_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'PsychomotorDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            # d5_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'PsychomotorDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            d5_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]), post=RawSQL("((scores->>'post_PsychomotorDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d5_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]), post=RawSQL("((scores->>'post_PsychomotorDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            d6_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'ArtisticDomain')::float)", params=[])).aggregate(total=Avg('val'))
-            d6_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'ArtisticDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            # d6_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'ArtisticDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            # d6_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'ArtisticDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            d6_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]), post=RawSQL("((scores->>'post_ArtisticDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d6_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]), post=RawSQL("((scores->>'post_ArtisticDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
             domain_gov.append({
                 'governorate': gov.name,
 
-                'art_improvement_male': d1_male['total'],
-                'art_improvement_female': d1_female['total'],
+                'art_improvement_male': d1_male['total'] if d1_male['total'] != None else 0.0,
+                'art_improvement_female': d1_female['total'] if d1_female['total'] != None else 0.0,
 
-                'math_improvement_male': d2_male['total'],
-                'math_improvement_female': d2_female['total'],
+                'math_improvement_male': d2_male['total'] if d2_male['total'] != None else 0.0,
+                'math_improvement_female': d2_female['total'] if d2_female['total'] != None else 0.0,
 
-                'science_improvement_male': d3_male['total'],
-                'science_improvement_female': d3_female['total'],
+                'science_improvement_male': d3_male['total'] if d3_male['total'] != None else 0.0,
+                'science_improvement_female': d3_female['total'] if d3_female['total'] != None else 0.0,
 
-                'social_improvement_male': d4_male['total'],
-                'social_improvement_female': d4_female['total'],
+                'social_improvement_male': d4_male['total'] if d4_male['total'] != None else 0.0,
+                'social_improvement_female': d4_female['total'] if d4_female['total'] != None else 0.0,
 
-                'psycho_improvement_male': d5_male['total'],
-                'psycho_improvement_female': d5_female['total'],
+                'psycho_improvement_male': d5_male['total'] if d5_male['total'] != None else 0.0,
+                'psycho_improvement_female': d5_female['total'] if d5_female['total'] != None else 0.0,
 
-                'artistic_improvement_male': d6_male['total'],
-                'artistic_improvement_female': d6_female['total']
+                'artistic_improvement_male': d6_male['total'] if d6_male['total'] != None else 0.0,
+                'artistic_improvement_female': d6_female['total'] if d6_female['total'] != None else 0.0
             })
 
         return {
