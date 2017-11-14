@@ -23,6 +23,10 @@ class OutreachYear(models.Model):
 
 class HouseHold(models.Model):
 
+    form_id = models.CharField(
+        max_length=45,
+        blank=True, null=True,
+    )
     interview_status = models.CharField(
         max_length=50,
         blank=True,
@@ -37,17 +41,12 @@ class HouseHold(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     phone_number = models.CharField(max_length=45, blank=True, null=True)
     residence_type = models.CharField(
-        max_length=50,
+        max_length=200,
         blank=True,
         null=True,
-        choices=Choices(
-            ('1', _('Informal Settlement')),
-            ('2', _('House or Apartment')),
-            ('3', _('Garage, Store or other')),
-        )
     )
-    p_code = models.CharField(max_length=45, blank=True, null=True)
-    address = models.CharField(max_length=100, blank=True, null=True)
+    p_code = models.CharField(max_length=100, blank=True, null=True)
+    address = models.CharField(max_length=200, blank=True, null=True)
     number_of_children = models.CharField(max_length=45, blank=True, null=True)
     barcode_number = models.CharField(max_length=45, blank=True, null=True)
 
@@ -74,7 +73,10 @@ class Child(Person):
         blank=True, null=True,
         related_name='+'
     )
-
+    form_id = models.CharField(
+        max_length=45,
+        blank=True, null=True,
+    )
     barcode_subset = models.CharField(max_length=45, blank=True, null=True)
     current_situation = models.CharField(
         max_length=50,
