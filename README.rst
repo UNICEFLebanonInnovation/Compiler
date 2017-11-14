@@ -6,6 +6,9 @@ Simple, interactive and online student registration.
 .. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg
      :target: https://github.com/pydanny/cookiecutter-django/
      :alt: Built with Cookiecutter Django
+     
+.. image:: https://travis-ci.com/UNICEFLebanonInnovation/Compiler.svg?token=WKgjjXiiSnxyfRMzpBws&branch=develop
+    :target: https://travis-ci.com/UNICEFLebanonInnovation/Compiler
 
 Settings
 ------------
