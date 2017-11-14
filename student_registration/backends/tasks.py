@@ -26,7 +26,7 @@ def export_2ndshift(params=None):
 
         _('ALP result'),
         _('ALP round'),
-        _('ALP level'),
+        # _('ALP level'),
         _('Is the child participated in an ALP/2016-2 program'),
         _('Result'),
         _('Education year'),
@@ -80,7 +80,7 @@ def export_2ndshift(params=None):
 
             line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
             line.last_informal_edu_round.name if line.last_informal_edu_round else '',
-            line.last_informal_edu_level.name if line.last_informal_edu_level else '',
+            # line.last_informal_edu_level.name if line.last_informal_edu_level else '',
             _(line.participated_in_alp) if line.participated_in_alp else '',
 
             _(line.last_year_result) if line.last_year_result else '',

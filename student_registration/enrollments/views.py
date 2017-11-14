@@ -43,6 +43,11 @@ class AddView(LoginRequiredMixin,
     success_url = '/enrollments/list/'
     group_required = [u"ENROL_CREATE"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/enrollments/add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -53,9 +58,9 @@ class AddView(LoginRequiredMixin,
     def get_initial(self):
         initial = super(AddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', '0'),
-            'student_outreached': self.request.GET.get('student_outreached', '1'),
-            'have_barcode': self.request.GET.get('have_barcode', '1')
+            'new_registry': self.request.GET.get('new_registry', 'yes'),
+            'student_outreached': self.request.GET.get('student_outreached', 'no'),
+            'have_barcode': self.request.GET.get('have_barcode', 'no')
         }
         if self.request.GET.get('enrollment_id'):
             if self.request.GET.get('school_type', None) == 'alp':
@@ -70,6 +75,10 @@ class AddView(LoginRequiredMixin,
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
+        if data:
+            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
+            data['student_outreached'] = self.request.GET.get('student_outreached', 'no')
+            data['have_barcode'] = self.request.GET.get('have_barcode', 'no')
         initial = data
 
         return initial
@@ -93,6 +102,11 @@ class EditView(LoginRequiredMixin,
     form_class = EnrollmentForm
     success_url = '/enrollments/list/'
     group_required = [u"ENROL_EDIT"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/enrollments/add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)

@@ -29,7 +29,7 @@ from .utils import initiate_grading
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
-EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, Person.CURRENT_YEAR))
+EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, Person.CURRENT_YEAR+1))
 EDUCATION_YEARS.append(('na', 'n/a'))
 
 YEARS = list(((str(x), x) for x in range(1990, 2017)))
@@ -195,7 +195,7 @@ class EnrollmentForm(forms.ModelForm):
         required=True, to_field_name='id'
     )
     student_id_number = forms.CharField(
-        label=_("ID number"),
+        label=_("ID number - Cell 14"),
         widget=forms.TextInput, required=True
     )
     student_phone_prefix = forms.CharField(
@@ -281,12 +281,12 @@ class EnrollmentForm(forms.ModelForm):
         ),
         initial='na'
     )
-    last_informal_edu_level = forms.ModelChoiceField(
-        label=_("Last informal education level"),
-        queryset=EducationLevel.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
-        initial=13
-    )
+    # last_informal_edu_level = forms.ModelChoiceField(
+    #     label=_("Last informal education level"),
+    #     queryset=EducationLevel.objects.all(), widget=forms.Select,
+    #     required=True, to_field_name='id',
+    #     initial=13
+    # )
     last_informal_edu_round = forms.ModelChoiceField(
         label=_("Last informal education round"),
         queryset=ALPRound.objects.all(), widget=forms.Select,
@@ -493,13 +493,8 @@ class EnrollmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('participated_in_alp', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('last_informal_edu_level', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">3</span>'),
                     Div('last_informal_edu_round', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('last_informal_edu_final_result', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -507,6 +502,8 @@ class EnrollmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
+                Submit('save_add_another', _('Save and add another')),
+                # Submit('save_continue_editing', _('Save and continue editing')),
                 HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -557,7 +554,7 @@ class EnrollmentForm(forms.ModelForm):
             'student_registered_in_unhcr',
             'participated_in_alp',
             'number_in_previous_school',
-            'last_informal_edu_level',
+            # 'last_informal_edu_level',
             'last_informal_edu_round',
             'last_informal_edu_final_result',
             'student_address',
@@ -588,16 +585,37 @@ class EnrollmentForm(forms.ModelForm):
 
 class GradingTermForm(forms.ModelForm):
 
+    exam_result = forms.ChoiceField(
+        label=_("Student status"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', _('------------')),
+            ('graduated', _('Graduated')),
+            ('failed', _('Failed')),
+        ),
+    )
+
     def __init__(self, *args, **kwargs):
         super(GradingTermForm, self).__init__(*args, **kwargs)
         instance = kwargs['instance']
 
+        display_exam_result = ''
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': instance.exam_term})
         enrollment_classroom = instance.enrollment.classroom_id
 
+        if instance.exam_term in ['1', '2']:
+            display_exam_result = ' d-none '
+            self.fields['exam_result'].required = False
+
         if enrollment_classroom in [2, 3, 4]:
+            self.fields['exam_result'].choices = (
+                ('', _('------------')),
+                ('graduated', _('Graduated')),
+                ('failed', _('Failed')),
+                ('uncompleted', _('Uncompleted'))
+            )
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -619,9 +637,12 @@ class GradingTermForm(forms.ModelForm):
                         Div('exam_result_science', css_class='col-md-2'),
                         HTML('<span class="badge badge-default">7</span>'),
                         Div('exam_total', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">8</span>'),
-                        Div('exam_total', css_class='col-md-2'),
                         css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">8</span>'),
+                        Div('exam_result', css_class='col-md-2'),
+                        css_class='row'+display_exam_result,
                     ),
                     Div(
                         'exam_result_history',
@@ -667,9 +688,12 @@ class GradingTermForm(forms.ModelForm):
                         Div('exam_result_science', css_class='col-md-2'),
                         HTML('<span class="badge badge-default">7</span>'),
                         Div('exam_total', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">8</span>'),
-                        Div('exam_total', css_class='col-md-2'),
                         css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">8</span>'),
+                        Div('exam_result', css_class='col-md-2'),
+                        css_class='row' + display_exam_result,
                     ),
                     Div(
                         'exam_result_history',
@@ -724,9 +748,12 @@ class GradingTermForm(forms.ModelForm):
                         Div('exam_result_bio', css_class='col-md-2'),
                         HTML('<span class="badge badge-default">10</span>'),
                         Div('exam_total', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">11</span>'),
-                        Div('exam_result', css_class='col-md-2'),
                         css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">8</span>'),
+                        Div('exam_result', css_class='col-md-2'),
+                        css_class='row' + display_exam_result,
                     ),
                     Div(
                         'exam_result_science',
@@ -775,9 +802,12 @@ class GradingTermForm(forms.ModelForm):
                     Div(
                         HTML('<span class="badge badge-default">8</span>'),
                         Div('exam_total', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">9</span>'),
-                        Div('exam_result', css_class='col-md-2'),
                         css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">8</span>'),
+                        Div('exam_result', css_class='col-md-2'),
+                        css_class='row' + display_exam_result,
                     ),
                     Div(
                         'exam_result_arabic',

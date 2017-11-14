@@ -80,7 +80,7 @@ class Enrollment(TimeStampedModel):
 
     YEARS = ((str(x), x) for x in range(2016, CURRENT_YEAR))
 
-    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, CURRENT_YEAR))
+    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2050))
     EDUCATION_YEARS.append(('na', 'N/A'))
 
     student = models.ForeignKey(
