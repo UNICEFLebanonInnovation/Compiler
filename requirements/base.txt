@@ -63,7 +63,7 @@ tablib==0.11.2
 django-import-export==0.5.0
 django-suit==0.2.21
 django-autocomplete-light==3.2.1
-django-helpdesk==0.1.18
+django-helpdesk==0.2.1
 mongoengine==0.11.0
 django-admin-rangefilter==0.3.0
 django-bootstrap3==8.2.3
