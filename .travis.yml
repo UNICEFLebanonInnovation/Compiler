@@ -12,5 +12,6 @@ script:
 after_success:
   - if [ "$TRAVIS_BRANCH" == "Complier-2-0" ]; then
     docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
+    docker tag compiler_django $DOCKER_USER/$DOCKER_REPO;
     docker push $DOCKER_USER/$DOCKER_REPO;
     fi
