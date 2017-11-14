@@ -78,7 +78,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
     last_education_level_id = serializers.CharField(source='last_education_level.id', read_only=True)
     last_school_id = serializers.CharField(source='last_school.id', read_only=True)
-    last_informal_edu_level_id = serializers.CharField(source='last_informal_edu_level.id', read_only=True)
+    # last_informal_edu_level_id = serializers.CharField(source='last_informal_edu_level.id', read_only=True)
     last_informal_edu_round_id = serializers.CharField(source='last_informal_edu_round.id', read_only=True)
     last_informal_edu_final_result_id = serializers.CharField(source='last_informal_edu_final_result.id', read_only=True)
 
@@ -175,7 +175,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'student_registered_in_unhcr',
             'participated_in_alp',
             'number_in_previous_school',
-            'last_informal_edu_level',
+            # 'last_informal_edu_level',
             'last_informal_edu_round',
             'last_informal_edu_final_result',
             'student_address',
@@ -200,7 +200,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'student_mother_nationality_id',
             'student_id_type_id',
             'last_education_level_id',
-            'last_informal_edu_level_id',
+            # 'last_informal_edu_level_id',
             'last_informal_edu_round_id',
             'last_informal_edu_final_result_id',
             'moved',

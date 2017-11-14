@@ -63,13 +63,21 @@ class BLNAddView(LoginRequiredMixin,
 
     def get_initial(self):
         initial = super(BLNAddView, self).get_initial()
-        data = []
+        data = {
+            'new_registry': self.request.GET.get('new_registry', 'yes'),
+            'student_outreached': self.request.GET.get('student_outreached', 'no'),
+            'have_barcode': self.request.GET.get('have_barcode', 'no')
+        }
         if self.request.GET.get('enrollment_id'):
             instance = BLN.objects.get(id=self.request.GET.get('enrollment_id'))
             data = BLNSerializer(instance).data
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
+        if data:
+            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
+            data['student_outreached'] = self.request.GET.get('student_outreached', 'no')
+            data['have_barcode'] = self.request.GET.get('have_barcode', 'no')
         initial = data
 
         return initial
@@ -307,13 +315,21 @@ class RSAddView(LoginRequiredMixin,
 
     def get_initial(self):
         initial = super(RSAddView, self).get_initial()
-        data = []
+        data = {
+            'new_registry': self.request.GET.get('new_registry', 'yes'),
+            'student_outreached': self.request.GET.get('student_outreached', 'no'),
+            'have_barcode': self.request.GET.get('have_barcode', 'no')
+        }
         if self.request.GET.get('enrollment_id'):
             instance = RS.objects.get(id=self.request.GET.get('enrollment_id'))
             data = RSSerializer(instance).data
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
+        if data:
+            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
+            data['student_outreached'] = self.request.GET.get('student_outreached', 'no')
+            data['have_barcode'] = self.request.GET.get('have_barcode', 'no')
         initial = data
 
         return initial
@@ -392,13 +408,21 @@ class CBECEAddView(LoginRequiredMixin,
 
     def get_initial(self):
         initial = super(CBECEAddView, self).get_initial()
-        data = []
+        data = {
+            'new_registry': self.request.GET.get('new_registry', 'yes'),
+            'student_outreached': self.request.GET.get('student_outreached', 'no'),
+            'have_barcode': self.request.GET.get('have_barcode', 'no')
+        }
         if self.request.GET.get('enrollment_id'):
             instance = CBECE.objects.get(id=self.request.GET.get('enrollment_id'))
             data = CBECESerializer(instance).data
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
+        if data:
+            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
+            data['student_outreached'] = self.request.GET.get('student_outreached', 'no')
+            data['have_barcode'] = self.request.GET.get('have_barcode', 'no')
         initial = data
 
         return initial

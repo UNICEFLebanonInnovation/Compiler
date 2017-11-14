@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-14 12:50+0200\n"
+"POT-Creation-Date: 2017-11-14 16:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -271,7 +271,6 @@ msgid "ID type"
 msgstr ""
 
 #: student_registration/alp/forms.py:179 student_registration/alp/forms.py:592
-#: student_registration/enrollments/forms.py:198
 #: student_registration/students/models.py:167
 msgid "ID number"
 msgstr ""
@@ -312,13 +311,13 @@ msgstr ""
 #: student_registration/alp/forms.py:1087 student_registration/clm/forms.py:580
 #: student_registration/clm/forms.py:1027
 #: student_registration/clm/forms.py:1315
-#: student_registration/enrollments/forms.py:509
-#: student_registration/enrollments/forms.py:643
-#: student_registration/enrollments/forms.py:691
-#: student_registration/enrollments/forms.py:745
-#: student_registration/enrollments/forms.py:798
-#: student_registration/enrollments/forms.py:881
-#: student_registration/enrollments/forms.py:933
+#: student_registration/enrollments/forms.py:504
+#: student_registration/enrollments/forms.py:664
+#: student_registration/enrollments/forms.py:715
+#: student_registration/enrollments/forms.py:772
+#: student_registration/enrollments/forms.py:828
+#: student_registration/enrollments/forms.py:911
+#: student_registration/enrollments/forms.py:963
 #: student_registration/schools/forms.py:85
 #: student_registration/schools/forms.py:144
 #: student_registration/templates/attendances/level_section.html:52
@@ -333,13 +332,13 @@ msgstr ""
 #: student_registration/alp/forms.py:1088 student_registration/clm/forms.py:581
 #: student_registration/clm/forms.py:1028
 #: student_registration/clm/forms.py:1316
-#: student_registration/enrollments/forms.py:510
-#: student_registration/enrollments/forms.py:644
-#: student_registration/enrollments/forms.py:692
-#: student_registration/enrollments/forms.py:746
-#: student_registration/enrollments/forms.py:799
-#: student_registration/enrollments/forms.py:882
-#: student_registration/enrollments/forms.py:934
+#: student_registration/enrollments/forms.py:507
+#: student_registration/enrollments/forms.py:665
+#: student_registration/enrollments/forms.py:716
+#: student_registration/enrollments/forms.py:773
+#: student_registration/enrollments/forms.py:829
+#: student_registration/enrollments/forms.py:912
+#: student_registration/enrollments/forms.py:964
 msgid "Are you sure you want to cancel this registration?"
 msgstr ""
 
@@ -348,13 +347,13 @@ msgstr ""
 #: student_registration/alp/forms.py:1088 student_registration/clm/forms.py:581
 #: student_registration/clm/forms.py:1028
 #: student_registration/clm/forms.py:1316
-#: student_registration/enrollments/forms.py:510
-#: student_registration/enrollments/forms.py:644
-#: student_registration/enrollments/forms.py:692
-#: student_registration/enrollments/forms.py:746
-#: student_registration/enrollments/forms.py:799
-#: student_registration/enrollments/forms.py:882
-#: student_registration/enrollments/forms.py:934
+#: student_registration/enrollments/forms.py:507
+#: student_registration/enrollments/forms.py:665
+#: student_registration/enrollments/forms.py:716
+#: student_registration/enrollments/forms.py:773
+#: student_registration/enrollments/forms.py:829
+#: student_registration/enrollments/forms.py:912
+#: student_registration/enrollments/forms.py:964
 msgid "Back to list"
 msgstr ""
 
@@ -452,7 +451,6 @@ msgid "n/a"
 msgstr ""
 
 #: student_registration/alp/forms.py:641 student_registration/alp/models.py:212
-#: student_registration/enrollments/forms.py:285
 #: student_registration/enrollments/models.py:198
 msgid "Last informal education level"
 msgstr ""
@@ -488,7 +486,7 @@ msgstr ""
 
 #: student_registration/alp/forms.py:783
 #: student_registration/enrollments/forms.py:451
-#: student_registration/enrollments/forms.py:921
+#: student_registration/enrollments/forms.py:951
 #: student_registration/templates/alp/test_grading.html:25
 #: student_registration/templates/enrollments/grading.html:24
 msgid "Current situation"
@@ -514,7 +512,9 @@ msgstr ""
 
 #: student_registration/alp/models.py:54
 #: student_registration/enrollments/forms.py:269
-#: student_registration/enrollments/forms.py:843
+#: student_registration/enrollments/forms.py:593
+#: student_registration/enrollments/forms.py:615
+#: student_registration/enrollments/forms.py:873
 #: student_registration/enrollments/models.py:49
 #: student_registration/enrollments/models.py:55
 #: student_registration/enrollments/models.py:563
@@ -523,7 +523,9 @@ msgstr ""
 
 #: student_registration/alp/models.py:55
 #: student_registration/enrollments/forms.py:270
-#: student_registration/enrollments/forms.py:844
+#: student_registration/enrollments/forms.py:594
+#: student_registration/enrollments/forms.py:616
+#: student_registration/enrollments/forms.py:874
 #: student_registration/enrollments/models.py:50
 #: student_registration/enrollments/models.py:56
 #: student_registration/enrollments/models.py:564
@@ -702,50 +704,50 @@ msgstr ""
 msgid "Post-test total"
 msgstr ""
 
-#: student_registration/alp/views.py:473
-#: student_registration/enrollments/views.py:379
-#: student_registration/enrollments/views.py:423
+#: student_registration/alp/views.py:477
+#: student_registration/enrollments/views.py:393
+#: student_registration/enrollments/views.py:437
 #: student_registration/schools/models.py:21
 msgid "CERD"
 msgstr ""
 
-#: student_registration/alp/views.py:474
-#: student_registration/enrollments/views.py:380
-#: student_registration/enrollments/views.py:424
+#: student_registration/alp/views.py:478
+#: student_registration/enrollments/views.py:394
+#: student_registration/enrollments/views.py:438
 #: student_registration/schools/models.py:16
 msgid "School name"
 msgstr ""
 
-#: student_registration/alp/views.py:475
-#: student_registration/enrollments/views.py:381
-#: student_registration/enrollments/views.py:425
+#: student_registration/alp/views.py:479
+#: student_registration/enrollments/views.py:395
+#: student_registration/enrollments/views.py:439
 msgid "# Students registered in the Compiler"
 msgstr ""
 
-#: student_registration/alp/views.py:476
-#: student_registration/enrollments/views.py:382
+#: student_registration/alp/views.py:480
+#: student_registration/enrollments/views.py:396
 msgid "# Students reported by the Director"
 msgstr ""
 
-#: student_registration/alp/views.py:477
+#: student_registration/alp/views.py:481
 #: student_registration/backends/tasks.py:71
 #: student_registration/backends/tasks.py:184
 #: student_registration/backends/tasks.py:302
 #: student_registration/backends/tasks.py:416
 #: student_registration/clm/forms.py:125 student_registration/clm/models.py:194
-#: student_registration/enrollments/views.py:383
-#: student_registration/enrollments/views.py:428
+#: student_registration/enrollments/views.py:397
+#: student_registration/enrollments/views.py:442
 msgid "District"
 msgstr ""
 
-#: student_registration/alp/views.py:478
+#: student_registration/alp/views.py:482
 #: student_registration/backends/tasks.py:72
 #: student_registration/backends/tasks.py:185
 #: student_registration/backends/tasks.py:303
 #: student_registration/backends/tasks.py:417
 #: student_registration/clm/forms.py:118 student_registration/clm/models.py:188
-#: student_registration/enrollments/views.py:384
-#: student_registration/enrollments/views.py:429
+#: student_registration/enrollments/views.py:398
+#: student_registration/enrollments/views.py:443
 msgid "Governorate"
 msgstr ""
 
@@ -798,11 +800,6 @@ msgstr ""
 #: student_registration/backends/tasks.py:28
 #: student_registration/backends/tasks.py:269
 msgid "ALP round"
-msgstr ""
-
-#: student_registration/backends/tasks.py:29
-#: student_registration/backends/tasks.py:270
-msgid "ALP level"
 msgstr ""
 
 #: student_registration/backends/tasks.py:30
@@ -914,7 +911,8 @@ msgid "School number"
 msgstr ""
 
 #: student_registration/backends/tasks.py:150
-#: student_registration/enrollments/forms.py:839
+#: student_registration/enrollments/forms.py:589
+#: student_registration/enrollments/forms.py:869
 #: student_registration/enrollments/models.py:384
 #: student_registration/enrollments/models.py:705
 msgid "Student status"
@@ -1013,6 +1011,10 @@ msgstr ""
 #: student_registration/backends/tasks.py:170
 #: student_registration/enrollments/models.py:579
 msgid "Foreign language"
+msgstr ""
+
+#: student_registration/backends/tasks.py:270
+msgid "ALP level"
 msgstr ""
 
 #: student_registration/backends/tasks.py:271
@@ -1650,6 +1652,10 @@ msgstr ""
 msgid "2nd Shift"
 msgstr ""
 
+#: student_registration/enrollments/forms.py:198
+msgid "ID number - Cell 14"
+msgstr ""
+
 #: student_registration/enrollments/forms.py:242
 #: student_registration/enrollments/models.py:231
 msgid "Last school type"
@@ -1663,6 +1669,21 @@ msgstr ""
 #: student_registration/enrollments/forms.py:255
 #: student_registration/enrollments/models.py:244
 msgid "Last school"
+msgstr ""
+
+#: student_registration/enrollments/forms.py:505
+msgid "Save and add another"
+msgstr ""
+
+#: student_registration/enrollments/forms.py:592
+#: student_registration/enrollments/forms.py:614
+msgid "------------"
+msgstr ""
+
+#: student_registration/enrollments/forms.py:617
+#: student_registration/enrollments/models.py:57
+#: student_registration/enrollments/models.py:565
+msgid "Uncompleted"
 msgstr ""
 
 #: student_registration/enrollments/models.py:41
@@ -1679,11 +1700,6 @@ msgstr ""
 
 #: student_registration/enrollments/models.py:44
 msgid "Yes - in another type of school"
-msgstr ""
-
-#: student_registration/enrollments/models.py:57
-#: student_registration/enrollments/models.py:565
-msgid "Uncompleted"
 msgstr ""
 
 #: student_registration/enrollments/models.py:67
