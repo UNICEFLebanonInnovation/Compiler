@@ -3,10 +3,6 @@ notifications:
 
 sudo: required
 
-language: python
-python:
-  - "3.5"
-
 services:
   - docker
 
