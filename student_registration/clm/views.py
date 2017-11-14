@@ -30,6 +30,8 @@ from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
+from django.db.models import Sum, Avg, F, Func
+from django.db.models.expressions import RawSQL
 
 
 class CLMView(LoginRequiredMixin,
@@ -367,6 +369,7 @@ class CBECEDashboardView(LoginRequiredMixin,
         force_default_language(self.request)
 
         per_gov = []
+        domain_gov = []
         clm_round = self.request.user.partner.cbece_round
         clm_rounds = CLMRound.objects.all()
         governorates = Location.objects.filter(parent__isnull=True)
@@ -444,10 +447,51 @@ class CBECEDashboardView(LoginRequiredMixin,
                 'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
             })
 
+            d1_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'LanguageArtDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            d1_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'LanguageArtDomain')::float)", params=[])).aggregate(total=Avg('val'))
+
+            d2_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianMathematics')::float)", params=[])).aggregate(total=Avg('val'))
+            d2_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianMathematics')::float)", params=[])).aggregate(total=Avg('val'))
+
+            d3_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianScience')::float)", params=[])).aggregate(total=Avg('val'))
+            d3_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianScience')::float)", params=[])).aggregate(total=Avg('val'))
+
+            d4_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'SocialEmotionalDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            d4_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'SocialEmotionalDomain')::float)", params=[])).aggregate(total=Avg('val'))
+
+            d5_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'PsychomotorDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            d5_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'PsychomotorDomain')::float)", params=[])).aggregate(total=Avg('val'))
+
+            d6_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'ArtisticDomain')::float)", params=[])).aggregate(total=Avg('val'))
+            d6_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'ArtisticDomain')::float)", params=[])).aggregate(total=Avg('val'))
+
+            domain_gov.append({
+                'governorate': gov.name,
+
+                'art_improvement_male': d1_male['total'],
+                'art_improvement_female': d1_female['total'],
+
+                'math_improvement_male': d2_male['total'],
+                'math_improvement_female': d2_female['total'],
+
+                'science_improvement_male': d3_male['total'],
+                'science_improvement_female': d3_female['total'],
+
+                'social_improvement_male': d4_male['total'],
+                'social_improvement_female': d4_female['total'],
+
+                'psycho_improvement_male': d5_male['total'],
+                'psycho_improvement_female': d5_female['total'],
+
+                'artistic_improvement_male': d6_male['total'],
+                'artistic_improvement_female': d6_female['total']
+            })
+
         return {
             'clm_round': clm_round,
             'clm_rounds': clm_rounds,
-            'per_gov': per_gov
+            'per_gov': per_gov,
+            'domain_gov': domain_gov
         }
 
 

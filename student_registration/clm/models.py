@@ -853,10 +853,8 @@ class CBECE(CLM):
             program_cycle
         )
         if self.pre_test and self.post_test:
-            return '{}{}'.format(
-                round(((float(self.post_test[key]) - float(self.pre_test[key])) /
-                       float(self.pre_test[key])) * 100.0, 2),
-                '%')
+            return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
+                          float(self.pre_test[key])) * 100.0, 2)
         return 0
 
     @property
@@ -901,8 +899,15 @@ class CBECE(CLM):
             'CBECE_ASSESSMENT/PsychomotorDomain'+program_cycle,
             'CBECE_ASSESSMENT/ArtisticDomain'+program_cycle,
         ]
-
         super(CBECE, self).score(keys, stage)
+        self.scores = {
+            'LanguageArtDomain': self.domain_improvement('LanguageArtDomain'),
+            'CognitiveDomianMathematics': self.domain_improvement('CognitiveDomianMathematics'),
+            'CognitiveDomianScience': self.domain_improvement('CognitiveDomianScience'),
+            'SocialEmotionalDomain': self.domain_improvement('SocialEmotionalDomain'),
+            'PsychomotorDomain': self.domain_improvement('PsychomotorDomain'),
+            'ArtisticDomain': self.domain_improvement('ArtisticDomain'),
+        }
 
     class Meta:
         ordering = ['id']
