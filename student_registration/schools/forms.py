@@ -13,6 +13,27 @@ from .models import School, PartnerOrganization, EducationYear
 
 class ProfileForm(forms.ModelForm):
 
+    email = forms.EmailField(
+        label=_('School email')
+    )
+    land_phone_number = forms.RegexField(
+        label=_('School land phone number'),
+        regex=r'^[0-9]{2}-[0-9]{6}$'
+    )
+    fax_number = forms.RegexField(
+        label=_('School fax number'),
+        regex=r'^[0-9]{2}-[0-9]{6}$',
+        required=False
+    )
+    director_phone_number =forms.RegexField(
+        label=_('School director cell phone'),
+        regex=r'^[0-9]{2}-[0-9]{6}$'
+    )
+    it_phone_number = forms.RegexField(
+        label=_('School IT phone number'),
+        regex=r'^[0-9]{2}-[0-9]{6}$'
+    )
+
     def __init__(self, *args, **kwargs):
         super(ProfileForm, self).__init__(*args, **kwargs)
 
