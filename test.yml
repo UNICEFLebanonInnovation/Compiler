@@ -14,8 +14,6 @@ services:
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
-      args:
-        - REQUIREMENTS_FILE=test.txt
     command: ./runtests.sh
     depends_on:
       - postgres
