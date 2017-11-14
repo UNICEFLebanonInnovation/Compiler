@@ -1,3 +1,6 @@
+notifications:
+  email: false
+
 sudo: required
 
 language: python
@@ -9,3 +12,9 @@ services:
 
 script:
   - docker-compose -f test.yml run django
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "Complier-2-0" ]; then
+    docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
+    docker push $DOCKER_USER/$DOCKER_REPO;
+    fi
