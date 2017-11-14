@@ -210,7 +210,7 @@ $(document).ready(function(){
                 .append("<div style='border: 1px solid;'>"
                     + "<b>Base Data:</b> " + item.student_full_name + " - " + item.student_mother_fullname
                     + "<br/> <b>Gender - Birthday:</b> " + item.student_sex + " - " + item.student_birthday
-                    + "<br/> <b>Round:</b> " + item.round_name
+                    // + "<br/> <b>Round:</b> " + item.round_name
                     + "</div>")
                 .appendTo(ul);
         };

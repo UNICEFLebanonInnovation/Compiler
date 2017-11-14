@@ -346,7 +346,7 @@ tr.odd {
     color: white !important;
 }
 .table-container .table th {
-    border-left: 1px solid red
+    border-left: 1px solid;
 }
 .table-container .table td {
     border-left: 1px solid #eceeef;
