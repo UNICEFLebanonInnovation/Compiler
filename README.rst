@@ -7,10 +7,6 @@ Simple, interactive and online student registration.
      :target: https://github.com/pydanny/cookiecutter-django/
      :alt: Built with Cookiecutter Django
 
-
-LICENSE: MIT
-
-
 Settings
 ------------
 
