@@ -5,7 +5,6 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
 from django.utils.translation import ugettext as _
-from django.contrib.gis.db import models
 
 
 class LocationType(models.Model):
