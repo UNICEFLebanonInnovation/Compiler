@@ -449,7 +449,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         if has_group(self.request.user, 'ALP_SCHOOL') and self.request.user.school_id:
             school = self.request.user.school_id
         if school:
-            data = export_alp({'current': 'true', 'school': school})
+            data = export_alp({'current': 'true', 'school': school}, return_data=True)
 
         response = HttpResponse(
             data,

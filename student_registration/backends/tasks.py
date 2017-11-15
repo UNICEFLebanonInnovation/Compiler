@@ -1,17 +1,15 @@
 __author__ = 'achamseddine'
 
-import json
-import os
+import time
 import tablib
-from datetime import datetime
-from django.db.models import Q
 from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from student_registration.taskapp.celery import app
+from .file import store_file
 
 
 @app.task
-def export_2ndshift(params=None):
+def export_2ndshift(params=None, return_data=False):
     from student_registration.enrollments.models import Enrollment
     from student_registration.schools.models import EducationYear
 
@@ -26,7 +24,6 @@ def export_2ndshift(params=None):
 
         _('ALP result'),
         _('ALP round'),
-        # _('ALP level'),
         _('Is the child participated in an ALP/2016-2 program'),
         _('Result'),
         _('Education year'),
@@ -80,7 +77,6 @@ def export_2ndshift(params=None):
 
             line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
             line.last_informal_edu_round.name if line.last_informal_edu_round else '',
-            # line.last_informal_edu_level.name if line.last_informal_edu_level else '',
             _(line.participated_in_alp) if line.participated_in_alp else '',
 
             _(line.last_year_result) if line.last_year_result else '',
@@ -131,12 +127,17 @@ def export_2ndshift(params=None):
         ]
         data.append(content)
 
+    timestamp = time.time()
     file_format = base_formats.XLSX()
-    return file_format.export_data(data)
+    data = file_format.export_data(data)
+    if return_data:
+        return data
+    store_file(data, timestamp)
+    return True
 
 
 @app.task
-def export_2ndshift_gradings(params=None):
+def export_2ndshift_gradings(params=None, return_data=False):
     from student_registration.enrollments.models import EnrollmentGrading
     from student_registration.schools.models import EducationYear
     current = EducationYear.objects.get(current_year=True)
@@ -232,12 +233,17 @@ def export_2ndshift_gradings(params=None):
         ]
         data.append(content)
 
+    timestamp = time.time()
     file_format = base_formats.XLSX()
-    return file_format.export_data(data)
+    data = file_format.export_data(data)
+    if return_data:
+        return data
+    store_file(data, timestamp)
+    return True
 
 
 @app.task
-def export_alp(params=None):
+def export_alp(params=None, return_data=False):
     from student_registration.alp.models import Outreach, ALPRound
 
     queryset = Outreach.objects.all()
@@ -394,12 +400,17 @@ def export_alp(params=None):
         ]
         data.append(content)
 
+    timestamp = time.time()
     file_format = base_formats.XLSX()
-    return file_format.export_data(data)
+    data = file_format.export_data(data)
+    if return_data:
+        return data
+    store_file(data, timestamp)
+    return True
 
 
 @app.task
-def export_attendance(params=None):
+def export_attendance(params=None, return_data=False):
     from student_registration.attendances.models import Attendance
 
     queryset = Attendance.objects.all()
@@ -467,12 +478,17 @@ def export_attendance(params=None):
                 ]
                 data.append(content)
 
+    timestamp = time.time()
     file_format = base_formats.XLSX()
-    return file_format.export_data(data)
+    data = file_format.export_data(data)
+    if return_data:
+        return data
+    store_file(data, timestamp)
+    return True
 
 
 @app.task
-def export_winterization():
+def export_winterization(return_data=False):
     from student_registration.winterization.models import Assessment
 
     queryset = Assessment.objects.all()
@@ -543,9 +559,6 @@ def export_winterization():
         '9 years kit Completed',
         '12 years kit Completed',
         '14 years kit Completed',
-        # 'Q1',
-        # 'Q2',
-        # 'Q3'
     ]
 
     content = []
@@ -616,12 +629,14 @@ def export_winterization():
             line._9_years_kit_completed,
             line._12_years_kit_completed,
             line._14_years_kit_completed,
-            # line.Q1,
-            # line.Q2,
-            # line.Q3,
         ]
 
         data.append(content)
 
+    timestamp = time.time()
     file_format = base_formats.XLSX()
-    return file_format.export_data(data)
+    data = file_format.export_data(data)
+    if return_data:
+        return data
+    store_file(data, timestamp)
+    return True
