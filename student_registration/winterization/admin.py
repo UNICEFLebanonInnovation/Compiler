@@ -113,6 +113,8 @@ class AssessmentAdmin(ImportExportModelAdmin):
     resource_class = AssessmentResource
     list_display = (
         '_id',
+        'p_code',
+        'p_code_name',
         'location_p_code',
         'location_p_code_name',
         'location_district',
