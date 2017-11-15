@@ -14,13 +14,11 @@ services:
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
-      args:
-        - REQUIREMENTS_FILE=test.txt
-    image: app
     command: ./runtests.sh
     depends_on:
       - postgres
     environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.test
       - POSTGRES_USER=student_registration
       - DATABASE_URL=postgres://student_registration:postgres@postgres:5432/student_registration
       - USE_DOCKER=yes
