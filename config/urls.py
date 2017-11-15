@@ -90,8 +90,9 @@ urlpatterns = [
     url(r'^locations/', include('student_registration.locations.urls', namespace='locations')),
     url(r'^dashboard/', include('student_registration.dashboard.urls', namespace='dashboard')),
     url(r'^backends/', include('student_registration.backends.urls', namespace='backends')),
+    url(r'^helpdesk/', include('student_registration.helpdesk.urls', namespace='helpdesk')),
 
-    url(r'helpdesk/', include('helpdesk.urls')),
+    # url(r'helpdesk/', include('helpdesk.urls')),
     url(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
