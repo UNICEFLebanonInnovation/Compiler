@@ -25,12 +25,13 @@
     </ol>
 
     <ol class="breadcrumb">
-      <li class="breadcrumb-item active">
+        <li class="breadcrumb-item active">
             <a href="{% url "clm:bln_add" %}" class="btn btn-success">
                 <i class="icon-plus-sign icon-white"></i>
                 {% trans "Add new Child" %}
             </a>
-      </li>
+            <a href="{% url "clm:bln_dashboard" %}" class="btn btn-outline-primary absolute-right-15" role="button" aria-pressed="true">Dashboard</a>
+        </li>
     {#  <li class="breadcrumb-item active">#}
     {#        <a href="{% url "clm:bln_add" %}" class="btn btn-success">#}
     {#            <i class="icon-plus-sign icon-white"></i>#}
