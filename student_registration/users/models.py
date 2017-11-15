@@ -8,7 +8,6 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from student_registration.schools.models import PartnerOrganization, School
 from student_registration.locations.models import Location
-from django.db.models.signals import post_save
 
 
 @python_2_unicode_compatible
