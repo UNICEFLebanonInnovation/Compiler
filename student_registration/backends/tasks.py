@@ -26,12 +26,14 @@ def export_2ndshift(params=None):
 
         _('ALP result'),
         _('ALP round'),
-        _('ALP level'),
+        # _('ALP level'),
         _('Is the child participated in an ALP/2016-2 program'),
         _('Result'),
         _('Education year'),
         _('School'),
         _('Last education level'),
+
+        _('Serial number in previous school'),
 
         _('Current Section'),
         _('Current Class'),
@@ -48,11 +50,20 @@ def export_2ndshift(params=None):
         _('Student nationality'),
         _('Student age'),
         _('Student birthday'),
+        _('Place of birth'),
         _('year'),
         _('month'),
         _('day'),
         _('Sex'),
+        _('Student first name'),
+        _('Student father name'),
+        _('Student last name'),
         _('Student fullname'),
+
+        _('First time registered?'),
+        _('Student outreached?'),
+        _('Have barcode with him?'),
+        _('Outreach barcode'),
 
         _('Registration date'),
         _('School'),
@@ -69,13 +80,15 @@ def export_2ndshift(params=None):
 
             line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
             line.last_informal_edu_round.name if line.last_informal_edu_round else '',
-            line.last_informal_edu_level.name if line.last_informal_edu_level else '',
+            # line.last_informal_edu_level.name if line.last_informal_edu_level else '',
             _(line.participated_in_alp) if line.participated_in_alp else '',
 
             _(line.last_year_result) if line.last_year_result else '',
             line.last_education_year if line.last_education_year else '',
             _(line.last_school_type) if line.last_school_type else '',
             line.last_education_level.name if line.last_education_level else '',
+
+            line.number_in_previous_school,
 
             line.section.name if line.section else '',
             line.classroom.name if line.classroom else '',
@@ -95,11 +108,20 @@ def export_2ndshift(params=None):
 
             line.student.age,
             line.student.birthday,
+            line.student.place_of_birth,
             line.student.birthday_year,
             line.student.birthday_month,
             line.student.birthday_day,
             _(line.student.sex) if line.student.sex else '',
+            line.student.first_name,
+            line.student.father_name,
+            line.student.last_name,
             line.student.__unicode__(),
+
+            line.new_registry,
+            line.student_outreached,
+            line.have_barcode,
+            line.outreach_barcode,
 
             line.registration_date,
             line.school.name,

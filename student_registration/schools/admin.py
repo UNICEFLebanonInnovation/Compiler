@@ -27,8 +27,9 @@ from student_registration.attendances.tasks import set_app_attendances
 
 
 class SchoolResource(resources.ModelResource):
-    locationKazaa = fields.Field(column_name='District')
-    locationGov = fields.Field(column_name='Governorate')
+    district = fields.Field(column_name='District')
+    governorate = fields.Field(column_name='Governorate')
+    total_registered = fields.Field(column_name='Total registered')
 
     class Meta:
         model = School
@@ -36,21 +37,38 @@ class SchoolResource(resources.ModelResource):
             'id',
             'name',
             'number',
-            'location',
-            'locationGov',
-            'locationKazaa'
+            'district',
+            'governorate',
+            'director_name',
+            'land_phone_number',
+            'fax_number',
+            'director_phone_number',
+            'email',
+            'certified_foreign_language',
+            'comments',
+            'weekend',
+            'it_name',
+            'it_phone_number',
+            'field_coordinator_name',
+            'total_registered',
+            'academic_year_start',
+            'academic_year_end',
+            'academic_year_exam_end',
         )
-        export_order = ('id', 'name', 'number', 'location', 'locationGov', 'locationKazaa')
+        export_order = fields
 
-    def dehydrate_locationKazaa(self, school):
-        if school.location:
-            return school.location.name
+    def dehydrate_district(self, obj):
+        if obj.location:
+            return obj.location.name
         return ''
 
-    def dehydrate_locationGov(self, school):
-        if school.location and school.location.parent:
-            return school.location.parent.name
+    def dehydrate_governorate(self, obj):
+        if obj.location and obj.location.parent:
+            return obj.location.parent.name
         return ''
+
+    def dehydrate_total_registered(self, obj):
+        return obj.total_registered
 
 
 class GovernorateFilter(admin.SimpleListFilter):

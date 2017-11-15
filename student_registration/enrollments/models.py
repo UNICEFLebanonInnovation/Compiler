@@ -73,14 +73,14 @@ class Enrollment(TimeStampedModel):
         ('na', 'n/a'),
         ('first', _('First shift')),
         ('second', _('Second shift')),
-        ('alp', _('ALP')),
+        # ('alp', _('ALP')),
     )
 
     CURRENT_YEAR = datetime.datetime.now().year
 
     YEARS = ((str(x), x) for x in range(2016, CURRENT_YEAR))
 
-    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, CURRENT_YEAR))
+    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2050))
     EDUCATION_YEARS.append(('na', 'N/A'))
 
     student = models.ForeignKey(
@@ -145,6 +145,13 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         choices=YES_NO
+    )
+
+    number_in_previous_school = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name=_('Serial number in previous school')
     )
 
     last_education_level = models.ForeignKey(

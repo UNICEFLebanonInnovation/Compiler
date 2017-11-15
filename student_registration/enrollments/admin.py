@@ -51,6 +51,7 @@ class EnrollmentResource(resources.ModelResource):
             'student__birthday_year',
             'student__birthday_month',
             'student__birthday_day',
+            'student__place_of_birth',
             'student_age',
             'student__sex',
             'student__nationality__name',
@@ -63,6 +64,7 @@ class EnrollmentResource(resources.ModelResource):
             'school__name',
             'section__name',
             'classroom__name',
+            'number_in_previous_school',
             'last_education_level__name',
             'last_education_year',
             'last_school_type',
@@ -188,7 +190,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_education_year',
         'last_year_result',
         'participated_in_alp',
-        'last_informal_edu_level',
+        # 'last_informal_edu_level',
         'last_informal_edu_round',
         'last_informal_edu_final_result',
         'deleted',
@@ -197,6 +199,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'new_registry',
         'student_outreached',
         'have_barcode',
+        'number_in_previous_school',
     )
     list_display = (
         'student',

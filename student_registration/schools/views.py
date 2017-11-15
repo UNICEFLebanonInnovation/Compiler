@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+from django.db.models import Q
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView, FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+from dal import autocomplete
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin
 
@@ -122,3 +125,18 @@ class PublicDocumentView(LoginRequiredMixin,
         return {
             'documents': self.queryset
         }
+
+
+class AutocompleteView(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated():
+            return School.objects.none()
+
+        qs = School.objects.all()
+
+        if self.q:
+            qs = School.objects.filter(
+                Q(name__istartswith=self.q) | Q(number__istartswith=self.q)
+            )
+
+        return qs

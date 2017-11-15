@@ -129,9 +129,9 @@ class AddView(LoginRequiredMixin,
     def get_initial(self):
         initial = super(AddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', '0'),
-            'student_outreached': self.request.GET.get('student_outreached', '1'),
-            'have_barcode': self.request.GET.get('have_barcode', '1')
+            'new_registry': self.request.GET.get('new_registry', 'yes'),
+            'student_outreached': self.request.GET.get('student_outreached', 'no'),
+            'have_barcode': self.request.GET.get('have_barcode', 'no')
         }
         if self.request.GET.get('enrollment_id'):
             instance = Outreach.objects.get(id=self.request.GET.get('enrollment_id'))
@@ -142,6 +142,10 @@ class AddView(LoginRequiredMixin,
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
+        if data:
+            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
+            data['student_outreached'] = self.request.GET.get('student_outreached', 'no')
+            data['have_barcode'] = self.request.GET.get('have_barcode', 'no')
         initial = data
 
         return initial
