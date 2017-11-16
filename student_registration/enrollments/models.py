@@ -501,6 +501,12 @@ class Enrollment(TimeStampedModel):
         return self.grading(3)
 
     @property
+    def last_year_grading_result(self):
+        if self.enrollment_gradings.count():
+            return self.enrollment_gradings.get(exam_term=3).exam_result
+        return ''
+
+    @property
     def incomplete_grading(self):
         return self.grading(4)
 
