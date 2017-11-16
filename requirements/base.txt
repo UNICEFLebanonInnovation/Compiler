@@ -54,6 +54,7 @@ django-datatables-view==1.13.0
 django-mptt==0.8.7
 django-makemessages-xgettext==0.1.1
 djangorestframework==3.6.3
+django-markdown-deux==1.0.5
 markdown==2.6.6
 django-filter==0.13.0
 django-rest-swagger==2.1.2
@@ -73,3 +74,7 @@ django-storages==1.6.5
 azure-storage==0.36.0
 azure-storage-blob==0.37.0
 openpyxl==2.4.9
+django-bootstrap-form==3.3
+email-reply-parser==0.5.9
+beautifulsoup4==4.6.0
+lxml==4.1.1
