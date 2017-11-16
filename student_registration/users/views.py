@@ -133,11 +133,8 @@ def password_change(request,
                     post_change_redirect=None,
                     password_change_form=PasswordChangeForm,
                     extra_context=None):
-    warnings.warn("The password_change() view is superseded by the "
-                  "class-based PasswordChangeView().",
-                  RemovedInDjango21Warning, stacklevel=2)
     if post_change_redirect is None:
-        post_change_redirect = reverse('change_password_done')
+        post_change_redirect = reverse('password_change_done')
     else:
         post_change_redirect = resolve_url(post_change_redirect)
     if request.method == "POST":
@@ -162,12 +159,9 @@ def password_change(request,
 
 @login_required
 @deprecate_current_app
-def change_password_done(request,
+def password_change_done(request,
                          template_name='registration/password_change_done.html',
                          extra_context=None):
-    warnings.warn("The password_change_done() view is superseded by the "
-                  "class-based PasswordChangeDoneView().",
-                  RemovedInDjango21Warning, stacklevel=2)
     context = {
         'title': _('Password change successful'),
     }

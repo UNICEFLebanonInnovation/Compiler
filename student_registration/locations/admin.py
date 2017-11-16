@@ -33,6 +33,11 @@ class LocationAdmin(ImportExportModelAdmin):
         'name', 'parent'
     )
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
+
 admin.site.register(Location, LocationAdmin)
 admin.site.register(LocationType)
 

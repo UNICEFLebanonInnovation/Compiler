@@ -52,6 +52,10 @@ class BLNAdmin(ImportExportModelAdmin):
         'student__mother_fullname',
     )
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class RSResource(resources.ModelResource):
 
@@ -86,6 +90,10 @@ class RSAdmin(ImportExportModelAdmin):
         'student__mother_fullname',
     )
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class CBECEResource(resources.ModelResource):
 
@@ -119,6 +127,10 @@ class CBECEAdmin(ImportExportModelAdmin):
         'student__last_name',
         'student__mother_fullname',
     )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 admin.site.register(Assessment)

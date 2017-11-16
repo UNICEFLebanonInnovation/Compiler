@@ -191,6 +191,10 @@ class AssessmentAdmin(ImportExportModelAdmin):
         'id_type',
     )
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
     def get_queryset(self, request):
         if request.user.id == 1 or request.user.id == 936:
             return super(AssessmentAdmin, self).get_queryset(request)
