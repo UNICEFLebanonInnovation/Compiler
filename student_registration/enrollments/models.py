@@ -808,6 +808,7 @@ class LoggingProgramMove(TimeStampedModel):
         related_name='+',
     )
     eligibility = models.BooleanField(default=True)
+    potential_move = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['id']
