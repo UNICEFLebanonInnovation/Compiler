@@ -421,6 +421,7 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
         'school_from',
         'school_to',
         'eligibility',
+        'potential_move',
     )
 
     list_filter = (
@@ -428,6 +429,7 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
         'school_from',
         'school_to',
         'eligibility',
+        'potential_move',
     )
 
     search_fields = (

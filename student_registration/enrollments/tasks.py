@@ -38,8 +38,7 @@ def assign_education_year(year):
 @app.task
 def track_student_moves():
 
-    from student_registration.enrollments.models import Enrollment
-    from student_registration.enrollments.models import StudentMove
+    from student_registration.enrollments.models import Enrollment, StudentMove
 
     registrations = Enrollment.objects.order_by('created')
 
@@ -67,6 +66,41 @@ def track_student_moves():
             print(match_records)
             for item in match_records:
                 StudentMove.objects.get_or_create(enrolment1=registry, enrolment2=item, school1=registry.school, school2=item.school)
+
+
+@app.task
+def track_student_moves():
+
+    from student_registration.alp.models import Outreach
+    from student_registration.enrollments.models import Enrollment, StudentMove
+
+    registrations = Outreach.objects.order_by('created')
+
+    for registry in registrations:
+        student = registry.student
+        match_records = Enrollment.objects.filter(
+            Q(student__number=student.number) |
+            Q(student__number_part1=student.number_part1)
+        )
+
+        if not match_records:
+            match_records = Enrollment.objects.filter(
+                student__first_name=student.first_name,
+                student__father_name=student.father_name,
+                student__last_name=student.last_name,
+            )
+
+        if len(match_records):
+            for item in match_records:
+                LoggingProgramMove.objects.get_or_create(
+                    student=item.student,
+                    registry=registry,
+                    school_from=registry.school,
+                    school_to=item.school,
+                    education_year=item.education_year,
+                    eligibility=False,
+                    potential_move=True
+                )
 
 
 @app.task

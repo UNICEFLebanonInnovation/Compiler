@@ -74,6 +74,7 @@ class CLMSerializer(serializers.ModelSerializer):
     student_nationality_id = serializers.CharField(source='student.nationality.id', read_only=True)
     student_address = serializers.CharField(source='student.address', required=False)
     student_p_code = serializers.CharField(source='student.p_code', required=False)
+    student_id_number = serializers.CharField(source='student.id_number', required=False)
     student_family_status = serializers.CharField(source='student.family_status', required=False)
     student_have_children = serializers.CharField(source='student.have_children', required=False)
 
@@ -113,7 +114,10 @@ class CLMSerializer(serializers.ModelSerializer):
             'student_nationality_id',
             'student_address',
             'student_p_code',
+            'student_id_number',
+            'internal_number',
             'owner',
+            'modified_by',
             'governorate',
             'district',
             'location',
@@ -172,6 +176,7 @@ class RSSerializer(CLMSerializer):
             'school',
             'shift',
             'grade',
+            'section',
             'referral',
             'registered_in_school',
             'student_family_status',

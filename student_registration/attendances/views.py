@@ -119,7 +119,6 @@ class AttendanceView(LoginRequiredMixin,
         date_format = '%Y-%m-%d'
         date_format_display = '%A %d/%m/%Y'
 
-        # if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
         if self.request.user.school:
             school = self.request.user.school
 
@@ -163,11 +162,13 @@ class AttendanceView(LoginRequiredMixin,
             validation_date = attendance.validation_date if attendance else ''
             total_attended = 0
             total_absences = 0
+            attendance_taken = False
             level_section = '{}-{}'.format(registry['classroom_id'], registry['section_id'])
             attendances = attendance.students[level_section] if attendance and attendance.students and level_section in attendance.students else ''
             total = queryset.filter(classroom_id=registry['classroom_id'], section_id=registry['section_id']).count()
 
             if attendances:
+                attendance_taken = True
                 total = attendances['total_enrolled']
                 total_attended = attendances['total_attended']
                 total_absences = attendances['total_absences']
@@ -187,7 +188,8 @@ class AttendanceView(LoginRequiredMixin,
                 'exam_day': exam_day,
                 'not_attending': not_attending,
                 'validation_date': validation_date,
-                'disable_attendance': disable_attendance
+                'disable_attendance': disable_attendance,
+                'attendance_taken': attendance_taken
             }
 
             if level and section and level.id == registry['classroom_id'] and section.id == registry['section_id']:
