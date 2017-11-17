@@ -238,7 +238,21 @@ class AbstractTicketForm(CustomFieldMixin, forms.Form):
     @staticmethod
     def _send_messages(ticket, queue, followup, files, user=None):
         context = safe_template_context(ticket)
-        context['comment'] = followup.comment
+        comment = followup.comment
+        if ticket.owner and ticket.owner.school:
+            school = ticket.owner.school
+            comment = 'School: {} - {} - {} - {} \\r\\n School director: {} - {} \\r\\n IT: {} - {} \\r\\n Coordinator: {}'.format(
+                school.name,
+                school.number,
+                school.land_phone_number,
+                school.email,
+                school.director_name,
+                school.director_phone_number,
+                school.it_name,
+                school.it_phone_number,
+                school.field_coordinator_name
+            )
+        context['comment'] = comment
 
         messages_sent_to = []
 
@@ -252,6 +266,7 @@ class AbstractTicketForm(CustomFieldMixin, forms.Form):
                 files=files,
             )
             messages_sent_to.append(ticket.submitter_email)
+            # messages_sent_to.append(ticket.submitter_email) todo add HELPDESK manager email
 
         if ticket.assigned_to and \
                 ticket.assigned_to != user and \
