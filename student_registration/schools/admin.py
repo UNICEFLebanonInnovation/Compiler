@@ -140,6 +140,26 @@ class SchoolTypeFilter(admin.SimpleListFilter):
 
 class SchoolAdmin(ImportExportModelAdmin):
     resource_class = SchoolResource
+
+    fields = (
+        'name',
+        'number',
+        'location',
+        'director_name',
+        'land_phone_number',
+        'fax_number',
+        'director_phone_number',
+        'email',
+        'certified_foreign_language',
+        'comments',
+        'weekend',
+        'it_name',
+        'it_phone_number',
+        'field_coordinator_name',
+        'academic_year_start',
+        'academic_year_end',
+        'academic_year_exam_end',
+    )
     list_display = (
         'name',
         'number',
