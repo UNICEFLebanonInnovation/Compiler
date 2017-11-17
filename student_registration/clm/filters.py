@@ -8,14 +8,16 @@ class BLNFilter(FilterSet):
         model = BLN
         fields = {
             'round': ['exact'],
+            'student__id_number': ['contains'],
+            'internal_number': ['contains'],
             'student__first_name': ['contains'],
             'student__father_name': ['contains'],
             'student__last_name': ['contains'],
             'student__mother_fullname': ['contains'],
             'student__nationality': ['exact'],
             'cycle': ['exact'],
-            'governorate': ['exact'],
-            'district': ['exact'],
+            # 'governorate': ['exact'],
+            # 'district': ['exact'],
             'participation': ['exact'],
             'learning_result': ['exact'],
         }
@@ -26,6 +28,8 @@ class RSFilter(FilterSet):
         model = RS
         fields = {
             'round': ['exact'],
+            'student__id_number': ['contains'],
+            'internal_number': ['contains'],
             'student__first_name': ['contains'],
             'student__father_name': ['contains'],
             'student__last_name': ['contains'],
@@ -34,11 +38,12 @@ class RSFilter(FilterSet):
             'type': ['exact'],
             'site': ['exact'],
             'school': ['exact'],
-            'governorate': ['exact'],
-            'district': ['exact'],
+            # 'governorate': ['exact'],
+            # 'district': ['exact'],
             'registered_in_school': ['exact'],
             'shift': ['exact'],
             'grade': ['exact'],
+            'section': ['exact'],
             'participation': ['exact'],
             'learning_result': ['exact'],
         }
@@ -49,6 +54,8 @@ class CBECEFilter(FilterSet):
         model = CBECE
         fields = {
             'round': ['exact'],
+            'student__id_number': ['contains'],
+            'internal_number': ['contains'],
             'student__first_name': ['contains'],
             'student__father_name': ['contains'],
             'student__last_name': ['contains'],
@@ -57,8 +64,8 @@ class CBECEFilter(FilterSet):
             'cycle': ['exact'],
             'site': ['exact'],
             'school': ['exact'],
-            'governorate': ['exact'],
-            'district': ['exact'],
+            # 'governorate': ['exact'],
+            # 'district': ['exact'],
             'participation': ['exact'],
             'learning_result': ['exact'],
         }
