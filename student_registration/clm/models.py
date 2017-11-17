@@ -13,6 +13,7 @@ from student_registration.students.models import Student, Labour
 from student_registration.locations.models import Location
 from student_registration.schools.models import (
     School,
+    Section,
     ClassRoom,
     CLMRound,
     EducationalLevel,
@@ -304,6 +305,12 @@ class CLM(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Modified by'),
+    )
     deleted = models.BooleanField(blank=True, default=False)
     dropout_status = models.BooleanField(blank=True, default=False)
     moved = models.BooleanField(blank=True, default=False)
@@ -344,6 +351,12 @@ class CLM(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Partner'),
         related_name='+'
+    )
+    internal_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Internal number')
     )
 
     @property
@@ -633,6 +646,12 @@ class RS(CLM):
         null=True,
         choices=LEARNING_RESULT,
         verbose_name=_('Learning result')
+    )
+    section = models.ForeignKey(
+        Section,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Section')
     )
 
     class Meta:

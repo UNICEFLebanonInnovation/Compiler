@@ -193,6 +193,10 @@ class CommonForm(forms.ModelForm):
         label=_('P-Code If a child lives in a tent / Brax in a random camp'),
         widget=forms.TextInput, required=False
     )
+    student_id_number = forms.CharField(
+        label=_('ID number'),
+        widget=forms.TextInput, required=False
+    )
 
     disability = forms.ModelChoiceField(
         queryset=Disability.objects.all(), widget=forms.Select,
@@ -262,17 +266,20 @@ class CommonForm(forms.ModelForm):
         if instance:
             serializer = serializer(instance, data=request.POST)
             if serializer.is_valid():
-                serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance.modified_by = request.user
+                instance.save()
         else:
             serializer = serializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.owner = request.user
+                instance.modified_by = request.user
                 instance.partner = request.user.partner
                 instance.round = clm_round
                 instance.save()
             else:
-                print(serializer.errors)
+                # print(serializer.errors)
                 return False
 
         return True
@@ -298,6 +305,8 @@ class CommonForm(forms.ModelForm):
             'student_mother_fullname',
             # 'student_address',
             'student_p_code',
+            'student_id_number',
+            'internal_number',
             'disability',
             'have_labour',
             'labours',
@@ -516,6 +525,13 @@ class BLNForm(CommonForm):
                     Div('student_p_code', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">12</span>'),
                     Div('disability', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('student_id_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('internal_number', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
@@ -872,6 +888,13 @@ class RSForm(CommonForm):
                     Div('disability', css_class='col-md-3'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('student_id_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('internal_number', css_class='col-md-3'),
+                    css_class='row',
+                ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
             Fieldset(
@@ -915,6 +938,8 @@ class RSForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
+                    Div('section', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('referral', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1057,6 +1082,7 @@ class RSForm(CommonForm):
             'school',
             'shift',
             'grade',
+            'section',
             'referral',
             'registered_in_school',
             'student_family_status',
@@ -1270,6 +1296,13 @@ class CBECEForm(CommonForm):
                     Div('student_p_code', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">12</span>'),
                     Div('disability', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('student_id_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('internal_number', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
