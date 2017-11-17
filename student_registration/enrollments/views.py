@@ -362,7 +362,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         if self.request.user.school_id:
             school = self.request.user.school_id
         if school:
-            data = export_2ndshift({'current': 'true', 'school': school})
+            data = export_2ndshift({'current': 'true', 'school': school}, return_data=True)
 
         response = HttpResponse(
             data,

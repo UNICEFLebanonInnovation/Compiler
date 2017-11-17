@@ -396,7 +396,9 @@ class CLM(TimeStampedModel):
 
     def get_score_value(self, key, stage):
         assessment = getattr(self, stage, 'pre_test')
-        return int(assessment.get(key, 0))
+        if assessment:
+            return int(assessment.get(key, 0))
+        return 0
 
     class Meta:
         abstract = True
