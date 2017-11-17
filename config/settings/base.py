@@ -33,6 +33,8 @@ if READ_DOT_ENV_FILE:
     env.read_env(env_file)
     print('The .env file has been loaded. See base.py for more information')
 
+SUIT = True
+
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
@@ -43,6 +45,7 @@ DJANGO_APPS = [
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'suit_dashboard',
 
     # Useful template tags:
     'django.contrib.humanize',
@@ -59,6 +62,14 @@ DJANGO_APPS = [
     'rangefilter',
     #'storages',
 ]
+
+if SUIT:  # add suit and replace admin with SimpleAdminConfig
+    INSTALLED_APPS = [
+        'suit',
+        'django.contrib.admin.apps.SimpleAdminConfig'
+    ] + DJANGO_APPS[1:]
+
+
 THIRD_PARTY_APPS = [
     'crispy_forms',  # Form layouts
     'allauth',  # registration

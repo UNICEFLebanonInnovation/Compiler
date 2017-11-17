@@ -23,6 +23,7 @@ from student_registration.enrollments.models import Enrollment
 from student_registration.alp.models import Outreach, ALPRound
 from student_registration.users.models import User
 from student_registration.backends.exporter import export_full_data
+from suit_dashboard.views import DashboardView
 
 
 class ExporterView(LoginRequiredMixin,
@@ -383,3 +384,7 @@ class RegistrationsALPPostTestView(LoginRequiredMixin,
                 'governorates': governorates,
                 'education_levels': ClassLevel.objects.all()
         }
+
+
+class HomeView(DashboardView):
+    template_name = 'dashboard/template.html'
