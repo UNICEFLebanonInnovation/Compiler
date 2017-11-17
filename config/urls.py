@@ -79,6 +79,13 @@ urlpatterns = [
     # User management
     url(r'^users/', include('student_registration.users.urls', namespace='users')),
     url(r'^accounts/', include('allauth.urls')),
+    url(r'^django-dashboard/', include('dash.urls')),
+    # django-dash RSS contrib plugin URLs:
+    url(r'^dash/contrib/plugins/rss-feed/',
+        include('dash.contrib.plugins.rss_feed.urls')),
+
+    # django-dash public dashboards contrib app:
+    url(r'^', include('dash.contrib.apps.public_dashboard.urls')),
 
     url(r'^students/', include('student_registration.students.urls', namespace='students')),
     url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),

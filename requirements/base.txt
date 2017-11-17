@@ -72,3 +72,6 @@ django-tables2==1.10.0
 django-storages==1.6.5
 azure-storage==0.36.0
 openpyxl==2.4.9
+lipsum==0.1.2
+lorem-ipsum-generator==0.3
+django-dash==0.5.3
