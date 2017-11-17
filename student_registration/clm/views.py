@@ -66,9 +66,9 @@ class BLNAddView(LoginRequiredMixin,
     def get_initial(self):
         initial = super(BLNAddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', 'yes'),
-            'student_outreached': self.request.GET.get('student_outreached', 'no'),
-            'have_barcode': self.request.GET.get('have_barcode', 'no')
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
         }
         if self.request.GET.get('enrollment_id'):
             instance = BLN.objects.get(id=self.request.GET.get('enrollment_id'))
@@ -77,9 +77,9 @@ class BLNAddView(LoginRequiredMixin,
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', 'no')
-            data['have_barcode'] = self.request.GET.get('have_barcode', 'no')
+            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
 
         return initial
@@ -534,9 +534,9 @@ class RSAddView(LoginRequiredMixin,
     def get_initial(self):
         initial = super(RSAddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', 'yes'),
-            'student_outreached': self.request.GET.get('student_outreached', 'no'),
-            'have_barcode': self.request.GET.get('have_barcode', 'no')
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
         }
         if self.request.GET.get('enrollment_id'):
             instance = RS.objects.get(id=self.request.GET.get('enrollment_id'))
@@ -545,9 +545,9 @@ class RSAddView(LoginRequiredMixin,
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', 'no')
-            data['have_barcode'] = self.request.GET.get('have_barcode', 'no')
+            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
 
         return initial
@@ -627,9 +627,9 @@ class CBECEAddView(LoginRequiredMixin,
     def get_initial(self):
         initial = super(CBECEAddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', 'yes'),
-            'student_outreached': self.request.GET.get('student_outreached', 'no'),
-            'have_barcode': self.request.GET.get('have_barcode', 'no')
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
         }
         if self.request.GET.get('enrollment_id'):
             instance = CBECE.objects.get(id=self.request.GET.get('enrollment_id'))
@@ -638,9 +638,9 @@ class CBECEAddView(LoginRequiredMixin,
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', 'no')
-            data['have_barcode'] = self.request.GET.get('have_barcode', 'no')
+            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
 
         return initial
@@ -815,5 +815,5 @@ class CLMStudentViewSet(mixins.RetrieveModelMixin,
                     Q(student__first_name__contains=term) |
                     Q(student__father_name__contains=term) |
                     Q(student__last_name__contains=term)
-                ).distinct()[:50]
+                ).distinct()
             return qs
