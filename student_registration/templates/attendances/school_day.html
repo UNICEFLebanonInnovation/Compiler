@@ -61,7 +61,11 @@
                                         {% if attendance.validation_date %}
                                             <button class="btn btn-default absolute-right-15 absolute-top-15"><b>{% trans 'Attendances validated on' %}: {{ attendance.validation_date }}</b></button>
                                         {% else %}
-                                            <button type="button" itemref="{{ attendance.id }}" class="btn btn-success absolute-right-15 absolute-top-15" id="attendance_validate" translation="{% trans 'Are you sure you want to validate all attendances?' %}">{% trans "Validate all" %}</button>
+                                            <button type="button" itemref="{{ attendance.id }}" class="btn btn-success absolute-right-15 absolute-top-15"
+                                                    id="attendance_validate" translation_ok="{% trans 'Are you sure you want to validate all attendances?' %}"
+                                                    translation_ko="{% trans 'Attendance not completed yet' %}">
+                                                {% trans "Validate all" %}
+                                            </button>
                                         {% endif %}
 {#                                        {% endif %}#}
                                     {% endif %}
@@ -77,7 +81,8 @@
                 <input type="hidden" name="school" value="{{ request.user.school_id }}" id="school" />
                 <input type="hidden" name="owner" value="{{ request.user.id }}" id="owner" />
                 {% for row in levels_by_sections %}
-                <a class="row row-class" href="{% url "attendances:attendance" %}?date={{ selected_date }}&level={{ row.level }}&section={{ row.section }}">
+                <a class="row row-class {% if row.attendance_taken %}attendance_done{% else %}attendance_not_done{% endif %}"
+                   href="{% url "attendances:attendance" %}?date={{ selected_date }}&level={{ row.level }}&section={{ row.section }}">
                     <div class="col-xs-4 col-sm-4 col-md-4 s-lft s-col" style="border-left: 10px solid #2aabd2;">
                         <div>{{ row.level_name }}</div>
                         <div>{{ row.section_name }}</div>
@@ -98,12 +103,14 @@
                     </div>
                     <div class="col-xs-3 col-sm-3 col-md-3 s-progs s-col">
                         <div class="progress progress-success">
-                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ row.total_attended }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_attended|percentage_int:row.total }}%">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ row.total_attended }}"
+                                 aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_attended|percentage_int:row.total }}%">
                                {{ row.total_attended }} ({{ row.total_attended|percentage_int:row.total }})%
                             </div>
                          </div>
                         <div class="progress progress-danger">
-                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ row.total_absences }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_absences|percentage_int:row.total }}%">
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{{ row.total_absences }}"
+                                 aria-valuemin="0" aria-valuemax="100" style="width: {{ row.total_absences|percentage_int:row.total }}%">
                                {{ row.total_absences }} ({{ row.total_absences|percentage_int:row.total }})%
                             </div>
                          </div>

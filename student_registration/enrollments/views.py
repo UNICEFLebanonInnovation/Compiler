@@ -26,7 +26,7 @@ from student_registration.alp.models import Outreach
 from student_registration.alp.serializers import OutreachSerializer
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
-from student_registration.schools.models import ClassRoom
+from student_registration.schools.models import ClassRoom, School
 from .models import Enrollment, EnrollmentGrading, LoggingStudentMove, EducationYear, LoggingProgramMove
 from .forms import EnrollmentForm, GradingTermForm, GradingIncompleteForm, StudentMovedForm
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer, LoggingProgramMoveSerializer
@@ -58,17 +58,39 @@ class AddView(LoginRequiredMixin,
     def get_initial(self):
         initial = super(AddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', 'yes'),
-            'student_outreached': self.request.GET.get('student_outreached', 'no'),
-            'have_barcode': self.request.GET.get('have_barcode', 'no')
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
         }
         if self.request.GET.get('enrollment_id'):
             if self.request.GET.get('school_type', None) == 'alp':
                 instance = Outreach.objects.get(id=self.request.GET.get('enrollment_id'))
                 data = OutreachSerializer(instance).data
+
+                data['classroom'] = ''
+                data['participated_in_alp'] = 'yes'
+                data['last_informal_edu_round'] = instance.alp_round_id
+                data['last_informal_edu_final_result'] = instance.refer_to_level_id
+
+                data['last_education_level'] = ClassRoom.objects.get(name='n/a').id
+                data['last_school_type'] = 'na'
+                data['last_school_shift'] = 'na'
+                data['last_school'] = School.objects.get(number='na').id
+                data['last_education_year'] = 'na'
+                data['last_year_result'] = 'na'
+
             else:
                 instance = Enrollment.objects.get(id=self.request.GET.get('enrollment_id'))
                 data = EnrollmentSerializer(instance).data
+
+                data['classroom'] = ''
+                data['last_education_level'] = instance.classroom_id
+                data['last_school_type'] = 'public_in_country'
+                data['last_school_shift'] = 'second'
+                data['last_school'] = instance.school_id
+                data['last_education_year'] = data['education_year_name']
+                data['last_year_result'] = instance.last_year_grading_result
+
             data['student_nationality'] = data['student_nationality_id']
             data['student_mother_nationality'] = data['student_mother_nationality_id']
             data['student_id_type'] = data['student_id_type_id']
@@ -76,9 +98,9 @@ class AddView(LoginRequiredMixin,
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', 'no')
-            data['have_barcode'] = self.request.GET.get('have_barcode', 'no')
+            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
 
         return initial
