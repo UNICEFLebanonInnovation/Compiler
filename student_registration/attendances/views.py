@@ -216,7 +216,13 @@ class AttendanceView(LoginRequiredMixin,
 
         base = datetime.datetime.now()
         dates = []
-        day_range = school.attendance_range if school.attendance_range else Attendance.DEFAULT_ATTENDANCE_RANGE
+        if school.attendance_from_beginning:
+            start_date = school.academic_year_start
+            end_date = datetime.date(base.year, base.month, base.day)
+            delta = end_date - start_date
+            day_range = delta.days + 1
+        else:
+            day_range = school.attendance_range if school.attendance_range else Attendance.DEFAULT_ATTENDANCE_RANGE
 
         for x in range(0, day_range):
             d = base - datetime.timedelta(days=x)

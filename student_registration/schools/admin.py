@@ -54,6 +54,12 @@ class SchoolResource(resources.ModelResource):
             'academic_year_start',
             'academic_year_end',
             'academic_year_exam_end',
+            'attendance_range',
+            'attendance_from_beginning',
+            'is_alp',
+            'number_students_alp',
+            'is_2nd_shift',
+            'number_students_2nd_shift',
         )
         export_order = fields
 
@@ -144,6 +150,12 @@ class SchoolAdmin(ImportExportModelAdmin):
     fields = (
         'name',
         'number',
+        'attendance_range',
+        'attendance_from_beginning',
+        'is_alp',
+        'number_students_alp',
+        'is_2nd_shift',
+        'number_students_2nd_shift',
         'location',
         'director_name',
         'land_phone_number',
@@ -169,6 +181,7 @@ class SchoolAdmin(ImportExportModelAdmin):
         'is_alp',
         'number_students_alp',
         'attendance_range',
+        'attendance_from_beginning',
     )
     search_fields = (
         'name',
@@ -178,7 +191,13 @@ class SchoolAdmin(ImportExportModelAdmin):
         SchoolTypeFilter,
         GovernorateFilter,
         'location',
+        'attendance_range',
+        'attendance_from_beginning',
+        'is_alp',
+        'is_2nd_shift',
+        'weekend',
     )
+    date_hierarchy = 'academic_year_start'
 
     actions = ('push_attendances_2ndshift', 'push_attendances_2ndshift_delay',
                'push_attendances_alp', 'push_attendances_alp_delay',
