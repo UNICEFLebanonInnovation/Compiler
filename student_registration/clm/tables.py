@@ -81,6 +81,10 @@ class BLNTable(CommonTable):
             'assessment_improvement',
             'participation',
             'learning_result',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
         )
 
 
@@ -167,6 +171,10 @@ class RSTable(CommonTable):
             'self_assessment_improvement',
             'participation',
             'learning_result',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
         )
 
 
@@ -232,4 +240,8 @@ class CBECETable(CommonTable):
             'artistic_improvement',
             'participation',
             'learning_result',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
         )

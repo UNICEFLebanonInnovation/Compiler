@@ -56,6 +56,11 @@ class BLNAddView(LoginRequiredMixin,
     success_url = '/clm/bln-list/'
     group_required = [u"CLM_BLN"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/bln-add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -97,6 +102,11 @@ class BLNEditView(LoginRequiredMixin,
     form_class = BLNForm
     success_url = '/clm/bln-list/'
     group_required = [u"CLM_BLN"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/bln-add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -524,6 +534,11 @@ class RSAddView(LoginRequiredMixin,
     success_url = '/clm/rs-list/'
     group_required = [u"CLM_RS"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/rs-add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -565,6 +580,11 @@ class RSEditView(LoginRequiredMixin,
     form_class = RSForm
     success_url = '/clm/rs-list/'
     group_required = [u"CLM_RS"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/rs-add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -617,6 +637,11 @@ class CBECEAddView(LoginRequiredMixin,
     success_url = '/clm/cbece-list/'
     group_required = [u"CLM_CBECE"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/cbece-add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -658,6 +683,11 @@ class CBECEEditView(LoginRequiredMixin,
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
     group_required = [u"CLM_CBECE"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/cbece-add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
