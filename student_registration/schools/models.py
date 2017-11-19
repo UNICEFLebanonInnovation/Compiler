@@ -105,6 +105,11 @@ class School(models.Model):
         blank=True, null=True,
         verbose_name=_('Attendance day range')
     )
+    attendance_from_beginning = models.BooleanField(
+        blank=True,
+        default=False,
+        verbose_name=_('Start attendance from the beginning')
+    )
     academic_year_start = models.DateField(
         blank=True,
         null=True,

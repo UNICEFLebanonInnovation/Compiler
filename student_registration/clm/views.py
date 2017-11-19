@@ -421,7 +421,7 @@ class CBECEDashboardView(LoginRequiredMixin,
             per_gov.append({
                 'governorate': gov.name,
                 'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov.count()), 2) if total_male_gov.count() else 0.0,
-                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov.coun()), 2) if total_female_gov.count() else 0.0,
+                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov.count()), 2) if total_female_gov.count() else 0.0,
 
                 'attendance_male_1': round((float(attendances_male_gov.filter(
                     participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
