@@ -63,7 +63,7 @@ class BLNTable(CommonTable):
             'edit_column',
             'delete_column',
             'round',
-            'cycle',
+            # 'cycle',
             'governorate',
             'district',
             'internal_number',
@@ -197,10 +197,8 @@ class CBECETable(CommonTable):
 
     art_improvement = tables.Column(verbose_name=_('Language Art Domain - Improvement'), orderable=False,
                                     accessor='art_improvement')
-    math_improvement = tables.Column(verbose_name=_('Cognitive Domain Mathematics - Improvement'), orderable=False,
-                                     accessor='math_improvement')
-    science_improvement = tables.Column(verbose_name=_('Cognitive Domain Science - Improvement'), orderable=False,
-                                        accessor='science_improvement')
+    cognitive_improvement = tables.Column(verbose_name=_('Cognitive Domain - Improvement'), orderable=False,
+                                        accessor='cognitive_improvement')
     social_improvement = tables.Column(verbose_name=_('Social Emotional Domain - Improvement'), orderable=False,
                                        accessor='social_improvement')
     psycho_improvement = tables.Column(verbose_name=_('Psychomotor Domain - Improvement'), orderable=False,
@@ -233,8 +231,7 @@ class CBECETable(CommonTable):
             'post_assessment_result',
             'assessment_improvement',
             'art_improvement',
-            'math_improvement',
-            'science_improvement',
+            'cognitive_improvement',
             'social_improvement',
             'psycho_improvement',
             'artistic_improvement',

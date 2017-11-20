@@ -465,33 +465,18 @@ class CBECEDashboardView(LoginRequiredMixin,
                 'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
             })
 
-            # d1_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'LanguageArtDomain')::float)", params=[])).aggregate(total=Avg('val'))
-            # d1_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'LanguageArtDomain')::float)", params=[])).aggregate(total=Avg('val'))
             d1_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]), post=RawSQL("((scores->>'post_LanguageArtDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
             d1_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]), post=RawSQL("((scores->>'post_LanguageArtDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            # d2_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianMathematics')::float)", params=[])).aggregate(total=Avg('val'))
-            # d2_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianMathematics')::float)", params=[])).aggregate(total=Avg('val'))
-            d2_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomianMathematics')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomianMathematics')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-            d2_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomianMathematics')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomianMathematics')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d3_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d3_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            # d3_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianScience')::float)", params=[])).aggregate(total=Avg('val'))
-            # d3_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianScience')::float)", params=[])).aggregate(total=Avg('val'))
-            d3_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomianScience')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomianScience')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-            d3_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomianScience')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomianScience')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-
-            # d4_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'SocialEmotionalDomain')::float)", params=[])).aggregate(total=Avg('val'))
-            # d4_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'SocialEmotionalDomain')::float)", params=[])).aggregate(total=Avg('val'))
             d4_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]), post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
             d4_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]), post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            # d5_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'PsychomotorDomain')::float)", params=[])).aggregate(total=Avg('val'))
-            # d5_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'PsychomotorDomain')::float)", params=[])).aggregate(total=Avg('val'))
             d5_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]), post=RawSQL("((scores->>'post_PsychomotorDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
             d5_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]), post=RawSQL("((scores->>'post_PsychomotorDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            # d6_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'ArtisticDomain')::float)", params=[])).aggregate(total=Avg('val'))
-            # d6_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'ArtisticDomain')::float)", params=[])).aggregate(total=Avg('val'))
             d6_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]), post=RawSQL("((scores->>'post_ArtisticDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
             d6_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]), post=RawSQL("((scores->>'post_ArtisticDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
@@ -501,11 +486,8 @@ class CBECEDashboardView(LoginRequiredMixin,
                 'art_improvement_male': d1_male['total'] if d1_male['total'] != None else 0.0,
                 'art_improvement_female': d1_female['total'] if d1_female['total'] != None else 0.0,
 
-                'math_improvement_male': d2_male['total'] if d2_male['total'] != None else 0.0,
-                'math_improvement_female': d2_female['total'] if d2_female['total'] != None else 0.0,
-
-                'science_improvement_male': d3_male['total'] if d3_male['total'] != None else 0.0,
-                'science_improvement_female': d3_female['total'] if d3_female['total'] != None else 0.0,
+                'cognitive_improvement_male': d3_male['total'] if d3_male['total'] != None else 0.0,
+                'cognitive_improvement_female': d3_female['total'] if d3_female['total'] != None else 0.0,
 
                 'social_improvement_male': d4_male['total'] if d4_male['total'] != None else 0.0,
                 'social_improvement_female': d4_female['total'] if d4_female['total'] != None else 0.0,
