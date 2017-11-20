@@ -236,6 +236,10 @@ class SchoolAdmin(ImportExportModelAdmin):
     def open_attendance_10_days(self, request, queryset):
         queryset.update(attendance_range=10)
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class EducationLevelResource(resources.ModelResource):
     class Meta:
@@ -251,6 +255,10 @@ class EducationLevelResource(resources.ModelResource):
 class EducationLevelAdmin(ImportExportModelAdmin):
     resource_class = EducationLevelResource
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class ClassLevelResource(resources.ModelResource):
     class Meta:
@@ -264,6 +272,9 @@ class ClassLevelResource(resources.ModelResource):
 
 class ClassLevelAdmin(ImportExportModelAdmin):
     resource_class = ClassLevelResource
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 class SectionResource(resources.ModelResource):
@@ -278,6 +289,10 @@ class SectionResource(resources.ModelResource):
 
 class SectionAdmin(ImportExportModelAdmin):
     resource_class = SectionResource
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 class ClassRoomResource(resources.ModelResource):
@@ -297,6 +312,10 @@ class ClassRoomAdmin(ImportExportModelAdmin):
     )
     list_display = fields
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class PartnerOrganizationResource(resources.ModelResource):
     class Meta:
@@ -311,6 +330,10 @@ class PartnerOrganizationResource(resources.ModelResource):
 class PartnerOrganizationAdmin(ImportExportModelAdmin):
     resource_class = PartnerOrganizationResource
     search_fields = ('name', )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 class ALPReferMatrixResource(resources.ModelResource):
@@ -328,6 +351,10 @@ class ALPReferMatrixAdmin(ImportExportModelAdmin):
         'success_grade',
     )
     list_display = fields
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 class ALPAssignmentMatrixResource(resources.ModelResource):
@@ -349,6 +376,10 @@ class ALPAssignmentMatrixAdmin(ImportExportModelAdmin):
         'refer_to',
     )
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class PublicDocumentResource(resources.ModelResource):
     class Meta:
@@ -363,6 +394,10 @@ class PublicDocumentAdmin(ImportExportModelAdmin):
         'created',
         'modified'
     )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 admin.site.register(School, SchoolAdmin)
