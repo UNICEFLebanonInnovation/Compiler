@@ -119,6 +119,11 @@ class AddView(LoginRequiredMixin,
     success_url = '/alp/list/'
     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/alp/add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -163,6 +168,11 @@ class EditView(LoginRequiredMixin,
     form_class = RegistrationForm
     success_url = '/alp/list/'
     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/alp/add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -238,6 +248,11 @@ class PreTestAddView(LoginRequiredMixin,
     form_class = PreTestForm
     success_url = '/alp/pre-test/'
     group_required = [u"TEST_MANAGER", u"CERD"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/alp/pre-test-add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -392,6 +407,11 @@ class OutreachAddView(LoginRequiredMixin,
     success_url = '/alp/outreach/'
     group_required = [u"PARTNER"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/alp/outreach-add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -412,6 +432,11 @@ class OutreachEditView(LoginRequiredMixin,
     form_class = OutreachForm
     success_url = '/alp/outreach/'
     group_required = [u"PARTNER"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/alp/outreach-add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)

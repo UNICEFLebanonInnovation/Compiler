@@ -15,7 +15,7 @@ class BLNFilter(FilterSet):
             'student__last_name': ['contains'],
             'student__mother_fullname': ['contains'],
             'student__nationality': ['exact'],
-            'cycle': ['exact'],
+            # 'cycle': ['exact'],
             # 'governorate': ['exact'],
             # 'district': ['exact'],
             'participation': ['exact'],
