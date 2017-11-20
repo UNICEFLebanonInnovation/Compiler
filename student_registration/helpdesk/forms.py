@@ -241,15 +241,15 @@ class AbstractTicketForm(CustomFieldMixin, forms.Form):
         comment = followup.comment
         if ticket.owner and ticket.owner.school:
             school = ticket.owner.school
-            comment = 'School: {} - {} - {} - {} \\r\\n School director: {} - {} \\r\\n IT: {} - {} \\r\\n Coordinator: {}'.format(
+            comment = u'School: {} - {} - {} - {} \r\n School director: {} - {} \r\n IT: {} - {} \r\n Coordinator: {}'.format(
                 school.name,
-                school.number,
-                school.land_phone_number,
+                str(school.number),
+                str(school.land_phone_number),
                 school.email,
                 school.director_name,
-                school.director_phone_number,
+                str(school.director_phone_number),
                 school.it_name,
-                school.it_phone_number,
+                str(school.it_phone_number),
                 school.field_coordinator_name
             )
         context['comment'] = comment
