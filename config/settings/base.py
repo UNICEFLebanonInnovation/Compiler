@@ -109,6 +109,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# SECURITY CONFIGURATION
+X_FRAME_OPTIONS = 'DENY'
+
 # MIGRATIONS CONFIGURATION
 # ------------------------------------------------------------------------------
 MIGRATION_MODULES = {

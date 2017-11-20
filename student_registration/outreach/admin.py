@@ -35,6 +35,10 @@ class HouseHoldAdmin(ImportExportModelAdmin):
         'district'
     )
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class ChildResource(resources.ModelResource):
     class Meta:
@@ -60,6 +64,10 @@ class ChildAdmin(ImportExportModelAdmin):
     list_filter = (
         'p_code',
     )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 admin.site.register(HouseHold, HouseHoldAdmin)
