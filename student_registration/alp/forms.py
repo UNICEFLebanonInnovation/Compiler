@@ -268,6 +268,7 @@ class OutreachForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
+                Submit('save_add_another', _('Save and add another'), css_class='child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/alp/outreach/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -828,6 +829,7 @@ class RegistrationForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
+                Submit('save_add_another', _('Save and add another'), css_class='child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/alp/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
