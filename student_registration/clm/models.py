@@ -464,6 +464,32 @@ class BLN(CLM):
         except Assessment.DoesNotExist as ex:
             return ''
 
+    def domain_improvement(self, domain_mame):
+        key = '{}/{}'.format(
+            'BLN_ASSESSMENT',
+            domain_mame,
+        )
+        if self.pre_test and self.post_test:
+            return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
+                          float(self.pre_test[key])) * 100.0, 2)
+        return 0.0
+
+    @property
+    def arabic_improvement(self):
+        return str(self.domain_improvement('arabic')) + '%'
+
+    @property
+    def math_improvement(self):
+        return str(self.domain_improvement('math')) + '%'
+
+    @property
+    def english_improvement(self):
+        return str(self.domain_improvement('english')) + '%'
+
+    @property
+    def french_improvement(self):
+        return str(self.domain_improvement('french')) + '%'
+
     def pre_assessment_form(self):
         return self.assessment_form(stage='pre_test', assessment_slug='bln_pre_test')
 
@@ -728,6 +754,30 @@ class RS(CLM):
     @property
     def post_assessment_form(self):
         return self.assessment_form(stage='post_test', assessment_slug='rs_post_test')
+
+    def domain_improvement(self, domain_mame):
+        pre_test = getattr(self, 'pre_test_'+domain_mame)
+        post_test = getattr(self, 'post_test_'+domain_mame)
+        if pre_test and post_test:
+            return round(((float(post_test) - float(pre_test)) /
+                          float(pre_test)) * 100.0, 2)
+        return 0.0
+
+    @property
+    def arabic_improvement(self):
+        return str(self.domain_improvement('arabic')) + '%'
+
+    @property
+    def math_improvement(self):
+        return str(self.domain_improvement('math')) + '%'
+
+    @property
+    def language_improvement(self):
+        return str(self.domain_improvement('language')) + '%'
+
+    @property
+    def science_improvement(self):
+        return str(self.domain_improvement('science')) + '%'
 
     def calculate_score(self, stage):
         keys = []
