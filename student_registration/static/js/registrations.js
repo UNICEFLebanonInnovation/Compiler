@@ -7,6 +7,7 @@ var protocol = window.location.protocol;
 var host = protocol+window.location.host;
 var moved_student_path = host+'/api/logging-student-move/';
 var current_school = null;
+var eligibility_msg = '';
 
 $(document).ready(function(){
 
@@ -18,6 +19,10 @@ $(document).ready(function(){
 
     $(document).on('change', 'select#id_site', function(){
          reorganizeForm();
+    });
+
+    $(document).on('change', 'select#id_student_registered_in_unhcr', function(){
+        reorganizeForm();
     });
 
     $(document).on('click', 'input[name=have_labour]', function(){
@@ -111,7 +116,7 @@ $(document).ready(function(){
                     registry_id = ui.item.registration.id;
                     var refer_to_level = ui.item.registration.refer_to_level;
                     if(!$.inArray(refer_to_level, [1, 10, 11, 12, 13, 14, 15, 16, 17])){
-                        if(confirm("This student is not eligible to go into 2nd shift program, are you sure you want to register this student")){
+                        if(confirm(eligibility_msg)){
                             eligibility = false;
                         }else{
                             return false;
@@ -353,6 +358,7 @@ function reorganizeForm()
     var family_status = $('select#id_student_family_status').val();
     var have_labour = $('input[name=have_labour]:checked').val();
     var program_site = $('select#id_site').val();
+    var registered_unhcr = $('select#id_student_registered_in_unhcr').val();
 
     if(program_site == 'out_school') {
         $('div#div_id_school').parent().addClass('d-none');
@@ -382,6 +388,12 @@ function reorganizeForm()
         $('div#labour_hours').prev().addClass('d-none');
     }
 
+    if(registered_unhcr == '1'){
+        $('select#id_student_id_type').val(1);
+    }else{
+        $('select#id_student_id_type').val('');
+    }
+
     if(urlParam('child_id') || urlParam('enrollment_id') || $('#registry_block').hasClass('d-none')) {
         $('#registry_block').addClass('d-none');
         $('#register_by_barcode').addClass('d-none');
@@ -390,9 +402,6 @@ function reorganizeForm()
     }
 
     if(outreached == 'no'){
-        // $('#id_have_barcode').val('0');
-        // $("#id_have_barcode_2").attr('checked', 'checked');
-
         $('#have_barcode_option').addClass('d-none');
         $('#have_barcode_option').prev().addClass('d-none');
     }else{
@@ -408,8 +417,8 @@ function reorganizeForm()
     }
 
     if(new_registry == 'yes' && outreached == 'yes' && have_barcode == 'yes'){
-        $('#block_id_outreach_barcode').addClass('d-none');
-        $('#block_id_outreach_barcode').prev().addClass('d-none');
+        $('#block_id_outreach_barcode').removeClass('d-none');
+        $('#block_id_outreach_barcode').prev().removeClass('d-none');
 
         $('#register_by_barcode').removeClass('d-none');
         $('#search_options').addClass('d-none');

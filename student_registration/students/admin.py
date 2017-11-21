@@ -53,7 +53,11 @@ class IDTypeResource(resources.ModelResource):
 
 
 class IDTypeAdmin(ImportExportModelAdmin):
-        resource_class = IDTypeResource
+    resource_class = IDTypeResource
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 class EnrollmentInline(admin.TabularInline):
@@ -572,6 +576,7 @@ class StudentResource(resources.ModelResource):
             'birthday_day',
             'birthday_month',
             'birthday_year',
+            'place_of_birth',
             'sex',
             'nationality',
             'mother_nationality',
@@ -645,6 +650,10 @@ class StudentAdmin(ImportExportModelAdmin):
     )
     inlines = (EnrollmentInline, ALPInline)
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class StudentMatchingResource(resources.ModelResource):
     class Meta:
@@ -678,6 +687,10 @@ class StudentMatchingAdmin(ImportExportModelAdmin):
         if obj.enrolment:
             return obj.enrolment.id
         return ''
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 admin.site.register(Student, StudentAdmin)

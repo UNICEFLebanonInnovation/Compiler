@@ -73,22 +73,23 @@
       {% if request.user.is_authenticated %}
         {% if request.user|has_group:"CLM" %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'schools:partner' %}">{% trans "Profile" %}</a>
+          <a class="nav-link" href="{% url 'schools:partner' %}">{% trans "Partner Profile" %}</a>
         </li>
         {% endif %}
         {% if request.user|has_group:"SCHOOL" or request.user|has_group:"ALP_SCHOOL" %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'schools:profile' %}">{% trans "Profile" %}</a>
+          <a class="nav-link" href="{% url 'schools:profile' %}">{% trans "School Profile" %}</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'schools:documents' %}">{% trans "Public documents" %}</a>
         </li>
         {% endif %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'change_password' %}">{% trans "Change password" %}</a>
+{#          <a class="nav-link" href="{% url 'change_password' %}">{% trans "Change password" %}</a>#}
+          <a class="nav-link" href="{% url 'account_change_password' %}">{% trans "Change password" %}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
+{#          <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>#}
         </li>
           {% if request.user.is_superuser %}
           <li class="nav-item">
