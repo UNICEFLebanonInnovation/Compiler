@@ -17,6 +17,7 @@ install:
 
 script:
   - docker-compose -f test.yml run django
+  - ls -al
 
 after_success:
   - coveralls
