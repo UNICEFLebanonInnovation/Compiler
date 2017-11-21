@@ -37,6 +37,11 @@
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'enrollments:list' %}">{% trans "2nd shift Registration" %}</a>
               </li>
+            {% if request.user|has_group:"ENROL_EDIT_OLD" %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'enrollments:list_old_data' %}">{% trans "2nd shift old data" %}</a>
+              </li>
+            {% endif %}
         {% endif %}
         {% if request.user|has_group:"TEST_MANAGER" %}
             <li class="nav-item">

@@ -504,7 +504,8 @@ class EnrollmentForm(forms.ModelForm):
                 Submit('save', _('Save'), css_class='child_data'),
                 Submit('save_add_another', _('Save and add another'), css_class='child_data'),
                 # Submit('save_continue_editing', _('Save and continue editing')),
-                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' +
+                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -662,7 +663,8 @@ class GradingTermForm(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' +
+                         _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 )
             )
 
@@ -713,7 +715,8 @@ class GradingTermForm(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' +
+                         _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 )
             )
 
@@ -770,7 +773,8 @@ class GradingTermForm(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' +
+                         _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 )
             )
 
@@ -826,7 +830,8 @@ class GradingTermForm(forms.ModelForm):
                 ),
                 FormActions(
                     Submit('save', _('Save')),
-                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                    HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' +
+                         _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 )
             )
 
@@ -909,7 +914,8 @@ class GradingIncompleteForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' +
+                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -1003,4 +1009,169 @@ class LoggingStudentMoveForm(forms.ModelForm):
             'student',
             'school_from',
             'school_to',
+        )
+
+
+class EditOldDataForm(forms.ModelForm):
+
+    student_first_name = forms.CharField(
+        label=_("First name"),
+        widget=forms.TextInput, required=True
+    )
+    student_father_name = forms.CharField(
+        label=_("Father name"),
+        widget=forms.TextInput, required=True
+    )
+    student_last_name = forms.CharField(
+        label=_("Last name"),
+        widget=forms.TextInput, required=True
+    )
+    student_sex = forms.ChoiceField(
+        label=_("Sex"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('Male', _('Male')),
+            ('Female', _('Female')),
+        )
+    )
+    student_birthday_year = forms.ChoiceField(
+        label=_("Birthday year"),
+        widget=forms.Select, required=True,
+        choices=YEARS
+    )
+    student_birthday_month = forms.ChoiceField(
+        label=_("Birthday month"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('1', _('January')),
+            ('2', _('February')),
+            ('3', _('March')),
+            ('4', _('April')),
+            ('5', _('May')),
+            ('6', _('June')),
+            ('7', _('July')),
+            ('8', _('August')),
+            ('9', _('September')),
+            ('10', _('October')),
+            ('11', _('November')),
+            ('12', _('December')),
+        )
+    )
+    student_birthday_day = forms.ChoiceField(
+        label=_("Birthday day"),
+        widget=forms.Select, required=True,
+        choices=DAYS
+    )
+    student_mother_fullname = forms.CharField(
+        label=_("Mother fullname"),
+        widget=forms.TextInput, required=True
+    )
+    classroom = forms.ModelChoiceField(
+        label=_("Current Class"),
+        queryset=ClassRoom.objects.exclude(name='n/a'), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    section = forms.ModelChoiceField(
+        label=_("Current Section"),
+        queryset=Section.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+        initial=1
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(EditOldDataForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = reverse('enrollments:edit_old_data', kwargs={'pk': instance.id})
+
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Basic Data')+'</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_first_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('student_father_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('student_last_name', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('student_birthday_year', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('student_birthday_month', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('student_birthday_day', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('student_sex', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('student_mother_fullname', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current situation') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('classroom', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('section', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='child_data'),
+                HTML('<a class="btn btn-info cancel-button" href="/enrollments/list-old-data/" translation="' +
+                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def save(self, request=None, instance=None):
+        if instance:
+            serializer = EnrollmentSerializer(instance, data=request.POST)
+            if serializer.is_valid():
+                serializer.update(validated_data=serializer.validated_data, instance=instance)
+            # else:
+            #     print(serializer.errors)
+
+    class Meta:
+        model = Enrollment
+        fields = (
+            'student_first_name',
+            'student_father_name',
+            'student_last_name',
+            'student_mother_fullname',
+            'student_sex',
+            'student_birthday_year',
+            'student_birthday_month',
+            'student_birthday_day',
+            'section',
+            'classroom',
+        )
+        initial_fields = fields
+        widgets = {}
+
+    class Media:
+        js = (
+            'js/jquery-1.12.3.min.js',
+            'js/jquery-ui-1.12.1.js',
+            'js/validator.js',
+            'js/registrations.js',
         )
