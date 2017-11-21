@@ -446,6 +446,10 @@ class AttendanceAdmin(ImportExportModelAdmin):
     )
     date_hierarchy = 'attendance_date'
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 admin.site.register(Attendance, AttendanceAdmin)
 # admin.site.register(BySchoolByDay, BySchoolByDayAdmin)
 admin.site.register(Absentee, AbsenteeAdmin)

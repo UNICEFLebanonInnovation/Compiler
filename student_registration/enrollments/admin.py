@@ -257,6 +257,10 @@ class EnrollmentAdmin(ImportExportModelAdmin):
     )
     date_hierarchy = 'registration_date'
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
     def caza(self, obj):
         if obj.school and obj.school.location:
             return obj.school.location.name
@@ -327,6 +331,10 @@ class StudentMoveAdmin(ImportExportModelAdmin):
         'school2__name',
     )
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class LoggingStudentMoveResource(resources.ModelResource):
 
@@ -362,6 +370,10 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
     search_fields = (
 
     )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
     def registered(self, obj):
         if obj.enrolment:
@@ -428,6 +440,10 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
         'student__father_name',
         'student__last_name',
     )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 class GradingResource(resources.ModelResource):
@@ -520,6 +536,10 @@ class GradingAdmin(ImportExportModelAdmin):
         'enrollment__student__father_name',
         'enrollment__student__last_name',
     )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 admin.site.register(Enrollment, EnrollmentAdmin)

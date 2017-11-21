@@ -671,6 +671,10 @@ class OutreachAdmin(ImportExportModelAdmin):
         'modified_by__username',
     )
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
     def get_queryset(self, request):
         qs = super(OutreachAdmin, self).get_queryset(request)
         return qs
