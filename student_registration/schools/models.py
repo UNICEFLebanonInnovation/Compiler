@@ -5,6 +5,7 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 from django.utils.translation import ugettext as _
+from django.contrib.gis.db import models
 from student_registration.locations.models import Location
 
 
@@ -24,15 +25,48 @@ class School(models.Model):
         blank=True, null=True,
         verbose_name=_('School director name')
     )
+    director_phone_number = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School director cell phone')
+    )
     land_phone_number = models.CharField(
         max_length=100,
         blank=True, null=True,
         verbose_name=_('School land phone number')
     )
-    director_phone_number = models.CharField(
+    fax_number = models.CharField(
         max_length=100,
         blank=True, null=True,
-        verbose_name=_('School director cell phone')
+        verbose_name=_('School fax number')
+    )
+    email = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School email')
+    )
+    certified_foreign_language = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        choices=Choices(
+            ('French', _('French')),
+            ('English', _('English')),
+            ('French & English', _('French & English'))
+        ),
+        verbose_name=_('Certified foreign language')
+    )
+    comments = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Comments')
+    )
+    weekend = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        choices=Choices(
+            ('Friday', _('Friday')),
+            ('Saturday', _('Saturday')),
+        ),
+        verbose_name=_('School weekends')
     )
     it_name = models.CharField(
         max_length=100,
@@ -71,6 +105,11 @@ class School(models.Model):
         blank=True, null=True,
         verbose_name=_('Attendance day range')
     )
+    attendance_from_beginning = models.BooleanField(
+        blank=True,
+        default=False,
+        verbose_name=_('Start attendance from the beginning')
+    )
     academic_year_start = models.DateField(
         blank=True,
         null=True,
@@ -107,6 +146,14 @@ class School(models.Model):
         if self.location and self.location.parent:
             return self.location.parent.name
         return ''
+
+    @property
+    def total_registered(self):
+        from student_registration.enrollments.models import Enrollment
+        return Enrollment.objects.filter(
+            education_year__current_year=True,
+            school_id=self.id
+        ).count()
 
     @property
     def have_academic_year_dates(self):

@@ -30,6 +30,8 @@ from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
+from django.db.models import Sum, Avg, F, Func
+from django.db.models.expressions import RawSQL
 
 
 class CLMView(LoginRequiredMixin,
@@ -54,6 +56,11 @@ class BLNAddView(LoginRequiredMixin,
     success_url = '/clm/bln-list/'
     group_required = [u"CLM_BLN"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/bln-add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -63,13 +70,21 @@ class BLNAddView(LoginRequiredMixin,
 
     def get_initial(self):
         initial = super(BLNAddView, self).get_initial()
-        data = []
+        data = {
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
+        }
         if self.request.GET.get('enrollment_id'):
             instance = BLN.objects.get(id=self.request.GET.get('enrollment_id'))
             data = BLNSerializer(instance).data
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
+        if data:
+            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
 
         return initial
@@ -87,6 +102,11 @@ class BLNEditView(LoginRequiredMixin,
     form_class = BLNForm
     success_url = '/clm/bln-list/'
     group_required = [u"CLM_BLN"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/bln-add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -168,7 +188,7 @@ class BLNDashboardView(LoginRequiredMixin,
                        TemplateView):
 
     template_name = 'clm/bln_dashboard.html'
-
+    model = BLN
     group_required = [u"CLM_BLN"]
 
     def get_context_data(self, **kwargs):
@@ -180,7 +200,7 @@ class BLNDashboardView(LoginRequiredMixin,
         governorates = Location.objects.filter(parent__isnull=True)
 
         # queryset = BLN.objects.filter(round=clm_round)
-        queryset = BLN.objects.all()
+        queryset = self.model.objects.all()
         total_male = queryset.filter(student__sex='Male')
         total_female = queryset.filter(student__sex='Female')
 
@@ -217,39 +237,39 @@ class BLNDashboardView(LoginRequiredMixin,
 
             per_gov.append({
                 'governorate': gov.name,
-                'completion_male': round((float(completion_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
-                'completion_female': round((float(completion_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
+                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov), 2) if total_male_gov else 0.0,
+                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov), 2) if total_female_gov else 0.0,
 
                 'attendance_male_1': round((float(attendances_male_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_1': round((float(attendances_female_gov.filter(
-                    participation='less_than_5days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
                 'attendance_male_2': round((float(attendances_male_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_2': round((float(attendances_female_gov.filter(
-                    participation='5_10_days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
                 'attendance_male_3': round((float(attendances_male_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_3': round((float(attendances_female_gov.filter(
-                    participation='10_15_days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
                 'attendance_male_4': round((float(attendances_male_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100,
-                                           2) if attendance_gov else 0,
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
                 'attendance_female_4': round((float(attendances_female_gov.filter(
-                    participation='more_than_15days').count()) / float(attendance_gov)) * 100,
-                                             0) if attendance_gov else 0,
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
 
-                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
-                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0,
+                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
+                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
             })
 
         return {
@@ -264,28 +284,226 @@ class RSDashboardView(LoginRequiredMixin,
                       TemplateView):
 
     template_name = 'clm/rs_dashboard.html'
-
+    model = RS
     group_required = [u"CLM_RS"]
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
-        return {
 
+        per_gov = []
+        clm_round = self.request.user.partner.rs_round
+        clm_rounds = CLMRound.objects.all()
+        governorates = Location.objects.filter(parent__isnull=True)
+
+        # queryset = self.model.objects.filter(round=clm_round)
+        queryset = self.model.objects.all()
+        total_male = queryset.filter(student__sex='Male')
+        total_female = queryset.filter(student__sex='Female')
+
+        completion = queryset.exclude(learning_result='dropout') \
+            .exclude(learning_result='repeat_level')
+        completion_male = completion.filter(student__sex='Male')
+        completion_female = completion.filter(student__sex='Female')
+
+        attendance = queryset.exclude(learning_result='dropout')
+            # .filter(participation__isnull=False)
+        attendances_male = attendance.filter(student__sex='Male', participation__isnull=False)
+        attendances_female = attendance.filter(student__sex='Female', participation__isnull=False)
+
+        repeat_class = queryset.exclude(learning_result='dropout').filter(learning_result='repeat_level')
+        repeat_class_male = repeat_class.filter(student__sex='Male')
+        repeat_class_female = repeat_class.filter(student__sex='Female')
+
+        for gov in governorates:
+
+            total_gov = queryset.filter(governorate=gov).count()
+            total_male_gov = total_male.filter(governorate=gov).count()
+            total_female_gov = total_female.filter(governorate=gov).count()
+
+            completion_gov = completion.filter(governorate=gov).count()
+            completion_male_gov = completion_male.filter(governorate=gov).count()
+            completion_female_gov = completion_female.filter(governorate=gov).count()
+
+            attendance_gov = attendance.filter(governorate=gov).count()
+            attendances_male_gov = attendances_male.filter(governorate=gov)
+            attendances_female_gov = attendances_female.filter(governorate=gov)
+
+            repeat_class_male_gov = repeat_class_male.filter(governorate=gov).count()
+            repeat_class_female_gov = repeat_class_female.filter(governorate=gov).count()
+
+            per_gov.append({
+                'governorate': gov.name,
+                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov), 2) if total_male_gov else 0.0,
+                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov), 2) if total_female_gov else 0.0,
+
+                'attendance_male_1': round((float(attendances_male_gov.filter(
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
+                'attendance_female_1': round((float(attendances_female_gov.filter(
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
+
+                'attendance_male_2': round((float(attendances_male_gov.filter(
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
+                'attendance_female_2': round((float(attendances_female_gov.filter(
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
+
+                'attendance_male_3': round((float(attendances_male_gov.filter(
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
+                'attendance_female_3': round((float(attendances_female_gov.filter(
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
+
+                'attendance_male_4': round((float(attendances_male_gov.filter(
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
+                'attendance_female_4': round((float(attendances_female_gov.filter(
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
+
+                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
+                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
+            })
+
+        return {
+            'clm_round': clm_round,
+            'clm_rounds': clm_rounds,
+            'per_gov': per_gov
         }
 
 
 class CBECEDashboardView(LoginRequiredMixin,
-                         GroupRequiredMixin,
-                         TemplateView):
+                      GroupRequiredMixin,
+                      TemplateView):
 
     template_name = 'clm/cbece_dashboard.html'
-
+    model = CBECE
     group_required = [u"CLM_CBECE"]
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
-        return {
 
+        per_gov = []
+        domain_gov = []
+        clm_round = self.request.user.partner.cbece_round
+        clm_rounds = CLMRound.objects.all()
+        governorates = Location.objects.filter(parent__isnull=True)
+
+        # queryset = self.model.objects.filter(round=clm_round)
+        queryset = self.model.objects.all()
+        total_male = queryset.filter(student__sex='Male')
+        total_female = queryset.filter(student__sex='Female')
+
+        completion = queryset.exclude(learning_result='dropout') \
+            .exclude(learning_result='repeat_level')
+        completion_male = completion.filter(student__sex='Male')
+        completion_female = completion.filter(student__sex='Female')
+
+        attendance = queryset.exclude(learning_result='dropout')
+            # .filter(participation__isnull=False)
+        attendances_male = attendance.filter(student__sex='Male', participation__isnull=False)
+        attendances_female = attendance.filter(student__sex='Female', participation__isnull=False)
+
+        repeat_class = queryset.exclude(learning_result='dropout').filter(learning_result='repeat_level')
+        repeat_class_male = repeat_class.filter(student__sex='Male')
+        repeat_class_female = repeat_class.filter(student__sex='Female')
+
+        for gov in governorates:
+
+            total_gov = queryset.filter(governorate=gov).count()
+            total_male_gov = total_male.filter(governorate=gov)
+            total_female_gov = total_female.filter(governorate=gov)
+
+            completion_gov = completion.filter(governorate=gov).count()
+            completion_male_gov = completion_male.filter(governorate=gov).count()
+            completion_female_gov = completion_female.filter(governorate=gov).count()
+
+            attendance_gov = attendance.filter(governorate=gov).count()
+            attendances_male_gov = attendances_male.filter(governorate=gov)
+            attendances_female_gov = attendances_female.filter(governorate=gov)
+
+            repeat_class_male_gov = repeat_class_male.filter(governorate=gov).count()
+            repeat_class_female_gov = repeat_class_female.filter(governorate=gov).count()
+
+            per_gov.append({
+                'governorate': gov.name,
+                'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov.count()), 2) if total_male_gov.count() else 0.0,
+                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov.count()), 2) if total_female_gov.count() else 0.0,
+
+                'attendance_male_1': round((float(attendances_male_gov.filter(
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
+                'attendance_female_1': round((float(attendances_female_gov.filter(
+                    participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
+
+                'attendance_male_2': round((float(attendances_male_gov.filter(
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
+                'attendance_female_2': round((float(attendances_female_gov.filter(
+                    participation='5_10_days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
+
+                'attendance_male_3': round((float(attendances_male_gov.filter(
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
+                'attendance_female_3': round((float(attendances_female_gov.filter(
+                    participation='10_15_days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
+
+                'attendance_male_4': round((float(attendances_male_gov.filter(
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
+                                           2) if attendance_gov else 0.0,
+                'attendance_female_4': round((float(attendances_female_gov.filter(
+                    participation='more_than_15days').count()) / float(attendance_gov)) * 100.0,
+                                             2) if attendance_gov else 0.0,
+
+                'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
+                'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
+            })
+
+            d1_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]), post=RawSQL("((scores->>'post_LanguageArtDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d1_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]), post=RawSQL("((scores->>'post_LanguageArtDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+
+            d3_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d3_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+
+            d4_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]), post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d4_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]), post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+
+            d5_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]), post=RawSQL("((scores->>'post_PsychomotorDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d5_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]), post=RawSQL("((scores->>'post_PsychomotorDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+
+            d6_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]), post=RawSQL("((scores->>'post_ArtisticDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d6_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]), post=RawSQL("((scores->>'post_ArtisticDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+
+            domain_gov.append({
+                'governorate': gov.name,
+
+                'art_improvement_male': d1_male['total'] if d1_male['total'] != None else 0.0,
+                'art_improvement_female': d1_female['total'] if d1_female['total'] != None else 0.0,
+
+                'cognitive_improvement_male': d3_male['total'] if d3_male['total'] != None else 0.0,
+                'cognitive_improvement_female': d3_female['total'] if d3_female['total'] != None else 0.0,
+
+                'social_improvement_male': d4_male['total'] if d4_male['total'] != None else 0.0,
+                'social_improvement_female': d4_female['total'] if d4_female['total'] != None else 0.0,
+
+                'psycho_improvement_male': d5_male['total'] if d5_male['total'] != None else 0.0,
+                'psycho_improvement_female': d5_female['total'] if d5_female['total'] != None else 0.0,
+
+                'artistic_improvement_male': d6_male['total'] if d6_male['total'] != None else 0.0,
+                'artistic_improvement_female': d6_female['total'] if d6_female['total'] != None else 0.0
+            })
+
+        return {
+            'clm_round': clm_round,
+            'clm_rounds': clm_rounds,
+            'per_gov': per_gov,
+            'domain_gov': domain_gov
         }
 
 
@@ -298,6 +516,11 @@ class RSAddView(LoginRequiredMixin,
     success_url = '/clm/rs-list/'
     group_required = [u"CLM_RS"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/rs-add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -307,13 +530,21 @@ class RSAddView(LoginRequiredMixin,
 
     def get_initial(self):
         initial = super(RSAddView, self).get_initial()
-        data = []
+        data = {
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
+        }
         if self.request.GET.get('enrollment_id'):
             instance = RS.objects.get(id=self.request.GET.get('enrollment_id'))
             data = RSSerializer(instance).data
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
+        if data:
+            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
 
         return initial
@@ -331,6 +562,11 @@ class RSEditView(LoginRequiredMixin,
     form_class = RSForm
     success_url = '/clm/rs-list/'
     group_required = [u"CLM_RS"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/rs-add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -383,6 +619,11 @@ class CBECEAddView(LoginRequiredMixin,
     success_url = '/clm/cbece-list/'
     group_required = [u"CLM_CBECE"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/cbece-add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -392,13 +633,21 @@ class CBECEAddView(LoginRequiredMixin,
 
     def get_initial(self):
         initial = super(CBECEAddView, self).get_initial()
-        data = []
+        data = {
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
+        }
         if self.request.GET.get('enrollment_id'):
             instance = CBECE.objects.get(id=self.request.GET.get('enrollment_id'))
             data = CBECESerializer(instance).data
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
+        if data:
+            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
 
         return initial
@@ -416,6 +665,11 @@ class CBECEEditView(LoginRequiredMixin,
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
     group_required = [u"CLM_CBECE"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/cbece-add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -573,5 +827,5 @@ class CLMStudentViewSet(mixins.RetrieveModelMixin,
                     Q(student__first_name__contains=term) |
                     Q(student__father_name__contains=term) |
                     Q(student__last_name__contains=term)
-                ).distinct()[:50]
+                ).distinct()
             return qs

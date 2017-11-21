@@ -8,13 +8,36 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
 
-from .models import School, PartnerOrganization
+from .models import School, PartnerOrganization, EducationYear
 
 
 class ProfileForm(forms.ModelForm):
 
+    email = forms.EmailField(
+        label=_('School email')
+    )
+    land_phone_number = forms.RegexField(
+        label=_('School land phone number'),
+        regex=r'^[0-9]{2}-[0-9]{6}$'
+    )
+    fax_number = forms.RegexField(
+        label=_('School fax number'),
+        regex=r'^[0-9]{2}-[0-9]{6}$',
+        required=False
+    )
+    director_phone_number =forms.RegexField(
+        label=_('School director cell phone'),
+        regex=r'^[0-9]{2}-[0-9]{6}$'
+    )
+    it_phone_number = forms.RegexField(
+        label=_('School IT phone number'),
+        regex=r'^[0-9]{2}-[0-9]{6}$'
+    )
+
     def __init__(self, *args, **kwargs):
         super(ProfileForm, self).__init__(*args, **kwargs)
+
+        current_education_year = EducationYear.objects.get(current_year=True)
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -24,23 +47,39 @@ class ProfileForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Contact information') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School information') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('land_phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
                     Div('director_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('land_phone_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('director_phone_number', css_class='col-md-3'),
+                    Div('fax_number', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('it_name', css_class='col-md-3'),
+                    Div('director_phone_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('it_phone_number', css_class='col-md-3'),
+                    Div('email', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
+                    Div('certified_foreign_language', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('comments', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('weekend', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('it_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('it_phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('field_coordinator_name', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -49,7 +88,8 @@ class ProfileForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Current academic year') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' +
+                         _('Current academic year') + ' ' + current_education_year.name + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -82,6 +122,11 @@ class ProfileForm(forms.ModelForm):
             'it_name',
             'it_phone_number',
             'field_coordinator_name',
+            'fax_number',
+            'email',
+            'certified_foreign_language',
+            'comments',
+            'weekend',
         )
         initial_fields = fields
         widgets = {}

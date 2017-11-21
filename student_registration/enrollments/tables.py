@@ -73,7 +73,7 @@ class EnrollmentTable(tables.Table):
             'last_education_year',
             'last_year_result',
             'participated_in_alp',
-            'last_informal_edu_level',
+            # 'last_informal_edu_level',
             'last_informal_edu_round',
             'last_informal_edu_final_result',
             'new_registry',

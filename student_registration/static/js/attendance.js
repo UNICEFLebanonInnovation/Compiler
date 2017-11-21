@@ -46,7 +46,12 @@ $(document).ready(function(){
         var mm = today.getMonth()+1; //January is 0!
         var yyyy = today.getFullYear();
         var attendance = $(this).attr('itemref');
-        if(confirm($(this).attr('translation'))) {
+        if($('a.attendance_not_done').length){
+            alert($(this).attr('translation_ko'));
+            return false;
+        }
+
+        if(confirm($(this).attr('translation_ok'))) {
             var data = {
                 validation_owner: $('input#owner').val(),
                 validation_status: true,

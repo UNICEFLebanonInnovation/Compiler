@@ -31,9 +31,12 @@
                           <div class="panel-heading">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item">
-                                    <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to " %} {{ selected_date_view }}</a>
+                                    <span style="padding-top: 7px; display: block; ">{{ selected_date_view }}</span>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
                                     <button type="button" class="btn btn-warning absolute-right-15 absolute-top-15" id="exam_day" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}" {% if disable_attendance %}disabled{% endif %}>{% trans "Exam day" %}</button>
-                                    <button type="button" class="btn btn-warning absolute-right-200 absolute-top-15" id="not_attending" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}" {% if disable_attendance %}disabled{% endif %}>{% trans "Not attending" %}</button>
+                                    <button type="button" class="btn btn-warning absolute-right-310 absolute-top-15" id="not_attending" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}" {% if disable_attendance %}disabled{% endif %}>{% trans "Not attending" %}</button>
                                 </li>
                             </ol>
                             <ol class="breadcrumb">
@@ -95,16 +98,19 @@
                         </div>
                         <div class="col-sm-8 absence-reasons {% if line.attendance_status == 'True' or line.attendance_status == None %}d-none{% endif %}" id="reasons-{{ line.id }}">
                             <label class="radio-inline"><input type="radio" {% if line.absence_reason == 'sick' %}checked="checked"{% endif %} value="sick" name="absence_reason[{{ line.id }}]" class="absence_reason_{{ line.id }}" {% if disable_attendance %}disabled{% endif %}/>{% trans "Sick" %}</label>
-                            <label class="radio-inline"><input type="radio" {% if line.absence_reason == 'no_reason' %}checked="checked"{% endif %} value="no_reason" name="absence_reason[{{ line.id }}]" class="absence_reason_{{ line.id }}" {% if disable_attendance %}disabled{% endif %}/>{% trans "No reason" %}</label>
+{#                            <label class="radio-inline"><input type="radio" {% if line.absence_reason == 'no_reason' %}checked="checked"{% endif %} value="no_reason" name="absence_reason[{{ line.id }}]" class="absence_reason_{{ line.id }}" {% if disable_attendance %}disabled{% endif %}/>{% trans "No reason" %}</label>#}
                             <label class="radio-inline"><input type="radio" {% if line.absence_reason == 'no_transport' %}checked="checked"{% endif %} value="no_transport" name="absence_reason[{{ line.id }}]" class="absence_reason_{{ line.id }}" {% if disable_attendance %}disabled{% endif %}/>{% trans "No transport" %}</label>
-                            <label class="radio-inline"><input type="radio" {% if line.absence_reason == 'other' %}checked="checked"{% endif %} value="other" name="absence_reason[{{ line.id }}]" class="absence_reason_{{ line.id }}" {% if disable_attendance %}disabled{% endif %}/>{% trans "Other" %}</label>
+                            <label class="radio-inline"><input type="radio" {% if line.absence_reason == 'other' %}checked="checked"{% endif %} value="other" name="absence_reason[{{ line.id }}]" class="absence_reason_{{ line.id }}" {% if disable_attendance %}disabled{% endif %}/>{% trans "Other reason" %}</label>
                         </div>
                     </div>
                 {% endfor %}
 
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to " %} {{ selected_date_view }}</a>
+                            <span style="padding-top: 7px; display: block; ">{{ selected_date_view }}</span>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
                             {% if disable_attendance %}
                             {% else %}
                             <a href="#" class="btn btn-success absolute-right-15 absolute-top-7 save_attendances" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>

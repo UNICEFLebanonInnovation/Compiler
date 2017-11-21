@@ -119,6 +119,11 @@ class AddView(LoginRequiredMixin,
     success_url = '/alp/list/'
     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/alp/add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -129,9 +134,9 @@ class AddView(LoginRequiredMixin,
     def get_initial(self):
         initial = super(AddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', '0'),
-            'student_outreached': self.request.GET.get('student_outreached', '1'),
-            'have_barcode': self.request.GET.get('have_barcode', '1')
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
         }
         if self.request.GET.get('enrollment_id'):
             instance = Outreach.objects.get(id=self.request.GET.get('enrollment_id'))
@@ -142,6 +147,10 @@ class AddView(LoginRequiredMixin,
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
+        if data:
+            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
 
         return initial
@@ -159,6 +168,11 @@ class EditView(LoginRequiredMixin,
     form_class = RegistrationForm
     success_url = '/alp/list/'
     group_required = [u"ALP_SCHOOL", u"ALP_DIRECTOR"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/alp/add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -234,6 +248,11 @@ class PreTestAddView(LoginRequiredMixin,
     form_class = PreTestForm
     success_url = '/alp/pre-test/'
     group_required = [u"TEST_MANAGER", u"CERD"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/alp/pre-test-add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -388,6 +407,11 @@ class OutreachAddView(LoginRequiredMixin,
     success_url = '/alp/outreach/'
     group_required = [u"PARTNER"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/alp/outreach-add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -408,6 +432,11 @@ class OutreachEditView(LoginRequiredMixin,
     form_class = OutreachForm
     success_url = '/alp/outreach/'
     group_required = [u"PARTNER"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/alp/outreach-add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -445,7 +474,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         if has_group(self.request.user, 'ALP_SCHOOL') and self.request.user.school_id:
             school = self.request.user.school_id
         if school:
-            data = export_alp({'current': 'true', 'school': school})
+            data = export_alp({'current': 'true', 'school': school}, return_data=True)
 
         response = HttpResponse(
             data,

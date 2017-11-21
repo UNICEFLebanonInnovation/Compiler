@@ -13,6 +13,7 @@ from student_registration.students.models import Student, Labour
 from student_registration.locations.models import Location
 from student_registration.schools.models import (
     School,
+    Section,
     ClassRoom,
     CLMRound,
     EducationalLevel,
@@ -304,6 +305,12 @@ class CLM(TimeStampedModel):
         blank=False, null=True,
         related_name='+',
     )
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Modified by'),
+    )
     deleted = models.BooleanField(blank=True, default=False)
     dropout_status = models.BooleanField(blank=True, default=False)
     moved = models.BooleanField(blank=True, default=False)
@@ -345,6 +352,12 @@ class CLM(TimeStampedModel):
         verbose_name=_('Partner'),
         related_name='+'
     )
+    internal_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Internal number')
+    )
 
     @property
     def student_fullname(self):
@@ -364,7 +377,7 @@ class CLM(TimeStampedModel):
             return '{}{}'.format(
                 round(((float(self.post_test_score) - float(self.pre_test_score)) / float(self.pre_test_score)) * 100.0, 2),
                 '%')
-        return ''
+        return 0
 
     def get_absolute_url(self):
         return '/clm/edit/%d/' % self.pk
@@ -380,6 +393,12 @@ class CLM(TimeStampedModel):
         marks = {key: int(assessment.get(key, 0)) for key in keys}
         total = sum(marks.values())
         setattr(self, score, total)
+
+    def get_score_value(self, key, stage):
+        assessment = getattr(self, stage, 'pre_test')
+        if assessment:
+            return int(assessment.get(key, 0))
+        return 0
 
     class Meta:
         abstract = True
@@ -444,6 +463,32 @@ class BLN(CLM):
             )
         except Assessment.DoesNotExist as ex:
             return ''
+
+    def domain_improvement(self, domain_mame):
+        key = '{}/{}'.format(
+            'BLN_ASSESSMENT',
+            domain_mame,
+        )
+        if self.pre_test and self.post_test:
+            return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
+                          float(self.pre_test[key])) * 100.0, 2)
+        return 0.0
+
+    @property
+    def arabic_improvement(self):
+        return str(self.domain_improvement('arabic')) + '%'
+
+    @property
+    def math_improvement(self):
+        return str(self.domain_improvement('math')) + '%'
+
+    @property
+    def english_improvement(self):
+        return str(self.domain_improvement('english')) + '%'
+
+    @property
+    def french_improvement(self):
+        return str(self.domain_improvement('french')) + '%'
 
     def pre_assessment_form(self):
         return self.assessment_form(stage='pre_test', assessment_slug='bln_pre_test')
@@ -630,6 +675,12 @@ class RS(CLM):
         choices=LEARNING_RESULT,
         verbose_name=_('Learning result')
     )
+    section = models.ForeignKey(
+        Section,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Section')
+    )
 
     class Meta:
         ordering = ['id']
@@ -664,25 +715,25 @@ class RS(CLM):
             return '{}{}'.format(
                 round((float(self.posttest_total) - float(self.pretest_total)) / float(self.pretest_total) * 100.0, 2),
                 '%')
-        return ''
+        return 0
 
     @property
     def self_assessment_improvement(self):
         if self.pre_self_assessment and self.post_self_assessment:
             return '{}{}'.format(
-                (round((float(self.post_self_assessment_score) - float(self.pre_self_assessment_score)) /
-                 float(self.pre_self_assessment_score)) * 100.0, 2),
+                round(((float(self.post_self_assessment_score) - float(self.pre_self_assessment_score)) /
+                       float(self.pre_self_assessment_score)) * 100.0, 2),
                 '%')
-        return ''
+        return 0
 
     @property
     def motivation_improvement(self):
         if self.pre_motivation and self.post_motivation:
             return '{}{}'.format(
-                (round((float(self.post_motivation_score) - float(self.pre_motivation_score)) /
-                 float(self.pre_motivation_score)) * 100.0, 2),
+                round(((float(self.post_motivation_score) - float(self.pre_motivation_score)) /
+                        float(self.pre_motivation_score)) * 100.0, 2),
                 '%')
-        return ''
+        return 0
 
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
@@ -704,10 +755,35 @@ class RS(CLM):
     def post_assessment_form(self):
         return self.assessment_form(stage='post_test', assessment_slug='rs_post_test')
 
+    def domain_improvement(self, domain_mame):
+        pre_test = getattr(self, 'pre_test_'+domain_mame)
+        post_test = getattr(self, 'post_test_'+domain_mame)
+        if pre_test and post_test:
+            return round(((float(post_test) - float(pre_test)) /
+                          float(pre_test)) * 100.0, 2)
+        return 0.0
+
+    @property
+    def arabic_improvement(self):
+        return str(self.domain_improvement('arabic')) + '%'
+
+    @property
+    def math_improvement(self):
+        return str(self.domain_improvement('math')) + '%'
+
+    @property
+    def language_improvement(self):
+        return str(self.domain_improvement('language')) + '%'
+
+    @property
+    def science_improvement(self):
+        return str(self.domain_improvement('science')) + '%'
+
     def calculate_score(self, stage):
         keys = []
         if stage in ['pre_test', 'post_test']:
             keys = [
+                'RS_ASSESSMENT_0/FL0',
                 'RS_ASSESSMENT/FL1',
                 'RS_ASSESSMENT/FL2',
                 'RS_ASSESSMENT/FL3',
@@ -845,6 +921,18 @@ class CBECE(CLM):
         except Assessment.DoesNotExist:
             return ''
 
+    def domain_improvement(self, domain_mame):
+        program_cycle = str(self.cycle_id)
+        key = '{}/{}{}'.format(
+            'CBECE_ASSESSMENT',
+            domain_mame,
+            program_cycle
+        )
+        if self.pre_test and self.post_test:
+            return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
+                          float(self.pre_test[key])) * 100.0, 2)
+        return 0.0
+
     @property
     def pre_assessment_form(self):
         return self.assessment_form(stage='pre_test', assessment_slug='cbece_pre_test')
@@ -853,18 +941,61 @@ class CBECE(CLM):
     def post_assessment_form(self):
         return self.assessment_form(stage='post_test', assessment_slug='cbece_post_test')
 
+    @property
+    def art_improvement(self):
+        return str(self.domain_improvement('LanguageArtDomain')) + '%'
+
+    @property
+    def cognitive_improvement(self):
+        return str(self.domain_improvement('CognitiveDomain')) + '%'
+
+    @property
+    def social_improvement(self):
+        return str(self.domain_improvement('SocialEmotionalDomain')) + '%'
+
+    @property
+    def psycho_improvement(self):
+        return str(self.domain_improvement('PsychomotorDomain')) + '%'
+
+    @property
+    def artistic_improvement(self):
+        return str(self.domain_improvement('ArtisticDomain')) + '%'
+
     def calculate_score(self, stage):
         program_cycle = str(self.cycle_id)
         keys = [
             'CBECE_ASSESSMENT/LanguageArtDomain'+program_cycle,
-            'CBECE_ASSESSMENT/CognitiveDomianMathematics'+program_cycle,
-            'CBECE_ASSESSMENT/CognitiveDomianScience'+program_cycle,
+            'CBECE_ASSESSMENT/CognitiveDomain'+program_cycle,
             'CBECE_ASSESSMENT/SocialEmotionalDomain'+program_cycle,
             'CBECE_ASSESSMENT/PsychomotorDomain'+program_cycle,
             'CBECE_ASSESSMENT/ArtisticDomain'+program_cycle,
         ]
-
         super(CBECE, self).score(keys, stage)
+
+        self.scores = {
+            'pre_LanguageArtDomain': self.get_score_value('CBECE_ASSESSMENT/LanguageArtDomain' + program_cycle,
+                                                          'pre_test'),
+            'pre_CognitiveDomain': self.get_score_value(
+                'CBECE_ASSESSMENT/CognitiveDomain' + program_cycle,
+                'pre_test'),
+            'pre_SocialEmotionalDomain': self.get_score_value('CBECE_ASSESSMENT/SocialEmotionalDomain' + program_cycle,
+                                                              'pre_test'),
+            'pre_PsychomotorDomain': self.get_score_value('CBECE_ASSESSMENT/PsychomotorDomain' + program_cycle,
+                                                          'pre_test'),
+            'pre_ArtisticDomain': self.get_score_value('CBECE_ASSESSMENT/ArtisticDomain' + program_cycle, 'pre_test'),
+
+
+            'post_LanguageArtDomain': self.get_score_value('CBECE_ASSESSMENT/LanguageArtDomain' + program_cycle,
+                                                           'post_test'),
+            'post_CognitiveDomain': self.get_score_value(
+                'CBECE_ASSESSMENT/CognitiveDomain' + program_cycle,
+                'post_test'),
+            'post_SocialEmotionalDomain': self.get_score_value('CBECE_ASSESSMENT/SocialEmotionalDomain' + program_cycle,
+                                                               'post_test'),
+            'post_PsychomotorDomain': self.get_score_value('CBECE_ASSESSMENT/PsychomotorDomain' + program_cycle,
+                                                           'post_test'),
+            'post_ArtisticDomain': self.get_score_value('CBECE_ASSESSMENT/ArtisticDomain' + program_cycle, 'post_test'),
+        }
 
     class Meta:
         ordering = ['id']

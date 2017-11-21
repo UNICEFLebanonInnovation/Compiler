@@ -234,6 +234,14 @@ tr.odd {
     position: absolute;
     right: 200px;
 }
+.absolute-right-270 {
+    position: absolute;
+    right: 270px;
+}
+.absolute-right-310 {
+    position: absolute;
+    right: 310px;
+}
 .breadcrumb {
     position: relative;
 }
@@ -358,4 +366,8 @@ tr.odd {
 
 .list-filter .form-group input, .list-filter .form-group select {
     width: 150px;
+}
+.nav-link.btn.btn-outline-secondary {
+    margin-left: 10px;
+    margin-right: 10px;
 }

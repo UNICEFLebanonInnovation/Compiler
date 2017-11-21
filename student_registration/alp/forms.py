@@ -27,7 +27,7 @@ from student_registration.schools.models import (
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
-EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, Person.CURRENT_YEAR))
+EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, Person.CURRENT_YEAR+1))
 EDUCATION_YEARS.append(('na', 'n/a'))
 
 YEARS = list(((str(x), x) for x in range(1990, 2050)))
@@ -268,6 +268,7 @@ class OutreachForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
+                Submit('save_add_another', _('Save and add another'), css_class='child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/alp/outreach/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -828,6 +829,7 @@ class RegistrationForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
+                Submit('save_add_another', _('Save and add another'), css_class='child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/alp/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
