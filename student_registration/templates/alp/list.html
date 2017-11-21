@@ -1,243 +1,60 @@
 {% extends "base.html" %}
 {% load staticfiles i18n %}
-{% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
+{% load static %}
+{% load render_table from django_tables2 %}
+{% load bootstrap3 %}
+{% bootstrap_css %}
 
 {% block extra_head %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'css/jquery.dataTables.min.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'css/buttons.dataTables.min.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'css/select.dataTables.min.css' %}">
-
+    <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
 {% endblock %}
-
 
 {% block content-full-page %}
 
-         <section class="main-content-wrapper">
-            <section id="main-content">
-                 <div class="row">
-                    <div class="col-md-12">
-                        </br>
-                    </div>
-                </div>
-            <div class="row">
-                    <div class="col-md-12">
-                        <div class="panel panel-default">
-                          <div class="panel-heading">
-                            <h3 class="panel-title">
-                                <ol class="breadcrumb">
-                                    <li><a>{% trans "ALP data collecting" %}</a></li>
-                                    <li>
-                                         <select id="id_location" class="col-400">
-                                             <option value="">---{% trans "Display by Location" %}---</option>
-                                              {% for location in locations %}
-                                                <option value="{{ location.id }}" {% if selectedLocation == location.id %}selected="selected"{% endif %}>
-                                                    {{ location.name }}
-                                                </option>
-                                              {% endfor %}
-                                         </select>
-                                         <select id="id_school" class="col-400">
-                                             <option value="">---{% trans "Display by School" %}---</option>
-                                              {% for school in schools %}
-                                                <option data-parent="{% if school.location %}{{ school.location.id }}{% endif %}"
-                                                        {% if school.location and not school.location_id == selectedLocation %}style="display: none;" {% endif %}
-                                                        value="{{ school.id }}" {% if selectedSchool == school.id %}selected="selected"{% endif %}>
-                                                    {{ school }}
-                                                </option>
-                                              {% endfor %}
-                                         </select>
-                                    </li>
-                                    <li>
-                                        {% if selectedSchool or selectedLocation %}
-                                        <a class="btn btn-info" id="outreach-export" href="{% url "alp:alp_data_export" %}?school={{ selectedSchool }}&location={{ selectedLocation }}" target="_blank">
-                                            <i class="icon-export-sign icon-white"></i>&nbsp;
-                                                {% trans "Export" %}
-                                          </a>
-                                        {% endif %}
-                                    </li>
-                                 </ol>
-                            </h3>
-                            <div class="actions pull-right">
-                                <i class="fa fa-chevron-down"></i>
-                                <i class="fa fa-times"></i>
-                            </div>
-                          </div>
-                          <div class="panel-body">
-                                <table id="outreaches-table" class="table table-striped table-bordered cell-border"
-                                       data-height="500"
-                                       data-pagination="true"
-                                       data-search="true"
-                                       cellspacing="0"
-                                       width="100%">
-                                <thead>
-                                    <tr id="thead-line-1">
-                                        <th rowspan="2"><label class="col-100">{% trans "Governorate" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "District" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "School number" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "School" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Student number" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Student first name" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Student father name" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Student last name" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Sex" %}</label></th>
-                                        <th rowspan="2" style="text-align: center;"><label class="col-100">{% trans "Student birthday" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Student age" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Student nationality" %}</label></th>
-                                        <th rowspan="2" style="background-color: #b0e1ef;"><label class="col-100">{% trans "Registered in level" %}</label></th>
-                                        <th colspan="9" style="text-align: center; background-color: #b0e1ef;"><label class="col-100">{% trans "Student notes" %}</label></th>
-                                        <th rowspan="2" style="background-color: #b0e1ef;"><label class="col-100">{% trans "Assigned to level" %}</label></th>
-                                        <th colspan="2" style="text-align: center; background-color: #b0e1ef;"><label class="col-200">{% trans "Student actual status" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Mother fullname" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Mother nationality" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Registered in UNHCR" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Student ID Type" %}</label></th>
-                                        <th rowspan="2"><label class="col-200">{% trans "Student ID Number" %}</label>
-                                            <i class="icon-info-sign" data-toggle="tooltip" title="{% trans "ID Number tooltip" %}"></i>
-                                        </th>
-                                        <th rowspan="2"><label class="col-150">{% trans "Student living address" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Phone number (6 digits)" %}</label></th>
-                                        <th rowspan="2"><label class="col-100">{% trans "Phone prefix (2 digits)" %}</label></th>
-                                        <th colspan="2" style="text-align: center; background-color: #67b168;"><label class="col-100">{% trans "Last student education" %}</label></th>
-                                        <th colspan="4" style="text-align: center; background-color: #ec971f;"><label class="col-100">{% trans "Last student informal education" %}</label></th>
-                                    </tr>
-                                    <tr id="thead-line-2">
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Math" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Math corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science corrector" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Total" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Current Level" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Current Section" %}</label></th>
-                                        <th style="background-color: #67b168;"><label class="col-100">{% trans "Last education level" %}</label></th>
-                                        <th style="background-color: #67b168;"><label class="col-100">{% trans "Education year" %}</label></th>
-                                        <th style="background-color: #ec971f;"><label class="col-200">{% trans "Is the child participated in an ALP program" %}</label></th>
-                                        <th style="background-color: #ec971f;"><label class="col-100">{% trans "ALP round" %}</label></th>
-                                        <th style="background-color: #ec971f;"><label class="col-100">{% trans "ALP level" %}</label></th>
-                                        <th style="background-color: #ec971f;"><label class="col-100">{% trans "ALP result" %}</label></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for registry in outreaches %}
-                                        <tr>
-                                            <td><label class="col-100">{% if registry.school and registry.school.location and registry.school.location.parent %}{{ registry.school.location.parent.name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.school and registry.school.location %}{{ registry.school.location.name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.school %}{{ registry.school.number }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.school %}{{ registry.school.name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{{ registry.student.number }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{{ registry.student.first_name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{{ registry.student.father_name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{{ registry.student.last_name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{% trans registry.student.sex %}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{{ registry.student.birthday }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{{ registry.student.get_age }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{{ registry.student.nationality_name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.level %}{{ registry.level.name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{{ registry.exam_result_arabic }}{% if registry.level %}/{{ registry.level.note }}{% endif %}</label></td>
-                                            <td><label class="col-100">{{ registry.exam_corrector_arabic }}</label></td>
-                                            <td><label class="col-100">{{ registry.exam_result_language }}{% if registry.level %}/{{ registry.level.note }}{% endif %}</label></td>
-                                            <td><label class="col-100">{{ registry.exam_corrector_language }}</label></td>
-                                            <td><label class="col-100">{{ registry.exam_result_math }}{% if registry.level %}/{{ registry.level.note }}{% endif %}</label></td>
-                                            <td><label class="col-100">{{ registry.exam_corrector_math }}</label></td>
-                                            <td><label class="col-100">{{ registry.exam_result_science }}{% if registry.level %}/{{ registry.level.note }}{% endif %}</label></td>
-                                            <td><label class="col-100">{{ registry.exam_corrector_science }}</label></td>
-                                            <td><label class="col-100">{{ registry.exam_total }}{% if registry.level %}/{{ registry.level.note|multiply:4 }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.assigned_to_level %}{{ registry.assigned_to_level.name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.registered_in_level %}{{ registry.registered_in_level.name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.section %}{{ registry.section.name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{{ registry.student.mother_fullname }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{{ registry.student.mother_nationality.name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.registered_in_unhcr %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student and registry.student.id_type %}{{ registry.student.id_type.name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{{ registry.student.id_number }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{{ registry.student.address }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{{ registry.student.phone }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.student %}{{ registry.student.phone_prefix }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.last_education_level %}{{ registry.last_education_level.name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{{ registry.last_education_year }}</label></td>
-                                            <td><label class="col-100">{% if registry.participated_in_alp %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.last_informal_edu_round %}{{ registry.last_informal_edu_round.name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.last_informal_edu_level %}{{ registry.last_informal_edu_level.name }}{% endif %}</label></td>
-                                            <td><label class="col-100">{% if registry.last_informal_edu_final_result %}{{ registry.last_informal_edu_final_result.name }}{% endif %}</label></td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                     </div>
-                </div>
-            </div>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><span class="badge badge-primary">{{ table.rows|length }}</span></li>
+            <li class="breadcrumb-item">{{ request.user.school }}</li>
+            <li class="breadcrumb-item">{{ request.user.school.location }}</li>
+            <li class="breadcrumb-item">{{ request.user.school.location.parent }}</li>
+        </ol>
 
-            </section>
-         </section>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+                <a href="{% url "alp:add" %}" class="btn btn-success">
+                    <i class="icon-plus-sign icon-white"></i>
+                    {% trans "Add new Student" %}
+                </a>
+          </li>
+          <li class="breadcrumb-item">
+            <a class="btn btn-info" href="{% url "alp:export" %}" target="_blank">
+                <i class="icon-export-sign icon-white"></i>&nbsp;
+                    {% trans "Export" %}
+            </a>
+          </li>
+        </ol>
+
+        <div class="pb-5 pr-5 list-filter">
+            <form action="" method="get" class="form form-inline">
+                    {% bootstrap_form filter.form layout='inline' %}
+                    {% bootstrap_button _('filter') button_class="btn-primary" %}
+                    {% bootstrap_button _('reset') button_type="link" button_class="btn-warning" href='/list/' %}
+            </form>
+        </div>
+        <div class="col-sm-10">
+            {% csrf_token %}
+            {% render_table table 'django_tables2/bootstrap.html' %}
+        </div>
 
 {% endblock %}
 
 {% block extra_js %}
-
+    {% get_user_token request.user.id as user_token %}
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script type="text/javascript">
-        var oTable = null;
-        var language  = '{{ LANGUAGE_CODE }}';
-
-        $(document).ready(function(){
-
-            oTable = $('#outreaches-table').DataTable({
-                fixedHeader: false,
-                paging:   true,
-                ordering: true,
-                info:     true,
-                autoWidth: false,
-                scrollY: '50vh',
-                scrollX: true,
-                scrollCollapse: true,
-                "language": {
-                    "url": "/static/locale/"+language+".json"
-                },
-                "fnInitComplete": function(oSettings, json) {
-                    $('[data-toggle="tooltip"]').tooltip();
-                }
-            });
-
-{#            $("#id_location").change(function(){#}
-{#                var selected_location = $(this).val();#}
-{#                var url = '{% url "alp:alp_data_view" %}';#}
-{#                if(selected_location){#}
-{#                    url = url+'?location='+selected_location;#}
-{#                }#}
-{#                window.location.href = url;#}
-{#            });#}
-
-            $(document).on('change', '#id_location', function(){
-                if($(this).val()){
-                    $("#id_school").val("");
-                    $("#id_school").find('option').hide();
-                    $("#id_school").find('option[value=""]').show();
-                    $("#id_school").find('option[data-parent='+$(this).val()+']').show();
-                }
-            });
-
-            // get the list of school and fill the table with it
-            $("#id_school").change(function(){
-                var selected_school = $(this).val();
-               // reload the page with the school id passed in post
-                var url = '{% url "alp:alp_data_view" %}';
-                if(selected_school){
-                    url = url+'?school='+selected_school+"&location="+$('#id_location').val();
-                }
-                window.location.href = url;
-            });
-
-        });
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/registrations.js' %}"></script>
+    <script>
+        var user_token = '{{ user_token }}';
+        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
     </script>
-
 {% endblock %}

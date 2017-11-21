@@ -1,369 +1,43 @@
 {% extends "base.html" %}
 {% load staticfiles i18n %}
-{% get_current_language as LANGUAGE_CODE %}
+{% load static %}
+{% load render_table from django_tables2 %}
+{% load bootstrap3 %}
 {% load util_tags %}
+{% bootstrap_css %}
 
 {% block extra_head %}
-
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-breadcrumbs.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-alert.css' %}">
-    <style>
-        tr.highlighted {
-            background-color: darkseagreen !important;
-        }
-        .outreach-field-p:focus {
-            background-color: yellow;
-        }
-        .outreach-field:focus {
-            background-color: yellow;
-        }
-        .field-warning {
-            background-color: red !important;
-            color: #fff;
-        }
-        .synchro-status.success {
-            background-color: #1ABB9C !important;
-        }
-        .synchro-status.failed {
-            background-color: #ac2925 !important;
-        }
-        span.required {
-            color: red;
-        }
-    </style>
+    <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
 {% endblock %}
 
 {% block content-full-page %}
 
-         <section class="main-content-wrapper">
-            <section id="main-content">
-                 <div class="row">
-                    <div class="col-md-12">
-                        </br>
-                    </div>
-                </div>
-            <div class="row">
-                <div class="alert alert-success" role="alert" id="alert-synchro-success" style="display: none;"><strong>{% trans 'Well done' %}</strong> {% trans 'Synchronization success' %}</div>
-                <div class="alert alert-warning" role="alert" id="alert-synchro-warning" style="display: none;"><strong>{% trans 'Warning' %}</strong> {% trans 'Please check fill required field' %}</div>
-                <div class="alert alert-danger" role="alert" id="alert-connection" style="display: none;">{% trans 'Please check you internet connectivity' %}</div>
-            </div>
-            <div class="row">
-                    <div class="col-md-12">
-                        <div class="panel panel-default">
-                          <div class="panel-heading">
-                              <ol class="breadcrumb">
-                                    <li><b>{% trans "ALP Registrations" %}</b></li>
-                                    <li><b>{{ school }}</b></li>
-                                    <li><b>{{ location }}</b></li>
-                                    <li><b>{{ location_parent }}</b></li>
-                              </ol>
-                          </div>
-                          <div class="panel-heading" style="position: absolute; top:50px;" id="header">
-                                <ol class="breadcrumb">
-                                    <li><a>
-                                        <h3 class="panel-title">{% trans "ALP Post Test" %}</h3></a></li>
-                                    <li>
-                                      <button class="btn btn-info" id="outreach-synchro">
-                                        <i class="icon-synch-sign icon-white"></i>&nbsp;
-                                            {% trans "synchronize" %}
-                                      </button>
-                                    </li>
-                                    <li>
-                                        <select name="school" id="filter_school" style="width: 210px;">
-                                            <option value="">{% trans "Filter by School" %}</option>
-                                            {% for item in schools %}
-                                                <option value="{{ item.id }}" {% if selectedSchool == item.id %}selected="selected"{% endif %}>
-                                                    {{ item }} - {% if item.location %}{{ item.location.name }}{% endif %}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                        <input type="text" id="search" size="300" style="width: 200px;" placeholder="{% trans "Search a student" %}" />
-                                        <button class="btn btn-warning" id="filter_cancel">
-                                            {% trans "Rest filter" %}
-                                        </button>
-                                    </li>
-                                </ol>
-                            <div class="actions pull-right">
-                                <i class="fa fa-chevron-down"></i>
-                                <i class="fa fa-times"></i>
-                            </div>
-                          </div>
-                          <div class="panel-body">
-                              <div class="loader"></div>
-                                <table id="outreaches-table" class="table table-striped table-bordered cell-border"
-                                       data-height="500"
-                                       data-pagination="true"
-                                       data-search="true"
-                                       cellspacing="0"
-                                       width="100%" style="margin-bottom: 100px; margin-top: 75px;">
-                                <thead>
-                                    <tr id="thead-line-1">
-                                        <th rowspan="2">&nbsp;</th>
-                                        <th rowspan="2"><label>{% trans "Student first name" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Student father name" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Student last name" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Sex" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Age" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Current Level" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Current Section" %}</label></th>
-                                        <th colspan="6" style="text-align: center; background-color: #b0e1ef;"><label>{% trans "Student notes" %}</label></th>
-                                        <th rowspan="2" style="background-color: #b0e1ef;"><label class="col-100">{% trans "Refer to level" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Created by" %}</label></th>
-                                        <th rowspan="2"><label>{% trans "Modified by" %}</label></th>
-                                    </tr>
-                                    <tr id="thead-line-2">
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Arabic language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Exam language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Foreign language" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Math" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Science" %}</label></th>
-                                        <th style="background-color: #b0e1ef;"><label class="col-100">{% trans "Total" %}</label></th>
-{#                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Arabic language corrector" %}</label></th>#}
-{#                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Foreign language corrector" %}</label></th>#}
-{#                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Math corrector" %}</label></th>#}
-{#                                        <th style="background-color: #b0e1ef;"><label class="col-80">{% trans "Science corrector" %}</label></th>#}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {% for line in data %}
-                                    {% include 'alp/prototype-view_new.html' with role="CERD" student=line.student level=line.registered_in_level %}
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                     </div>
-                </div>
-            </div>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><h3>{% trans "ALP Post-test" %}</h3></li>
+            <li class="breadcrumb-item"><span class="badge badge-primary">{{ table.rows|length }}</span></li>
+        </ol>
 
-            </section>
-         </section>
+        <div class="pb-5 pr-5 list-filter">
+            <form action="" method="get" class="form form-inline">
+                    {% bootstrap_form filter.form layout='inline' %}
+                    {% bootstrap_button _('filter') button_class="btn-primary" %}
+                    {% bootstrap_button _('reset') button_type="link" button_class="btn-warning" href='/post-test/' %}
+            </form>
+        </div>
+        <div class="col-sm-10">
+            {% csrf_token %}
+            {% render_table table 'django_tables2/bootstrap.html' %}
+        </div>
 
 {% endblock %}
 
 {% block extra_js %}
-
     {% get_user_token request.user.id as user_token %}
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/util.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/tooltip.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootbox.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/appcache.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/indexedDB.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jquery.quicksearch.js' %}"></script>
-    <script type="text/javascript">
-        var db = null;
-        var user_id = {{ request.user.id }};
-        var user_username = '{{ request.user.username }}';
-        var user_email = '{{ request.user.email }}';
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/registrations.js' %}"></script>
+    <script>
         var user_token = '{{ user_token }}';
-        var synchro_result = true;
-        var prototype = $('#outreach_prototype');
-        var table = $('#outreaches-table');
-        var selectedSchool = '{{ selectedSchool }}';
-        var filterSchools = true;
-        var synchronized_data = true;
-        var protocol = 'http://';
-        {% if request.is_secure %}
-            protocol = 'https://';
-        {% endif %}
-
-        var host = protocol+'{{ request.get_host }}';
-        var synchro_path = host+'/api/outreach/';
-
-        $(document).ready(function(){
-
-            $('#search').val('');
-            createStores();
-
-            $('input#search').quicksearch('table tbody tr', {
-                selector: 'span'
-            });
-
-            $(document).on('keypress', 'input#search', function(){
-                $('body, html').scrollLeft(400);
-            });
-
-{#            $(document).on('blur', '#post_exam_corrector_science', function(){#}
-{#                $('body, html').scrollLeft(800);#}
-{#            });#}
-
-            $("#filter_school").change(function(){
-                var selected_school = $(this).val();
-               // reload the page with the school id passed in post
-                var url = '{% url "alp:alp_post_test" %}';
-                if(selected_school){
-                    url = url+'?school='+selected_school;
-                }
-                if(synchronized_data == false){
-                    alert('Please synchronize you data before leaving this page');
-                }else{
-                    window.location.href = url;
-                }
-            });
-
-            $(document).on('click', '#filter_cancel', function(){
-                $('.outreach-line').show();
-                $('.outreach-line-p').show();
-                $('#search').val('');
-                $('tbody').find('tr').removeClass('highlighted');
-            });
-
-            $(document).on('click', 'tbody tr', function(){
-                $('tbody').find('tr').removeClass('highlighted');
-                $(this).addClass('highlighted');
-            });
-
-            $(window).scroll(function () {
-                var l = $(this).scrollLeft();
-                if(parseInt(l) <= 0){
-                    $('#header').css({'left': l});
-                }else{
-                    $('#header').css({'right': -l});
-                }
-            });
-
-            $(document).on("click", "input[type='text']", function(){
-                $(this).select();
-            });
-
-            $(document).on('change', '.post-exam-note', function(){
-
-                $(this).removeClass('required');
-                var item = $(this).parent().parent();
-{#                var max = parseInt(item.find('#level').find('option:selected').attr('data-value'));#}
-{#                if(parseFloat($(this).val()) > max){#}
-{#                    $(this).val(0);#}
-{#                    $(this).addClass('required');#}
-{#                    return false;#}
-{#                }#}
-
-                var note1 = parseFloat(item.find('#post_exam_result_arabic').val());
-                var note2 = parseFloat(item.find('#post_exam_result_language').val());
-                var note3 = parseFloat(item.find('#post_exam_result_math').val());
-                var note4 = parseFloat(item.find('#post_exam_result_science').val());
-                item.find('#post_exam_total').val(note1+note2+note3+note4);
-                item.find('#poat_exam_total').trigger('blur');
-            });
-
-            $(document).on('blur change', '.outreach-field-p', function(){
-                update_or_create_item(parseInt($(this).attr('itemscope')), $(this).attr('name'), $(this).val(), 'outreaches-p');
-                flag_record_to_update(parseInt($(this).attr('itemscope')), 'outreaches-p');
-                synchronized_data = false;
-            });
-
-            $(document).on('click', '#outreach-synchro', function(){
-                synchro_result = true;
-                $('.alert').hide();
-                if(navigator.onLine) {
-                    $(".loader").show();
-                    synchronize_data(true);
-                    synchronized_data = true;
-                }else{
-                    $('#alert-connection').show();
-                }
-            });
-
-        });
-
-        function synchronize_data(showFeedback)
-        {
-            var store_p = getStoreByName('outreaches-p');
-            var request_p = store_p.getAll();
-            request_p.onsuccess = function() {
-                var result_p = request_p.result;
-                $(result_p).each(function(i, item){
-                    if(item.to_update == true) {
-                        patch_data_into_server(item);
-                    }
-                    $(".loader").hide();
-                });
-            };
-            $(".loader").hide();
-        }
-
-        function patch_data_into_server(item)
-        {
-            var itemid = item.id;
-            var data = item;
-            data.modified_by = user_id;
-            delete data.id;
-
-            if(data.post_exam_result_arabic) {
-                data.post_exam_result_arabic = data.post_exam_result_arabic.replace(",",".");
-            }
-            if(data.post_exam_result_language) {
-                data.post_exam_result_language = data.post_exam_result_language.replace(",",".");
-            }
-            if(data.post_exam_result_math) {
-                data.post_exam_result_math = data.post_exam_result_math.replace(",",".");
-            }
-            if(data.post_exam_result_science) {
-                data.post_exam_result_science = data.post_exam_result_science.replace(",",".");
-            }
-
-            $.ajax({
-                type: "PATCH",
-                url: synchro_path+itemid+'/',
-                data: data,
-                cache: false,
-                headers: getHeader(),
-                dataType: 'json',
-                success: function (response, result, jqXHR) {
-                    $('#line-'+itemid).removeClass('warning');
-                    $('#line-'+itemid).find('.synchro-status').removeClass('failed');
-
-                    $('#line-'+itemid).find('.synchro-status').addClass('success');
-                    $('#line-'+itemid).find('.outreach-field-p').removeClass('required');
-                    update_item_store(parseInt(itemid), 'to_update', false, 'outreaches-p');
-                },
-                error: function (response) {
-                    console.log(response);
-                    $('#line-'+itemid).addClass('warning');
-                    $('#line-'+itemid).find('.synchro-status').addClass('failed');
-                    var required_fields = JSON.parse(response.responseText);
-                    $.each(required_fields, function(field_name, field_msg){
-                        $('#line-'+itemid).find('#'+field_name).addClass('required');
-                    });
-                }
-            });
-        }
-
-        function createStores()
-        {
-            var request = indexedDB.open("bd_posttest", 3);
-
-            request.onupgradeneeded = function() {
-                // The database did not previously exist, so create object stores and indexes.
-                db = request.result;
-                var flag = false;
-                try {
-                    if(!db.objectStoreNames().contains('outreaches')) {
-                        flag = true;
-                    }
-                }catch(err) {
-                    flag = true;
-                }
-                if(flag){
-                    var store = db.createObjectStore("outreaches", {keyPath: "id", autoIncrement:true});
-                    db.createObjectStore("outreaches-p", {keyPath: "id", autoIncrement:true});
-
-                    var profile_store = db.createObjectStore("user", {keyPath: "id"});
-                    profile_store.put({id: user_id, username: user_username, email: user_email});
-                }
-            };
-
-            request.onsuccess = function() {
-                db = request.result;
-                $(".loader").show();
-                setTimeout(function(){
-                    $(".loader").hide();
-                }, 5000);
-            };
-        }
-
+        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
     </script>
-
 {% endblock %}

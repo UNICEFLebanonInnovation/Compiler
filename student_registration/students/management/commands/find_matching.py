@@ -9,4 +9,4 @@ class Command(BaseCommand):
     help = 'Find Students matching between Enrollment and Registrations'
 
     def handle(self, *args, **options):
-        find_matching()
+        pass

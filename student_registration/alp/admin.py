@@ -6,7 +6,7 @@ from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import *
-from .forms import OutreachForm
+from .forms import OutreachAdminForm
 from .models import (
     Outreach,
     ALPRound,
@@ -75,10 +75,6 @@ class OutreachResource(resources.ModelResource):
             'exam_result_science',
             'exam_total',
             'passed_pre',
-            # 'exam_corrector_arabic',
-            # 'exam_corrector_language',
-            # 'exam_corrector_math',
-            # 'exam_corrector_science',
             'assigned_to_level__name',
             'registered_in_level__name',
             'section__name',
@@ -88,10 +84,6 @@ class OutreachResource(resources.ModelResource):
             'post_exam_result_math',
             'post_exam_result_science',
             'post_exam_total',
-            # 'post_exam_corrector_arabic',
-            # 'post_exam_corrector_language',
-            # 'post_exam_corrector_math',
-            # 'post_exam_corrector_science',
             'referred_to',
             're_enrolled',
             'passed_post',
@@ -250,7 +242,7 @@ class OwnerFilter(admin.SimpleListFilter):
         human-readable name for the option that will appear
         in the right sidebar.
         """
-        return ((l.id, l.username) for l in User.objects.filter(groups__name__in=['PARTNER', 'SCHOOL', 'DIRECTOR', 'ALP_SCHOOL', 'ALP_DIRECTOR', 'CERD']))
+        return ((l.id, l.username) for l in User.objects.filter(groups__name__in=['PARTNER', 'SCHOOL', 'DIRECTOR', 'ALP_SCHOOL', 'ALP_DIRECTOR', 'TEST_MANAGER', 'CERD']))
 
     def queryset(self, request, queryset):
         """
@@ -279,7 +271,7 @@ class ModifiedByFilter(admin.SimpleListFilter):
         human-readable name for the option that will appear
         in the right sidebar.
         """
-        return ((l.id, l.username) for l in User.objects.filter(groups__name__in=['PARTNER', 'SCHOOL', 'DIRECTOR', 'ALP_SCHOOL', 'ALP_DIRECTOR', 'CERD']))
+        return ((l.id, l.username) for l in User.objects.filter(groups__name__in=['PARTNER', 'SCHOOL', 'DIRECTOR', 'ALP_SCHOOL', 'ALP_DIRECTOR', 'TEST_MANAGER', 'CERD']))
 
     def queryset(self, request, queryset):
         """
@@ -506,7 +498,7 @@ class PassedTestFilter(admin.SimpleListFilter):
         """
         if self.value() and self.value() == 'pre':
             pre_test_round = ALPRound.objects.get(current_pre_test=True)
-            not_schools = User.objects.filter(groups__name__in=['PARTNER', 'CERD'])
+            not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER', 'CERD'])
             return queryset.filter(
                 alp_round=pre_test_round,
                 owner__in=not_schools,
@@ -586,7 +578,7 @@ class ToAgeFilter(admin.SimpleListFilter):
 
 class OutreachAdmin(ImportExportModelAdmin):
     resource_class = OutreachResource
-    form = OutreachForm
+    form = OutreachAdminForm
     fieldsets = (
         (None, {
             'fields': ('student', 'school', 'owner', 'modified_by')
@@ -672,6 +664,10 @@ class OutreachAdmin(ImportExportModelAdmin):
         'owner__username',
         'modified_by__username',
     )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
     def get_queryset(self, request):
         qs = super(OutreachAdmin, self).get_queryset(request)
@@ -795,7 +791,7 @@ class PreTestAdmin(OutreachAdmin):
 
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_pre_test=True)
-        not_schools = User.objects.filter(groups__name__in=['PARTNER', 'CERD'])
+        not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER', 'CERD'])
         qs = super(PreTestAdmin, self).get_queryset(request)
         return qs.filter(
             alp_round=alp_round,
@@ -868,7 +864,6 @@ class CurrentRoundAdmin(OutreachAdmin):
 
     def get_queryset(self, request):
         alp_round = ALPRound.objects.filter(current_round=True)
-        print alp_round
         qs = super(CurrentRoundAdmin, self).get_queryset(request)
         return qs.filter(
             alp_round=alp_round,

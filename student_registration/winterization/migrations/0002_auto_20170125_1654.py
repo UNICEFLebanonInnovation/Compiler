@@ -15,22 +15,22 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='beneficiary',
             name='card_distributed',
-            field=models.CharField(blank=True, choices=[('Distributed', 'Distributed'), ('Not Distributed', 'Not Distributed')], max_length=45L, null=True),
+            field=models.CharField(blank=True, choices=[('Distributed', 'Distributed'), ('Not Distributed', 'Not Distributed')], max_length=45, null=True),
         ),
         migrations.AlterField(
             model_name='beneficiary',
             name='card_loaded',
-            field=models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No')], max_length=45L, null=True),
+            field=models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No')], max_length=45, null=True),
         ),
         migrations.AlterField(
             model_name='beneficiary',
             name='location_type',
-            field=models.CharField(blank=True, choices=[('CS', 'CS'), ('IS', 'IS')], max_length=45L, null=True),
+            field=models.CharField(blank=True, choices=[('CS', 'CS'), ('IS', 'IS')], max_length=45, null=True),
         ),
         migrations.AlterField(
             model_name='beneficiary',
             name='registration_status',
-            field=models.CharField(blank=True, choices=[('Registered', 'Registered'), ('Recorded', 'Recorded'), ('Unregistered', 'Unregistered')], max_length=45L, null=True),
+            field=models.CharField(blank=True, choices=[('Registered', 'Registered'), ('Recorded', 'Recorded'), ('Unregistered', 'Unregistered')], max_length=45, null=True),
         ),
         migrations.AlterField(
             model_name='beneficiary',

@@ -6,9 +6,9 @@ from . import views
 
 urlpatterns = [
     url(
-        regex=r'^registrations-pilot/$',
-        view=views.RegistrationsPilotView.as_view(),
-        name='registrations-pilot'
+        regex=r'^exporter/$',
+        view=views.ExporterView.as_view(),
+        name='exporter'
     ),
     url(
         regex=r'^registrations-2ndshift/$',
@@ -44,10 +44,5 @@ urlpatterns = [
         regex=r'^registrations-alp-post-test/$',
         view=views.RegistrationsALPPostTestView.as_view(),
         name='registrations-alp-post-test'
-    ),
-    url(
-        regex=r'^attendances/$',
-        view=views.AttendanceView.as_view(),
-        name='attendances'
     ),
 ]

@@ -1,15 +1,19 @@
 from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
+from django.conf import settings
+from django.utils.translation import ugettext as _
+from django.contrib.postgres.fields import JSONField, ArrayField
+
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-from django.utils.translation import ugettext as _
-from django.conf import settings
+
 from student_registration.students.models import (
     Student,
 )
 from student_registration.schools.models import (
     School,
+    Section,
     ClassRoom,
     EducationLevel,
 )
@@ -17,16 +21,24 @@ from student_registration.schools.models import (
 
 class Attendance(TimeStampedModel):
 
-    REASON = Choices(
+    ABSENCE_REASON = Choices(
         ('sick', _('Sick')),
-        ('no_reason', _('No reason')),
         ('no_transport', _('No transport')),
-        ('other', _('Other')),
+        ('other', _('Other reason')),
     )
+
+    CLOSE_REASON = Choices(
+        ('public_holiday', _('Public Holiday')),
+        ('school_holiday', _('School Holiday')),
+        ('strike', _('Strike')),
+        ('weekly_holiday', _('Weekly Holiday')),
+    )
+
+    DEFAULT_ATTENDANCE_RANGE = 10
 
     student = models.ForeignKey(
         Student,
-        blank=False, null=True,
+        blank=True, null=True,
         related_name='attendances',
     )
     school = models.ForeignKey(
@@ -41,6 +53,11 @@ class Attendance(TimeStampedModel):
     )
     classlevel = models.ForeignKey(
         EducationLevel,
+        blank=True, null=True,
+        related_name='+'
+    )
+    section = models.ForeignKey(
+        Section,
         blank=True, null=True,
         related_name='+'
     )
@@ -62,8 +79,28 @@ class Attendance(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        choices=REASON
+        choices=ABSENCE_REASON
     )
+    close_reason = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=CLOSE_REASON
+    )
+
+    students = JSONField(blank=True, null=True)
+
+    total_enrolled = models.IntegerField(blank=True, null=True)
+    total_attended = models.IntegerField(blank=True, null=True)
+    total_absences = models.IntegerField(blank=True, null=True)
+    total_attended_male = models.IntegerField(blank=True, null=True)
+    total_attended_female = models.IntegerField(blank=True, null=True)
+    total_absent_male = models.IntegerField(blank=True, null=True)
+    total_absent_female = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        # ordering = ['attendance_date']
+        verbose_name = "Attendances by School by Day"
 
     @property
     def student_fullname(self):
@@ -76,7 +113,30 @@ class Attendance(TimeStampedModel):
         return self.student.sex
 
     def __unicode__(self):
-        return self.student_fullname
+        return self.school.__unicode__()
+
+    def save(self, **kwargs):
+        """
+        """
+        if self.students:
+            self.total_attended = 0
+            self.total_absences = 0
+            self.total_attended_male = 0
+            self.total_attended_female = 0
+            self.total_absent_male = 0
+            self.total_absent_female = 0
+            for level_section in self.students:
+                self.total_attended += self.students[level_section]['total_attended']
+                self.total_absences += self.students[level_section]['total_absences']
+                self.total_attended_male += self.students[level_section]['total_attended_male']
+                self.total_attended_female += self.students[level_section]['total_attended_female']
+                self.total_absent_male += self.students[level_section]['total_absent_male']
+                self.total_absent_female += self.students[level_section]['total_absent_female']
+
+        if self.close_reason:
+            self.students = {}
+
+        super(Attendance, self).save(**kwargs)
 
 
 class BySchoolByDay(models.Model):
@@ -111,6 +171,7 @@ class Absentee(TimeStampedModel):
     last_attendance_date = models.DateField(blank=True, null=True)
     last_absent_date = models.DateField(blank=True, null=True)
     absent_days = models.IntegerField(blank=True, null=True)
+    attended_days = models.IntegerField(blank=True, null=True)
     reattend_date = models.DateField(blank=True, null=True)
     validation_status = models.BooleanField(default=False)
     dropout_status = models.NullBooleanField(default=False)

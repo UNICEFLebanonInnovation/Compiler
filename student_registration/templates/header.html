@@ -2,178 +2,114 @@
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
 
-    <div class="m-b">
-      <nav class="navbar navbar-dark navbar-static-top bg-inverse">
-        <div class="container">
-          <a class="navbar-brand" href="/?ln={{ LANGUAGE_CODE }}">
-                <img src="{% static 'images/logo.png' %}" style="float: left; width: 30px; height: 30px; margin-right: 10px;" />
-              {% if request.user.is_authenticated %}
-                {% if request.user|has_group:"ALP" %}{% trans "Compiler" %} 1.1{% else %}{% trans "Pilot" %} 1.7{% endif %}
-              {% else %}
-                  {% trans "Compiler" %} 1.1
-              {% endif %}
-          </a>
-          <button type="button" class="navbar-toggler hidden-sm-up pull-xs-right" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
-            &#9776;
-          </button>
-
-          <!-- Collect the nav links, forms, and other content for toggling -->
-          <div class="collapse navbar-toggleable-xs" id="bs-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-               {% if request.user.is_staff %}
+<nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand mr-15" href="/">
+{#        <img src="{% static 'images/logo-mdb2.png' %}" style="float: left; width: 130px; height: 50px;" class="mr-10" />#}
+        <img src="{% static 'images/logo.png' %}" style="float: left; width: 30px; height: 30px;" class="mr-10" />
+          {% trans "Compiler" %} 2.0
+  </a>
+  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+  {% if request.user.is_authenticated %}
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        {% if request.user.is_superuser %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
+          </li>
+        {% endif %}
+        {% if request.user|has_group:"CLM" %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'clm:index' %}">{% trans "CLM tools" %}</a>
+        </li>
+{#            #}
+{#        <li class="nav-item dropdown">#}
+{#            <a class="nav-link dropdown-toggle" href="{% url 'clm:index' %}" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "CLM tools" %}</a>#}
+{#            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">#}
+{#              <a class="dropdown-item" href="#">Action</a>#}
+{#              <a class="dropdown-item" href="#">Another action</a>#}
+{#              <a class="dropdown-item" href="#">Something else here</a>#}
+{#            </div>#}
+{#        </li>#}
+        {% endif %}
+        {% if request.user|has_group:"SCHOOL" or request.user|has_group:"DIRECTOR" %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
+                <a class="nav-link" href="{% url 'enrollments:list' %}">{% trans "2nd shift Registration" %}</a>
               </li>
-                {% endif %}
-                {% if request.user.is_authenticated %}
-                    {% if request.user|has_group:"ALP_OUTREACH" %}
-                        {% if request.user|has_group:"CERD" %}
-                            <li class="nav-item">
-                                <a class="nav-link {% if request|is_current_page:"alp_post_test" %}active{% endif %}" href="{% url 'alp:alp_post_test' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "ALP Post Test" %}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {% if request|is_current_page:"alp_pre_test" %}active{% endif %}" href="{% url 'alp:alp_pre_test' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "ALP Pre Test" %}</a>
-                            </li>
-                        {% endif %}
-                        {% if request.user|has_group:"PARTNER" %}
-                              <li class="nav-item">
-                                <a class="nav-link {% if request|is_current_page:"alp_outreach" %}active{% endif %}" href="{% url 'alp:alp_outreach' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data collecting" %}</a>
-                              </li>
-                        {% endif %}
-                        {% if request.user|has_group:"ALP_SCHOOL" %}
-                              <li class="nav-item">
-                                  <a class="nav-link {% if request|is_current_page:"alp_registrations" %}active{% endif %}" href="{% url 'alp:alp_registrations' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "ALP Registrations" %}</a>
-                              </li>
-{#                              <li class="nav-item">#}
-{#                                <a class="nav-link {% if request|is_current_page:"alp_data_collecting" %}active{% endif %}" href="{% url 'alp:alp_data_collecting' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "ALP Registrations" %}</a>#}
-{#                              </li>#}
-                        {% endif %}
-                        {% if request.user|has_group:"ALP_MEHE" %}
-                  <li class="nav-item">
-                    <a class="nav-link {% if request|is_current_page:"alp_data_view" %}active{% endif %}" href="{% url 'alp:alp_data_view' %}?ln={{ LANGUAGE_CODE }}">{% trans "ALP data collecting" %}</a>
-                  </li>
-                        {% endif %}
-                    {% endif %}
-                {% if request.user|has_group:"SCHOOL" or request.user|has_group:"DIRECTOR" %}
-                    {% if request.user|has_group:"ENROL_CREATE" %}
-                      <li class="nav-item">
-                        <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "Registration" %}</a>
-                      </li>
-{#                    {% elif request.user|has_group:"ENROL_EDIT" %}#}
-{#                      <li class="nav-item">#}
-{#                        <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment_edit' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "Registration editing" %}</a>#}
-{#                      </li>#}
-                    {% else %}
-                      <li class="nav-item">
-                        <a class="nav-link {% if request|is_current_page:"enrollment" %}active{% endif %}" href="{% url 'enrollments:enrollment_patch' %}?ln={{ LANGUAGE_CODE }}-1">{% trans "Registration editing" %}</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="{% url 'enrollments:enrollment_grading' %}?ln={{ LANGUAGE_CODE }}">{% trans "Edit grading" %}</a>
-                      </li>
-                    {% endif %}
-                {% endif %}
-                {% if request.user|has_group:"PMU" %}
-                  <li class="nav-item">
-                    <a class="nav-link {% if request|is_current_page:"enrollment_view" %}active{% endif %}" href="{% url 'enrollments:enrollment_view' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
-                  </li>
-                {% endif %}
-                    {% if request.user|has_group:"ATTENDANCE" %}
-                      <li class="nav-item">
-                        <a class="nav-link {% if request|is_current_page:"attendance" %}active{% endif %}" href="{% url 'attendances:attendance' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance" %}</a>
-                      </li>
-                    {% endif %}
-                    {% if request.user|has_group:"HH_UPDATE" %}
-                        <li class="nav-item">
-                            <a class="nav-link {% if request|is_current_page:"registry_search" %}active{% endif %}" href="{% url 'registrations:registry_search' %}?ln={{ LANGUAGE_CODE }}">{% trans "Updates and Complaints" %}</a>
-                        </li>
-                    {% endif %}
-                    {% if request.user|has_group:"COMPLAINTS" %}
-                        <li class="nav-item">
-                            <a class="nav-link {% if request|is_current_page:"complaints_search" %}active{% endif %}" href="{% url 'registrations:complaints_search' %}?ln={{ LANGUAGE_CODE }}">{% trans "Updates and Complaints Approval Layer" %}</a>
-                        </li>
-                    {% endif %}
-                {% if request.user|has_group:"PILOT" %}
-                <li class="nav-item">
-                    <a class="nav-link {% if request|is_current_page:"registering_pilot" %}active{% endif %}" href="{% url 'registrations:registering_pilot' %}?ln={{ LANGUAGE_CODE }}">{% trans "Registration" %}</a>
-                  </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if request|is_current_page:"waiting_list" %}active{% endif %}" href="{% url 'registrations:waiting_list' %}?ln={{ LANGUAGE_CODE }}">{% trans "Waiting List" %}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if request|is_current_page:"class_assignment" %}active{% endif %}" href="{% url 'registrations:class_assignment' %}?ln={{ LANGUAGE_CODE }}">{% trans "Class Assignments" %}</a>
-                </li>
-
-                    {% if request.user|has_group:"SCHOOL_MODIFY" %}
-                        <li class="nav-item">
-                            <a class="nav-link {% if request|is_current_page:"list_school_modification" %}active{% endif %}" href="{% url 'registrations:list_school_modification' %}?ln={{ LANGUAGE_CODE }}">{% trans "Modify School" %}</a>
-                        </li>
-                    {% endif %}
-                {% endif %}
-                {% if request.user.is_superuser %}
-                <li class="dropdown nav-item">
-                  <a class="nav-link dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" role="button">
-                      {% trans "Dashboard" %}
-                  </a>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                      <li><a class="nav-link" href="{% url 'dashboard:registrations-pilot' %}">{% trans "PILOT" %}</a></li>
-                      <li role="separator" class="divider"></li>
-                      <li><a class="nav-link" href="{% url 'dashboard:registrations-2ndshift' %}">{% trans "2nd Shift" %}</a></li>
-                      <li role="separator" class="divider"></li>
-                      <li><a class="nav-link" href="{% url 'dashboard:registrations-alp' %}">{% trans "ALP" %}</a></li>
-{#                      <li role="separator" class="divider"></li>#}
-{#                      <li><a href="{% url 'dashboard:attendances' %}?ln={{ LANGUAGE_CODE }}">{% trans "Attendance dashboard" %}</a></li>#}
-                  </ul>
-                </li>
-                {% endif %}
-            {% endif %}
-              {% if request.user|has_group:"HH_VISIT" %}
-{#              <i class="nav-item">#}
-{#                <a class="nav-link {% if request|is_current_page:"household_visit" %}active{% endif %}" href="{% url 'hhvisit:household_visit' %}?ln={{ LANGUAGE_CODE }}">{% trans "Household Visit" %}</a>#}
-{#              </li>#}
+        {% endif %}
+        {% if request.user|has_group:"TEST_MANAGER" %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'alp:post_test' %}">{% trans "ALP Post-Test" %}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'alp:pre_test' %}">{% trans "ALP Pre-Test" %}</a>
+            </li>
+        {% endif %}
+        {% if request.user|has_group:"PARTNER" %}
               <li class="nav-item">
-                <a class="nav-link {% if request|is_current_page:"household_visit_list" %}active{% endif %}" href="{% url 'hhvisit:household_visit_list' %}?ln={{ LANGUAGE_CODE }}">{% trans "Household Visit" %}</a>
+                <a class="nav-link" href="{% url 'alp:outreach' %}">{% trans "ALP data collecting" %}</a>
               </li>
-            {% endif %}
-            {% if request.user|has_group:"HH_SUPERVISOR" %}
+        {% endif %}
+        {% if request.user|has_group:"ALP_SCHOOL" %}
               <li class="nav-item">
-                <a class="nav-link {% if request|is_current_page:"household_visit_list_supervisor" %}active{% endif %}" href="{% url 'hhvisit:household_visit_list_supervisor' %}?ln={{ LANGUAGE_CODE }}">{% trans "Household Visit Assignment" %}</a>
+                  <a class="nav-link" href="{% url 'alp:list' %}">{% trans "ALP Registrations" %}</a>
               </li>
-              {% endif %}
-            </ul>
+        {% endif %}
+        {% if request.user|has_group:"ATTENDANCE" %}
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'attendances:attendance' %}">{% trans "Attendance" %}</a>
+              </li>
+        {% endif %}
+        {% if request.user|has_group:"SCHOOL" or request.user|has_group:"ALP_SCHOOL" %}
+              <li class="nav-item">
+                  <a class="nav-link" href="/helpdesk/tickets/submit/">{% trans "Helpdesk" %}</a>
+              </li>
+        {% endif %}
+    </ul>
+  {% endif %}
 
-            <ul class="nav navbar-nav pull-xs-right">
-              {% if request.user.is_authenticated %}
-{#                <li class="nav-item">#}
-{#                  <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>#}
-{#                </li>#}
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'change_password' %}">{% trans "Change password" %}</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>
-                </li>
-                  <li class="nav-item">
-                    <a href="{% url 'users:set_language' 'en-us' %}" class="nav-link{% if LANGUAGE_CODE == 'en-us' %} active{% endif %}">
-                        {% trans 'English' %}
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="{% url 'users:set_language' 'ar-ar' %}" class="nav-link{% if LANGUAGE_CODE == 'ar-ar' %} active{% endif %}">
-                        {% trans 'Arabic' %}
-                    </a>
-                  </li>
+    <ul class="navbar-nav pull-xs-right">
+      {% if request.user.is_authenticated %}
+        {% if request.user|has_group:"CLM" %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'schools:partner' %}">{% trans "Partner Profile" %}</a>
+        </li>
+        {% endif %}
+        {% if request.user|has_group:"SCHOOL" or request.user|has_group:"ALP_SCHOOL" %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'schools:profile' %}">{% trans "School Profile" %}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'schools:documents' %}">{% trans "Public documents" %}</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+{#          <a class="nav-link" href="{% url 'change_password' %}">{% trans "Change password" %}</a>#}
+          <a class="nav-link" href="{% url 'account_change_password' %}">{% trans "Change password" %}</a>
+        </li>
+        <li class="nav-item">
+{#          <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Logout" %}</a>#}
+        </li>
+          {% if request.user.is_superuser %}
+          <li class="nav-item">
+            <a href="{% url 'users:set_language' 'en-us' %}" class="nav-link{% if LANGUAGE_CODE == 'en-us' %} active{% endif %}">
+                {% trans 'English' %}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'users:set_language' 'ar-ar' %}" class="nav-link{% if LANGUAGE_CODE == 'ar-ar' %} active{% endif %}">
+                {% trans 'Arabic' %}
+            </a>
+          </li>
+        {% endif %}
 
-              {% else %}
-{#                <li class="nav-item">#}
-{#                  <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>#}
-{#                </li>#}
-                <li class="nav-item">
-                  <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Log In" %}</a>
-                </li>
-              {% endif %}
-                {% block header %}{% endblock %}
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </div>
+      {% else %}
+        <li class="nav-item">
+          <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Log In" %}</a>
+        </li>
+      {% endif %}
+        {% block header %}{% endblock %}
+    </ul>
+  </div>
+</nav>

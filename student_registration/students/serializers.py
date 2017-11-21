@@ -11,7 +11,10 @@ class StudentSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(read_only=True)
     number = serializers.CharField(read_only=True)
+    birthday = serializers.CharField(read_only=True)
+    place_of_birth = serializers.CharField(required=False)
     registration = OutreachSerializer(source='last_alp_registration', read_only=True)
+    enrollment = EnrollmentSerializer(source='last_enrollment', read_only=True)
 
     alp_registrations = OutreachSerializer(read_only=True, many=True)
     secondshift_registrations = EnrollmentSerializer(read_only=True, many=True)
@@ -37,22 +40,28 @@ class StudentSerializer(serializers.ModelSerializer):
             'first_name',
             'father_name',
             'last_name',
+            'full_name',
             'mother_fullname',
             'sex',
             'age',
             'birthday_year',
             'birthday_month',
             'birthday_day',
+            'place_of_birth',
+            'birthday',
             'phone',
             'phone_prefix',
             'id_number',
             'id_type',
+            'registered_in_unhcr',
             'nationality',
             'mother_nationality',
+            'family_status',
             'address',
             'number',
             'hh_barcode',
             'registration',
+            'enrollment',
             'alp_registrations',
             'secondshift_registrations',
             'current_alp_registration',

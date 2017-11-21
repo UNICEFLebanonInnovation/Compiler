@@ -2,6 +2,8 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.db import models
 from model_utils import Choices
+from model_utils.models import TimeStampedModel
+
 from django.utils.translation import ugettext as _
 from django.contrib.gis.db import models
 from student_registration.locations.models import Location
@@ -9,19 +11,126 @@ from student_registration.locations.models import Location
 
 class School(models.Model):
 
-    name = models.CharField(max_length=555L)
-    number = models.CharField(max_length=45L, unique=True)
-    is_2nd_shift = models.BooleanField(blank=True, default=False)
-    number_students_2nd_shift = models.IntegerField(blank=True, null=True)
-    is_alp = models.BooleanField(blank=True, default=False)
-    number_students_alp = models.IntegerField(blank=True, null=True)
-
+    name = models.CharField(
+        max_length=255,
+        verbose_name=_('School name')
+    )
+    number = models.CharField(
+        max_length=45,
+        unique=True,
+        verbose_name=_('CERD')
+    )
+    director_name = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School director name')
+    )
+    director_phone_number = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School director cell phone')
+    )
+    land_phone_number = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School land phone number')
+    )
+    fax_number = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School fax number')
+    )
+    email = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School email')
+    )
+    certified_foreign_language = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        choices=Choices(
+            ('French', _('French')),
+            ('English', _('English')),
+            ('French & English', _('French & English'))
+        ),
+        verbose_name=_('Certified foreign language')
+    )
+    comments = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Comments')
+    )
+    weekend = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        choices=Choices(
+            ('Friday', _('Friday')),
+            ('Saturday', _('Saturday')),
+        ),
+        verbose_name=_('School weekends')
+    )
+    it_name = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School IT name')
+    )
+    it_phone_number = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('School IT phone number')
+    )
+    field_coordinator_name = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        verbose_name=_('Field coordinator name')
+    )
+    is_2nd_shift = models.BooleanField(
+        blank=True,
+        default=False,
+        verbose_name=_('School is 2nd shift?')
+    )
+    number_students_2nd_shift = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of students in 2nd shift')
+    )
+    is_alp = models.BooleanField(
+        blank=True,
+        default=False,
+        verbose_name=_('School is ALP?')
+    )
+    number_students_alp = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of students in ALP')
+    )
+    attendance_range = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Attendance day range')
+    )
+    attendance_from_beginning = models.BooleanField(
+        blank=True,
+        default=False,
+        verbose_name=_('Start attendance from the beginning')
+    )
+    academic_year_start = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('School year start date')
+    )
+    academic_year_end = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('School year end date')
+    )
+    academic_year_exam_end = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Exam end date')
+    )
     location = models.ForeignKey(
         Location,
         blank=False, null=True,
+        verbose_name=_('School location'),
         related_name='+',
     )
-    in_use = models.BooleanField(blank=True, default=False)
 
     class Meta:
         ordering = ['number']
@@ -38,26 +147,31 @@ class School(models.Model):
             return self.location.parent.name
         return ''
 
+    @property
+    def total_registered(self):
+        from student_registration.enrollments.models import Enrollment
+        return Enrollment.objects.filter(
+            education_year__current_year=True,
+            school_id=self.id
+        ).count()
+
+    @property
+    def have_academic_year_dates(self):
+        if not self.academic_year_start \
+           or not self.academic_year_end \
+           or not self.academic_year_exam_end:
+            return False
+        return True
+
     def __unicode__(self):
-        # return self.name
         return u'{} - {}'.format(
             self.name,
             self.number
         )
 
 
-class Course(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
 class EducationLevel(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
+    name = models.CharField(max_length=45, unique=True)
     note = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -69,7 +183,7 @@ class EducationLevel(models.Model):
 
 
 class ClassLevel(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
+    name = models.CharField(max_length=45, unique=True)
 
     class Meta:
         ordering = ['id']
@@ -79,15 +193,8 @@ class ClassLevel(models.Model):
         return self.name
 
 
-class Grade(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
-
-    def __unicode__(self):
-        return self.name
-
-
 class Section(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
+    name = models.CharField(max_length=45, unique=True)
 
     class Meta:
         ordering = ['id']
@@ -97,22 +204,7 @@ class Section(models.Model):
 
 
 class ClassRoom(models.Model):
-    name = models.CharField(max_length=45L, unique=True)
-    school = models.ForeignKey(
-        School,
-        blank=True, null=True,
-        related_name='+',
-    )
-    grade = models.ForeignKey(
-        Grade,
-        blank=True, null=True,
-        related_name='+',
-    )
-    section = models.ForeignKey(
-        Section,
-        blank=True, null=True,
-        related_name='+',
-    )
+    name = models.CharField(max_length=45, unique=True)
 
     class Meta:
         ordering = ['id']
@@ -122,8 +214,39 @@ class ClassRoom(models.Model):
         return self.name
 
 
+class CLMRound(models.Model):
+    name = models.CharField(max_length=45, unique=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "CLM Round"
+
+    def __unicode__(self):
+        return self.name
+
+
 class PartnerOrganization(models.Model):
-    name = models.CharField(max_length=100L, unique=True)
+
+    name = models.CharField(max_length=100, unique=True)
+
+    bln_round = models.ForeignKey(
+        CLMRound,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('BLN current round')
+    )
+    rs_round = models.ForeignKey(
+        CLMRound,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('RS current round')
+    )
+    cbece_round = models.ForeignKey(
+        CLMRound,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('CB-ECE current round')
+    )
 
     class Meta:
         ordering = ['name']
@@ -160,7 +283,7 @@ class ALPReferMatrix(models.Model):
 
 
 class EducationYear(models.Model):
-    name = models.CharField(max_length=100L, unique=True)
+    name = models.CharField(max_length=100, unique=True)
     current_year = models.BooleanField(blank=True, default=False)
 
     class Meta:
@@ -195,3 +318,38 @@ class ALPAssignmentMatrix(models.Model):
 
     def __unicode__(self):
         return str(self.id)
+
+
+class EducationalLevel(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.name
+
+
+class Holiday(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.name
+
+
+class PublicDocument(TimeStampedModel):
+
+    name = models.CharField(max_length=100)
+    overview = models.TextField(blank=True, null=True)
+    file_url = models.URLField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['created']
+
+    def __unicode__(self):
+        return self.name

@@ -9,24 +9,27 @@ from import_export.admin import ImportExportModelAdmin
 
 from .models import (
     School,
-    Course,
     EducationLevel,
     ClassLevel,
-    Grade,
     Section,
     ClassRoom,
     PartnerOrganization,
     ALPReferMatrix,
     EducationYear,
     ALPAssignmentMatrix,
+    EducationalLevel,
+    Holiday,
+    CLMRound,
+    PublicDocument
 )
 from student_registration.locations.models import Location
 from student_registration.attendances.tasks import set_app_attendances
 
 
 class SchoolResource(resources.ModelResource):
-    locationKazaa = fields.Field(column_name='District')
-    locationGov = fields.Field(column_name='Governorate')
+    district = fields.Field(column_name='District')
+    governorate = fields.Field(column_name='Governorate')
+    total_registered = fields.Field(column_name='Total registered')
 
     class Meta:
         model = School
@@ -34,21 +37,44 @@ class SchoolResource(resources.ModelResource):
             'id',
             'name',
             'number',
-            'location',
-            'locationGov',
-            'locationKazaa'
+            'district',
+            'governorate',
+            'director_name',
+            'land_phone_number',
+            'fax_number',
+            'director_phone_number',
+            'email',
+            'certified_foreign_language',
+            'comments',
+            'weekend',
+            'it_name',
+            'it_phone_number',
+            'field_coordinator_name',
+            'total_registered',
+            'academic_year_start',
+            'academic_year_end',
+            'academic_year_exam_end',
+            'attendance_range',
+            'attendance_from_beginning',
+            'is_alp',
+            'number_students_alp',
+            'is_2nd_shift',
+            'number_students_2nd_shift',
         )
-        export_order = ('id', 'name', 'number', 'location', 'locationGov', 'locationKazaa')
+        export_order = fields
 
-    def dehydrate_locationKazaa(self, school):
-        if school.location:
-            return school.location.name
+    def dehydrate_district(self, obj):
+        if obj.location:
+            return obj.location.name
         return ''
 
-    def dehydrate_locationGov(self, school):
-        if school.location and school.location.parent:
-            return school.location.parent.name
+    def dehydrate_governorate(self, obj):
+        if obj.location and obj.location.parent:
+            return obj.location.parent.name
         return ''
+
+    def dehydrate_total_registered(self, obj):
+        return obj.total_registered
 
 
 class GovernorateFilter(admin.SimpleListFilter):
@@ -120,6 +146,32 @@ class SchoolTypeFilter(admin.SimpleListFilter):
 
 class SchoolAdmin(ImportExportModelAdmin):
     resource_class = SchoolResource
+
+    fields = (
+        'name',
+        'number',
+        'attendance_range',
+        'attendance_from_beginning',
+        'is_alp',
+        'number_students_alp',
+        'is_2nd_shift',
+        'number_students_2nd_shift',
+        'location',
+        'director_name',
+        'land_phone_number',
+        'fax_number',
+        'director_phone_number',
+        'email',
+        'certified_foreign_language',
+        'comments',
+        'weekend',
+        'it_name',
+        'it_phone_number',
+        'field_coordinator_name',
+        'academic_year_start',
+        'academic_year_end',
+        'academic_year_exam_end',
+    )
     list_display = (
         'name',
         'number',
@@ -128,6 +180,8 @@ class SchoolAdmin(ImportExportModelAdmin):
         'number_students_2nd_shift',
         'is_alp',
         'number_students_alp',
+        'attendance_range',
+        'attendance_from_beginning',
     )
     search_fields = (
         'name',
@@ -137,10 +191,19 @@ class SchoolAdmin(ImportExportModelAdmin):
         SchoolTypeFilter,
         GovernorateFilter,
         'location',
+        'attendance_range',
+        'attendance_from_beginning',
+        'is_alp',
+        'is_2nd_shift',
+        'weekend',
     )
+    date_hierarchy = 'academic_year_start'
 
     actions = ('push_attendances_2ndshift', 'push_attendances_2ndshift_delay',
-               'push_attendances_alp', 'push_attendances_alp_delay',)
+               'push_attendances_alp', 'push_attendances_alp_delay',
+               'open_attendance_90_days', 'open_attendance_60_days',
+               'open_attendance_30_days', 'open_attendance_20_days',
+               'open_attendance_10_days', )
 
     def push_attendances_2ndshift(self, request, queryset):
         for school in queryset:
@@ -158,6 +221,25 @@ class SchoolAdmin(ImportExportModelAdmin):
         for school in queryset:
             set_app_attendances.delay(school_number=school.number, school_type='alp')
 
+    def open_attendance_90_days(self, request, queryset):
+        queryset.update(attendance_range=90)
+
+    def open_attendance_60_days(self, request, queryset):
+        queryset.update(attendance_range=60)
+
+    def open_attendance_30_days(self, request, queryset):
+        queryset.update(attendance_range=30)
+
+    def open_attendance_20_days(self, request, queryset):
+        queryset.update(attendance_range=20)
+
+    def open_attendance_10_days(self, request, queryset):
+        queryset.update(attendance_range=10)
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class EducationLevelResource(resources.ModelResource):
     class Meta:
@@ -173,6 +255,10 @@ class EducationLevelResource(resources.ModelResource):
 class EducationLevelAdmin(ImportExportModelAdmin):
     resource_class = EducationLevelResource
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class ClassLevelResource(resources.ModelResource):
     class Meta:
@@ -186,20 +272,9 @@ class ClassLevelResource(resources.ModelResource):
 
 class ClassLevelAdmin(ImportExportModelAdmin):
     resource_class = ClassLevelResource
-
-
-class GradeResource(resources.ModelResource):
-    class Meta:
-        model = Grade
-        fields = (
-            'id',
-            'name'
-        )
-        export_order = ('name',)
-
-
-class GradeAdmin(ImportExportModelAdmin):
-    resource_class = GradeResource
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 class SectionResource(resources.ModelResource):
@@ -214,6 +289,10 @@ class SectionResource(resources.ModelResource):
 
 class SectionAdmin(ImportExportModelAdmin):
     resource_class = SectionResource
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 class ClassRoomResource(resources.ModelResource):
@@ -233,6 +312,10 @@ class ClassRoomAdmin(ImportExportModelAdmin):
     )
     list_display = fields
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class PartnerOrganizationResource(resources.ModelResource):
     class Meta:
@@ -247,6 +330,10 @@ class PartnerOrganizationResource(resources.ModelResource):
 class PartnerOrganizationAdmin(ImportExportModelAdmin):
     resource_class = PartnerOrganizationResource
     search_fields = ('name', )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 class ALPReferMatrixResource(resources.ModelResource):
@@ -264,6 +351,10 @@ class ALPReferMatrixAdmin(ImportExportModelAdmin):
         'success_grade',
     )
     list_display = fields
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 class ALPAssignmentMatrixResource(resources.ModelResource):
@@ -285,17 +376,42 @@ class ALPAssignmentMatrixAdmin(ImportExportModelAdmin):
         'refer_to',
     )
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
+
+class PublicDocumentResource(resources.ModelResource):
+    class Meta:
+        model = PublicDocument
+
+
+class PublicDocumentAdmin(ImportExportModelAdmin):
+    resource_class = PublicDocumentResource
+    list_display = (
+        'name',
+        'file_url',
+        'created',
+        'modified'
+    )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 admin.site.register(School, SchoolAdmin)
-# admin.site.register(Course)
 admin.site.register(EducationLevel, EducationLevelAdmin)
 admin.site.register(ClassLevel, ClassLevelAdmin)
-# admin.site.register(Grade, GradeAdmin)
 admin.site.register(Section, SectionAdmin)
 admin.site.register(ClassRoom, ClassRoomAdmin)
 admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
 admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
 admin.site.register(EducationYear)
+# admin.site.register(Holiday)
+admin.site.register(CLMRound)
+admin.site.register(PublicDocument, PublicDocumentAdmin)
+admin.site.register(EducationalLevel)
 admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
 
 

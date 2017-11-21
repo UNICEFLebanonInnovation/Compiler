@@ -15,7 +15,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('schools', '0003_auto_20161021_1045'),
-        ('registrations', '0039_auto_20161021_1452'),
         ('locations', '0002_auto_20161002_2337'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('students', '0013_student_phone_prefix'),
@@ -45,12 +44,12 @@ class Migration(migrations.Migration):
                 ('classroom', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.ClassRoom')),
                 ('enrolled_last_year_location', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='locations.Location')),
                 ('enrolled_last_year_school', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.School')),
-                ('grade', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.Grade')),
+                # ('grade', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.Grade')),
                 ('last_education_level', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.ClassRoom')),
                 ('last_informal_edu_final_result', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='schools.ClassLevel')),
                 ('last_informal_edu_level', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.EducationLevel')),
                 ('owner', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('registering_adult', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='registrations.RegisteringAdult')),
+                # ('registering_adult', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='registrations.RegisteringAdult')),
                 ('school', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.School')),
                 ('section', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.Section')),
                 ('student', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='students.Student')),

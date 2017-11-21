@@ -19,6 +19,7 @@ class LocationResource(resources.ModelResource):
             'id',
             'name',
             'type',
+            'parent',
             'latitude',
             'longitude',
             'p_code'
@@ -31,6 +32,11 @@ class LocationAdmin(ImportExportModelAdmin):
     list_display = (
         'name', 'parent'
     )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 admin.site.register(Location, LocationAdmin)
 admin.site.register(LocationType)
