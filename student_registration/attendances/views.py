@@ -130,7 +130,6 @@ class AttendanceView(LoginRequiredMixin,
             attendance = Attendance.objects.get(
                 school_id=school.id,
                 attendance_date=selected_date
-                # attendance_date=datetime.datetime.strptime(selected_date, date_format)
             )
         except Attendance.DoesNotExist:
             attendance = ''
@@ -142,7 +141,7 @@ class AttendanceView(LoginRequiredMixin,
             section = Section.objects.get(id=int(self.request.GET.get('section', 0)))
 
         education_year = EducationYear.objects.get(current_year=True)
-        queryset = Enrollment.objects.filter(school_id=school, education_year=education_year)
+        queryset = Enrollment.objects.exclude(moved=True).filter(school_id=school, education_year=education_year)
         registrations = queryset.filter(
             classroom__isnull=False,
             section__isnull=False
@@ -165,15 +164,17 @@ class AttendanceView(LoginRequiredMixin,
             attendance_taken = False
             level_section = '{}-{}'.format(registry['classroom_id'], registry['section_id'])
             attendances = attendance.students[level_section] if attendance and attendance.students and level_section in attendance.students else ''
-            total = queryset.filter(classroom_id=registry['classroom_id'], section_id=registry['section_id']).count()
+            total = queryset.filter(classroom_id=registry['classroom_id'],
+                                    section_id=registry['section_id'],
+                                    registration_date__lte=selected_date).count()
 
             if attendances:
                 attendance_taken = True
                 total = attendances['total_enrolled']
                 total_attended = attendances['total_attended']
                 total_absences = attendances['total_absences']
-                exam_day = attendances['exam_day']
-                not_attending = attendances['not_attending']
+                exam_day = attendances['exam_day'] if 'exam_day' in attendances else False
+                not_attending = attendances['not_attending'] if 'not_attending' in attendances else False
                 for value in attendances['students']:
                     attendance_status[value['student_id']] = value
 
@@ -204,7 +205,7 @@ class AttendanceView(LoginRequiredMixin,
 
         if level and section:
             students = queryset.filter(classroom_id=level.id,section_id=section.id,
-                                       # registration_date__lte=selected_date
+                                       registration_date__lte=selected_date
                                        ).order_by('student__first_name', 'student__father_name', 'student__last_name')
             for line in students:
                 student = line.student

@@ -10,7 +10,7 @@ pip install -r /code/requirements/test.txt
 # Run unittests and coverage report
 coverage erase
 coverage run manage.py test --noinput --keepdb --settings="$DJANGO_SETTINGS_MODULE" "$@"
-coverage html -d /reports
+#coverage html -d reports
 
 # Check code style
 #/venv/bin/flake8 .

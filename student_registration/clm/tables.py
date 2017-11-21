@@ -54,6 +54,15 @@ class BLNTable(CommonTable):
     post_assessment_result = tables.Column(verbose_name=_('Academic Result - Post'), orderable=False,
                                            accessor='post_test_score')
 
+    arabic_improvement = tables.Column(verbose_name=_('Arabic - Improvement'), orderable=False,
+                                       accessor='arabic_improvement')
+    english_improvement = tables.Column(verbose_name=_('English - Improvement'), orderable=False,
+                                        accessor='english_improvement')
+    french_improvement = tables.Column(verbose_name=_('French - Improvement'), orderable=False,
+                                       accessor='french_improvement')
+    math_improvement = tables.Column(verbose_name=_('Math - Improvement'), orderable=False,
+                                     accessor='math_improvement')
+
     assessment_improvement = tables.Column(verbose_name=_('Academic Result - Improvement'), orderable=False,
                                            accessor='assessment_improvement')
 
@@ -63,7 +72,7 @@ class BLNTable(CommonTable):
             'edit_column',
             'delete_column',
             'round',
-            'cycle',
+            # 'cycle',
             'governorate',
             'district',
             'internal_number',
@@ -78,9 +87,17 @@ class BLNTable(CommonTable):
             'student.mother_fullname',
             'pre_assessment_result',
             'post_assessment_result',
+            'arabic_improvement',
+            'english_improvement',
+            'french_improvement',
+            'math_improvement',
             'assessment_improvement',
             'participation',
             'learning_result',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
         )
 
 
@@ -98,6 +115,15 @@ class RSTable(CommonTable):
                                    accessor='pretest_result')
     post_test_total = tables.Column(verbose_name=_('Academic Result - Post'), orderable=False,
                                     accessor='posttest_result')
+    arabic_improvement = tables.Column(verbose_name=_('Arabic - Improvement'), orderable=False,
+                                       accessor='arabic_improvement')
+    language_improvement = tables.Column(verbose_name=_('Language - Improvement'), orderable=False,
+                                         accessor='language_improvement')
+    science_improvement = tables.Column(verbose_name=_('Science - Improvement'), orderable=False,
+                                        accessor='science_improvement')
+    math_improvement = tables.Column(verbose_name=_('Math - Improvement'), orderable=False,
+                                     accessor='math_improvement')
+
     academic_test_improvement = tables.Column(verbose_name=_('Academic Result - Improvement'), orderable=False,
                                               accessor='academic_test_improvement')
 
@@ -155,6 +181,10 @@ class RSTable(CommonTable):
             'section',
             'pre_test_total',
             'post_test_total',
+            'arabic_improvement',
+            'language_improvement',
+            'science_improvement',
+            'math_improvement',
             'academic_test_improvement',
             'pre_assessment_result',
             'post_assessment_result',
@@ -167,6 +197,10 @@ class RSTable(CommonTable):
             'self_assessment_improvement',
             'participation',
             'learning_result',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
         )
 
 
@@ -189,10 +223,8 @@ class CBECETable(CommonTable):
 
     art_improvement = tables.Column(verbose_name=_('Language Art Domain - Improvement'), orderable=False,
                                     accessor='art_improvement')
-    math_improvement = tables.Column(verbose_name=_('Cognitive Domain Mathematics - Improvement'), orderable=False,
-                                     accessor='math_improvement')
-    science_improvement = tables.Column(verbose_name=_('Cognitive Domain Science - Improvement'), orderable=False,
-                                        accessor='science_improvement')
+    cognitive_improvement = tables.Column(verbose_name=_('Cognitive Domain - Improvement'), orderable=False,
+                                        accessor='cognitive_improvement')
     social_improvement = tables.Column(verbose_name=_('Social Emotional Domain - Improvement'), orderable=False,
                                        accessor='social_improvement')
     psycho_improvement = tables.Column(verbose_name=_('Psychomotor Domain - Improvement'), orderable=False,
@@ -225,11 +257,14 @@ class CBECETable(CommonTable):
             'post_assessment_result',
             'assessment_improvement',
             'art_improvement',
-            'math_improvement',
-            'science_improvement',
+            'cognitive_improvement',
             'social_improvement',
             'psycho_improvement',
             'artistic_improvement',
             'participation',
             'learning_result',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
         )

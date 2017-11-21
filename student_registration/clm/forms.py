@@ -333,13 +333,13 @@ class CommonForm(forms.ModelForm):
 
 class BLNForm(CommonForm):
 
-    cycle = forms.ModelChoiceField(
-        empty_label='----------',
-        queryset=Cycle.objects.all(), widget=forms.Select,
-        label=_('In which cycle is this child registered?'),
-        required=True, to_field_name='id',
-        initial=0
-    )
+    # cycle = forms.ModelChoiceField(
+    #     empty_label='----------',
+    #     queryset=Cycle.objects.all(), widget=forms.Select,
+    #     label=_('In which cycle is this child registered?'),
+    #     required=True, to_field_name='id',
+    #     initial=0
+    # )
     # referral = forms.MultipleChoiceField(
     #     label=_('Where was the child referred?'),
     #     choices=CLM.REFERRAL,
@@ -464,18 +464,18 @@ class BLNForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Program Information') + '</h4>')
                 ),
                 Div(
+                    # HTML('<span class="badge badge-default">1</span>'),
+                    # Div('cycle', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('cycle', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
                     Div('governorate', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('district', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('location', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('language', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -598,6 +598,7 @@ class BLNForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
+                Submit('save_add_another', _('Save and add another'), css_class='child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -609,7 +610,7 @@ class BLNForm(CommonForm):
     class Meta:
         model = BLN
         fields = CommonForm.Meta.fields + (
-            'cycle',
+            # 'cycle',
             # 'referral',
             'student_family_status',
             'student_have_children',
@@ -1066,6 +1067,7 @@ class RSForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
+                Submit('save_add_another', _('Save and add another'), css_class='child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -1369,6 +1371,7 @@ class CBECEForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
+                Submit('save_add_another', _('Save and add another'), css_class='child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )

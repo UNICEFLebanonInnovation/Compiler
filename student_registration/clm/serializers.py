@@ -153,7 +153,7 @@ class BLNSerializer(CLMSerializer):
     class Meta:
         model = BLN
         fields = CLMSerializer.Meta.fields + (
-            'cycle',
+            # 'cycle',
             # 'referral',
             'student_family_status',
             'student_have_children',

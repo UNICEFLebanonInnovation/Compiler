@@ -51,7 +51,6 @@ htmlcov
 !.idea/vcs.xml
 !.idea/webResources.xml
 
-
 # Vim
 
 *~
@@ -70,15 +69,16 @@ node_modules/
 # User-uploaded media
 student_registration/media/
 
-
+# MailHog binary
+mailhog
 
 staticfiles/
 
 .cache/
-
 
 *.dump
 
 celerybeat-schedule
 
 *.pid
+
