@@ -12,8 +12,8 @@ class TestUser(TestCase):
             'testuser'  # This is the default username for self.make_user()
         )
 
-    def test_get_absolute_url(self):
-        self.assertEqual(
-            self.user.get_absolute_url(),
-            '/users/testuser/'
-        )
+    # def test_get_absolute_url(self):
+    #     self.assertEqual(
+    #         self.user.get_absolute_url(),
+    #         '/users/testuser/'
+    #     )

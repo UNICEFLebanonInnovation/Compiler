@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{#{% load util_tags %}#}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+{% endblock %}
+
+{% block content-full-page %}
+
+{% load util_tags %}
+<section class="main-content-wrapper">
+    <section id="main-content">
+        <div class="title_left">
+            <h3 style="color:#73879C;">{% trans 'Full data export' %}</h3>
+        </div>
+        <hr>
+
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">2nd shift registration</h3>
+                <p class="card-text">Export data for 2nd shift registration of the current school year.</p>
+                <a href="{% url 'dashboard:exporter' %}?report=export_2ndshift&current=true" class="btn btn-primary">Export</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">2nd shift gradings</h3>
+                <p class="card-text">Export data for 2nd shift gradings of the current school year.</p>
+                <a href="{% url 'dashboard:exporter' %}?report=export_2ndshift_gradings" class="btn btn-primary">Export</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">2nd shift registration full data</h3>
+                <p class="card-text">Export the full data for 2nd shift registration for all school years.</p>
+                <a href="{% url 'dashboard:exporter' %}?report=export_2ndshift" class="btn btn-primary">Export</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">ALP Pre-test</h3>
+                <p class="card-text">Export Pre-test gradings data entered by the partner for the current pre-test round.</p>
+                <a href="{% url 'dashboard:exporter' %}?report=export_alp&pre_test=true" class="btn btn-primary">Export</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">ALP school registration</h3>
+                <p class="card-text">Export school registration data entered by the school IT for the current round.</p>
+                <a href="{% url 'dashboard:exporter' %}?report=export_alp&current=true" class="btn btn-primary">Export</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">ALP Post-test</h3>
+                <p class="card-text">Export Post-test gradings data entered by the partner for the curent post-test round.</p>
+                <a href="{% url 'dashboard:exporter' %}?report=export_alp&post_test=true" class="btn btn-primary">Export</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">ALP full data</h3>
+                <p class="card-text">Export ALP full data for all rounds.</p>
+                <a href="{% url 'dashboard:exporter' %}?report=export_alp" class="btn btn-primary">Export</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">Attendance full data</h3>
+                <p class="card-text">Export Attendance full data for all schools.</p>
+                <a href="{% url 'dashboard:exporter' %}?report=export_attendance" class="btn btn-primary">Export</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+    </section>
+</section>
+{% endblock %}

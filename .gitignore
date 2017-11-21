@@ -24,8 +24,10 @@ sftp-config.json
 __pycache__
 
 # Logs
+logs
 *.log
 pip-log.txt
+npm-debug.log*
 
 # Unit test / coverage reports
 .coverage
@@ -70,7 +72,13 @@ student_registration/media/
 # MailHog binary
 mailhog
 
-deis
-staticfiles
+staticfiles/
+
+.cache/
+
+*.dump
 
 celerybeat-schedule
+
+*.pid
+

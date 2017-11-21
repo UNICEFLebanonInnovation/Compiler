@@ -8,7 +8,6 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from student_registration.schools.models import PartnerOrganization, School
 from student_registration.locations.models import Location
-from django.db.models.signals import post_save
 
 
 @python_2_unicode_compatible
@@ -38,11 +37,6 @@ class User(AbstractUser):
         blank=True, null=True,
         related_name='+',
     )
-    governante = models.ForeignKey(
-        Location,
-        blank=True, null=True,
-        related_name='+',
-    )
     locations = models.ManyToManyField(Location, blank=True)
     schools = models.ManyToManyField(School, blank=True)
 
@@ -54,15 +48,3 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse('users:detail', kwargs={'username': self.username})
-
-    def save(self, **kwargs):
-        """
-        Generate the HASH password
-        :param kwargs:
-        :return:
-        """
-        if self.pk is None:
-            self.set_password(self.password)
-        elif self.password and not self.password.startswith("pbkdf2_"):
-            self.set_password(self.password)
-        super(AbstractUser, self).save(**kwargs)

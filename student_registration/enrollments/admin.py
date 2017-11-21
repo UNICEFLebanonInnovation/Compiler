@@ -8,14 +8,18 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import *
 import datetime
 
-from .models import Enrollment, StudentMove, LoggingStudentMove
-from .forms import EnrollmentForm, LoggingStudentMoveForm
-from student_registration.students.models import Student
+from .models import (
+    Enrollment,
+    EnrollmentGrading,
+    StudentMove,
+    LoggingStudentMove,
+    LoggingProgramMove
+)
+from .forms import EnrollmentAdminForm, LoggingStudentMoveForm
 from student_registration.schools.models import (
     School,
 )
 from student_registration.locations.models import Location
-from student_registration.attendances.tasks import set_app_attendances
 
 
 class EnrollmentResource(resources.ModelResource):
@@ -33,7 +37,7 @@ class EnrollmentResource(resources.ModelResource):
 
     class Meta:
         model = Enrollment
-        form = EnrollmentForm
+        form = EnrollmentAdminForm
         fields = (
             'id',
             'student__id',
@@ -47,6 +51,7 @@ class EnrollmentResource(resources.ModelResource):
             'student__birthday_year',
             'student__birthday_month',
             'student__birthday_day',
+            'student__place_of_birth',
             'student_age',
             'student__sex',
             'student__nationality__name',
@@ -59,6 +64,7 @@ class EnrollmentResource(resources.ModelResource):
             'school__name',
             'section__name',
             'classroom__name',
+            'number_in_previous_school',
             'last_education_level__name',
             'last_education_year',
             'last_school_type',
@@ -69,25 +75,6 @@ class EnrollmentResource(resources.ModelResource):
             'last_informal_edu_round__name',
             'last_informal_edu_level__name',
             'last_informal_edu_final_result__name',
-            'exam_result_arabic',
-            'exam_result_language',
-            'exam_result_education',
-            'exam_result_geo',
-            'exam_result_history',
-            'exam_result_math',
-            'exam_result_science',
-            'exam_result_physic',
-            'exam_result_chemistry',
-            'exam_result_bio',
-            'exam_result_linguistic_ar',
-            'exam_result_sociology',
-            'exam_result_physical',
-            'exam_result_artistic',
-            'exam_result_linguistic_en',
-            'exam_result_mathematics',
-            'exam_result_sciences',
-            'exam_total',
-            'exam_result',
         )
         export_order = fields
 
@@ -187,7 +174,7 @@ class ToAgeFilter(admin.SimpleListFilter):
 
 class EnrollmentAdmin(ImportExportModelAdmin):
     resource_class = EnrollmentResource
-    form = EnrollmentForm
+    form = EnrollmentAdminForm
     fields = (
         'student',
         'school',
@@ -195,9 +182,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'classroom',
         'owner',
         'status',
-        'year',
-        'enrolled_in_this_school',
-        'registered_in_unhcr',
+        'education_year',
         'last_education_level',
         'last_school_type',
         'last_school_shift',
@@ -205,31 +190,16 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_education_year',
         'last_year_result',
         'participated_in_alp',
-        'last_informal_edu_level',
+        # 'last_informal_edu_level',
         'last_informal_edu_round',
         'last_informal_edu_final_result',
-        'exam_result_arabic',
-        'exam_result_language',
-        'exam_result_education',
-        'exam_result_geo',
-        'exam_result_history',
-        'exam_result_math',
-        'exam_result_science',
-        'exam_result_physic',
-        'exam_result_chemistry',
-        'exam_result_bio',
-        'exam_result_linguistic_ar',
-        'exam_result_sociology',
-        'exam_result_physical',
-        'exam_result_artistic',
-        'exam_result_linguistic_en',
-        'exam_result_mathematics',
-        'exam_result_sciences',
-        'exam_total',
-        'exam_result',
         'deleted',
         'moved',
         'dropout_status',
+        'new_registry',
+        'student_outreached',
+        'have_barcode',
+        'number_in_previous_school',
     )
     list_display = (
         'student',
@@ -239,6 +209,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'governorate',
         'classroom',
         'section',
+        'education_year',
         'created',
         'modified',
     )
@@ -251,7 +222,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'classroom',
         'section',
         'student__sex',
-        'registered_in_unhcr',
+        'student__registered_in_unhcr',
         'student__id_type',
         'last_education_level',
         'last_education_year',
@@ -265,7 +236,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_informal_edu_final_result',
         FromAgeFilter,
         ToAgeFilter,
-        'exam_result',
+        # 'exam_result',
         'created',
         'modified',
     )
@@ -281,6 +252,11 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'classroom__name',
         'owner__username',
     )
+    date_hierarchy = 'registration_date'
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
     def caza(self, obj):
         if obj.school and obj.school.location:
@@ -352,6 +328,10 @@ class StudentMoveAdmin(ImportExportModelAdmin):
         'school2__name',
     )
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class LoggingStudentMoveResource(resources.ModelResource):
 
@@ -368,6 +348,7 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
     )
 
     list_display = (
+        'education_year',
         'registered',
         'student',
         'school_from',
@@ -378,6 +359,7 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
     )
 
     list_filter = (
+        'education_year',
         'school_from',
         'school_to',
     )
@@ -385,6 +367,10 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
     search_fields = (
 
     )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
     def registered(self, obj):
         if obj.enrolment:
@@ -407,7 +393,155 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
         return ''
 
 
+class LoggingProgramMoveResource(resources.ModelResource):
+
+    class Meta:
+        model = LoggingProgramMove
+        fields = (
+            'education_year',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__sex',
+            'student__mother_fullname',
+            'school_from__name',
+            'school_to__name',
+            'eligibility',
+        )
+        export_order = fields
+
+
+class LoggingProgramMoveAdmin(ImportExportModelAdmin):
+    resource_class = LoggingProgramMoveResource
+    fields = ()
+
+    list_display = (
+        'education_year',
+        'student',
+        'school_from',
+        'school_to',
+        'eligibility',
+        'potential_move',
+    )
+
+    list_filter = (
+        'education_year',
+        'school_from',
+        'school_to',
+        'eligibility',
+        'potential_move',
+    )
+
+    search_fields = (
+        'student__first_name',
+        'student__father_name',
+        'student__last_name',
+    )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
+
+class GradingResource(resources.ModelResource):
+
+    class Meta:
+        model = EnrollmentGrading
+        fields = (
+            'enrollment',
+            'exam_term',
+            'exam_result_arabic',
+            'exam_result_language',
+            'exam_result_education',
+            'exam_result_geo',
+            'exam_result_history',
+            'exam_result_math',
+            'exam_result_science',
+            'exam_result_physic',
+            'exam_result_chemistry',
+            'exam_result_bio',
+            'exam_result_linguistic_ar',
+            'exam_result_sociology',
+            'exam_result_physical',
+            'exam_result_artistic',
+            'exam_result_linguistic_en',
+            'exam_result_mathematics',
+            'exam_result_sciences',
+            'exam_total',
+            'exam_result',
+        )
+        export_order = fields
+
+
+class GradingAdmin(ImportExportModelAdmin):
+    resource_class = GradingResource
+    fields = (
+        'exam_term',
+        'exam_result_arabic',
+        'exam_result_language',
+        'exam_result_education',
+        'exam_result_geo',
+        'exam_result_history',
+        'exam_result_math',
+        'exam_result_science',
+        'exam_result_physic',
+        'exam_result_chemistry',
+        'exam_result_bio',
+        'exam_result_linguistic_ar',
+        'exam_result_sociology',
+        'exam_result_physical',
+        'exam_result_artistic',
+        'exam_result_linguistic_en',
+        'exam_result_mathematics',
+        'exam_result_sciences',
+        'exam_total',
+        'exam_result',
+    )
+
+    list_display = (
+        'enrollment',
+        'exam_term',
+        'exam_result_arabic',
+        'exam_result_language',
+        'exam_result_education',
+        'exam_result_geo',
+        'exam_result_history',
+        'exam_result_math',
+        'exam_result_science',
+        'exam_result_physic',
+        'exam_result_chemistry',
+        'exam_result_bio',
+        'exam_result_linguistic_ar',
+        'exam_result_sociology',
+        'exam_result_physical',
+        'exam_result_artistic',
+        'exam_result_linguistic_en',
+        'exam_result_mathematics',
+        'exam_result_sciences',
+        'exam_total',
+        'exam_result',
+    )
+
+    list_filter = (
+        'exam_term',
+        'enrollment__school',
+        'enrollment__education_year'
+    )
+
+    search_fields = (
+        'enrollment__student__first_name',
+        'enrollment__student__father_name',
+        'enrollment__student__last_name',
+    )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
+
 admin.site.register(Enrollment, EnrollmentAdmin)
 admin.site.register(Dropout, DropoutAdmin)
-admin.site.register(StudentMove, StudentMoveAdmin)
+# admin.site.register(StudentMove, StudentMoveAdmin)
 admin.site.register(LoggingStudentMove, LoggingStudentMoveAdmin)
+admin.site.register(LoggingProgramMove, LoggingProgramMoveAdmin)
+admin.site.register(EnrollmentGrading, GradingAdmin)

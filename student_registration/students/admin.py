@@ -11,8 +11,8 @@ from .models import (
     Student,
     StudentMatching,
     Nationality,
-    Language,
     IDType,
+    Labour,
 )
 from .forms import StudentEnrollmentForm
 from student_registration.schools.models import (
@@ -53,14 +53,18 @@ class IDTypeResource(resources.ModelResource):
 
 
 class IDTypeAdmin(ImportExportModelAdmin):
-        resource_class = IDTypeResource
+    resource_class = IDTypeResource
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 class EnrollmentInline(admin.TabularInline):
     model = Enrollment
     extra = 0
     fields = (
-        # 'education_year',
+        'education_year',
         'school',
         'section',
         'classroom',
@@ -122,7 +126,6 @@ class RegisteredInFilter(admin.SimpleListFilter):
         in the right sidebar.
         """
         return (
-            ('pilot', 'PILOT'),
             ('alp', 'ALP'),
             ('2ndshift', '2nd-shift'),
         )
@@ -133,8 +136,6 @@ class RegisteredInFilter(admin.SimpleListFilter):
         provided in the query string and retrievable via
         `self.value()`.
         """
-        if self.value() and self.value() == 'pilot':
-            return queryset.filter(student_registration__isnull=False)
         if self.value() and self.value() == 'alp':
             return queryset.filter(
                 alp_enrollment__isnull=False,
@@ -194,7 +195,7 @@ class ALPhaseFilter(admin.SimpleListFilter):
                 alp_enrollment__owner__in=users,
             )
         if self.value() and self.value() == 'pretest':
-            not_schools = User.objects.filter(groups__name__in=['PARTNER', 'CERD'])
+            not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER', 'CERD'])
             return queryset.filter(
                 alp_enrollment__owner__in=not_schools,
                 alp_enrollment__level__isnull=False,
@@ -575,6 +576,7 @@ class StudentResource(resources.ModelResource):
             'birthday_day',
             'birthday_month',
             'birthday_year',
+            'place_of_birth',
             'sex',
             'nationality',
             'mother_nationality',
@@ -614,7 +616,7 @@ class StudentAdmin(ImportExportModelAdmin):
         'father_name',
         'last_name',
         'mother_fullname',
-        'calc_age',
+        'age',
         'sex',
         'nationality',
         'mother_nationality',
@@ -648,6 +650,10 @@ class StudentAdmin(ImportExportModelAdmin):
     )
     inlines = (EnrollmentInline, ALPInline)
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class StudentMatchingResource(resources.ModelResource):
     class Meta:
@@ -658,7 +664,6 @@ class StudentMatchingAdmin(ImportExportModelAdmin):
     resource_class = StudentMatching
     list_display = (
         'id',
-        'pilot_id',
         'registry',
         'enrolled_id',
         'enrolment',
@@ -678,19 +683,18 @@ class StudentMatchingAdmin(ImportExportModelAdmin):
         'enrolment__number',
     )
 
-    def pilot_id(self, obj):
-        if obj.registry:
-            return obj.registry.id
-        return ''
-
     def enrolled_id(self, obj):
         if obj.enrolment:
             return obj.enrolment.id
         return ''
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Nationality, NationalityAdmin)
-admin.site.register(Language)
 admin.site.register(StudentMatching, StudentMatchingAdmin)
 admin.site.register(IDType, IDTypeAdmin)
+admin.site.register(Labour)
