@@ -79,7 +79,7 @@ class OutreachResource(resources.ModelResource):
             'exam_result_math',
             'exam_result_science',
             'exam_total',
-            'passed_pre',
+            # 'passed_pre',
             'assigned_to_level__name',
             'registered_in_level__name',
             'section__name',
@@ -92,7 +92,7 @@ class OutreachResource(resources.ModelResource):
             'post_exam_total',
             'refer_to_level',
             're_enrolled',
-            'passed_post',
+            # 'passed_post',
             'owner__username',
             'modified_by__username',
             'created',
@@ -806,9 +806,6 @@ class PreTestAdmin(OutreachAdmin):
             level__isnull=False,
             assigned_to_level__isnull=False,
         )
-        # .extra(where={
-        #     '(alp_outreach.exam_corrector_arabic > 0 OR alp_outreach.exam_corrector_language > 0 OR alp_outreach.exam_corrector_math > 0 OR alp_outreach.exam_corrector_science > 0)'
-        # })
 
 
 class CurrentRound(Outreach):
@@ -895,7 +892,7 @@ class PostTestAdmin(OutreachAdmin):
         'registered_in_level',
         'post_total',
         'post_test_room',
-        'referred_to',
+        'refer_to_level',
         'section',
         'owner',
         'modified_by',
@@ -924,7 +921,7 @@ class PostTestAdmin(OutreachAdmin):
             if obj.refer_to_level_id == 1:
                 if obj.post_exam_total >= 40:
                     if obj.registered_in_level_id < 9:
-                        to_level = EducationLevel.objects.get(id=int(obj.registered_in_level_id) +1)
+                        to_level = EducationLevel.objects.get(id=int(obj.registered_in_level_id) + 1)
                         return to_level.name
                     else:
                         return obj.registered_in_level.name

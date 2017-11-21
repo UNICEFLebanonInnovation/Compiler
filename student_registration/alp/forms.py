@@ -30,7 +30,7 @@ YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, Person.CURRENT_YEAR+1))
 EDUCATION_YEARS.append(('na', 'n/a'))
 
-YEARS = list(((str(x), x) for x in range(1990, 2050)))
+YEARS = list(((str(x), x) for x in range(Person.CURRENT_YEAR-20, Person.CURRENT_YEAR-2)))
 YEARS.insert(0, ('', '---------'))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
@@ -322,6 +322,11 @@ class OutreachForm(forms.ModelForm):
 
 class PreTestForm(forms.ModelForm):
 
+    school = forms.ModelChoiceField(
+        label=_('School'),
+        queryset=School.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
     student_first_name = forms.CharField(
         label=_("First name"),
         widget=forms.TextInput, required=True
@@ -393,6 +398,8 @@ class PreTestForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Entrance test') + '</h4>')
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('school', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('level', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
@@ -481,6 +488,7 @@ class PreTestForm(forms.ModelForm):
             'exam_result_math',
             'exam_result_science',
             'level',
+            'school',
             'pre_test_room',
         )
         initial_fields = fields
