@@ -7,8 +7,8 @@ Simple, interactive and online student registration.
      :target: https://github.com/pydanny/cookiecutter-django/
      :alt: Built with Cookiecutter Django
 
-.. image:: https://travis-ci.com/UNICEFLebanonInnovation/Compiler.svg?token=WKgjjXiiSnxyfRMzpBws&branch=develop
-    :target: https://travis-ci.com/UNICEFLebanonInnovation/Compiler
+.. image:: https://travis-ci.org/UNICEFLebanonInnovation/Compiler.svg?branch=develop
+    :target: https://travis-ci.org/UNICEFLebanonInnovation/Compiler
 
 :License: GPLv3
 
