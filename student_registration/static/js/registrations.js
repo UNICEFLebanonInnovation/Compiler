@@ -17,6 +17,21 @@ $(document).ready(function(){
 
     reorganizeForm();
 
+    $(document).on('change', 'select#id_level', function(){
+
+         if($(document).find('#id_exam_result_arabic').length == 1) {
+             var max_value = 30;
+             var value = $('select#id_level').val();
+             if(value == 4 || value == 5 || value == 6){
+                 max_value = 60;
+             }
+             if(value == 7 || value == 8 || value == 9){
+                 max_value = 90;
+             }
+             $('#id_exam_result_arabic, #id_exam_result_language, #id_exam_result_math, #id_exam_result_science').attr('max', max_value);
+         }
+    });
+
     $(document).on('change', 'select#id_site', function(){
          reorganizeForm();
     });

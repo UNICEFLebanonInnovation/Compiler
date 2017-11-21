@@ -57,6 +57,7 @@ EXAM_LANGUAGES = (
             ('english', _('English')),
             ('french', _('French'))
         )
+ROOMS = list(((str(x), str(x)) for x in range(1, 20)))
 
 
 class OutreachAdminForm(forms.ModelForm):
@@ -321,16 +322,6 @@ class OutreachForm(forms.ModelForm):
 
 class PreTestForm(forms.ModelForm):
 
-    school = forms.ModelChoiceField(
-        queryset=School.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
-    )
-    level = forms.ModelChoiceField(
-        queryset=EducationLevel.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
-    )
-    pre_test_room = forms.CharField(widget=forms.TextInput, required=True)
-
     student_first_name = forms.CharField(
         label=_("First name"),
         widget=forms.TextInput, required=True
@@ -348,29 +339,40 @@ class PreTestForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=GENDER
     )
+    level = forms.ModelChoiceField(
+        label=_('Entrance test'),
+        queryset=EducationLevel.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    pre_test_room = forms.ChoiceField(
+        label=_('Pre test room'),
+        widget=forms.Select, required=True,
+        choices=ROOMS
+    )
     exam_result_arabic = forms.FloatField(
+        label=_('Arabic'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=90, min_value=0,
-        required=True
+        min_value=0, required=True
     )
     exam_language = forms.ChoiceField(
+        label=_('Exam language'),
         widget=forms.Select, required=True,
         choices=EXAM_LANGUAGES
     )
     exam_result_language = forms.FloatField(
+        label=_('Foreign Language'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=90, min_value=0,
-        required=True
+        min_value=0, required=True
     )
     exam_result_math = forms.FloatField(
+        label=_('Math'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=90, min_value=0,
-        required=True
+        min_value=0, required=True
     )
     exam_result_science = forms.FloatField(
+        label=_('Science'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=90, min_value=0,
-        required=True
+        min_value=0, required=True
     )
 
     def __init__(self, *args, **kwargs):
@@ -391,8 +393,6 @@ class PreTestForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Entrance test') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('school', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('level', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
@@ -481,7 +481,6 @@ class PreTestForm(forms.ModelForm):
             'exam_result_math',
             'exam_result_science',
             'level',
-            'school',
             'pre_test_room',
         )
         initial_fields = fields
@@ -899,39 +898,40 @@ class RegistrationForm(forms.ModelForm):
 
 class PreTestGradingForm(forms.ModelForm):
 
-    school = forms.ModelChoiceField(
-        queryset=School.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
-    )
     level = forms.ModelChoiceField(
+        label=_('Entrance test'),
         queryset=EducationLevel.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
-    pre_test_room = forms.CharField(widget=forms.TextInput, required=True)
-
+    pre_test_room = forms.ChoiceField(
+        label=_('Pre-test room'),
+        widget=forms.Select, required=True,
+        choices=ROOMS
+    )
     exam_result_arabic = forms.FloatField(
+        label=_('Arabic'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
-        required=True
+        min_value=0, required=True
     )
     exam_language = forms.ChoiceField(
+        label=_('Exam language'),
         widget=forms.Select, required=True,
         choices=EXAM_LANGUAGES
     )
     exam_result_language = forms.FloatField(
+        label=_('Foreign Language'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
-        required=True
+        min_value=0, required=True
     )
     exam_result_math = forms.FloatField(
+        label=_('Math'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
-        required=True
+        min_value=0, required=True
     )
     exam_result_science = forms.FloatField(
+        label=_('Science'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
-        required=True
+        min_value=0, required=True
     )
 
     def __init__(self, *args, **kwargs):
@@ -950,10 +950,8 @@ class PreTestGradingForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('school', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
                     Div('level', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('pre_test_room', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -989,6 +987,7 @@ class PreTestGradingForm(forms.ModelForm):
         )
 
     def save(self, instance=None, request=None):
+        print(request.POST)
         instance = super(PreTestGradingForm, self).save()
         instance.modified_by = request.user
         instance.calculate_pre_result()
@@ -1003,39 +1002,49 @@ class PreTestGradingForm(forms.ModelForm):
             'exam_result_math',
             'exam_result_science',
             'level',
-            'school',
             'pre_test_room',
         )
 
     class Media:
         js = (
-            # 'js/validator.js',
+            'js/jquery-1.12.3.min.js',
+            'js/jquery-ui-1.12.1.js',
+            'js/registrations.js',
         )
 
 
 class PostTestGradingForm(forms.ModelForm):
 
-    post_test_room = forms.CharField(widget=forms.TextInput, required=True)
+    post_test_room = forms.ChoiceField(
+        label=_('Post-test room'),
+        widget=forms.Select, required=True,
+        choices=ROOMS
+    )
     post_exam_result_arabic = forms.FloatField(
+        label=_('Arabic'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         max_value=20, min_value=0,
         required=True
     )
     post_exam_language = forms.ChoiceField(
+        label=_('Exam language'),
         widget=forms.Select, required=True,
         choices=EXAM_LANGUAGES
     )
     post_exam_result_language = forms.FloatField(
+        label=_('Foreign Language'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         max_value=20, min_value=0,
         required=True
     )
     post_exam_result_math = forms.FloatField(
+        label=_('Math'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         max_value=20, min_value=0,
         required=True
     )
     post_exam_result_science = forms.FloatField(
+        label=_('Science'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         max_value=20, min_value=0,
         required=True
