@@ -69,7 +69,6 @@ django-admin-rangefilter==0.3.0
 django-bootstrap3==8.2.3
 bootstrap3-datetime==2.4
 django-tables2==1.10.0
-django-storages==1.6.5
 azure-storage==0.36.0
 azure-storage-blob==0.37.0
 openpyxl==2.4.9
