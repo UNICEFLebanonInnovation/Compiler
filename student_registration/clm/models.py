@@ -200,15 +200,11 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Location')
     )
-    language = ArrayField(
-        models.CharField(
-            choices=LANGUAGES,
-            max_length=50,
-            blank=True,
-            null=True,
-        ),
+    language = models.CharField(
+        max_length=100,
         blank=True,
         null=True,
+        choices=LANGUAGES,
         verbose_name=_('The language supported in the program')
     )
     student = models.ForeignKey(

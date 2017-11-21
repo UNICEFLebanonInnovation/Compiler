@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, division
 from django import forms
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
+from django.contrib import messages
 
 from dal import autocomplete
 from crispy_forms.helper import FormHelper
@@ -281,6 +282,9 @@ class OutreachForm(forms.ModelForm):
                 serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
         else:
             serializer = OutreachSmallSerializer(data=request.POST)
             if serializer.is_valid():
@@ -289,6 +293,9 @@ class OutreachForm(forms.ModelForm):
                 instance.owner = request.user
                 instance.alp_round = ALPRound.objects.get(current_pre_test=True)
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
 
     class Meta:
         model = Outreach
@@ -466,6 +473,9 @@ class PreTestForm(forms.ModelForm):
                 instance.modified_by = request.user
                 instance.calculate_pre_result()
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
         else:
             serializer = OutreachSmallSerializer(data=request.POST)
             if serializer.is_valid():
@@ -474,6 +484,9 @@ class PreTestForm(forms.ModelForm):
                 instance.alp_round = ALPRound.objects.get(current_pre_test=True)
                 instance.calculate_pre_result()
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
 
     class Meta:
         model = Outreach
@@ -848,8 +861,9 @@ class RegistrationForm(forms.ModelForm):
                 serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
             else:
-                print(serializer.errors)
+                messages.warning(request, serializer.errors)
         else:
             serializer = OutreachSerializer(data=request.POST)
             if serializer.is_valid():
@@ -858,6 +872,9 @@ class RegistrationForm(forms.ModelForm):
                 instance.owner = request.user
                 instance.alp_round = ALPRound.objects.get(current_round=True)
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
 
     class Meta:
         model = Outreach
@@ -995,11 +1012,11 @@ class PreTestGradingForm(forms.ModelForm):
         )
 
     def save(self, instance=None, request=None):
-        print(request.POST)
         instance = super(PreTestGradingForm, self).save()
         instance.modified_by = request.user
         instance.calculate_pre_result()
         instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
 
     class Meta:
         model = Outreach
@@ -1113,6 +1130,7 @@ class PostTestGradingForm(forms.ModelForm):
         instance.modified_by = request.user
         instance.calculate_post_result()
         instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
 
     class Meta:
         model = Outreach

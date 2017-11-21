@@ -2,9 +2,10 @@ from __future__ import unicode_literals, absolute_import, division
 
 from django.utils.translation import ugettext as _
 from django import forms
-from dal import autocomplete
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 
+from dal import autocomplete
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
@@ -519,6 +520,9 @@ class EnrollmentForm(forms.ModelForm):
             serializer = EnrollmentSerializer(instance, data=request.POST)
             if serializer.is_valid():
                 serializer.update(validated_data=serializer.validated_data, instance=instance)
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
         else:
             serializer = EnrollmentSerializer(data=request.POST)
             if serializer.is_valid():
@@ -531,6 +535,9 @@ class EnrollmentForm(forms.ModelForm):
                 initiate_grading(enrollment=instance, term=2)
                 initiate_grading(enrollment=instance, term=3)
                 initiate_grading(enrollment=instance, term=4)
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
 
     class Meta:
         model = Enrollment
@@ -837,6 +844,7 @@ class GradingTermForm(forms.ModelForm):
 
     def save(self, instance=None, request=None):
         instance = super(GradingTermForm, self).save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
 
     class Meta:
         model = Enrollment
@@ -921,6 +929,7 @@ class GradingIncompleteForm(forms.ModelForm):
 
     def save(self, instance=None, request=None):
         instance = super(GradingIncompleteForm, self).save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
 
     class Meta:
         model = Enrollment
@@ -978,6 +987,7 @@ class StudentMovedForm(forms.ModelForm):
         instance.education_year = EducationYear.objects.get(current_year=True)
         instance.moved = False
         instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
 
     class Meta:
         model = Enrollment
@@ -1148,8 +1158,9 @@ class EditOldDataForm(forms.ModelForm):
             serializer = EnrollmentSerializer(instance, data=request.POST)
             if serializer.is_valid():
                 serializer.update(validated_data=serializer.validated_data, instance=instance)
-            # else:
-            #     print(serializer.errors)
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
 
     class Meta:
         model = Enrollment

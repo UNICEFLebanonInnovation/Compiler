@@ -2,7 +2,7 @@
  * Created by ali on 7/22/17.
  */
 
-var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname";
+var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname, input#id_location";
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
 var moved_student_path = host+'/api/logging-student-move/';
@@ -383,7 +383,7 @@ function reorganizeForm()
         $('div#div_id_school').parent().prev().removeClass('d-none');
     }
 
-    if(family_status == 'married' || family_status == 'divorced'){
+    if(family_status == 'married' || family_status == 'divorced' || family_status == 'widower'){
         $('div#student_have_children').removeClass('d-none');
         $('div#student_have_children').prev().removeClass('d-none');
     }else{
