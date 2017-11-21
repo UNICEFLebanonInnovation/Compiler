@@ -6,10 +6,22 @@ sudo: required
 services:
   - docker
 
+language: python
+# python versions
+python:
+  - "3.4"
+
+# install requirements
+install:
+  - pip install -r requirements/test.txt
+
 script:
   - docker-compose -f test.yml run django
+  - cat .coverage
 
 after_success:
+  - coveralls
+  - cat .coverage
   - if [ "$TRAVIS_BRANCH" == "develop" ]; then
     docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
     docker tag compiler_django $DOCKER_USER/$DOCKER_REPO;
