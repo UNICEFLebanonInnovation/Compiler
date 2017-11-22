@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, division
 from django.utils.translation import ugettext as _
 from django import forms
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
@@ -109,6 +110,7 @@ class ProfileForm(forms.ModelForm):
 
     def save(self, instance=None, request=None):
         instance = super(ProfileForm, self).save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
 
     class Meta:
         model = School
@@ -168,6 +170,7 @@ class PartnerForm(forms.ModelForm):
 
     def save(self, instance=None, request=None):
         instance = super(PartnerForm, self).save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
 
     class Meta:
         model = PartnerOrganization

@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, division
 from django.utils.translation import ugettext as _
 from django import forms
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
@@ -132,11 +133,10 @@ class CommonForm(forms.ModelForm):
     #     widget=forms.TextInput,
     #     required=True
     # )
-    language = forms.MultipleChoiceField(
+    language = forms.ChoiceField(
         label=_('The language supported in the program'),
-        choices=CLM.LANGUAGES,
-        widget=forms.CheckboxSelectMultiple,
-        required=True,
+        widget=forms.Select,
+        choices=CLM.LANGUAGES, required=True,
         initial='english_arabic'
     )
 
@@ -269,6 +269,9 @@ class CommonForm(forms.ModelForm):
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
         else:
             serializer = serializer(data=request.POST)
             if serializer.is_valid():
@@ -278,9 +281,9 @@ class CommonForm(forms.ModelForm):
                 instance.partner = request.user.partner
                 instance.round = clm_round
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
             else:
-                # print(serializer.errors)
-                return False
+                messages.warning(request, serializer.errors)
 
         return True
 

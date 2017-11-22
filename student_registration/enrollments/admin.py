@@ -40,6 +40,10 @@ class EnrollmentResource(resources.ModelResource):
         form = EnrollmentAdminForm
         fields = (
             'id',
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
+            'outreach_barcode',
             'student__id',
             'student__id_type',
             'student__id_number',
@@ -73,7 +77,6 @@ class EnrollmentResource(resources.ModelResource):
             'last_year_result',
             'participated_in_alp',
             'last_informal_edu_round__name',
-            'last_informal_edu_level__name',
             'last_informal_edu_final_result__name',
         )
         export_order = fields
