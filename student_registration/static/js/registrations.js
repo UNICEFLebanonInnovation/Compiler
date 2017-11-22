@@ -2,7 +2,7 @@
  * Created by ali on 7/22/17.
  */
 
-var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname";
+var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname, input#id_location";
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
 var moved_student_path = host+'/api/logging-student-move/';
@@ -16,6 +16,21 @@ $(document).ready(function(){
     }
 
     reorganizeForm();
+
+    $(document).on('change', 'select#id_level', function(){
+
+         if($(document).find('#id_exam_result_arabic').length == 1) {
+             var max_value = 30;
+             var value = $('select#id_level').val();
+             if(value == 4 || value == 5 || value == 6){
+                 max_value = 60;
+             }
+             if(value == 7 || value == 8 || value == 9){
+                 max_value = 90;
+             }
+             $('#id_exam_result_arabic, #id_exam_result_language, #id_exam_result_math, #id_exam_result_science').attr('max', max_value);
+         }
+    });
 
     $(document).on('change', 'select#id_site', function(){
          reorganizeForm();
@@ -368,7 +383,7 @@ function reorganizeForm()
         $('div#div_id_school').parent().prev().removeClass('d-none');
     }
 
-    if(family_status == 'married' || family_status == 'divorced'){
+    if(family_status == 'married' || family_status == 'divorced' || family_status == 'widower'){
         $('div#student_have_children').removeClass('d-none');
         $('div#student_have_children').prev().removeClass('d-none');
     }else{

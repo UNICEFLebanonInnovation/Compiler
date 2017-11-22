@@ -17,6 +17,11 @@ urlpatterns = [
         name='edit'
     ),
     url(
+        regex=r'^edit-old-data/(?P<pk>[\w.@+-]+)/$',
+        view=views.EditOldDataView.as_view(),
+        name='edit_old_data'
+    ),
+    url(
         regex=r'^moved/(?P<pk>[\w.@+-]+)/(?P<moved>[\w.@+-]+)/$',
         view=views.MovedView.as_view(),
         name='moved'
@@ -25,6 +30,11 @@ urlpatterns = [
         regex=r'^list/$',
         view=views.ListingView.as_view(),
         name='list'
+    ),
+    url(
+        regex=r'^list-old-data/$',
+        view=views.ListingOldDataView.as_view(),
+        name='list_old_data'
     ),
     url(
         regex=r'^grading/(?P<pk>[\w.@+-]+)/(?P<term>[\w.@+-]+)/$',
