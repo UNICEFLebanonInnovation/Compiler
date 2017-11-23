@@ -413,6 +413,15 @@ class Outreach(TimeStampedModel):
         verbose_name=_('Have barcode with him?')
     )
 
+    pre_comment = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Comments')
+    )
+    post_comment = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Comments')
+    )
+
     objects = OutreachManager()
     drop_objects = OutreachDropoutManager()
 

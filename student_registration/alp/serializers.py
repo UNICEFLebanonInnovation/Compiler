@@ -188,6 +188,8 @@ class OutreachSerializer(serializers.ModelSerializer):
 
 
 class GradingSerializer(serializers.ModelSerializer):
+    pre_comment = serializers.CharField(required=False)
+    post_comment = serializers.CharField(required=False)
 
     class Meta:
         model = Outreach
@@ -197,6 +199,8 @@ class GradingSerializer(serializers.ModelSerializer):
             'exam_result_language',
             'exam_result_math',
             'exam_result_science',
+            'pre_test_room',
+            'post_test_room',
             'level',
             'registered_in_level',
             'section',
@@ -207,6 +211,8 @@ class GradingSerializer(serializers.ModelSerializer):
             'post_exam_result_math',
             'post_exam_result_science',
             'refer_to_level',
+            'pre_comment',
+            'post_comment',
         )
 
 
@@ -231,6 +237,9 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
     student_nationality = serializers.CharField(source='student.nationality', required=False)
     student_mother_nationality = serializers.CharField(source='student.mother_nationality', required=False)
     student_address = serializers.CharField(source='student.address', required=False)
+
+    pre_comment = serializers.CharField(required=False)
+    post_comment = serializers.CharField(required=False)
 
     def create(self, validated_data):
         from student_registration.students.serializers import StudentSerializer
@@ -300,5 +309,8 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'exam_result_language',
             'exam_result_math',
             'exam_result_science',
+            'pre_test_room',
             'level',
+            'pre_comment',
+            'post_comment',
         )
