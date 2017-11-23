@@ -34,10 +34,8 @@ from student_registration.clm.views import (
     CLMStudentViewSet,
     SelfPerceptionGradesViewSet
 )
-# from student_registration.winterization.views import (
-#     BeneficiaryViewSet
-# )
-from student_registration.users.views import LoginRedirectView, PasswordChangeView, PasswordChangeDoneView
+
+from student_registration.users.views import LoginRedirectView
 from student_registration.enrollments.views import EnrollmentViewSet, LoggingStudentMoveViewSet, LoggingProgramMoveViewSet
 from student_registration.outreach.views import HouseHoldViewSet, ChildViewSet
 
@@ -47,7 +45,6 @@ api.register(r'enrollments', EnrollmentViewSet, base_name='enrollments')
 api.register(r'logging-student-move', LoggingStudentMoveViewSet, base_name='logging_student_move')
 api.register(r'logging-student-program-move', LoggingProgramMoveViewSet, base_name='logging_student_ptogram_move')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
-# api.register(r'beneficiary', BeneficiaryViewSet, base_name='beneficiary')
 
 api.register(r'students', StudentViewSet, base_name='students')
 api.register(r'students-search', StudentSearchViewSet, base_name='students-search')
@@ -69,8 +66,6 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
     url(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
     url(r'^login-redirect/$', LoginRedirectView.as_view(), name='login-redirect'),
-    url(r'^change-password/$', PasswordChangeView.as_view(), name='change_password'),
-    url(r'^change-password-done/$', PasswordChangeDoneView.as_view(), name='change_password_done'),
     url(r'^student-autocomplete/$', StudentAutocomplete.as_view(), name='student_autocomplete'),
 
     # Django Admin, use {% url 'admin:index' %}

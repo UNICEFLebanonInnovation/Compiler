@@ -40,6 +40,10 @@ class EnrollmentResource(resources.ModelResource):
         form = EnrollmentAdminForm
         fields = (
             'id',
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
+            'outreach_barcode',
             'student__id',
             'student__id_type',
             'student__id_number',
@@ -73,7 +77,6 @@ class EnrollmentResource(resources.ModelResource):
             'last_year_result',
             'participated_in_alp',
             'last_informal_edu_round__name',
-            'last_informal_edu_level__name',
             'last_informal_edu_final_result__name',
         )
         export_order = fields
@@ -254,6 +257,10 @@ class EnrollmentAdmin(ImportExportModelAdmin):
     )
     date_hierarchy = 'registration_date'
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
     def caza(self, obj):
         if obj.school and obj.school.location:
             return obj.school.location.name
@@ -324,6 +331,10 @@ class StudentMoveAdmin(ImportExportModelAdmin):
         'school2__name',
     )
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
 
 class LoggingStudentMoveResource(resources.ModelResource):
 
@@ -359,6 +370,10 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
     search_fields = (
 
     )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
     def registered(self, obj):
         if obj.enrolment:
@@ -409,6 +424,7 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
         'school_from',
         'school_to',
         'eligibility',
+        'potential_move',
     )
 
     list_filter = (
@@ -416,6 +432,7 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
         'school_from',
         'school_to',
         'eligibility',
+        'potential_move',
     )
 
     search_fields = (
@@ -423,6 +440,10 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
         'student__father_name',
         'student__last_name',
     )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 class GradingResource(resources.ModelResource):
@@ -515,6 +536,10 @@ class GradingAdmin(ImportExportModelAdmin):
         'enrollment__student__father_name',
         'enrollment__student__last_name',
     )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
 
 admin.site.register(Enrollment, EnrollmentAdmin)

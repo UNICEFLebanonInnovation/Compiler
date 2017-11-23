@@ -56,6 +56,11 @@ class BLNAddView(LoginRequiredMixin,
     success_url = '/clm/bln-list/'
     group_required = [u"CLM_BLN"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/bln-add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -66,20 +71,21 @@ class BLNAddView(LoginRequiredMixin,
     def get_initial(self):
         initial = super(BLNAddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', 'yes'),
-            'student_outreached': self.request.GET.get('student_outreached', 'no'),
-            'have_barcode': self.request.GET.get('have_barcode', 'no')
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
         }
         if self.request.GET.get('enrollment_id'):
             instance = BLN.objects.get(id=self.request.GET.get('enrollment_id'))
             data = BLNSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', 'no')
-            data['have_barcode'] = self.request.GET.get('have_barcode', 'no')
+            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
 
         return initial
@@ -97,6 +103,11 @@ class BLNEditView(LoginRequiredMixin,
     form_class = BLNForm
     success_url = '/clm/bln-list/'
     group_required = [u"CLM_BLN"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/bln-add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -421,7 +432,7 @@ class CBECEDashboardView(LoginRequiredMixin,
             per_gov.append({
                 'governorate': gov.name,
                 'completion_male': round((float(completion_male_gov) * 100.0) / float(total_male_gov.count()), 2) if total_male_gov.count() else 0.0,
-                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov.coun()), 2) if total_female_gov.count() else 0.0,
+                'completion_female': round((float(completion_female_gov) * 100.0) / float(total_female_gov.count()), 2) if total_female_gov.count() else 0.0,
 
                 'attendance_male_1': round((float(attendances_male_gov.filter(
                     participation='less_than_5days').count()) / float(attendance_gov)) * 100.0,
@@ -455,33 +466,18 @@ class CBECEDashboardView(LoginRequiredMixin,
                 'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
             })
 
-            # d1_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'LanguageArtDomain')::float)", params=[])).aggregate(total=Avg('val'))
-            # d1_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'LanguageArtDomain')::float)", params=[])).aggregate(total=Avg('val'))
             d1_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]), post=RawSQL("((scores->>'post_LanguageArtDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
             d1_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_LanguageArtDomain')::float)", params=[]), post=RawSQL("((scores->>'post_LanguageArtDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            # d2_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianMathematics')::float)", params=[])).aggregate(total=Avg('val'))
-            # d2_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianMathematics')::float)", params=[])).aggregate(total=Avg('val'))
-            d2_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomianMathematics')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomianMathematics')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-            d2_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomianMathematics')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomianMathematics')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d3_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
+            d3_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomain')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            # d3_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianScience')::float)", params=[])).aggregate(total=Avg('val'))
-            # d3_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'CognitiveDomianScience')::float)", params=[])).aggregate(total=Avg('val'))
-            d3_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomianScience')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomianScience')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-            d3_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_CognitiveDomianScience')::float)", params=[]), post=RawSQL("((scores->>'post_CognitiveDomianScience')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
-
-            # d4_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'SocialEmotionalDomain')::float)", params=[])).aggregate(total=Avg('val'))
-            # d4_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'SocialEmotionalDomain')::float)", params=[])).aggregate(total=Avg('val'))
             d4_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]), post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
             d4_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_SocialEmotionalDomain')::float)", params=[]), post=RawSQL("((scores->>'post_SocialEmotionalDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            # d5_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'PsychomotorDomain')::float)", params=[])).aggregate(total=Avg('val'))
-            # d5_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'PsychomotorDomain')::float)", params=[])).aggregate(total=Avg('val'))
             d5_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]), post=RawSQL("((scores->>'post_PsychomotorDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
             d5_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_PsychomotorDomain')::float)", params=[]), post=RawSQL("((scores->>'post_PsychomotorDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
-            # d6_male = total_male.filter(governorate=gov).annotate(val=RawSQL("((scores->>'ArtisticDomain')::float)", params=[])).aggregate(total=Avg('val'))
-            # d6_female = total_female.filter(governorate=gov).annotate(val=RawSQL("((scores->>'ArtisticDomain')::float)", params=[])).aggregate(total=Avg('val'))
             d6_male = total_male_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]), post=RawSQL("((scores->>'post_ArtisticDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
             d6_female = total_female_gov.annotate(pre=RawSQL("((scores->>'pre_ArtisticDomain')::float)", params=[]), post=RawSQL("((scores->>'post_ArtisticDomain')::float)", params=[])).aggregate(total=((Sum('post') - Sum('pre')) / Sum('pre')) * 100.0)
 
@@ -491,11 +487,8 @@ class CBECEDashboardView(LoginRequiredMixin,
                 'art_improvement_male': d1_male['total'] if d1_male['total'] != None else 0.0,
                 'art_improvement_female': d1_female['total'] if d1_female['total'] != None else 0.0,
 
-                'math_improvement_male': d2_male['total'] if d2_male['total'] != None else 0.0,
-                'math_improvement_female': d2_female['total'] if d2_female['total'] != None else 0.0,
-
-                'science_improvement_male': d3_male['total'] if d3_male['total'] != None else 0.0,
-                'science_improvement_female': d3_female['total'] if d3_female['total'] != None else 0.0,
+                'cognitive_improvement_male': d3_male['total'] if d3_male['total'] != None else 0.0,
+                'cognitive_improvement_female': d3_female['total'] if d3_female['total'] != None else 0.0,
 
                 'social_improvement_male': d4_male['total'] if d4_male['total'] != None else 0.0,
                 'social_improvement_female': d4_female['total'] if d4_female['total'] != None else 0.0,
@@ -524,6 +517,11 @@ class RSAddView(LoginRequiredMixin,
     success_url = '/clm/rs-list/'
     group_required = [u"CLM_RS"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/rs-add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -534,20 +532,21 @@ class RSAddView(LoginRequiredMixin,
     def get_initial(self):
         initial = super(RSAddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', 'yes'),
-            'student_outreached': self.request.GET.get('student_outreached', 'no'),
-            'have_barcode': self.request.GET.get('have_barcode', 'no')
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
         }
         if self.request.GET.get('enrollment_id'):
             instance = RS.objects.get(id=self.request.GET.get('enrollment_id'))
             data = RSSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', 'no')
-            data['have_barcode'] = self.request.GET.get('have_barcode', 'no')
+            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
 
         return initial
@@ -565,6 +564,11 @@ class RSEditView(LoginRequiredMixin,
     form_class = RSForm
     success_url = '/clm/rs-list/'
     group_required = [u"CLM_RS"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/rs-add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -617,6 +621,11 @@ class CBECEAddView(LoginRequiredMixin,
     success_url = '/clm/cbece-list/'
     group_required = [u"CLM_CBECE"]
 
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/cbece-add/'
+        return self.success_url
+
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         """Insert the form into the context dict."""
@@ -627,20 +636,21 @@ class CBECEAddView(LoginRequiredMixin,
     def get_initial(self):
         initial = super(CBECEAddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', 'yes'),
-            'student_outreached': self.request.GET.get('student_outreached', 'no'),
-            'have_barcode': self.request.GET.get('have_barcode', 'no')
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
         }
         if self.request.GET.get('enrollment_id'):
             instance = CBECE.objects.get(id=self.request.GET.get('enrollment_id'))
             data = CBECESerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', 'no')
-            data['have_barcode'] = self.request.GET.get('have_barcode', 'no')
+            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
 
         return initial
@@ -658,6 +668,11 @@ class CBECEEditView(LoginRequiredMixin,
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
     group_required = [u"CLM_CBECE"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/cbece-add/'
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
@@ -815,5 +830,5 @@ class CLMStudentViewSet(mixins.RetrieveModelMixin,
                     Q(student__first_name__contains=term) |
                     Q(student__father_name__contains=term) |
                     Q(student__last_name__contains=term)
-                ).distinct()[:50]
+                ).distinct()
             return qs

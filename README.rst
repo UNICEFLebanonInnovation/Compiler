@@ -1,5 +1,5 @@
-Student Registration
-====================
+Student Registration Compiler
+=============================
 
 Simple, interactive and online student registration.
 
@@ -7,6 +7,11 @@ Simple, interactive and online student registration.
      :target: https://github.com/pydanny/cookiecutter-django/
      :alt: Built with Cookiecutter Django
 
+.. image:: https://travis-ci.org/UNICEFLebanonInnovation/Compiler.svg?branch=develop
+    :target: https://travis-ci.org/UNICEFLebanonInnovation/Compiler
+    
+.. image:: https://coveralls.io/repos/github/UNICEFLebanonInnovation/Compiler/badge.svg?branch=develop
+    :target: https://coveralls.io/github/UNICEFLebanonInnovation/Compiler?branch=develop
 
 :License: GPLv3
 

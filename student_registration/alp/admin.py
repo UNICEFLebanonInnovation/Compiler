@@ -46,6 +46,10 @@ class OutreachResource(resources.ModelResource):
         model = Outreach
         fields = (
             'id',
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
+            'outreach_barcode',
             'student__id',
             'student__id_type',
             'student__id_number',
@@ -68,25 +72,27 @@ class OutreachResource(resources.ModelResource):
             'school__number',
             'school__name',
             'level__name',
+            'pre_test_room',
             'exam_result_arabic',
             'exam_language',
             'exam_result_language',
             'exam_result_math',
             'exam_result_science',
             'exam_total',
-            'passed_pre',
+            # 'passed_pre',
             'assigned_to_level__name',
             'registered_in_level__name',
             'section__name',
+            'post_test_room',
             'post_exam_result_arabic',
             'post_exam_language',
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',
             'post_exam_total',
-            'referred_to',
+            'refer_to_level',
             're_enrolled',
-            'passed_post',
+            # 'passed_post',
             'owner__username',
             'modified_by__username',
             'created',
@@ -665,6 +671,10 @@ class OutreachAdmin(ImportExportModelAdmin):
         'modified_by__username',
     )
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
     def get_queryset(self, request):
         qs = super(OutreachAdmin, self).get_queryset(request)
         return qs
@@ -762,6 +772,7 @@ class PreTestAdmin(OutreachAdmin):
         'caza',
         'governorate',
         'level',
+        'pre_test_room',
         'total',
         'assigned_to_level',
         'owner',
@@ -795,9 +806,6 @@ class PreTestAdmin(OutreachAdmin):
             level__isnull=False,
             assigned_to_level__isnull=False,
         )
-        # .extra(where={
-        #     '(alp_outreach.exam_corrector_arabic > 0 OR alp_outreach.exam_corrector_language > 0 OR alp_outreach.exam_corrector_math > 0 OR alp_outreach.exam_corrector_science > 0)'
-        # })
 
 
 class CurrentRound(Outreach):
@@ -883,8 +891,8 @@ class PostTestAdmin(OutreachAdmin):
         'governorate',
         'registered_in_level',
         'post_total',
-        # 'refer_to_level',
-        'referred_to',
+        'post_test_room',
+        'refer_to_level',
         'section',
         'owner',
         'modified_by',
@@ -913,7 +921,7 @@ class PostTestAdmin(OutreachAdmin):
             if obj.refer_to_level_id == 1:
                 if obj.post_exam_total >= 40:
                     if obj.registered_in_level_id < 9:
-                        to_level = EducationLevel.objects.get(id=int(obj.registered_in_level_id) +1)
+                        to_level = EducationLevel.objects.get(id=int(obj.registered_in_level_id) + 1)
                         return to_level.name
                     else:
                         return obj.registered_in_level.name

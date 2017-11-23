@@ -119,7 +119,6 @@ class AttendanceView(LoginRequiredMixin,
         date_format = '%Y-%m-%d'
         date_format_display = '%A %d/%m/%Y'
 
-        # if has_group(self.request.user, 'SCHOOL') or has_group(self.request.user, 'DIRECTOR'):
         if self.request.user.school:
             school = self.request.user.school
 
@@ -131,7 +130,6 @@ class AttendanceView(LoginRequiredMixin,
             attendance = Attendance.objects.get(
                 school_id=school.id,
                 attendance_date=selected_date
-                # attendance_date=datetime.datetime.strptime(selected_date, date_format)
             )
         except Attendance.DoesNotExist:
             attendance = ''
@@ -143,7 +141,7 @@ class AttendanceView(LoginRequiredMixin,
             section = Section.objects.get(id=int(self.request.GET.get('section', 0)))
 
         education_year = EducationYear.objects.get(current_year=True)
-        queryset = Enrollment.objects.filter(school_id=school, education_year=education_year)
+        queryset = Enrollment.objects.exclude(moved=True).filter(school_id=school, education_year=education_year)
         registrations = queryset.filter(
             classroom__isnull=False,
             section__isnull=False
@@ -163,16 +161,20 @@ class AttendanceView(LoginRequiredMixin,
             validation_date = attendance.validation_date if attendance else ''
             total_attended = 0
             total_absences = 0
+            attendance_taken = False
             level_section = '{}-{}'.format(registry['classroom_id'], registry['section_id'])
             attendances = attendance.students[level_section] if attendance and attendance.students and level_section in attendance.students else ''
-            total = queryset.filter(classroom_id=registry['classroom_id'], section_id=registry['section_id']).count()
+            total = queryset.filter(classroom_id=registry['classroom_id'],
+                                    section_id=registry['section_id'],
+                                    registration_date__lte=selected_date).count()
 
             if attendances:
+                attendance_taken = True
                 total = attendances['total_enrolled']
                 total_attended = attendances['total_attended']
                 total_absences = attendances['total_absences']
-                exam_day = attendances['exam_day']
-                not_attending = attendances['not_attending']
+                exam_day = attendances['exam_day'] if 'exam_day' in attendances else False
+                not_attending = attendances['not_attending'] if 'not_attending' in attendances else False
                 for value in attendances['students']:
                     attendance_status[value['student_id']] = value
 
@@ -187,7 +189,8 @@ class AttendanceView(LoginRequiredMixin,
                 'exam_day': exam_day,
                 'not_attending': not_attending,
                 'validation_date': validation_date,
-                'disable_attendance': disable_attendance
+                'disable_attendance': disable_attendance,
+                'attendance_taken': attendance_taken
             }
 
             if level and section and level.id == registry['classroom_id'] and section.id == registry['section_id']:
@@ -202,7 +205,7 @@ class AttendanceView(LoginRequiredMixin,
 
         if level and section:
             students = queryset.filter(classroom_id=level.id,section_id=section.id,
-                                       # registration_date__lte=selected_date
+                                       registration_date__lte=selected_date
                                        ).order_by('student__first_name', 'student__father_name', 'student__last_name')
             for line in students:
                 student = line.student
@@ -214,7 +217,13 @@ class AttendanceView(LoginRequiredMixin,
 
         base = datetime.datetime.now()
         dates = []
-        day_range = school.attendance_range if school.attendance_range else Attendance.DEFAULT_ATTENDANCE_RANGE
+        if school.attendance_from_beginning:
+            start_date = school.academic_year_start
+            end_date = datetime.date(base.year, base.month, base.day)
+            delta = end_date - start_date
+            day_range = delta.days + 1
+        else:
+            day_range = school.attendance_range if school.attendance_range else Attendance.DEFAULT_ATTENDANCE_RANGE
 
         for x in range(0, day_range):
             d = base - datetime.timedelta(days=x)
@@ -265,7 +274,7 @@ class ExportView(LoginRequiredMixin, ListView):
         selected_date = self.request.GET.get('date', current_date)
 
         school = self.request.user.school_id
-        data = export_attendance({'date': selected_date, 'school': school})
+        data = export_attendance({'date': selected_date, 'school': school}, return_data=True)
 
         response = HttpResponse(
             data,

@@ -19,16 +19,28 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
-from .filters import EnrollmentFilter
-from .tables import BootstrapTable, EnrollmentTable
+from .filters import EnrollmentFilter, EnrollmentOldDataFilter
+from .tables import BootstrapTable, EnrollmentTable, EnrollmentOldDataTable
 
 from student_registration.alp.models import Outreach
 from student_registration.alp.serializers import OutreachSerializer
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
-from student_registration.schools.models import ClassRoom
-from .models import Enrollment, EnrollmentGrading, LoggingStudentMove, EducationYear, LoggingProgramMove
-from .forms import EnrollmentForm, GradingTermForm, GradingIncompleteForm, StudentMovedForm
+from student_registration.schools.models import ClassRoom, School
+from .models import (
+    Enrollment,
+    EnrollmentGrading,
+    LoggingStudentMove,
+    EducationYear,
+    LoggingProgramMove,
+)
+from .forms import (
+    EnrollmentForm,
+    GradingTermForm,
+    GradingIncompleteForm,
+    StudentMovedForm,
+    EditOldDataForm
+)
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer, LoggingProgramMoveSerializer
 from student_registration.users.utils import force_default_language
 from student_registration.backends.tasks import export_2ndshift, export_2ndshift_gradings
@@ -58,17 +70,39 @@ class AddView(LoginRequiredMixin,
     def get_initial(self):
         initial = super(AddView, self).get_initial()
         data = {
-            'new_registry': self.request.GET.get('new_registry', 'yes'),
-            'student_outreached': self.request.GET.get('student_outreached', 'no'),
-            'have_barcode': self.request.GET.get('have_barcode', 'no')
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
         }
         if self.request.GET.get('enrollment_id'):
             if self.request.GET.get('school_type', None) == 'alp':
                 instance = Outreach.objects.get(id=self.request.GET.get('enrollment_id'))
                 data = OutreachSerializer(instance).data
+
+                data['classroom'] = ''
+                data['participated_in_alp'] = 'yes'
+                data['last_informal_edu_round'] = instance.alp_round_id
+                data['last_informal_edu_final_result'] = instance.refer_to_level_id
+
+                data['last_education_level'] = ClassRoom.objects.get(name='n/a').id
+                data['last_school_type'] = 'na'
+                data['last_school_shift'] = 'na'
+                data['last_school'] = School.objects.get(number='na').id
+                data['last_education_year'] = 'na'
+                data['last_year_result'] = 'na'
+
             else:
                 instance = Enrollment.objects.get(id=self.request.GET.get('enrollment_id'))
                 data = EnrollmentSerializer(instance).data
+
+                data['classroom'] = ''
+                data['last_education_level'] = instance.classroom_id
+                data['last_school_type'] = 'public_in_country'
+                data['last_school_shift'] = 'second'
+                data['last_school'] = instance.school_id
+                data['last_education_year'] = data['education_year_name']
+                data['last_year_result'] = instance.last_year_grading_result
+
             data['student_nationality'] = data['student_nationality_id']
             data['student_mother_nationality'] = data['student_mother_nationality_id']
             data['student_id_type'] = data['student_id_type_id']
@@ -76,9 +110,9 @@ class AddView(LoginRequiredMixin,
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', 'yes')
-            data['student_outreached'] = self.request.GET.get('student_outreached', 'no')
-            data['have_barcode'] = self.request.GET.get('have_barcode', 'no')
+            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
 
         return initial
@@ -130,6 +164,59 @@ class EditView(LoginRequiredMixin,
         instance = Enrollment.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(EditView, self).form_valid(form)
+
+
+class EditOldDataView(LoginRequiredMixin,
+                      GroupRequiredMixin,
+                      FormView):
+
+    template_name = 'bootstrap4/common_form.html'
+    form_class = EditOldDataForm
+    success_url = '/enrollments/list-old-data/'
+    group_required = [u"ENROL_EDIT_OLD"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(EditOldDataView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return EditOldDataForm(self.request.POST, instance=instance)
+        else:
+            data = EnrollmentSerializer(instance).data
+            return EditOldDataForm(data, instance=instance)
+
+    def form_valid(self, form):
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(EditOldDataView, self).form_valid(form)
+
+
+class ListingOldDataView(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         FilterView,
+                         ExportMixin,
+                         SingleTableView,
+                         RequestConfig):
+
+    table_class = EnrollmentOldDataTable
+    model = Enrollment
+    template_name = 'enrollments/list_old_data.html'
+    table = BootstrapTable(Enrollment.objects.all(), order_by='id')
+    filterset_class = EnrollmentOldDataFilter
+    group_required = [u"ENROL_EDIT_OLD"]
+
+    def get_queryset(self):
+        force_default_language(self.request)
+        education_year = EducationYear.objects.get(current_year=True)
+        return Enrollment.objects.exclude(moved=True).filter(
+            education_year__id__lt=education_year.id,
+            school=self.request.user.school_id
+        )
 
 
 class MovedView(LoginRequiredMixin,
@@ -340,7 +427,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         if self.request.user.school_id:
             school = self.request.user.school_id
         if school:
-            data = export_2ndshift({'current': 'true', 'school': school})
+            data = export_2ndshift({'current': 'true', 'school': school}, return_data=True)
 
         response = HttpResponse(
             data,

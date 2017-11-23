@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, division
 from django.utils.translation import ugettext as _
 from django import forms
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
@@ -132,11 +133,10 @@ class CommonForm(forms.ModelForm):
     #     widget=forms.TextInput,
     #     required=True
     # )
-    language = forms.MultipleChoiceField(
+    language = forms.ChoiceField(
         label=_('The language supported in the program'),
-        choices=CLM.LANGUAGES,
-        widget=forms.CheckboxSelectMultiple,
-        required=True,
+        widget=forms.Select,
+        choices=CLM.LANGUAGES, required=True,
         initial='english_arabic'
     )
 
@@ -191,6 +191,10 @@ class CommonForm(forms.ModelForm):
     # )
     student_p_code = forms.CharField(
         label=_('P-Code If a child lives in a tent / Brax in a random camp'),
+        widget=forms.TextInput, required=False
+    )
+    student_id_number = forms.CharField(
+        label=_('ID number'),
         widget=forms.TextInput, required=False
     )
 
@@ -262,18 +266,24 @@ class CommonForm(forms.ModelForm):
         if instance:
             serializer = serializer(instance, data=request.POST)
             if serializer.is_valid():
-                serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance.modified_by = request.user
+                instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
         else:
             serializer = serializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.owner = request.user
+                instance.modified_by = request.user
                 instance.partner = request.user.partner
                 instance.round = clm_round
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
             else:
-                print(serializer.errors)
-                return False
+                messages.warning(request, serializer.errors)
 
         return True
 
@@ -298,6 +308,8 @@ class CommonForm(forms.ModelForm):
             'student_mother_fullname',
             # 'student_address',
             'student_p_code',
+            'student_id_number',
+            'internal_number',
             'disability',
             'have_labour',
             'labours',
@@ -324,13 +336,13 @@ class CommonForm(forms.ModelForm):
 
 class BLNForm(CommonForm):
 
-    cycle = forms.ModelChoiceField(
-        empty_label='----------',
-        queryset=Cycle.objects.all(), widget=forms.Select,
-        label=_('In which cycle is this child registered?'),
-        required=True, to_field_name='id',
-        initial=0
-    )
+    # cycle = forms.ModelChoiceField(
+    #     empty_label='----------',
+    #     queryset=Cycle.objects.all(), widget=forms.Select,
+    #     label=_('In which cycle is this child registered?'),
+    #     required=True, to_field_name='id',
+    #     initial=0
+    # )
     # referral = forms.MultipleChoiceField(
     #     label=_('Where was the child referred?'),
     #     choices=CLM.REFERRAL,
@@ -455,18 +467,18 @@ class BLNForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Program Information') + '</h4>')
                 ),
                 Div(
+                    # HTML('<span class="badge badge-default">1</span>'),
+                    # Div('cycle', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('cycle', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
                     Div('governorate', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('district', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('location', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('language', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -516,6 +528,13 @@ class BLNForm(CommonForm):
                     Div('student_p_code', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">12</span>'),
                     Div('disability', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('student_id_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('internal_number', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
@@ -582,6 +601,7 @@ class BLNForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
+                Submit('save_add_another', _('Save and add another'), css_class='child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -593,7 +613,7 @@ class BLNForm(CommonForm):
     class Meta:
         model = BLN
         fields = CommonForm.Meta.fields + (
-            'cycle',
+            # 'cycle',
             # 'referral',
             'student_family_status',
             'student_have_children',
@@ -872,6 +892,13 @@ class RSForm(CommonForm):
                     Div('disability', css_class='col-md-3'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('student_id_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('internal_number', css_class='col-md-3'),
+                    css_class='row',
+                ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
             Fieldset(
@@ -915,6 +942,8 @@ class RSForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
+                    Div('section', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('referral', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1041,6 +1070,7 @@ class RSForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
+                Submit('save_add_another', _('Save and add another'), css_class='child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -1057,6 +1087,7 @@ class RSForm(CommonForm):
             'school',
             'shift',
             'grade',
+            'section',
             'referral',
             'registered_in_school',
             'student_family_status',
@@ -1273,6 +1304,13 @@ class CBECEForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('student_id_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('internal_number', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('child_muac', css_class='col-md-3'),
                     css_class='row',
@@ -1336,6 +1374,7 @@ class CBECEForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
+                Submit('save_add_another', _('Save and add another'), css_class='child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )

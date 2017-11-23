@@ -158,13 +158,13 @@ class Outreach(TimeStampedModel):
         max_length=45,
         blank=True,
         null=True,
-        verbose_name=_('Pre-test room'),
+        verbose_name=_('Pre test room'),
     )
     post_test_room = models.CharField(
         max_length=45,
         blank=True,
         null=True,
-        verbose_name=_('Post-test room'),
+        verbose_name=_('Post test room'),
     )
 
     status = models.BooleanField(blank=True, default=True)
