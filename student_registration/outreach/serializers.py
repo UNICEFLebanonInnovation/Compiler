@@ -47,6 +47,8 @@ class ChildSerializer(serializers.ModelSerializer):
     student_nationality = serializers.CharField(source='nationality.id', read_only=True)
     student_mother_nationality = serializers.CharField(source='mother_nationality.id', read_only=True)
     student_address = serializers.CharField(source='address', read_only=True)
+    student_registered_in_unhcr = serializers.CharField(source='is_registered_in_unhcr', read_only=True)
+    outreach_barcode = serializers.CharField(source='barcode_subset', read_only=True)
 
     first_name = serializers.CharField(required=False)
     father_name = serializers.CharField(required=False)
@@ -80,6 +82,8 @@ class ChildSerializer(serializers.ModelSerializer):
             'student_phone_prefix',
             'student_id_number',
             'student_id_type',
+            'student_registered_in_unhcr',
+            'outreach_barcode',
             'student_nationality',
             'student_mother_nationality',
             'student_address',

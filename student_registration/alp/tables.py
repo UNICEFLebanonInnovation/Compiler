@@ -103,6 +103,7 @@ class PreTestTable(CommonTable):
             'exam_result_science',
             'pretest_total',
             'assigned_to_level',
+            'pre_comment',
             'student_birthday',
             'student.nationality',
             'created_by',
@@ -151,6 +152,7 @@ class PostTestTable(CommonTable):
             'post_exam_result_science',
             'posttest_total',
             'refer_to_level',
+            'post_comment',
             'created_by',
             'modified_by',
         )

@@ -39,10 +39,12 @@ class UserAdmin(AuthUserAdmin):
         'disable',
         'allow_enroll_create',
         'allow_enroll_edit',
+        'allow_enroll_edit_old',
         'allow_enroll_grading',
         'allow_attendance',
         'deny_enroll_create',
         'deny_enroll_edit',
+        'deny_enroll_edit_old',
         'deny_enroll_grading',
         'deny_attendance',
         'allow_helpdesk',
@@ -84,6 +86,11 @@ class UserAdmin(AuthUserAdmin):
         for user in queryset:
             user.groups.add(group)
 
+    def allow_enroll_edit_old(self, request, queryset):
+        group = Group.objects.get(name='ENROL_EDIT_OLD')
+        for user in queryset:
+            user.groups.add(group)
+
     def allow_enroll_grading(self, request, queryset):
         group = Group.objects.get(name='ENROL_GRADING')
         for user in queryset:
@@ -101,6 +108,11 @@ class UserAdmin(AuthUserAdmin):
 
     def deny_enroll_edit(self, request, queryset):
         group = Group.objects.get(name='ENROL_EDIT')
+        for user in queryset:
+            user.groups.remove(group)
+
+    def deny_enroll_edit_old(self, request, queryset):
+        group = Group.objects.get(name='ENROL_EDIT_OLD')
         for user in queryset:
             user.groups.remove(group)
 
