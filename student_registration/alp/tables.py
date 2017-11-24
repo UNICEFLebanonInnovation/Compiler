@@ -218,4 +218,8 @@ class SchoolTable(CommonTable):
             'last_informal_edu_level',
             'last_informal_edu_round',
             'last_informal_edu_final_result',
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
+            'outreach_barcode',
         )
