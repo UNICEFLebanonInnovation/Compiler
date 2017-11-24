@@ -19,16 +19,28 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
-from .filters import EnrollmentFilter
-from .tables import BootstrapTable, EnrollmentTable
+from .filters import EnrollmentFilter, EnrollmentOldDataFilter
+from .tables import BootstrapTable, EnrollmentTable, EnrollmentOldDataTable
 
 from student_registration.alp.models import Outreach
 from student_registration.alp.serializers import OutreachSerializer
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.schools.models import ClassRoom, School
-from .models import Enrollment, EnrollmentGrading, LoggingStudentMove, EducationYear, LoggingProgramMove
-from .forms import EnrollmentForm, GradingTermForm, GradingIncompleteForm, StudentMovedForm
+from .models import (
+    Enrollment,
+    EnrollmentGrading,
+    LoggingStudentMove,
+    EducationYear,
+    LoggingProgramMove,
+)
+from .forms import (
+    EnrollmentForm,
+    GradingTermForm,
+    GradingIncompleteForm,
+    StudentMovedForm,
+    EditOldDataForm
+)
 from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer, LoggingProgramMoveSerializer
 from student_registration.users.utils import force_default_language
 from student_registration.backends.tasks import export_2ndshift, export_2ndshift_gradings
@@ -152,6 +164,59 @@ class EditView(LoginRequiredMixin,
         instance = Enrollment.objects.get(id=self.kwargs['pk'])
         form.save(request=self.request, instance=instance)
         return super(EditView, self).form_valid(form)
+
+
+class EditOldDataView(LoginRequiredMixin,
+                      GroupRequiredMixin,
+                      FormView):
+
+    template_name = 'bootstrap4/common_form.html'
+    form_class = EditOldDataForm
+    success_url = '/enrollments/list-old-data/'
+    group_required = [u"ENROL_EDIT_OLD"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(EditOldDataView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return EditOldDataForm(self.request.POST, instance=instance)
+        else:
+            data = EnrollmentSerializer(instance).data
+            return EditOldDataForm(data, instance=instance)
+
+    def form_valid(self, form):
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(EditOldDataView, self).form_valid(form)
+
+
+class ListingOldDataView(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         FilterView,
+                         ExportMixin,
+                         SingleTableView,
+                         RequestConfig):
+
+    table_class = EnrollmentOldDataTable
+    model = Enrollment
+    template_name = 'enrollments/list_old_data.html'
+    table = BootstrapTable(Enrollment.objects.all(), order_by='id')
+    filterset_class = EnrollmentOldDataFilter
+    group_required = [u"ENROL_EDIT_OLD"]
+
+    def get_queryset(self):
+        force_default_language(self.request)
+        education_year = EducationYear.objects.get(current_year=True)
+        return Enrollment.objects.exclude(moved=True).filter(
+            education_year__id__lt=education_year.id,
+            school=self.request.user.school_id
+        )
 
 
 class MovedView(LoginRequiredMixin,
