@@ -80,3 +80,48 @@ class EnrollmentTable(tables.Table):
             'student_outreached',
             'have_barcode',
         )
+
+
+class EnrollmentOldDataTable(tables.Table):
+
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
+                                        template_name='django_tables2/edit_column.html',
+                                        attrs={'url': '/enrollments/edit-old-data/'})
+
+    student_age = tables.Column(verbose_name=_('Age'), accessor='student.age', orderable=False,)
+    student_birthday = tables.Column(verbose_name=_('Birthday'), accessor='student.birthday', orderable=False,)
+    student_phone_number = tables.Column(verbose_name=_('Phone number'), accessor='student.phone_number', orderable=False,)
+    student_registered_in_unhcr = tables.Column(verbose_name=_('Registered in UNHCR'), orderable=False,
+                                                accessor='student.registered_in_unhcr')
+
+    class Meta:
+        model = Enrollment
+        template = 'django_tables2/bootstrap.html'
+        fields = (
+            'edit_column',
+            'student.first_name',
+            'student.father_name',
+            'student.last_name',
+            'student.sex',
+            'student_age',
+            'student_birthday',
+            'student.nationality',
+            'student.mother_fullname',
+            'student.mother_nationality',
+            'student_registered_in_unhcr',
+            'student.id_type',
+            'student.id_number',
+            'student.address',
+            'student_phone_number',
+            'classroom',
+            'section',
+            'last_education_level',
+            'last_school_type',
+            'last_school_shift',
+            'last_school',
+            'last_education_year',
+            'last_year_result',
+            'participated_in_alp',
+            'last_informal_edu_round',
+            'last_informal_edu_final_result',
+        )

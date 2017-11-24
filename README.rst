@@ -9,6 +9,9 @@ Simple, interactive and online student registration.
 
 .. image:: https://travis-ci.org/UNICEFLebanonInnovation/Compiler.svg?branch=develop
     :target: https://travis-ci.org/UNICEFLebanonInnovation/Compiler
+    
+.. image:: https://coveralls.io/repos/github/UNICEFLebanonInnovation/Compiler/badge.svg?branch=develop
+    :target: https://coveralls.io/github/UNICEFLebanonInnovation/Compiler?branch=develop
 
 :License: GPLv3
 

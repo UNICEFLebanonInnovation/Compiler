@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, division
 from django import forms
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
+from django.contrib import messages
 
 from dal import autocomplete
 from crispy_forms.helper import FormHelper
@@ -30,7 +31,7 @@ YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, Person.CURRENT_YEAR+1))
 EDUCATION_YEARS.append(('na', 'n/a'))
 
-YEARS = list(((str(x), x) for x in range(1990, 2050)))
+YEARS = list(((str(x), x) for x in range(Person.CURRENT_YEAR-20, Person.CURRENT_YEAR-2)))
 YEARS.insert(0, ('', '---------'))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
@@ -57,6 +58,7 @@ EXAM_LANGUAGES = (
             ('english', _('English')),
             ('french', _('French'))
         )
+ROOMS = list(((str(x), str(x)) for x in range(1, 20)))
 
 
 class OutreachAdminForm(forms.ModelForm):
@@ -280,6 +282,9 @@ class OutreachForm(forms.ModelForm):
                 serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
         else:
             serializer = OutreachSmallSerializer(data=request.POST)
             if serializer.is_valid():
@@ -288,6 +293,9 @@ class OutreachForm(forms.ModelForm):
                 instance.owner = request.user
                 instance.alp_round = ALPRound.objects.get(current_pre_test=True)
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
 
     class Meta:
         model = Outreach
@@ -322,15 +330,10 @@ class OutreachForm(forms.ModelForm):
 class PreTestForm(forms.ModelForm):
 
     school = forms.ModelChoiceField(
+        label=_('School'),
         queryset=School.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
-    level = forms.ModelChoiceField(
-        queryset=EducationLevel.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
-    )
-    pre_test_room = forms.CharField(widget=forms.TextInput, required=True)
-
     student_first_name = forms.CharField(
         label=_("First name"),
         widget=forms.TextInput, required=True
@@ -348,29 +351,40 @@ class PreTestForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=GENDER
     )
+    level = forms.ModelChoiceField(
+        label=_('Entrance test'),
+        queryset=EducationLevel.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    pre_test_room = forms.ChoiceField(
+        label=_('Pre-test room'),
+        widget=forms.Select, required=True,
+        choices=ROOMS
+    )
     exam_result_arabic = forms.FloatField(
+        label=_('Arabic'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=90, min_value=0,
-        required=True
+        min_value=0, required=True
     )
     exam_language = forms.ChoiceField(
+        label=_('Exam language'),
         widget=forms.Select, required=True,
         choices=EXAM_LANGUAGES
     )
     exam_result_language = forms.FloatField(
+        label=_('Foreign Language'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=90, min_value=0,
-        required=True
+        min_value=0, required=True
     )
     exam_result_math = forms.FloatField(
+        label=_('Math'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=90, min_value=0,
-        required=True
+        min_value=0, required=True
     )
     exam_result_science = forms.FloatField(
+        label=_('Science'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=90, min_value=0,
-        required=True
+        min_value=0, required=True
     )
 
     def __init__(self, *args, **kwargs):
@@ -441,6 +455,8 @@ class PreTestForm(forms.ModelForm):
                     Div('exam_result_math', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('exam_result_science', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('pre_comment', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
@@ -459,6 +475,9 @@ class PreTestForm(forms.ModelForm):
                 instance.modified_by = request.user
                 instance.calculate_pre_result()
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
         else:
             serializer = OutreachSmallSerializer(data=request.POST)
             if serializer.is_valid():
@@ -467,6 +486,9 @@ class PreTestForm(forms.ModelForm):
                 instance.alp_round = ALPRound.objects.get(current_pre_test=True)
                 instance.calculate_pre_result()
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
 
     class Meta:
         model = Outreach
@@ -483,6 +505,7 @@ class PreTestForm(forms.ModelForm):
             'level',
             'school',
             'pre_test_room',
+            'pre_comment'
         )
         initial_fields = fields
 
@@ -841,8 +864,9 @@ class RegistrationForm(forms.ModelForm):
                 serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
             else:
-                print(serializer.errors)
+                messages.warning(request, serializer.errors)
         else:
             serializer = OutreachSerializer(data=request.POST)
             if serializer.is_valid():
@@ -851,6 +875,9 @@ class RegistrationForm(forms.ModelForm):
                 instance.owner = request.user
                 instance.alp_round = ALPRound.objects.get(current_round=True)
                 instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
 
     class Meta:
         model = Outreach
@@ -899,39 +926,40 @@ class RegistrationForm(forms.ModelForm):
 
 class PreTestGradingForm(forms.ModelForm):
 
-    school = forms.ModelChoiceField(
-        queryset=School.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
-    )
     level = forms.ModelChoiceField(
+        label=_('Entrance test'),
         queryset=EducationLevel.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
     )
-    pre_test_room = forms.CharField(widget=forms.TextInput, required=True)
-
+    pre_test_room = forms.ChoiceField(
+        label=_('Pre-test room'),
+        widget=forms.Select, required=True,
+        choices=ROOMS
+    )
     exam_result_arabic = forms.FloatField(
+        label=_('Arabic'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
-        required=True
+        min_value=0, required=True
     )
     exam_language = forms.ChoiceField(
+        label=_('Exam language'),
         widget=forms.Select, required=True,
         choices=EXAM_LANGUAGES
     )
     exam_result_language = forms.FloatField(
+        label=_('Foreign Language'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
-        required=True
+        min_value=0, required=True
     )
     exam_result_math = forms.FloatField(
+        label=_('Math'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
-        required=True
+        min_value=0, required=True
     )
     exam_result_science = forms.FloatField(
+        label=_('Science'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        max_value=60, min_value=0,
-        required=True
+        min_value=0, required=True
     )
 
     def __init__(self, *args, **kwargs):
@@ -950,10 +978,8 @@ class PreTestGradingForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('school', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
                     Div('level', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('pre_test_room', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -978,6 +1004,8 @@ class PreTestGradingForm(forms.ModelForm):
                     Div('exam_result_math', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('exam_result_science', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('pre_comment', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
@@ -993,6 +1021,7 @@ class PreTestGradingForm(forms.ModelForm):
         instance.modified_by = request.user
         instance.calculate_pre_result()
         instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
 
     class Meta:
         model = Outreach
@@ -1003,39 +1032,50 @@ class PreTestGradingForm(forms.ModelForm):
             'exam_result_math',
             'exam_result_science',
             'level',
-            'school',
             'pre_test_room',
+            'pre_comment',
         )
 
     class Media:
         js = (
-            # 'js/validator.js',
+            'js/jquery-1.12.3.min.js',
+            'js/jquery-ui-1.12.1.js',
+            'js/registrations.js',
         )
 
 
 class PostTestGradingForm(forms.ModelForm):
 
-    post_test_room = forms.CharField(widget=forms.TextInput, required=True)
+    post_test_room = forms.ChoiceField(
+        label=_('Post-test room'),
+        widget=forms.Select, required=True,
+        choices=ROOMS
+    )
     post_exam_result_arabic = forms.FloatField(
+        label=_('Arabic'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         max_value=20, min_value=0,
         required=True
     )
     post_exam_language = forms.ChoiceField(
+        label=_('Exam language'),
         widget=forms.Select, required=True,
         choices=EXAM_LANGUAGES
     )
     post_exam_result_language = forms.FloatField(
+        label=_('Foreign Language'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         max_value=20, min_value=0,
         required=True
     )
     post_exam_result_math = forms.FloatField(
+        label=_('Math'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         max_value=20, min_value=0,
         required=True
     )
     post_exam_result_science = forms.FloatField(
+        label=_('Science'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         max_value=20, min_value=0,
         required=True
@@ -1081,6 +1121,8 @@ class PostTestGradingForm(forms.ModelForm):
                     Div('post_exam_result_math', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('post_exam_result_science', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('post_comment', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
@@ -1096,6 +1138,7 @@ class PostTestGradingForm(forms.ModelForm):
         instance.modified_by = request.user
         instance.calculate_post_result()
         instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
 
     class Meta:
         model = Outreach
@@ -1106,6 +1149,7 @@ class PostTestGradingForm(forms.ModelForm):
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',
+            'post_comment',
         )
 
     class Media:

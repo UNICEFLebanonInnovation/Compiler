@@ -158,13 +158,13 @@ class Outreach(TimeStampedModel):
         max_length=45,
         blank=True,
         null=True,
-        verbose_name=_('Pre-test room'),
+        verbose_name=_('Pre test room'),
     )
     post_test_room = models.CharField(
         max_length=45,
         blank=True,
         null=True,
-        verbose_name=_('Post-test room'),
+        verbose_name=_('Post test room'),
     )
 
     status = models.BooleanField(blank=True, default=True)
@@ -411,6 +411,15 @@ class Outreach(TimeStampedModel):
         null=True,
         choices=Choices(('yes', _("Yes")), ('no', _("No"))),
         verbose_name=_('Have barcode with him?')
+    )
+
+    pre_comment = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Comments')
+    )
+    post_comment = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Comments')
     )
 
     objects = OutreachManager()

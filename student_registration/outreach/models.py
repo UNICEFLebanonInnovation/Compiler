@@ -247,3 +247,9 @@ class Child(Person):
         null=True,
     )
     referral_note = models.CharField(max_length=200, blank=True, null=True)
+
+    @property
+    def is_registered_in_unhcr(self):
+        if self.id_type and self.id_type_id == 1:
+            return 1
+        return 0

@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, division
 from django.utils.translation import ugettext as _
 from django import forms
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
@@ -14,24 +15,29 @@ from .models import School, PartnerOrganization, EducationYear
 class ProfileForm(forms.ModelForm):
 
     email = forms.EmailField(
-        label=_('School email')
+        label=_('School email'),
+        widget=forms.TextInput(attrs={'placeholder': 'Format: school@email.com'})
     )
     land_phone_number = forms.RegexField(
         label=_('School land phone number'),
-        regex=r'^[0-9]{2}-[0-9]{6}$'
+        regex=r'^[0-9]{2}-[0-9]{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
     )
     fax_number = forms.RegexField(
         label=_('School fax number'),
         regex=r'^[0-9]{2}-[0-9]{6}$',
-        required=False
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
     )
     director_phone_number =forms.RegexField(
         label=_('School director cell phone'),
-        regex=r'^[0-9]{2}-[0-9]{6}$'
+        regex=r'^[0-9]{2}-[0-9]{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
     )
     it_phone_number = forms.RegexField(
         label=_('School IT phone number'),
-        regex=r'^[0-9]{2}-[0-9]{6}$'
+        regex=r'^[0-9]{2}-[0-9]{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
     )
 
     def __init__(self, *args, **kwargs):
@@ -109,6 +115,7 @@ class ProfileForm(forms.ModelForm):
 
     def save(self, instance=None, request=None):
         instance = super(ProfileForm, self).save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
 
     class Meta:
         model = School
@@ -168,6 +175,7 @@ class PartnerForm(forms.ModelForm):
 
     def save(self, instance=None, request=None):
         instance = super(PartnerForm, self).save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
 
     class Meta:
         model = PartnerOrganization

@@ -2,7 +2,7 @@
  * Created by ali on 7/22/17.
  */
 
-var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname";
+var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname, input#id_location";
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
 var moved_student_path = host+'/api/logging-student-move/';
@@ -16,6 +16,21 @@ $(document).ready(function(){
     }
 
     reorganizeForm();
+
+    $(document).on('change', 'select#id_level', function(){
+
+         if($(document).find('#id_exam_result_arabic').length == 1) {
+             var max_value = 30;
+             var value = $('select#id_level').val();
+             if(value == 4 || value == 5 || value == 6){
+                 max_value = 60;
+             }
+             if(value == 7 || value == 8 || value == 9){
+                 max_value = 90;
+             }
+             $('#id_exam_result_arabic, #id_exam_result_language, #id_exam_result_math, #id_exam_result_science').attr('max', max_value);
+         }
+    });
 
     $(document).on('change', 'select#id_site', function(){
          reorganizeForm();
@@ -368,7 +383,7 @@ function reorganizeForm()
         $('div#div_id_school').parent().prev().removeClass('d-none');
     }
 
-    if(family_status == 'married' || family_status == 'divorced'){
+    if(family_status == 'married' || family_status == 'divorced' || family_status == 'widower'){
         $('div#student_have_children').removeClass('d-none');
         $('div#student_have_children').prev().removeClass('d-none');
     }else{
@@ -388,10 +403,16 @@ function reorganizeForm()
         $('div#labour_hours').prev().addClass('d-none');
     }
 
-    if(registered_unhcr == '1'){
+    if(registered_unhcr == '1') {
         $('select#id_student_id_type').val(1);
+    }
+
+    if(have_barcode == 'no'){
+        $('#block_id_outreach_barcode').addClass('d-none');
+        $('#block_id_outreach_barcode').prev().addClass('d-none');
     }else{
-        $('select#id_student_id_type').val('');
+        $('#block_id_outreach_barcode').removeClass('d-none');
+        $('#block_id_outreach_barcode').prev().removeClass('d-none');
     }
 
     if(urlParam('child_id') || urlParam('enrollment_id') || $('#registry_block').hasClass('d-none')) {
@@ -404,16 +425,11 @@ function reorganizeForm()
     if(outreached == 'no'){
         $('#have_barcode_option').addClass('d-none');
         $('#have_barcode_option').prev().addClass('d-none');
+        $('select#id_have_barcode').val('no');
     }else{
         $('#have_barcode_option').removeClass('d-none');
         $('#have_barcode_option').prev().removeClass('d-none');
-    }
-    if(have_barcode == 'no'){
-        $('#block_id_outreach_barcode').addClass('d-none');
-        $('#block_id_outreach_barcode').prev().addClass('d-none');
-    }else{
-        $('#block_id_outreach_barcode').removeClass('d-none');
-        $('#block_id_outreach_barcode').prev().removeClass('d-none');
+        $('select#id_have_barcode').val('yes');
     }
 
     if(new_registry == 'yes' && outreached == 'yes' && have_barcode == 'yes'){

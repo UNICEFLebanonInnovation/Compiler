@@ -78,6 +78,7 @@ class BLNAddView(LoginRequiredMixin,
         if self.request.GET.get('enrollment_id'):
             instance = BLN.objects.get(id=self.request.GET.get('enrollment_id'))
             data = BLNSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
@@ -538,6 +539,7 @@ class RSAddView(LoginRequiredMixin,
         if self.request.GET.get('enrollment_id'):
             instance = RS.objects.get(id=self.request.GET.get('enrollment_id'))
             data = RSSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
@@ -641,6 +643,7 @@ class CBECEAddView(LoginRequiredMixin,
         if self.request.GET.get('enrollment_id'):
             instance = CBECE.objects.get(id=self.request.GET.get('enrollment_id'))
             data = CBECESerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
