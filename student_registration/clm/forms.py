@@ -12,12 +12,14 @@ from dal import autocomplete
 
 from student_registration.students.models import (
     Student,
+    Person,
     Nationality,
 )
 from student_registration.schools.models import (
     School,
     ClassRoom,
     EducationalLevel,
+    PartnerOrganization,
 )
 from student_registration.locations.models import Location
 from .models import (
@@ -33,7 +35,7 @@ from .serializers import BLNSerializer, RSSerializer, CBECESerializer
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
-YEARS = list(((str(x), x) for x in range(1990, 2050)))
+YEARS = list(((str(x), x) for x in range(Person.CURRENT_YEAR-20, Person.CURRENT_YEAR-2)))
 YEARS.insert(0, ('', '---------'))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
@@ -321,6 +323,7 @@ class CommonForm(forms.ModelForm):
             'student_id',
             'enrollment_id',
             'student_outreach_child',
+            'comments',
         )
         initial_fields = fields
         widgets = {}
@@ -535,6 +538,8 @@ class BLNForm(CommonForm):
                     Div('student_id_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('internal_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('comments', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
@@ -629,6 +634,19 @@ class BLNForm(CommonForm):
 
 
 class RSForm(CommonForm):
+
+    student_outreached = forms.ChoiceField(
+        label=_("Student outreached?"),
+        widget=forms.Select, required=True,
+        choices=(('no', _("No")), ),
+        initial='no'
+    )
+    have_barcode = forms.ChoiceField(
+        label=_("Have barcode with him?"),
+        widget=forms.Select, required=True,
+        choices=(('no', _("No")), ),
+        initial='no'
+    )
 
     type = forms.ChoiceField(
         widget=forms.Select, required=True,
@@ -789,10 +807,6 @@ class RSForm(CommonForm):
                     'student_outreach_child',
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('new_registry', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('student_outreached', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('have_barcode', css_class='col-md-3', css_id='have_barcode_option'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'+display_registry, css_id='registry_block'
@@ -803,10 +817,12 @@ class RSForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
                 ),
                 Div(
-                    Div('search_barcode', css_class='col-md-4'),
-                    css_class='row',
+                    Div('have_barcode', css_class='col-md-3 d-none'),
+                    Div('student_outreached', css_class='col-md-3 d-none'),
+                    Div('search_barcode', css_class='col-md-4 d-none'),
+                    css_class='row d-none',
                 ),
-                css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
+                css_id='', css_class='bd-callout bd-callout-warning d-none'
             ),
             Fieldset(
                 None,
@@ -897,6 +913,8 @@ class RSForm(CommonForm):
                     Div('student_id_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('internal_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('comments', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
@@ -1308,6 +1326,8 @@ class CBECEForm(CommonForm):
                     Div('student_id_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('internal_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('comments', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
