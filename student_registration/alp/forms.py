@@ -357,7 +357,7 @@ class PreTestForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     pre_test_room = forms.ChoiceField(
-        label=_('Pre test room'),
+        label=_('Pre-test room'),
         widget=forms.Select, required=True,
         choices=ROOMS
     )
@@ -455,6 +455,8 @@ class PreTestForm(forms.ModelForm):
                     Div('exam_result_math', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('exam_result_science', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('pre_comment', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
@@ -503,6 +505,7 @@ class PreTestForm(forms.ModelForm):
             'level',
             'school',
             'pre_test_room',
+            'pre_comment'
         )
         initial_fields = fields
 
@@ -1001,6 +1004,8 @@ class PreTestGradingForm(forms.ModelForm):
                     Div('exam_result_math', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('exam_result_science', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('pre_comment', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
@@ -1028,6 +1033,7 @@ class PreTestGradingForm(forms.ModelForm):
             'exam_result_science',
             'level',
             'pre_test_room',
+            'pre_comment',
         )
 
     class Media:
@@ -1115,6 +1121,8 @@ class PostTestGradingForm(forms.ModelForm):
                     Div('post_exam_result_math', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('post_exam_result_science', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('post_comment', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
@@ -1141,6 +1149,7 @@ class PostTestGradingForm(forms.ModelForm):
             'post_exam_result_language',
             'post_exam_result_math',
             'post_exam_result_science',
+            'post_comment',
         )
 
     class Media:
