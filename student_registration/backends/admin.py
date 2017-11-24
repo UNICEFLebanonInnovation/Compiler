@@ -6,7 +6,10 @@ from django.contrib import admin
 from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
+from helpdesk.models import Ticket
 from .models import Exporter
+from student_registration.users.models import User
+from student_registration.schools.models import School
 
 
 class ExporterResource(resources.ModelResource):
@@ -15,7 +18,7 @@ class ExporterResource(resources.ModelResource):
 
 
 class ExporterAdmin(ImportExportModelAdmin):
-    resource_class = Exporter
+    resource_class = ExporterResource
     list_display = (
         'name',
         'created',
@@ -26,4 +29,70 @@ class ExporterAdmin(ImportExportModelAdmin):
         from student_registration.users.utils import get_default_export_formats
         return get_default_export_formats()
 
+
+class SchoolFilter(admin.SimpleListFilter):
+    title = 'School'
+
+    parameter_name = 'school'
+
+    def lookups(self, request, model_admin):
+        return ((l.id, l) for l in School.objects.all())
+
+    def queryset(self, request, queryset):
+        if self.value():
+            emails = User.objects.filter(school_id=self.value()).values_list('email', flat=True)
+            return queryset.filter(submitter_email__in=emails)
+        return queryset
+
+
+class TicketSchoolAdmin(admin.ModelAdmin):
+
+    fields = (
+        'queue',
+        'description',
+        'submitter_email',
+        'status',
+        'created',
+        'priority'
+    )
+    list_display = (
+        'title',
+        'submitter',
+        'school',
+        'school_cerd',
+        'status',
+        'queue',
+        'created',
+    )
+    list_filter = (
+        'queue',
+        'status',
+        'priority',
+        SchoolFilter,
+    )
+    date_hierarchy = 'created'
+
+    def owner(self, obj):
+        if obj.submitter_email:
+            return User.objects.get(email=obj.submitter_email)
+        return ''
+
+    def submitter(self, obj):
+        if self.owner(obj):
+            return self.owner(obj).username
+        return ''
+
+    def school(self, obj):
+        if self.owner(obj):
+            return self.owner(obj).school
+        return ''
+
+    def school_cerd(self, obj):
+        if self.owner(obj) and self.owner(obj).school:
+            return self.owner(obj).school.number
+        return ''
+
+
 admin.site.register(Exporter, ExporterAdmin)
+admin.site.unregister(Ticket)
+admin.site.register(Ticket, TicketSchoolAdmin)
