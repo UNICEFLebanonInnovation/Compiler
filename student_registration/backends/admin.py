@@ -49,6 +49,7 @@ class TicketSchoolAdmin(admin.ModelAdmin):
 
     fields = (
         'queue',
+        'title',
         'description',
         'submitter_email',
         'status',
@@ -56,14 +57,17 @@ class TicketSchoolAdmin(admin.ModelAdmin):
         'priority'
     )
     list_display = (
-        'title',
-        'submitter',
-        'school',
-        'school_cerd',
-        'status',
         'queue',
+        'title',
+        'description',
+        'school_cerd',
+        'school',
+        'priority',
+        'submitter',
         'created',
+        'status',
     )
+    list_editable = ('status',)
     list_filter = (
         'queue',
         'status',
@@ -71,6 +75,7 @@ class TicketSchoolAdmin(admin.ModelAdmin):
         SchoolFilter,
     )
     date_hierarchy = 'created'
+    view_on_site = False
 
     def owner(self, obj):
         if obj.submitter_email:
