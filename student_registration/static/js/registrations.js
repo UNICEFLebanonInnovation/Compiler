@@ -429,7 +429,7 @@ function reorganizeForm()
     }else{
         $('#have_barcode_option').removeClass('d-none');
         $('#have_barcode_option').prev().removeClass('d-none');
-        $('select#id_have_barcode').val('yes');
+        // $('select#id_have_barcode').val('yes');
     }
 
     if(new_registry == 'yes' && outreached == 'yes' && have_barcode == 'yes'){
