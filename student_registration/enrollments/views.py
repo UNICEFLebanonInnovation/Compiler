@@ -485,9 +485,11 @@ class ExportBySchoolView(LoginRequiredMixin, ListView):
             _('Governorate'),
         ]
 
+        queryset = self.queryset.filter(education_year__current_year=True)
+
         content = []
         for school in schools:
-            nbr = self.model.objects.filter(school=school[0]).count()
+            nbr = queryset.filter(school=school[0]).count()
             content = [
                 school[1],
                 school[2],
@@ -530,9 +532,11 @@ class ExportByCycleView(LoginRequiredMixin, ListView):
             _('Governorate'),
         ]
 
+        queryset = self.queryset.filter(education_year__current_year=True)
+
         content = []
         for school in schools:
-            enrollments = self.model.objects.filter(school=school[0])
+            enrollments = queryset.filter(school=school[0])
             nbr = enrollments.count()
             for cls in classrooms:
                 nbr_cls = enrollments.filter(classroom=cls).count()
