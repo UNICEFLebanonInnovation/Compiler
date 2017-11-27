@@ -203,7 +203,8 @@ class SchoolAdmin(ImportExportModelAdmin):
                'push_attendances_alp', 'push_attendances_alp_delay',
                'open_attendance_90_days', 'open_attendance_60_days',
                'open_attendance_30_days', 'open_attendance_20_days',
-               'open_attendance_10_days', )
+               'open_attendance_10_days', 'open_attendance_from_beginning',
+               'close_attendance_from_beginning', )
 
     def push_attendances_2ndshift(self, request, queryset):
         for school in queryset:
@@ -235,6 +236,12 @@ class SchoolAdmin(ImportExportModelAdmin):
 
     def open_attendance_10_days(self, request, queryset):
         queryset.update(attendance_range=10)
+
+    def open_attendance_from_beginning(self, request, queryset):
+        queryset.update(attendance_from_beginning=True)
+
+    def close_attendance_from_beginning(self, request, queryset):
+        queryset.update(attendance_from_beginning=False)
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
