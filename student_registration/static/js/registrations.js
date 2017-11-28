@@ -129,15 +129,17 @@ $(document).ready(function(){
                 var school_type = $('#id_school_type').val();
                 if(school_type == undefined || school_type == 'alp'){
                     registry_id = ui.item.registration.id;
-                    var refer_to_level = ui.item.registration.refer_to_level;
-                    if(!$.inArray(refer_to_level, [1, 10, 11, 12, 13, 14, 15, 16, 17])){
-                        if(confirm(eligibility_msg)){
-                            eligibility = false;
-                        }else{
-                            return false;
+                    if(school_type == 'alp') {
+                        var refer_to_level = ui.item.registration.refer_to_level;
+                        if (!$.inArray(refer_to_level, [1, 10, 11, 12, 13, 14, 15, 16, 17])) {
+                            if (confirm(eligibility_msg)) {
+                                eligibility = false;
+                            } else {
+                                return false;
+                            }
                         }
+                        log_student_program_move(ui.item.registration, eligibility);
                     }
-                    log_student_program_move(ui.item.registration, eligibility);
                 }else{
                     registry_id = ui.item.enrollment.id;
                 }
