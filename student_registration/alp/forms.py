@@ -524,19 +524,19 @@ class RegistrationForm(forms.ModelForm):
         label=_("First time registered?"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='no'
+        initial='yes'
     )
     student_outreached = forms.ChoiceField(
         label=_("Student outreached?"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        initial='no'
     )
     have_barcode = forms.ChoiceField(
         label=_("Have barcode with him?"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        initial='no'
     )
     search_barcode = forms.CharField(
         label=_("Search a barcode"),
