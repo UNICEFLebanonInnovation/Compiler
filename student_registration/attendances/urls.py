@@ -12,6 +12,11 @@ urlpatterns = [
         name='attendance'
     ),
     url(
+        regex=r'^attendance-alp/$',
+        view=views.AttendanceALPView.as_view(),
+        name='attendance_alp'
+    ),
+    url(
         regex=r'^export/$',
         view=views.ExportView.as_view(),
         name='export'

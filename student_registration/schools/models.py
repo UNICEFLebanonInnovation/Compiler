@@ -156,6 +156,22 @@ class School(models.Model):
         ).count()
 
     @property
+    def total_registered_2ndshift(self):
+        from student_registration.enrollments.models import Enrollment
+        return Enrollment.objects.filter(
+            education_year__current_year=True,
+            school_id=self.id
+        ).count()
+
+    @property
+    def total_registered_alp(self):
+        from student_registration.alp.models import Outreach
+        return Outreach.objects.filter(
+            alp_round__current_round=True,
+            school_id=self.id
+        ).count()
+
+    @property
     def have_academic_year_dates(self):
         if not self.academic_year_start \
            or not self.academic_year_end \

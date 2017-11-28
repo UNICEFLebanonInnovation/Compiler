@@ -30,8 +30,13 @@
                             <div class="col-md-4">{{ request.user.school.location }}</div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">{% trans 'Total registered' %}:
-                                <span class="badge badge-default">{{ request.user.school.total_registered }}</span>
+                            <div class="col-md-4">{% trans 'Total registered 2nd-shift' %}:
+                                <span class="badge badge-default">{{ request.user.school.total_registered_2ndshift }}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">{% trans 'Total registered ALP' %}:
+                                <span class="badge badge-default">{{ request.user.school.total_registered_alp }}</span>
                             </div>
                         </div>
                 </fieldset>

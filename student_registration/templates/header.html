@@ -61,9 +61,14 @@
                   <a class="nav-link" href="{% url 'alp:list' %}">{% trans "ALP Registrations" %}</a>
               </li>
         {% endif %}
-        {% if request.user|has_group:"ATTENDANCE" %}
+        {% if request.user|has_group:"ATTENDANCE" and request.user|has_group:"SCHOOL" %}
               <li class="nav-item">
-                  <a class="nav-link" href="{% url 'attendances:attendance' %}">{% trans "Attendance" %}</a>
+                  <a class="nav-link" href="{% url 'attendances:attendance' %}">{% trans "Attendance 2nd-shift" %}</a>
+              </li>
+        {% endif %}
+        {% if request.user|has_group:"ATTENDANCE" and request.user|has_group:"ALP_SCHOOL" %}
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'attendances:attendance_alp' %}">{% trans "Attendance ALP" %}</a>
               </li>
         {% endif %}
         {% if request.user|has_group:"SCHOOL" or request.user|has_group:"ALP_SCHOOL" %}
