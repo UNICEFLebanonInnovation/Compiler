@@ -32,6 +32,12 @@
                     {% trans "Export" %}
             </a>
           </li>
+          <li class="breadcrumb-item">
+            <a class="btn btn-primary" href="{% url "alp:export" %}?current_type=current_all" target="_blank">
+                <i class="icon-export-sign icon-white"></i>&nbsp;
+                    {% trans "Export all pre-test data" %}
+            </a>
+          </li>
         </ol>
 
         <div class="pb-5 pr-5 list-filter">
