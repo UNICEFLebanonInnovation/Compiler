@@ -247,7 +247,6 @@ def export_alp(params=None, return_data=False):
     from student_registration.alp.models import Outreach, ALPRound
 
     queryset = Outreach.objects.all()
-    print params
 
     if 'pre_test' in params:
         queryset = queryset.filter(

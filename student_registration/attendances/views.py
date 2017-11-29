@@ -22,16 +22,16 @@ from student_registration.schools.models import (
     ClassRoom,
     EducationLevel
 )
-from student_registration.users.utils import force_default_language
-from .utils import find_attendances, calculate_absentees
-from .models import Attendance, Absentee
-from .serializers import AttendanceSerializer, AbsenteeSerializer
 from student_registration.enrollments.models import (
     Enrollment,
     EducationYear,
 )
 from student_registration.alp.models import Outreach
 from student_registration.backends.tasks import export_attendance
+from student_registration.users.utils import force_default_language
+from .utils import find_attendances, calculate_absentees
+from .models import Attendance, Absentee
+from .serializers import AttendanceSerializer, AbsenteeSerializer
 
 
 class AttendanceViewSet(mixins.RetrieveModelMixin,
@@ -200,7 +200,8 @@ class AttendanceView(LoginRequiredMixin,
                 'school_closed': school_closed
             }
 
-            if level and section and level.id == registry['classroom_id'] and section.id == registry['section_id']:
+            if level and section and level.id == registry['classroom_id'] \
+                     and section.id == registry['section_id']:
                 current_level_section = level_by_section
                 if exam_day or not_attending or (attendance and attendance.validation_date) or school_closed:
                     disable_attendance = True
