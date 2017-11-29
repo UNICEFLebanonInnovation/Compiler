@@ -20,7 +20,7 @@ class CommonTable(tables.Table):
                                         attrs={'url': ''})
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/delete_column.html',
-                                          attrs={'url': 'api/alp/'})
+                                          attrs={'url': '/api/alp/'})
 
     student_age = tables.Column(verbose_name=_('Age'), accessor='student.age', orderable=False,)
     student_birthday = tables.Column(verbose_name=_('Birthday'), accessor='student.birthday', orderable=False,)
@@ -165,7 +165,7 @@ class SchoolTable(CommonTable):
                                         attrs={'url': '/alp/edit/'})
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/delete_column.html',
-                                          attrs={'url': 'api/alp/'})
+                                          attrs={'url': '/api/alp/'})
     current_level = tables.Column(verbose_name=_('Current Level'), orderable=False,
                                   accessor='registered_in_level')
     current_section = tables.Column(verbose_name=_('Current Section'), orderable=False,

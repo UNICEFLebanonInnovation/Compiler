@@ -7,7 +7,7 @@ from django.contrib import messages
 
 from dal import autocomplete
 from crispy_forms.helper import FormHelper
-from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
+from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
 
 from .models import Outreach, ALPRound
@@ -524,19 +524,19 @@ class RegistrationForm(forms.ModelForm):
         label=_("First time registered?"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='no'
+        initial='yes'
     )
     student_outreached = forms.ChoiceField(
         label=_("Student outreached?"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        initial='no'
     )
     have_barcode = forms.ChoiceField(
         label=_("Have barcode with him?"),
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        initial='no'
     )
     search_barcode = forms.CharField(
         label=_("Search a barcode"),
@@ -630,7 +630,7 @@ class RegistrationForm(forms.ModelForm):
     )
 
     registered_in_level = forms.ModelChoiceField(
-        label=_("Current Class"),
+        label=_("Current Level"),
         queryset=EducationLevel.objects.exclude(name='n/a'), widget=forms.Select,
         required=True, to_field_name='id',
     )
@@ -645,6 +645,7 @@ class RegistrationForm(forms.ModelForm):
         label=_('Last education level'),
         queryset=ClassRoom.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
+        initial=11
     )
     last_education_year = forms.ChoiceField(
         label=_("Last Education year"),
@@ -659,22 +660,26 @@ class RegistrationForm(forms.ModelForm):
             ('na', _('n/a')),
             ('yes', _('Yes')),
             ('no', _('No')),
-        )
+        ),
+        initial='na'
     )
     last_informal_edu_level = forms.ModelChoiceField(
         label=_("Last informal education level"),
         queryset=EducationLevel.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
+        initial=13
     )
     last_informal_edu_round = forms.ModelChoiceField(
         label=_("Last informal education round"),
         queryset=ALPRound.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
+        initial=8
     )
     last_informal_edu_final_result = forms.ModelChoiceField(
         label=_("Last informal education status"),
         queryset=ClassLevel.objects.all(), widget=forms.Select,
         required=True, to_field_name='id',
+        initial=27
     )
 
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -851,7 +856,7 @@ class RegistrationForm(forms.ModelForm):
                 css_class='bd-callout bd-callout-warning child_data'
             ),
             FormActions(
-                Submit('save', _('Save')),
+                Submit('save', _('Save'), css_class='child_data'),
                 Submit('save_add_another', _('Save and add another'), css_class='child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/alp/list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )

@@ -40,7 +40,7 @@ from student_registration.enrollments.views import EnrollmentViewSet, LoggingStu
 from student_registration.outreach.views import HouseHoldViewSet, ChildViewSet
 
 api = routers.SimpleRouter()
-api.register(r'outreach', OutreachViewSet, base_name='outreach')
+api.register(r'alp', OutreachViewSet, base_name='alp')
 api.register(r'enrollments', EnrollmentViewSet, base_name='enrollments')
 api.register(r'logging-student-move', LoggingStudentMoveViewSet, base_name='logging_student_move')
 api.register(r'logging-student-program-move', LoggingProgramMoveViewSet, base_name='logging_student_ptogram_move')

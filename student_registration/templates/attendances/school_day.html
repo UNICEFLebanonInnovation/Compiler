@@ -33,7 +33,11 @@
                                 <li class="breadcrumb-item">
                                     <select name="dates" id="dates" class="form-control">
                                         {% for date in dates %}
+                                            {% if school_type == 'alp' %}
+                                            <option value="{{ date.value }}" {% if date.value == selected_date %}selected="selected"{% endif %} data-action="{% url "attendances:attendance_alp" %}?date={{ date.value }}">{{ date.label }}</option>
+                                            {% else %}
                                             <option value="{{ date.value }}" {% if date.value == selected_date %}selected="selected"{% endif %} data-action="{% url "attendances:attendance" %}?date={{ date.value }}">{{ date.label }}</option>
+                                            {% endif %}
                                         {% endfor %}
                                     </select>
                                 </li>
@@ -57,7 +61,6 @@
                                       <button type="button" class="closing-reason-b btn btn-info" itemref="weekly_holiday" translation="{% trans 'Are you sure that the school is closed today for a weekly holiday?' %}" {% if attendance.validation_date %}disabled{% endif %}>{% trans "Weekly Holiday" %}</button>
                                     {% endif %}
                                     {% if attendance %}
-{#                                        {% if request.user|has_group:"DIRECTOR" or request.user|has_group:"ALP_DIRECTOR" %}#}
                                         {% if attendance.validation_date %}
                                             <button class="btn btn-default absolute-right-15 absolute-top-15"><b>{% trans 'Attendances validated on' %}: {{ attendance.validation_date }}</b></button>
                                         {% else %}
@@ -67,7 +70,6 @@
                                                 {% trans "Validate all" %}
                                             </button>
                                         {% endif %}
-{#                                        {% endif %}#}
                                     {% endif %}
                                 </li>
                             </ol>
@@ -81,8 +83,13 @@
                 <input type="hidden" name="school" value="{{ request.user.school_id }}" id="school" />
                 <input type="hidden" name="owner" value="{{ request.user.id }}" id="owner" />
                 {% for row in levels_by_sections %}
-                <a class="row row-class {% if row.attendance_taken %}attendance_done{% else %}attendance_not_done{% endif %}"
+                    {% if school_type == 'alp' %}
+                <a class="row row-class {% if row.attendance_taken or row.school_closed %}attendance_done{% else %}attendance_not_done{% endif %}"
+                   href="{% url "attendances:attendance_alp" %}?date={{ selected_date }}&level={{ row.level }}&section={{ row.section }}">
+                    {% else %}
+                <a class="row row-class {% if row.attendance_taken or row.school_closed %}attendance_done{% else %}attendance_not_done{% endif %}"
                    href="{% url "attendances:attendance" %}?date={{ selected_date }}&level={{ row.level }}&section={{ row.section }}">
+                {% endif %}
                     <div class="col-xs-4 col-sm-4 col-md-4 s-lft s-col" style="border-left: 10px solid #2aabd2;">
                         <div>{{ row.level_name }}</div>
                         <div>{{ row.section_name }}</div>

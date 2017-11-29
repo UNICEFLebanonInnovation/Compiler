@@ -91,7 +91,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     save = serializers.IntegerField(source='owner.id', read_only=True)
     enrollment_id = serializers.IntegerField(source='id', read_only=True)
     search_student = serializers.CharField(source='student.full_name', read_only=True)
-    search_school = serializers.CharField(source='school.name', read_only=True)
+    search_school = serializers.CharField(source='school.id', read_only=True)
     school_type = serializers.CharField(source='school.name', read_only=True)
     search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
 

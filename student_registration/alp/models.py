@@ -66,6 +66,9 @@ class Outreach(TimeStampedModel):
         ('no', _('No'))
     )
 
+    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2050))
+    EDUCATION_YEARS.append(('na', 'N/A'))
+
     student = models.ForeignKey(
         Student,
         blank=False, null=True,
@@ -188,7 +191,7 @@ class Outreach(TimeStampedModel):
         max_length=10,
         blank=True,
         null=True,
-        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021)),
+        choices=EDUCATION_YEARS,
         verbose_name=_('Last Education year'),
     )
     last_year_result = models.CharField(
@@ -215,7 +218,7 @@ class Outreach(TimeStampedModel):
         max_length=10,
         blank=True,
         null=True,
-        choices=((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, 2021)),
+        choices=EDUCATION_YEARS,
         verbose_name=_('Last informal education year'),
     )
     last_informal_edu_result = models.CharField(
