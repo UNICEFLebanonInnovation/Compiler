@@ -615,7 +615,7 @@ class OutreachAdmin(ImportExportModelAdmin):
                        'last_informal_edu_final_result'),
         }),
         ('Status options', {
-            'fields': ('status', 'deleted', 'dropout_status')
+            'fields': ('status', 'deleted', 'dropout_status', 'new_registry', 'student_outreached', 'have_barcode',)
         }),
     )
     list_display = (

@@ -354,6 +354,10 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Internal number')
     )
+    comments = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Comments')
+    )
 
     @property
     def student_fullname(self):

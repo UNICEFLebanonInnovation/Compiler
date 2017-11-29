@@ -34,7 +34,11 @@
                                     <span style="padding-top: 7px; display: block; ">{{ selected_date_view }}</span>
                                 </li>
                                 <li class="breadcrumb-item">
+                                    {% if school_type == 'alp' %}
+                                    <a class="btn btn-info" href="{% url "attendances:attendance_alp" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
+                                    {% else %}
                                     <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
+                                    {% endif %}
                                     <button type="button" class="btn btn-warning absolute-right-15 absolute-top-15" id="exam_day" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}" {% if disable_attendance %}disabled{% endif %}>{% trans "Exam day" %}</button>
                                     <button type="button" class="btn btn-warning absolute-right-310 absolute-top-15" id="not_attending" translation="{% trans 'Are you sure that the students of this class are away for a reason?' %}" {% if disable_attendance %}disabled{% endif %}>{% trans "Not attending" %}</button>
                                 </li>
@@ -110,7 +114,11 @@
                             <span style="padding-top: 7px; display: block; ">{{ selected_date_view }}</span>
                         </li>
                         <li class="breadcrumb-item">
+                            {% if school_type == 'alp' %}
+                            <a class="btn btn-info" href="{% url "attendances:attendance_alp" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
+                            {% else %}
                             <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
+                            {% endif %}
                             {% if disable_attendance %}
                             {% else %}
                             <a href="#" class="btn btn-success absolute-right-15 absolute-top-7 save_attendances" id="save_attendances" translation="{% trans 'Are you sure you want to save the attendance for this class?' %}">{% trans "Save" %}</a>

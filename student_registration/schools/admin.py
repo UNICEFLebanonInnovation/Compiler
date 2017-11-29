@@ -29,7 +29,8 @@ from student_registration.attendances.tasks import set_app_attendances
 class SchoolResource(resources.ModelResource):
     district = fields.Field(column_name='District')
     governorate = fields.Field(column_name='Governorate')
-    total_registered = fields.Field(column_name='Total registered')
+    total_registered = fields.Field(column_name='Total registered 2nd-shift')
+    total_registered_alp = fields.Field(column_name='Total registered ALP')
 
     class Meta:
         model = School
@@ -51,6 +52,7 @@ class SchoolResource(resources.ModelResource):
             'it_phone_number',
             'field_coordinator_name',
             'total_registered',
+            'total_registered_alp',
             'academic_year_start',
             'academic_year_end',
             'academic_year_exam_end',
@@ -75,6 +77,9 @@ class SchoolResource(resources.ModelResource):
 
     def dehydrate_total_registered(self, obj):
         return obj.total_registered
+
+    def dehydrate_total_registered_alp(self, obj):
+        return obj.total_registered_alp
 
 
 class GovernorateFilter(admin.SimpleListFilter):
@@ -203,7 +208,8 @@ class SchoolAdmin(ImportExportModelAdmin):
                'push_attendances_alp', 'push_attendances_alp_delay',
                'open_attendance_90_days', 'open_attendance_60_days',
                'open_attendance_30_days', 'open_attendance_20_days',
-               'open_attendance_10_days', )
+               'open_attendance_10_days', 'open_attendance_from_beginning',
+               'close_attendance_from_beginning', )
 
     def push_attendances_2ndshift(self, request, queryset):
         for school in queryset:
@@ -235,6 +241,12 @@ class SchoolAdmin(ImportExportModelAdmin):
 
     def open_attendance_10_days(self, request, queryset):
         queryset.update(attendance_range=10)
+
+    def open_attendance_from_beginning(self, request, queryset):
+        queryset.update(attendance_from_beginning=True)
+
+    def close_attendance_from_beginning(self, request, queryset):
+        queryset.update(attendance_from_beginning=False)
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats

@@ -69,10 +69,10 @@ def track_student_moves():
 
 
 @app.task
-def track_student_moves():
+def track_student_program_moves():
 
     from student_registration.alp.models import Outreach
-    from student_registration.enrollments.models import Enrollment, StudentMove
+    from student_registration.enrollments.models import Enrollment, LoggingProgramMove
 
     registrations = Outreach.objects.order_by('created')
 

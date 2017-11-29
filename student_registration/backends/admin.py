@@ -45,10 +45,26 @@ class SchoolFilter(admin.SimpleListFilter):
         return queryset
 
 
+class SchoolCERDFilter(admin.SimpleListFilter):
+    title = 'School CERD'
+
+    parameter_name = 'school_cerd'
+
+    def lookups(self, request, model_admin):
+        return ((l.number, l.number) for l in School.objects.all())
+
+    def queryset(self, request, queryset):
+        if self.value():
+            emails = User.objects.filter(school__number=self.value()).values_list('email', flat=True)
+            return queryset.filter(submitter_email__in=emails)
+        return queryset
+
+
 class TicketSchoolAdmin(admin.ModelAdmin):
 
     fields = (
         'queue',
+        'title',
         'description',
         'submitter_email',
         'status',
@@ -56,21 +72,26 @@ class TicketSchoolAdmin(admin.ModelAdmin):
         'priority'
     )
     list_display = (
-        'title',
-        'submitter',
-        'school',
-        'school_cerd',
-        'status',
         'queue',
+        'title',
+        'description',
+        'school_cerd',
+        'school',
+        'priority',
+        'submitter',
         'created',
+        'status',
     )
+    list_editable = ('status',)
     list_filter = (
         'queue',
         'status',
         'priority',
         SchoolFilter,
+        SchoolCERDFilter,
     )
     date_hierarchy = 'created'
+    view_on_site = False
 
     def owner(self, obj):
         if obj.submitter_email:

@@ -87,8 +87,10 @@ $(document).ready(function(){
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
-            delete_student(item);
-            item.parents('tr').remove();
+            var callback = function(){
+                item.parents('tr').remove();
+            };
+            delete_student(item, callback());
         }
     });
     $(document).on('click', '.cancel-button', function(e){
@@ -129,15 +131,17 @@ $(document).ready(function(){
                 var school_type = $('#id_school_type').val();
                 if(school_type == undefined || school_type == 'alp'){
                     registry_id = ui.item.registration.id;
-                    var refer_to_level = ui.item.registration.refer_to_level;
-                    if(!$.inArray(refer_to_level, [1, 10, 11, 12, 13, 14, 15, 16, 17])){
-                        if(confirm(eligibility_msg)){
-                            eligibility = false;
-                        }else{
-                            return false;
+                    if(school_type == 'alp') {
+                        var refer_to_level = ui.item.registration.refer_to_level;
+                        if (!$.inArray(refer_to_level, [1, 10, 11, 12, 13, 14, 15, 16, 17])) {
+                            if (confirm(eligibility_msg)) {
+                                eligibility = false;
+                            } else {
+                                return false;
+                            }
                         }
+                        log_student_program_move(ui.item.registration, eligibility);
                     }
-                    log_student_program_move(ui.item.registration, eligibility);
                 }else{
                     registry_id = ui.item.enrollment.id;
                 }
@@ -429,7 +433,7 @@ function reorganizeForm()
     }else{
         $('#have_barcode_option').removeClass('d-none');
         $('#have_barcode_option').prev().removeClass('d-none');
-        $('select#id_have_barcode').val('yes');
+        // $('select#id_have_barcode').val('yes');
     }
 
     if(new_registry == 'yes' && outreached == 'yes' && have_barcode == 'yes'){
@@ -505,7 +509,7 @@ function moved_student(item)
     });
 }
 
-function delete_student(item)
+function delete_student(item, callback)
 {
     var url = item.attr('data-action');
 
@@ -517,6 +521,9 @@ function delete_student(item)
         headers: getHeader(),
         dataType: 'json',
         success: function (response) {
+            if(callback != undefined){
+                callback();
+            }
             console.log(response);
         },
         error: function(response) {

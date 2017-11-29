@@ -98,6 +98,7 @@ class BLNTable(CommonTable):
             'modified_by',
             'created',
             'modified',
+            'comments',
         )
 
 
@@ -201,6 +202,7 @@ class RSTable(CommonTable):
             'modified_by',
             'created',
             'modified',
+            'comments',
         )
 
 
@@ -267,4 +269,5 @@ class CBECETable(CommonTable):
             'modified_by',
             'created',
             'modified',
+            'comments',
         )

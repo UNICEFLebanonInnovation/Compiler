@@ -77,6 +77,7 @@ class CLMSerializer(serializers.ModelSerializer):
     student_id_number = serializers.CharField(source='student.id_number', required=False)
     student_family_status = serializers.CharField(source='student.family_status', required=False)
     student_have_children = serializers.CharField(source='student.have_children', required=False)
+    comments = serializers.CharField(required=False)
 
     student_outreach_child = serializers.IntegerField(source='student.outreach_child', required=False)
     student_outreach_child_id = serializers.IntegerField(source='student.outreach_child.id', read_only=True)
@@ -95,7 +96,7 @@ class CLMSerializer(serializers.ModelSerializer):
             # 'round_name',
             'enrollment_id',
             'student_id',
-            # 'round',
+            'round',
             'partner',
             'language',
             'student_outreach_child',
@@ -139,6 +140,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'search_barcode',
             'csrfmiddlewaretoken',
             'save',
+            'comments',
         )
 
 

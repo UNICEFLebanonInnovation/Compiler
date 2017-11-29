@@ -79,6 +79,7 @@ class EnrollmentTable(tables.Table):
             'new_registry',
             'student_outreached',
             'have_barcode',
+            'outreach_barcode',
         )
 
 
