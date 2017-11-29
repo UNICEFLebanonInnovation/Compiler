@@ -7,7 +7,7 @@ from django.contrib import messages
 
 from dal import autocomplete
 from crispy_forms.helper import FormHelper
-from crispy_forms.bootstrap import FormActions, Accordion, PrependedText, InlineCheckboxes, InlineRadios
+from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
 
 from student_registration.students.models import (

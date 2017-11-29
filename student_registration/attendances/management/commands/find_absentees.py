@@ -9,4 +9,4 @@ class Command(BaseCommand):
     help = 'Find absentees'
 
     def handle(self, *args, **options):
-        dropout_students()
+        dropout_students(from_date=None, to_date=None)

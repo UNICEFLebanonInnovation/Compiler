@@ -299,7 +299,8 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
     actions = ('validate_absentees', 'dropout')
 
     def get_queryset(self, request):
-        qs = super(AbsenteeAdmin, self).get_queryset(request)
+        # qs = super(AbsenteeAdmin, self).get_queryset(request)
+        qs = Absentee.objects.all()
         qs = qs.filter(absent_days__gt=0)
         if has_group(request.user, 'COORDINATOR'):
             return qs.filter(school_id__in=request.user.schools.all())

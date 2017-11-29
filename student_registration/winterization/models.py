@@ -459,6 +459,213 @@ class Assessment(models.Model):
     def amount(self):
         return 0
 
+    def get_id(self):
+        return self._id
+
+    def get_0_to_3_months(self):
+        return self._0_to_3_months
+
+    def get_3_to_12_months(self):
+        return self._3_to_12_months
+
+    def get_1_year_old(self):
+        return self._1_year_old
+
+    def get_2_years_old(self):
+        return self._2_years_old
+
+    def get_3_years_old(self):
+        return self._3_years_old
+
+    def get_4_years_old(self):
+        return self._4_years_old
+
+    def get_5_years_old(self):
+        return self._5_years_old
+
+    def get_6_years_old(self):
+        return self._6_years_old
+
+    def get_7_years_old(self):
+        return self._7_years_old
+
+    def get_8_years_old(self):
+        return self._8_years_old
+
+    def get_9_years_old(self):
+        return self._9_years_old
+
+    def get_10_years_old(self):
+        return self._10_years_old
+
+    def get_11_years_old(self):
+        return self._11_years_old
+
+    def get_12_years_old(self):
+        return self._12_years_old
+
+    def get_13_years_old(self):
+        return self._13_years_old
+
+    def get_14_years_old(self):
+        return self._14_years_old
+
+    def get_3_months_kit(self):
+        return self._3_months_kit
+
+    def get_12_months_kit(self):
+        return self._12_months_kit
+
+    def get_2_years_kit(self):
+        return self._2_years_kit
+
+    def get_3_years_kit(self):
+        return self._3_years_kit
+
+    def get_5_years_kit(self):
+        return self._5_years_kit
+
+    def get_7_years_kit(self):
+        return self._7_years_kit
+
+    def get_9_years_kit(self):
+        return self._9_years_kit
+
+    def get_12_years_kit(self):
+        return self._12_years_kit
+
+    def get_14_years_kit(self):
+        return self._14_years_kit
+
+    def get_3_months_kit_completed(self):
+        return self._3_months_kit_completed
+
+    def get_12_months_kit_completed(self):
+        return self._12_months_kit_completed
+
+    def get_2_years_kit_completed(self):
+        return self._2_years_kit_completed
+
+    def get_3_years_kit_completed(self):
+        return self._3_years_kit_completed
+
+    def get_5_years_kit_completed(self):
+        return self._5_years_kit_completed
+
+    def get_7_years_kit_completed(self):
+        return self._7_years_kit_completed
+
+    def get_9_years_kit_completed(self):
+        return self._9_years_kit_completed
+
+    def get_12_years_kit_completed(self):
+        return self._12_years_kit_completed
+
+    def get_14_years_kit_completed(self):
+        return self._14_years_kit_completed
+
+    def set_0_to_3_months(self, value):
+        self._0_to_3_months = value
+
+    def set_3_to_12_months(self, value):
+        self._3_to_12_months = value
+
+    def set_1_year_old(self, value):
+        self._1_year_old = value
+
+    def set_2_years_old(self, value):
+        self._2_years_old = value
+
+    def set_3_years_old(self, value):
+        self._3_years_old = value
+
+    def set_4_years_old(self, value):
+        self._4_years_old = value
+
+    def set_5_years_old(self, value):
+        self._5_years_old = value
+
+    def set_6_years_old(self, value):
+        self._6_years_old = value
+
+    def set_7_years_old(self, value):
+        self._7_years_old = value
+
+    def set_8_years_old(self, value):
+        self._8_years_old = value
+
+    def set_9_years_old(self, value):
+        self._9_years_old = value
+
+    def set_10_years_old(self, value):
+        self._10_years_old = value
+
+    def set_11_years_old(self, value):
+        self._11_years_old = value
+
+    def set_12_years_old(self, value):
+        self._12_years_old = value
+
+    def set_13_years_old(self, value):
+        self._13_years_old = value
+
+    def set_14_years_old(self, value):
+        self._14_years_old = value
+
+    def set_3_months_kit(self, value):
+        self._3_months_kit = value
+
+    def set_12_months_kit(self, value):
+        self._12_months_kit = value
+
+    def set_2_years_kit(self, value):
+        self._2_years_kit = value
+
+    def set_3_years_kit(self, value):
+        self._3_years_kit = value
+
+    def set_5_years_kit(self, value):
+        self._5_years_kit = value
+
+    def set_7_years_kit(self, value):
+        self._7_years_kit = value
+
+    def set_9_years_kit(self, value):
+        self._9_years_kit = value
+
+    def set_12_years_kit(self, value):
+        self._12_years_kit = value
+
+    def set_14_years_kit(self, value):
+        self._14_years_kit = value
+
+    def set_3_months_kit_completed(self, value):
+        self._3_months_kit_completed = value
+
+    def set_12_months_kit_completed(self, value):
+        self._12_months_kit_completed = value
+
+    def set_2_years_kit_completed(self, value):
+        self._2_years_kit_completed = value
+
+    def set_3_years_kit_completed(self, value):
+        self._3_years_kit_completed = value
+
+    def set_5_years_kit_completed(self, value):
+        self._5_years_kit_completed = value
+
+    def set_7_years_kit_completed(self, value):
+        self._7_years_kit_completed = value
+
+    def set_9_years_kit_completed(self, value):
+        self._9_years_kit_completed = value
+
+    def set_12_years_kit_completed(self, value):
+        self._12_years_kit_completed = value
+
+    def set_14_years_kit_completed(self, value):
+        self._14_years_kit_completed = value
+
     @property
     def location_p_code(self):
         if self.location and self.location['p_code']:
