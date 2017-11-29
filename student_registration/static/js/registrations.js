@@ -87,8 +87,10 @@ $(document).ready(function(){
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
-            delete_student(item);
-            item.parents('tr').remove();
+            var callback = function(){
+                item.parents('tr').remove();
+            };
+            delete_student(item, callback());
         }
     });
     $(document).on('click', '.cancel-button', function(e){
@@ -507,7 +509,7 @@ function moved_student(item)
     });
 }
 
-function delete_student(item)
+function delete_student(item, callback)
 {
     var url = item.attr('data-action');
 
@@ -519,6 +521,9 @@ function delete_student(item)
         headers: getHeader(),
         dataType: 'json',
         success: function (response) {
+            if(callback != undefined){
+                callback();
+            }
             console.log(response);
         },
         error: function(response) {
