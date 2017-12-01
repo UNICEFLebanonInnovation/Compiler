@@ -98,10 +98,30 @@ class Person(TimeStampedModel):
         ('single', _('Single')),
     )
 
-    first_name = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('First name'))
-    last_name = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('Last name'))
-    father_name = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('Father name'))
-    mother_fullname = models.CharField(max_length=64, blank=True, null=True, verbose_name=_('Mother fullname'))
+    first_name = models.CharField(
+        max_length=64,
+        db_index=True,
+        blank=True, null=True,
+        verbose_name=_('First name')
+    )
+    last_name = models.CharField(
+        max_length=64,
+        db_index=True,
+        blank=True, null=True,
+        verbose_name=_('Last name')
+    )
+    father_name = models.CharField(
+        max_length=64,
+        db_index=True,
+        blank=True, null=True,
+        verbose_name=_('Father name')
+    )
+    mother_fullname = models.CharField(
+        max_length=64,
+        db_index=True,
+        blank=True, null=True,
+        verbose_name=_('Mother fullname')
+    )
     mother_firstname = models.CharField(max_length=64, blank=True, null=True)
     mother_lastname = models.CharField(max_length=64, blank=True, null=True)
     sex = models.CharField(
@@ -164,7 +184,12 @@ class Person(TimeStampedModel):
         choices=Choices((1, _("Yes")), (0, _("No"))),
         verbose_name=_('Registered in UNHCR')
     )
-    id_number = models.CharField(max_length=45, blank=True, null=True, verbose_name=_('ID number'))
+    id_number = models.CharField(
+        max_length=45,
+        db_index=True,
+        blank=True, null=True,
+        verbose_name=_('ID number')
+    )
     id_type = models.ForeignKey(
         IDType,
         blank=True, null=True,
