@@ -621,14 +621,14 @@ function display_alert(dob, min_value, max_value, min_date)
     var max_age = Math.floor((today-dob) / (365.25 * 24 * 60 * 60 * 1000));
 
     if(min_age < min_value) {
-        min_age_limit_msg = min_age_limit_msg + " : " + min_value;
-        alert(min_age_limit_msg);
+        var msg1 = min_age_limit_msg + " : " + min_value;
+        alert(msg1);
         $('select#id_student_birthday_year').val("");
         return false;
     }
     if(max_age > max_value) {
-        max_age_limit_msg = max_age_limit_msg + " : " + max_value;
-        if(confirm(max_age_limit_msg)){
+        var msg2 = max_age_limit_msg + " : " + max_value;
+        if(confirm(msg2)){
 
         }else{
             $('select#id_student_birthday_year').val("");
