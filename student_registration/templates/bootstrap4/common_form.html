@@ -29,9 +29,12 @@
 
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>
     <script>
         var current_school = '{{ request.user.school_id }}';
         var eligibility_msg = '{% trans 'This student is not eligible to go into 2nd shift program, are you sure you want to register this student' %}';
+        var min_age_limit_msg = '{% trans 'Please change the student birthday, the min age for this level is' %}';
+        var max_age_limit_msg = '{% trans 'Are you sure you want to continue the registration, the max age for this level is' %}';
     </script>
 {% endblock %}
