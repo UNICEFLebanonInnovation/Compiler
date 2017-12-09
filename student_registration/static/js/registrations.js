@@ -38,9 +38,9 @@ $(document).ready(function(){
          reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_classroom, select#id_student_birthday_day, select#id_student_birthday_month, select#id_student_birthday_year', function(){
-         verify_age_level();
-    });
+    // $(document).on('change', 'select#id_classroom, select#id_student_birthday_day, select#id_student_birthday_month, select#id_student_birthday_year', function(){
+    //      verify_age_level();
+    // });
 
     $(document).on('change', 'select#id_student_registered_in_unhcr', function(){
         reorganizeForm();
