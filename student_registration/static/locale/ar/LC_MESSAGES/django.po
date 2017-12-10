@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-28 13:38+0200\n"
+"POT-Creation-Date: 2017-12-07 16:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,12 +27,12 @@ msgstr "امتحان الدخول"
 
 #: student_registration/alp/filters.py:24
 #: student_registration/alp/filters.py:40 student_registration/alp/forms.py:333
-#: student_registration/alp/models.py:95
+#: student_registration/alp/models.py:98
 #: student_registration/backends/tasks.py:30
 #: student_registration/backends/tasks.py:66
 #: student_registration/backends/tasks.py:183
-#: student_registration/backends/tasks.py:311
-#: student_registration/backends/tasks.py:431
+#: student_registration/backends/tasks.py:310
+#: student_registration/backends/tasks.py:430
 #: student_registration/clm/filters.py:16
 #: student_registration/enrollments/models.py:113
 #: student_registration/templates/alp/test_grading.html:21
@@ -42,16 +42,16 @@ msgstr "المدرسة"
 
 #: student_registration/alp/filters.py:39
 #: student_registration/alp/filters.py:57 student_registration/alp/forms.py:633
-#: student_registration/alp/models.py:311
+#: student_registration/alp/models.py:314
 #: student_registration/alp/tables.py:122
 #: student_registration/alp/tables.py:169
-#: student_registration/backends/tasks.py:299
+#: student_registration/backends/tasks.py:298
 msgid "Current Level"
 msgstr " المستوى الحالي"
 
 #: student_registration/alp/filters.py:41
 #: student_registration/alp/filters.py:58
-#: student_registration/backends/tasks.py:443
+#: student_registration/backends/tasks.py:442
 #: student_registration/clm/filters.py:18
 #: student_registration/clm/models.py:682
 #: student_registration/enrollments/filters.py:13
@@ -63,16 +63,16 @@ msgstr "الشعبة"
 #: student_registration/clm/forms.py:182
 #: student_registration/enrollments/filters.py:12
 #: student_registration/enrollments/forms.py:170
-#: student_registration/students/models.py:177
+#: student_registration/students/models.py:202
 msgid "Nationality"
 msgstr " الجنسية"
 
 #: student_registration/alp/forms.py:29 student_registration/alp/forms.py:526
 #: student_registration/alp/forms.py:532 student_registration/alp/forms.py:538
 #: student_registration/alp/forms.py:661 student_registration/alp/models.py:65
-#: student_registration/alp/models.py:398
-#: student_registration/alp/models.py:405
-#: student_registration/alp/models.py:412 student_registration/clm/forms.py:36
+#: student_registration/alp/models.py:401
+#: student_registration/alp/models.py:408
+#: student_registration/alp/models.py:415 student_registration/clm/forms.py:36
 #: student_registration/clm/forms.py:93 student_registration/clm/forms.py:99
 #: student_registration/clm/forms.py:105 student_registration/clm/models.py:130
 #: student_registration/clm/models.py:323
@@ -90,17 +90,17 @@ msgstr " الجنسية"
 #: student_registration/enrollments/models.py:455
 #: student_registration/enrollments/models.py:462
 #: student_registration/outreach/models.py:155
-#: student_registration/students/models.py:155
-#: student_registration/students/models.py:164
+#: student_registration/students/models.py:175
+#: student_registration/students/models.py:184
 msgid "Yes"
 msgstr "نعم"
 
 #: student_registration/alp/forms.py:29 student_registration/alp/forms.py:526
 #: student_registration/alp/forms.py:532 student_registration/alp/forms.py:538
 #: student_registration/alp/forms.py:662 student_registration/alp/models.py:66
-#: student_registration/alp/models.py:398
-#: student_registration/alp/models.py:405
-#: student_registration/alp/models.py:412 student_registration/clm/forms.py:36
+#: student_registration/alp/models.py:401
+#: student_registration/alp/models.py:408
+#: student_registration/alp/models.py:415 student_registration/clm/forms.py:36
 #: student_registration/clm/forms.py:93 student_registration/clm/forms.py:99
 #: student_registration/clm/forms.py:105 student_registration/clm/forms.py:641
 #: student_registration/clm/forms.py:647 student_registration/clm/models.py:131
@@ -121,8 +121,8 @@ msgstr "نعم"
 #: student_registration/enrollments/models.py:455
 #: student_registration/enrollments/models.py:462
 #: student_registration/outreach/models.py:156
-#: student_registration/students/models.py:155
-#: student_registration/students/models.py:164
+#: student_registration/students/models.py:175
+#: student_registration/students/models.py:184
 msgid "No"
 msgstr "كلا"
 
@@ -226,8 +226,8 @@ msgstr "كانون الأول"
 
 #: student_registration/alp/forms.py:57 student_registration/alp/forms.py:370
 #: student_registration/alp/forms.py:950 student_registration/alp/forms.py:1066
-#: student_registration/alp/models.py:269
-#: student_registration/alp/models.py:355
+#: student_registration/alp/models.py:272
+#: student_registration/alp/models.py:358
 msgid "Exam language"
 msgstr "لغة الامتحان"
 
@@ -246,7 +246,7 @@ msgstr "الفرنسية"
 #: student_registration/alp/forms.py:558 student_registration/clm/forms.py:146
 #: student_registration/enrollments/forms.py:119
 #: student_registration/enrollments/forms.py:1028
-#: student_registration/students/models.py:101
+#: student_registration/students/models.py:105
 msgid "First name"
 msgstr "الاسم الاول"
 
@@ -254,7 +254,7 @@ msgstr "الاسم الاول"
 #: student_registration/alp/forms.py:562 student_registration/clm/forms.py:150
 #: student_registration/enrollments/forms.py:123
 #: student_registration/enrollments/forms.py:1032
-#: student_registration/students/models.py:103
+#: student_registration/students/models.py:117
 msgid "Father name"
 msgstr "اسم الاب"
 
@@ -262,7 +262,7 @@ msgstr "اسم الاب"
 #: student_registration/alp/forms.py:566 student_registration/clm/forms.py:154
 #: student_registration/enrollments/forms.py:127
 #: student_registration/enrollments/forms.py:1036
-#: student_registration/students/models.py:102
+#: student_registration/students/models.py:111
 msgid "Last name"
 msgstr "الشهرة"
 
@@ -270,12 +270,12 @@ msgstr "الشهرة"
 #: student_registration/alp/forms.py:570
 #: student_registration/backends/tasks.py:54
 #: student_registration/backends/tasks.py:179
-#: student_registration/backends/tasks.py:308
-#: student_registration/backends/tasks.py:446
+#: student_registration/backends/tasks.py:307
+#: student_registration/backends/tasks.py:445
 #: student_registration/clm/forms.py:158
 #: student_registration/enrollments/forms.py:131
 #: student_registration/enrollments/forms.py:1040
-#: student_registration/students/models.py:112
+#: student_registration/students/models.py:132
 msgid "Sex"
 msgstr "الجنس"
 
@@ -283,7 +283,7 @@ msgstr "الجنس"
 #: student_registration/clm/forms.py:167
 #: student_registration/enrollments/forms.py:140
 #: student_registration/enrollments/forms.py:1049
-#: student_registration/students/models.py:120
+#: student_registration/students/models.py:140
 msgid "Birthday year"
 msgstr "تاريخ الولادة - السنة"
 
@@ -291,7 +291,7 @@ msgstr "تاريخ الولادة - السنة"
 #: student_registration/clm/forms.py:172
 #: student_registration/enrollments/forms.py:145
 #: student_registration/enrollments/forms.py:1054
-#: student_registration/students/models.py:128
+#: student_registration/students/models.py:148
 msgid "Birthday month"
 msgstr "تاريخ الولادة - الشهر"
 
@@ -299,75 +299,75 @@ msgstr "تاريخ الولادة - الشهر"
 #: student_registration/clm/forms.py:177
 #: student_registration/enrollments/forms.py:164
 #: student_registration/enrollments/forms.py:1073
-#: student_registration/students/models.py:136
+#: student_registration/students/models.py:156
 msgid "Birthday day"
 msgstr "تاريخ الولادة - اليوم"
 
 #: student_registration/alp/forms.py:162 student_registration/alp/forms.py:597
 #: student_registration/backends/tasks.py:46
 #: student_registration/backends/tasks.py:177
-#: student_registration/backends/tasks.py:296
+#: student_registration/backends/tasks.py:295
 #: student_registration/clm/forms.py:187
 #: student_registration/enrollments/forms.py:176
 #: student_registration/enrollments/forms.py:1078
-#: student_registration/students/models.py:104
+#: student_registration/students/models.py:123
 msgid "Mother fullname"
 msgstr "اسم الأم وشهرتها "
 
 #: student_registration/alp/forms.py:166 student_registration/alp/forms.py:601
 #: student_registration/backends/tasks.py:45
-#: student_registration/backends/tasks.py:295
+#: student_registration/backends/tasks.py:294
 #: student_registration/enrollments/forms.py:180
-#: student_registration/students/models.py:183
+#: student_registration/students/models.py:208
 msgid "Mother nationality"
 msgstr "جنسية الأم"
 
 #: student_registration/alp/forms.py:171 student_registration/alp/forms.py:606
 #: student_registration/alp/tables.py:176
 #: student_registration/backends/tasks.py:44
-#: student_registration/backends/tasks.py:293
+#: student_registration/backends/tasks.py:292
 #: student_registration/enrollments/forms.py:185
 #: student_registration/enrollments/tables.py:38
 #: student_registration/enrollments/tables.py:95
-#: student_registration/students/models.py:165
+#: student_registration/students/models.py:185
 msgid "Registered in UNHCR"
 msgstr "مسجل لدى المفوضية"
 
 #: student_registration/alp/forms.py:176 student_registration/alp/forms.py:611
 #: student_registration/enrollments/forms.py:194
-#: student_registration/students/models.py:171
+#: student_registration/students/models.py:196
 msgid "ID type"
 msgstr "نوع البطاقة"
 
 #: student_registration/alp/forms.py:181 student_registration/alp/forms.py:616
 #: student_registration/clm/forms.py:199
-#: student_registration/students/models.py:167
+#: student_registration/students/models.py:191
 msgid "ID number"
 msgstr "رقم البطاقة"
 
 #: student_registration/alp/forms.py:185 student_registration/alp/forms.py:620
 #: student_registration/backends/tasks.py:39
-#: student_registration/backends/tasks.py:287
+#: student_registration/backends/tasks.py:286
 #: student_registration/enrollments/forms.py:203
-#: student_registration/students/models.py:159
+#: student_registration/students/models.py:179
 msgid "Phone prefix"
 msgstr "رمز رقم الهاتف "
 
 #: student_registration/alp/forms.py:189 student_registration/alp/forms.py:624
 #: student_registration/alp/tables.py:174
 #: student_registration/backends/tasks.py:40
-#: student_registration/backends/tasks.py:288
+#: student_registration/backends/tasks.py:287
 #: student_registration/enrollments/forms.py:207
 #: student_registration/enrollments/tables.py:37
 #: student_registration/enrollments/tables.py:94
-#: student_registration/students/models.py:158
+#: student_registration/students/models.py:178
 #: student_registration/users/models.py:25
 msgid "Phone number"
 msgstr "الهاتف"
 
 #: student_registration/alp/forms.py:193 student_registration/alp/forms.py:628
 #: student_registration/enrollments/forms.py:211
-#: student_registration/students/models.py:188
+#: student_registration/students/models.py:213
 msgid "Address"
 msgstr "العنوان"
 
@@ -462,8 +462,8 @@ msgstr "غرفة امتحان "
 
 #: student_registration/alp/forms.py:365 student_registration/alp/forms.py:945
 #: student_registration/alp/forms.py:1060
-#: student_registration/alp/models.py:244
-#: student_registration/alp/models.py:330
+#: student_registration/alp/models.py:247
+#: student_registration/alp/models.py:333
 #: student_registration/backends/tasks.py:172
 #: student_registration/clm/models.py:589
 #: student_registration/clm/models.py:617
@@ -477,8 +477,8 @@ msgstr "اللغة العربية"
 
 #: student_registration/alp/forms.py:375 student_registration/alp/forms.py:955
 #: student_registration/alp/forms.py:1071
-#: student_registration/alp/models.py:250
-#: student_registration/alp/models.py:336
+#: student_registration/alp/models.py:253
+#: student_registration/alp/models.py:339
 #: student_registration/clm/models.py:596
 #: student_registration/clm/models.py:624
 #: student_registration/clm/models.py:888
@@ -489,8 +489,8 @@ msgstr " اللغة الأجنبية"
 
 #: student_registration/alp/forms.py:380 student_registration/alp/forms.py:960
 #: student_registration/alp/forms.py:1077
-#: student_registration/alp/models.py:256
-#: student_registration/alp/models.py:342
+#: student_registration/alp/models.py:259
+#: student_registration/alp/models.py:345
 #: student_registration/backends/tasks.py:167
 #: student_registration/clm/models.py:603
 #: student_registration/clm/models.py:631
@@ -503,8 +503,8 @@ msgstr "الرياضيات"
 
 #: student_registration/alp/forms.py:385 student_registration/alp/forms.py:965
 #: student_registration/alp/forms.py:1083
-#: student_registration/alp/models.py:262
-#: student_registration/alp/models.py:348
+#: student_registration/alp/models.py:265
+#: student_registration/alp/models.py:351
 #: student_registration/backends/tasks.py:166
 #: student_registration/clm/models.py:610
 #: student_registration/clm/models.py:638
@@ -518,7 +518,7 @@ msgstr "العلوم"
 msgid "Grades"
 msgstr "العلامات"
 
-#: student_registration/alp/forms.py:524 student_registration/alp/models.py:399
+#: student_registration/alp/forms.py:524 student_registration/alp/models.py:402
 #: student_registration/backends/tasks.py:60
 #: student_registration/clm/forms.py:91 student_registration/clm/models.py:324
 #: student_registration/enrollments/forms.py:64
@@ -526,7 +526,7 @@ msgstr "العلامات"
 msgid "First time registered?"
 msgstr "يتم التسجيل لأول مرة؟"
 
-#: student_registration/alp/forms.py:530 student_registration/alp/models.py:406
+#: student_registration/alp/forms.py:530 student_registration/alp/models.py:409
 #: student_registration/backends/tasks.py:61
 #: student_registration/clm/forms.py:97 student_registration/clm/forms.py:639
 #: student_registration/clm/models.py:331
@@ -535,7 +535,7 @@ msgstr "يتم التسجيل لأول مرة؟"
 msgid "Student outreached?"
 msgstr "تم التواصل مع التلميذ من قبل؟"
 
-#: student_registration/alp/forms.py:536 student_registration/alp/models.py:413
+#: student_registration/alp/forms.py:536 student_registration/alp/models.py:416
 #: student_registration/backends/tasks.py:62
 #: student_registration/clm/forms.py:103 student_registration/clm/forms.py:645
 #: student_registration/clm/models.py:338
@@ -559,12 +559,12 @@ msgstr "ابحث عن تلميذ"
 msgid "Search by School"
 msgstr " ابحث في مدرسة محددة"
 
-#: student_registration/alp/forms.py:638 student_registration/alp/models.py:145
+#: student_registration/alp/forms.py:638 student_registration/alp/models.py:148
 #: student_registration/alp/tables.py:124
 #: student_registration/alp/tables.py:171
 #: student_registration/backends/tasks.py:35
 #: student_registration/backends/tasks.py:174
-#: student_registration/backends/tasks.py:298
+#: student_registration/backends/tasks.py:297
 #: student_registration/enrollments/forms.py:221
 #: student_registration/enrollments/forms.py:1087
 #: student_registration/enrollments/models.py:119
@@ -573,18 +573,18 @@ msgstr "الشعبة الحالية"
 
 #: student_registration/alp/forms.py:645
 #: student_registration/backends/tasks.py:31
-#: student_registration/backends/tasks.py:285
+#: student_registration/backends/tasks.py:284
 #: student_registration/enrollments/forms.py:237
 msgid "Last education level"
 msgstr " أعلى مستوى تعليم وصل إليه التلميذ"
 
-#: student_registration/alp/forms.py:651 student_registration/alp/models.py:192
+#: student_registration/alp/forms.py:651 student_registration/alp/models.py:195
 #: student_registration/enrollments/forms.py:260
 #: student_registration/enrollments/models.py:168
 msgid "Last Education year"
 msgstr " آخر سنة دراسية"
 
-#: student_registration/alp/forms.py:657 student_registration/alp/models.py:206
+#: student_registration/alp/forms.py:657 student_registration/alp/models.py:209
 #: student_registration/enrollments/forms.py:276
 #: student_registration/enrollments/models.py:192
 msgid "Participated in ALP"
@@ -598,18 +598,18 @@ msgstr "انتسب من قبل الى برنامج ALP"
 msgid "n/a"
 msgstr ""
 
-#: student_registration/alp/forms.py:667 student_registration/alp/models.py:212
+#: student_registration/alp/forms.py:667 student_registration/alp/models.py:215
 #: student_registration/enrollments/models.py:198
 msgid "Last informal education level"
 msgstr " أعلى مستوى تعليم وصل إليه التلميذ"
 
-#: student_registration/alp/forms.py:673 student_registration/alp/models.py:232
+#: student_registration/alp/forms.py:673 student_registration/alp/models.py:235
 #: student_registration/enrollments/forms.py:292
 #: student_registration/enrollments/models.py:218
 msgid "Last informal education round"
 msgstr " تفاصيل آخر دورة  تعليم غير نظامي"
 
-#: student_registration/alp/forms.py:679 student_registration/alp/models.py:238
+#: student_registration/alp/forms.py:679 student_registration/alp/models.py:241
 #: student_registration/enrollments/forms.py:298
 #: student_registration/enrollments/models.py:224
 msgid "Last informal education status"
@@ -685,72 +685,72 @@ msgstr "ناجح/ة"
 msgid "Failed"
 msgstr "معيد/ة"
 
-#: student_registration/alp/models.py:83 student_registration/alp/tables.py:126
+#: student_registration/alp/models.py:86 student_registration/alp/tables.py:126
 #: student_registration/enrollments/models.py:137
 msgid "Created by"
 msgstr "انشأ من قبل"
 
-#: student_registration/alp/models.py:89 student_registration/clm/models.py:308
+#: student_registration/alp/models.py:92 student_registration/clm/models.py:308
 msgid "Modified by"
 msgstr "اخر تعديل من قبل"
 
-#: student_registration/alp/models.py:101
+#: student_registration/alp/models.py:104
 #: student_registration/clm/models.py:201
 msgid "Location"
 msgstr "الموقع/مركز"
 
-#: student_registration/alp/models.py:161
+#: student_registration/alp/models.py:164
 msgid "Pre test room"
 msgstr "غرفة امتحان "
 
-#: student_registration/alp/models.py:167
+#: student_registration/alp/models.py:170
 msgid "Post test room"
 msgstr "غرفة امتحان "
 
-#: student_registration/alp/models.py:185
+#: student_registration/alp/models.py:188
 #: student_registration/enrollments/models.py:161
 msgid "Last Education level"
 msgstr " أعلى مستوى تعليم وصل إليه التلميذ"
 
-#: student_registration/alp/models.py:199
+#: student_registration/alp/models.py:202
 #: student_registration/enrollments/forms.py:266
 #: student_registration/enrollments/models.py:175
 msgid "Last Education result"
 msgstr "آخر نتيجة حصل عليها "
 
-#: student_registration/alp/models.py:219
+#: student_registration/alp/models.py:222
 #: student_registration/enrollments/models.py:205
 msgid "Last informal education year"
 msgstr "معلومات سابقة للتعليم غير نظامي للتلميذ"
 
-#: student_registration/alp/models.py:226
+#: student_registration/alp/models.py:229
 #: student_registration/enrollments/models.py:212
 msgid "Last informal education result"
 msgstr "معلومات سابقة للتعليم غير نظامي للتلميذ"
 
-#: student_registration/alp/models.py:305
+#: student_registration/alp/models.py:308
 msgid "Entrance Test (Pre-Test)"
 msgstr "امتحان الدخول"
 
-#: student_registration/alp/models.py:317
-#: student_registration/backends/tasks.py:303
+#: student_registration/alp/models.py:320
+#: student_registration/backends/tasks.py:302
 msgid "Pre-test result"
 msgstr "نتيجة ال Pre-test"
 
-#: student_registration/alp/models.py:385
-#: student_registration/backends/tasks.py:301
+#: student_registration/alp/models.py:388
+#: student_registration/backends/tasks.py:300
 msgid "Post-test result"
 msgstr "نتيجة ال Post-test"
 
-#: student_registration/alp/models.py:392
+#: student_registration/alp/models.py:395
 #: student_registration/backends/tasks.py:63
 #: student_registration/clm/models.py:317
 #: student_registration/enrollments/models.py:442
 msgid "Outreach barcode"
 msgstr "رقم الباركود"
 
-#: student_registration/alp/models.py:418
-#: student_registration/alp/models.py:422
+#: student_registration/alp/models.py:421
+#: student_registration/alp/models.py:425
 #: student_registration/clm/models.py:359
 #: student_registration/schools/models.py:60
 msgid "Comments"
@@ -775,7 +775,7 @@ msgid "Delete student"
 msgstr "حذف التلميذ "
 
 #: student_registration/alp/tables.py:25
-#: student_registration/backends/tasks.py:447
+#: student_registration/backends/tasks.py:446
 #: student_registration/clm/tables.py:31
 #: student_registration/enrollments/tables.py:35
 #: student_registration/enrollments/tables.py:92
@@ -832,8 +832,8 @@ msgstr "عدد التلامذة المصرح عنهم من قبل المدير"
 #: student_registration/alp/views.py:511
 #: student_registration/backends/tasks.py:68
 #: student_registration/backends/tasks.py:185
-#: student_registration/backends/tasks.py:313
-#: student_registration/backends/tasks.py:432
+#: student_registration/backends/tasks.py:312
+#: student_registration/backends/tasks.py:431
 #: student_registration/clm/filters.py:14 student_registration/clm/forms.py:128
 #: student_registration/clm/models.py:195
 #: student_registration/enrollments/views.py:484
@@ -844,8 +844,8 @@ msgstr "القضاء"
 #: student_registration/alp/views.py:512
 #: student_registration/backends/tasks.py:69
 #: student_registration/backends/tasks.py:186
-#: student_registration/backends/tasks.py:314
-#: student_registration/backends/tasks.py:433
+#: student_registration/backends/tasks.py:313
+#: student_registration/backends/tasks.py:432
 #: student_registration/clm/filters.py:13 student_registration/clm/forms.py:121
 #: student_registration/clm/models.py:189
 #: student_registration/enrollments/views.py:485
@@ -889,12 +889,12 @@ msgid "Weekly Holiday"
 msgstr "عطلة نهاية الاسبوع"
 
 #: student_registration/backends/tasks.py:25
-#: student_registration/backends/tasks.py:279
+#: student_registration/backends/tasks.py:278
 msgid "ALP result"
 msgstr "نتيجة ALP"
 
 #: student_registration/backends/tasks.py:26
-#: student_registration/backends/tasks.py:280
+#: student_registration/backends/tasks.py:279
 msgid "ALP round"
 msgstr "دورة ALP"
 
@@ -908,7 +908,7 @@ msgstr "النتيجة"
 
 #: student_registration/backends/tasks.py:29
 #: student_registration/backends/tasks.py:37
-#: student_registration/backends/tasks.py:284
+#: student_registration/backends/tasks.py:283
 #: student_registration/enrollments/filters.py:34
 #: student_registration/enrollments/models.py:131
 msgid "Education year"
@@ -929,40 +929,40 @@ msgid "Current Class"
 msgstr "الصف الحالي"
 
 #: student_registration/backends/tasks.py:41
-#: student_registration/backends/tasks.py:289
+#: student_registration/backends/tasks.py:288
 msgid "Student living address"
 msgstr "البلدة مكان السكن "
 
 #: student_registration/backends/tasks.py:42
-#: student_registration/backends/tasks.py:291
+#: student_registration/backends/tasks.py:290
 msgid "Student ID Number"
 msgstr "رقم البطاقة الخاصة بالتلميذ"
 
 #: student_registration/backends/tasks.py:43
-#: student_registration/backends/tasks.py:292
+#: student_registration/backends/tasks.py:291
 msgid "Student ID Type"
 msgstr "نوع البطاقة الخاصة بالتلميذ"
 
 #: student_registration/backends/tasks.py:47
 #: student_registration/backends/tasks.py:178
-#: student_registration/backends/tasks.py:305
+#: student_registration/backends/tasks.py:304
 msgid "Student nationality"
 msgstr "جنسية التلميذ"
 
 #: student_registration/backends/tasks.py:48
-#: student_registration/backends/tasks.py:306
+#: student_registration/backends/tasks.py:305
 #: student_registration/templates/enrollments/moved.html:32
 msgid "Student age"
 msgstr "عمر التلميذ"
 
 #: student_registration/backends/tasks.py:49
-#: student_registration/backends/tasks.py:307
+#: student_registration/backends/tasks.py:306
 msgid "Student birthday"
 msgstr "تاريخ ميلاد التلميذ"
 
 #: student_registration/backends/tasks.py:50
 #: student_registration/enrollments/forms.py:228
-#: student_registration/students/models.py:142
+#: student_registration/students/models.py:162
 msgid "Place of birth"
 msgstr "مكان الولادة "
 
@@ -992,8 +992,8 @@ msgstr " الشهرة "
 
 #: student_registration/backends/tasks.py:58
 #: student_registration/backends/tasks.py:180
-#: student_registration/backends/tasks.py:309
-#: student_registration/backends/tasks.py:445
+#: student_registration/backends/tasks.py:308
+#: student_registration/backends/tasks.py:444
 #: student_registration/templates/alp/test_grading.html:25
 #: student_registration/templates/enrollments/grading.html:20
 #: student_registration/templates/enrollments/moved.html:20
@@ -1010,8 +1010,8 @@ msgstr "تاريخ التسجيل"
 
 #: student_registration/backends/tasks.py:67
 #: student_registration/backends/tasks.py:184
-#: student_registration/backends/tasks.py:312
-#: student_registration/backends/tasks.py:430
+#: student_registration/backends/tasks.py:311
+#: student_registration/backends/tasks.py:429
 msgid "School number"
 msgstr "رقم المدرسة"
 
@@ -1118,56 +1118,56 @@ msgstr "تربية"
 msgid "Foreign language"
 msgstr "لغة اجنبية"
 
-#: student_registration/backends/tasks.py:281
+#: student_registration/backends/tasks.py:280
 msgid "ALP level"
 msgstr "المستوى المسجل فيه ضمن البرنامج"
 
-#: student_registration/backends/tasks.py:282
+#: student_registration/backends/tasks.py:281
 msgid "Is the child participated in an ALP program"
 msgstr "هل انتسب التلميذ الى برنامج التعليم المكثف ALP"
 
-#: student_registration/backends/tasks.py:302
+#: student_registration/backends/tasks.py:301
 msgid "Assigned to level"
 msgstr "نتيجة ALP"
 
-#: student_registration/backends/tasks.py:435
+#: student_registration/backends/tasks.py:434
 msgid "Attendance date"
 msgstr " تاريخ الحضور"
 
-#: student_registration/backends/tasks.py:436
+#: student_registration/backends/tasks.py:435
 msgid "Validation status"
 msgstr "حلة التحقق من الحضور"
 
-#: student_registration/backends/tasks.py:437
+#: student_registration/backends/tasks.py:436
 msgid "Validation date"
 msgstr "تاريخ التصديق على الحضور"
 
-#: student_registration/backends/tasks.py:438
+#: student_registration/backends/tasks.py:437
 msgid "Validated by"
 msgstr "  تم التصديق على الحضور من قبل"
 
-#: student_registration/backends/tasks.py:439
+#: student_registration/backends/tasks.py:438
 msgid "Close reason"
 msgstr "سبب الاقفال "
 
-#: student_registration/backends/tasks.py:440
+#: student_registration/backends/tasks.py:439
 #: student_registration/templates/attendances/level_section.html:42
 msgid "Exam day"
 msgstr "لا حضور للصف – يوم امتحان لباقي الشعب"
 
-#: student_registration/backends/tasks.py:442
+#: student_registration/backends/tasks.py:441
 msgid "Level"
 msgstr "المستوى "
 
-#: student_registration/backends/tasks.py:448
+#: student_registration/backends/tasks.py:447
 msgid "Attendance status"
 msgstr " الحضور ام غائب؟"
 
-#: student_registration/backends/tasks.py:449
+#: student_registration/backends/tasks.py:448
 msgid "Absence reason"
 msgstr "سبب الغياب"
 
-#: student_registration/backends/tasks.py:450
+#: student_registration/backends/tasks.py:449
 msgid "Dropout"
 msgstr " متسرب من التعليم"
 
@@ -2266,15 +2266,15 @@ msgstr ""
 msgid "CB-ECE current round"
 msgstr ""
 
-#: student_registration/students/models.py:149
+#: student_registration/students/models.py:169
 msgid "Family status"
 msgstr "وضع التلميذ"
 
-#: student_registration/students/models.py:156
+#: student_registration/students/models.py:176
 msgid "Have children"
 msgstr "لديه اطفال"
 
-#: student_registration/students/models.py:194
+#: student_registration/students/models.py:219
 msgid "P-code"
 msgstr ""
 
@@ -2655,11 +2655,21 @@ msgstr "تسجيل الحضور غير مكتمل"
 msgid "Validate all"
 msgstr "التصديق على الحضور"
 
-#: student_registration/templates/bootstrap4/common_form.html:35
+#: student_registration/templates/bootstrap4/common_form.html:36
 msgid ""
 "This student is not eligible to go into 2nd shift program, are you sure you "
 "want to register this student"
 msgstr ""
+
+#: student_registration/templates/bootstrap4/common_form.html:37
+msgid "Please change the student birthday, the min age for this level is"
+msgstr "يرجى تغيير تاريخ ميلاد التلميذ، الحد الأدنى للعمر لهذا الصف هو"
+
+#: student_registration/templates/bootstrap4/common_form.html:38
+msgid ""
+"Are you sure you want to continue the registration, the max age for this "
+"level is"
+msgstr "هل أنت متأكد من أنك تريد متابعة التسجيل، الحد الأقصى للعمر لهذا الصف هو"
 
 #: student_registration/templates/clm/bln_list.html:31
 #: student_registration/templates/clm/cbece_list.html:31

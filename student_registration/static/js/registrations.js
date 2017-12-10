@@ -8,6 +8,8 @@ var host = protocol+window.location.host;
 var moved_student_path = host+'/api/logging-student-move/';
 var current_school = null;
 var eligibility_msg = '';
+var min_age_limit_msg = '';
+var max_age_limit_msg = '';
 
 $(document).ready(function(){
 
@@ -35,6 +37,10 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_site', function(){
          reorganizeForm();
     });
+
+    // $(document).on('change', 'select#id_classroom, select#id_student_birthday_day, select#id_student_birthday_month, select#id_student_birthday_year', function(){
+    //      verify_age_level();
+    // });
 
     $(document).on('change', 'select#id_student_registered_in_unhcr', function(){
         reorganizeForm();
@@ -558,4 +564,76 @@ function log_student_program_move(item, eligibility)
             console.log(response);
         }
     });
+}
+
+
+function verify_age_level()
+{
+    var level = $('select#id_classroom').val();
+    var day = $('select#id_student_birthday_day').val();
+    var month = $('select#id_student_birthday_month').val();
+    var year = $('select#id_student_birthday_year').val();
+    var birthday = year+"-"+month+"-"+day;
+    var dob = new Date(birthday);
+    var min_date = new Date('2017-01-31');
+
+    if(dob == NaN || level == '') {
+        return false;
+    }
+
+    if(level == '1') { //KG
+        min_date = new Date('2017-09-14');
+        display_alert(dob, 5, 9, min_date);
+    }
+    if(level == '2') { //Level 1
+        display_alert(dob, 6, 10, min_date);
+    }
+    if(level == '3') { //Level 2
+        display_alert(dob, 7, 13, min_date);
+    }
+    if(level == '4') { //Level 3
+        display_alert(dob, 8, 14, min_date);
+    }
+    if(level == '5') { //Level 4
+        display_alert(dob, 9, 15, min_date);
+    }
+    if(level == '6') { //Level 5
+        display_alert(dob, 10, 18, min_date);
+    }
+    if(level == '7') { //Level 6
+        display_alert(dob, 11, 18, min_date);
+    }
+    if(level == '8') { //Level 7
+        display_alert(dob, 12, 18, min_date);
+    }
+    if(level == '9') { //Level 8
+        display_alert(dob, 13, 19, min_date);
+    }
+    if(level == '10') { //Level 9
+        display_alert(dob, 14, 20, min_date);
+    }
+}
+
+function display_alert(dob, min_value, max_value, min_date)
+{
+    var today = new Date();
+    var min_age = Math.floor((min_date-dob) / (365.25 * 24 * 60 * 60 * 1000));
+    var max_age = Math.floor((today-dob) / (365.25 * 24 * 60 * 60 * 1000));
+
+    if(min_age < min_value) {
+        var msg1 = min_age_limit_msg + " : " + min_value;
+        alert(msg1);
+        $('select#id_student_birthday_year').val("");
+        return false;
+    }
+    if(max_age > max_value) {
+        var msg2 = max_age_limit_msg + " : " + max_value;
+        if(confirm(msg2)){
+
+        }else{
+            $('select#id_student_birthday_year').val("");
+        }
+        return false;
+    }
+    return true;
 }

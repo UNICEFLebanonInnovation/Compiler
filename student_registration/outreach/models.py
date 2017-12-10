@@ -48,7 +48,7 @@ class HouseHold(models.Model):
     p_code = models.CharField(max_length=100, blank=True, null=True)
     address = models.CharField(max_length=200, blank=True, null=True)
     number_of_children = models.CharField(max_length=45, blank=True, null=True)
-    barcode_number = models.CharField(max_length=45, blank=True, null=True)
+    barcode_number = models.CharField(max_length=45, blank=True, null=True, db_index=True)
 
     social_worker_name = models.CharField(max_length=200, blank=True, null=True)
     partner_name = models.CharField(max_length=200, blank=True, null=True)
@@ -77,7 +77,7 @@ class Child(Person):
         max_length=45,
         blank=True, null=True,
     )
-    barcode_subset = models.CharField(max_length=45, blank=True, null=True)
+    barcode_subset = models.CharField(max_length=45, blank=True, null=True, db_index=True)
     current_situation = models.CharField(
         max_length=50,
         blank=True,
