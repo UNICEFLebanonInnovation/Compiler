@@ -715,7 +715,7 @@ class RegistrationForm(forms.ModelForm):
                     Div('have_barcode', css_class='col-md-3', css_id='have_barcode_option'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning'+display_registry
+                css_class='bd-callout bd-callout-warning'+display_registry, css_id='registry_block'
             ),
             Fieldset(
                 None,
