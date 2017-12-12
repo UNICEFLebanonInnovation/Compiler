@@ -51,6 +51,7 @@ class OutreachResource(resources.ModelResource):
             'have_barcode',
             'outreach_barcode',
             'student__id',
+            'student__registered_in_unhcr',
             'student__id_type',
             'student__id_number',
             'student__number',
@@ -64,6 +65,7 @@ class OutreachResource(resources.ModelResource):
             'student_age',
             'student__sex',
             'student__nationality__name',
+            'student__mother_nationality__name',
             'student__phone_prefix',
             'student__phone',
             'student__address',
@@ -80,7 +82,6 @@ class OutreachResource(resources.ModelResource):
             'exam_result_science',
             'exam_total',
             'pre_comment',
-            # 'passed_pre',
             'assigned_to_level__name',
             'registered_in_level__name',
             'section__name',
@@ -94,7 +95,13 @@ class OutreachResource(resources.ModelResource):
             'refer_to_level',
             'post_comment',
             're_enrolled',
-            # 'passed_post',
+            'last_informal_edu_final_result__name',
+            'last_informal_edu_round__name',
+            'last_informal_edu_level__name',
+            'participated_in_alp',
+
+            'last_education_year',
+            'last_education_level__name',
             'owner__username',
             'modified_by__username',
             'created',
@@ -141,7 +148,7 @@ class OutreachResource(resources.ModelResource):
         return 'No'
 
     def dehydrate_re_enrolled(self, obj):
-        return obj.student.alp_enrollment.count()
+        return obj.re_enrolled
 
 
 class PreTestTotalFilter(admin.SimpleListFilter):
@@ -456,8 +463,7 @@ class ReferredToFilter(admin.SimpleListFilter):
         provided in the query string and retrievable via
         `self.value()`.
         """
-        post_test_round = ALPRound.objects.get(current_post_test=True)
-        queryset = queryset.filter(alp_round=post_test_round)
+        queryset = queryset.filter(alp_round__current_post_test=True)
         if self.value() and self.value() == 'alp':
             return queryset.filter(
                 refer_to_level_id__in=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
@@ -505,18 +511,16 @@ class PassedTestFilter(admin.SimpleListFilter):
         `self.value()`.
         """
         if self.value() and self.value() == 'pre':
-            pre_test_round = ALPRound.objects.get(current_pre_test=True)
             not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER', 'CERD'])
             return queryset.filter(
-                alp_round=pre_test_round,
+                alp_round__current_pre_test=True,
                 owner__in=not_schools,
                 level__isnull=False,
                 assigned_to_level__isnull=False,
             )
         if self.value() and self.value() == 'post':
-            post_test_round = ALPRound.objects.get(current_post_test=True)
             return queryset.filter(
-                alp_round=post_test_round,
+                alp_round__current_post_test=True,
                 registered_in_level__isnull=False,
                 refer_to_level__isnull=False
             )
@@ -750,11 +754,10 @@ class CurrentOutreachAdmin(OutreachAdmin):
     )
 
     def get_queryset(self, request):
-        alp_round = ALPRound.objects.filter(current_pre_test=True)
         users = User.objects.filter(groups__name__in=['PARTNER'])
         qs = super(CurrentOutreachAdmin, self).get_queryset(request)
         return qs.filter(
-            alp_round=alp_round,
+            alp_round__current_pre_test=True,
             owner__in=users
         )
 
@@ -799,11 +802,10 @@ class PreTestAdmin(OutreachAdmin):
     )
 
     def get_queryset(self, request):
-        alp_round = ALPRound.objects.filter(current_pre_test=True)
         not_schools = User.objects.filter(groups__name__in=['PARTNER', 'TEST_MANAGER', 'CERD'])
         qs = super(PreTestAdmin, self).get_queryset(request)
         return qs.filter(
-            alp_round=alp_round,
+            alp_round__current_pre_test=True,
             owner__in=not_schools,
             level__isnull=False,
             assigned_to_level__isnull=False,
@@ -869,10 +871,8 @@ class CurrentRoundAdmin(OutreachAdmin):
         return ''
 
     def get_queryset(self, request):
-        alp_round = ALPRound.objects.filter(current_round=True)
-        qs = super(CurrentRoundAdmin, self).get_queryset(request)
-        return qs.filter(
-            alp_round=alp_round,
+        return Outreach.objects.filter(
+            alp_round__current_round=True,
             registered_in_level__isnull=False,
         )
 
@@ -934,10 +934,8 @@ class PostTestAdmin(OutreachAdmin):
                 return obj.refer_to_level.name
 
     def get_queryset(self, request):
-        alp_round = ALPRound.objects.filter(current_post_test=True)
-        qs = super(PostTestAdmin, self).get_queryset(request)
-        return qs.filter(
-            alp_round=alp_round,
+        return Outreach.objects.filter(
+            alp_round__current_post_test=True,
             registered_in_level__isnull=False,
             refer_to_level__isnull=False
         )
