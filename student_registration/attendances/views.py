@@ -212,7 +212,9 @@ class AttendanceView(LoginRequiredMixin,
             disable_attendance = True
 
         if level and section:
-            students = queryset.filter(classroom_id=level.id,section_id=section.id,
+            students = queryset.filter(classroom_id=level.id,
+                                       section_id=section.id,
+                                       registration_date__lte=selected_date
                                        ).order_by('student__first_name', 'student__father_name', 'student__last_name')
             for line in students:
                 student = line.student
@@ -240,7 +242,7 @@ class AttendanceView(LoginRequiredMixin,
             })
 
         return {
-            'school_type': 'alp',
+            'school_type': '2ndshift',
             'attendance': attendance,
             'disable_attendance': disable_attendance,
             'current_level_section': current_level_section,
@@ -376,7 +378,7 @@ class AttendanceALPView(LoginRequiredMixin,
             disable_attendance = True
 
         if level and section:
-            students = queryset.filter(registered_in_level_id=level.id,section_id=section.id,
+            students = queryset.filter(registered_in_level_id=level.id, section_id=section.id,
                                        ).order_by('student__first_name', 'student__father_name', 'student__last_name')
             for line in students:
                 student = line.student
