@@ -172,7 +172,7 @@ class CLM(TimeStampedModel):
         ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
         ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
         ('referred_to_another_program', _('Referred to another program')),
-        ('dropout', _('Dropout from school'))
+        # ('dropout', _('Dropout from school'))
     )
 
     round = models.ForeignKey(
@@ -414,7 +414,7 @@ class BLN(CLM):
         ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
         ('reenrolled_in_alp', _('Re-register on another round of BLN')),
         ('not_enrolled_any_program', _('Not enrolled in any educational program')),
-        ('dropout', _('Dropout from school'))
+        # ('dropout', _('Dropout from school'))
     )
 
     cycle = models.ForeignKey(
@@ -507,7 +507,7 @@ class RS(CLM):
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
         ('repeat_level', _('Repeat level')),
-        ('dropout', _('Dropout from school')),
+        # ('dropout', _('Dropout from school')),
         ('graduated_next_level', _('Graduated to the next level'))
     )
 
@@ -581,60 +581,60 @@ class RS(CLM):
         null=True,
         verbose_name=_('Reason of referral')
     )
-    pre_test_arabic = models.IntegerField(
+    pre_test_arabic = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Arabic')
     )
-    pre_test_language = models.IntegerField(
+    pre_test_language = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Foreign Language')
     )
-    pre_test_math = models.IntegerField(
+    pre_test_math = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Math')
     )
-    pre_test_science = models.IntegerField(
+    pre_test_science = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Science')
     )
-    post_test_arabic = models.IntegerField(
+    post_test_arabic = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Arabic')
     )
-    post_test_language = models.IntegerField(
+    post_test_language = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Foreign Language')
     )
-    post_test_math = models.IntegerField(
+    post_test_math = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Math')
     )
-    post_test_science = models.IntegerField(
+    post_test_science = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Science')
     )
 
@@ -835,7 +835,7 @@ class CBECE(CLM):
         ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
         ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
         ('referred_to_another_program', _('Referred to another program')),
-        ('dropout', _('Dropout from school'))
+        # ('dropout', _('Dropout from school'))
     )
 
     cycle = models.ForeignKey(

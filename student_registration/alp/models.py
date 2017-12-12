@@ -512,6 +512,10 @@ class Outreach(TimeStampedModel):
             return self.student.nationality
         return ''
 
+    @property
+    def re_enrolled(self):
+        return self.student.alp_enrollment.count()
+
     def calculate_pre_result(self):
         self.assigned_to_level = assign_to_level(self.level, self.exam_total)
 
