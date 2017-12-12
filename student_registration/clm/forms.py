@@ -81,7 +81,7 @@ LEARNING_RESULT = (
     ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
     ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
     ('referred_to_another_program', _('Referred to another program')),
-    ('dropout', _('Dropout from school'))
+    # ('dropout', _('Dropout from school'))
 )
 
 
@@ -256,7 +256,7 @@ class CommonForm(forms.ModelForm):
             ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
             ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
             ('referred_to_another_program', _('Referred to another program')),
-            ('dropout', _('Dropout from school'))
+            # ('dropout', _('Dropout from school'))
         ),
         initial=''
     )
@@ -330,10 +330,10 @@ class CommonForm(forms.ModelForm):
 
     class Media:
         js = (
-            'js/jquery-1.12.3.min.js',
-            'js/jquery-ui-1.12.1.js',
-            'js/validator.js',
-            'js/registrations.js',
+            # 'js/jquery-1.12.3.min.js',
+            # 'js/jquery-ui-1.12.1.js',
+            # 'js/validator.js',
+            # 'js/registrations.js',
         )
 
 
@@ -376,7 +376,7 @@ class BLNForm(CommonForm):
             ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
             ('reenrolled_in_alp', _('Re-register on another round of BLN')),
             ('not_enrolled_any_program', _('Not enrolled in any educational program')),
-            ('dropout', _('Dropout from school'))
+            # ('dropout', _('Dropout from school'))
         ),
         initial=''
     )
@@ -626,10 +626,10 @@ class BLNForm(CommonForm):
 
     class Media:
         js = (
-            'js/jquery-1.12.3.min.js',
-            'js/jquery-ui-1.12.1.js',
-            'js/validator.js',
-            'js/registrations.js',
+            # 'js/jquery-1.12.3.min.js',
+            # 'js/jquery-ui-1.12.1.js',
+            # 'js/validator.js',
+            # 'js/registrations.js',
         )
 
 
@@ -694,6 +694,48 @@ class RSForm(CommonForm):
         required=True, to_field_name='id',
         initial=0
     )
+    pre_test_arabic = forms.FloatField(
+        label=_('Arabic'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+    pre_test_language = forms.FloatField(
+        label=_('Foreign Language'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+    pre_test_math = forms.FloatField(
+        label=_('Math'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+    pre_test_science = forms.FloatField(
+        label=_('Science'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+
+    post_test_arabic = forms.FloatField(
+        label=_('Arabic'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+    post_test_language = forms.FloatField(
+        label=_('Foreign Language'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+    post_test_math = forms.FloatField(
+        label=_('Math'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+    post_test_science = forms.FloatField(
+        label=_('Science'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+
     referral = forms.MultipleChoiceField(
         label=_('Reason for referral of the child'),
         choices=RS.REFER_SEASON,
@@ -707,7 +749,7 @@ class RSForm(CommonForm):
         choices=(
             ('', '----------'),
             ('repeat_level', _('Repeat level')),
-            ('dropout', _('Dropout from school')),
+            # ('dropout', _('Dropout from school')),
             ('graduated_next_level', _('Graduated to the next level')),
         ),
         initial=''
