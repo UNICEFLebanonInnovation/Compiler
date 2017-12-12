@@ -205,17 +205,14 @@ class BLNDashboardView(LoginRequiredMixin,
         total_male = queryset.filter(student__sex='Male')
         total_female = queryset.filter(student__sex='Female')
 
-        completion = queryset.exclude(learning_result='dropout') \
-            .exclude(learning_result='repeat_level')
+        completion = queryset.exclude(learning_result='repeat_level')
         completion_male = completion.filter(student__sex='Male')
         completion_female = completion.filter(student__sex='Female')
 
-        attendance = queryset.exclude(learning_result='dropout')
-            # .filter(participation__isnull=False)
         attendances_male = attendance.filter(student__sex='Male', participation__isnull=False)
         attendances_female = attendance.filter(student__sex='Female', participation__isnull=False)
 
-        repeat_class = queryset.exclude(learning_result='dropout').filter(learning_result='repeat_level')
+        repeat_class = queryset.filter(learning_result='repeat_level')
         repeat_class_male = repeat_class.filter(student__sex='Male')
         repeat_class_female = repeat_class.filter(student__sex='Female')
 
@@ -301,17 +298,14 @@ class RSDashboardView(LoginRequiredMixin,
         total_male = queryset.filter(student__sex='Male')
         total_female = queryset.filter(student__sex='Female')
 
-        completion = queryset.exclude(learning_result='dropout') \
-            .exclude(learning_result='repeat_level')
+        completion = queryset.exclude(learning_result='repeat_level')
         completion_male = completion.filter(student__sex='Male')
         completion_female = completion.filter(student__sex='Female')
 
-        attendance = queryset.exclude(learning_result='dropout')
-            # .filter(participation__isnull=False)
         attendances_male = attendance.filter(student__sex='Male', participation__isnull=False)
         attendances_female = attendance.filter(student__sex='Female', participation__isnull=False)
 
-        repeat_class = queryset.exclude(learning_result='dropout').filter(learning_result='repeat_level')
+        repeat_class = queryset.filter(learning_result='repeat_level')
         repeat_class_male = repeat_class.filter(student__sex='Male')
         repeat_class_female = repeat_class.filter(student__sex='Female')
 
@@ -398,17 +392,14 @@ class CBECEDashboardView(LoginRequiredMixin,
         total_male = queryset.filter(student__sex='Male')
         total_female = queryset.filter(student__sex='Female')
 
-        completion = queryset.exclude(learning_result='dropout') \
-            .exclude(learning_result='repeat_level')
+        completion = queryset.exclude(learning_result='repeat_level')
         completion_male = completion.filter(student__sex='Male')
         completion_female = completion.filter(student__sex='Female')
 
-        attendance = queryset.exclude(learning_result='dropout')
-            # .filter(participation__isnull=False)
         attendances_male = attendance.filter(student__sex='Male', participation__isnull=False)
         attendances_female = attendance.filter(student__sex='Female', participation__isnull=False)
 
-        repeat_class = queryset.exclude(learning_result='dropout').filter(learning_result='repeat_level')
+        repeat_class = queryset.filter(learning_result='repeat_level')
         repeat_class_male = repeat_class.filter(student__sex='Male')
         repeat_class_female = repeat_class.filter(student__sex='Female')
 
