@@ -581,60 +581,60 @@ class RS(CLM):
         null=True,
         verbose_name=_('Reason of referral')
     )
-    pre_test_arabic = models.IntegerField(
+    pre_test_arabic = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Arabic')
     )
-    pre_test_language = models.IntegerField(
+    pre_test_language = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Foreign Language')
     )
-    pre_test_math = models.IntegerField(
+    pre_test_math = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Math')
     )
-    pre_test_science = models.IntegerField(
+    pre_test_science = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Science')
     )
-    post_test_arabic = models.IntegerField(
+    post_test_arabic = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Arabic')
     )
-    post_test_language = models.IntegerField(
+    post_test_language = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Foreign Language')
     )
-    post_test_math = models.IntegerField(
+    post_test_math = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Math')
     )
-    post_test_science = models.IntegerField(
+    post_test_science = models.FloatField(
         blank=True,
         null=True,
         default=0,
-        choices=((x, x) for x in range(0, 21)),
+        # choices=((x, x) for x in range(0, 21)),
         verbose_name=_('Science')
     )
 

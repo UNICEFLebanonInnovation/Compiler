@@ -330,10 +330,10 @@ class CommonForm(forms.ModelForm):
 
     class Media:
         js = (
-            'js/jquery-1.12.3.min.js',
-            'js/jquery-ui-1.12.1.js',
-            'js/validator.js',
-            'js/registrations.js',
+            # 'js/jquery-1.12.3.min.js',
+            # 'js/jquery-ui-1.12.1.js',
+            # 'js/validator.js',
+            # 'js/registrations.js',
         )
 
 
@@ -626,10 +626,10 @@ class BLNForm(CommonForm):
 
     class Media:
         js = (
-            'js/jquery-1.12.3.min.js',
-            'js/jquery-ui-1.12.1.js',
-            'js/validator.js',
-            'js/registrations.js',
+            # 'js/jquery-1.12.3.min.js',
+            # 'js/jquery-ui-1.12.1.js',
+            # 'js/validator.js',
+            # 'js/registrations.js',
         )
 
 
@@ -694,6 +694,48 @@ class RSForm(CommonForm):
         required=True, to_field_name='id',
         initial=0
     )
+    pre_test_arabic = forms.FloatField(
+        label=_('Arabic'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+    pre_test_language = forms.FloatField(
+        label=_('Foreign Language'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+    pre_test_math = forms.FloatField(
+        label=_('Math'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+    pre_test_science = forms.FloatField(
+        label=_('Science'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+
+    post_test_arabic = forms.FloatField(
+        label=_('Arabic'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+    post_test_language = forms.FloatField(
+        label=_('Foreign Language'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+    post_test_math = forms.FloatField(
+        label=_('Math'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+    post_test_science = forms.FloatField(
+        label=_('Science'), required=False,
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, max_value=20
+    )
+
     referral = forms.MultipleChoiceField(
         label=_('Reason for referral of the child'),
         choices=RS.REFER_SEASON,
