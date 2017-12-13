@@ -22,8 +22,8 @@ script:
 after_success:
   - coveralls
   - codecov
-  - if [ "$TRAVIS_BRANCH" == "develop" ]; then
+  - if [ "$TRAVIS_BRANCH" == "develop" -o "$TRAVIS_BRANCH" == "master"]; then
     docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
-    docker tag compiler_django $DOCKER_USER/$DOCKER_REPO;
-    docker push $DOCKER_USER/$DOCKER_REPO;
+    docker tag compiler_django $DOCKER_USER/$DOCKER_REPO:$TRAVIS_BRANCH;
+    docker push $DOCKER_USER/$DOCKER_REPO:$TRAVIS_BRANCH;
     fi
