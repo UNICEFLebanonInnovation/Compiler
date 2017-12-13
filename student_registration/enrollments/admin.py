@@ -2,6 +2,8 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
+from django.utils.translation import ugettext as _
+
 from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
@@ -174,6 +176,25 @@ class ToAgeFilter(admin.SimpleListFilter):
         if self.value():
             now = datetime.datetime.now()
             return queryset.filter(student__birthday_year__gte=(now.year - int(self.value())))
+        return queryset
+
+
+class TermFilter(admin.SimpleListFilter):
+    title = 'Term'
+
+    parameter_name = 'term'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('1', _('Term1')),
+            ('2', _('Term2')),
+            ('3', _('Term3')),
+            ('4', _('Term4')),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(exam_term=self.value())
         return queryset
 
 
@@ -453,12 +474,13 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
 
 
 class GradingResource(resources.ModelResource):
+    exam_term_name = fields.Field(column_name='Term')
 
     class Meta:
         model = EnrollmentGrading
         fields = (
             'enrollment',
-            'exam_term',
+            'exam_term_name',
             'exam_result_arabic',
             'exam_result_language',
             'exam_result_education',
@@ -480,6 +502,9 @@ class GradingResource(resources.ModelResource):
             'exam_result',
         )
         export_order = fields
+
+    def dehydrate_exam_term_name(self, obj):
+        return obj.exam_term_name
 
 
 class GradingAdmin(ImportExportModelAdmin):
@@ -509,7 +534,7 @@ class GradingAdmin(ImportExportModelAdmin):
 
     list_display = (
         'enrollment',
-        'exam_term',
+        'exam_term_name',
         'exam_result_arabic',
         'exam_result_language',
         'exam_result_education',
@@ -532,7 +557,7 @@ class GradingAdmin(ImportExportModelAdmin):
     )
 
     list_filter = (
-        'exam_term',
+        TermFilter,
         'enrollment__school',
         'enrollment__education_year'
     )

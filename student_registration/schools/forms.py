@@ -95,6 +95,20 @@ class ProfileForm(forms.ModelForm):
                     Div('field_coordinator_name', css_class='col-md-3'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('is_2nd_shift', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('is_alp', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('number_students_2nd_shift', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('number_students_alp', css_class='col-md-3'),
+                    css_class='row',
+                ),
                 css_class='bd-callout bd-callout-warning'
             ),
             Fieldset(
@@ -140,6 +154,10 @@ class ProfileForm(forms.ModelForm):
             'certified_foreign_language',
             'comments',
             'weekend',
+            'is_2nd_shift',
+            'is_alp',
+            'number_students_2nd_shift',
+            'number_students_alp',
         )
         initial_fields = fields
         widgets = {}

@@ -195,7 +195,7 @@ def export_2ndshift_gradings(params=None, return_data=False):
 
             line.exam_result,
             line.exam_total,
-            line.exam_term,
+            line.exam_term_name,
 
             line.exam_result_linguistic_ar,
             line.exam_result_sociology,
