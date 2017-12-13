@@ -236,6 +236,8 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'csrfmiddlewaretoken',
             'save',
             'school_type',
+            'age_min_restricted',
+            'age_max_restricted',
         )
 
 

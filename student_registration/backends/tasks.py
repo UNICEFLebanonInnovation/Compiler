@@ -276,6 +276,7 @@ def export_alp(params=None, return_data=False):
 
     data.headers = [
 
+        _('ALP round'),
         _('Governorate'),
         _('District'),
         _('School number'),
@@ -344,6 +345,8 @@ def export_alp(params=None, return_data=False):
             continue
         student = line.student
         content = [
+
+            line.alp_round.name if line.alp_round else '',
             line.school.location.parent.name,
             line.school.location.name,
             line.school.number,
@@ -399,7 +402,7 @@ def export_alp(params=None, return_data=False):
             line.last_informal_edu_round.name if line.last_informal_edu_round else '',
 
             line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
-            line.owner.username,
+            line.owner.username if line.owner else '',
             line.modified_by.username if line.modified_by else '',
             line.created,
             line.modified,
