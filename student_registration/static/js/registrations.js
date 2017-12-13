@@ -17,6 +17,10 @@ $(document).ready(function(){
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
     }
 
+    $("td[class='student.first_name']").addClass('font-bolder');
+    $("td[class='student.father_name']").addClass('font-bolder');
+    $("td[class='student.last_name']").addClass('font-bolder');
+
     reorganizeForm();
 
     $(document).on('change', 'select#id_level', function(){

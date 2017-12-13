@@ -90,7 +90,7 @@ class School(models.Model):
     )
     number_students_2nd_shift = models.IntegerField(
         blank=True, null=True,
-        verbose_name=_('Number of students in 2nd shift')
+        verbose_name=_('Expected number of students in 2nd shift')
     )
     is_alp = models.BooleanField(
         blank=True,
@@ -99,7 +99,7 @@ class School(models.Model):
     )
     number_students_alp = models.IntegerField(
         blank=True, null=True,
-        verbose_name=_('Number of students in ALP')
+        verbose_name=_('Expected number of students in ALP')
     )
     attendance_range = models.IntegerField(
         blank=True, null=True,

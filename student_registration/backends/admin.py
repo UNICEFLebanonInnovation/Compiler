@@ -3,6 +3,9 @@ from __future__ import absolute_import, unicode_literals
 
 
 from django.contrib import admin
+from django.utils.html import escape, format_html, format_html_join, html_safe
+from django.utils.safestring import mark_safe
+
 from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
@@ -60,6 +63,26 @@ class SchoolCERDFilter(admin.SimpleListFilter):
         return queryset
 
 
+class SchoolTypeFilter(admin.SimpleListFilter):
+    title = 'School Type'
+
+    parameter_name = 'school_type'
+
+    def lookups(self, request, model_admin):
+        return (('2ndshift', '2nd shift'),
+                ('alp', 'ALP'),
+                )
+
+    def queryset(self, request, queryset):
+        if self.value() and self.value() == '2ndshift':
+            emails = User.objects.filter(school__is_2nd_shift=True).values_list('email', flat=True)
+            return queryset.filter(submitter_email__in=emails)
+        if self.value() and self.value() == 'alp':
+            emails = User.objects.filter(school__is_alp=True).values_list('email', flat=True)
+            return queryset.filter(submitter_email__in=emails)
+        return queryset
+
+
 class TicketSchoolAdmin(admin.ModelAdmin):
 
     fields = (
@@ -69,14 +92,18 @@ class TicketSchoolAdmin(admin.ModelAdmin):
         'submitter_email',
         'status',
         'created',
-        'priority'
+        'priority',
     )
     list_display = (
+        'id',
         'queue',
         'title',
         'description',
+        'owner',
         'school_cerd',
         'school',
+        'is_2nd_shift',
+        'is_alp',
         'priority',
         'submitter',
         'created',
@@ -89,6 +116,7 @@ class TicketSchoolAdmin(admin.ModelAdmin):
         'priority',
         SchoolFilter,
         SchoolCERDFilter,
+        SchoolTypeFilter,
     )
     date_hierarchy = 'created'
     view_on_site = False
@@ -109,10 +137,37 @@ class TicketSchoolAdmin(admin.ModelAdmin):
         return ''
 
     def school_cerd(self, obj):
-        if self.owner(obj) and self.owner(obj).school:
-            return self.owner(obj).school.number
+        if self.school(obj):
+            return self.school(obj).number
         return ''
 
+    def is_2nd_shift(self, obj):
+        if self.school(obj):
+            return self.school(obj).is_2nd_shift
+        return False
+
+    def is_alp(self, obj):
+        if self.school(obj):
+            return self.school(obj).is_alp
+        return False
+
+    # def is_2nd_shift(self, obj):
+    #     result = False
+    #     html_icon = '<i class="{} icon"></i>'
+    #     if self.school(obj):
+    #         result = self.school(obj).is_2nd_shift
+    #     if result:
+    #         return format_html(html_icon, mark_safe('check green'))
+    #     return format_html(html_icon, mark_safe('remove red'))
+    #
+    # def is_alp(self, obj):
+    #     result = False
+    #     html_icon = '<i class="{} icon"></i>'
+    #     if self.school(obj):
+    #         result = self.school(obj).is_alp
+    #     if result:
+    #         return format_html(html_icon, mark_safe('check green'))
+    #     return format_html(html_icon, mark_safe('remove red'))
 
 admin.site.register(Exporter, ExporterAdmin)
 admin.site.unregister(Ticket)

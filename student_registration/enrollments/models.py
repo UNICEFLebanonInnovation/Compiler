@@ -702,7 +702,7 @@ class EnrollmentGrading(models.Model):
         max_length=20,
         blank=True,
         null=True,
-        verbose_name=_('Final Grade')
+        verbose_name=_('Total Grade')
     )
 
     exam_result = models.CharField(
@@ -728,6 +728,17 @@ class EnrollmentGrading(models.Model):
 
     class Meta:
         ordering = ['id']
+
+    @property
+    def exam_term_name(self):
+        if self.exam_term:
+            return {
+                '1': _('Term1'),
+                '2': _('Term2'),
+                '3': _('Term3'),
+                '4': _('Term4'),
+            }[str(self.exam_term)]
+        return ''
 
     def __unicode__(self):
         return str(self.id)

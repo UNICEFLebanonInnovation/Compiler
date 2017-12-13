@@ -423,11 +423,18 @@ class ExportViewSet(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
         data = ''
         school = request.GET.get('school', 0)
+        classroom = request.GET.get('classroom', 0)
+        section = request.GET.get('section', 0)
 
         if self.request.user.school_id:
             school = self.request.user.school_id
         if school:
-            data = export_2ndshift({'current': 'true', 'school': school}, return_data=True)
+            data = export_2ndshift({
+                'current': 'true',
+                'school': school,
+                'classroom': classroom,
+                'section': section
+            }, return_data=True)
 
         response = HttpResponse(
             data,
@@ -450,11 +457,20 @@ class ExportGradingViewSet(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
         data= ''
         school = request.GET.get('school', 0)
+        classroom = request.GET.get('classroom', 0)
+        section = request.GET.get('section', 0)
+        term = request.GET.get('term', 0)
 
         if self.request.user.school_id:
             school = self.request.user.school_id
         if school:
-            data = export_2ndshift_gradings({'current': 'true', 'school': school}, return_data=True)
+            data = export_2ndshift_gradings({
+                'current': 'true',
+                'school': school,
+                'classroom': classroom,
+                'section': section,
+                'term': term
+            }, return_data=True)
 
         response = HttpResponse(
             data,
