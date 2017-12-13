@@ -38,9 +38,9 @@ $(document).ready(function(){
          reorganizeForm();
     });
 
-    // $(document).on('change', 'select#id_classroom, select#id_student_birthday_day, select#id_student_birthday_month, select#id_student_birthday_year', function(){
-    //      verify_age_level();
-    // });
+    $(document).on('change', 'select#id_classroom, select#id_student_birthday_day, select#id_student_birthday_month, select#id_student_birthday_year', function(){
+         verify_age_level();
+    });
 
     $(document).on('change', 'select#id_student_registered_in_unhcr', function(){
         reorganizeForm();
@@ -621,13 +621,15 @@ function display_alert(dob, min_value, max_value, min_date)
     var max_age = Math.floor((today-dob) / (365.25 * 24 * 60 * 60 * 1000));
 
     if(min_age < min_value) {
-        var msg1 = min_age_limit_msg + " : " + min_value;
+        $('#id_age_min_restricted').val(1);
+        var msg1 = min_age_limit_msg;
         alert(msg1);
         $('select#id_student_birthday_year').val("");
         return false;
     }
     if(max_age > max_value) {
-        var msg2 = max_age_limit_msg + " : " + max_value;
+        $('#id_age_max_restricted').val(1);
+        var msg2 = max_age_limit_msg;
         if(confirm(msg2)){
 
         }else{
