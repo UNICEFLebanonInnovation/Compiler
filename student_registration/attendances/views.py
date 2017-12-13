@@ -8,6 +8,8 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.contrib import messages
+from django.shortcuts import render
 
 from braces.views import GroupRequiredMixin
 from rest_framework import viewsets, mixins, permissions
@@ -126,6 +128,12 @@ class AttendanceView(LoginRequiredMixin,
 
         if self.request.user.school:
             school = self.request.user.school
+
+        if not school.academic_year_start:
+            messages.warning(self.request, _('Please go to the school profile and enter the academic start date in order to take attendance.'))
+            self.template_name = 'error.html'
+            return {
+            }
 
         current_date = datetime.datetime.now().strftime(date_format)
         selected_date = self.request.GET.get('date', current_date)
