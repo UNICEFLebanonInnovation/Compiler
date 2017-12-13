@@ -69,12 +69,14 @@ class TicketSchoolAdmin(admin.ModelAdmin):
         'submitter_email',
         'status',
         'created',
-        'priority'
+        'priority',
     )
     list_display = (
+        'id',
         'queue',
         'title',
         'description',
+        'owner',
         'school_cerd',
         'school',
         'priority',

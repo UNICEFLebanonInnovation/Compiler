@@ -29,7 +29,7 @@ class ProfileForm(forms.ModelForm):
         required=False,
         widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
     )
-    director_phone_number =forms.RegexField(
+    director_phone_number = forms.RegexField(
         label=_('School director cell phone'),
         regex=r'^[0-9]{2}-[0-9]{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
@@ -38,6 +38,12 @@ class ProfileForm(forms.ModelForm):
         label=_('School IT phone number'),
         regex=r'^[0-9]{2}-[0-9]{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: 00-00000'})
+    )
+
+    academic_year_start = forms.DateField(
+        label=_('School year start date'),
+        widget=forms.TextInput,
+        required=True
     )
 
     def __init__(self, *args, **kwargs):

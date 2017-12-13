@@ -702,7 +702,7 @@ class EnrollmentGrading(models.Model):
         max_length=20,
         blank=True,
         null=True,
-        verbose_name=_('Final Grade')
+        verbose_name=_('Total Grade')
     )
 
     exam_result = models.CharField(
