@@ -30,16 +30,26 @@
           </li>
         {% endif %}
           <li class="breadcrumb-item">
-            <a class="btn btn-info" href="{% url "enrollments:export" %}" target="_blank">
+            <a class="btn btn-info export-info" href="{% url "enrollments:export" %}" target="_blank">
                 <i class="icon-export-sign icon-white"></i>&nbsp;
                     {% trans "Export students infos" %}
             </a>
           </li>
           <li class="breadcrumb-item">
-            <a class="btn btn-info" href="{% url "enrollments:export_grading" %}" target="_blank">
-                <i class="icon-export-sign icon-white"></i>&nbsp;
-                    {% trans "Export students grading" %}
-            </a>
+            <div class="btn-group">
+              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="icon-export-sign icon-white"></i>&nbsp;
+                  {% trans "Export students grading" %}
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item export-grading" href="{% url "enrollments:export_grading" %}" target="_blank" itemscope="">{% trans 'All Terms' %}</a>
+                <a class="dropdown-item export-grading1" href="{% url "enrollments:export_grading" %}" target="_blank" itemscope="1">{% trans 'Term1' %}</a>
+                <a class="dropdown-item export-grading2" href="{% url "enrollments:export_grading" %}" target="_blank" itemscope="2">{% trans 'Term2' %}</a>
+                <a class="dropdown-item export-grading3" href="{% url "enrollments:export_grading" %}" target="_blank" itemscope="3">{% trans 'Term3' %}</a>
+                <a class="dropdown-item export-grading4" href="{% url "enrollments:export_grading" %}" target="_blank" itemscope="4">{% trans 'Term4' %}</a>
+              </div>
+            </div>
+
           </li>
           <li class="breadcrumb-item">
               <input type="text" id="search_moved_student" size="400" style="width: 400px;" placeholder="{% trans "Search moved student" %}" />
@@ -68,5 +78,21 @@
     <script>
         var user_token = '{{ user_token }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+        var export_info = '{% url "enrollments:export" %}';
+        var export_grading = '{% url "enrollments:export_grading" %}';
+        var export_grading1 = '{% url "enrollments:export_grading" %}?term=1';
+        var export_grading2 = '{% url "enrollments:export_grading" %}?term=2';
+        var export_grading3 = '{% url "enrollments:export_grading" %}?term=3';
+        var export_grading4 = '{% url "enrollments:export_grading" %}?term=4';
+        $(document).ready(function(){
+            var params = '?classroom='+$('select#id_classroom').val() + '&section='+$('select#id_section').val();
+            var params2 = '&classroom='+$('select#id_classroom').val() + '&section='+$('select#id_section').val();
+            $('a.export-info').attr('href', export_info+params);
+            $('a.export-grading').attr('href', export_grading+params);
+            $('a.export-grading1').attr('href', export_grading1+params2);
+            $('a.export-grading2').attr('href', export_grading2+params2);
+            $('a.export-grading3').attr('href', export_grading3+params2);
+            $('a.export-grading4').attr('href', export_grading4+params2);
+        });
     </script>
 {% endblock %}

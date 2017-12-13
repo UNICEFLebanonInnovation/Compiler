@@ -18,6 +18,10 @@ def export_2ndshift(params=None, return_data=False):
         queryset = queryset.filter(education_year__current_year=True)
     if 'school' in params:
         queryset = queryset.filter(school_id=params['school'])
+    if 'classroom' in params and params['classroom']:
+        queryset = queryset.filter(classroom_id=params['classroom'])
+    if 'section' in params and params['section']:
+        queryset = queryset.filter(section_id=params['section'])
 
     data = tablib.Dataset()
     data.headers = [
@@ -142,9 +146,17 @@ def export_2ndshift_gradings(params=None, return_data=False):
     from student_registration.schools.models import EducationYear
     current = EducationYear.objects.get(current_year=True)
 
+    print(params)
+
     queryset = EnrollmentGrading.objects.filter(enrollment__education_year=current)
     if 'school' in params:
         queryset = queryset.filter(enrollment__school_id=params['school'])
+    if 'classroom' in params and params['classroom']:
+        queryset = queryset.filter(enrollment__classroom_id=params['classroom'])
+    if 'section' in params and params['section']:
+        queryset = queryset.filter(enrollment__section_id=params['section'])
+    if 'term' in params and params['term']:
+        queryset = queryset.filter(exam_term=params['term'])
 
     data = tablib.Dataset()
     data.headers = [
