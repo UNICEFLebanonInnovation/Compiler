@@ -304,6 +304,8 @@ class EnrollmentForm(forms.ModelForm):
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
     student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
+    age_min_restricted = forms.BooleanField(widget=forms.HiddenInput, required=False)
+    age_max_restricted = forms.BooleanField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -337,6 +339,8 @@ class EnrollmentForm(forms.ModelForm):
                     'student_id',
                     'enrollment_id',
                     'student_outreach_child',
+                    'age_min_restricted',
+                    'age_max_restricted',
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('new_registry', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
@@ -578,6 +582,8 @@ class EnrollmentForm(forms.ModelForm):
             'new_registry',
             'student_outreached',
             'have_barcode',
+            'age_min_restricted',
+            'age_max_restricted',
         )
         initial_fields = fields
         widgets = {}

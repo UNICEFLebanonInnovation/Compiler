@@ -137,6 +137,8 @@ class Enrollment(TimeStampedModel):
         verbose_name=_('Created by')
     )
     status = models.BooleanField(blank=True, default=True)
+    age_min_restricted = models.BooleanField(default=False)
+    age_max_restricted = models.BooleanField(default=False)
     out_of_school_two_years = models.BooleanField(blank=True, default=False)
     related_to_family = models.BooleanField(blank=True, default=False)
     enrolled_in_this_school = models.BooleanField(blank=True, default=True)
