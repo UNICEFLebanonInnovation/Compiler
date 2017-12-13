@@ -34,7 +34,7 @@
     <script>
         var current_school = '{{ request.user.school_id }}';
         var eligibility_msg = '{% trans 'This student is not eligible to go into 2nd shift program, are you sure you want to register this student' %}';
-        var min_age_limit_msg = '{% trans 'Please change the student birthday, the min age for this level is' %}';
-        var max_age_limit_msg = '{% trans 'Are you sure you want to continue the registration, the max age for this level is' %}';
+        var min_age_limit_msg = '{% trans 'Registration can not be continued because age is not appropriate for the class' %}';
+        var max_age_limit_msg = '{% trans 'Age does not fit the grade - continue registration?' %}';
     </script>
 {% endblock %}

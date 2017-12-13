@@ -78,6 +78,8 @@ class EnrollmentResource(resources.ModelResource):
             'participated_in_alp',
             'last_informal_edu_round__name',
             'last_informal_edu_final_result__name',
+            'age_min_restricted',
+            'age_max_restricted',
         )
         export_order = fields
 
@@ -203,6 +205,8 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'student_outreached',
         'have_barcode',
         'number_in_previous_school',
+        'age_min_restricted',
+        'age_max_restricted',
     )
     list_display = (
         'student',
@@ -239,6 +243,8 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_informal_edu_final_result',
         FromAgeFilter,
         ToAgeFilter,
+        'age_min_restricted',
+        'age_max_restricted',
         # 'exam_result',
         'created',
         'modified',
