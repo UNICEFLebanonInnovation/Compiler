@@ -168,6 +168,7 @@ class School(models.Model):
         from student_registration.alp.models import Outreach
         return Outreach.objects.filter(
             alp_round__current_round=True,
+            registered_in_level__isnull=False,
             school_id=self.id
         ).count()
 

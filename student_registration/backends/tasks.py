@@ -26,13 +26,14 @@ def export_2ndshift(params=None, return_data=False):
     data = tablib.Dataset()
     data.headers = [
 
-        _('ALP result'),
-        _('ALP round'),
+        _('Last non formal education - result'),
+        _('Last non formal education - round'),
         _('Is the child participated in an ALP/2016-2 program'),
-        _('Result'),
-        _('Education year'),
-        _('School'),
-        _('Last education level'),
+
+        _('Last formal education - result'),
+        _('Last formal education - year'),
+        _('Last formal education - school'),
+        _('Last formal education - level'),
 
         _('Serial number in previous school'),
 
@@ -145,8 +146,6 @@ def export_2ndshift_gradings(params=None, return_data=False):
     from student_registration.enrollments.models import EnrollmentGrading
     from student_registration.schools.models import EducationYear
     current = EducationYear.objects.get(current_year=True)
-
-    print(params)
 
     queryset = EnrollmentGrading.objects.filter(enrollment__education_year=current)
     if 'school' in params:
@@ -314,7 +313,8 @@ def export_alp(params=None, return_data=False):
         _('Phone number'),
 
         _('Student living address'),
-        _('Pre-test result'),
+        _('Pre-test level'),
+        _('Pre-test room'),
         _('Arabic'),
         _('Exam language'),
         _('Foreign language'),
@@ -326,24 +326,26 @@ def export_alp(params=None, return_data=False):
         _('Assigned to level'),
 
         _('Current Section'),
-        _('Current Level'),
-        _('Post-test result'),
+        _('Registered in Level'),
         _('Arabic'),
         _('Exam language'),
 
         _('Foreign language'),
         _('Math'),
         _('Science'),
+        _('Post-test room'),
         _('Post-test total'),
+        _('Post-test result'),
+
         _('Comments'),
 
-        _('Last education level'),
-        _('Education year'),
+        _('Last formal education - level'),
+        _('Last formal education - year'),
         _('Is the child participated in an ALP program'),
-        _('ALP level'),
-        _('ALP round'),
+        _('Last non formal education - level'),
+        _('Last non formal education - round'),
 
-        _('ALP result'),
+        _('Last non formal education - result'),
         _('Created by'),
         _('Modified by'),
         _('Creation date'),
@@ -385,6 +387,7 @@ def export_alp(params=None, return_data=False):
 
             student.address,
             line.level.name if line.level else '',
+            line.pre_test_room,
             line.exam_result_arabic,
             line.exam_language,
             line.exam_result_language,
@@ -397,14 +400,16 @@ def export_alp(params=None, return_data=False):
 
             line.section.name if line.section else '',
             line.registered_in_level.name if line.registered_in_level else '',
-            line.refer_to_level,
+
             line.post_exam_result_arabic,
             line.post_exam_language,
 
             line.post_exam_result_language,
             line.post_exam_result_math,
             line.post_exam_result_science,
+            line.post_test_room,
             line.post_exam_total,
+            line.refer_to_level,
             line.post_comment,
 
             line.last_education_level.name if line.last_education_level else '',
