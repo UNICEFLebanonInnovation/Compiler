@@ -94,6 +94,15 @@ $(document).ready(function(){
             item.parents('tr').remove();
         }
     });
+    $(document).on('click', '.detach-button', function(){
+        var item = $(this);
+        if(confirm($(this).attr('translation'))) {
+            var callback = function(){
+                item.parents('tr').remove();
+            };
+            patch_registration(item, callback());
+        }
+    });
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
@@ -527,6 +536,31 @@ function delete_student(item, callback)
         type: "DELETE",
         url: url+'/',
         cache: false,
+        async: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            if(callback != undefined){
+                callback();
+            }
+            console.log(response);
+        },
+        error: function(response) {
+            console.log(response);
+        }
+    });
+}
+
+function patch_registration(item, callback)
+{
+    var url = item.attr('data-action');
+    var data = {section: '', registered_in_level: ''};
+
+    $.ajax({
+        type: "PATCH",
+        url: url+'/',
+        cache: false,
+        data: data,
         async: false,
         headers: getHeader(),
         dataType: 'json',
