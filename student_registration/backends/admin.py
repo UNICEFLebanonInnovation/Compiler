@@ -5,6 +5,7 @@ from __future__ import absolute_import, unicode_literals
 from django.contrib import admin
 from django.utils.html import escape, format_html, format_html_join, html_safe
 from django.utils.safestring import mark_safe
+from django.utils.encoding import force_text
 
 from import_export import resources, fields
 from import_export import fields
@@ -83,8 +84,93 @@ class SchoolTypeFilter(admin.SimpleListFilter):
         return queryset
 
 
-class TicketSchoolAdmin(admin.ModelAdmin):
+class TicketSchoolResource(resources.ModelResource):
+    queue_name = fields.Field(column_name='Category')
+    owner_name = fields.Field(column_name='User')
+    school_cerd = fields.Field(column_name='School CERD')
+    school_name = fields.Field(column_name='School')
+    is_2nd_shift = fields.Field(column_name='is 2nd-shift')
+    is_alp = fields.Field(column_name='is ALP')
+    comments = fields.Field(column_name='Comments')
+    status_name = fields.Field(column_name='Status')
+    priority_name = fields.Field(column_name='Priority')
 
+    class Meta:
+        model = Ticket
+        fields = (
+            'id',
+            'school_cerd',
+            'school_name',
+            'owner_name',
+            'submitter_email',
+            'is_2nd_shift',
+            'is_alp',
+            'queue_name',
+            'title',
+            'description',
+            'comments',
+            'priority_name',
+            'created',
+            'status_name',
+        )
+        export_order = fields
+
+    def dehydrate_queue_name(self, obj):
+        return obj.queue.title
+
+    def dehydrate_owner(self, obj):
+        if obj.submitter_email:
+            return User.objects.get(email=obj.submitter_email)
+        return ''
+
+    def dehydrate_owner_name(self, obj):
+        if obj.submitter_email:
+            return self.dehydrate_owner(obj).username
+        return ''
+
+    def dehydrate_school(self, obj):
+        if self.dehydrate_owner(obj):
+            return self.dehydrate_owner(obj).school
+        return ''
+
+    def dehydrate_school_name(self, obj):
+        if self.dehydrate_school(obj):
+            return self.dehydrate_school(obj).name
+        return ''
+
+    def dehydrate_school_cerd(self, obj):
+        if self.dehydrate_school(obj):
+            return self.dehydrate_school(obj).number
+        return ''
+
+    def dehydrate_is_2nd_shift(self, obj):
+        if self.dehydrate_school(obj):
+            return self.dehydrate_school(obj).is_2nd_shift
+        return False
+
+    def dehydrate_is_alp(self, obj):
+        if self.dehydrate_school(obj):
+            return self.dehydrate_school(obj).is_alp
+        return False
+
+    def dehydrate_comments(self, obj):
+        if obj.followup_set:
+            return '\r\n'.join([f.comment for f in obj.followup_set.all()])
+        return ''
+
+    def dehydrate_status_name(self, obj):
+        if obj.status:
+            return force_text(dict(Ticket.STATUS_CHOICES)[obj.status])
+        return ''
+
+    def dehydrate_priority_name(self, obj):
+        if obj.priority:
+            return force_text(dict(Ticket.PRIORITY_CHOICES)[obj.priority])
+        return ''
+
+
+class TicketSchoolAdmin(ImportExportModelAdmin):
+    resource_class = TicketSchoolResource
     fields = (
         'queue',
         'title',
@@ -97,15 +183,16 @@ class TicketSchoolAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'queue',
-        'title',
-        'description',
         'owner',
+        'submitter_email',
         'school_cerd',
         'school',
+        'title',
+        'description',
+        'comments',
         'is_2nd_shift',
         'is_alp',
         'priority',
-        'submitter',
         'created',
         'status',
     )
@@ -150,6 +237,11 @@ class TicketSchoolAdmin(admin.ModelAdmin):
         if self.school(obj):
             return self.school(obj).is_alp
         return False
+
+    def comments(self, obj):
+        if obj.followup_set:
+            return '\r\n'.join([f.comment for f in obj.followup_set.all()])
+        return ''
 
     # def is_2nd_shift(self, obj):
     #     result = False
