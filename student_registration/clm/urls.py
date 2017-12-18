@@ -42,6 +42,11 @@ urlpatterns = [
         name='bln_edit'
     ),
     url(
+        regex=r'^bln-export/$',
+        view=views.BLNAddView.as_view(),
+        name='bln_export'
+    ),
+    url(
         regex=r'^assessment-submission/$',
         view=views.AssessmentSubmission.as_view(),
         name='assessment_submission'
@@ -63,6 +68,11 @@ urlpatterns = [
         name='rs_edit'
     ),
     url(
+        regex=r'^rs-export/$',
+        view=views.RSAddView.as_view(),
+        name='rs_export'
+    ),
+    url(
         regex=r'^rs-list/$',
         view=views.RSListView.as_view(),
         name='rs_list'
@@ -77,6 +87,11 @@ urlpatterns = [
         regex=r'^cbece-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.CBECEEditView.as_view(),
         name='cbece_edit'
+    ),
+    url(
+        regex=r'^cbece-export/$',
+        view=views.CBECEAddView.as_view(),
+        name='cbece_export'
     ),
     url(
         regex=r'^cbece-list/$',

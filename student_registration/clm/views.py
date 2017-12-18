@@ -829,3 +829,114 @@ class CLMStudentViewSet(mixins.RetrieveModelMixin,
                     Q(student__last_name__contains=term)
                 ).distinct()
             return qs
+
+
+class BLNExportViewSet(LoginRequiredMixin, ListView):
+
+    model = BLN
+    queryset = BLN.objects.all()
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return self.queryset.filter(partner=self.request.user.partner)
+        return self.queryset
+
+    def get(self, request, *args, **kwargs):
+
+        queryset = self.get_queryset()
+        data = tablib.Dataset()
+
+        data.headers = [
+            _('CLM round'),
+            _('Governorate'),
+            _('District'),
+            _('Location'),
+            _('The language supported in the program'),
+
+            _('First name'),
+            _('Father name'),
+            _('Last name'),
+            _('Sex'),
+            _('Birthday day'),
+            _('Birthday month'),
+            _('Birthday year'),
+            _('Birthday'),
+            _('Nationality'),
+            _('Mother fullname'),
+
+            _('P-Code If a child lives in a tent / Brax in a random camp'),
+            _('Does the child have any disability or special need?'),
+            _('Internal number'),
+            _('ID number'),
+            _('Comments'),
+
+            _('What is the educational level of a person who is valuable to the child?'),
+            _('Does the child participate in work?'),
+            _('What is the type of work ?'),
+            _('How many hours does this child work in a day?'),
+
+            _('What is the family status of the child?'),
+            _("Does the child have children?"),
+
+            _('How was the level of child participation in the program?'),
+            _('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
+            _('Based on the overall score, what is the recommended learning path?'),
+
+            _("First time registered?"),
+            _("Student outreached?"),
+            _("Have barcode with him?"),
+
+        ]
+
+        content = []
+        for line in queryset:
+            if not line.student:
+                continue
+            student = line.student
+            content = [
+                line.round.name if line.round else '',
+                line.governorate.name if line.governorate else '',
+                line.district.name if line.district else '',
+                line.location,
+                line.language,
+
+                student.first_name,
+                student.father_name,
+                student.last_name,
+                student.sex,
+                student.birthday_day,
+                student.birthday_month,
+                student.birthday_year,
+                student.birthday,
+                student.nationality.name if student.nationality else '',
+                student.mother_fullname,
+
+                student.p_code,
+                line.disability,
+
+            ]
+
+        'internal_number',
+        'student.id_number',
+
+        'pre_assessment_result',
+        'post_assessment_result',
+        'arabic_improvement',
+        'english_improvement',
+        'french_improvement',
+        'math_improvement',
+        'assessment_improvement',
+        'participation',
+        'learning_result',
+        'owner',
+        'modified_by',
+        'created',
+        'modified',
+        'comments',
+
+        response = HttpResponse(
+            data,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        response['Content-Disposition'] = 'attachment; filename=registration_list.xlsx'
+        return response
