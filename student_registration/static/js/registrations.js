@@ -613,7 +613,7 @@ function verify_age_level()
     var year = $('select#id_student_birthday_year').val();
     var birthday = year+"-"+month+"-"+day;
     var dob = new Date(birthday);
-    var min_date = new Date('2017-01-31');
+    var min_date = new Date('2018-01-31');
 
     if(dob == NaN || level == '') {
         return false;
