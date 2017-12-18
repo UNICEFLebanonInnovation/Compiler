@@ -2,15 +2,19 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
+import tablib
 
+from django.utils.translation import ugettext as _
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
-from django.db.models import Q
+from django.db.models import Q, Sum, Avg, F, Func
+from django.db.models.expressions import RawSQL
 
+from import_export.formats import base_formats
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -20,18 +24,15 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
 from student_registration.users.utils import force_default_language
-from .filters import BLNFilter, RSFilter, CBECEFilter
-from .tables import BootstrapTable, BLNTable, RSTable, CBECETable
-
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
+from student_registration.schools.models import CLMRound
+from student_registration.locations.models import Location
+from .filters import BLNFilter, RSFilter, CBECEFilter
+from .tables import BootstrapTable, BLNTable, RSTable, CBECETable
 from .models import BLN, RS, CBECE, SelfPerceptionGrades
 from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
-from student_registration.schools.models import CLMRound
-from student_registration.locations.models import Location
-from django.db.models import Sum, Avg, F, Func
-from django.db.models.expressions import RawSQL
 
 
 class CLMView(LoginRequiredMixin,
@@ -878,6 +879,14 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             _('What is the family status of the child?'),
             _("Does the child have children?"),
 
+            _('Academic Result - Pre'),
+            _('Academic Result - Post'),
+            _('Arabic - Improvement'),
+            _('English - Improvement'),
+            _('French - Improvement'),
+            _('Math - Improvement'),
+            _('Academic Result - Improvement'),
+
             _('How was the level of child participation in the program?'),
             _('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
             _('Based on the overall score, what is the recommended learning path?'),
@@ -912,27 +921,39 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
                 student.mother_fullname,
 
                 student.p_code,
-                line.disability,
+                line.disability.name if line.disability else '',
+                line.internal_number,
+                student.id_number,
+                line.comments,
 
+                line.hh_educational_level,
+                line.have_labour,
+                line.labours,
+                line.labour_hours,
+
+                student.family_status,
+                student.have_children,
+
+                line.pre_test_score,
+                line.post_test_score,
+                line.arabic_improvement,
+                line.english_improvement,
+                line.french_improvement,
+                line.math_improvement,
+                line.assessment_improvement,
+
+                line.participation,
+                line.barriers,
+                line.learning_result,
+
+                line.new_registry,
+                line.student_outreached,
+                line.have_barcode,
             ]
+            data.append(content)
 
-        'internal_number',
-        'student.id_number',
-
-        'pre_assessment_result',
-        'post_assessment_result',
-        'arabic_improvement',
-        'english_improvement',
-        'french_improvement',
-        'math_improvement',
-        'assessment_improvement',
-        'participation',
-        'learning_result',
-        'owner',
-        'modified_by',
-        'created',
-        'modified',
-        'comments',
+        file_format = base_formats.XLSX()
+        data = file_format.export_data(data)
 
         response = HttpResponse(
             data,

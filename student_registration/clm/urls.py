@@ -43,7 +43,7 @@ urlpatterns = [
     ),
     url(
         regex=r'^bln-export/$',
-        view=views.BLNAddView.as_view(),
+        view=views.BLNExportViewSet.as_view(),
         name='bln_export'
     ),
     url(
