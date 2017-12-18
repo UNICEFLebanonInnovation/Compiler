@@ -69,7 +69,7 @@ urlpatterns = [
     ),
     url(
         regex=r'^rs-export/$',
-        view=views.RSAddView.as_view(),
+        view=views.RSExportViewSet.as_view(),
         name='rs_export'
     ),
     url(
@@ -90,7 +90,7 @@ urlpatterns = [
     ),
     url(
         regex=r'^cbece-export/$',
-        view=views.CBECEAddView.as_view(),
+        view=views.CBECEExportViewSet.as_view(),
         name='cbece_export'
     ),
     url(

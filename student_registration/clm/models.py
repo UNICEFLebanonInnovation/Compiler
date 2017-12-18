@@ -882,7 +882,7 @@ class CBECE(CLM):
         ),
         blank=True,
         null=True,
-        verbose_name=_('Reason of referral')
+        verbose_name=_('Where was the child referred?')
     )
     child_muac = models.CharField(
         max_length=50,
@@ -944,7 +944,7 @@ class CBECE(CLM):
             domain_mame,
             program_cycle
         )
-        if self.pre_test and self.post_test:
+        if key in self.pre_test and key in self.post_test:
             try:
                 return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
                               float(self.pre_test[key])) * 100.0, 2)
