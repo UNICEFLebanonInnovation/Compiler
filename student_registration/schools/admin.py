@@ -23,13 +23,12 @@ from .models import (
     PublicDocument
 )
 from student_registration.locations.models import Location
-from student_registration.attendances.tasks import set_app_attendances
 
 
 class SchoolResource(resources.ModelResource):
     district = fields.Field(column_name='District')
     governorate = fields.Field(column_name='Governorate')
-    total_registered = fields.Field(column_name='Total registered 2nd-shift')
+    total_registered_2ndshift = fields.Field(column_name='Total registered 2nd-shift')
     total_registered_alp = fields.Field(column_name='Total registered ALP')
 
     class Meta:
@@ -51,7 +50,7 @@ class SchoolResource(resources.ModelResource):
             'it_name',
             'it_phone_number',
             'field_coordinator_name',
-            'total_registered',
+            'total_registered_2ndshift',
             'total_registered_alp',
             'academic_year_start',
             'academic_year_end',
@@ -75,7 +74,7 @@ class SchoolResource(resources.ModelResource):
             return obj.location.parent.name
         return ''
 
-    def dehydrate_total_registered(self, obj):
+    def dehydrate_total_registered_2ndshift(self, obj):
         return obj.total_registered
 
     def dehydrate_total_registered_alp(self, obj):
@@ -183,8 +182,10 @@ class SchoolAdmin(ImportExportModelAdmin):
         'location',
         'is_2nd_shift',
         'number_students_2nd_shift',
+        'total_registered_2ndshift',
         'is_alp',
         'number_students_alp',
+        'total_registered_alp',
         'attendance_range',
         'attendance_from_beginning',
     )
@@ -204,28 +205,10 @@ class SchoolAdmin(ImportExportModelAdmin):
     )
     date_hierarchy = 'academic_year_start'
 
-    actions = ('push_attendances_2ndshift', 'push_attendances_2ndshift_delay',
-               'push_attendances_alp', 'push_attendances_alp_delay',
-               'open_attendance_90_days', 'open_attendance_60_days',
+    actions = ('open_attendance_90_days', 'open_attendance_60_days',
                'open_attendance_30_days', 'open_attendance_20_days',
                'open_attendance_10_days', 'open_attendance_from_beginning',
                'close_attendance_from_beginning', )
-
-    def push_attendances_2ndshift(self, request, queryset):
-        for school in queryset:
-            set_app_attendances(school_number=school.number)
-
-    def push_attendances_2ndshift_delay(self, request, queryset):
-        for school in queryset:
-            set_app_attendances.delay(school_number=school.number)
-
-    def push_attendances_alp(self, request, queryset):
-        for school in queryset:
-            set_app_attendances(school_number=school.number, school_type='alp')
-
-    def push_attendances_alp_delay(self, request, queryset):
-        for school in queryset:
-            set_app_attendances.delay(school_number=school.number, school_type='alp')
 
     def open_attendance_90_days(self, request, queryset):
         queryset.update(attendance_range=90)

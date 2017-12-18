@@ -18,17 +18,22 @@ def export_2ndshift(params=None, return_data=False):
         queryset = queryset.filter(education_year__current_year=True)
     if 'school' in params:
         queryset = queryset.filter(school_id=params['school'])
+    if 'classroom' in params and params['classroom']:
+        queryset = queryset.filter(classroom_id=params['classroom'])
+    if 'section' in params and params['section']:
+        queryset = queryset.filter(section_id=params['section'])
 
     data = tablib.Dataset()
     data.headers = [
 
-        _('ALP result'),
-        _('ALP round'),
+        _('Last non formal education - result'),
+        _('Last non formal education - round'),
         _('Is the child participated in an ALP/2016-2 program'),
-        _('Result'),
-        _('Education year'),
-        _('School'),
-        _('Last education level'),
+
+        _('Last formal education - result'),
+        _('Last formal education - year'),
+        _('Last formal education - school'),
+        _('Last formal education - level'),
 
         _('Serial number in previous school'),
 
@@ -145,6 +150,12 @@ def export_2ndshift_gradings(params=None, return_data=False):
     queryset = EnrollmentGrading.objects.filter(enrollment__education_year=current)
     if 'school' in params:
         queryset = queryset.filter(enrollment__school_id=params['school'])
+    if 'classroom' in params and params['classroom']:
+        queryset = queryset.filter(enrollment__classroom_id=params['classroom'])
+    if 'section' in params and params['section']:
+        queryset = queryset.filter(enrollment__section_id=params['section'])
+    if 'term' in params and params['term']:
+        queryset = queryset.filter(exam_term=params['term'])
 
     data = tablib.Dataset()
     data.headers = [
@@ -195,7 +206,7 @@ def export_2ndshift_gradings(params=None, return_data=False):
 
             line.exam_result,
             line.exam_total,
-            line.exam_term,
+            line.exam_term_name,
 
             line.exam_result_linguistic_ar,
             line.exam_result_sociology,
@@ -275,132 +286,143 @@ def export_alp(params=None, return_data=False):
     data = tablib.Dataset()
 
     data.headers = [
-        _('ALP result'),
+
         _('ALP round'),
-        _('ALP level'),
-        _('Is the child participated in an ALP program'),
+        _('Governorate'),
+        _('District'),
+        _('School number'),
+        _('School'),
+        _('First name'),
 
-        _('Education year'),
-        _('Last education level'),
+        _('Father name'),
+        _('Last name'),
+        _('Mother fullname'),
+        _('Birthday day'),
+        _('Birthday month'),
 
+        _('Birthday year'),
+        _('Student age'),
+        _('Student sex'),
+        _('Student nationality'),
+        _('Mother nationality'),
+
+        _('Registered in UNHCR'),
+        _('Student ID Type'),
+        _('Student ID Number'),
         _('Phone prefix'),
         _('Phone number'),
+
         _('Student living address'),
+        _('Pre-test level'),
+        _('Pre-test room'),
+        _('Arabic'),
+        _('Exam language'),
+        _('Foreign language'),
 
-        _('Student ID Number'),
-        _('Student ID Type'),
-        _('Registered in UNHCR'),
-
-        _('Mother nationality'),
-        _('Mother fullname'),
+        _('Math'),
+        _('Science'),
+        _('Pre-test total'),
+        _('Comments'),
+        _('Assigned to level'),
 
         _('Current Section'),
-        _('Current Level'),
+        _('Registered in Level'),
+        _('Arabic'),
+        _('Exam language'),
 
+        _('Foreign language'),
+        _('Math'),
+        _('Science'),
+        _('Post-test room'),
+        _('Post-test total'),
         _('Post-test result'),
-        _('Assigned to level'),
-        _('Pre-test result'),
 
-        _('Student nationality'),
-        _('Student age'),
-        _('Student birthday'),
-        _('Sex'),
-        _('Student fullname'),
+        _('Comments'),
 
-        _('School'),
-        _('School number'),
-        _('District'),
-        _('Governorate'),
+        _('Last formal education - level'),
+        _('Last formal education - year'),
+        _('Is the child participated in an ALP program'),
+        _('Last non formal education - level'),
+        _('Last non formal education - round'),
+
+        _('Last non formal education - result'),
+        _('Created by'),
+        _('Modified by'),
+        _('Creation date'),
+        _('Modification date')
+
     ]
-
-    # 'id',
-    # 'student__id',
-    # 'student__id_type',
-    # 'student__id_number',
-    # 'student__number',
-    # 'student__first_name',
-    # 'student__father_name',
-    # 'student__last_name',
-    # 'student__mother_fullname',
-    # 'student__birthday_year',
-    # 'student__birthday_month',
-    # 'student__birthday_day',
-    # 'student_age',
-    # 'student__sex',
-    # 'student__nationality__name',
-    # 'student__phone_prefix',
-    # 'student__phone',
-    # 'student__address',
-    # 'governorate',
-    # 'district',
-    # 'school__number',
-    # 'school__name',
-    # 'level__name',
-    # 'exam_result_arabic',
-    # 'exam_language',
-    # 'exam_result_language',
-    # 'exam_result_math',
-    # 'exam_result_science',
-    # 'exam_total',
-    # 'passed_pre',
-    # 'assigned_to_level__name',
-    # 'registered_in_level__name',
-    # 'section__name',
-    # 'post_exam_result_arabic',
-    # 'post_exam_language',
-    # 'post_exam_result_language',
-    # 'post_exam_result_math',
-    # 'post_exam_result_science',
-    # 'post_exam_total',
-    # 'referred_to',
-    # 're_enrolled',
-    # 'passed_post',
-    # 'owner__username',
-    # 'modified_by__username',
-    # 'created',
-    # 'modified',
 
     content = []
     for line in queryset:
         if not line.student or not line.school:
             continue
+        student = line.student
         content = [
-            line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
-            line.last_informal_edu_round.name if line.last_informal_edu_round else '',
-            line.last_informal_edu_level.name if line.last_informal_edu_level else '',
-            _(line.participated_in_alp) if line.participated_in_alp else '',
 
-            line.last_education_year,
-            line.last_education_level.name if line.last_education_level else '',
+            line.alp_round.name if line.alp_round else '',
+            line.school.location.parent.name,
+            line.school.location.name,
+            line.school.number,
+            line.school.name,
+            student.first_name,
 
-            line.student.phone_prefix,
-            line.student.phone,
-            line.student.address,
+            student.father_name,
+            student.last_name,
+            student.mother_fullname,
+            student.birthday_year,
+            student.birthday_month,
 
-            line.student.id_number,
-            line.student.id_type.name if line.student.id_type else '',
-            _(line.registered_in_unhcr) if line.registered_in_unhcr else '',
+            student.birthday_day,
+            student.age,
+            student.sex,
+            student.nationality.name if student.nationality else '',
+            student.mother_nationality.name if student.mother_nationality else '',
 
-            line.student.mother_nationality.name if line.student.mother_nationality else '',
-            line.student.mother_fullname,
+            student.registered_in_unhcr,
+            student.id_type.name if student.id_type else '',
+            student.id_number,
+            student.phone_prefix,
+            student.phone,
+
+            student.address,
+            line.level.name if line.level else '',
+            line.pre_test_room,
+            line.exam_result_arabic,
+            line.exam_language,
+            line.exam_result_language,
+
+            line.exam_result_math,
+            line.exam_result_science,
+            line.exam_total,
+            line.pre_comment,
+            line.assigned_to_level.name if line.assigned_to_level else '',
 
             line.section.name if line.section else '',
             line.registered_in_level.name if line.registered_in_level else '',
 
+            line.post_exam_result_arabic,
+            line.post_exam_language,
+
+            line.post_exam_result_language,
+            line.post_exam_result_math,
+            line.post_exam_result_science,
+            line.post_test_room,
             line.post_exam_total,
-            line.assigned_to_level.name if line.assigned_to_level else '',
-            line.exam_total,
+            line.refer_to_level,
+            line.post_comment,
 
-            line.student.nationality_name(),
-            line.student.age,
-            line.student.birthday,
-            _(line.student.sex),
-            line.student.__unicode__(),
+            line.last_education_level.name if line.last_education_level else '',
+            line.last_education_year,
+            _(line.participated_in_alp) if line.participated_in_alp else '',
+            line.last_informal_edu_level.name if line.last_informal_edu_level else '',
+            line.last_informal_edu_round.name if line.last_informal_edu_round else '',
 
-            line.school.name,
-            line.school.number,
-            line.school.location.name,
-            line.school.location.parent.name,
+            line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
+            line.owner.username if line.owner else '',
+            line.modified_by.username if line.modified_by else '',
+            line.created,
+            line.modified,
         ]
         data.append(content)
 

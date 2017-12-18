@@ -17,6 +17,10 @@ $(document).ready(function(){
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
     }
 
+    $("td[class='student.first_name']").addClass('font-bolder');
+    $("td[class='student.father_name']").addClass('font-bolder');
+    $("td[class='student.last_name']").addClass('font-bolder');
+
     reorganizeForm();
 
     $(document).on('change', 'select#id_level', function(){
@@ -88,6 +92,15 @@ $(document).ready(function(){
         if(confirm($(this).attr('translation'))) {
             moved_student(item.attr('itemscope'));
             item.parents('tr').remove();
+        }
+    });
+    $(document).on('click', '.detach-button', function(){
+        var item = $(this);
+        if(confirm($(this).attr('translation'))) {
+            var callback = function(){
+                item.parents('tr').remove();
+            };
+            patch_registration(item, callback());
         }
     });
     $(document).on('click', '.delete-button', function(){
@@ -538,6 +551,31 @@ function delete_student(item, callback)
     });
 }
 
+function patch_registration(item, callback)
+{
+    var url = item.attr('data-action');
+    var data = {section: '', registered_in_level: ''};
+
+    $.ajax({
+        type: "PATCH",
+        url: url+'/',
+        cache: false,
+        data: data,
+        async: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            if(callback != undefined){
+                callback();
+            }
+            console.log(response);
+        },
+        error: function(response) {
+            console.log(response);
+        }
+    });
+}
+
 // log student move from ALP to 2nd shift
 function log_student_program_move(item, eligibility)
 {
@@ -621,13 +659,15 @@ function display_alert(dob, min_value, max_value, min_date)
     var max_age = Math.floor((today-dob) / (365.25 * 24 * 60 * 60 * 1000));
 
     if(min_age < min_value) {
-        var msg1 = min_age_limit_msg + " : " + min_value;
+        $('#id_age_min_restricted').val(1);
+        var msg1 = min_age_limit_msg;
         alert(msg1);
         $('select#id_student_birthday_year').val("");
         return false;
     }
     if(max_age > max_value) {
-        var msg2 = max_age_limit_msg + " : " + max_value;
+        $('#id_age_max_restricted').val(1);
+        var msg2 = max_age_limit_msg;
         if(confirm(msg2)){
 
         }else{

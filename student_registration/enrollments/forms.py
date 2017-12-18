@@ -304,6 +304,8 @@ class EnrollmentForm(forms.ModelForm):
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
     student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
+    age_min_restricted = forms.BooleanField(widget=forms.HiddenInput, required=False)
+    age_max_restricted = forms.BooleanField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -337,6 +339,8 @@ class EnrollmentForm(forms.ModelForm):
                     'student_id',
                     'enrollment_id',
                     'student_outreach_child',
+                    'age_min_restricted',
+                    'age_max_restricted',
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('new_registry', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
@@ -578,6 +582,8 @@ class EnrollmentForm(forms.ModelForm):
             'new_registry',
             'student_outreached',
             'have_barcode',
+            'age_min_restricted',
+            'age_max_restricted',
         )
         initial_fields = fields
         widgets = {}
@@ -612,6 +618,9 @@ class GradingTermForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': instance.exam_term})
         enrollment_classroom = instance.enrollment.classroom_id
+
+        if instance.exam_term in ['3', '4']:
+            self.fields['exam_total'].label = _('Final Grade')
 
         if instance.exam_term in ['1', '2']:
             display_exam_result = ' d-none '
@@ -676,6 +685,14 @@ class GradingTermForm(forms.ModelForm):
             )
 
         if enrollment_classroom in [5, 6, 7]:
+            self.fields['exam_result_arabic'].label += ' (/20)'
+            self.fields['exam_result_language'].label += ' (/20)'
+            self.fields['exam_result_education'].label += ' (/20)'
+            self.fields['exam_result_geo'].label += ' (/20)'
+            self.fields['exam_result_math'].label += ' (/20)'
+            self.fields['exam_result_science'].label += ' (/20)'
+            self.fields['exam_total'].label += ' (/120)'
+
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -728,6 +745,17 @@ class GradingTermForm(forms.ModelForm):
             )
 
         if enrollment_classroom in [8, 9, 10]:
+            self.fields['exam_result_arabic'].label += ' (/60)'
+            self.fields['exam_result_language'].label += ' (/40)'
+            self.fields['exam_result_education'].label += ' (/20)'
+            self.fields['exam_result_geo'].label += ' (/20)'
+            self.fields['exam_result_history'].label += ' (/20)'
+            self.fields['exam_result_math'].label += ' (/60)'
+            self.fields['exam_result_physic'].label += ' (/20)'
+            self.fields['exam_result_chemistry'].label += ' (/20)'
+            self.fields['exam_result_bio'].label += ' (/20)'
+            self.fields['exam_total'].label += ' (/280)'
+
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -761,7 +789,7 @@ class GradingTermForm(forms.ModelForm):
                         css_class='row',
                     ),
                     Div(
-                        HTML('<span class="badge badge-default">8</span>'),
+                        HTML('<span class="badge badge-default">11</span>'),
                         Div('exam_result', css_class='col-md-2'),
                         css_class='row' + display_exam_result,
                     ),

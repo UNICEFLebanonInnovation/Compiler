@@ -8,6 +8,8 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.contrib import messages
+from django.shortcuts import render
 
 from braces.views import GroupRequiredMixin
 from rest_framework import viewsets, mixins, permissions
@@ -127,6 +129,12 @@ class AttendanceView(LoginRequiredMixin,
         if self.request.user.school:
             school = self.request.user.school
 
+        if not school.academic_year_start:
+            messages.warning(self.request, _('Please go to the school profile and enter the academic start date in order to take attendance.'))
+            self.template_name = 'error.html'
+            return {
+            }
+
         current_date = datetime.datetime.now().strftime(date_format)
         selected_date = self.request.GET.get('date', current_date)
         selected_date_view = datetime.datetime.strptime(selected_date, date_format).strftime(date_format_display)
@@ -212,7 +220,9 @@ class AttendanceView(LoginRequiredMixin,
             disable_attendance = True
 
         if level and section:
-            students = queryset.filter(classroom_id=level.id,section_id=section.id,
+            students = queryset.filter(classroom_id=level.id,
+                                       section_id=section.id,
+                                       registration_date__lte=selected_date
                                        ).order_by('student__first_name', 'student__father_name', 'student__last_name')
             for line in students:
                 student = line.student
@@ -240,7 +250,7 @@ class AttendanceView(LoginRequiredMixin,
             })
 
         return {
-            'school_type': 'alp',
+            'school_type': '2ndshift',
             'attendance': attendance,
             'disable_attendance': disable_attendance,
             'current_level_section': current_level_section,
@@ -292,6 +302,12 @@ class AttendanceALPView(LoginRequiredMixin,
 
         if self.request.user.school:
             school = self.request.user.school
+
+        if not school.academic_year_start:
+            messages.warning(self.request, _('Please go to the school profile and enter the academic start date in order to take attendance.'))
+            self.template_name = 'error.html'
+            return {
+            }
 
         current_date = datetime.datetime.now().strftime(date_format)
         selected_date = self.request.GET.get('date', current_date)
@@ -376,7 +392,7 @@ class AttendanceALPView(LoginRequiredMixin,
             disable_attendance = True
 
         if level and section:
-            students = queryset.filter(registered_in_level_id=level.id,section_id=section.id,
+            students = queryset.filter(registered_in_level_id=level.id, section_id=section.id,
                                        ).order_by('student__first_name', 'student__father_name', 'student__last_name')
             for line in students:
                 student = line.student

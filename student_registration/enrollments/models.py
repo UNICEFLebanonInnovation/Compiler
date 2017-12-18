@@ -137,6 +137,8 @@ class Enrollment(TimeStampedModel):
         verbose_name=_('Created by')
     )
     status = models.BooleanField(blank=True, default=True)
+    age_min_restricted = models.BooleanField(blank=True, default=False)
+    age_max_restricted = models.BooleanField(blank=True, default=False)
     out_of_school_two_years = models.BooleanField(blank=True, default=False)
     related_to_family = models.BooleanField(blank=True, default=False)
     enrolled_in_this_school = models.BooleanField(blank=True, default=True)
@@ -700,7 +702,7 @@ class EnrollmentGrading(models.Model):
         max_length=20,
         blank=True,
         null=True,
-        verbose_name=_('Final Grade')
+        verbose_name=_('Total Grade')
     )
 
     exam_result = models.CharField(
@@ -726,6 +728,17 @@ class EnrollmentGrading(models.Model):
 
     class Meta:
         ordering = ['id']
+
+    @property
+    def exam_term_name(self):
+        if self.exam_term:
+            return {
+                '1': _('Term1'),
+                '2': _('Term2'),
+                '3': _('Term3'),
+                '4': _('Term4'),
+            }[str(self.exam_term)]
+        return ''
 
     def __unicode__(self):
         return str(self.id)
