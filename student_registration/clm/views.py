@@ -66,6 +66,7 @@ class BLNAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            kwargs['clm_round'] = self.request.user.partner.bln_round
         return super(BLNAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -114,6 +115,7 @@ class BLNEditView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            kwargs['clm_round'] = self.get_form().instance.round
         return super(BLNEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -518,6 +520,7 @@ class RSAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            kwargs['clm_round'] = self.request.user.partner.rs_round
         return super(RSAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -566,6 +569,7 @@ class RSEditView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            kwargs['clm_round'] = self.get_form().instance.round
         return super(RSEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -622,6 +626,7 @@ class CBECEAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            kwargs['clm_round'] = self.request.user.partner.cbece_round
         return super(CBECEAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -670,6 +675,7 @@ class CBECEEditView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            kwargs['clm_round'] = self.get_form().instance.round
         return super(CBECEEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
