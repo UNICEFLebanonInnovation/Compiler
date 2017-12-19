@@ -344,7 +344,6 @@ class CommonForm(forms.ModelForm):
             'student_father_name',
             'student_last_name',
             'student_sex',
-            'student_birthday_year',
             'student_birthday_month',
             'student_birthday_day',
             'student_nationality',
@@ -670,6 +669,7 @@ class BLNForm(CommonForm):
         fields = CommonForm.Meta.fields + (
             # 'cycle',
             # 'referral',
+            'student_birthday_year',
             'student_family_status',
             'student_have_children',
         )
@@ -1201,6 +1201,7 @@ class RSForm(CommonForm):
     class Meta:
         model = RS
         fields = CommonForm.Meta.fields + (
+            'student_birthday_year',
             'type',
             'site',
             'school',
@@ -1516,6 +1517,7 @@ class CBECEForm(CommonForm):
     class Meta:
         model = CBECE
         fields = CommonForm.Meta.fields + (
+            'student_birthday_year',
             'cycle',
             'site',
             'school',
