@@ -163,11 +163,11 @@ class CommonForm(forms.ModelForm):
             ('Female', _('Female')),
         )
     )
-    student_birthday_year = forms.ChoiceField(
-        label=_("Birthday year"),
-        widget=forms.Select, required=True,
-        choices=YEARS
-    )
+    # student_birthday_year = forms.ChoiceField(
+    #     label=_("Birthday year"),
+    #     widget=forms.Select, required=True,
+    #     choices=YEARS
+    # )
     student_birthday_month = forms.ChoiceField(
         label=_("Birthday month"),
         widget=forms.Select, required=True,
@@ -264,6 +264,45 @@ class CommonForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)
 
+    def clean(self):
+        cleaned_data = super(CommonForm, self).clean()
+        birthday_year = cleaned_data.get('student_birthday_year')
+        birthday_day = cleaned_data.get('student_birthday_day')
+        birthday_month = cleaned_data.get('student_birthday_month')
+        sex = cleaned_data.get('student_sex')
+        id_number = cleaned_data.get('student_id_number')
+        internal_number = cleaned_data.get('internal_number')
+        first_name = cleaned_data.get('student_first_name')
+        last_name = cleaned_data.get('student_last_name')
+        father_name = cleaned_data.get('student_father_name')
+        form_str = '{} {} {}'.format(first_name, father_name, last_name)
+        is_matching = False
+        queryset = self.Meta.model.objects.all()
+
+        if queryset.filter(Q(student__id_number=id_number) | Q(internal_number=internal_number)).count():
+            raise forms.ValidationError(
+                _("Child already registered in your organization")
+            )
+
+        filtered_results = queryset.filter(student__birthday_year=birthday_year,
+                                           student__birthday_day=birthday_day,
+                                           student__birthday_month=birthday_month,
+                                           student__sex=sex)
+
+        for result in filtered_results:
+            result_str = '{} {} {}'.format(result.student.first_name,
+                                           result.student.father_name,
+                                           result.student.last_name)
+            fuzzy_match = fuzz.ratio(form_str, result_str)
+            if fuzzy_match > 95:
+                is_matching = True
+                break
+
+        if is_matching:
+            raise forms.ValidationError(
+                _("Child already registered in your organization")
+            )
+
     def save(self, request=None, instance=None, serializer=None, clm_round=None):
         if instance:
             serializer = serializer(instance, data=request.POST)
@@ -352,6 +391,15 @@ class BLNForm(CommonForm):
     #     widget=forms.CheckboxSelectMultiple,
     #     required=True,
     # )
+    YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 7, Person.CURRENT_YEAR - 2)))
+    YEARS_BLN.insert(0, ('', '---------'))
+
+    student_birthday_year = forms.ChoiceField(
+        label=_("Birthday year"),
+        widget=forms.Select, required=True,
+        choices=YEARS_BLN
+    )
+
     student_family_status = forms.ChoiceField(
         label=_('What is the family status of the child?'),
         widget=forms.Select, required=True,
@@ -634,6 +682,15 @@ class BLNForm(CommonForm):
 
 
 class RSForm(CommonForm):
+
+    YEARS_RS = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 5)))
+    YEARS_RS.insert(0, ('', '---------'))
+
+    student_birthday_year = forms.ChoiceField(
+        label=_("Birthday year"),
+        widget=forms.Select, required=True,
+        choices=YEARS_RS
+    )
 
     student_outreached = forms.ChoiceField(
         label=_("Student outreached?"),
@@ -1164,6 +1221,15 @@ class RSForm(CommonForm):
 
 
 class CBECEForm(CommonForm):
+
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 5)))
+    YEARS_CB.insert(0, ('', '---------'))
+
+    student_birthday_year = forms.ChoiceField(
+        label=_("Birthday year"),
+        widget=forms.Select, required=True,
+        choices=YEARS_CB
+    )
 
     cycle = forms.ModelChoiceField(
         queryset=Cycle.objects.all(), widget=forms.Select,
