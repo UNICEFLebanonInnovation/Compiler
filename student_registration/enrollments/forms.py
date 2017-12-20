@@ -633,6 +633,13 @@ class GradingTermForm(forms.ModelForm):
                 ('failed', _('Failed')),
                 ('uncompleted', _('Uncompleted'))
             )
+            self.fields['exam_result_arabic'].label += _('Cycle 1 max grade')
+            self.fields['exam_result_language'].label += _('Cycle 1 max grade')
+            self.fields['exam_result_education'].label += _('Cycle 1 max grade')
+            self.fields['exam_result_geo'].label += _('Cycle 1 max grade')
+            self.fields['exam_result_math'].label += _('Cycle 1 max grade')
+            self.fields['exam_result_science'].label += _('Cycle 1 max grade')
+
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -652,12 +659,10 @@ class GradingTermForm(forms.ModelForm):
                         Div('exam_result_math', css_class='col-md-2'),
                         HTML('<span class="badge badge-default">6</span>'),
                         Div('exam_result_science', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">7</span>'),
-                        Div('exam_total', css_class='col-md-2'),
                         css_class='row',
                     ),
                     Div(
-                        HTML('<span class="badge badge-default">8</span>'),
+                        HTML('<span class="badge badge-default">7</span>'),
                         Div('exam_result', css_class='col-md-2'),
                         css_class='row'+display_exam_result,
                     ),
@@ -673,6 +678,7 @@ class GradingTermForm(forms.ModelForm):
                         'exam_result_artistic',
                         'exam_result_mathematics',
                         'exam_result_sciences',
+                        'exam_total',
                         css_class='d-none'
                     ),
                     css_class='bd-callout bd-callout-warning'
