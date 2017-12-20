@@ -46,6 +46,7 @@ class EnrollmentResource(resources.ModelResource):
             'student_outreached',
             'have_barcode',
             'outreach_barcode',
+            'registration_date',
             'student__id',
             'student__id_type',
             'student__id_number',
@@ -204,6 +205,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
     fields = (
         'student',
         'school',
+        'registration_date',
         'section',
         'classroom',
         'owner',
