@@ -16,8 +16,6 @@ def export_2ndshift(params=None, return_data=False):
     queryset = Enrollment.objects.all()
     if 'current' in params:
         queryset = queryset.filter(education_year__current_year=True)
-    if 'year' in params:
-        queryset = queryset.filter(education_year_id=params['year'])
     if 'school' in params:
         queryset = queryset.filter(school_id=params['school'])
     if 'classroom' in params and params['classroom']:
