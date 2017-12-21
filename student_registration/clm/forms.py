@@ -5,8 +5,6 @@ from django import forms
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
@@ -266,44 +264,17 @@ class CommonForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)
 
-    def clean(self):
-        cleaned_data = super(CommonForm, self).clean()
-        birthday_year = cleaned_data.get('student_birthday_year')
-        birthday_day = cleaned_data.get('student_birthday_day')
-        birthday_month = cleaned_data.get('student_birthday_month')
-        sex = cleaned_data.get('student_sex')
-        id_number = cleaned_data.get('student_id_number')
-        internal_number = cleaned_data.get('internal_number')
-        first_name = cleaned_data.get('student_first_name')
-        last_name = cleaned_data.get('student_last_name')
-        father_name = cleaned_data.get('student_father_name')
-        form_str = '{} {} {}'.format(first_name, father_name, last_name)
-        is_matching = False
-        queryset = self.Meta.model.objects.all()
-
-        if queryset.filter(Q(student__id_number=id_number) | Q(internal_number=internal_number)).count():
-            raise forms.ValidationError(
-                _("Child already registered in your organization")
-            )
-
-        filtered_results = queryset.filter(student__birthday_year=birthday_year,
-                                           student__birthday_day=birthday_day,
-                                           student__birthday_month=birthday_month,
-                                           student__sex=sex)
-
-        for result in filtered_results:
-            result_str = '{} {} {}'.format(result.student.first_name,
-                                           result.student.father_name,
-                                           result.student.last_name)
-            fuzzy_match = fuzz.ratio(form_str, result_str)
-            if fuzzy_match > 95:
-                is_matching = True
-                break
-
-        if is_matching:
-            raise forms.ValidationError(
-                _("Child already registered in your organization")
-            )
+    # def clean(self):
+    #     from django.db.models import Q
+    #     cleaned_data = super(CommonForm, self).clean()
+    #     id_number = cleaned_data.get('student_id_number')
+    #     internal_number = cleaned_data.get('internal_number')
+    #     queryset = self.Meta.model.objects.all()
+    #
+    #     if queryset.filter(Q(student__id_number=id_number) | Q(internal_number=internal_number)).count():
+    #         raise forms.ValidationError(
+    #             _("Child already registered in your organization")
+    #         )
 
     def save(self, request=None, instance=None, serializer=None, clm_round=None):
         if instance:
