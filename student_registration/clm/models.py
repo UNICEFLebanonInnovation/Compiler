@@ -783,7 +783,7 @@ class RS(CLM):
         keys = []
         if stage in ['pre_test', 'post_test']:
             keys = [
-                'RS_ASSESSMENT_0/FL0',
+                # 'RS_ASSESSMENT_0/FL0',
                 'RS_ASSESSMENT/FL1',
                 'RS_ASSESSMENT/FL2',
                 'RS_ASSESSMENT/FL3',
