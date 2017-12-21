@@ -269,7 +269,7 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
 
     def comments(self, obj):
         if obj.followup_set:
-            return '\r\n'.join([f.comment for f in obj.followup_set.all()])
+            return format_html('<br/><br/>'.join(['<b>{}</b>: {}'.format(f.user, f.comment) for f in obj.followup_set.all()]))
         return ''
 
     # def is_2nd_shift(self, obj):
