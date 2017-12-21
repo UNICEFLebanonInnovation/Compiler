@@ -13,8 +13,10 @@ def export_2ndshift(params=None, return_data=False):
     from student_registration.enrollments.models import Enrollment
     from student_registration.schools.models import EducationYear
 
+    title = '2nd-shit-all'
     queryset = Enrollment.objects.all()
     if 'current' in params:
+        title = '2nd-shit-current'
         queryset = queryset.filter(education_year__current_year=True)
     if 'school' in params:
         queryset = queryset.filter(school_id=params['school'])
@@ -130,7 +132,7 @@ def export_2ndshift(params=None, return_data=False):
         ]
         data.append(content)
 
-    timestamp = time.time()
+    timestamp = '{}-{}'.format(title, time.time())
     file_format = base_formats.XLSX()
     data = file_format.export_data(data)
     if return_data:
@@ -145,6 +147,7 @@ def export_2ndshift_gradings(params=None, return_data=False):
     from student_registration.schools.models import EducationYear
     current = EducationYear.objects.get(current_year=True)
 
+    title = '2nd-shift-grading-current'
     queryset = EnrollmentGrading.objects.filter(enrollment__education_year=current)
     if 'school' in params:
         queryset = queryset.filter(enrollment__school_id=params['school'])
@@ -152,6 +155,9 @@ def export_2ndshift_gradings(params=None, return_data=False):
         queryset = queryset.filter(enrollment__classroom_id=params['classroom'])
     if 'section' in params and params['section']:
         queryset = queryset.filter(enrollment__section_id=params['section'])
+    if 'year' in params and params['year']:
+        title = '2nd-shift-grading-year-'+params['year']
+        queryset = queryset.filter(enrollment__education_year_id=params['year'])
     if 'term' in params and params['term']:
         queryset = queryset.filter(exam_term=params['term'])
 
@@ -242,7 +248,7 @@ def export_2ndshift_gradings(params=None, return_data=False):
         ]
         data.append(content)
 
-    timestamp = time.time()
+    timestamp = '{}-{}'.format(title, time.time())
     file_format = base_formats.XLSX()
     data = file_format.export_data(data)
     if return_data:
@@ -255,26 +261,31 @@ def export_2ndshift_gradings(params=None, return_data=False):
 def export_alp(params=None, return_data=False):
     from student_registration.alp.models import Outreach, ALPRound
 
+    title = 'alp-all'
     queryset = Outreach.objects.all()
 
     if 'pre_test' in params:
+        title = 'alp-pre-test'
         queryset = queryset.filter(
             alp_round__current_pre_test=True,
             level__isnull=False,
             assigned_to_level__isnull=False
         )
     if 'post_test' in params:
+        title = 'alp-post-test'
         queryset = queryset.filter(
             alp_round__current_post_test=True,
             registered_in_level__isnull=False,
             refer_to_level__isnull=False
         )
     if 'current' in params:
+        title = 'alp-current'
         queryset = queryset.filter(
             alp_round__current_round=True,
             registered_in_level__isnull=False,
         )
     if 'current_all' in params:
+        title = 'alp-current-all'
         queryset = queryset.filter(
             alp_round__current_round=True,
         )
@@ -424,7 +435,7 @@ def export_alp(params=None, return_data=False):
         ]
         data.append(content)
 
-    timestamp = time.time()
+    timestamp = '{}-{}'.format(title, time.time())
     file_format = base_formats.XLSX()
     data = file_format.export_data(data)
     if return_data:
@@ -502,7 +513,7 @@ def export_attendance(params=None, return_data=False):
                 ]
                 data.append(content)
 
-    timestamp = time.time()
+    timestamp = '{}-{}'.format('attendance', time.time())
     file_format = base_formats.XLSX()
     data = file_format.export_data(data)
     if return_data:
@@ -657,7 +668,7 @@ def export_winterization(return_data=False):
 
         data.append(content)
 
-    timestamp = time.time()
+    timestamp = '{}-{}'.format('winter', time.time())
     file_format = base_formats.XLSX()
     data = file_format.export_data(data)
     if return_data:

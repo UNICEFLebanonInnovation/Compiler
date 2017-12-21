@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-
 from django.contrib import admin
 from django.utils.html import escape, format_html, format_html_join, html_safe
-from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 
 from import_export import resources, fields
@@ -181,12 +179,12 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
         'priority',
     )
     list_display = (
-        'id',
+        'id_link',
         'queue',
-        'owner',
+        'owner_link',
         'submitter_email',
         'school_cerd',
-        'school',
+        'school_link',
         'title',
         'description',
         'comments',
@@ -195,6 +193,7 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
         'priority',
         'created',
         'status',
+        'edit_link'
     )
     list_editable = ('status',)
     list_filter = (
@@ -217,6 +216,27 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
             return User.objects.get(email=obj.submitter_email)
         return ''
 
+    def owner_link(self, obj):
+        if self.owner(obj):
+            return '<a href="/admin/users/user/%s/change/" target="_blank">%s</a>' % \
+                   (self.owner(obj).id, escape(self.owner(obj).username))
+        return ''
+
+    owner_link.allow_tags = True
+    owner_link.short_description = "Submitter username"
+
+    def id_link(self, obj):
+        return '<a href="/helpdesk/tickets/%s/" target="_blank">%s</a>' % (obj.id, escape(obj.id))
+
+    id_link.allow_tags = True
+    id_link.short_description = "ID"
+
+    def edit_link(self, obj):
+        return '<a href="/helpdesk/tickets/%s/edit/" target="_blank">%s</a>' % (obj.id, escape('Edit'))
+
+    edit_link.allow_tags = True
+    edit_link.short_description = "Edit"
+
     def submitter(self, obj):
         if self.owner(obj):
             return self.owner(obj).username
@@ -226,6 +246,15 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
         if self.owner(obj):
             return self.owner(obj).school
         return ''
+
+    def school_link(self, obj):
+        if self.school(obj):
+            return '<a href="/admin/schools/school/%s/change/" target="_blank">%s</a>' % \
+                   (self.school(obj).id, escape(self.school(obj).name))
+        return ''
+
+    school_link.allow_tags = True
+    school_link.short_description = "School"
 
     def school_cerd(self, obj):
         if self.school(obj):
