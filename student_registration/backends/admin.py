@@ -207,6 +207,10 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
     date_hierarchy = 'created'
     view_on_site = False
 
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
     def owner(self, obj):
         if obj.submitter_email:
             return User.objects.get(email=obj.submitter_email)
