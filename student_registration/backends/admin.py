@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-
 from django.contrib import admin
 from django.utils.html import escape, format_html, format_html_join, html_safe
-from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
-from django.template.defaultfilters import escape
-from django.core.urlresolvers import reverse
 
 from import_export import resources, fields
 from import_export import fields

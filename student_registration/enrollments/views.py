@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-import tablib
 import datetime
+import tablib
 
 from django.views.generic import ListView, FormView, TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
