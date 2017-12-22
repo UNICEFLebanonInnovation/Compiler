@@ -619,6 +619,9 @@ class GradingTermForm(forms.ModelForm):
         self.helper.form_action = reverse('enrollments:grading', kwargs={'pk': instance.id, 'term': instance.exam_term})
         enrollment_classroom = instance.enrollment.classroom_id
 
+        if instance.exam_term in ['3', '4']:
+            self.fields['exam_total'].label = _('Final Grade')
+
         if instance.exam_term in ['1', '2']:
             display_exam_result = ' d-none '
             self.fields['exam_result'].required = False
@@ -630,6 +633,13 @@ class GradingTermForm(forms.ModelForm):
                 ('failed', _('Failed')),
                 ('uncompleted', _('Uncompleted'))
             )
+            self.fields['exam_result_arabic'].label += _('Cycle 1 max grade')
+            self.fields['exam_result_language'].label += _('Cycle 1 max grade')
+            self.fields['exam_result_education'].label += _('Cycle 1 max grade')
+            self.fields['exam_result_geo'].label += _('Cycle 1 max grade')
+            self.fields['exam_result_math'].label += _('Cycle 1 max grade')
+            self.fields['exam_result_science'].label += _('Cycle 1 max grade')
+
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -649,12 +659,10 @@ class GradingTermForm(forms.ModelForm):
                         Div('exam_result_math', css_class='col-md-2'),
                         HTML('<span class="badge badge-default">6</span>'),
                         Div('exam_result_science', css_class='col-md-2'),
-                        HTML('<span class="badge badge-default">7</span>'),
-                        Div('exam_total', css_class='col-md-2'),
                         css_class='row',
                     ),
                     Div(
-                        HTML('<span class="badge badge-default">8</span>'),
+                        HTML('<span class="badge badge-default">7</span>'),
                         Div('exam_result', css_class='col-md-2'),
                         css_class='row'+display_exam_result,
                     ),
@@ -670,6 +678,7 @@ class GradingTermForm(forms.ModelForm):
                         'exam_result_artistic',
                         'exam_result_mathematics',
                         'exam_result_sciences',
+                        'exam_total',
                         css_class='d-none'
                     ),
                     css_class='bd-callout bd-callout-warning'
@@ -682,6 +691,14 @@ class GradingTermForm(forms.ModelForm):
             )
 
         if enrollment_classroom in [5, 6, 7]:
+            self.fields['exam_result_arabic'].label += ' (/20)'
+            self.fields['exam_result_language'].label += ' (/20)'
+            self.fields['exam_result_education'].label += ' (/20)'
+            self.fields['exam_result_geo'].label += ' (/20)'
+            self.fields['exam_result_math'].label += ' (/20)'
+            self.fields['exam_result_science'].label += ' (/20)'
+            self.fields['exam_total'].label += ' (/120)'
+
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -734,6 +751,17 @@ class GradingTermForm(forms.ModelForm):
             )
 
         if enrollment_classroom in [8, 9, 10]:
+            self.fields['exam_result_arabic'].label += ' (/60)'
+            self.fields['exam_result_language'].label += ' (/40)'
+            self.fields['exam_result_education'].label += ' (/20)'
+            self.fields['exam_result_geo'].label += ' (/20)'
+            self.fields['exam_result_history'].label += ' (/20)'
+            self.fields['exam_result_math'].label += ' (/60)'
+            self.fields['exam_result_physic'].label += ' (/20)'
+            self.fields['exam_result_chemistry'].label += ' (/20)'
+            self.fields['exam_result_bio'].label += ' (/20)'
+            self.fields['exam_total'].label += ' (/280)'
+
             self.helper.layout = Layout(
                 Fieldset(
                     None,
@@ -767,7 +795,7 @@ class GradingTermForm(forms.ModelForm):
                         css_class='row',
                     ),
                     Div(
-                        HTML('<span class="badge badge-default">8</span>'),
+                        HTML('<span class="badge badge-default">11</span>'),
                         Div('exam_result', css_class='col-md-2'),
                         css_class='row' + display_exam_result,
                     ),

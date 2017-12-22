@@ -90,7 +90,7 @@ class School(models.Model):
     )
     number_students_2nd_shift = models.IntegerField(
         blank=True, null=True,
-        verbose_name=_('Number of students in 2nd shift')
+        verbose_name=_('Expected number of students in 2nd shift')
     )
     is_alp = models.BooleanField(
         blank=True,
@@ -99,7 +99,7 @@ class School(models.Model):
     )
     number_students_alp = models.IntegerField(
         blank=True, null=True,
-        verbose_name=_('Number of students in ALP')
+        verbose_name=_('Expected number of students in ALP')
     )
     attendance_range = models.IntegerField(
         blank=True, null=True,
@@ -168,6 +168,7 @@ class School(models.Model):
         from student_registration.alp.models import Outreach
         return Outreach.objects.filter(
             alp_round__current_round=True,
+            registered_in_level__isnull=False,
             school_id=self.id
         ).count()
 
@@ -263,6 +264,8 @@ class PartnerOrganization(models.Model):
         related_name='+',
         verbose_name=_('CB-ECE current round')
     )
+
+    schools = models.ManyToManyField(School, blank=True)
 
     class Meta:
         ordering = ['name']

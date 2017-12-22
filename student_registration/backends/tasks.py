@@ -13,8 +13,10 @@ def export_2ndshift(params=None, return_data=False):
     from student_registration.enrollments.models import Enrollment
     from student_registration.schools.models import EducationYear
 
+    title = '2nd-shit-all'
     queryset = Enrollment.objects.all()
     if 'current' in params:
+        title = '2nd-shit-current'
         queryset = queryset.filter(education_year__current_year=True)
     if 'year' in params:
         queryset = queryset.filter(education_year_id=params['year'])
@@ -22,17 +24,20 @@ def export_2ndshift(params=None, return_data=False):
         queryset = queryset.filter(classroom_id=params['classroom'])
     if 'school' in params:
         queryset = queryset.filter(school_id=params['school'])
+    if 'section' in params and params['section']:
+        queryset = queryset.filter(section_id=params['section'])
 
     data = tablib.Dataset()
     data.headers = [
 
-        _('ALP result'),
-        _('ALP round'),
+        _('Last non formal education - result'),
+        _('Last non formal education - round'),
         _('Is the child participated in an ALP/2016-2 program'),
-        _('Result'),
-        _('Education year'),
-        _('School'),
-        _('Last education level'),
+
+        _('Last formal education - result'),
+        _('Last formal education - year'),
+        _('Last formal education - school'),
+        _('Last formal education - level'),
 
         _('Serial number in previous school'),
 
@@ -131,7 +136,7 @@ def export_2ndshift(params=None, return_data=False):
         ]
         data.append(content)
 
-    timestamp = time.time()
+    timestamp = '{}-{}'.format(title, time.time())
     file_format = base_formats.XLSX()
     data = file_format.export_data(data)
     if return_data:
@@ -146,9 +151,19 @@ def export_2ndshift_gradings(params=None, return_data=False):
     from student_registration.schools.models import EducationYear
     current = EducationYear.objects.get(current_year=True)
 
+    title = '2nd-shift-grading-current'
     queryset = EnrollmentGrading.objects.filter(enrollment__education_year=current)
     if 'school' in params:
         queryset = queryset.filter(enrollment__school_id=params['school'])
+    if 'classroom' in params and params['classroom']:
+        queryset = queryset.filter(enrollment__classroom_id=params['classroom'])
+    if 'section' in params and params['section']:
+        queryset = queryset.filter(enrollment__section_id=params['section'])
+    if 'year' in params and params['year']:
+        title = '2nd-shift-grading-year-'+params['year']
+        queryset = queryset.filter(enrollment__education_year_id=params['year'])
+    if 'term' in params and params['term']:
+        queryset = queryset.filter(exam_term=params['term'])
 
     data = tablib.Dataset()
     data.headers = [
@@ -199,7 +214,7 @@ def export_2ndshift_gradings(params=None, return_data=False):
 
             line.exam_result,
             line.exam_total,
-            line.exam_term,
+            line.exam_term_name,
 
             line.exam_result_linguistic_ar,
             line.exam_result_sociology,
@@ -237,7 +252,7 @@ def export_2ndshift_gradings(params=None, return_data=False):
         ]
         data.append(content)
 
-    timestamp = time.time()
+    timestamp = '{}-{}'.format(title, time.time())
     file_format = base_formats.XLSX()
     data = file_format.export_data(data)
     if return_data:
@@ -250,26 +265,31 @@ def export_2ndshift_gradings(params=None, return_data=False):
 def export_alp(params=None, return_data=False):
     from student_registration.alp.models import Outreach, ALPRound
 
+    title = 'alp-all'
     queryset = Outreach.objects.all()
 
     if 'pre_test' in params:
+        title = 'alp-pre-test'
         queryset = queryset.filter(
             alp_round__current_pre_test=True,
             level__isnull=False,
             assigned_to_level__isnull=False
         )
     if 'post_test' in params:
+        title = 'alp-post-test'
         queryset = queryset.filter(
             alp_round__current_post_test=True,
             registered_in_level__isnull=False,
             refer_to_level__isnull=False
         )
     if 'current' in params:
+        title = 'alp-current'
         queryset = queryset.filter(
             alp_round__current_round=True,
             registered_in_level__isnull=False,
         )
     if 'current_all' in params:
+        title = 'alp-current-all'
         queryset = queryset.filter(
             alp_round__current_round=True,
         )
@@ -306,7 +326,8 @@ def export_alp(params=None, return_data=False):
         _('Phone number'),
 
         _('Student living address'),
-        _('Pre-test result'),
+        _('Pre-test level'),
+        _('Pre-test room'),
         _('Arabic'),
         _('Exam language'),
         _('Foreign language'),
@@ -318,24 +339,26 @@ def export_alp(params=None, return_data=False):
         _('Assigned to level'),
 
         _('Current Section'),
-        _('Current Level'),
-        _('Post-test result'),
+        _('Registered in Level'),
         _('Arabic'),
         _('Exam language'),
 
         _('Foreign language'),
         _('Math'),
         _('Science'),
+        _('Post-test room'),
         _('Post-test total'),
+        _('Post-test result'),
+
         _('Comments'),
 
-        _('Last education level'),
-        _('Education year'),
+        _('Last formal education - level'),
+        _('Last formal education - year'),
         _('Is the child participated in an ALP program'),
-        _('ALP level'),
-        _('ALP round'),
+        _('Last non formal education - level'),
+        _('Last non formal education - round'),
 
-        _('ALP result'),
+        _('Last non formal education - result'),
         _('Created by'),
         _('Modified by'),
         _('Creation date'),
@@ -377,6 +400,7 @@ def export_alp(params=None, return_data=False):
 
             student.address,
             line.level.name if line.level else '',
+            line.pre_test_room,
             line.exam_result_arabic,
             line.exam_language,
             line.exam_result_language,
@@ -389,14 +413,16 @@ def export_alp(params=None, return_data=False):
 
             line.section.name if line.section else '',
             line.registered_in_level.name if line.registered_in_level else '',
-            line.refer_to_level,
+
             line.post_exam_result_arabic,
             line.post_exam_language,
 
             line.post_exam_result_language,
             line.post_exam_result_math,
             line.post_exam_result_science,
+            line.post_test_room,
             line.post_exam_total,
+            line.refer_to_level,
             line.post_comment,
 
             line.last_education_level.name if line.last_education_level else '',
@@ -413,7 +439,7 @@ def export_alp(params=None, return_data=False):
         ]
         data.append(content)
 
-    timestamp = time.time()
+    timestamp = '{}-{}'.format(title, time.time())
     file_format = base_formats.XLSX()
     data = file_format.export_data(data)
     if return_data:
@@ -491,7 +517,7 @@ def export_attendance(params=None, return_data=False):
                 ]
                 data.append(content)
 
-    timestamp = time.time()
+    timestamp = '{}-{}'.format('attendance', time.time())
     file_format = base_formats.XLSX()
     data = file_format.export_data(data)
     if return_data:
@@ -646,7 +672,7 @@ def export_winterization(return_data=False):
 
         data.append(content)
 
-    timestamp = time.time()
+    timestamp = '{}-{}'.format('winter', time.time())
     file_format = base_formats.XLSX()
     data = file_format.export_data(data)
     if return_data:
