@@ -374,9 +374,12 @@ class CLM(TimeStampedModel):
     @property
     def assessment_improvement(self):
         if self.pre_test and self.post_test:
-            return '{}{}'.format(
-                round(((float(self.post_test_score) - float(self.pre_test_score)) / float(self.pre_test_score)) * 100.0, 2),
-                '%')
+            try:
+                return '{}{}'.format(
+                    round(((float(self.post_test_score) - float(self.pre_test_score)) /
+                           float(self.pre_test_score)) * 100.0, 2), '%')
+            except ZeroDivisionError:
+                return 0.0
         return 0
 
     def get_absolute_url(self):
@@ -469,9 +472,12 @@ class BLN(CLM):
             'BLN_ASSESSMENT',
             domain_mame,
         )
-        if self.pre_test and self.post_test:
-            return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
-                          float(self.pre_test[key])) * 100.0, 2)
+        try:
+            if self.pre_test and self.post_test:
+                return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
+                              float(self.pre_test[key])) * 100.0, 2)
+        except ZeroDivisionError:
+            return 0.0
         return 0.0
 
     @property
@@ -712,27 +718,37 @@ class RS(CLM):
     @property
     def academic_test_improvement(self):
         if self.pretest_total and self.posttest_total:
-            return '{}{}'.format(
-                round((float(self.posttest_total) - float(self.pretest_total)) / float(self.pretest_total) * 100.0, 2),
-                '%')
+            try:
+                return '{}{}'.format(
+                    round((float(self.posttest_total) - float(self.pretest_total)) /
+                          float(self.pretest_total) * 100.0, 2),
+                    '%')
+            except ZeroDivisionError:
+                return 0.0
         return 0
 
     @property
     def self_assessment_improvement(self):
         if self.pre_self_assessment and self.post_self_assessment:
-            return '{}{}'.format(
-                round(((float(self.post_self_assessment_score) - float(self.pre_self_assessment_score)) /
-                       float(self.pre_self_assessment_score)) * 100.0, 2),
-                '%')
+            try:
+                return '{}{}'.format(
+                    round(((float(self.post_self_assessment_score) - float(self.pre_self_assessment_score)) /
+                           float(self.pre_self_assessment_score)) * 100.0, 2),
+                    '%')
+            except ZeroDivisionError:
+                return 0.0
         return 0
 
     @property
     def motivation_improvement(self):
         if self.pre_motivation and self.post_motivation:
-            return '{}{}'.format(
-                round(((float(self.post_motivation_score) - float(self.pre_motivation_score)) /
-                        float(self.pre_motivation_score)) * 100.0, 2),
-                '%')
+            try:
+                return '{}{}'.format(
+                    round(((float(self.post_motivation_score) - float(self.pre_motivation_score)) /
+                            float(self.pre_motivation_score)) * 100.0, 2),
+                    '%')
+            except ZeroDivisionError:
+                return 0.0
         return 0
 
     def assessment_form(self, stage, assessment_slug, callback=''):
@@ -866,7 +882,7 @@ class CBECE(CLM):
         ),
         blank=True,
         null=True,
-        verbose_name=_('Reason of referral')
+        verbose_name=_('Where was the child referred?')
     )
     child_muac = models.CharField(
         max_length=50,
@@ -928,9 +944,12 @@ class CBECE(CLM):
             domain_mame,
             program_cycle
         )
-        if self.pre_test and self.post_test:
-            return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
-                          float(self.pre_test[key])) * 100.0, 2)
+        if key in self.pre_test and key in self.post_test:
+            try:
+                return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
+                              float(self.pre_test[key])) * 100.0, 2)
+            except ZeroDivisionError:
+                return 0.0
         return 0.0
 
     @property

@@ -25,19 +25,19 @@
     </ol>
 
     <ol class="breadcrumb">
-      <li class="breadcrumb-item active">
+        <li class="breadcrumb-item active">
             <a href="{% url "clm:rs_add" %}" class="btn btn-success">
                 <i class="icon-plus-sign icon-white"></i>
                 {% trans "Add new Child" %}
             </a>
             <a href="{% url "clm:rs_dashboard" %}" class="btn btn-outline-primary" role="button" aria-pressed="true">Dashboard</a>
-      </li>
-    {#  <li class="breadcrumb-item active">#}
-    {#        <a href="{% url "clm:bln_add" %}" class="btn btn-success">#}
-    {#            <i class="icon-plus-sign icon-white"></i>#}
-    {#            {% trans "Export data" %}#}
-    {#        </a>#}
-    {#  </li>#}
+        </li>
+        <li class="breadcrumb-item active">
+            <a href="{% url "clm:rs_export" %}" class="btn btn-success">
+                <i class="icon-plus-sign icon-white"></i>
+                {% trans "Export data" %}
+            </a>
+        </li>
     </ol>
 
     <div class="pb-5 pr-5 list-filter">

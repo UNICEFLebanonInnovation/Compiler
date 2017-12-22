@@ -324,6 +324,7 @@ class PartnerOrganizationResource(resources.ModelResource):
 
 class PartnerOrganizationAdmin(ImportExportModelAdmin):
     resource_class = PartnerOrganizationResource
+    filter_horizontal = ('schools', )
     search_fields = ('name', )
 
     def get_export_formats(self):
