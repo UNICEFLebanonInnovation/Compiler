@@ -662,6 +662,9 @@ class OutreachAdmin(ImportExportModelAdmin):
         ModifiedByFilter,
         'created',
         'modified',
+        'new_registry',
+        'student_outreached',
+        'have_barcode',
     )
     search_fields = (
         'student__first_name',

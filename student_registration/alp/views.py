@@ -18,7 +18,7 @@ from django_tables2.export.views import ExportMixin
 
 from .models import Outreach, ALPRound
 from .forms import RegistrationForm, PreTestGradingForm, PostTestGradingForm, OutreachForm, PreTestForm
-from .serializers import OutreachSerializer, GradingSerializer, OutreachSmallSerializer
+from .serializers import OutreachSerializer, GeneralSerializer, OutreachSmallSerializer
 from .tables import BootstrapTable, OutreachTable, PreTestTable, PostTestTable, SchoolTable
 from .filters import OutreachFilter, PreTestFilter, PostTestFilter, SchoolFilter
 from student_registration.outreach.models import Child
@@ -105,8 +105,9 @@ class OutreachViewSet(mixins.RetrieveModelMixin,
         return super(OutreachViewSet, self).update(request)
 
     def partial_update(self, request, *args, **kwargs):
-        if has_group(self.request.user, 'CERD'):
-            self.serializer_class = GradingSerializer
+        # if has_group(self.request.user, 'CERD'):
+        #     self.serializer_class = GradingSerializer
+        self.serializer_class = GeneralSerializer
         return super(OutreachViewSet, self).partial_update(request)
 
 

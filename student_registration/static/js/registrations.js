@@ -17,6 +17,10 @@ $(document).ready(function(){
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
     }
 
+    $("td[class='student.first_name']").addClass('font-bolder');
+    $("td[class='student.father_name']").addClass('font-bolder');
+    $("td[class='student.last_name']").addClass('font-bolder');
+
     reorganizeForm();
 
     $(document).on('change', 'select#id_level', function(){
@@ -90,6 +94,15 @@ $(document).ready(function(){
             item.parents('tr').remove();
         }
     });
+    $(document).on('click', '.detach-button', function(){
+        var item = $(this);
+        if(confirm($(this).attr('translation'))) {
+            var callback = function(){
+                item.parents('tr').remove();
+            };
+            patch_registration(item, callback());
+        }
+    });
     $(document).on('click', '.delete-button', function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
@@ -126,12 +139,20 @@ $(document).ready(function(){
                         term: request.term
                     },
                     success: function (data) {
-                        response(data);
+                       if(!data.length){
+                            var result = [{ error: 'No matches found',  value: response.term }];
+                            response(result);
+                         }else{
+                            response(data);
+                        }
                     }
                 });
             },
             minLength: 3,
             select: function (event, ui) {
+                if(ui.item.error) {
+                    return false;
+                }
                 var registry_id = 0;
                 var eligibility = true;
                 var school_type = $('#id_school_type').val();
@@ -172,6 +193,9 @@ $(document).ready(function(){
         };
 
         $("#id_search_student").autocomplete("instance")._renderItem = function (ul, item) {
+            if(item.error) {
+                return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
+            }
             var registry = item.enrollment;
             if(registry){
                 var education_year_name = registry.education_year_name;
@@ -204,12 +228,20 @@ $(document).ready(function(){
                         term: request.term
                     },
                     success: function (data) {
-                        response(data);
+                       if(!data.length){
+                            var result = [{ error: 'No matches found',  value: response.term }];
+                            response(result);
+                         }else{
+                            response(data);
+                        }
                     }
                 });
             },
             minLength: 3,
             select: function (event, ui) {
+                if(ui.item.error) {
+                    return false;
+                }
                 var params = {
                     enrollment_id: ui.item.id,
                     new_registry: $('select#id_new_registry').val(),
@@ -230,7 +262,9 @@ $(document).ready(function(){
         };
 
         $("#id_search_clm_student").autocomplete("instance")._renderItem = function (ul, item) {
-
+            if(item.error) {
+                return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
+            }
             return $("<li>")
                 .append("<div style='border: 1px solid;'>"
                     + "<b>Base Data:</b> " + item.student_full_name + " - " + item.student_mother_fullname
@@ -252,13 +286,20 @@ $(document).ready(function(){
                         term: request.term
                     },
                     success: function (data) {
-                        response(data);
+                       if(!data.length){
+                            var result = [{ error: 'No matches found',  value: response.term }];
+                            response(result);
+                         }else{
+                            response(data);
+                        }
                     }
                 });
             },
             minLength: 10,
             select: function (event, ui) {
-
+                if(ui.item.error) {
+                    return false;
+                }
                 var params = {
                     child_id: ui.item.child_id,
                     new_registry: $('select#id_new_registry').val(),
@@ -279,6 +320,9 @@ $(document).ready(function(){
         };
 
         $("#id_search_barcode").autocomplete("instance")._renderItem = function (ul, item) {
+            if(item.error) {
+                return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
+            }
             return $("<li>")
                 .append("<div style='border: 1px solid;'>"
                     + "<b>Base Data:</b> " + item.student_full_name + " - " + item.student_mother_fullname + " - " + item.student_id_number
@@ -299,13 +343,20 @@ $(document).ready(function(){
                         term: request.term
                     },
                     success: function (data) {
-                        response(data);
+                       if(!data.length){
+                            var result = [{ error: 'No matches found',  value: response.term }];
+                            response(result);
+                         }else{
+                            response(data);
+                        }
                     }
                 });
             },
             minLength: 10,
             select: function (event, ui) {
-                console.log(ui.item);
+                if(ui.item.error) {
+                    return false;
+                }
                 $('#id_outreach_barcode').val(ui.item.barcode_subset);
                 return false;
             }
@@ -318,6 +369,9 @@ $(document).ready(function(){
         };
 
         $("#id_outreach_barcode").autocomplete("instance")._renderItem = function (ul, item) {
+            if(item.error) {
+                return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
+            }
             return $("<li>")
                 .append("<div style='border: 1px solid;'>"
                     + "<b>Base Data:</b> " + item.student_full_name + " - " + item.stduent_mother_fullname + " - " + item.student_id_number
@@ -338,13 +392,20 @@ $(document).ready(function(){
                         term: request.term
                     },
                     success: function (data) {
-                        response(data);
+                       if(!data.length){
+                            var result = [{ error: 'No matches found',  value: response.term }];
+                            response(result);
+                         }else{
+                            response(data);
+                        }
                     }
                 });
             },
             minLength: 3,
             select: function (event, ui) {
-                console.log(ui);
+                if(ui.item.error) {
+                    return false;
+                }
                 $("#search_moved_student").val('');
                 window.location = '/enrollments/moved/' + ui.item.enrolment_id + '/' + ui.item.id;
                 return false;
@@ -358,6 +419,9 @@ $(document).ready(function(){
         };
 
         $("#search_moved_student").autocomplete("instance")._renderItem = function (ul, item) {
+            if(item.error) {
+                return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
+            }
             return $("<li>")
                 .append("<div style='border: 1px solid;'>" + item.student_full_name + " - " + item.student_mother_fullname + " (" + item.student_sex + " - " + item.student_age + ") "
                     + "<br> Current situation: " + item.school_name + " - " + item.school_number + " / " + item.classroom_name + " / " + item.section_name
@@ -523,6 +587,31 @@ function delete_student(item, callback)
         type: "DELETE",
         url: url+'/',
         cache: false,
+        async: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            if(callback != undefined){
+                callback();
+            }
+            console.log(response);
+        },
+        error: function(response) {
+            console.log(response);
+        }
+    });
+}
+
+function patch_registration(item, callback)
+{
+    var url = item.attr('data-action');
+    var data = {section: '', registered_in_level: ''};
+
+    $.ajax({
+        type: "PATCH",
+        url: url+'/',
+        cache: false,
+        data: data,
         async: false,
         headers: getHeader(),
         dataType: 'json',

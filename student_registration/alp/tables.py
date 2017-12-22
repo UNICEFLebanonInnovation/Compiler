@@ -166,6 +166,9 @@ class SchoolTable(CommonTable):
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': '/api/alp/'})
+    detach_column = tables.TemplateColumn(verbose_name=_('Detach student'), orderable=False,
+                                          template_name='django_tables2/detach_column.html',
+                                          attrs={'url': '/api/alp/'})
     current_level = tables.Column(verbose_name=_('Current Level'), orderable=False,
                                   accessor='registered_in_level')
     current_section = tables.Column(verbose_name=_('Current Section'), orderable=False,
@@ -186,6 +189,7 @@ class SchoolTable(CommonTable):
         fields = (
             'edit_column',
             'delete_column',
+            'detach_column',
             'student.first_name',
             'student.father_name',
             'student.last_name',

@@ -2,15 +2,19 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
+import tablib
 
+from django.utils.translation import ugettext as _
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
-from django.db.models import Q
+from django.db.models import Q, Sum, Avg, F, Func
+from django.db.models.expressions import RawSQL
 
+from import_export.formats import base_formats
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -20,18 +24,15 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
 from student_registration.users.utils import force_default_language
-from .filters import BLNFilter, RSFilter, CBECEFilter
-from .tables import BootstrapTable, BLNTable, RSTable, CBECETable
-
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
+from student_registration.schools.models import CLMRound
+from student_registration.locations.models import Location
+from .filters import BLNFilter, RSFilter, CBECEFilter
+from .tables import BootstrapTable, BLNTable, RSTable, CBECETable
 from .models import BLN, RS, CBECE, SelfPerceptionGrades
 from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
-from student_registration.schools.models import CLMRound
-from student_registration.locations.models import Location
-from django.db.models import Sum, Avg, F, Func
-from django.db.models.expressions import RawSQL
 
 
 class CLMView(LoginRequiredMixin,
@@ -66,6 +67,7 @@ class BLNAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            kwargs['clm_round'] = self.request.user.partner.bln_round
         return super(BLNAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -114,6 +116,7 @@ class BLNEditView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            kwargs['clm_round'] = self.get_form().instance.round
         return super(BLNEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -518,6 +521,7 @@ class RSAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            kwargs['clm_round'] = self.request.user.partner.rs_round
         return super(RSAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -566,6 +570,7 @@ class RSEditView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            kwargs['clm_round'] = self.get_form().instance.round
         return super(RSEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -622,6 +627,7 @@ class CBECEAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            kwargs['clm_round'] = self.request.user.partner.cbece_round
         return super(CBECEAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -670,6 +676,7 @@ class CBECEEditView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            kwargs['clm_round'] = self.get_form().instance.round
         return super(CBECEEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -823,3 +830,436 @@ class CLMStudentViewSet(mixins.RetrieveModelMixin,
                     Q(student__last_name__contains=term)
                 ).distinct()
             return qs
+
+
+class BLNExportViewSet(LoginRequiredMixin, ListView):
+
+    model = BLN
+    queryset = BLN.objects.all()
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return self.queryset.filter(partner=self.request.user.partner)
+        return self.queryset
+
+    def get(self, request, *args, **kwargs):
+
+        queryset = self.get_queryset()
+        data = tablib.Dataset()
+
+        data.headers = [
+            _('CLM round'),
+            _('Governorate'),
+            _('District'),
+            _('Location'),
+            _('The language supported in the program'),
+
+            _('First name'),
+            _('Father name'),
+            _('Last name'),
+            _('Sex'),
+            _('Birthday day'),
+            _('Birthday month'),
+            _('Birthday year'),
+            _('Birthday'),
+            _('Nationality'),
+            _('Mother fullname'),
+
+            _('P-Code If a child lives in a tent / Brax in a random camp'),
+            _('Does the child have any disability or special need?'),
+            _('Internal number'),
+            _('ID number'),
+            _('Comments'),
+
+            _('What is the educational level of a person who is valuable to the child?'),
+            _('Does the child participate in work?'),
+            _('What is the type of work ?'),
+            _('How many hours does this child work in a day?'),
+
+            _('What is the family status of the child?'),
+            _("Does the child have children?"),
+
+            _('Academic Result - Pre'),
+            _('Academic Result - Post'),
+            _('Arabic - Improvement'),
+            _('English - Improvement'),
+            _('French - Improvement'),
+            _('Math - Improvement'),
+            _('Academic Result - Improvement'),
+
+            _('How was the level of child participation in the program?'),
+            _('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
+            _('Based on the overall score, what is the recommended learning path?'),
+
+            _("First time registered?"),
+            _("Student outreached?"),
+            _("Have barcode with him?"),
+
+        ]
+
+        content = []
+        for line in queryset:
+            if not line.student:
+                continue
+            student = line.student
+            content = [
+                line.round.name if line.round else '',
+                line.governorate.name if line.governorate else '',
+                line.district.name if line.district else '',
+                line.location,
+                line.language,
+
+                student.first_name,
+                student.father_name,
+                student.last_name,
+                student.sex,
+                student.birthday_day,
+                student.birthday_month,
+                student.birthday_year,
+                student.birthday,
+                student.nationality.name if student.nationality else '',
+                student.mother_fullname,
+
+                student.p_code,
+                line.disability.name if line.disability else '',
+                line.internal_number,
+                student.id_number,
+                line.comments,
+
+                line.hh_educational_level,
+                line.have_labour,
+                line.labours,
+                line.labour_hours,
+
+                student.family_status,
+                student.have_children,
+
+                line.pre_test_score,
+                line.post_test_score,
+                line.arabic_improvement,
+                line.english_improvement,
+                line.french_improvement,
+                line.math_improvement,
+                line.assessment_improvement,
+
+                line.participation,
+                line.barriers,
+                line.learning_result,
+
+                line.new_registry,
+                line.student_outreached,
+                line.have_barcode,
+            ]
+            data.append(content)
+
+        file_format = base_formats.XLSX()
+        data = file_format.export_data(data)
+
+        response = HttpResponse(
+            data,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        response['Content-Disposition'] = 'attachment; filename=bln_registrations_list.xlsx'
+        return response
+
+
+class RSExportViewSet(LoginRequiredMixin, ListView):
+
+    model = RS
+    queryset = RS.objects.all()
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return self.queryset.filter(partner=self.request.user.partner)
+        return self.queryset
+
+    def get(self, request, *args, **kwargs):
+
+        queryset = self.get_queryset()
+        data = tablib.Dataset()
+
+        data.headers = [
+            _('CLM round'),
+            _('Program type'),
+            _('Program site'),
+            _('Attending in school'),
+            _('Governorate'),
+            _('District'),
+            _('Location'),
+            _('The language supported in the program'),
+
+            _('First name'),
+            _('Father name'),
+            _('Last name'),
+            _('Sex'),
+            _('Birthday day'),
+            _('Birthday month'),
+            _('Birthday year'),
+            _('Birthday'),
+            _('Nationality'),
+            _('Mother fullname'),
+
+            _('P-Code If a child lives in a tent / Brax in a random camp'),
+            _('Does the child have any disability or special need?'),
+            _('Internal number'),
+            _('ID number'),
+            _('Comments'),
+
+            _('What is the educational level of a person who is valuable to the child?'),
+            _('Does the child participate in work?'),
+            _('What is the type of work ?'),
+            _('How many hours does this child work in a day?'),
+
+            _('What is the family status of the child?'),
+            _("Does the child have children?"),
+
+            _('Registered in school'),
+            _('Shift'),
+            _('Class'),
+            _('Reason of referral'),
+
+            _('Academic Result - Pre'),
+            _('Academic Result - Post'),
+            _('Arabic - Improvement'),
+            _('Language - Improvement'),
+            _('Science - Improvement'),
+            _('Math - Improvement'),
+            _('Academic Result - Improvement'),
+
+            _('Strategy Evaluation Result - Pre'),
+            _('Strategy Evaluation Result - Post'),
+            _('Strategy Evaluation Result - Improvement'),
+
+            _('Motivation - Pre'),
+            _('Motivation - Post'),
+            _('Motivation - Improvement'),
+
+            _('Self Assessment - Pre'),
+            _('Self Assessment - Post'),
+            _('Self Assessment - Improvement'),
+
+            _('How was the level of child participation in the program?'),
+            _('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
+            _('Based on the overall score, what is the recommended learning path?'),
+
+            _("First time registered?"),
+
+        ]
+
+        content = []
+        for line in queryset:
+            if not line.student:
+                continue
+            student = line.student
+            content = [
+                line.round.name if line.round else '',
+                line.type,
+                line.site,
+                line.school.name if line.school else '',
+                line.governorate.name if line.governorate else '',
+                line.district.name if line.district else '',
+                line.location,
+                line.language,
+
+                student.first_name,
+                student.father_name,
+                student.last_name,
+                student.sex,
+                student.birthday_day,
+                student.birthday_month,
+                student.birthday_year,
+                student.birthday,
+                student.nationality.name if student.nationality else '',
+                student.mother_fullname,
+
+                student.p_code,
+                line.disability.name if line.disability else '',
+                line.internal_number,
+                student.id_number,
+                line.comments,
+
+                line.hh_educational_level,
+                line.have_labour,
+                line.labours,
+                line.labour_hours,
+
+                student.family_status,
+                student.have_children,
+
+                line.registered_in_school.name if line.registered_in_school else '',
+                line.shift,
+                line.grade.name if line.grade else '',
+                line.referral,
+
+                line.pretest_result,
+                line.posttest_result,
+                line.arabic_improvement,
+                line.language_improvement,
+                line.science_improvement,
+                line.math_improvement,
+                line.academic_test_improvement,
+
+                line.pre_test_score,
+                line.post_test_score,
+                line.assessment_improvement,
+                line.pre_motivation_score,
+                line.post_motivation_score,
+                line.motivation_improvement,
+                line.pre_self_assessment_score,
+                line.post_self_assessment_score,
+                line.self_assessment_improvement,
+
+                line.participation,
+                line.barriers,
+                line.learning_result,
+
+                line.new_registry,
+            ]
+            data.append(content)
+
+        file_format = base_formats.XLSX()
+        data = file_format.export_data(data)
+
+        response = HttpResponse(
+            data,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        response['Content-Disposition'] = 'attachment; filename=rs_registrations_list.xlsx'
+        return response
+
+
+class CBECEExportViewSet(LoginRequiredMixin, ListView):
+
+    model = CBECE
+    queryset = CBECE.objects.all()
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return self.queryset.filter(partner=self.request.user.partner)
+        return self.queryset
+
+    def get(self, request, *args, **kwargs):
+
+        queryset = self.get_queryset()
+        data = tablib.Dataset()
+
+        data.headers = [
+            _('CLM round'),
+            _('Cycle'),
+            _('Program site'),
+            _('Attending in school'),
+            _('Governorate'),
+            _('District'),
+            _('Location'),
+            _('The language supported in the program'),
+
+            _('Where was the child referred?'),
+            _('First name'),
+            _('Father name'),
+            _('Last name'),
+            _('Sex'),
+            _('Birthday day'),
+            _('Birthday month'),
+            _('Birthday year'),
+            _('Birthday'),
+            _('Nationality'),
+            _('Mother fullname'),
+
+            _('P-Code If a child lives in a tent / Brax in a random camp'),
+            _('Does the child have any disability or special need?'),
+            _('Internal number'),
+            _('ID number'),
+            _('Comments'),
+            _('Child MUAC'),
+
+            _('What is the educational level of a person who is valuable to the child?'),
+            _('Does the child participate in work?'),
+            _('What is the type of work ?'),
+            _('How many hours does this child work in a day?'),
+
+            _('Academic Result - Pre'),
+            _('Academic Result - Post'),
+            _('Language Art Domain - Improvement'),
+            _('Cognitive Domain - Improvement'),
+            _('Social Emotional Domain - Improvement'),
+            _('Psychomotor Domain - Improvement'),
+            _('Artistic Domain - Improvement'),
+            _('Academic Result - Improvement'),
+
+            _('How was the level of child participation in the program?'),
+            _('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
+            _('Based on the overall score, what is the recommended learning path?'),
+
+            _("First time registered?"),
+            _("Student outreached?"),
+            _("Have barcode with him?"),
+
+        ]
+
+        content = []
+        for line in queryset:
+            if not line.student:
+                continue
+            student = line.student
+            content = [
+                line.round.name if line.round else '',
+                line.cycle.name if line.cycle else '',
+                line.site,
+                line.school.name if line.school else '',
+                line.governorate.name if line.governorate else '',
+                line.district.name if line.district else '',
+                line.location,
+                line.language,
+
+                line.referral,
+                student.first_name,
+                student.father_name,
+                student.last_name,
+                student.sex,
+                student.birthday_day,
+                student.birthday_month,
+                student.birthday_year,
+                student.birthday,
+                student.nationality.name if student.nationality else '',
+                student.mother_fullname,
+
+                student.p_code,
+                line.disability.name if line.disability else '',
+                line.internal_number,
+                student.id_number,
+                line.comments,
+                line.child_muac,
+
+                line.hh_educational_level,
+                line.have_labour,
+                line.labours,
+                line.labour_hours,
+
+                line.pre_test_score,
+                line.post_test_score,
+                line.art_improvement,
+                line.cognitive_improvement,
+                line.social_improvement,
+                line.psycho_improvement,
+                line.artistic_improvement,
+                line.assessment_improvement,
+
+                line.participation,
+                line.barriers,
+                line.learning_result,
+
+                line.new_registry,
+                line.student_outreached,
+                line.have_barcode,
+            ]
+            data.append(content)
+
+        file_format = base_formats.XLSX()
+        data = file_format.export_data(data)
+
+        response = HttpResponse(
+            data,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        response['Content-Disposition'] = 'attachment; filename=cbece_registrations_list.xlsx'
+        return response

@@ -400,6 +400,7 @@ SUIT_CONFIG = {
         )},
         {'label': '2nd Shift', 'icon': 'icon-th-list', 'models': (
             'enrollments.enrollment',
+            'enrollments.enrollmentgrading',
             'enrollments.dropout',
             'enrollments.LoggingStudentMove',
             'enrollments.LoggingProgramMove',

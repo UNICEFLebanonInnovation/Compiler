@@ -163,11 +163,11 @@ class CommonForm(forms.ModelForm):
             ('Female', _('Female')),
         )
     )
-    student_birthday_year = forms.ChoiceField(
-        label=_("Birthday year"),
-        widget=forms.Select, required=True,
-        choices=YEARS
-    )
+    # student_birthday_year = forms.ChoiceField(
+    #     label=_("Birthday year"),
+    #     widget=forms.Select, required=True,
+    #     choices=YEARS
+    # )
     student_birthday_month = forms.ChoiceField(
         label=_("Birthday month"),
         widget=forms.Select, required=True,
@@ -264,6 +264,18 @@ class CommonForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)
 
+    # def clean(self):
+    #     from django.db.models import Q
+    #     cleaned_data = super(CommonForm, self).clean()
+    #     id_number = cleaned_data.get('student_id_number')
+    #     internal_number = cleaned_data.get('internal_number')
+    #     queryset = self.Meta.model.objects.all()
+    #
+    #     if queryset.filter(Q(student__id_number=id_number) | Q(internal_number=internal_number)).count():
+    #         raise forms.ValidationError(
+    #             _("Child already registered in your organization")
+    #         )
+
     def save(self, request=None, instance=None, serializer=None, clm_round=None):
         if instance:
             serializer = serializer(instance, data=request.POST)
@@ -303,7 +315,6 @@ class CommonForm(forms.ModelForm):
             'student_father_name',
             'student_last_name',
             'student_sex',
-            'student_birthday_year',
             'student_birthday_month',
             'student_birthday_day',
             'student_nationality',
@@ -352,6 +363,15 @@ class BLNForm(CommonForm):
     #     widget=forms.CheckboxSelectMultiple,
     #     required=True,
     # )
+    YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 7, Person.CURRENT_YEAR - 2)))
+    YEARS_BLN.insert(0, ('', '---------'))
+
+    student_birthday_year = forms.ChoiceField(
+        label=_("Birthday year"),
+        widget=forms.Select, required=True,
+        choices=YEARS_BLN
+    )
+
     student_family_status = forms.ChoiceField(
         label=_('What is the family status of the child?'),
         widget=forms.Select, required=True,
@@ -620,6 +640,7 @@ class BLNForm(CommonForm):
         fields = CommonForm.Meta.fields + (
             # 'cycle',
             # 'referral',
+            'student_birthday_year',
             'student_family_status',
             'student_have_children',
         )
@@ -634,6 +655,15 @@ class BLNForm(CommonForm):
 
 
 class RSForm(CommonForm):
+
+    YEARS_RS = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 5)))
+    YEARS_RS.insert(0, ('', '---------'))
+
+    student_birthday_year = forms.ChoiceField(
+        label=_("Birthday year"),
+        widget=forms.Select, required=True,
+        choices=YEARS_RS
+    )
 
     student_outreached = forms.ChoiceField(
         label=_("Student outreached?"),
@@ -1142,6 +1172,7 @@ class RSForm(CommonForm):
     class Meta:
         model = RS
         fields = CommonForm.Meta.fields + (
+            'student_birthday_year',
             'type',
             'site',
             'school',
@@ -1164,6 +1195,15 @@ class RSForm(CommonForm):
 
 
 class CBECEForm(CommonForm):
+
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 5)))
+    YEARS_CB.insert(0, ('', '---------'))
+
+    student_birthday_year = forms.ChoiceField(
+        label=_("Birthday year"),
+        widget=forms.Select, required=True,
+        choices=YEARS_CB
+    )
 
     cycle = forms.ModelChoiceField(
         queryset=Cycle.objects.all(), widget=forms.Select,
@@ -1448,6 +1488,7 @@ class CBECEForm(CommonForm):
     class Meta:
         model = CBECE
         fields = CommonForm.Meta.fields + (
+            'student_birthday_year',
             'cycle',
             'site',
             'school',

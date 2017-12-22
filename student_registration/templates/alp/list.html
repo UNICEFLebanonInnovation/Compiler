@@ -13,7 +13,7 @@
 {% block content-full-page-ar %}
 
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><span class="badge badge-primary">{{ table.rows|length }}</span></li>
+            <li class="breadcrumb-item"><span class="badge badge-primary">{{ request.user.school.total_registered_alp }}</span></li>
             <li class="breadcrumb-item">{{ request.user.school }}</li>
             <li class="breadcrumb-item">{{ request.user.school.location }}</li>
             <li class="breadcrumb-item">{{ request.user.school.location.parent }}</li>

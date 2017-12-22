@@ -303,6 +303,12 @@ class AttendanceALPView(LoginRequiredMixin,
         if self.request.user.school:
             school = self.request.user.school
 
+        if not school.academic_year_start:
+            messages.warning(self.request, _('Please go to the school profile and enter the academic start date in order to take attendance.'))
+            self.template_name = 'error.html'
+            return {
+            }
+
         current_date = datetime.datetime.now().strftime(date_format)
         selected_date = self.request.GET.get('date', current_date)
         selected_date_view = datetime.datetime.strptime(selected_date, date_format).strftime(date_format_display)

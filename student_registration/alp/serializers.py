@@ -187,6 +187,13 @@ class OutreachSerializer(serializers.ModelSerializer):
         )
 
 
+class GeneralSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Outreach
+        fields = '__all__'
+
+
 class GradingSerializer(serializers.ModelSerializer):
     pre_comment = serializers.CharField(required=False)
     post_comment = serializers.CharField(required=False)
