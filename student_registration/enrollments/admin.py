@@ -386,6 +386,7 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
         'education_year',
         'registered',
         'student',
+        'moved_date',
         'school_from',
         'classroom',
         'section',
