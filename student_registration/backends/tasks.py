@@ -18,6 +18,10 @@ def export_2ndshift(params=None, return_data=False):
     if 'current' in params:
         title = '2nd-shit-current'
         queryset = queryset.filter(education_year__current_year=True)
+    if 'year' in params:
+        queryset = queryset.filter(education_year_id=params['year'])
+    if 'classroom' in params and params['classroom']:
+        queryset = queryset.filter(classroom_id=params['classroom'])
     if 'school' in params:
         queryset = queryset.filter(school_id=params['school'])
     if 'section' in params and params['section']:
