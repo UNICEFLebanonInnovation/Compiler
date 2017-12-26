@@ -138,6 +138,7 @@ class AttendanceView(LoginRequiredMixin,
 
         current_date = datetime.datetime.now().strftime(date_format)
         selected_date = self.request.GET.get('date', current_date)
+        selected_date_obj = datetime.datetime.strptime(selected_date, date_format).date()
         selected_date_view = datetime.datetime.strptime(selected_date, date_format).strftime(date_format_display)
 
         try:
@@ -155,7 +156,8 @@ class AttendanceView(LoginRequiredMixin,
             section = Section.objects.get(id=int(self.request.GET.get('section', 0)))
 
         education_year = EducationYear.objects.get(current_year=True)
-        queryset = Enrollment.objects.exclude(moved=True).filter(school_id=school, education_year=education_year)
+        queryset = Enrollment.objects.exclude(last_moved_date__lt=selected_date).filter(school_id=school, education_year=education_year)
+        # queryset = Enrollment.objects.exclude(moved=True).filter(school_id=school, education_year=education_year)
         registrations = queryset.filter(
             classroom__isnull=False,
             section__isnull=False
@@ -182,6 +184,8 @@ class AttendanceView(LoginRequiredMixin,
             total = queryset.filter(classroom_id=registry['classroom_id'],
                                     section_id=registry['section_id'],
                                     registration_date__lte=selected_date).count()
+            if total == 0:
+                continue
 
             if attendances:
                 attendance_taken = True

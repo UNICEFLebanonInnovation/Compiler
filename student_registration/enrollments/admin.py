@@ -223,6 +223,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_informal_edu_final_result',
         'deleted',
         'moved',
+        'last_moved_date',
         'dropout_status',
         'new_registry',
         'student_outreached',
