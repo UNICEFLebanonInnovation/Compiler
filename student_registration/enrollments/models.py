@@ -469,6 +469,11 @@ class Enrollment(TimeStampedModel):
         null=True,
         verbose_name=_('Registration date')
     )
+    last_moved_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Last moved date')
+    )
 
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
@@ -777,6 +782,11 @@ class LoggingStudentMove(TimeStampedModel):
         EducationYear,
         blank=True, null=True,
         related_name='+',
+    )
+    moved_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Moved date')
     )
 
     class Meta:

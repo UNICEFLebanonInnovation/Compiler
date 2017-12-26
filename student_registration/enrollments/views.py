@@ -356,14 +356,17 @@ class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
     def post(self, request, *args, **kwargs):
         if request.POST.get('moved', 0):
             enrollment = Enrollment.objects.get(id=request.POST.get('moved', 0))
+            moved_date = request.POST.get('moved_date', 0)
             current_year = EducationYear.objects.get(current_year=True)
             enrollment.moved = True
+            enrollment.last_moved_date = moved_date
             enrollment.save()
             LoggingStudentMove.objects.get_or_create(
                 enrolment_id=enrollment.id,
                 student_id=enrollment.student_id,
                 school_from_id=enrollment.school_id,
-                education_year=current_year
+                education_year=current_year,
+                moved_date=moved_date
             )
         return JsonResponse({'status': status.HTTP_200_OK})
 
