@@ -130,7 +130,8 @@ class AttendanceView(LoginRequiredMixin,
             school = self.request.user.school
 
         if not school.academic_year_start:
-            messages.warning(self.request, _('Please go to the school profile and enter the academic start date in order to take attendance.'))
+            messages.warning(self.request, _('Please go to the school profile and enter the academic start date '
+                                             'in order to take attendance.'))
             self.template_name = 'error.html'
             return {
             }
