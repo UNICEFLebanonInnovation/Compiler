@@ -42,6 +42,11 @@ $(document).ready(function(){
          }
     });
 
+    /* Using Combobox select elements */
+    $(document).find('select#id_school, select#id_registered_in_school')
+                .combobox()
+                .end();
+
     $(document).on('change', 'select#id_site', function(){
          reorganizeForm();
     });

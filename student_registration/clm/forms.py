@@ -689,12 +689,14 @@ class RSForm(CommonForm):
         choices=RS.SITES
     )
     school = forms.ModelChoiceField(
+        empty_label='--------',
         queryset=School.objects.all(), widget=forms.Select,
         label=_('The school where the child is attending the program'),
         required=True, to_field_name='id',
         initial=0
     )
     registered_in_school = forms.ModelChoiceField(
+        empty_label='--------',
         queryset=School.objects.all(), widget=forms.Select,
         label=_('The school where the child is registered'),
         required=True, to_field_name='id',
@@ -920,7 +922,7 @@ class RSForm(CommonForm):
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('site', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('school', css_class='col-md-3'),
+                    Div('school', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
