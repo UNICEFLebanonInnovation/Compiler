@@ -17,6 +17,10 @@ $(document).ready(function(){
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
     }
 
+    if($(document).find('.moving-date-input').length >= 1) {
+        $('.moving-date-input').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
     $("td[class='student.first_name']").addClass('font-bolder');
     $("td[class='student.father_name']").addClass('font-bolder');
     $("td[class='student.last_name']").addClass('font-bolder');
@@ -89,11 +93,27 @@ $(document).ready(function(){
 
     $(document).on('click', '.moved-button', function(){
         var item = $(this);
+        var itemscope = item.attr('itemscope');
         if(confirm($(this).attr('translation'))) {
-            moved_student(item.attr('itemscope'));
+
+            $('.moving-date-block').addClass('d-none');
+            $('#moving_date_block_'+itemscope).removeClass('d-none');
+        }
+    });
+    $(document).on('click', '.cancel-moved-button', function(){
+        var itemscope = $(this).attr('itemscope');
+        $('#moving_date_block_'+itemscope).addClass('d-none');
+        $('#moved_button_'+itemscope).removeClass('d-none');
+    });
+    $(document).on('click', '.save-moved-button', function(){
+        var item = $(this);
+        var itemscope = item.attr('itemscope');
+        if($('#moving_date_'+itemscope).val()) {
+            moved_student(item.attr('itemscope'), $('#moving_date_'+itemscope).val());
             item.parents('tr').remove();
         }
     });
+
     $(document).on('click', '.detach-button', function(){
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
@@ -558,9 +578,9 @@ function reorganizeForm()
 }
 
 
-function moved_student(item)
+function moved_student(item, moved_date)
 {
-    var data = {moved: item};
+    var data = {moved: item, moved_date: moved_date};
 
     $.ajax({
         type: "POST",
