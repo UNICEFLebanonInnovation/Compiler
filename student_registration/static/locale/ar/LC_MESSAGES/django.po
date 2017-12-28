@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-28 13:46+0200\n"
+"POT-Creation-Date: 2017-12-28 14:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2147,7 +2147,6 @@ msgid "To school"
 msgstr "الى مدرسة "
 
 #: student_registration/enrollments/models.py:809
-#: student_registration/templates/django_tables2/moved_column.html:6
 msgid "Moved date"
 msgstr "تاريخ الانتقال"
 
@@ -3052,11 +3051,17 @@ msgstr "اكمال"
 
 #: student_registration/templates/django_tables2/moved_column.html:2
 msgid "Are you sure you want to tag this student as moved?"
-msgstr "هل انت متأكد ان هذا التلميذ انتقل الى مدرسة اخرى؟"
+msgstr ""
+"هل انت متاكد ان هذا التلميذ انتقل الى مدرسة اخرى؟ اضغط على OK لادخال تاريخ "
+"الانتقال"
 
 #: student_registration/templates/django_tables2/moved_column.html:3
 msgid "Moved?"
 msgstr "انتقل؟"
+
+#: student_registration/templates/django_tables2/moved_column.html:6
+msgid "Enter moved date"
+msgstr " انقر هنا لادخال التاريخ"
 
 #: student_registration/templates/enrollments/grading.html:38
 msgid "Grading Term 1"

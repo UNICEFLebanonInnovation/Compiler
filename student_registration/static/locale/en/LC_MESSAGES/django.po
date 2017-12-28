@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-28 13:46+0200\n"
+"POT-Creation-Date: 2017-12-28 14:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2141,7 +2141,6 @@ msgid "To school"
 msgstr ""
 
 #: student_registration/enrollments/models.py:809
-#: student_registration/templates/django_tables2/moved_column.html:6
 msgid "Moved date"
 msgstr ""
 
@@ -3048,6 +3047,10 @@ msgstr ""
 
 #: student_registration/templates/django_tables2/moved_column.html:3
 msgid "Moved?"
+msgstr ""
+
+#: student_registration/templates/django_tables2/moved_column.html:6
+msgid "Enter moved date"
 msgstr ""
 
 #: student_registration/templates/enrollments/grading.html:38
