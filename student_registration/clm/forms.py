@@ -1025,7 +1025,7 @@ class RSForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('registered_in_school', css_class='col-md-3'),
+                    Div('registered_in_school', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('shift', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
@@ -1340,7 +1340,7 @@ class CBECEForm(CommonForm):
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('site', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('school', css_class='col-md-3'),
+                    Div('school', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(

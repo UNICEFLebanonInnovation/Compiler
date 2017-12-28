@@ -43,7 +43,7 @@ $(document).ready(function(){
     });
 
     /* Using Combobox select elements */
-    $(document).find('select#id_school, select#id_registered_in_school')
+    $(document).find('select#id_school, select#id_registered_in_school, select#id_search_school, select#id_last_school')
                 .combobox()
                 .end();
 
