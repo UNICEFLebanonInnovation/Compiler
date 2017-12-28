@@ -735,6 +735,26 @@ class EnrollmentGrading(models.Model):
         ordering = ['id']
 
     @property
+    def enrollment_student(self):
+        return self.enrollment.student_fullname
+
+    @property
+    def enrollment_school_name(self):
+        return self.enrollment.school.name
+
+    @property
+    def enrollment_school_number(self):
+        return self.enrollment.school.number
+
+    @property
+    def enrollment_classroom_name(self):
+        return self.enrollment.classroom.name
+
+    @property
+    def enrollment_section_name(self):
+        return self.enrollment.section.name
+
+    @property
     def exam_term_name(self):
         if self.exam_term:
             return {
