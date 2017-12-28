@@ -8,6 +8,7 @@ var host = protocol+window.location.host;
 var moved_student_path = host+'/api/logging-student-move/';
 var current_school = null;
 var eligibility_msg = '';
+var min_age_restriction_msg = '';
 var min_age_limit_msg = '';
 var max_age_limit_msg = '';
 
@@ -697,10 +698,10 @@ function verify_age_level()
 
     if(level == '1') { //KG
         min_date = new Date('2017-09-14');
-        display_alert(dob, 5, 9, min_date);
+        display_alert_restriction(dob, 5, 9, min_date);
     }
     if(level == '2') { //Level 1
-        display_alert(dob, 6, 10, min_date);
+        display_alert_restriction(dob, 6, 10, min_date);
     }
     if(level == '3') { //Level 2
         display_alert(dob, 7, 13, min_date);
@@ -728,6 +729,32 @@ function verify_age_level()
     }
 }
 
+function display_alert_restriction(dob, min_value, max_value, min_date)
+{
+    var today = new Date();
+    var min_age = Math.floor((min_date-dob) / (365.25 * 24 * 60 * 60 * 1000));
+    var max_age = Math.floor((today-dob) / (365.25 * 24 * 60 * 60 * 1000));
+
+    if(min_age < min_value) {
+        $('#id_age_min_restricted').val(1);
+        var msg1 = min_age_restriction_msg;
+        alert(msg1);
+        $('select#id_student_birthday_year').val("");
+        return false;
+    }
+    if(max_age > max_value) {
+        $('#id_age_max_restricted').val(1);
+        var msg2 = max_age_limit_msg;
+        if(confirm(msg2)){
+
+        }else{
+            $('select#id_student_birthday_year').val("");
+        }
+        return false;
+    }
+    return true;
+}
+
 function display_alert(dob, min_value, max_value, min_date)
 {
     var today = new Date();
@@ -737,8 +764,11 @@ function display_alert(dob, min_value, max_value, min_date)
     if(min_age < min_value) {
         $('#id_age_min_restricted').val(1);
         var msg1 = min_age_limit_msg;
-        alert(msg1);
-        $('select#id_student_birthday_year').val("");
+        if(confirm(msg1)){
+
+        }else{
+            $('select#id_student_birthday_year').val("");
+        }
         return false;
     }
     if(max_age > max_value) {
