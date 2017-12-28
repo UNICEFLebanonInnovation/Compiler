@@ -372,7 +372,7 @@ class EnrollmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('school_type', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('search_school', css_class='col-md-3'),
+                    Div('search_school', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('search_student', css_class='col-md-3'),
                     css_class='row',
@@ -480,7 +480,7 @@ class EnrollmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('last_school', css_class='col-md-3'),
+                    Div('last_school', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('last_education_year', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
