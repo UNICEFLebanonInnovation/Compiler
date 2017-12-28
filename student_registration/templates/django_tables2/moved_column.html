@@ -3,7 +3,7 @@
     {% trans "Moved?" %}
 </button>
 <div class="moving-date-block d-none" id="moving_date_block_{{ record.id }}">
-    <input class="form-control moving-date-input" itemscope="{{ record.id }}" id="moving_date_{{ record.id }}" type="text" />
+    <input class="form-control moving-date-input" itemscope="{{ record.id }}" id="moving_date_{{ record.id }}" type="text" placeholder="{% trans 'Moved date' %}" />
     <button class="btn btn-success save-moved-button" itemscope="{{ record.id }}" id="save_moved_button_{{ record.id }}">
         {% trans "Save" %}
     </button>
