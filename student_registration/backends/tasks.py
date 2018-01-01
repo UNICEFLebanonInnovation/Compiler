@@ -36,6 +36,8 @@ def export_2ndshift(params=None, return_data=False):
 
         _('Last formal education - result'),
         _('Last formal education - year'),
+        _('Last formal education - school shift'),
+        _('Last formal education - school type'),
         _('Last formal education - school'),
         _('Last formal education - level'),
 
@@ -91,6 +93,8 @@ def export_2ndshift(params=None, return_data=False):
             _(line.last_year_result) if line.last_year_result else '',
             line.last_education_year if line.last_education_year else '',
             _(line.last_school_type) if line.last_school_type else '',
+            _(line.last_school_shift) if line.last_school_shift else '',
+            line.last_school.name if line.last_school else '',
             line.last_education_level.name if line.last_education_level else '',
 
             line.number_in_previous_school,

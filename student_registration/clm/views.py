@@ -212,8 +212,9 @@ class BLNDashboardView(LoginRequiredMixin,
         completion_male = completion.filter(student__sex='Male')
         completion_female = completion.filter(student__sex='Female')
 
-        attendances_male = attendance.filter(student__sex='Male', participation__isnull=False)
-        attendances_female = attendance.filter(student__sex='Female', participation__isnull=False)
+        attendance = queryset.filter(participation__isnull=False)
+        attendances_male = attendance.filter(student__sex='Male')
+        attendances_female = attendance.filter(student__sex='Female')
 
         repeat_class = queryset.filter(learning_result='repeat_level')
         repeat_class_male = repeat_class.filter(student__sex='Male')
@@ -305,8 +306,9 @@ class RSDashboardView(LoginRequiredMixin,
         completion_male = completion.filter(student__sex='Male')
         completion_female = completion.filter(student__sex='Female')
 
-        attendances_male = attendance.filter(student__sex='Male', participation__isnull=False)
-        attendances_female = attendance.filter(student__sex='Female', participation__isnull=False)
+        attendance = queryset.filter(participation__isnull=False)
+        attendances_male = attendance.filter(student__sex='Male')
+        attendances_female = attendance.filter(student__sex='Female')
 
         repeat_class = queryset.filter(learning_result='repeat_level')
         repeat_class_male = repeat_class.filter(student__sex='Male')
@@ -399,8 +401,9 @@ class CBECEDashboardView(LoginRequiredMixin,
         completion_male = completion.filter(student__sex='Male')
         completion_female = completion.filter(student__sex='Female')
 
-        attendances_male = attendance.filter(student__sex='Male', participation__isnull=False)
-        attendances_female = attendance.filter(student__sex='Female', participation__isnull=False)
+        attendance = queryset.filter(participation__isnull=False)
+        attendances_male = attendance.filter(student__sex='Male')
+        attendances_female = attendance.filter(student__sex='Female')
 
         repeat_class = queryset.filter(learning_result='repeat_level')
         repeat_class_male = repeat_class.filter(student__sex='Male')

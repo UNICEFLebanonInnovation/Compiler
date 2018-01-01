@@ -223,6 +223,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_informal_edu_final_result',
         'deleted',
         'moved',
+        'last_moved_date',
         'dropout_status',
         'new_registry',
         'student_outreached',
@@ -386,6 +387,7 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
         'education_year',
         'registered',
         'student',
+        'moved_date',
         'school_from',
         'classroom',
         'section',
@@ -480,11 +482,20 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
 
 class GradingResource(resources.ModelResource):
     exam_term_name = fields.Field(column_name='Term')
+    enrollment_student = fields.Field(column_name='Student fullname')
+    enrollment_school_name = fields.Field(column_name='School name')
+    enrollment_school_number = fields.Field(column_name='School number')
+    enrollment_classroom_name = fields.Field(column_name='Class')
+    enrollment_section_name = fields.Field(column_name='Section')
 
     class Meta:
         model = EnrollmentGrading
         fields = (
-            'enrollment',
+            'enrollment_student',
+            'enrollment_school_name',
+            'enrollment_school_number',
+            'enrollment_classroom_name',
+            'enrollment_section_name',
             'exam_term_name',
             'exam_result_arabic',
             'exam_result_language',
@@ -510,6 +521,21 @@ class GradingResource(resources.ModelResource):
 
     def dehydrate_exam_term_name(self, obj):
         return obj.exam_term_name
+
+    def dehydrate_enrollment_student(self, obj):
+        return obj.enrollment_student
+
+    def dehydrate_enrollment_school_name(self, obj):
+        return obj.enrollment_school_name
+
+    def dehydrate_enrollment_school_number(self, obj):
+        return obj.enrollment_school_number
+
+    def dehydrate_enrollment_classroom_name(self, obj):
+        return obj.enrollment_classroom_name
+
+    def dehydrate_enrollment_section_name(self, obj):
+        return obj.enrollment_section_name
 
 
 class GradingAdmin(ImportExportModelAdmin):

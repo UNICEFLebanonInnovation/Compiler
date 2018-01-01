@@ -377,3 +377,6 @@ tr.odd {
 .error {
     color: red;
 }
+table th.moved_column {
+    min-width: 150px;
+}

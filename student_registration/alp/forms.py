@@ -406,7 +406,7 @@ class PreTestForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('school', css_class='col-md-3'),
+                    Div('school', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('level', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
@@ -737,7 +737,7 @@ class RegistrationForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('search_school', css_class='col-md-3'),
+                    Div('search_school', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('search_student', css_class='col-md-3'),
                     css_class='row',
