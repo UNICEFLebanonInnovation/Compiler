@@ -363,7 +363,7 @@ class BLNForm(CommonForm):
     #     widget=forms.CheckboxSelectMultiple,
     #     required=True,
     # )
-    YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 7, Person.CURRENT_YEAR - 2)))
+    YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 9, Person.CURRENT_YEAR)))
     YEARS_BLN.insert(0, ('', '---------'))
 
     student_birthday_year = forms.ChoiceField(
@@ -656,7 +656,7 @@ class BLNForm(CommonForm):
 
 class RSForm(CommonForm):
 
-    YEARS_RS = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 5)))
+    YEARS_RS = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 13, Person.CURRENT_YEAR - 3)))
     YEARS_RS.insert(0, ('', '---------'))
 
     student_birthday_year = forms.ChoiceField(
@@ -1198,7 +1198,7 @@ class RSForm(CommonForm):
 
 class CBECEForm(CommonForm):
 
-    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 15, Person.CURRENT_YEAR - 5)))
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 13, Person.CURRENT_YEAR - 3)))
     YEARS_CB.insert(0, ('', '---------'))
 
     student_birthday_year = forms.ChoiceField(
