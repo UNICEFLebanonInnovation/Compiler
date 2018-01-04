@@ -554,6 +554,12 @@ class RegistrationForm(forms.ModelForm):
         required=False, to_field_name='id',
         initial=0
     )
+    outreach_barcode = forms.RegexField(
+        label=_('Outreach barcode'),
+        regex=r'^([A-Z]{2})(\d{8})$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: AA11111111'}),
+        required=False
+    )
     student_first_name = forms.CharField(
         label=_("First name"),
         widget=forms.TextInput, required=True
@@ -752,6 +758,10 @@ class RegistrationForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('outreach_barcode', css_class='col-md-3', css_id='block_id_outreach_barcode'),
+                    HTML('<span style="padding-top: 25px;">' +
+                         _('The barcode is not required, enter a valid one or leave it empty') +
+                         '. <br/><a href="/static/images/barcode_example.png" target="_blank">' +
+                         _('Click to see the barcode') + '</a></span>'),
                     css_class='row',
                 ),
                 Div(
