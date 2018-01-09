@@ -380,7 +380,7 @@ class CLM(TimeStampedModel):
                            float(self.pre_test_score)) * 100.0, 2), '%')
             except ZeroDivisionError:
                 return 0.0
-        return 0
+        return 0.0
 
     def get_absolute_url(self):
         return '/clm/edit/%d/' % self.pk
@@ -475,7 +475,7 @@ class BLN(CLM):
         try:
             if self.pre_test and self.post_test:
                 return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
-                              float(self.pre_test[key])) * 100.0, 2)
+                              20.0) * 100.0, 2)
         except ZeroDivisionError:
             return 0.0
         return 0.0
@@ -737,7 +737,7 @@ class RS(CLM):
                     '%')
             except ZeroDivisionError:
                 return 0.0
-        return 0
+        return 0.0
 
     @property
     def motivation_improvement(self):
@@ -749,7 +749,7 @@ class RS(CLM):
                     '%')
             except ZeroDivisionError:
                 return 0.0
-        return 0
+        return 0.0
 
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
@@ -775,8 +775,11 @@ class RS(CLM):
         pre_test = getattr(self, 'pre_test_'+domain_mame)
         post_test = getattr(self, 'post_test_'+domain_mame)
         if pre_test and post_test:
-            return round(((float(post_test) - float(pre_test)) /
-                          float(pre_test)) * 100.0, 2)
+            try:
+                return round(((float(post_test) - float(pre_test)) /
+                              float(pre_test)) * 100.0, 2)
+            except ZeroDivisionError:
+                return 0.0
         return 0.0
 
     @property
