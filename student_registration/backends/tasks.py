@@ -366,7 +366,8 @@ def export_alp(params=None, return_data=False):
         _('Created by'),
         _('Modified by'),
         _('Creation date'),
-        _('Modification date')
+        _('Modification date'),
+        _('Re-enrolled'),
 
     ]
 
@@ -440,6 +441,7 @@ def export_alp(params=None, return_data=False):
             line.modified_by.username if line.modified_by else '',
             line.created,
             line.modified,
+            line.re_enrolled,
         ]
         data.append(content)
 
