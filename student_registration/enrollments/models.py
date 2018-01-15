@@ -485,10 +485,46 @@ class Enrollment(TimeStampedModel):
         return ''
 
     @property
+    def student_birthday(self):
+        return self.student.birthday
+
+    @property
+    def student_sex(self):
+        return self.student.sex
+
+    @property
     def student_age(self):
         if self.student:
             return self.student.age
         return 0
+
+    @property
+    def student_nationality(self):
+        return self.student.nationality
+
+    @property
+    def student_id_type(self):
+        return self.student.id_type
+
+    @property
+    def student_id_number(self):
+        return self.student.id_number
+
+    @property
+    def student_mother_fullname(self):
+        return self.student.mother_fullname
+
+    @property
+    def student_mother_nationality(self):
+        return self.student.mother_nationality
+
+    @property
+    def student_phone_number(self):
+        return self.student.phone_number
+
+    @property
+    def student_address(self):
+        return self.student.address
 
     def grading(self, term):
         if self.enrollment_gradings.count():

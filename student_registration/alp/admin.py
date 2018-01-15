@@ -591,12 +591,37 @@ class ToAgeFilter(admin.SimpleListFilter):
 class OutreachAdmin(ImportExportModelAdmin):
     resource_class = OutreachResource
     form = OutreachAdminForm
+    readonly_fields = (
+        'student',
+        'student_sex',
+        'student_birthday',
+        'student_age',
+        'student_nationality',
+        'student_id_type',
+        'student_id_number',
+        'student_mother_fullname',
+        'student_mother_nationality',
+        'student_phone_number',
+        'student_address',
+    )
     fieldsets = (
-        (None, {
-            'fields': ('student', 'school', 'owner', 'modified_by')
+        ('Student Info', {
+            'fields': (
+                'student',
+                'student_sex',
+                'student_birthday',
+                'student_age',
+                'student_nationality',
+                'student_id_type',
+                'student_id_number',
+                'student_mother_fullname',
+                'student_mother_nationality',
+                'student_phone_number',
+                'student_address',
+            )
         }),
         ('Current Situation', {
-            'fields': ('alp_round', 'registered_in_level', 'section')
+            'fields': ('school', 'alp_round', 'registered_in_level', 'section')
         }),
         ('Pre-test', {
             'classes': ('collapse',),
@@ -619,7 +644,12 @@ class OutreachAdmin(ImportExportModelAdmin):
                        'last_informal_edu_final_result'),
         }),
         ('Status options', {
-            'fields': ('status', 'deleted', 'dropout_status', 'new_registry', 'student_outreached', 'have_barcode',)
+            'fields': (
+                'owner',
+                'modified_by'
+                'status', 'deleted',
+                'dropout_status', 'new_registry',
+                'student_outreached', 'have_barcode',)
         }),
     )
     list_display = (
