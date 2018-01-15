@@ -556,7 +556,7 @@ class RegistrationForm(forms.ModelForm):
     )
     outreach_barcode = forms.RegexField(
         label=_('Outreach barcode'),
-        regex=r'^([A-Z]{2})(\d{8})$',
+        regex=r'^([A-Z]{2})(\d{8})|(-(\d{1}))$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: AA11111111'}),
         required=False
     )
