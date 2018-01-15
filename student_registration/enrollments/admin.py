@@ -202,35 +202,77 @@ class TermFilter(admin.SimpleListFilter):
 class EnrollmentAdmin(ImportExportModelAdmin):
     resource_class = EnrollmentResource
     form = EnrollmentAdminForm
-    fields = (
+    readonly_fields = (
         'student',
-        'school',
-        'registration_date',
-        'section',
-        'classroom',
-        'owner',
-        'status',
-        'education_year',
-        'last_education_level',
-        'last_school_type',
-        'last_school_shift',
-        'last_school',
-        'last_education_year',
-        'last_year_result',
-        'participated_in_alp',
-        # 'last_informal_edu_level',
-        'last_informal_edu_round',
-        'last_informal_edu_final_result',
-        'deleted',
-        'moved',
-        'last_moved_date',
-        'dropout_status',
-        'new_registry',
-        'student_outreached',
-        'have_barcode',
-        'number_in_previous_school',
-        'age_min_restricted',
-        'age_max_restricted',
+        'student_sex',
+        'student_birthday',
+        'student_age',
+        'student_nationality',
+        'student_id_type',
+        'student_id_number',
+        'student_mother_fullname',
+        'student_mother_nationality',
+        'student_phone_number',
+        'student_address',
+    )
+    fieldsets = (
+        ('Student Info', {
+            'fields': (
+                'student',
+                'student_sex',
+                'student_birthday',
+                'student_age',
+                'student_nationality',
+                'student_id_type',
+                'student_id_number',
+                'student_mother_fullname',
+                'student_mother_nationality',
+                'student_phone_number',
+                'student_address',
+            )
+        }),
+        ('Current Situation', {
+            'fields': (
+                'education_year',
+                'school',
+                'registration_date',
+                'classroom',
+                'section',
+            )
+        }),
+        ('Last formal education', {
+            'classes': ('collapse',),
+            'fields': (
+                'last_education_level',
+                'last_school_type',
+                'last_school_shift',
+                'last_school',
+                'last_education_year',
+                'last_year_result',
+            ),
+        }),
+        ('Last informal education', {
+            'classes': ('collapse',),
+            'fields': ('participated_in_alp',
+                       'last_informal_edu_round',
+                       'last_informal_edu_final_result'
+                       ),
+        }),
+        ('Status options', {
+            'fields': ('owner',
+                       'status',
+                       'deleted',
+                       'moved',
+                       'last_moved_date',
+                       'dropout_status',
+                       'new_registry',
+                       'student_outreached',
+                       'have_barcode',
+                       'number_in_previous_school',
+                       'age_min_restricted',
+                       'age_max_restricted',
+                       )
+        }),
     )
     list_display = (
         'student',
