@@ -695,7 +695,10 @@ class RS(CLM):
 
     @property
     def pretest_total(self):
-        return self.pre_test_arabic + self.pre_test_language + self.pre_test_math + self.pre_test_science
+        try:
+            return self.pre_test_arabic + self.pre_test_language + self.pre_test_math + self.pre_test_science
+        except TypeError:
+            return 0
 
     @property
     def pretest_result(self):
@@ -706,7 +709,10 @@ class RS(CLM):
 
     @property
     def posttest_total(self):
-        return self.post_test_arabic+self.post_test_language+self.post_test_math+self.post_test_science
+        try:
+            return self.post_test_arabic+self.post_test_language+self.post_test_math+self.post_test_science
+        except TypeError:
+            return 0
 
     @property
     def posttest_result(self):
@@ -941,6 +947,8 @@ class CBECE(CLM):
             return ''
 
     def domain_improvement(self, domain_mame):
+        if not self.cycle_id:
+            return 0.0
         program_cycle = str(self.cycle_id)
         key = '{}/{}{}'.format(
             'CBECE_ASSESSMENT',
