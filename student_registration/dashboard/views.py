@@ -97,18 +97,20 @@ class Registrations2ndShiftOverallView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
 
+        current = self.request.GET.get('current', 1)
         now = datetime.datetime.now()
         governorates = Location.objects.exclude(parent__isnull=False)
         education_levels = ClassRoom.objects.all()
         level_by_age = {}
+        queryset = self.queryset.filter(education_year_id=current)
 
         return {
-                'registrations': self.queryset.count(),
-                'males': self.queryset.filter(student__sex='Male').count(),
-                'females': self.queryset.filter(student__sex='Female').count(),
+                'registrations': queryset.count(),
+                'males': queryset.filter(student__sex='Male').count(),
+                'females': queryset.filter(student__sex='Female').count(),
                 'education_levels': education_levels,
                 'governorates': governorates,
-                'enrollments': self.queryset,
+                'enrollments': queryset,
                 'level_by_age': level_by_age
         }
 
