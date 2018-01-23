@@ -1,12 +1,13 @@
 
 
-def find_attendances(governorate=None, student_id=None, from_date=None, to_date=None):
+def find_attendances(governorate=None, student_id=None, from_date=None, to_date=None, filter_by_status=None):
     from student_registration.enrollments.models import Enrollment
     from student_registration.alp.models import Outreach, ALPRound
     from .models import Attendance
 
     alp_round = ''
     queryset = Attendance.objects.all()
+    queryset = queryset.exclude(close_reason__isnull=True).exclude(students__isnull=True)
 
     if governorate:
         queryset = queryset.filter(school__location__parent_id=int(governorate))
@@ -37,8 +38,8 @@ def find_attendances(governorate=None, student_id=None, from_date=None, to_date=
 
     data = []
     for line in queryset:
-        if not line.students or line.close_reason:
-            continue
+        # if not line.students or line.close_reason:
+        #     continue
         if not isinstance(line.students, dict):
             continue
         for level_section in line.students:
@@ -48,6 +49,8 @@ def find_attendances(governorate=None, student_id=None, from_date=None, to_date=
                 continue
             for student in students:
                 if student_id and not student_id == student['student_id']:
+                    continue
+                if filter_by_status and student['status'] == "True":
                     continue
                 content = {
                     'school_cerd': line.school.number,
