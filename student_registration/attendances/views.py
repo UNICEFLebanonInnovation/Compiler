@@ -61,7 +61,8 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
             data = find_attendances(governorate=self.request.GET.get('governorate', None),
                                     student_id=self.request.GET.get('student', None),
                                     from_date=self.request.GET.get('from_date', None),
-                                    to_date=self.request.GET.get('to_date', None)
+                                    to_date=self.request.GET.get('to_date', None),
+                                    filter_by_status=request.GET.get('status', False)
                                     )
             return JsonResponse(json.dumps(data), safe=False)
 

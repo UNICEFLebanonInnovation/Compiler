@@ -18,7 +18,7 @@ from django_tables2.export.views import ExportMixin
 
 from .models import Outreach, ALPRound
 from .forms import RegistrationForm, PreTestGradingForm, PostTestGradingForm, OutreachForm, PreTestForm
-from .serializers import OutreachSerializer, GeneralSerializer, OutreachSmallSerializer
+from .serializers import OutreachSerializer, GeneralSerializer, OutreachSmallSerializer, GradingSerializer
 from .tables import BootstrapTable, OutreachTable, PreTestTable, PostTestTable, SchoolTable
 from .filters import OutreachFilter, PreTestFilter, PostTestFilter, SchoolFilter
 from student_registration.outreach.models import Child
