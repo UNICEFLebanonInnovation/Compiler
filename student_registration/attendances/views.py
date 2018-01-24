@@ -107,6 +107,25 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
         return super(AttendanceViewSet, self).partial_update(request)
 
 
+class AbsenteeViewSet(mixins.ListModelMixin,
+                      viewsets.GenericViewSet):
+
+    model = Absentee
+    queryset = Absentee.objects.all()
+    serializer_class = AbsenteeSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.request.GET.get('days', None):
+            return self.queryset.filter(absent_days__lte=self.request.GET.get('days', None))
+        return []
+
+    # def list(self, request, *args, **kwargs):
+    #     if self.request.GET.get('days', None):
+    #         return self.queryset.filter(absent_days=self.request.GET.get('days', None))
+    #     return JsonResponse({'status': status.HTTP_200_OK})
+
+
 class AttendanceView(LoginRequiredMixin,
                      GroupRequiredMixin,
                      ListView):
