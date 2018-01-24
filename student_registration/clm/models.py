@@ -393,14 +393,14 @@ class CLM(TimeStampedModel):
     def score(self, keys, stage):
         assessment = getattr(self, stage, 'pre_test')
         score = stage+'_score'
-        marks = {key: int(assessment.get(key, 0)) for key in keys}
+        marks = {key: float(assessment.get(key, 0)) for key in keys}
         total = sum(marks.values())
         setattr(self, score, total)
 
     def get_score_value(self, key, stage):
         assessment = getattr(self, stage, 'pre_test')
         if assessment:
-            return int(assessment.get(key, 0))
+            return float(assessment.get(key, 0))
         return 0
 
     class Meta:
