@@ -477,7 +477,7 @@ class Outreach(TimeStampedModel):
 
     @property
     def post_exam_total(self):
-        total = 0
+        total = 0.0
         if self.post_exam_result_arabic:
             total += self.post_exam_result_arabic
         if self.post_exam_result_language:
