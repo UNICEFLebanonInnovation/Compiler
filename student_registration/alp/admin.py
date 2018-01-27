@@ -646,7 +646,7 @@ class OutreachAdmin(ImportExportModelAdmin):
         ('Status options', {
             'fields': (
                 'owner',
-                'modified_by'
+                'modified_by',
                 'status', 'deleted',
                 'dropout_status', 'new_registry',
                 'student_outreached', 'have_barcode',)
