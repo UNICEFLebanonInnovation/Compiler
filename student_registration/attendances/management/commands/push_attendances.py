@@ -13,13 +13,14 @@ class Command(BaseCommand):
         parser.add_argument('--school_type', type=str, default=None)
 
     def handle(self, *args, **options):
-        school_type = options['school_type']
-
-        if options['schools']:
-            for school in options['schools']:
-                set_app_attendances(
-                    school_number=school,
-                    school_type=school_type)
-        else:
-            set_app_attendances(school_type=school_type)
+        pass
+        # school_type = options['school_type']
+        #
+        # if options['schools']:
+        #     for school in options['schools']:
+        #         set_app_attendances(
+        #             school_number=school,
+        #             school_type=school_type)
+        # else:
+        #     set_app_attendances(school_type=school_type)
 

@@ -74,7 +74,8 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
         """
         try:
             instance = Attendance.objects.get(school=int(request.POST.get('school')),
-                                              attendance_date=request.POST.get('attendance_date'))
+                                              attendance_date=request.POST.get('attendance_date'),
+                                              school_type=request.POST.get('school_type'))
             return JsonResponse({'status': status.HTTP_200_OK, 'data': instance.id})
         except Attendance.DoesNotExist:
             serializer = self.get_serializer(data=request.data)
@@ -164,7 +165,8 @@ class AttendanceView(LoginRequiredMixin,
         try:
             attendance = Attendance.objects.get(
                 school_id=school.id,
-                attendance_date=selected_date
+                attendance_date=selected_date,
+                school_type='2nd-shift'
             )
         except Attendance.DoesNotExist:
             attendance = ''
@@ -248,7 +250,7 @@ class AttendanceView(LoginRequiredMixin,
         if level and section:
             students = queryset.filter(classroom_id=level.id,
                                        section_id=section.id,
-                                       registration_date__lte=selected_date
+                                       registration_date__lte=selected_date,
                                        ).order_by('student__first_name', 'student__father_name', 'student__last_name')
             for line in students:
                 student = line.student
@@ -276,7 +278,7 @@ class AttendanceView(LoginRequiredMixin,
             })
 
         return {
-            'school_type': '2ndshift',
+            'school_type': '2nd-shift',
             'attendance': attendance,
             'disable_attendance': disable_attendance,
             'current_level_section': current_level_section,
@@ -342,7 +344,8 @@ class AttendanceALPView(LoginRequiredMixin,
         try:
             attendance = Attendance.objects.get(
                 school_id=school.id,
-                attendance_date=selected_date
+                attendance_date=selected_date,
+                school_type='ALP'
             )
         except Attendance.DoesNotExist:
             attendance = ''
@@ -446,7 +449,7 @@ class AttendanceALPView(LoginRequiredMixin,
             })
 
         return {
-            'school_type': 'alp',
+            'school_type': 'ALP',
             'attendance': attendance,
             'disable_attendance': disable_attendance,
             'current_level_section': current_level_section,
@@ -475,9 +478,10 @@ class ExportView(LoginRequiredMixin, ListView):
         date_format = '%Y-%m-%d'
         current_date = datetime.datetime.now().strftime(date_format)
         selected_date = self.request.GET.get('date', current_date)
+        school_type = self.request.GET.get('school_type', '2nd-shift')
 
         school = self.request.user.school_id
-        data = export_attendance({'date': selected_date, 'school': school}, return_data=True)
+        data = export_attendance({'date': selected_date, 'school': school, 'school_type': school_type}, return_data=True)
 
         response = HttpResponse(
             data,

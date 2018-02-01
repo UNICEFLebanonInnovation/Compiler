@@ -7,4 +7,5 @@ class Command(BaseCommand):
     help = 'Flatten attendance data from CouchBase'
 
     def handle(self, *args, **options):
-        flatten_attendance()
+        pass
+        # flatten_attendance()

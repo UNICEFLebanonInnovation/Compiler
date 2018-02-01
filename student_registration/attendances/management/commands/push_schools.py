@@ -9,4 +9,5 @@ class Command(BaseCommand):
     help = 'Push Schools data to CouchBase'
 
     def handle(self, *args, **options):
-        set_app_schools()
+        pass
+        # set_app_schools()

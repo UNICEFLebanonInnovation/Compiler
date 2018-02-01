@@ -130,7 +130,8 @@ def calculate_attendances_by_student():
     from .models import Attendance, Absentee
 
     Absentee.objects.all().delete()
-    queryset = Attendance.objects.all()
+    queryset = Attendance.objects.exclude(close_reason__isnull=False).exclude(students__isnull=True)
+    queryset = queryset.order_by('attendance_date')
 
     for line in queryset:
         if not line.students:
@@ -143,6 +144,33 @@ def calculate_attendances_by_student():
 
 @app.task
 def calculate_absentees(attendance, students):
+    from .models import Absentee
+
+    for student in students:
+        try:
+            absentee = Absentee.objects.get(student_id=student['student_id'])
+        except Absentee.DoesNotExist:
+            absentee = Absentee.objects.create(
+                student_id=student['student_id'],
+                school=attendance.school,
+                absent_days=0,
+                attended_days=0
+            )
+
+        if student['status'] == 'True':
+            absentee.absent_days = 0
+            absentee.attended_days += 1
+            absentee.last_attendance_date = attendance.attendance_date
+        elif student['status'] == 'False':
+            absentee.last_absent_date = attendance.attendance_date
+            absentee.absent_days += 1
+            absentee.attended_days = 0
+
+        absentee.save()
+
+
+@app.task
+def calculate_absentees2(attendance, students):
     from .models import Absentee
 
     for student in students:
@@ -174,3 +202,21 @@ def calculate_absentees(attendance, students):
                 absentee.attended_days = 0
 
         absentee.save()
+
+
+@app.task
+def split_attendance(school_type='2nd-shift'):
+    from .models import Attendance
+    from student_registration.alp.models import ALPRound
+    from student_registration.schools.models import EducationYear
+
+    queryset = Attendance.objects.all()
+    if school_type == 'ALP':
+        queryset = Attendance.objects.filter(school___is_alp=True)
+        alp_round = ALPRound.objects.get(current_round=True)
+        queryset.update(alp_round=alp_round)
+    else:
+        education_year = EducationYear.objects.get(current_year=True)
+        queryset.update(education_year=education_year)
+
+    queryset.update(school_type=school_type)

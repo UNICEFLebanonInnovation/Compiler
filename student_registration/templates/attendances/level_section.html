@@ -34,7 +34,7 @@
                                     <span style="padding-top: 7px; display: block; ">{{ selected_date_view }}</span>
                                 </li>
                                 <li class="breadcrumb-item">
-                                    {% if school_type == 'alp' %}
+                                    {% if school_type == 'ALP' %}
                                     <a class="btn btn-info" href="{% url "attendances:attendance_alp" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
                                     {% else %}
                                     <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
@@ -114,7 +114,7 @@
                             <span style="padding-top: 7px; display: block; ">{{ selected_date_view }}</span>
                         </li>
                         <li class="breadcrumb-item">
-                            {% if school_type == 'alp' %}
+                            {% if school_type == 'ALP' %}
                             <a class="btn btn-info" href="{% url "attendances:attendance_alp" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
                             {% else %}
                             <a class="btn btn-info" href="{% url "attendances:attendance" %}?date={{ selected_date }}">{% trans "Back to section list" %}</a>
@@ -141,6 +141,7 @@
     <script type="text/javascript" src="{% static 'js/attendance.js' %}"></script>
     <script>
         var user_token = '{{ user_token }}';
+        var school_type = '{{ school_type }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
     </script>
 
