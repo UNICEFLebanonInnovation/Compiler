@@ -756,8 +756,8 @@ class RegistrationForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Basic Data') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('outreach_barcode', css_class='col-md-3', css_id='block_id_outreach_barcode'),
+                    HTML('<span class="badge badge-default">0</span>'),
+                    Div('outreach_barcode', css_class='col-md-3'),
                     HTML('<span style="padding-top: 25px;">' +
                          _('The barcode is not required, enter a valid one or leave it empty') +
                          '. <br/><a href="/static/images/barcode_example.png" target="_blank">' +

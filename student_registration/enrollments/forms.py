@@ -395,7 +395,7 @@ class EnrollmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('registration_date', css_class='col-md-3'),
                     HTML('<span class="badge badge-default '+display_registry+'">2</span>'),
-                    Div('outreach_barcode', css_class='col-md-3', css_id='block_id_outreach_barcode'),
+                    Div('outreach_barcode', css_class='col-md-3'),
                     HTML('<span style="padding-top: 25px;">' +
                          _('The barcode is not required, enter a valid one or leave it empty') +
                          '. <br/><a href="/static/images/barcode_example.png" target="_blank">' +

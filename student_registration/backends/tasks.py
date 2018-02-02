@@ -39,6 +39,7 @@ def export_2ndshift(params=None, return_data=False):
         _('Last formal education - school shift'),
         _('Last formal education - school type'),
         _('Last formal education - school'),
+        _('Last formal education - CERD'),
         _('Last formal education - level'),
 
         _('Serial number in previous school'),
@@ -95,6 +96,7 @@ def export_2ndshift(params=None, return_data=False):
             _(line.last_school_type) if line.last_school_type else '',
             _(line.last_school_shift) if line.last_school_shift else '',
             line.last_school.name if line.last_school else '',
+            line.last_school.number if line.last_school else '',
             line.last_education_level.name if line.last_education_level else '',
 
             line.number_in_previous_school,
@@ -388,11 +390,12 @@ def export_alp(params=None, return_data=False):
             student.father_name,
             student.last_name,
             student.mother_fullname,
-            student.birthday_year,
-            student.birthday_month,
 
             student.birthday_day,
+            student.birthday_month,
+            student.birthday_year,
             student.age,
+
             student.sex,
             student.nationality.name if student.nationality else '',
             student.mother_nationality.name if student.mother_nationality else '',
