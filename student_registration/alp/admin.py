@@ -37,9 +37,9 @@ class OutreachResource(resources.ModelResource):
     student_age = fields.Field(column_name='Student age')
     exam_total = fields.Field(column_name='Total pre test')
     post_exam_total = fields.Field(column_name='Total post test')
-    referred_to = fields.Field(column_name='Referred to level')
-    passed_pre = fields.Field(column_name='Passed the Pre-test')
-    passed_post = fields.Field(column_name='Passed the Post-test')
+    # referred_to = fields.Field(column_name='Referred to level')
+    # passed_pre = fields.Field(column_name='Passed the Pre-test')
+    # passed_post = fields.Field(column_name='Passed the Post-test')
     re_enrolled = fields.Field(column_name='Re-enrolled')
 
     class Meta:
@@ -92,7 +92,7 @@ class OutreachResource(resources.ModelResource):
             'post_exam_result_math',
             'post_exam_result_science',
             'post_exam_total',
-            'refer_to_level',
+            'refer_to_level__name',
             'post_comment',
             're_enrolled',
             'last_informal_edu_final_result__name',
