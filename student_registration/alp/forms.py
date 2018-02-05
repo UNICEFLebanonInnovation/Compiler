@@ -31,7 +31,7 @@ YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, Person.CURRENT_YEAR+1))
 EDUCATION_YEARS.append(('na', 'n/a'))
 
-YEARS = list(((str(x), x) for x in range(Person.CURRENT_YEAR-20, Person.CURRENT_YEAR-2)))
+YEARS = list(((str(x), x) for x in range(Person.CURRENT_YEAR-18, Person.CURRENT_YEAR-5)))
 YEARS.insert(0, ('', '---------'))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
