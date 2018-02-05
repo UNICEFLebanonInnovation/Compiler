@@ -481,8 +481,7 @@ class ExportView(LoginRequiredMixin, ListView):
         school_type = self.request.GET.get('school_type', '2nd-shift')
 
         school = self.request.user.school_id
-        # data = export_attendance({'date': selected_date, 'school': school, 'school_type': school_type}, return_data=True)
-        data = export_attendance({'school_type': school_type}, return_data=True)
+        data = export_attendance({'date': selected_date, 'school': school, 'school_type': school_type}, return_data=True)
 
         response = HttpResponse(
             data,
