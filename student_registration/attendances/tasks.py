@@ -212,7 +212,7 @@ def split_attendance(school_type='2nd-shift'):
 
     queryset = Attendance.objects.all()
     if school_type == 'ALP':
-        queryset = Attendance.objects.filter(school___is_alp=True)
+        queryset = Attendance.objects.filter(school__is_alp=True)
         alp_round = ALPRound.objects.get(current_round=True)
         queryset.update(alp_round=alp_round)
     else:
