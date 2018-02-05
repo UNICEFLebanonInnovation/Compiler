@@ -31,7 +31,7 @@ YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 EDUCATION_YEARS = list((str(x-1)+'/'+str(x), str(x-1)+'/'+str(x)) for x in range(2001, Person.CURRENT_YEAR+1))
 EDUCATION_YEARS.append(('na', 'n/a'))
 
-YEARS = list(((str(x), x) for x in range(Person.CURRENT_YEAR-20, Person.CURRENT_YEAR-2)))
+YEARS = list(((str(x), x) for x in range(Person.CURRENT_YEAR-18, Person.CURRENT_YEAR-5)))
 YEARS.insert(0, ('', '---------'))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
@@ -171,6 +171,7 @@ class OutreachForm(forms.ModelForm):
         label=_("Registered in UNHCR"),
         widget=forms.Select, required=True,
         choices=YES_NO_CHOICE,
+        initial=1
     )
     student_id_type = forms.ModelChoiceField(
         label=_("ID type"),
@@ -756,8 +757,8 @@ class RegistrationForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Basic Data') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('outreach_barcode', css_class='col-md-3', css_id='block_id_outreach_barcode'),
+                    HTML('<span class="badge badge-default">0</span>'),
+                    Div('outreach_barcode', css_class='col-md-3'),
                     HTML('<span style="padding-top: 25px;">' +
                          _('The barcode is not required, enter a valid one or leave it empty') +
                          '. <br/><a href="/static/images/barcode_example.png" target="_blank">' +

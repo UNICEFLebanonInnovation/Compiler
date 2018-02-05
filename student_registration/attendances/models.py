@@ -16,7 +16,9 @@ from student_registration.schools.models import (
     Section,
     ClassRoom,
     EducationLevel,
+    EducationYear
 )
+from student_registration.alp.models import ALPRound
 
 
 class Attendance(TimeStampedModel):
@@ -97,6 +99,17 @@ class Attendance(TimeStampedModel):
     total_attended_female = models.IntegerField(blank=True, null=True)
     total_absent_male = models.IntegerField(blank=True, null=True)
     total_absent_female = models.IntegerField(blank=True, null=True)
+    school_type = models.CharField(max_length=20, blank=True, null=True, default=None)
+    education_year = models.ForeignKey(
+        EducationYear,
+        blank=True, null=True,
+        related_name='+',
+    )
+    alp_round= models.ForeignKey(
+        ALPRound,
+        blank=True, null=True,
+        related_name='+',
+    )
 
     class Meta:
         # ordering = ['attendance_date']

@@ -1,4 +1,19 @@
 
+def find_absentees(governorate=None, from_date=None, to_date=None):
+    from .models import Attendance
+
+    queryset = Attendance.objects.all()
+    queryset = queryset.exclude(close_reason__isnull=False).exclude(students__isnull=True)
+
+    if governorate:
+        queryset = queryset.filter(school__location__parent_id=int(governorate))
+
+    if from_date and to_date:
+        queryset = queryset.filter(
+            attendance_date__gte=from_date,
+            attendance_date__lte=to_date,
+        )
+
 
 def find_attendances(governorate=None, student_id=None, from_date=None, to_date=None, filter_by_status=None):
     from student_registration.enrollments.models import Enrollment
