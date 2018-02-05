@@ -62,12 +62,12 @@ class OutreachTable(CommonTable):
             'student.nationality',
             'student.mother_fullname',
             'student.mother_nationality',
-            'student_registered_in_unhcr',
+            'student.registered_in_unhcr',
             'student.id_type',
             'student.id_number',
             'student.address',
-            'student_phone',
-            'student_phone_prefix',
+            'student.phone',
+            'student.phone_prefix',
         )
 
 
