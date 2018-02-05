@@ -158,7 +158,7 @@ def export_2ndshift_gradings(params=None, return_data=False):
     current = EducationYear.objects.get(current_year=True)
 
     title = '2nd-shift-grading-current'
-    queryset = EnrollmentGrading.objects.filter(enrollment__education_year=current)
+    queryset = EnrollmentGrading.objects.exclude(enrollment__isnull=True).filter(enrollment__education_year=current)
     if 'school' in params:
         queryset = queryset.filter(enrollment__school_id=params['school'])
     if 'classroom' in params and params['classroom']:
@@ -466,12 +466,21 @@ def export_attendance(params=None, return_data=False):
         queryset = queryset.filter(school_id=params['school'])
     if 'date' in params:
         queryset = queryset.filter(attendance_date=params['date'])
+    if 'school_type' in params:
+        school_type = params['school_type']
+        queryset = queryset.filter(school_type=school_type)
+        if school_type == 'ALP':
+            queryset = queryset.filter(alp_round__current_round=True)
+        if school_type == '2nd-shift':
+            queryset = queryset.filter(education_year__current_year=True)
 
     data = tablib.Dataset()
 
     data.headers = [
         _('School number'),
         _('School'),
+        _('School type'),
+        _('Education year/ALP round'),
         _('District'),
         _('Governorate'),
 
@@ -495,6 +504,11 @@ def export_attendance(params=None, return_data=False):
 
     content = []
     for line in queryset:
+        school = line.school
+        school_location = school.location
+        school_location_parent = school_location.parent
+        education_year = line.education_year
+        alp_round = line.alp_round
         if not line.students:
             continue
         for level_section in line.students:
@@ -502,10 +516,12 @@ def export_attendance(params=None, return_data=False):
             students = attendances['students']
             for student in students:
                 content = [
-                    line.school.number,
-                    line.school.name,
-                    line.school.location.name,
-                    line.school.location.parent.name,
+                    school.number,
+                    school.name,
+                    line.school_type,
+                    education_year.name if education_year else alp_round.name,
+                    school_location.name,
+                    school_location_parent.name,
 
                     line.attendance_date,
                     line.validation_date,

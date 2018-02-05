@@ -33,7 +33,7 @@
                                 <li class="breadcrumb-item">
                                     <select name="dates" id="dates" class="form-control">
                                         {% for date in dates %}
-                                            {% if school_type == 'alp' %}
+                                            {% if school_type == 'ALP' %}
                                             <option value="{{ date.value }}" {% if date.value == selected_date %}selected="selected"{% endif %} data-action="{% url "attendances:attendance_alp" %}?date={{ date.value }}">{{ date.label }}</option>
                                             {% else %}
                                             <option value="{{ date.value }}" {% if date.value == selected_date %}selected="selected"{% endif %} data-action="{% url "attendances:attendance" %}?date={{ date.value }}">{{ date.label }}</option>
@@ -43,7 +43,7 @@
                                 </li>
                                 <li class="breadcrumb-item"><span style="margin-top: 5px;display: inline-block;">{{ school }}</span></li>
                                 <li class="breadcrumb-item">
-                                    <a href="{% url 'attendances:export' %}?date={{ selected_date }}" class="btn btn-success">{% trans "Export attendance" %}</a>
+                                    <a href="{% url 'attendances:export' %}?date={{ selected_date }}&school_type={{ school_type }}" class="btn btn-success">{% trans "Export attendance" %}</a>
                                 </li>
                                 <li class="absolute-right-15 absolute-top-15" style="font-size: 20px"><span class="badge badge-primary">{{ total }}</span></li>
                             </ol>
@@ -83,7 +83,7 @@
                 <input type="hidden" name="school" value="{{ request.user.school_id }}" id="school" />
                 <input type="hidden" name="owner" value="{{ request.user.id }}" id="owner" />
                 {% for row in levels_by_sections %}
-                    {% if school_type == 'alp' %}
+                    {% if school_type == 'ALP' %}
                 <a class="row row-class {% if row.attendance_taken or row.school_closed %}attendance_done{% else %}attendance_not_done{% endif %}"
                    href="{% url "attendances:attendance_alp" %}?date={{ selected_date }}&level={{ row.level }}&section={{ row.section }}">
                     {% else %}
@@ -143,6 +143,7 @@
     <script type="text/javascript" src="{% static 'js/attendance.js' %}"></script>
     <script>
         var user_token = '{{ user_token }}';
+        var school_type = '{{ school_type }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
     </script>
 

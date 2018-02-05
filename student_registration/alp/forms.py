@@ -171,6 +171,7 @@ class OutreachForm(forms.ModelForm):
         label=_("Registered in UNHCR"),
         widget=forms.Select, required=True,
         choices=YES_NO_CHOICE,
+        initial=1
     )
     student_id_type = forms.ModelChoiceField(
         label=_("ID type"),

@@ -9,4 +9,5 @@ class Command(BaseCommand):
     help = 'Push Users data to CouchBase'
 
     def handle(self, *args, **options):
-        set_app_users()
+        pass
+        # set_app_users()

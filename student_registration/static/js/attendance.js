@@ -2,11 +2,14 @@
  * Created by ali on 10/13/17.
  */
 
+var school_type = null;
+
 $(document).ready(function(){
 
     $(document).on('click', '.closing-reason-b', function () {
         if(confirm($(this).attr('translation'))){
             var data = {
+                school_type: school_type,
                 owner: $('input#owner').val(),
                 attendance_date: $('select#dates').val(),
                 school: $('input#school').val(),
@@ -31,6 +34,7 @@ $(document).ready(function(){
             var level_section = get_level_section_attendances(false, false);
 
             var data = {
+                    school_type: school_type,
                     owner: $('input#owner').val(),
                     attendance_date: $('input#attendance_date').val(),
                     school: $('input#school').val(),
@@ -53,6 +57,7 @@ $(document).ready(function(){
 
         if(confirm($(this).attr('translation_ok'))) {
             var data = {
+                school_type: school_type,
                 validation_owner: $('input#owner').val(),
                 validation_status: true,
                 validation_date: yyyy+'-'+mm+'-'+dd
@@ -83,6 +88,7 @@ $(document).ready(function(){
             };
 
             var data = {
+                    school_type: school_type,
                     owner: $('input#owner').val(),
                     attendance_date: $('input#attendance_date').val(),
                     school: $('input#school').val(),
@@ -114,6 +120,7 @@ $(document).ready(function(){
             };
 
             var data = {
+                    school_type: school_type,
                     owner: $('input#owner').val(),
                     attendance_date: $('input#attendance_date').val(),
                     school: $('input#school').val(),

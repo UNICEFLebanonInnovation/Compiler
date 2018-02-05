@@ -9,5 +9,6 @@ class Command(BaseCommand):
     help = 'Pull attendance data from CouchBase'
 
     def handle(self, *args, **options):
-        import_docs()
-        flatten_attendance()
+        pass
+        # import_docs()
+        # flatten_attendance()
