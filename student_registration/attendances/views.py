@@ -166,7 +166,8 @@ class AttendanceView(LoginRequiredMixin,
             attendance = Attendance.objects.get(
                 school_id=school.id,
                 attendance_date=selected_date,
-                school_type='2nd-shift'
+                school_type='2nd-shift',
+                education_year__current_year=True
             )
         except Attendance.DoesNotExist:
             attendance = ''
@@ -177,9 +178,9 @@ class AttendanceView(LoginRequiredMixin,
         if self.request.GET.get('section', 0):
             section = Section.objects.get(id=int(self.request.GET.get('section', 0)))
 
-        education_year = EducationYear.objects.get(current_year=True)
+        # education_year = EducationYear.objects.get(current_year=True)
         queryset = Enrollment.objects.exclude(last_moved_date__lt=selected_date,
-                                              moved=True).filter(school_id=school, education_year=education_year)
+                                              moved=True).filter(school_id=school, education_year__current_year=True)
         # queryset = Enrollment.objects.exclude(moved=True).filter(school_id=school, education_year=education_year)
         registrations = queryset.filter(
             classroom__isnull=False,
@@ -345,7 +346,8 @@ class AttendanceALPView(LoginRequiredMixin,
             attendance = Attendance.objects.get(
                 school_id=school.id,
                 attendance_date=selected_date,
-                school_type='ALP'
+                school_type='ALP',
+                alp_round__current_round=True
             )
         except Attendance.DoesNotExist:
             attendance = ''
