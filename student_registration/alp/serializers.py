@@ -28,6 +28,7 @@ class OutreachSerializer(serializers.ModelSerializer):
     student_phone = serializers.CharField(source='student.phone', required=False)
     student_phone_prefix = serializers.CharField(source='student.phone_prefix', required=False)
     student_id_number = serializers.CharField(source='student.id_number')
+    student_registered_in_unhcr = serializers.CharField(source='student.registered_in_unhcr', required=False)
     student_id_type = serializers.CharField(source='student.id_type')
     student_id_type_name = serializers.CharField(source='student.id_type.name', read_only=True)
     student_number = serializers.CharField(source='student.number', read_only=True)
@@ -133,6 +134,7 @@ class OutreachSerializer(serializers.ModelSerializer):
             'student_phone',
             'student_phone_prefix',
             'student_id_number',
+            'student_registered_in_unhcr',
             'student_id_type',
             'student_id_type_name',
             'student_number',
@@ -240,6 +242,7 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
     student_phone = serializers.CharField(source='student.phone', required=False)
     student_phone_prefix = serializers.CharField(source='student.phone_prefix', required=False)
     student_id_number = serializers.CharField(source='student.id_number', required=False)
+    student_registered_in_unhcr = serializers.CharField(source='student.registered_in_unhcr', required=False)
     student_id_type = serializers.CharField(source='student.id_type', required=False)
     student_nationality = serializers.CharField(source='student.nationality', required=False)
     student_mother_nationality = serializers.CharField(source='student.mother_nationality', required=False)
@@ -309,6 +312,7 @@ class OutreachSmallSerializer(serializers.ModelSerializer):
             'student_phone_prefix',
             'student_id_number',
             'student_id_type',
+            'student_registered_in_unhcr',
             'student_address',
             'school',
             'exam_result_arabic',
