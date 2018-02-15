@@ -263,6 +263,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
             'fields': ('owner',
                        'status',
                        'deleted',
+                       # 'disabled',
                        'moved',
                        'last_moved_date',
                        'dropout_status',

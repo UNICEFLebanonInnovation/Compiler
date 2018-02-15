@@ -106,32 +106,48 @@ def find_attendances_gap_grouped(days):
 
 @app.task
 def dropout_students(from_date, to_date):
-    from .models import Attendance, Absentee
+    from .models import Absentee
 
-    queryset = Attendance.objects.exclude(total_absences=0).exclude(close_reason__isnull=False)
-    # queryset = queryset.filter(
-    #     attendance_date__gte=from_date,
-    #     attendance_date__lte=to_date
-    # )
+    queryset = Absentee.objects.exclude(absent_days__lt=10)
+        # .exclude(dropout_status=True)
+        # .exclude(disabled=True)
+        # .exclude(student__student_enrollment__dropout_status=True)
+        # .exclude(student__student_enrollment__disabled=True)
 
-    for line in queryset:
-        if not line.students:
+    to_disable = queryset.filter(absent_days__gte=10, absent_days__lt=15)
+    to_dropout = queryset.filter(absent_days__gte=15)
+
+    # to_dropout.update(dropout_status=True)
+    # to_disable.update(disabled=True)
+
+    for line in to_disable:
+        registry = line.student.last_enrollment()
+        if not registry:
             continue
-        for level_section in line.students:
-            attendances = line.students[level_section]
-            students = attendances['students']
-            for student in students:
-                continue
+        registry.update(disabled=True)
+
+    for line in to_dropout:
+        registry = line.student.last_enrollment()
+        if not registry:
+            continue
+        registry.update(dropout_status=True)
 
 
 @app.task
-def calculate_attendances_by_student():
+def calculate_attendances_by_student(from_date=None, to_date=None):
     from .utils import calculate_absentees
     from .models import Attendance, Absentee
 
-    Absentee.objects.all().delete()
-    queryset = Attendance.objects.exclude(close_reason__isnull=False).exclude(students__isnull=True)
-    queryset = queryset.order_by('attendance_date')
+    queryset = Attendance.objects.exclude(close_reason__isnull=False)\
+        .exclude(students__isnull=True).order_by('attendance_date')
+
+    if not from_date:
+        Absentee.objects.all().delete()
+
+    if from_date:
+        queryset = queryset.filter(attendance_date__gte=from_date)
+    if to_date:
+        queryset = queryset.filter(attendance_date__lte=to_date)
 
     for line in queryset:
         if not line.students:
@@ -154,17 +170,21 @@ def calculate_absentees(attendance, students):
                 student_id=student['student_id'],
                 school=attendance.school,
                 absent_days=0,
-                attended_days=0
+                attended_days=0,
+                total_attended_days=0,
+                total_absent_days=0
             )
 
         if student['status'] == 'True':
             absentee.absent_days = 0
             absentee.attended_days += 1
+            absentee.total_attended_days += 1
             absentee.last_attendance_date = attendance.attendance_date
         elif student['status'] == 'False':
             absentee.last_absent_date = attendance.attendance_date
             absentee.absent_days += 1
             absentee.attended_days = 0
+            absentee.total_absent_days += 1
 
         absentee.save()
 
