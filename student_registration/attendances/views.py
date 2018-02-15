@@ -484,6 +484,7 @@ class ExportView(LoginRequiredMixin, ListView):
 
         school = self.request.user.school_id
         data = export_attendance({'date': selected_date, 'school': school, 'school_type': school_type}, return_data=True)
+        # data = export_attendance({'from_date': '2017-10-01', 'to_date': '2017-12-15', 'school_type': '2nd-shift', 'gov': 4}, return_data=True)
 
         response = HttpResponse(
             data,

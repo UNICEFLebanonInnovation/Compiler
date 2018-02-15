@@ -462,10 +462,17 @@ def export_attendance(params=None, return_data=False):
     from student_registration.attendances.models import Attendance
 
     queryset = Attendance.objects.all()
+
     if 'school' in params:
         queryset = queryset.filter(school_id=params['school'])
     if 'date' in params:
         queryset = queryset.filter(attendance_date=params['date'])
+    if 'from_date' in params:
+        queryset = queryset.filter(attendance_date__gte=params['from_date'])
+    if 'to_date' in params:
+        queryset = queryset.filter(attendance_date__lte=params['to_date'])
+    if 'gov' in params:
+        queryset = queryset.filter(school__location__parent=int(params['gov']))
     if 'school_type' in params:
         school_type = params['school_type']
         queryset = queryset.filter(school_type=school_type)
