@@ -186,17 +186,17 @@ class Absentee(TimeStampedModel):
     absent_days = models.IntegerField(blank=True, null=True)
     attended_days = models.IntegerField(blank=True, null=True)
 
-    # total_absent_days = models.IntegerField(blank=True, null=True)
-    # total_attended_days = models.IntegerField(blank=True, null=True)
+    total_absent_days = models.IntegerField(blank=True, null=True)
+    total_attended_days = models.IntegerField(blank=True, null=True)
 
     reattend_date = models.DateField(blank=True, null=True)
     validation_status = models.BooleanField(default=False)
-    # last_modification_date = models.DateField(blank=True, null=True)
+    last_modification_date = models.DateField(blank=True, null=True)
     dropout_status = models.NullBooleanField(default=False)
-    # disabled = models.NullBooleanField(
-    #     blank=True, default=False,
-    #     verbose_name=_('disabled')
-    # )
+    disabled = models.NullBooleanField(
+        blank=True, default=False,
+        verbose_name=_('disabled')
+    )
 
     def __unicode__(self):
         return '{} - {}'.format(self.student, self.school)

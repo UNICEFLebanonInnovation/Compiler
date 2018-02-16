@@ -109,10 +109,6 @@ def dropout_students(from_date, to_date):
     from .models import Absentee
 
     queryset = Absentee.objects.exclude(absent_days__lt=10)
-        # .exclude(dropout_status=True)
-        # .exclude(disabled=True)
-        # .exclude(student__student_enrollment__dropout_status=True)
-        # .exclude(student__student_enrollment__disabled=True)
 
     to_disable = queryset.filter(absent_days__gte=10, absent_days__lt=15)
     to_dropout = queryset.filter(absent_days__gte=15)
@@ -140,6 +136,7 @@ def calculate_attendances_by_student(from_date=None, to_date=None):
 
     queryset = Attendance.objects.exclude(close_reason__isnull=False)\
         .exclude(students__isnull=True).order_by('attendance_date')
+    queryset = queryset.filter(school__number='340')
 
     if not from_date:
         Absentee.objects.all().delete()
@@ -156,72 +153,6 @@ def calculate_attendances_by_student(from_date=None, to_date=None):
             attendances = line.students[level_section]
             students = attendances['students']
             calculate_absentees(attendance=line, students=students)
-
-
-@app.task
-def calculate_absentees(attendance, students):
-    from .models import Absentee
-
-    for student in students:
-        try:
-            absentee = Absentee.objects.get(student_id=student['student_id'])
-        except Absentee.DoesNotExist:
-            absentee = Absentee.objects.create(
-                student_id=student['student_id'],
-                school=attendance.school,
-                absent_days=0,
-                attended_days=0,
-                total_attended_days=0,
-                total_absent_days=0
-            )
-
-        if student['status'] == 'True':
-            absentee.absent_days = 0
-            absentee.attended_days += 1
-            absentee.total_attended_days += 1
-            absentee.last_attendance_date = attendance.attendance_date
-        elif student['status'] == 'False':
-            absentee.last_absent_date = attendance.attendance_date
-            absentee.absent_days += 1
-            absentee.attended_days = 0
-            absentee.total_absent_days += 1
-
-        absentee.save()
-
-
-@app.task
-def calculate_absentees2(attendance, students):
-    from .models import Absentee
-
-    for student in students:
-        try:
-            absentee = Absentee.objects.get(student_id=student['student_id'])
-        except Absentee.DoesNotExist:
-            absentee = Absentee.objects.create(
-                student_id=student['student_id'],
-                school=attendance.school,
-                absent_days=0,
-                attended_days=0
-            )
-
-        if student['status'] == 'True' and not attendance.attendance_date == absentee.last_attendance_date:
-            if absentee.absent_days > 0:
-                absentee.absent_days -= 1
-            else:
-                absentee.absent_days = 0
-            absentee.attended_days += 1
-            absentee.last_attendance_date = attendance.attendance_date
-            absentee.last_absent_date = None
-        elif student['status'] == 'False' and not attendance.attendance_date == absentee.last_absent_date:
-            absentee.last_absent_date = attendance.attendance_date
-            absentee.last_attendance_date = None
-            absentee.absent_days += 1
-            if absentee.attended_days > 0:
-                absentee.attended_days -= 1
-            else:
-                absentee.attended_days = 0
-
-        absentee.save()
 
 
 @app.task
