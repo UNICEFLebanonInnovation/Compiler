@@ -72,9 +72,9 @@ class AbsenteeSerializer(serializers.ModelSerializer):
             'absent_days',
             'last_attendance_date',
             'last_absent_date',
-            # 'total_absent_days',
-            # 'total_attended_days',
-            # 'last_modification_date',
+            'total_absent_days',
+            'total_attended_days',
+            'last_modification_date',
 
             # 'school_id',
             # 'school_name',

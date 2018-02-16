@@ -391,10 +391,10 @@ class AttendanceByStudentAdmin(AbsenteeAdmin):
         'student',
         'last_attendance_date',
         'attended_days',
-        # 'total_attended_days',
+        'total_attended_days',
         'last_absent_date',
         'absent_days',
-        # 'total_absent_days',
+        'total_absent_days',
     )
     date_hierarchy = 'last_attendance_date'
     ordering = ('-attended_days',)

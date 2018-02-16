@@ -1,4 +1,7 @@
 
+import datetime
+
+
 def find_absentees(governorate=None, from_date=None, to_date=None):
     from .models import Attendance
 
@@ -103,20 +106,22 @@ def calculate_absentees(attendance, students):
                 school=attendance.school,
                 absent_days=0,
                 attended_days=0,
-                # total_attended_days=0,
-                # total_absent_days=0
+                total_attended_days=0,
+                total_absent_days=0
             )
+
+        absentee.last_modification_date = datetime.datetime.now()
 
         if student['status'] == 'True':
             absentee.absent_days = 0
             absentee.attended_days += 1
-            # absentee.total_attended_days += 1
+            absentee.total_attended_days += 1
             absentee.last_attendance_date = attendance.attendance_date
         elif student['status'] == 'False':
             absentee.last_absent_date = attendance.attendance_date
             absentee.absent_days += 1
             absentee.attended_days = 0
-            # absentee.total_absent_days += 1
+            absentee.total_absent_days += 1
 
         absentee.save()
 

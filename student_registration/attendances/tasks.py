@@ -136,7 +136,7 @@ def calculate_attendances_by_student(from_date=None, to_date=None):
 
     queryset = Attendance.objects.exclude(close_reason__isnull=False)\
         .exclude(students__isnull=True).order_by('attendance_date')
-    queryset = queryset.filter(school__number='340')
+    # queryset = queryset.filter(school__number='340')
 
     if not from_date:
         Absentee.objects.all().delete()
