@@ -324,8 +324,9 @@ class ALPAssignmentMatrix(models.Model):
         blank=True, null=True,
         related_name='refer_to',
     )
-    range_start = models.IntegerField(blank=True, null=True)
-    range_end = models.IntegerField(blank=True, null=True)
+
+    range_start = models.FloatField(blank=True, null=True)
+    range_end = models.FloatField(blank=True, null=True)
 
     @property
     def range(self):

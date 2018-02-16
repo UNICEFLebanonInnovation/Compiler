@@ -30,6 +30,7 @@ def assign_to_level(level, exam_total):
     from student_registration.schools.models import ALPAssignmentMatrix
 
     try:
-        return ALPAssignmentMatrix.objects.get(level=level, range_start__gt=exam_total, range_end__lte=exam_total)
+        result = ALPAssignmentMatrix.objects.get(level=level, range_start__gt=exam_total, range_end__lte=exam_total)
+        return result.refer_to
     except ALPAssignmentMatrix.DoesNotExist:
         return None
