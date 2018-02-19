@@ -158,3 +158,27 @@ def post_data(protocol, url, apifunc, token, data):
     conn.close()
 
     return result
+
+
+@app.task
+def cross_matching_children_2ndshift():
+    from .models import Child
+    from student_registration.students.models import Student, CrossMatching
+
+    offset = 0
+    limit = 25000
+    children = Child.objects.all()[offset:limit]
+    students = Student.objects.filter(student_enrollment__current_year=True)
+    print(students.count())
+
+    for child in children:
+        matched1 = students.filter(
+            number=child.number
+        ).first()
+        if matched1:
+            CrossMatching.objects.create(student=matched1, child=child, matched_on=child.number, pertinence=1, program_type='2nd-shift')
+            continue
+
+
+
+
