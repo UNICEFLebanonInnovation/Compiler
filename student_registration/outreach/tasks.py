@@ -60,7 +60,7 @@ def push_children_data(base_url, token, protocol='HTTPS'):
         'Syria': 3,
     }
 
-    wb = load_workbook(filename='BTS_Outreach_form_16102017.xlsx', read_only=True)
+    wb = load_workbook(filename='BTS_Outreach_data_05022018.xlsx', read_only=True)
     ws = wb['Individuals']
 
     try:
@@ -75,24 +75,25 @@ def push_children_data(base_url, token, protocol='HTTPS'):
             data['last_name'] = row[3].value if row[3].value else 'None'
             data['mother_fullname'] = row[4].value if row[4].value else 'None'
 
-            data['mother_nationality'] = NATIONALITIES[row[5].value] if row[5].value in NATIONALITIES else 6
+            # data['mother_nationality'] = NATIONALITIES[row[5].value] if row[5].value in NATIONALITIES else 6
+            data['mother_nationality'] = row[5].value if row[5].value else 6
 
             data['birthday_year'] = row[6].value if row[6].value else '1990'
             data['birthday_month'] = row[7].value if row[7].value else '1'
             data['birthday_day'] = row[8].value if row[8].value else '1'
-            data['sex'] = row[9].value if row[9].value else 'Male'
+            data['nationality'] = row[9].value if row[9].value else 6
 
-            data['nationality'] = row[10].value if row[10].value else 6
+            data['id_type'] = ID_TYPES[row[10].value] if row[10].value in ID_TYPES else 6
 
-            data['id_type'] = ID_TYPES[row[11].value] if row[11].value in ID_TYPES else 6
-
-            data['id_number'] = row[12].value if row[12].value else '000000'  # ID_Num
-            if row[14].value:  # Case_Individual_Num
-                data['id_number'] = row[14].value
-            elif row[15].value:  # ID_Individual_Num
-                data['id_number'] = row[15].value
-            elif row[13].value:  # UNHCR_Case_Num
+            data['id_number'] = row[11].value if row[11].value else '000000'  # ID_Num
+            if row[13].value:  # Case_Individual_Num
                 data['id_number'] = row[13].value
+            elif row[14].value:  # ID_Individual_Num
+                data['id_number'] = row[14].value
+            elif row[12].value:  # UNHCR_Case_Num
+                data['id_number'] = row[12].value
+
+            data['sex'] = row[15].value if row[15].value else 'Male'
 
             post_data(protocol=protocol, url=base_url, apifunc='/api/child/', token=token, data=data)
     except Exception as ex:
