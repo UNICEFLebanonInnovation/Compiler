@@ -161,24 +161,105 @@ def post_data(protocol, url, apifunc, token, data):
 
 
 @app.task
-def cross_matching_children_2ndshift():
+def cross_matching_children(program_type='2nd-shift'):
     from .models import Child
     from student_registration.students.models import Student, CrossMatching
+    from student_registration.schools.models import EducationYear
 
-    offset = 0
-    limit = 25000
+    offset = 30000
+    limit = offset + 20000
     children = Child.objects.all()[offset:limit]
-    students = Student.objects.filter(student_enrollment__current_year=True)
+    print(children.count())
+    education_year = EducationYear.objects.get(current_year=True)
+    students = Student.objects.filter(student_enrollment__education_year=education_year)
+    print(students.count())
+    students = students.exclude(matched__isnull=False)
     print(students.count())
 
     for child in children:
+
+        ##########################
         matched1 = students.filter(
             number=child.number
         ).first()
         if matched1:
-            CrossMatching.objects.create(student=matched1, child=child, matched_on=child.number, pertinence=1, program_type='2nd-shift')
+            CrossMatching.objects.get_or_create(
+                student=matched1,
+                child=child,
+                matched_on=child.number,
+                pertinence=1,
+                program_type=program_type
+            )
             continue
 
+        ##########################
+        if child.id_number:
+            matched2 = students.filter(
+                id_number=child.id_number
+            ).first()
+            if matched2:
+                CrossMatching.objects.get_or_create(
+                    student=matched2,
+                    child=child,
+                    matched_on=child.id_number,
+                    pertinence=2,
+                    program_type=program_type
+                )
+                continue
 
+        ##########################
+        matched3 = students.filter(
+            first_name=child.first_name,
+            father_name=child.father_name,
+            last_name=child.last_name,
+            birthday_year=child.birthday_year,
+            sex=child.sex
+        ).first()
 
+        if matched3:
+            CrossMatching.objects.get_or_create(
+                student=matched3,
+                child=child,
+                matched_on="fullname+birthday_year+sex",
+                pertinence=3,
+                program_type=program_type
+            )
+            continue
 
+        ##########################
+        matched4 = students.filter(
+            first_name=child.first_name,
+            last_name=child.father_name,
+            mother_fullname=child.mother_fullname,
+            birthday_year=child.birthday_year,
+            sex=child.sex
+        ).first()
+
+        if matched4:
+            CrossMatching.objects.get_or_create(
+                student=matched4,
+                child=child,
+                matched_on="name+mother+birthday_year+sex",
+                pertinence=4,
+                program_type=program_type
+            )
+            continue
+
+        ##########################
+        matched5 = students.filter(
+            first_name=child.first_name,
+            last_name=child.father_name,
+            birthday_year=child.birthday_year,
+            birthday_month=child.birthday_month,
+            sex=child.sex
+        ).first()
+
+        if matched5:
+            CrossMatching.objects.get_or_create(
+                student=matched5,
+                child=child,
+                matched_on="name+birthday_year+birthday_month+sex",
+                pertinence=5,
+                program_type=program_type
+            )
+            continue

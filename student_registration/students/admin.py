@@ -13,6 +13,7 @@ from .models import (
     Nationality,
     IDType,
     Labour,
+    CrossMatching,
 )
 from .forms import StudentEnrollmentForm
 from student_registration.schools.models import (
@@ -287,8 +288,8 @@ class DistrictFilter(admin.SimpleListFilter):
             elif request.GET.get('registered_in', None) == '2ndshift':
                 return queryset.filter(
                     student_enrollment__school__location_id=self.value(),
-                    student_enrollment__deleted = False,
-                    student_enrollment__dropout_status = False
+                    student_enrollment__deleted=False,
+                    student_enrollment__dropout_status=False
                 )
         return queryset
 
@@ -565,6 +566,9 @@ class ToAgeFilter(admin.SimpleListFilter):
 
 
 class StudentResource(resources.ModelResource):
+    enrollment_school = fields.Field(column_name='enrollment_school')
+    enrollment_education_year = fields.Field(column_name='enrollment_education_year')
+
     class Meta:
         model = Student
         fields = (
@@ -572,7 +576,7 @@ class StudentResource(resources.ModelResource):
             'father_name',
             'last_name',
             'mother_fullname',
-            'age',
+            # 'age',
             'birthday_day',
             'birthday_month',
             'birthday_year',
@@ -588,11 +592,13 @@ class StudentResource(resources.ModelResource):
             'phone_prefix',
         )
         export_order = (
+            'enrollment_school',
+            'enrollment_education_year',
             'first_name',
             'father_name',
             'last_name',
             'mother_fullname',
-            'age',
+            # 'age',
             'birthday_day',
             'birthday_month',
             'birthday_year',
@@ -606,6 +612,12 @@ class StudentResource(resources.ModelResource):
             'phone',
             'phone_prefix',
         )
+
+    def dehydrate_enrollment_school(self, obj):
+        return obj.enrollment_school
+
+    def dehydrate_enrollment_education_year(self, obj):
+        return obj.enrollment_education_year
 
 
 class StudentAdmin(ImportExportModelAdmin):
@@ -650,6 +662,9 @@ class StudentAdmin(ImportExportModelAdmin):
     )
     inlines = (EnrollmentInline, ALPInline)
 
+    def get_queryset(self, request):
+        return Student.objects.filter(student_enrollment__school_id=206)
+
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
         return get_default_export_formats()
@@ -693,8 +708,36 @@ class StudentMatchingAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
+class CrossMatchingResource(resources.ModelResource):
+    class Meta:
+        model = CrossMatching
+
+
+class CrossMatchingAdmin(ImportExportModelAdmin):
+    resource_class = CrossMatchingResource
+    list_display = (
+        'student',
+        'child',
+        'matched_on',
+        'pertinence',
+        'program_type',
+    )
+    list_filter = (
+        'pertinence',
+        'program_type',
+    )
+    search_fields = (
+
+    )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
+
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Nationality, NationalityAdmin)
 admin.site.register(StudentMatching, StudentMatchingAdmin)
 admin.site.register(IDType, IDTypeAdmin)
 admin.site.register(Labour)
+admin.site.register(CrossMatching, CrossMatchingAdmin)

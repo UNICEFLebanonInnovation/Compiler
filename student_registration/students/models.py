@@ -369,6 +369,20 @@ class Student(Person):
             attendances[item.attendance_date] = item.status
         return attendances
 
+    @property
+    def enrollment_school(self):
+        last_enrollment = self.last_enrollment()
+        if last_enrollment:
+            return last_enrollment.school.name
+        return ''
+
+    @property
+    def enrollment_education_year(self):
+        last_enrollment = self.last_enrollment()
+        if last_enrollment:
+            return last_enrollment.education_year.name
+        return ''
+
 
 class StudentMatching(models.Model):
 
@@ -390,12 +404,12 @@ class CrossMatching(models.Model):
     student = models.ForeignKey(
         Student,
         blank=False, null=False,
-        related_name='+',
+        related_name='matched',
     )
     child = models.ForeignKey(
         Child,
         blank=False, null=False,
-        related_name='+',
+        related_name='matched',
     )
 
     matched_on = models.CharField(max_length=500, blank=True, null=True)
