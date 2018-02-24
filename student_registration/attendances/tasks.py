@@ -113,9 +113,6 @@ def dropout_students(from_date, to_date):
     to_disable = queryset.filter(absent_days__gte=10, absent_days__lt=15)
     to_dropout = queryset.filter(absent_days__gte=15)
 
-    # to_dropout.update(dropout_status=True)
-    # to_disable.update(disabled=True)
-
     for line in to_disable:
         registry = line.student.last_enrollment()
         if not registry:
