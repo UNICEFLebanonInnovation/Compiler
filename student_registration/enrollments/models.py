@@ -429,6 +429,10 @@ class Enrollment(TimeStampedModel):
         blank=True, default=False,
         verbose_name=_('deleted')
     )
+    disabled = models.BooleanField(
+        blank=True, default=False,
+        verbose_name=_('disabled')
+    )
     dropout_status = models.BooleanField(
         blank=True, default=False,
         verbose_name=_('Dropout status')

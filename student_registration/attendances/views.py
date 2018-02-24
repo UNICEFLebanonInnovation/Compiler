@@ -118,7 +118,9 @@ class AbsenteeViewSet(mixins.ListModelMixin,
 
     def get_queryset(self):
         if self.request.GET.get('days', None):
-            return self.queryset.filter(absent_days__lte=self.request.GET.get('days', None))
+            return self.queryset.filter(absent_days__lte=self.request.GET.get('days', None), absent_days__gte=5)
+        # .exclude(student__student_enrollment__dropout_status=True)
+        # .exclude(student__student_enrollment__disabled=True)
         return []
 
     # def list(self, request, *args, **kwargs):
