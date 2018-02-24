@@ -84,6 +84,8 @@ class EnrollmentResource(resources.ModelResource):
             'last_informal_edu_final_result__name',
             'age_min_restricted',
             'age_max_restricted',
+            'last_attendance_date',
+            'last_absent_date',
         )
         export_order = fields
 
@@ -267,6 +269,9 @@ class EnrollmentAdmin(ImportExportModelAdmin):
                        'moved',
                        'last_moved_date',
                        'dropout_status',
+                       'disabled',
+                       'last_attendance_date',
+                       'last_absent_date',
                        'new_registry',
                        'student_outreached',
                        'have_barcode',
@@ -356,8 +361,43 @@ class Dropout(Enrollment):
 
 class DropoutAdmin(EnrollmentAdmin):
 
+    list_display = (
+        'student',
+        'last_attendance_date',
+        'last_absent_date',
+        'school',
+        'classroom',
+        'section',
+        'education_year',
+        'caza',
+        'governorate',
+    )
+
     def get_queryset(self, request):
         return Enrollment.drop_objects.all()
+
+
+class Disabled(Enrollment):
+    class Meta:
+        proxy = True
+
+
+class DisabledAdmin(EnrollmentAdmin):
+
+    list_display = (
+        'student',
+        'last_attendance_date',
+        'last_absent_date',
+        'school',
+        'classroom',
+        'section',
+        'education_year',
+        'caza',
+        'governorate',
+    )
+
+    def get_queryset(self, request):
+        return Enrollment.disabled_objects.all()
 
 
 class StudentMoveResource(resources.ModelResource):
@@ -650,6 +690,7 @@ class GradingAdmin(ImportExportModelAdmin):
 
 admin.site.register(Enrollment, EnrollmentAdmin)
 admin.site.register(Dropout, DropoutAdmin)
+admin.site.register(Disabled, DisabledAdmin)
 # admin.site.register(StudentMove, StudentMoveAdmin)
 admin.site.register(LoggingStudentMove, LoggingStudentMoveAdmin)
 admin.site.register(LoggingProgramMove, LoggingProgramMoveAdmin)

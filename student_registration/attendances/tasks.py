@@ -117,13 +117,17 @@ def dropout_students(from_date, to_date):
         registry = line.student.last_enrollment()
         if not registry:
             continue
-        registry.update(disabled=True)
+        registry.update(disabled=True,
+                        last_attendance_date=line.last_attendance_date,
+                        last_absent_date=line.last_absent_date)
 
     for line in to_dropout:
         registry = line.student.last_enrollment()
         if not registry:
             continue
-        registry.update(dropout_status=True)
+        registry.update(dropout_status=True,
+                        last_attendance_date=line.last_attendance_date,
+                        last_absent_date=line.last_absent_date)
 
 
 @app.task
