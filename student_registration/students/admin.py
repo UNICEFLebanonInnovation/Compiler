@@ -662,9 +662,6 @@ class StudentAdmin(ImportExportModelAdmin):
     )
     inlines = (EnrollmentInline, ALPInline)
 
-    def get_queryset(self, request):
-        return Student.objects.filter(student_enrollment__school_id=206)
-
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
         return get_default_export_formats()
