@@ -839,13 +839,13 @@ class GradingTermForm(forms.ModelForm):
             self.fields['exam_result_arabic'] = forms.FloatField(
                 label=_('Arabic') + ' (/60)', required=True,
                 widget=forms.NumberInput(attrs=({'maxlength': 4})),
-                min_value=0, max_value=20
+                min_value=0, max_value=60
             )
 
             self.fields['exam_result_language'] = forms.FloatField(
                 label=_('Foreign language') + ' (/40)', required=True,
                 widget=forms.NumberInput(attrs=({'maxlength': 4})),
-                min_value=0, max_value=20
+                min_value=0, max_value=40
             )
 
             self.fields['exam_result_education'] = forms.FloatField(
@@ -869,7 +869,7 @@ class GradingTermForm(forms.ModelForm):
             self.fields['exam_result_math'] = forms.FloatField(
                 label=_('Math') + ' (/60)', required=True,
                 widget=forms.NumberInput(attrs=({'maxlength': 4})),
-                min_value=0, max_value=20
+                min_value=0, max_value=60
             )
 
             self.fields['exam_result_physic'] = forms.FloatField(
