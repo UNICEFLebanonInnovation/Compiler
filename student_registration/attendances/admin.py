@@ -207,7 +207,7 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
     date_hierarchy = 'last_attendance_date'
     ordering = ('-absent_days',)
 
-    actions = ('disable', 'dropout')
+    # actions = ('disable', 'dropout')
 
     def get_queryset(self, request):
         # qs = super(AbsenteeAdmin, self).get_queryset(request)
