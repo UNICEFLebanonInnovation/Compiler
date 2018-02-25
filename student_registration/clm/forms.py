@@ -276,7 +276,7 @@ class CommonForm(forms.ModelForm):
     #             _("Child already registered in your organization")
     #         )
 
-    def save(self, request=None, instance=None, serializer=None, clm_round=None):
+    def save(self, request=None, instance=None, serializer=None):
         if instance:
             serializer = serializer(instance, data=request.POST)
             if serializer.is_valid():
@@ -293,7 +293,6 @@ class CommonForm(forms.ModelForm):
                 instance.owner = request.user
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
-                instance.round = clm_round
                 instance.save()
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
@@ -304,6 +303,7 @@ class CommonForm(forms.ModelForm):
     class Meta:
         model = CLM
         fields = (
+            'round',
             'new_registry',
             'student_outreached',
             'have_barcode',
@@ -490,18 +490,21 @@ class BLNForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Program Information') + '</h4>')
                 ),
                 Div(
-                    # HTML('<span class="badge badge-default">1</span>'),
-                    # Div('cycle', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('governorate', css_class='col-md-3'),
+                    Div('round', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
+                    Div('governorate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('district', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
+                    Div('location', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('language', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -631,9 +634,8 @@ class BLNForm(CommonForm):
             )
         )
 
-    def save(self, request=None, instance=None, serializer=None, clm_round=None):
-        clm_round = request.user.partner.bln_round
-        super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer, clm_round=clm_round)
+    def save(self, request=None, instance=None, serializer=None):
+        super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
 
     class Meta:
         model = BLN
@@ -918,24 +920,29 @@ class RSForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('type', css_class='col-md-3'),
+                    Div('round', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('site', css_class='col-md-3'),
+                    Div('type', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('site', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('school', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('district', css_class='col-md-3'),
+                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
+                    Div('district', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('location', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('language', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1167,9 +1174,8 @@ class RSForm(CommonForm):
             )
         )
 
-    def save(self, request=None, instance=None, serializer=None, clm_round=None):
-        clm_round = request.user.partner.rs_round
-        super(RSForm, self).save(request=request, instance=instance, serializer=RSSerializer, clm_round=clm_round)
+    def save(self, request=None, instance=None, serializer=None):
+        super(RSForm, self).save(request=request, instance=instance, serializer=RSSerializer)
 
     class Meta:
         model = RS
@@ -1336,24 +1342,29 @@ class CBECEForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('cycle', css_class='col-md-3'),
+                    Div('round', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('site', css_class='col-md-3'),
+                    Div('cycle', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('site', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('school', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('district', css_class='col-md-3'),
+                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
+                    Div('district', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('location', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('language', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1483,9 +1494,8 @@ class CBECEForm(CommonForm):
             )
         )
 
-    def save(self, request=None, instance=None, serializer=None, clm_round=None):
-        clm_round = request.user.partner.cbece_round
-        super(CBECEForm, self).save(request=request, instance=instance, serializer=CBECESerializer, clm_round=clm_round)
+    def save(self, request=None, instance=None, serializer=None):
+        super(CBECEForm, self).save(request=request, instance=instance, serializer=CBECESerializer)
 
     class Meta:
         model = CBECE

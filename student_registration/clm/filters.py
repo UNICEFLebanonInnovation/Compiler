@@ -37,6 +37,7 @@ class BLNFilter(CommonFilter):
             'district': ['exact'],
             'participation': ['exact'],
             'learning_result': ['exact'],
+            'owner__username': ['contains'],
         }
 
 
@@ -63,6 +64,7 @@ class RSFilter(CommonFilter):
             'section': ['exact'],
             'participation': ['exact'],
             'learning_result': ['exact'],
+            'owner__username': ['contains'],
         }
 
 
@@ -85,4 +87,5 @@ class CBECEFilter(CommonFilter):
             'district': ['exact'],
             'participation': ['exact'],
             'learning_result': ['exact'],
+            'owner__username': ['contains'],
         }
