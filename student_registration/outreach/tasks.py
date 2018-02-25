@@ -166,7 +166,7 @@ def cross_matching_children(program_type='2nd-shift'):
     from student_registration.students.models import Student, CrossMatching
     from student_registration.schools.models import EducationYear
 
-    offset = 60000
+    offset = 80000
     limit = offset + 20000
     children = Child.objects.all()[offset:limit]
     print(children.count())
