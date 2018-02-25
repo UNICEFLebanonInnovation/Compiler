@@ -248,23 +248,23 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
             return False
         return True
 
-    def disable(self, request, queryset):
-        queryset.update(dropout_status=True)
-        for obj in queryset:
-            student = obj.student
-            enrollment = student.student_enrollment.first()
-            if enrollment:
-                enrollment.disabled = True
-                enrollment.save()
-
-    def dropout(self, request, queryset):
-        queryset.update(dropout_status=True)
-        for obj in queryset:
-            student = obj.student
-            enrollment = student.student_enrollment.first()
-            if enrollment:
-                enrollment.dropout_status = True
-                enrollment.save()
+    # def disable(self, request, queryset):
+    #     queryset.update(dropout_status=True)
+    #     for obj in queryset:
+    #         student = obj.student
+    #         enrollment = student.student_enrollment.first()
+    #         if enrollment:
+    #             enrollment.disabled = True
+    #             enrollment.save()
+    #
+    # def dropout(self, request, queryset):
+    #     queryset.update(dropout_status=True)
+    #     for obj in queryset:
+    #         student = obj.student
+    #         enrollment = student.student_enrollment.first()
+    #         if enrollment:
+    #             enrollment.dropout_status = True
+    #             enrollment.save()
 
 
 class AttendedDays(Absentee):
