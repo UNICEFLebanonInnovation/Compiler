@@ -69,8 +69,7 @@ class SchoolTypeFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (('2ndshift', '2nd shift'),
-                ('alp', 'ALP'),
-                )
+                ('alp', 'ALP'))
 
     def queryset(self, request, queryset):
         if self.value() and self.value() == '2ndshift':
@@ -118,7 +117,7 @@ class TicketSchoolResource(resources.ModelResource):
 
     def dehydrate_owner(self, obj):
         if obj.submitter_email:
-            return User.objects.get(email=obj.submitter_email)
+            return User.objects.filter(email=obj.submitter_email).first()
         return ''
 
     def dehydrate_owner_name(self, obj):
@@ -213,7 +212,7 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
 
     def owner(self, obj):
         if obj.submitter_email:
-            return User.objects.get(email=obj.submitter_email)
+            return User.objects.filter(email=obj.submitter_email).first()
         return ''
 
     def owner_link(self, obj):

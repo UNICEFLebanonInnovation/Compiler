@@ -2,7 +2,7 @@ __author__ = 'achamseddine'
 
 from django.core.management.base import BaseCommand
 
-from student_registration.users.tasks import *
+from student_registration.users.tasks import generate_tokens
 
 
 class Command(BaseCommand):
