@@ -147,93 +147,6 @@ class SchoolTypeFilter(admin.SimpleListFilter):
         return queryset
 
 
-class BySchoolResource(resources.ModelResource):
-    governorate = fields.Field(
-        column_name='governorate',
-        attribute='school',
-        widget=widgets.ForeignKeyWidget(School, 'location_parent_name')
-    )
-    district = fields.Field(
-        column_name='district',
-        attribute='school',
-        widget=widgets.ForeignKeyWidget(School, 'location_name')
-    )
-
-    class Meta:
-        model = BySchoolByDay
-        fields = (
-            'school__number',
-            'school__name',
-            'governorate',
-            'district',
-            'attendance_date',
-            'total_enrolled',
-            'total_attended',
-            'total_attended_male',
-            'total_attended_female',
-            'total_absent_male',
-            'total_absent_female',
-            'validation_date',
-        )
-
-
-class BySchoolByDayAdmin(ExportMixin, admin.ModelAdmin):
-    resource_class = BySchoolResource
-    list_display = (
-        'school',
-        'district',
-        'attendance_date',
-        'total_enrolled',
-        'total_attended',
-        'total_absences',
-        'highest_attendance_rate',
-        'total_attended_male',
-        'total_attended_female',
-        'total_absent_male',
-        'total_absent_female',
-        'validation_date',
-        'validation_status',
-    )
-    list_filter = (
-        ('attendance_date', DateRangeFilter),
-        LocationFilter,
-        GovernorateFilter,
-        SchoolFilter,
-        SchoolTypeFilter,
-        # 'attendance_date',
-        'validation_date',
-        'validation_status',
-        'highest_attendance_rate',
-    )
-    date_hierarchy = 'attendance_date'
-    ordering = ('-attendance_date',)
-
-    class Media:
-        css = {
-            "all": ("css/admin.css",)
-        }
-
-    def district(self, obj):
-        if obj.school and obj.school.location:
-            return obj.school.location.name
-        return ''
-
-    def get_queryset(self, request):
-        qs = super(BySchoolByDayAdmin, self).get_queryset(request)
-        if has_group(request.user, 'COORDINATOR'):
-            return qs.filter(school_id__in=request.user.schools.all())
-
-        return qs
-
-    def has_add_permission(self, request):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        if has_group(request.user, 'COORDINATOR') or has_group(request.user, 'PMU'):
-            return False
-        return True
-
-
 class AbsenteeResource(resources.ModelResource):
     governorate = fields.Field(
         column_name='governorate',
@@ -260,10 +173,12 @@ class AbsenteeResource(resources.ModelResource):
             'student__mother_fullname',
             'student__sex',
             'last_attendance_date',
+            'attended_days',
+            'total_attended_days',
+            'last_absent_date',
             'absent_days',
-            'reattend_date',
-            'validation_status',
-            'dropout_status',
+            'total_absent_days',
+            'last_modification_date'
         )
         export_order = fields
 
@@ -278,13 +193,9 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         'last_attendance_date',
         'last_absent_date',
         'absent_days',
-        # 'reattend_date',
-        # 'validation_status',
-        # 'dropout_status',
+        'total_absent_days',
     )
     list_filter = (
-        # 'school__location',
-        # 'school',
         SchoolFilter,
         SchoolTypeFilter,
         LocationFilter,
@@ -296,7 +207,7 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
     date_hierarchy = 'last_attendance_date'
     ordering = ('-absent_days',)
 
-    actions = ('validate_absentees', 'dropout')
+    actions = ('disable', 'dropout')
 
     def get_queryset(self, request):
         # qs = super(AbsenteeAdmin, self).get_queryset(request)
@@ -311,6 +222,10 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         if obj.school and obj.school.location:
             return obj.school.location.name
         return ''
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
     def has_add_permission(self, request):
         return False
@@ -332,6 +247,15 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         if has_group(request.user, 'COORDINATOR') or has_group(request.user, 'PMU'):
             return False
         return True
+
+    def disable(self, request, queryset):
+        queryset.update(dropout_status=True)
+        for obj in queryset:
+            student = obj.student
+            enrollment = student.student_enrollment.first()
+            if enrollment:
+                enrollment.disabled = True
+                enrollment.save()
 
     def dropout(self, request, queryset):
         queryset.update(dropout_status=True)
@@ -356,6 +280,7 @@ class AttendedDaysAdmin(AbsenteeAdmin):
         'student',
         'last_attendance_date',
         'attended_days',
+        'total_attended_days'
     )
     list_filter = (
         SchoolFilter,
@@ -395,6 +320,7 @@ class AttendanceByStudentAdmin(AbsenteeAdmin):
         'last_absent_date',
         'absent_days',
         'total_absent_days',
+        'last_modification_date'
     )
     date_hierarchy = 'last_attendance_date'
     ordering = ('-attended_days',)
@@ -410,7 +336,23 @@ class AttendanceByStudentAdmin(AbsenteeAdmin):
 class AttendanceResource(resources.ModelResource):
     class Meta:
         model = Attendance
-        fields = ()
+        fields = (
+            'school',
+            'attendance_date',
+            'total_enrolled',
+            'total_attended',
+            'total_attended_male',
+            'total_attended_female',
+            'total_absences',
+            'total_absent_male',
+            'total_absent_female',
+            'validation_date',
+            'validation_status',
+            'validation_owner',
+            'close_reason',
+            'created',
+            'modified'
+        )
         export_order = fields
 
 
@@ -458,7 +400,6 @@ class AttendanceAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(Attendance, AttendanceAdmin)
-# admin.site.register(BySchoolByDay, BySchoolByDayAdmin)
 admin.site.register(Absentee, AbsenteeAdmin)
 admin.site.register(AttendedDays, AttendedDaysAdmin)
 admin.site.register(AttendanceByStudent, AttendanceByStudentAdmin)
