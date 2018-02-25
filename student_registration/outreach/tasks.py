@@ -45,13 +45,13 @@ def push_household_data(base_url, token, protocol='HTTPS'):
 @app.task
 def push_children_data(base_url, token, protocol='HTTPS'):
 
-    NATIONALITIES = {
-        'Syria': 1,
-        'Iraq': 2,
-        'Lebanon': 5,
-        'Other': 6,
-        'Palestine': 4
-    }
+    # NATIONALITIES = {
+    #     'Syria': 1,
+    #     'Iraq': 2,
+    #     'Lebanon': 5,
+    #     'Other': 6,
+    #     'Palestine': 4
+    # }
     ID_TYPES = {
         'None': 6,
         'UNHCR': 1,

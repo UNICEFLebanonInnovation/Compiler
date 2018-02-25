@@ -2,7 +2,7 @@ __author__ = 'achamseddine'
 
 from django.core.management.base import BaseCommand
 
-from student_registration.students.tasks import *
+from student_registration.students.tasks import generate_2ndshift_unique_number
 
 
 class Command(BaseCommand):
