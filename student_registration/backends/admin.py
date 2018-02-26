@@ -69,8 +69,7 @@ class SchoolTypeFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (('2ndshift', '2nd shift'),
-                ('alp', 'ALP'),
-                )
+                ('alp', 'ALP'))
 
     def queryset(self, request, queryset):
         if self.value() and self.value() == '2ndshift':

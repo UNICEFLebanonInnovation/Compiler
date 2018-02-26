@@ -402,6 +402,7 @@ SUIT_CONFIG = {
             'enrollments.enrollment',
             'enrollments.enrollmentgrading',
             'enrollments.dropout',
+            'enrollments.disabled',
             'enrollments.LoggingStudentMove',
             'enrollments.LoggingProgramMove',
         )},

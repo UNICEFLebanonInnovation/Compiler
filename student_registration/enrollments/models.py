@@ -32,6 +32,13 @@ class EnrollmentDropoutManager(models.Manager):
         return super(EnrollmentDropoutManager, self).get_queryset().exclude(deleted=True).filter(dropout_status=True)
 
 
+class EnrollmentDisabledManager(models.Manager):
+    def get_queryset(self):
+        return super(EnrollmentDisabledManager, self).get_queryset()\
+            .exclude(deleted=True)\
+            .filter(disabled=True, dropout_status=False)
+
+
 class Enrollment(TimeStampedModel):
     """
     Captures the details of the child in the cash pilot
@@ -433,6 +440,8 @@ class Enrollment(TimeStampedModel):
         blank=True, default=False,
         verbose_name=_('disabled')
     )
+    last_attendance_date = models.DateField(blank=True, null=True)
+    last_absent_date = models.DateField(blank=True, null=True)
     dropout_status = models.BooleanField(
         blank=True, default=False,
         verbose_name=_('Dropout status')
@@ -481,6 +490,7 @@ class Enrollment(TimeStampedModel):
 
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
+    disabled_objects = EnrollmentDisabledManager()
 
     @property
     def student_fullname(self):
