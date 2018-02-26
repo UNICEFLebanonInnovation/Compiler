@@ -97,3 +97,34 @@ def generate_tokens(group):
         except Exception as ex:
             print(ex)  #TODO: use logging instead
             pass
+
+
+@app.task
+def copy_school_email():
+    from student_registration.schools.models import School
+
+    queryset = School.objects.all()
+
+    for school in queryset:
+        if not school.email or not school.user_set.all():
+            continue
+        users = school.user_set.filter(groups__id__exact=8)
+        print(users)
+        for user in users:
+            print(user.email)
+            print(school.email)
+            user.email = school.email
+            user.save()
+        # school.user_set.update(email=school.email)
+
+
+@app.task
+def copy_user_email_to_ticket():
+    from .models import User
+    from helpdesk.models import Ticket
+
+    queryset = User.objects.filter(school__isnull=False)
+    for line in queryset:
+        if not line.school.email:
+            continue
+        Ticket.objects.filter(submitter_email=line.email).update(submitter_email=line.school.email)

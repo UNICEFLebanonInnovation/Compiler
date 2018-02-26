@@ -2,12 +2,11 @@ __author__ = 'achamseddine'
 
 from django.core.management.base import BaseCommand
 
-from student_registration.attendances.tasks import *
+from student_registration.users.tasks import copy_school_email
 
 
 class Command(BaseCommand):
-    help = 'Push Users data to CouchBase'
+    help = 'Copy school email to user'
 
     def handle(self, *args, **options):
-        pass
-        # set_app_users()
+        copy_school_email()

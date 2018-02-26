@@ -2,11 +2,11 @@ __author__ = 'achamseddine'
 
 from django.core.management.base import BaseCommand
 
-from student_registration.students.tasks import *
+from student_registration.users.tasks import copy_user_email_to_ticket
 
 
 class Command(BaseCommand):
-    help = 'Synchronize Child age with UNHCR'
+    help = 'Copy user email to ticket'
 
     def handle(self, *args, **options):
-        synchronize_child_age()
+        copy_user_email_to_ticket()
