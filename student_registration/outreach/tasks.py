@@ -12,7 +12,7 @@ from openpyxl import load_workbook
 @app.task
 def push_household_data(base_url, token, protocol='HTTPS'):
 
-    wb = load_workbook(filename='BTS_Outreach_form_16102017.xlsx', read_only=True)
+    wb = load_workbook(filename='BTS_Outreach_data_05022018.xlsx', read_only=True)
     ws = wb['Household']
 
     try:
@@ -38,6 +38,27 @@ def push_household_data(base_url, token, protocol='HTTPS'):
         print("---------------")
         print("error: ", ex.message)
         print(json.dumps(data, cls=DjangoJSONEncoder))
+        print("---------------")
+        pass
+
+
+@app.task
+def update_household_data():
+    from .models import HouseHold
+    wb = load_workbook(filename='BTS_Outreach_data_05022018_original.xlsx', read_only=True)
+    ws = wb['Householdinfo']
+
+    try:
+        for row in ws.rows:
+            if row[0].value == 'FORMID':
+                continue
+            household = HouseHold.objects.get(form_id=row[0].value)
+            household.interview_status = row[11].value
+            household.save()
+
+    except Exception as ex:
+        print("---------------")
+        print("error: ", ex.message)
         print("---------------")
         pass
 
@@ -166,7 +187,7 @@ def cross_matching_children(program_type='2nd-shift'):
     from student_registration.students.models import Student, CrossMatching
     from student_registration.schools.models import EducationYear
 
-    offset = 80000
+    offset = 160000
     limit = offset + 20000
     children = Child.objects.all()[offset:limit]
     print(children.count())
@@ -263,3 +284,14 @@ def cross_matching_children(program_type='2nd-shift'):
                 program_type=program_type
             )
             continue
+
+
+@app.task
+def calculate_child_age():
+    from .models import Child
+
+    children = Child.objects.all()
+
+    for child in children:
+        child.calculated_age = child.calc_age()
+        child.save()

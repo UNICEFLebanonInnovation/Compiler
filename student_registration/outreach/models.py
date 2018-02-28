@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+import datetime
+
 from django.db import models
 from django.contrib.postgres.fields import JSONField, ArrayField
 from django.utils.translation import ugettext as _
@@ -78,6 +80,10 @@ class Child(Person):
         blank=True, null=True,
     )
     barcode_subset = models.CharField(max_length=45, blank=True, null=True, db_index=True)
+    calculated_age = models.CharField(
+        max_length=45,
+        blank=True, null=True,
+    )
     current_situation = models.CharField(
         max_length=50,
         blank=True,
@@ -252,4 +258,12 @@ class Child(Person):
     def is_registered_in_unhcr(self):
         if self.id_type and self.id_type_id == 1:
             return 1
+        return 0
+
+    def calc_age(self):
+        if self.birthday_year and self.birthday_month and self.birthday_day:
+            today = datetime.datetime.now()
+            return today.year - int(self.birthday_year) - ((today.month, today.day) < (int(self.birthday_month), int(self.birthday_day)))
+        # if self.birthday_year:
+        #     return int(self.CURRENT_YEAR)-int(self.birthday_year)
         return 0

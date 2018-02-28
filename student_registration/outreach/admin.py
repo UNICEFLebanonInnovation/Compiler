@@ -32,7 +32,9 @@ class HouseHoldAdmin(ImportExportModelAdmin):
         'p_code',
         'residence_type',
         'governorate',
-        'district'
+        'district',
+        'partner_name',
+        'interview_status'
     )
 
     def get_export_formats(self):
