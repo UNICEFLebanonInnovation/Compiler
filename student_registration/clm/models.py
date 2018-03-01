@@ -949,6 +949,8 @@ class CBECE(CLM):
     def domain_improvement(self, domain_mame):
         if not self.cycle_id:
             return 0.0
+        if not self.pre_test or not self.post_test:
+            return 0.0
         program_cycle = str(self.cycle_id)
         key = '{}/{}{}'.format(
             'CBECE_ASSESSMENT',
