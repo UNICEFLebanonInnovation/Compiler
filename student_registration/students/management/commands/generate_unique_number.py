@@ -2,7 +2,7 @@ __author__ = 'achamseddine'
 
 from django.core.management.base import BaseCommand
 
-from student_registration.students.tasks import *
+from student_registration.students.tasks import generate_2ndshift_unique_number, generate_alp_unique_number
 
 
 class Command(BaseCommand):
@@ -12,12 +12,6 @@ class Command(BaseCommand):
         parser.add_argument('models', nargs='+', type=str)
 
     def handle(self, *args, **options):
-        if 'adult' in options['models']:
-            print('Generate hash number for Adults')
-            generate_adult_unique_number()
-        if 'child' in options['models']:
-            print('Generate hash number for Children')
-            generate_child_unique_number()
         if '2ndshift' in options['models']:
             print('Generate hash number for 2nd shift students')
             generate_2ndshift_unique_number()

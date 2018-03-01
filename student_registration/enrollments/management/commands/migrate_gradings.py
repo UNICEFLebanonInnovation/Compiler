@@ -2,7 +2,7 @@ __author__ = 'achamseddine'
 
 from django.core.management.base import BaseCommand
 
-from student_registration.enrollments.tasks import *
+from student_registration.enrollments.tasks import migrate_gradings
 
 
 class Command(BaseCommand):
