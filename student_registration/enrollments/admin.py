@@ -303,6 +303,8 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'student__sex',
         'student__registered_in_unhcr',
         'student__id_type',
+        'student__nationality',
+        'student__mother_nationality',
         'last_education_level',
         'last_education_year',
         'last_school_type',
