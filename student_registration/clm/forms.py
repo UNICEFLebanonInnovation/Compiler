@@ -29,7 +29,8 @@ from .models import (
     CBECE,
     Cycle,
     Disability,
-    Assessment
+    Assessment,
+    CLMRound,
 )
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer
 
@@ -126,6 +127,13 @@ class CommonForm(forms.ModelForm):
     district = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
         label=_('District'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+        initial=0
+    )
+    round = forms.ModelChoiceField(
+        queryset=CLMRound.objects.all(), widget=forms.Select,
+        label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
         initial=0
