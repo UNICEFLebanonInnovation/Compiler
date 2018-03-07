@@ -14,6 +14,7 @@ from student_registration.locations.models import (
 )
 from student_registration.schools.models import (
     School,
+    EducationYear,
     EducationLevel,
     ClassLevel,
     ClassRoom,
@@ -39,7 +40,11 @@ class ExporterView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         if self.request.GET.get('report', None):
             export_full_data(self.request.GET)
-        return {}
+        return {
+            'alp_rounds': ALPRound.objects.all(),
+            'classrooms': ClassRoom.objects.all(),
+            'education_years': EducationYear.objects.all()
+        }
 
 
 class Registrations2ndShiftView(LoginRequiredMixin,
@@ -85,8 +90,10 @@ class Registrations2ndShiftOverallView(LoginRequiredMixin,
     Provides the registration page with lookup types in the context
     """
     model = Enrollment
-    queryset = Enrollment.objects.all()
-    template_name = 'dashboard/2ndshift-overall.html'
+    queryset = Enrollment.objects.exclude(moved__isnull=True)\
+        .exclude(dropout_status__isnull=True)\
+        .exclude(disabled__isnull=True)
+    template_name = 'dashboard/2ndshift.governorate.grade.html'
 
     group_required = [u"MEHE"]
 
@@ -97,11 +104,13 @@ class Registrations2ndShiftOverallView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
 
-        current = self.request.GET.get('current', 1)
+        current_year = EducationYear.objects.get(current_year=True)
+        current = self.request.GET.get('current', current_year.id)
         now = datetime.datetime.now()
         governorates = Location.objects.exclude(parent__isnull=False)
         education_levels = ClassRoom.objects.all()
         level_by_age = {}
+
         queryset = self.queryset.filter(education_year_id=current)
 
         return {

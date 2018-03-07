@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="main-content-wrapper">
+            <section id="main-content">
+                <div class="title_left">
+                    <h3 style="color:#73879C;">{% trans 'Registrations 2nd Shift' %}</h3>
+                </div>
+                <hr>
+     <div class="row">
+
+         <div class="">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>{% trans 'Students By Governorate by Age' %}</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <div>
+                      <button class="btn btn-info" id="export2">
+                        <i class="icon-export-sign icon-white"></i>&nbsp;
+                            Export
+                      </button>
+                    {% get_range_int 1 20 as ages %}
+                    <table class="table table-striped table-bordered cell-border"
+                           data-tableName="Students By Governorate by Age"
+                           data-height="500"
+                           data-pagination="true"
+                           data-search="true"
+                           cellspacing="0"
+                           width="100%"
+                           id="exporttable2">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Governorate</th>
+                                <th colspan="20"># of children by Age</th>
+                            </tr>
+                            <tr>
+                                {% for age in ages %}
+                                    <th>{{ age }}</th>
+                                {% endfor %}
+                                <th>Total</th>
+                            </tr>
+                              <tr>
+                                  <th></th>
+                                  {% for age in ages %}
+                                      <th>Male</th>
+                                      <th>Female</th>
+                                  {% endfor %}
+                                      <th>Male</th>
+                                      <th>Female</th>
+                              </tr>
+                        </thead>
+                        <tbody>
+                            {% for gov in governorates %}
+                                {% get_range_int 1 20 as ages1 %}
+                            <tr>
+                                <td><strong>{{ gov.name }}</strong></td>
+                                {% for age in ages1 %}
+                                    <td>
+                                        {% enrollment_by_gov_by_age enrollments gov.id age as number %}
+                                        {{ number }}
+                                    </td>
+                                {% endfor %}
+                                <td>
+                                    {% enrollment_by_gov_by_age enrollments gov.id 0 as number %}
+                                    {{ number }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                {% get_range_int 1 20 as ages2 %}
+                                {% for age in ages2 %}
+                                    <td>
+                                        {% enrollment_by_gov_by_age enrollments 0 age as number %}
+                                        {{ number }}
+                                    </td>
+                                {% endfor %}
+                                <td>
+                                    {{ registrations }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+    </div>
+
+</section>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
+    <script>
+
+    $(document).ready(function(){
+        $('#export1').click(function(){
+            $("#exporttable1").table2excel({
+                exclude: ".noExl",
+                name: "Excel Document Name",
+                filename: $("#exporttable1").attr('data-tableName')+'.xls',
+                fileext: ".xlsx",
+                exclude_img: true,
+                exclude_links: true,
+                exclude_inputs: true
+            });
+        });
+    });
+
+    </script>
+
+{% endblock %}

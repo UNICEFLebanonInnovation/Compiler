@@ -311,6 +311,11 @@ def export_alp(params=None, return_data=False):
         queryset = queryset.filter(
             alp_round__current_round=True,
         )
+    if 'alp_round' in params:
+        title = 'alp-round-'+params['alp_round']
+        queryset = queryset.filter(
+            alp_round_id=int(params['alp_round'])
+        )
     if 'school' in params:
         queryset = queryset.filter(school_id=params['school'])
 

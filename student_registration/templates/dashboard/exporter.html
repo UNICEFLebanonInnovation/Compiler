@@ -24,7 +24,20 @@
               <div class="card-block">
                 <h3 class="card-title">2nd shift registration</h3>
                 <p class="card-text">Export data for 2nd shift registration of the current school year.</p>
-                <a href="{% url 'dashboard:exporter' %}?report=export_2ndshift&current=true" class="btn btn-primary">Export</a>
+
+                <div class="btn-group">
+                  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="icon-export-sign icon-white"></i>&nbsp;
+                      {% trans "Export" %}
+                  </button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_2ndshift&current=true" target="_blank">Export All</a>
+                    {% for item in classrooms %}
+                    <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_2ndshift&current=true&classroom={{ item.id }}" target="_blank">Export level {{ item.name }}</a>
+                    {% endfor %}
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -34,7 +47,20 @@
               <div class="card-block">
                 <h3 class="card-title">2nd shift gradings</h3>
                 <p class="card-text">Export data for 2nd shift gradings of the current school year.</p>
-                <a href="{% url 'dashboard:exporter' %}?report=export_2ndshift_gradings" class="btn btn-primary">Export</a>
+
+                <div class="btn-group">
+                  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="icon-export-sign icon-white"></i>&nbsp;
+                      {% trans "Export" %}
+                  </button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_2ndshift_gradings&current=true" target="_blank">Export All</a>
+                    {% for item in classrooms %}
+                    <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_2ndshift_gradings&current=true&classroom={{ item.id }}" target="_blank">Export level {{ item.name }}</a>
+                    {% endfor %}
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -64,7 +90,20 @@
               <div class="card-block">
                 <h3 class="card-title">ALP school registration</h3>
                 <p class="card-text">Export school registration data entered by the school IT for the current round.</p>
-                <a href="{% url 'dashboard:exporter' %}?report=export_alp&current=true" class="btn btn-primary">Export</a>
+
+                <div class="btn-group">
+                  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="icon-export-sign icon-white"></i>&nbsp;
+                      {% trans "Export" %}
+                  </button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_alp&current=true" target="_blank">Export Current</a>
+                    {% for item in alp_rounds %}
+                    <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_alp&alp_round={{ item.id }}" target="_blank">Export round {{ item.name }}</a>
+                    {% endfor %}
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
