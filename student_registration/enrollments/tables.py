@@ -80,6 +80,10 @@ class EnrollmentTable(tables.Table):
             'student_outreached',
             'have_barcode',
             'outreach_barcode',
+            'created',
+            'modified',
+            'dropout_status',
+            'disabled',
         )
 
 

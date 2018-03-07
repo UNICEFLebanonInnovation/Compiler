@@ -380,3 +380,8 @@ tr.odd {
 table th.moved_column {
     min-width: 150px;
 }
+
+td.pre_assessment_result, td.post_assessment_result, td.arabic_improvement, td.english_improvement,
+td.french_improvement, td.math_improvement, td.assessment_improvement {
+  direction: ltr;
+}

@@ -86,6 +86,11 @@ class EnrollmentResource(resources.ModelResource):
             'age_max_restricted',
             'last_attendance_date',
             'last_absent_date',
+            'created',
+            'modified',
+            'moved',
+            'dropout_status',
+            'disabled',
         )
         export_order = fields
 
@@ -303,6 +308,8 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'student__sex',
         'student__registered_in_unhcr',
         'student__id_type',
+        'student__nationality',
+        'student__mother_nationality',
         'last_education_level',
         'last_education_year',
         'last_school_type',
@@ -320,6 +327,9 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         # 'exam_result',
         'created',
         'modified',
+        'dropout_status',
+        'disabled',
+        'moved',
         'new_registry',
         'student_outreached',
         'have_barcode',
@@ -372,8 +382,14 @@ class DropoutAdmin(EnrollmentAdmin):
         'governorate',
     )
 
+    actions = ('cancel_dropout', )
+
     def get_queryset(self, request):
         return Enrollment.drop_objects.all()
+
+    def cancel_dropout(self, request, queryset):
+        queryset.update(dropout_status=False)
+        queryset.update(disabled=False)
 
 
 class Disabled(Enrollment):
@@ -395,8 +411,16 @@ class DisabledAdmin(EnrollmentAdmin):
         'governorate',
     )
 
+    actions = ('dropout', 'cancel_disable')
+
     def get_queryset(self, request):
         return Enrollment.disabled_objects.all()
+
+    def cancel_disable(self, request, queryset):
+        queryset.update(disabled=False)
+
+    def dropout(self, request, queryset):
+        queryset.update(dropout_status=True)
 
 
 class StudentMoveResource(resources.ModelResource):

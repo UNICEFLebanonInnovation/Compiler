@@ -30,6 +30,8 @@ class SchoolResource(resources.ModelResource):
     governorate = fields.Field(column_name='Governorate')
     total_registered_2ndshift = fields.Field(column_name='Total registered 2nd-shift')
     total_registered_alp = fields.Field(column_name='Total registered ALP')
+    attendances_days_2ndshift = fields.Field(column_name='Attendances days 2nd shift')
+    attendances_days_alp = fields.Field(column_name='Attendances days ALP')
 
     class Meta:
         model = School
@@ -61,6 +63,8 @@ class SchoolResource(resources.ModelResource):
             'number_students_alp',
             'is_2nd_shift',
             'number_students_2nd_shift',
+            'attendances_days_2ndshift',
+            'attendances_days_alp',
         )
         export_order = fields
 
@@ -79,6 +83,12 @@ class SchoolResource(resources.ModelResource):
 
     def dehydrate_total_registered_alp(self, obj):
         return obj.total_registered_alp
+
+    def dehydrate_attendances_days_2ndshift(self, obj):
+        return obj.total_attendances_days_2ndshift
+
+    def dehydrate_attendances_days_alp(self, obj):
+        return obj.total_attendances_days_alp
 
 
 class GovernorateFilter(admin.SimpleListFilter):
