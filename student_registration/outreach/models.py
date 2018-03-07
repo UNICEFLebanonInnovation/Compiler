@@ -79,6 +79,10 @@ class Child(Person):
         max_length=45,
         blank=True, null=True,
     )
+    formid_ind = models.CharField(
+        max_length=45,
+        blank=True, null=True,
+    )
     barcode_subset = models.CharField(max_length=45, blank=True, null=True, db_index=True)
     calculated_age = models.CharField(
         max_length=45,
@@ -98,6 +102,9 @@ class Child(Person):
             ('7', _('Education system 7')),
         )
     )
+
+    last_edu_system = models.CharField(max_length=200, blank=True, null=True)
+    last_school_formal_year = models.CharField(max_length=45, blank=True, null=True)
     last_education_year = models.CharField(max_length=45, blank=True, null=True)
     last_public_school_location = models.CharField(
         max_length=50,
@@ -185,6 +192,7 @@ class Child(Person):
     disability_note = models.CharField(max_length=100, blank=True, null=True)
     other_disability_note = models.CharField(max_length=100, blank=True, null=True)
     disability_comments = models.CharField(max_length=200, blank=True, null=True)
+
     school_name = models.CharField(max_length=200, blank=True, null=True)
     retention_support = models.CharField(
         max_length=50,
@@ -200,15 +208,9 @@ class Child(Person):
         )
     )
     formal_education_type = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
-        null=True,
-        choices=Choices(
-            ('1', _('Formal education 1')),
-            ('2', _('Formal education 2')),
-            ('3', _('Formal education 3')),
-            ('4', _('Formal education 4')),
-        )
+        null=True
     )
     formal_education_shift = models.CharField(
         max_length=50,
@@ -234,16 +236,34 @@ class Child(Person):
         )
     )
     referred_school = models.CharField(max_length=200, blank=True, null=True)
+    referred_school_first = models.CharField(max_length=200, blank=True, null=True)
+    referred_school_second = models.CharField(max_length=200, blank=True, null=True)
+    referred_school_alp = models.CharField(max_length=200, blank=True, null=True)
+
     referred_org = models.CharField(max_length=200, blank=True, null=True)
+    referred_org_bln = models.CharField(max_length=200, blank=True, null=True)
+    referred_org_ece = models.CharField(max_length=200, blank=True, null=True)
     referred_school_name = models.CharField(max_length=200, blank=True, null=True)
     referred_org_name = models.CharField(max_length=200, blank=True, null=True)
+
     referral_reason = ArrayField(
         models.CharField(
             choices=Choices(
-                ('ALP', _('ALP')),
-                ('BLN', _('BLN')),
-                ('CBECE', _('CB-ECE')),
-                ('SALP', _('SALP')),
+                ('1', _('Referral_Reason 1')),
+                ('2', _('Referral_Reason 2')),
+                ('3', _('Referral_Reason 3')),
+                ('4', _('Referral_Reason 4')),
+                ('5', _('Referral_Reason 5')),
+                ('6', _('Referral_Reason 6')),
+                ('7', _('Referral_Reason 7')),
+                ('8', _('Referral_Reason 8')),
+                ('9', _('Referral_Reason 9')),
+                ('10', _('Referral_Reason 10')),
+                ('11', _('Referral_Reason 11')),
+                ('12', _('Referral_Reason 12')),
+                ('13', _('Referral_Reason 13')),
+                ('14', _('Referral_Reason 14')),
+                ('15', _('Referral_Reason 15')),
             ),
             max_length=50,
             blank=True,

@@ -126,6 +126,72 @@ def push_children_data(base_url, token, protocol='HTTPS'):
 
 
 @app.task
+def update_children_data():
+    from .models import Child
+    wb = load_workbook(filename='BTS_Outreach_data_05022018_original_children.xlsx', read_only=True)
+    ws = wb['IndividualInfo']
+    ctr = 0
+
+    for row in ws.rows:
+        try:
+            if row[0].value == 'FORMID':
+                continue
+            if not row[1].value or not row[2].value or not row[3].value:
+                continue
+            child = Child.objects.filter(
+                form_id=row[0].value.strip(),
+                first_name=row[1].value.strip(),
+                father_name=row[2].value.strip(),
+                last_name=row[3].value.strip(),
+            ).first()
+            if not child:
+                ctr += 1
+                continue
+
+            child.last_edu_system = row[16].value
+            child.last_school_formal_year = row[18].value
+            child.last_education_year = row[19].value
+            child.last_public_school_location = row[20].value
+            child.last_informal_education = row[21].value
+            child.not_enrolled_reasons = row[22].value.split(',') if row[22].value else []
+            if row[23].value:
+                child.consent_child_protection = row[23].value
+            child.work_type = row[24].value
+            child.disability_type = row[25].value.split(',') if row[25].value else []
+            child.disability_note = row[26].value
+            child.other_disability_note = row[27].value
+            child.school_name = row[28].value
+            if row[31].value:
+                child.retention_support = row[31].value
+            if row[32].value:
+                child.formal_education_type = row[32].value
+            if row[33].value:
+                child.formal_education_shift = row[33].value
+            if row[34].value:
+                child.informal_education_type = row[34].value
+
+            child.referred_school_first = row[36].value
+            child.referred_school_second = row[37].value
+            child.referred_school_alp = row[38].value
+            child.referred_org_bln = row[39].value
+            child.referred_org_ece = row[40].value
+            child.referral_reason = row[42].value.split(',') if row[42].value else []
+            child.referral_note = row[43].value
+            child.formid_ind = row[54].value
+
+            child.save()
+
+        except Exception as ex:
+            print("---------------")
+            ctr += 1
+            # print(row[0].value, row[1].value, row[2].value, row[3].value)
+            print("error: ", ex.message)
+            print("---------------")
+            pass
+    print(ctr)
+
+
+@app.task
 def link_household_to_children():
     from .models import HouseHold, Child
 
@@ -188,7 +254,7 @@ def cross_matching_children(program_type='2nd-shift'):
     from student_registration.schools.models import EducationYear
 
     offset = 160000
-    limit = offset + 20000
+    limit = offset + 40000
     children = Child.objects.all()[offset:limit]
     print(children.count())
     education_year = EducationYear.objects.get(current_year=True)
