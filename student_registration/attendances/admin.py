@@ -386,6 +386,8 @@ class AttendanceAdmin(ImportExportModelAdmin):
     list_filter = (
         'school',
         'school_type',
+        LocationFilter,
+        GovernorateFilter,
         'attendance_date',
         'validation_date',
         'validation_status',
