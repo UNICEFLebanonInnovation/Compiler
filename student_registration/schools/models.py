@@ -136,6 +136,14 @@ class School(models.Model):
         ordering = ['number']
 
     @property
+    def total_attendances_days_2ndshift(self):
+        return self.attendances.filter(education_year__current_year=True, school_type='2nd-shift').count()
+
+    @property
+    def total_attendances_days_alp(self):
+        return self.attendances.filter(alp_round__current_round=True, school_type='ALP').count()
+
+    @property
     def location_name(self):
         if self.location:
             return self.location.name
