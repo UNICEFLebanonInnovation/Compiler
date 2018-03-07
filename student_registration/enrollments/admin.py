@@ -382,8 +382,14 @@ class DropoutAdmin(EnrollmentAdmin):
         'governorate',
     )
 
+    actions = ('cancel_dropout', )
+
     def get_queryset(self, request):
         return Enrollment.drop_objects.all()
+
+    def cancel_dropout(self, request, queryset):
+        queryset.update(dropout_status=False)
+        queryset.update(disabled=False)
 
 
 class Disabled(Enrollment):
@@ -405,8 +411,16 @@ class DisabledAdmin(EnrollmentAdmin):
         'governorate',
     )
 
+    actions = ('dropout', 'cancel_disable')
+
     def get_queryset(self, request):
         return Enrollment.disabled_objects.all()
+
+    def cancel_disable(self, request, queryset):
+        queryset.update(disabled=False)
+
+    def dropout(self, request, queryset):
+        queryset.update(dropout_status=True)
 
 
 class StudentMoveResource(resources.ModelResource):
