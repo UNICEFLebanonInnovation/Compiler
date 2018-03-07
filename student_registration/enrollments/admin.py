@@ -86,6 +86,11 @@ class EnrollmentResource(resources.ModelResource):
             'age_max_restricted',
             'last_attendance_date',
             'last_absent_date',
+            'created',
+            'modified',
+            'moved',
+            'dropout_status',
+            'disabled',
         )
         export_order = fields
 
@@ -322,6 +327,9 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         # 'exam_result',
         'created',
         'modified',
+        'dropout_status',
+        'disabled',
+        'moved',
         'new_registry',
         'student_outreached',
         'have_barcode',

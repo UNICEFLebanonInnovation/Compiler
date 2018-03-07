@@ -30,6 +30,12 @@ def export_2ndshift(params=None, return_data=False):
     data = tablib.Dataset()
     data.headers = [
 
+        'created',
+        'modified',
+        'dropout_status',
+        'disabled',
+        'moved',
+
         _('Last non formal education - result'),
         _('Last non formal education - round'),
         _('Is the child participated in an ALP/2016-2 program'),
@@ -86,6 +92,12 @@ def export_2ndshift(params=None, return_data=False):
         if not line.student or not line.school:
             continue
         content = [
+
+            line.created,
+            line.modified,
+            line.dropout_status,
+            line.disabled,
+            line.moved,
 
             line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
             line.last_informal_edu_round.name if line.last_informal_edu_round else '',

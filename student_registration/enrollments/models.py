@@ -24,7 +24,7 @@ from student_registration.alp.models import ALPRound, Outreach
 
 class EnrollmentManager(models.Manager):
     def get_queryset(self):
-        return super(EnrollmentManager, self).get_queryset().exclude(deleted=True).exclude(dropout_status=True)
+        return super(EnrollmentManager, self).get_queryset().exclude(deleted=True)
 
 
 class EnrollmentDropoutManager(models.Manager):
@@ -438,17 +438,17 @@ class Enrollment(TimeStampedModel):
     )
     disabled = models.BooleanField(
         blank=True, default=False,
-        verbose_name=_('disabled')
+        verbose_name=_('Disabled?')
     )
     last_attendance_date = models.DateField(blank=True, null=True)
     last_absent_date = models.DateField(blank=True, null=True)
     dropout_status = models.BooleanField(
         blank=True, default=False,
-        verbose_name=_('Dropout status')
+        verbose_name=_('Dropout?')
     )
     moved = models.BooleanField(
         blank=True, default=False,
-        verbose_name=_('moved')
+        verbose_name=_('Moved?')
     )
     outreach_barcode = models.CharField(
         max_length=50,
