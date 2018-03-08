@@ -20,7 +20,6 @@ from student_registration.schools.models import (
     ClassRoom,
 )
 
-from student_registration.enrollments.models import Enrollment
 from student_registration.alp.models import Outreach, ALPRound
 from student_registration.users.models import User
 from student_registration.backends.exporter import export_full_data
@@ -44,83 +43,6 @@ class ExporterView(LoginRequiredMixin,
             'alp_rounds': ALPRound.objects.all(),
             'classrooms': ClassRoom.objects.all(),
             'education_years': EducationYear.objects.all()
-        }
-
-
-class Registrations2ndShiftView(LoginRequiredMixin,
-                                GroupRequiredMixin,
-                                TemplateView):
-    """
-    Provides the registration page with lookup types in the context
-    """
-    model = Enrollment
-    queryset = Enrollment.objects.all()
-    template_name = 'dashboard/registrations-2ndshift.html'
-
-    group_required = [u"MEHE"]
-
-    def handle_no_permission(self, request):
-        # return HttpResponseRedirect(reverse("403.html"))
-        # return HttpResponseForbidden(reverse("404.html"))
-        return HttpResponseForbidden()
-
-    def get_context_data(self, **kwargs):
-
-        # children by governate || get the governettes and get the number of children for each, and put them in a dictionary
-        # Also schools by governate
-        governorates = Location.objects.exclude(parent__isnull=False)
-
-        education_levels = ClassRoom.objects.all()
-
-        return {
-                'schools': 0,
-                'registrations': self.queryset.count(),
-                'males': self.queryset.filter(student__sex='Male').count(),
-                'females': self.queryset.filter(student__sex='Female').count(),
-                'education_levels': education_levels,
-                'governorates': governorates,
-                'enrollments': self.queryset,
-        }
-
-
-class Registrations2ndShiftOverallView(LoginRequiredMixin,
-                                       GroupRequiredMixin,
-                                       TemplateView):
-    """
-    Provides the registration page with lookup types in the context
-    """
-    model = Enrollment
-    queryset = Enrollment.objects.exclude(moved__isnull=True)\
-        .exclude(dropout_status__isnull=True)\
-        .exclude(disabled__isnull=True)
-    template_name = 'dashboard/2ndshift.governorate.grade.html'
-
-    group_required = [u"MEHE"]
-
-    def handle_no_permission(self, request):
-        # return HttpResponseRedirect(reverse("403.html"))
-        # return HttpResponseForbidden(reverse("404.html"))
-        return HttpResponseForbidden()
-
-    def get_context_data(self, **kwargs):
-
-        current_year = EducationYear.objects.get(current_year=True)
-        current = self.request.GET.get('current', current_year.id)
-        now = datetime.datetime.now()
-        governorates = Location.objects.exclude(parent__isnull=False)
-        education_levels = ClassRoom.objects.all()
-        level_by_age = {}
-
-        queryset = self.queryset.filter(education_year_id=current)
-
-        return {
-                'registrations': queryset.count(),
-                'males': queryset.filter(student__sex='Male').count(),
-                'females': queryset.filter(student__sex='Female').count(),
-                'education_levels': education_levels,
-                'governorates': governorates,
-                'enrollments': queryset,
-                'level_by_age': level_by_age
         }
 
 
