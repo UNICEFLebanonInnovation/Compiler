@@ -5,6 +5,7 @@ from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 from .models import HouseHold, Child, OutreachYear
+from django.utils.translation import ugettext as _
 
 
 class HouseHoldResource(resources.ModelResource):
@@ -32,9 +33,7 @@ class HouseHoldAdmin(ImportExportModelAdmin):
         'p_code',
         'residence_type',
         'governorate',
-        'district',
-        'partner_name',
-        'interview_status'
+        'district'
     )
 
     def get_export_formats(self):
@@ -42,13 +41,53 @@ class HouseHoldAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
+class DisabilityFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Disability'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'disability'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('Walking', _('Walking')),
+            ('Seeing', _('Seeing')),
+            ('Hearing', _('Hearing')),
+            ('Speaking', _('Speaking')),
+            ('Self_Care', _('Self Care')),
+            ('Learning', _('Learning')),
+            ('Interacting', _('Interacting')),
+            ('Other', _('Other')),
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if not self.value():
+            return queryset
+        return queryset.filter(disability_type__contains=[self.value()])
+
+
 class ChildResource(resources.ModelResource):
     class Meta:
         model = Child
+        fields = ()
+        export = fields
 
 
 class ChildAdmin(ImportExportModelAdmin):
-    resource_class = Child
+    resource_class = ChildResource
     list_display = (
         'form_id',
         'barcode_subset',
@@ -58,6 +97,7 @@ class ChildAdmin(ImportExportModelAdmin):
         'mother_fullname',
         'birthday',
         'nationality',
+        'disability_type',
     )
     search_fields = (
         'form_id',
@@ -65,7 +105,28 @@ class ChildAdmin(ImportExportModelAdmin):
     )
     list_filter = (
         'p_code',
+        'nationality',
+        'sex',
+        'disability_type',
+        'household__governorate',
+        DisabilityFilter,
+        'current_situation',
     )
+
+    # def get_queryset(self, request):
+    #     from django.db.models import Q
+    #
+    #     return Child.objects.filter(disability_type__contains=['Seeing'])
+        # return Child.objects.filter(Q(disability_type__isnull=False) | Q(disability_type__in=['Walking', 'Seeing', 'Hearing', ]))
+    #
+    # ('Walking', _('Walking')),
+    # ('Seeing', _('Seeing')),
+    # ('Hearing', _('Hearing')),
+    # ('Speaking', _('Speaking')),
+    # ('Self_Care', _('Self Care')),
+    # ('Learning', _('Learning')),
+    # ('Interacting', _('Interacting')),
+    # ('Other', _('Other')),
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
