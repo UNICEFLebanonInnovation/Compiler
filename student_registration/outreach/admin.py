@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from django.contrib import admin
 from import_export import resources, fields
 from import_export import fields
+from django.db.models import Count
 from import_export.admin import ImportExportModelAdmin
 from .models import HouseHold, Child, OutreachYear
 from django.utils.translation import ugettext as _
@@ -110,13 +111,14 @@ class ChildAdmin(ImportExportModelAdmin):
         'disability_type',
         'household__governorate',
         DisabilityFilter,
-        'current_situation',
+        'last_edu_system',
     )
 
     # def get_queryset(self, request):
-    #     from django.db.models import Q
-    #
-    #     return Child.objects.filter(disability_type__contains=['Seeing'])
+        # from django.db.models import Q
+
+        # return Child.objects.all().distinct()
+        # return Child.objects.filter(disability_type__contains=['Seeing'])
         # return Child.objects.filter(Q(disability_type__isnull=False) | Q(disability_type__in=['Walking', 'Seeing', 'Hearing', ]))
     #
     # ('Walking', _('Walking')),

@@ -73,7 +73,7 @@ class Child(Person):
     household = models.ForeignKey(
         HouseHold,
         blank=True, null=True,
-        related_name='+'
+        related_name='outreach_children'
     )
     form_id = models.CharField(
         max_length=45,

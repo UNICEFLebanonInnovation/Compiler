@@ -207,12 +207,12 @@ class CLM(TimeStampedModel):
         choices=LANGUAGES,
         verbose_name=_('The language supported in the program')
     )
-    student = models.ForeignKey(
-        Student,
-        blank=False, null=True,
-        related_name='+',
-        verbose_name=_('Student')
-    )
+    # student = models.ForeignKey(
+    #     Student,
+    #     blank=False, null=True,
+    #     related_name='clm_enrollment',
+    #     verbose_name=_('Student')
+    # )
     disability = models.ForeignKey(
         Disability,
         blank=True, null=True,
@@ -420,6 +420,13 @@ class BLN(CLM):
         # ('dropout', _('Dropout from school'))
     )
 
+    student = models.ForeignKey(
+        Student,
+        blank=False, null=True,
+        related_name='bln_enrollment',
+        verbose_name=_('Student')
+    )
+
     cycle = models.ForeignKey(
         Cycle,
         blank=True, null=True,
@@ -535,6 +542,13 @@ class RS(CLM):
     REFER_SEASON = Choices(
         ('academic', _('Academic')),
         ('absence', _('Absence'))
+    )
+
+    student = models.ForeignKey(
+        Student,
+        blank=False, null=True,
+        related_name='rs_enrollment',
+        verbose_name=_('Student')
     )
 
     type = models.CharField(
@@ -861,6 +875,13 @@ class CBECE(CLM):
         ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
         ('referred_to_another_program', _('Referred to another program')),
         # ('dropout', _('Dropout from school'))
+    )
+
+    student = models.ForeignKey(
+        Student,
+        blank=False, null=True,
+        related_name='cbece_enrollment',
+        verbose_name=_('Student')
     )
 
     cycle = models.ForeignKey(

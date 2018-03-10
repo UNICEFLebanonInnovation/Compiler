@@ -6,4 +6,10 @@ from . import views
 
 urlpatterns = [
 
+    url(
+        regex=r'^export/$',
+        view=views.Export4View.as_view(),
+        name='export'
+    ),
+
 ]
