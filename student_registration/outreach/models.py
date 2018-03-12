@@ -8,7 +8,7 @@ from django.utils.translation import ugettext as _
 
 from model_utils import Choices
 
-from student_registration.students.models import Person
+from student_registration.students.models import Person, Nationality
 
 
 class OutreachYear(models.Model):
@@ -58,6 +58,13 @@ class HouseHold(models.Model):
     district = models.CharField(max_length=200, blank=True, null=True)
     village = models.CharField(max_length=200, blank=True, null=True)
     interview_date = models.CharField(max_length=200, blank=True, null=True)
+
+    nationality = models.ForeignKey(
+        Nationality,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Nationality')
+    )
 
     children = JSONField(blank=True, null=True)
 

@@ -207,6 +207,18 @@ def link_household_to_children():
             child.save()
 
 
+@app.task
+def update_household_nationality():
+    from .models import HouseHold, Child
+
+    households = HouseHold.objects.all()
+    for hh in households:
+        child = Child.objects.filter(form_id=hh.form_id).first()
+        if child.nationality:
+            hh.nationality = child.nationality
+            hh.save()
+
+
 class MyEncoder(json.JSONEncoder):
 
     def default(self, obj):
