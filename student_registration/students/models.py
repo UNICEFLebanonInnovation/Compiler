@@ -415,3 +415,4 @@ class CrossMatching(models.Model):
     matched_on = models.CharField(max_length=500, blank=True, null=True)
     pertinence = models.CharField(max_length=1, blank=True, null=True)
     program_type = models.CharField(max_length=100, blank=True, null=True)
+    education_level = models.CharField(max_length=2, blank=True, null=True)

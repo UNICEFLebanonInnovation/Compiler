@@ -219,6 +219,19 @@ def update_household_nationality():
             hh.save()
 
 
+@app.task
+def update_student_grade():
+    from student_registration.students.models import CrossMatching
+
+    children = CrossMatching.objects.filter(program_type='2nd-shift')
+    for hh in children:
+        student = hh.student
+        enrollment = student.student_enrollment.filter(education_year__current_year=True).first()
+        if enrollment:
+            hh.education_level = enrollment.classroom_id
+            hh.save()
+
+
 class MyEncoder(json.JSONEncoder):
 
     def default(self, obj):
