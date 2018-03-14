@@ -12,6 +12,18 @@
 
 {% block content-full-page %}
 
+<style>
+
+div.row-student.disabled {
+  pointer-events: none;
+
+  /* for "disabled" effect */
+  opacity: 0.5;
+  background: #CCC;
+}
+
+</style>
+
          <section class="main-content-wrapper">
             <section id="main-content">
                  <div class="row">
@@ -72,7 +84,7 @@
                     <input type="hidden" name="section" value="{{ section.id }}" id="section" />
                     <input type="hidden" name="level" value="{{ level.id }}" id="level" />
                 {% for line in students %}
-                    <div class="row row-student">
+                    <div class="row row-student {% if line.disabled or line.dropout_status %}disabled{% endif %}">
                         <input type="hidden" name="enrollment_id[]" value="{{ line.id }}" class="enrollment_id" />
                         <input type="hidden" name="student_id[]" id="student_id_{{ line.id }}" value="{{ line.student.id }}" />
                         <input type="hidden" name="student_fullname[]" id="student_fullname_{{ line.id }}" value="{{ line.student }}" />
@@ -98,7 +110,11 @@
                             <span>{{ line.student.age }}</span>
                         </div>
                         <div class="col-xs-6 col-sm-2 col-md-2 s-col">
-                            <input type="checkbox" name="status[]" id="status_{{ line.id }}" {% if line.attendance_status == 'True' or line.attendance_status == None %}checked="checked" value="True"{% else %}value="False"{% endif %} itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" {% if disable_attendance %}disabled{% endif %}/>
+                          {% if line.disabled or line.dropout_status %}
+                              <input type="checkbox" name="status[]" id="status_{{ line.id }}" {% if line.attendance_status == 'True' %} checked="checked" value="True"{% else %}value="False"{% endif %} itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" {% if disable_attendance %}disabled{% endif %}/>
+                          {% else %}
+                            <input type="checkbox" name="status[]" id="status_{{ line.id }}" {% if line.attendance_status == 'True' or line.attendance_status == None %}checked="checked" value="True"{% else %} value="False"{% endif %} itemid="{{ line.id }}" class="toggle-status" data-on-text="{% trans "Present" %}" data-off-text="{% trans "Absent" %}" {% if disable_attendance %}disabled{% endif %}/>
+                          {% endif %}
                         </div>
                         <div class="col-sm-8 absence-reasons {% if line.attendance_status == 'True' or line.attendance_status == None %}d-none{% endif %}" id="reasons-{{ line.id }}">
                             <label class="radio-inline"><input type="radio" {% if line.absence_reason == 'sick' %}checked="checked"{% endif %} value="sick" name="absence_reason[{{ line.id }}]" class="absence_reason_{{ line.id }}" {% if disable_attendance %}disabled{% endif %}/>{% trans "Sick" %}</label>
