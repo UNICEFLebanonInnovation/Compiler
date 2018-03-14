@@ -112,6 +112,7 @@ class ChildAdmin(ImportExportModelAdmin):
         'household__governorate',
         DisabilityFilter,
         'last_edu_system',
+        'referral_reason',
     )
 
     # def get_queryset(self, request):
