@@ -137,6 +137,19 @@ def enrollment_by_gov_by_nationality_by_gender(registrations, gov, nationality=N
 
 
 @register.assignment_tag
+def enrollment_by_gov_by_nationality_by_gender_by_grade(registrations, gov, nationality=None, gender=None, level=None):
+    if gender:
+        registrations = registrations.filter(student__sex=gender)
+    if gov:
+        registrations = registrations.filter(school__location__parent_id=gov)
+    if nationality:
+        registrations = registrations.filter(student__nationality_id=nationality)
+    if level:
+        registrations = registrations.filter(classroom_id=level)
+    return registrations.count()
+
+
+@register.assignment_tag
 def enrollment_by_gov_by_age_by_gender(registrations, gov, age=None, gender=None):
     now = datetime.datetime.now()
     if gender:

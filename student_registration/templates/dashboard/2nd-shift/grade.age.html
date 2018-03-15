@@ -14,7 +14,8 @@
 
   <section id="main-content">
       <div class="title_left">
-          <h3>{% trans 'Students by Grade by Age' %} - {{ selected_year.name }}</h3>
+          <h3>{% trans 'Students by Grade by Age' %}</h3>
+          <h3>{{ selected_year.name }} - {% if selected_gov %}{{ selected_gov.name }}{% else %}All Governorate{% endif %}</h3>
       </div>
      <div class="" style="overflow: scroll;">
         <div class="x_content">
@@ -29,6 +30,16 @@
                   <div class="dropdown-menu">
                     {% for item in education_years %}
                     <a class="dropdown-item" href="{% url 'dashboard:2ndshift_grade_age' %}?current={{ item.id }}">{{ item.name }}</a>
+                    {% endfor %}
+                  </div>
+                </div>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Governorate
+                  </button>
+                  <div class="dropdown-menu">
+                    {% for item in governorates %}
+                    <a class="dropdown-item" href="{% url 'dashboard:2ndshift_grade_age' %}?current={{ selected_year.id }}&gov={{ item.id }}">{{ item.name }}</a>
                     {% endfor %}
                   </div>
                 </div>
