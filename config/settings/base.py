@@ -385,6 +385,8 @@ SUIT_CONFIG = {
             {'url': '/dashboard/2ndshift-grade-age/', 'label': '2nd Shift by Grade by Age'},
             {'url': '/dashboard/2ndshift-grade-nationality/', 'label': '2nd Shift by Grade by Nationality'},
             {'url': '/dashboard/2ndshift-nationality-age/', 'label': '2nd Shift by Nationality by Age'},
+            {'url': '/dashboard/2ndshift-school-grade/', 'label': '2nd Shift by School by Grade'},
+            {'url': '/dashboard/2ndshift-school-nationality/', 'label': '2nd Shift by School by Nationality'},
             # {'url': '/dashboard/2ndshift-overall/', 'label': '2nd Shift Overall'},
             {'url': '/dashboard/alp-overall/', 'label': 'ALP Overall'},
             {'url': '/dashboard/registrations-alp/', 'label': 'ALP Current round'},
