@@ -67,4 +67,14 @@ urlpatterns = [
         view=secondshift.NationalityAgeView.as_view(),
         name='2ndshift_nationality_age'
     ),
+    url(
+        regex=r'^2ndshift-school-grade/$',
+        view=secondshift.SchoolGradeView.as_view(),
+        name='2ndshift_school_grade'
+    ),
+    url(
+        regex=r'^2ndshift-school-nationality/$',
+        view=secondshift.SchoolNationalityView.as_view(),
+        name='2ndshift_school_nationality'
+    ),
 ]

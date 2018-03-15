@@ -14,12 +14,11 @@
 
   <section id="main-content">
       <div class="title_left">
-          <h3>{% trans 'Students by Grade by Age' %}</h3>
+          <h3>{% trans 'Students by School by Nationality' %}</h3>
           <h3>
             {{ selected_year.name }} -
             {% if selected_gov %}{{ selected_gov.name }}{% endif %}
             {% if selected_district %} {{ selected_district.name }} {% endif %}
-            {% if selected_school %} {{ selected_school }} {% endif %}
           </h3>
       </div>
      <div class="" style="overflow: scroll;">
@@ -34,7 +33,7 @@
                   </button>
                   <div class="dropdown-menu">
                     {% for item in education_years %}
-                    <a class="dropdown-item" href="{% url 'dashboard:2ndshift_grade_age' %}?current={{ item.id }}">{{ item.name }}</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:2ndshift_school_nationality' %}?current={{ item.id }}">{{ item.name }}</a>
                     {% endfor %}
                   </div>
                 </div>
@@ -45,7 +44,7 @@
                   </button>
                   <div class="dropdown-menu">
                     {% for item in governorates %}
-                    <a class="dropdown-item" href="{% url 'dashboard:2ndshift_grade_age' %}?current={{ selected_year.id }}&gov={{ item.id }}">{{ item.name }}</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:2ndshift_school_nationality' %}?current={{ selected_year.id }}&gov={{ item.id }}">{{ item.name }}</a>
                     {% endfor %}
                   </div>
                 </div>
@@ -56,26 +55,13 @@
                   </button>
                   <div class="dropdown-menu">
                     {% for item in districts %}
-                    <a class="dropdown-item" href="{% url 'dashboard:2ndshift_grade_age' %}?current={{ selected_year.id }}&district={{ item.id }}">{{ item.name }}</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:2ndshift_school_nationality' %}?current={{ selected_year.id }}&district={{ item.id }}">{{ item.name }}</a>
                     {% endfor %}
                   </div>
                 </div>
 
-                <div class="btn-group">
-                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    School
-                  </button>
-                  <div class="dropdown-menu">
-                    {% for item in schools %}
-                    <a class="dropdown-item" href="{% url 'dashboard:2ndshift_grade_age' %}?current={{ selected_year.id }}&school={{ item.id }}">{{ item.name }}</a>
-                    {% endfor %}
-                  </div>
-                </div>
-
-                {% get_range_int 1 23 as ages0 %}
-                {% get_range_int 1 23 as ages %}
                 <table class="table table-striped table-bordered cell-border"
-                       data-tableName="Students by Grade by Age"
+                       data-tableName="Students by School by Grade"
                        data-height="500"
                        data-pagination="true"
                        data-search="true"
@@ -84,18 +70,18 @@
                        id="exporttable1">
                     <thead>
                         <tr>
-                            <th rowspan="3">Grades</th>
-                            <th colspan="47" style="text-align: center;">Ages</th>
+                            <th rowspan="3">Schools</th>
+                            <th colspan="41" style="text-align: center;">Nationalities</th>
                         </tr>
                         <tr>
-                            {% for age in ages0 %}
-                                <th colspan="2">{{ age }}</th>
+                            {% for level in nationalities %}
+                                <th colspan="2">{{ level.name }}</th>
                             {% endfor %}
                             <th colspan="2">Total</th>
                             <th colspan="2" rowspan="2">Total</th>
                         </tr>
                         <tr>
-                            {% for age in ages %}
+                            {% for level in nationalities %}
                                 <th>Male</th>
                                 <th>Female</th>
                             {% endfor %}
@@ -104,44 +90,42 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for gov in education_levels %}
-                        {% get_range_int 1 23 as ages1 %}
+                        {% for school in schools %}
                         <tr>
-                            <td><strong>{{ gov.name }}</strong></td>
-                            {% for age in ages1 %}
+                            <td><strong>{{ school.name }}</strong></td>
+                            {% for level in nationalities %}
                             <td>
-                                {% enrollment_by_grade_by_age_by_gender enrollments gov.id age 'Male' as number %}
+                                {% enrollment_by_school_by_grade_by_gender enrollments school.id level.id 'Male' as number %}
                                 {{ number }}
                             </td>
                             <td>
-                                {% enrollment_by_grade_by_age_by_gender enrollments gov.id age 'Female' as number %}
+                                {% enrollment_by_school_by_grade_by_gender enrollments school.id level.id 'Female' as number %}
                                 {{ number }}
                             </td>
                             {% endfor %}
                             <td>
-                                {% enrollment_by_grade_by_age_by_gender enrollments gov.id 0 'Male' as number %}
+                                {% enrollment_by_school_by_grade_by_gender enrollments school.id 0 'Male' as number %}
                                 {{ number }}
                             </td>
                             <td>
-                                {% enrollment_by_grade_by_age_by_gender enrollments gov.id 0 'Female' as number %}
+                                {% enrollment_by_school_by_grade_by_gender enrollments school.id 0 'Female' as number %}
                                 {{ number }}
                             </td>
                             <td>
-                                {% enrollment_by_grade_by_age_by_gender enrollments gov.id 0 as number %}
+                                {% enrollment_by_school_by_grade_by_gender enrollments school.id 0 0 as number %}
                                 {{ number }}
                             </td>
                         </tr>
                         {% endfor %}
                         <tr>
                             <td><strong>Total</strong></td>
-                            {% get_range_int 1 23 as ages2 %}
-                            {% for age in ages2 %}
+                            {% for level in nationalities %}
                             <td>
-                                {% enrollment_by_grade_by_age_by_gender enrollments 0 age 'Male' as number %}
+                                {% enrollment_by_school_by_grade_by_gender enrollments 0 level.id 'Male' as number %}
                                 {{ number }}
                             </td>
                             <td>
-                                {% enrollment_by_grade_by_age_by_gender enrollments 0 age 'Female' as number %}
+                                {% enrollment_by_school_by_grade_by_gender enrollments 0 level.id 'Female' as number %}
                                 {{ number }}
                             </td>
                             {% endfor %}
