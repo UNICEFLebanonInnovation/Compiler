@@ -126,6 +126,28 @@ def enrollment_by_gov_by_grade_by_gender(registrations, gov, level=None, gender=
 
 
 @register.assignment_tag
+def enrollment_by_school_by_grade_by_gender(registrations, school, level=None, gender=None):
+    if gender:
+        registrations = registrations.filter(student__sex=gender)
+    if school:
+        registrations = registrations.filter(school_id=school)
+    if level:
+        registrations = registrations.filter(classroom_id=level)
+    return registrations.count()
+
+
+@register.assignment_tag
+def enrollment_by_school_by_nationality_by_gender(registrations, school, nationality=None, gender=None):
+    if gender:
+        registrations = registrations.filter(student__sex=gender)
+    if school:
+        registrations = registrations.filter(school_id=school)
+    if nationality:
+        registrations = registrations.filter(student__nationality_id=nationality)
+    return registrations.count()
+
+
+@register.assignment_tag
 def enrollment_by_gov_by_nationality_by_gender(registrations, gov, nationality=None, gender=None):
     if gender:
         registrations = registrations.filter(student__sex=gender)
