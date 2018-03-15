@@ -148,8 +148,13 @@ class GradeAgeView(LoginRequiredMixin,
         current_year = EducationYear.objects.get(current_year=True)
         current = int(self.request.GET.get('current', current_year.id))
         selected_year = EducationYear.objects.get(id=current)
-
         queryset = self.queryset.filter(education_year_id=current)
+
+        selected_gov = None
+        governorate = int(self.request.GET.get('gov', 0))
+        if governorate:
+            selected_gov = Location.objects.get(id=governorate)
+            queryset = queryset.filter(school__location__parent_id=selected_gov.id)
 
         return {
             'registrations': queryset.count(),
@@ -162,6 +167,7 @@ class GradeAgeView(LoginRequiredMixin,
             'governorates': Location.objects.exclude(parent__isnull=False),
             'enrollments': queryset,
             'selected_year': selected_year,
+            'selected_gov': selected_gov
         }
 
 
@@ -184,8 +190,13 @@ class GradeNationalityView(LoginRequiredMixin,
         current_year = EducationYear.objects.get(current_year=True)
         current = int(self.request.GET.get('current', current_year.id))
         selected_year = EducationYear.objects.get(id=current)
-
         queryset = self.queryset.filter(education_year_id=current)
+
+        selected_gov = None
+        governorate = int(self.request.GET.get('gov', 0))
+        if governorate:
+            selected_gov = Location.objects.get(id=governorate)
+            queryset = queryset.filter(school__location__parent_id=selected_gov.id)
 
         return {
             'registrations': queryset.count(),
@@ -198,6 +209,7 @@ class GradeNationalityView(LoginRequiredMixin,
             'governorates': Location.objects.exclude(parent__isnull=False),
             'enrollments': queryset,
             'selected_year': selected_year,
+            'selected_gov': selected_gov,
         }
 
 
@@ -220,8 +232,13 @@ class NationalityAgeView(LoginRequiredMixin,
         current_year = EducationYear.objects.get(current_year=True)
         current = int(self.request.GET.get('current', current_year.id))
         selected_year = EducationYear.objects.get(id=current)
-
         queryset = self.queryset.filter(education_year_id=current)
+
+        selected_gov = None
+        governorate = int(self.request.GET.get('gov', 0))
+        if governorate:
+            selected_gov = Location.objects.get(id=governorate)
+            queryset = queryset.filter(school__location__parent_id=selected_gov.id)
 
         return {
             'registrations': queryset.count(),
@@ -234,4 +251,5 @@ class NationalityAgeView(LoginRequiredMixin,
             'governorates': Location.objects.exclude(parent__isnull=False),
             'enrollments': queryset,
             'selected_year': selected_year,
+            'selected_gov': selected_gov
         }
