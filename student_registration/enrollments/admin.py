@@ -18,6 +18,7 @@ from .models import (
     LoggingProgramMove
 )
 from .forms import EnrollmentAdminForm, LoggingStudentMoveForm
+from .utils import initiate_grading
 from student_registration.schools.models import (
     School,
 )
@@ -347,6 +348,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'owner__username',
     )
     date_hierarchy = 'registration_date'
+    actions = ('initiate_grading',)
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
@@ -361,6 +363,13 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         if obj.school and obj.school.location and obj.school.location.parent:
             return obj.school.location.parent.name
         return ''
+
+    def initiate_grading(self, request, queryset):
+        for instance in queryset:
+            initiate_grading(enrollment=instance, term=1)
+            initiate_grading(enrollment=instance, term=2)
+            initiate_grading(enrollment=instance, term=3)
+            initiate_grading(enrollment=instance, term=4)
 
 
 class Dropout(Enrollment):
