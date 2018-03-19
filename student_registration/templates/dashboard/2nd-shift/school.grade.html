@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="main-content-wrapper">
+
+  <section id="main-content">
+      <div class="title_left">
+          <h3>{% trans 'Students by School by Grade' %}</h3>
+          <h3>
+            {{ selected_year.name }} -
+            {% if selected_gov %}{{ selected_gov.name }}{% endif %}
+            {% if selected_district %} {{ selected_district.name }} {% endif %}
+          </h3>
+      </div>
+     <div class="" style="overflow: scroll;">
+        <div class="x_content">
+                <button class="btn btn-info" id="export1">
+                  <i class="icon-export-sign icon-white"></i>&nbsp;
+                      Export
+                </button>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Education Year
+                  </button>
+                  <div class="dropdown-menu">
+                    {% for item in education_years %}
+                    <a class="dropdown-item" href="{% url 'dashboard:2ndshift_school_grade' %}?current={{ item.id }}">{{ item.name }}</a>
+                    {% endfor %}
+                  </div>
+                </div>
+
+                <div class="btn-group">
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Governorate
+                  </button>
+                  <div class="dropdown-menu">
+                    {% for item in governorates %}
+                    <a class="dropdown-item" href="{% url 'dashboard:2ndshift_school_grade' %}?current={{ selected_year.id }}&gov={{ item.id }}">{{ item.name }}</a>
+                    {% endfor %}
+                  </div>
+                </div>
+
+                <div class="btn-group">
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    District
+                  </button>
+                  <div class="dropdown-menu">
+                    {% for item in districts %}
+                    <a class="dropdown-item" href="{% url 'dashboard:2ndshift_school_grade' %}?current={{ selected_year.id }}&district={{ item.id }}">{{ item.name }}</a>
+                    {% endfor %}
+                  </div>
+                </div>
+
+                <table class="table table-striped table-bordered cell-border"
+                       data-tableName="Students by School by Grade"
+                       data-height="500"
+                       data-pagination="true"
+                       data-search="true"
+                       cellspacing="0"
+                       width="100%"
+                       id="exporttable1">
+                    <thead>
+                        <tr>
+                            <th rowspan="3">Schools</th>
+                            <th colspan="41" style="text-align: center;">Grades</th>
+                        </tr>
+                        <tr>
+                            {% for level in education_levels %}
+                                <th colspan="2">{{ level.name }}</th>
+                            {% endfor %}
+                            <th colspan="2">Total</th>
+                            <th colspan="2" rowspan="2">Total</th>
+                        </tr>
+                        <tr>
+                            {% for level in education_levels %}
+                                <th>Male</th>
+                                <th>Female</th>
+                            {% endfor %}
+                                <th>Male</th>
+                                <th>Female</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for school in schools %}
+                        <tr>
+                            <td><strong>{{ school.name }}</strong></td>
+                            {% for level in education_levels %}
+                            <td>
+                                {% enrollment_by_school_by_grade_by_gender enrollments school.id level.id 'Male' as number %}
+                                {{ number }}
+                            </td>
+                            <td>
+                                {% enrollment_by_school_by_grade_by_gender enrollments school.id level.id 'Female' as number %}
+                                {{ number }}
+                            </td>
+                            {% endfor %}
+                            <td>
+                                {% enrollment_by_school_by_grade_by_gender enrollments school.id 0 'Male' as number %}
+                                {{ number }}
+                            </td>
+                            <td>
+                                {% enrollment_by_school_by_grade_by_gender enrollments school.id 0 'Female' as number %}
+                                {{ number }}
+                            </td>
+                            <td>
+                                {% enrollment_by_school_by_grade_by_gender enrollments school.id 0 0 as number %}
+                                {{ number }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            {% for level in education_levels %}
+                            <td>
+                                {% enrollment_by_school_by_grade_by_gender enrollments 0 level.id 'Male' as number %}
+                                {{ number }}
+                            </td>
+                            <td>
+                                {% enrollment_by_school_by_grade_by_gender enrollments 0 level.id 'Female' as number %}
+                                {{ number }}
+                            </td>
+                            {% endfor %}
+                            <td>{{ males }}</td>
+                            <td>{{ females }}</td>
+                            <td>{{ registrations }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+        </div>
+    </div>
+
+</section>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
+    <script>
+
+    $(document).ready(function(){
+        $('#export1').click(function(){
+            $("#exporttable1").table2excel({
+                exclude: ".noExl",
+                name: "Excel Document Name",
+                filename: $("#exporttable1").attr('data-tableName')+'.xls',
+                fileext: ".xlsx",
+                exclude_img: true,
+                exclude_links: true,
+                exclude_inputs: true
+            });
+        });
+    });
+
+    </script>
+
+{% endblock %}

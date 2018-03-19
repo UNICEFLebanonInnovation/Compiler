@@ -3,17 +3,13 @@ from __future__ import absolute_import, unicode_literals
 from django.conf.urls import url
 
 from . import views
+from student_registration.dashboard.secondshift import views as secondshift
 
 urlpatterns = [
     url(
         regex=r'^exporter/$',
         view=views.ExporterView.as_view(),
         name='exporter'
-    ),
-    url(
-        regex=r'^registrations-2ndshift/$',
-        view=views.Registrations2ndShiftView.as_view(),
-        name='registrations-2ndshift'
     ),
     url(
         regex=r'^registrations-alp/$',
@@ -24,11 +20,6 @@ urlpatterns = [
         regex=r'^alp-overall/$',
         view=views.RegistrationsALPOverallView.as_view(),
         name='alp-overall'
-    ),
-    url(
-        regex=r'^2ndshift-overall/$',
-        view=views.Registrations2ndShiftOverallView.as_view(),
-        name='2ndshift-overall'
     ),
     url(
         regex=r'^registrations-alp-outreach/$',
@@ -44,5 +35,46 @@ urlpatterns = [
         regex=r'^registrations-alp-post-test/$',
         view=views.RegistrationsALPPostTestView.as_view(),
         name='registrations-alp-post-test'
+    ),
+
+    url(
+        regex=r'^2ndshift-governorate-grade/$',
+        view=secondshift.GovernorateGradeView.as_view(),
+        name='2ndshift_governorate_grade'
+    ),
+    url(
+        regex=r'^2ndshift-governorate-age/$',
+        view=secondshift.GovernorateAgeView.as_view(),
+        name='2ndshift_governorate_age'
+    ),
+    url(
+        regex=r'^2ndshift-governorate-nationality/$',
+        view=secondshift.GovernorateNationalityView.as_view(),
+        name='2ndshift_governorate_nationality'
+    ),
+    url(
+        regex=r'^2ndshift-grade-age/$',
+        view=secondshift.GradeAgeView.as_view(),
+        name='2ndshift_grade_age'
+    ),
+    url(
+        regex=r'^2ndshift-grade-nationality/$',
+        view=secondshift.GradeNationalityView.as_view(),
+        name='2ndshift_grade_nationality'
+    ),
+    url(
+        regex=r'^2ndshift-nationality-age/$',
+        view=secondshift.NationalityAgeView.as_view(),
+        name='2ndshift_nationality_age'
+    ),
+    url(
+        regex=r'^2ndshift-school-grade/$',
+        view=secondshift.SchoolGradeView.as_view(),
+        name='2ndshift_school_grade'
+    ),
+    url(
+        regex=r'^2ndshift-school-nationality/$',
+        view=secondshift.SchoolNationalityView.as_view(),
+        name='2ndshift_school_nationality'
     ),
 ]

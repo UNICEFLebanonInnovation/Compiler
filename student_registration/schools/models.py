@@ -136,6 +136,27 @@ class School(models.Model):
         ordering = ['number']
 
     @property
+    def total_attendances_days_2ndshift(self):
+        qs = self.attendances.filter(
+            education_year__current_year=True,
+            school_type='2nd-shift',
+            close_reason__isnull=True,
+        )
+        if self.academic_year_start:
+            qs = qs.filter(
+                attendance_date__gte=self.academic_year_start
+            )
+        return qs.count()
+
+    @property
+    def total_attendances_days_alp(self):
+        return self.attendances.filter(
+            alp_round__current_round=True,
+            school_type='ALP',
+            close_reason__isnull=True,
+        ).count()
+
+    @property
     def location_name(self):
         if self.location:
             return self.location.name
@@ -164,12 +185,50 @@ class School(models.Model):
         ).count()
 
     @property
+    def total_registered_2ndshift_male(self):
+        from student_registration.enrollments.models import Enrollment
+        return Enrollment.objects.filter(
+            education_year__current_year=True,
+            school_id=self.id,
+            student__sex='Male'
+        ).count()
+
+    @property
+    def total_registered_2ndshift_female(self):
+        from student_registration.enrollments.models import Enrollment
+        return Enrollment.objects.filter(
+            education_year__current_year=True,
+            school_id=self.id,
+            student__sex='Female'
+        ).count()
+
+    @property
     def total_registered_alp(self):
         from student_registration.alp.models import Outreach
         return Outreach.objects.filter(
             alp_round__current_round=True,
             registered_in_level__isnull=False,
             school_id=self.id
+        ).count()
+
+    @property
+    def total_registered_alp_male(self):
+        from student_registration.alp.models import Outreach
+        return Outreach.objects.filter(
+            alp_round__current_round=True,
+            registered_in_level__isnull=False,
+            school_id=self.id,
+            student__sex='Male'
+        ).count()
+
+    @property
+    def total_registered_alp_female(self):
+        from student_registration.alp.models import Outreach
+        return Outreach.objects.filter(
+            alp_round__current_round=True,
+            registered_in_level__isnull=False,
+            school_id=self.id,
+            student__sex='Female'
         ).count()
 
     @property

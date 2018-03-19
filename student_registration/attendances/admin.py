@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
+from django.utils.translation import ugettext as _
 
 from import_export.admin import ExportMixin
 from import_export import resources, fields, widgets
@@ -147,6 +148,42 @@ class SchoolTypeFilter(admin.SimpleListFilter):
         return queryset
 
 
+class SchoolStatusFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'School status'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'school_status'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('open', _('Open')),
+            ('close', _('Close')),
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if not self.value():
+            return queryset
+        if self.value() == 'open':
+            return queryset.filter(close_reason__isnull=True)
+        if self.value() == 'close':
+            return queryset.filter(close_reason__isnull=False)
+        return queryset
+
+
 class AbsenteeResource(resources.ModelResource):
     governorate = fields.Field(
         column_name='governorate',
@@ -206,8 +243,6 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
     )
     date_hierarchy = 'last_attendance_date'
     ordering = ('-absent_days',)
-
-    # actions = ('disable', 'dropout')
 
     def get_queryset(self, request):
         # qs = super(AbsenteeAdmin, self).get_queryset(request)
@@ -337,7 +372,10 @@ class AttendanceResource(resources.ModelResource):
     class Meta:
         model = Attendance
         fields = (
-            'school',
+            'school__number',
+            'school__name',
+            'school__location__name',
+            'school__location__parent__name',
             'attendance_date',
             'total_enrolled',
             'total_attended',
@@ -351,7 +389,7 @@ class AttendanceResource(resources.ModelResource):
             'validation_owner',
             'close_reason',
             'created',
-            'modified'
+            'modified',
         )
         export_order = fields
 
@@ -380,17 +418,22 @@ class AttendanceAdmin(ImportExportModelAdmin):
         'total_absent_female',
         'validation_date',
         'validation_status',
+        'close_reason',
         'created',
         'modified'
     )
     list_filter = (
         'school',
         'school_type',
+        LocationFilter,
+        GovernorateFilter,
         'attendance_date',
         'validation_date',
         'validation_status',
         'alp_round',
         'education_year',
+        'close_reason',
+        SchoolStatusFilter,
     )
     date_hierarchy = 'attendance_date'
 

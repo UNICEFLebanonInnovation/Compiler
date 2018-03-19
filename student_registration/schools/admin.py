@@ -29,7 +29,13 @@ class SchoolResource(resources.ModelResource):
     district = fields.Field(column_name='District')
     governorate = fields.Field(column_name='Governorate')
     total_registered_2ndshift = fields.Field(column_name='Total registered 2nd-shift')
+    total_registered_2ndshift_male = fields.Field(column_name='Total registered 2nd-shift - Male')
+    total_registered_2ndshift_female = fields.Field(column_name='Total registered 2nd-shift - Female')
     total_registered_alp = fields.Field(column_name='Total registered ALP')
+    total_registered_alp_male = fields.Field(column_name='Total registered ALP - Male')
+    total_registered_alp_female = fields.Field(column_name='Total registered ALP - Female')
+    attendances_days_2ndshift = fields.Field(column_name='Attendances days 2nd shift')
+    attendances_days_alp = fields.Field(column_name='Attendances days ALP')
 
     class Meta:
         model = School
@@ -51,7 +57,11 @@ class SchoolResource(resources.ModelResource):
             'it_phone_number',
             'field_coordinator_name',
             'total_registered_2ndshift',
+            'total_registered_2ndshift_male',
+            'total_registered_2ndshift_female',
             'total_registered_alp',
+            'total_registered_alp_male',
+            'total_registered_alp_female',
             'academic_year_start',
             'academic_year_end',
             'academic_year_exam_end',
@@ -61,6 +71,8 @@ class SchoolResource(resources.ModelResource):
             'number_students_alp',
             'is_2nd_shift',
             'number_students_2nd_shift',
+            'attendances_days_2ndshift',
+            'attendances_days_alp',
         )
         export_order = fields
 
@@ -77,8 +89,26 @@ class SchoolResource(resources.ModelResource):
     def dehydrate_total_registered_2ndshift(self, obj):
         return obj.total_registered
 
+    def dehydrate_total_registered_2ndshift_male(self, obj):
+        return obj.total_registered_2ndshift_male
+
+    def dehydrate_total_registered_2ndshift_female(self, obj):
+        return obj.total_registered_2ndshift_female
+
     def dehydrate_total_registered_alp(self, obj):
         return obj.total_registered_alp
+
+    def dehydrate_total_registered_alp_male(self, obj):
+        return obj.total_registered_alp_male
+
+    def dehydrate_total_registered_alp_female(self, obj):
+        return obj.total_registered_alp_female
+
+    def dehydrate_attendances_days_2ndshift(self, obj):
+        return obj.total_attendances_days_2ndshift
+
+    def dehydrate_attendances_days_alp(self, obj):
+        return obj.total_attendances_days_alp
 
 
 class GovernorateFilter(admin.SimpleListFilter):

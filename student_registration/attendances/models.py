@@ -46,7 +46,7 @@ class Attendance(TimeStampedModel):
     school = models.ForeignKey(
         School,
         blank=False, null=True,
-        related_name='+',
+        related_name='attendances',
     )
     classroom = models.ForeignKey(
         ClassRoom,
