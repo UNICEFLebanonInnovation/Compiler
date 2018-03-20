@@ -126,7 +126,7 @@ def push_children_data(base_url, token, protocol='HTTPS'):
 
 
 @app.task
-def update_children_data():
+def update_children_data_2():
     from .models import Child
     wb = load_workbook(filename='BTS_Outreach_data_05022018_original_children.xlsx', read_only=True)
     ws = wb['IndividualInfo']
@@ -191,19 +191,162 @@ def update_children_data():
     print(ctr)
 
 
+def update_children_data():
+    from .models import Child2
+    wb = load_workbook(filename='BTS_Outreach_data_05022018_original_children.xlsx', read_only=True)
+    ws = wb['IndividualInfo']
+
+    for row in ws.rows:
+        try:
+            if row[0].value == 'FORMID' or not row[0].value:
+                continue
+            child = Child2.objects.get(
+                formid_ind=row[54].value
+            )
+            child.sex = row[56].value if row[56].value else 'Male'
+            child.calculated_age = row[45].value
+
+            # child.last_edu_system = row[16].value
+            # child.last_school_formal_year = row[18].value
+            # child.last_education_year = row[19].value
+            # child.last_public_school_location = row[20].value
+            # child.last_informal_education = row[21].value
+            # child.not_enrolled_reasons = row[22].value.split(',') if row[22].value else []
+            # if row[23].value:
+            #     child.consent_child_protection = row[23].value
+            # child.work_type = row[24].value
+            # child.disability_type = row[25].value.split(',') if row[25].value else []
+            # child.disability_note = row[26].value
+            # child.other_disability_note = row[27].value
+            # child.school_name = row[28].value
+            # if row[31].value:
+            #     child.retention_support = row[31].value
+            # if row[32].value:
+            #     child.formal_education_type = row[32].value
+            # if row[33].value:
+            #     child.formal_education_shift = row[33].value
+            # if row[34].value:
+            #     child.informal_education_type = row[34].value
+            #
+            # child.referred_school_first = row[36].value
+            # child.referred_school_second = row[37].value
+            # child.referred_school_alp = row[38].value
+            # child.referred_org_bln = row[39].value
+            # child.referred_org_ece = row[40].value
+            # child.referral_reason = row[42].value.split(',') if row[42].value else []
+            # child.referral_note = row[43].value
+            # child.formid_ind = row[54].value
+
+            child.save()
+
+        except Exception as ex:
+            print("---------------")
+            print("error: ", ex.message)
+            print("---------------")
+            pass
+
+
+@app.task
+def create_children_data():
+    from .models import Child2
+    wb = load_workbook(filename='BTS_Outreach_data_05022018_original_children.xlsx', read_only=True)
+    ws = wb['IndividualInfo']
+    ctr = 0
+
+    ID_TYPES = {
+        'None': 6,
+        'UNHCR': 1,
+        'Lebanese': 5,
+        'Other': 5,
+        'Syria': 3,
+    }
+
+    for row in ws.rows:
+        try:
+            if row[0].value == 'FORMID' or not row[0].value:
+                continue
+            child = Child2()
+
+            child.form_id = row[0].value
+            child.first_name = row[1].value if row[1].value else 'None'
+            child.father_name = row[2].value if row[2].value else 'None'
+            child.last_name = row[3].value if row[3].value else 'None'
+            child.mother_fullname = row[4].value if row[4].value else 'None'
+
+            # data['mother_nationality'] = NATIONALITIES[row[5].value] if row[5].value in NATIONALITIES else 6
+            child.mother_nationality_id = row[5].value if row[5].value else 6
+
+            child.birthday_year = row[6].value if row[6].value else '1990'
+            child.birthday_month = row[7].value if row[7].value else '1'
+            child.birthday_day = row[8].value if row[8].value else '1'
+            child.nationality_id = row[9].value if row[9].value else 6
+
+            child.id_type_id = ID_TYPES[row[10].value] if row[10].value in ID_TYPES else 6
+
+            child.id_number = row[11].value if row[11].value else '000000'  # ID_Num
+            if row[13].value:  # Case_Individual_Num
+                child.id_number = row[13].value
+            elif row[14].value:  # ID_Individual_Num
+                child.id_number = row[14].value
+            elif row[12].value:  # UNHCR_Case_Num
+                child.id_number = row[12].value
+
+            child.sex = row[56].value if row[56].value else 'Male'
+
+            child.last_edu_system = row[16].value
+            child.last_school_formal_year = row[18].value
+            child.last_education_year = row[19].value
+            child.last_public_school_location = row[20].value
+            child.last_informal_education = row[21].value
+            child.not_enrolled_reasons = row[22].value.split(',') if row[22].value else []
+            if row[23].value:
+                child.consent_child_protection = row[23].value
+            child.work_type = row[24].value
+            child.disability_type = row[25].value.split(',') if row[25].value else []
+            child.disability_note = row[26].value
+            child.other_disability_note = row[27].value
+            child.school_name = row[28].value
+            if row[31].value:
+                child.retention_support = row[31].value
+            if row[32].value:
+                child.formal_education_type = row[32].value
+            if row[33].value:
+                child.formal_education_shift = row[33].value
+            if row[34].value:
+                child.informal_education_type = row[34].value
+
+            child.referred_school_first = row[36].value
+            child.referred_school_second = row[37].value
+            child.referred_school_alp = row[38].value
+            child.referred_org_bln = row[39].value
+            child.referred_org_ece = row[40].value
+            child.referral_reason = row[42].value.split(',') if row[42].value else []
+            child.referral_note = row[43].value
+            child.calculated_age = row[45].value
+            child.formid_ind = row[54].value
+
+            child.save()
+
+        except Exception as ex:
+            print("---------------")
+            print("error: ", ex.message)
+            print("---------------")
+            pass
+
+
 @app.task
 def link_household_to_children():
-    from .models import HouseHold, Child
+    from .models import HouseHold, Child2
 
     households = HouseHold.objects.all()
     for hh in households:
         ctr = 0
-        children = Child.objects.filter(form_id=hh.form_id)
+        children = Child2.objects.filter(form_id=hh.form_id)
         for child in children:
             ctr += 1
             child.barcode_subset = '{}-{}'.format(hh.barcode_number, ctr)
             child.household = hh
-            print(child.id)
+            # print(child.id)
             child.save()
 
 
@@ -508,9 +651,9 @@ def cross_matching_children_2(program_type='CBECE'):
 
 @app.task
 def calculate_child_age():
-    from .models import Child
+    from .models import Child2
 
-    children = Child.objects.all()
+    children = Child2.objects.all()
 
     for child in children:
         child.calculated_age = child.calc_age()

@@ -8,7 +8,7 @@ urlpatterns = [
 
     url(
         regex=r'^export/$',
-        view=views.Export4View.as_view(),
+        view=views.Export2aView.as_view(),
         name='export'
     ),
 
