@@ -41,6 +41,72 @@
                         </div>
                 </fieldset>
 
+                <fieldset class="bd-callout bd-callout-warning'">
+                    <h5 id="alternatives-to-hidden-labels-1">
+                    <a class="" data-toggle="collapse" href="#collapse1" aria-expanded="false" aria-controls="collapse1">
+                      {% trans "General Notifications" %}
+                    </a>
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-4">{% trans "Number of unread messages" %}: <span class="badge badge-default">{{ notifications|length }}</span></div>
+                    </div>
+
+                  <div class="collapse" id="collapse1" style="max-height: 320px; overflow: scroll; padding: 11px; border: 1px solid #ccc; margin-top: 10px; padding-top: 20px; padding-bottom: 20px;">
+                    {% for item in notifications %}
+                        <div class="row" style="
+    border-right: 3px solid #0275d8;
+    padding-right: 15px;
+    border: 1px outset #0275d8;
+    border-radius: 5px;
+    box-shadow: 3px 3px 3px #0275D8;
+    margin-bottom: 15px;
+    min-height: 80px;
+    margin-right: 5px;
+    width: 99%;
+">
+                          <div class="col-md-4">{{ item.created }}</div>
+                          <div class="col-md-10">{{ item.name }}</div>
+                          <div class="col-md-10">{{ item.description }}</div>
+                        </div>
+                    {% endfor %}
+                  </div>
+
+                </fieldset>
+
+                <fieldset class="bd-callout bd-callout-warning'">
+                    <h5 id="alternatives-to-hidden-labels-2">
+                      <a class="" data-toggle="collapse" href="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                        {% trans "Helpdesk Notifications" %}
+                      </a>
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-4">{% trans "Number of unread messages" %}: <span class="badge badge-default">{{ tickets|length }}</span></div>
+                    </div>
+
+                  <div class="collapse" id="collapse2" style="max-height: 320px; overflow: scroll; padding: 11px; border: 1px solid #ccc; margin-top: 10px; padding-top: 20px; padding-bottom: 20px;">
+                    {% for item in tickets %}
+                        <div class="row" style="
+    border-right: 3px solid #0275d8;
+    padding-right: 15px;
+    border: 1px outset #0275d8;
+    border-radius: 5px;
+    box-shadow: 3px 3px 3px #0275D8;
+    margin-bottom: 15px;
+    min-height: 80px;
+    margin-right: 5px;
+    width: 99%;
+">
+                          <div class="col-md-4">{{ item.created }}</div>
+                          <div class="col-md-10">{{ item.name }}</div>
+                          <div class="col-md-10">{{ item.description }}</div>
+                        </div>
+                    {% endfor %}
+                  </div>
+
+                </fieldset>
+
                 {{ form.errors }}
                 {% crispy form %}
             </div>
