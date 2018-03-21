@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
+from django.contrib.admin.models import LogEntry
 from django.utils.html import escape, format_html, format_html_join, html_safe
 from django.utils.encoding import force_text
 
@@ -9,7 +10,7 @@ from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 from helpdesk.models import Ticket
-from .models import Exporter
+from .models import Exporter, Notification
 from student_registration.users.models import User
 from student_registration.schools.models import School
 
@@ -25,6 +26,40 @@ class ExporterAdmin(ImportExportModelAdmin):
         'name',
         'created',
         'file_url',
+    )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
+
+class NotificationResource(resources.ModelResource):
+    class Meta:
+        model = Notification
+
+
+class NotificationAdmin(ImportExportModelAdmin):
+    resource_class = NotificationResource
+    filter_horizontal = ('schools', )
+    list_display = (
+        'name',
+        'description',
+        'type',
+        'status',
+        'ticket',
+        'school',
+        'created',
+    )
+
+    list_filter = (
+        'type',
+        'status',
+        'school',
+    )
+
+    search_fields = (
+        'name',
+        'description',
     )
 
     def get_export_formats(self):
@@ -293,6 +328,9 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
     #         return format_html(html_icon, mark_safe('check green'))
     #     return format_html(html_icon, mark_safe('remove red'))
 
+
+admin.site.register(LogEntry)
 admin.site.register(Exporter, ExporterAdmin)
+admin.site.register(Notification, NotificationAdmin)
 admin.site.unregister(Ticket)
 admin.site.register(Ticket, TicketSchoolAdmin)
