@@ -71,14 +71,15 @@ def create_helpdesk_notification(sender, instance, created, **kwargs):
     try:
         status = force_text(dict(Ticket.STATUS_CHOICES)[instance.status]) if instance.status else ''
         if instance.followup_set:
-            comments = '\r\n'.join([f.comment for f in instance.followup_set.all()])
+            comments = instance.followup_set.all().last().comment
+            # comments = '\r\n'.join([f.comment for f in instance.followup_set.all()])
 
         if instance.submitter_email:
             submitter = User.objects.filter(email=submitter_email).first()
         if submitter:
             school = submitter.school
 
-        title = 'Ticket type: {}\r\nTitle: {}\r\nStatus: [{}]'.format(
+        title = '{} - {} - {}'.format(
             instance.queue,
             instance.title,
             status,

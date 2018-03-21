@@ -68,15 +68,18 @@ class ProfileView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-            kwargs['notifications'] = Notification.objects.filter(
+            notifications = Notification.objects.filter(
                 type='general',
                 schools=self.request.user.school
             )
-            kwargs['tickets'] = Notification.objects.filter(
-                status=False,
+            kwargs['notifications'] = notifications[:50]
+            kwargs['unread_notifications'] = notifications.filter(status=False).count()
+            tickets = Notification.objects.filter(
                 type='helpdesk',
                 school_id=self.request.user.school_id
             )
+            kwargs['tickets'] = tickets[:50]
+            kwargs['unread_tickets'] = tickets.filter(status=False).count()
         return super(ProfileView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
