@@ -1,20 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-import datetime
-import json
 
-from django.views import View
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse
-from django.core.urlresolvers import reverse, reverse_lazy
-from django.contrib import messages
-from django.shortcuts import render
-
-from braces.views import GroupRequiredMixin
 from rest_framework import viewsets, mixins, permissions
-from rest_framework.generics import ListAPIView
-from rest_framework import status
 
 from .models import Notification
 from .serializers import NotificationSerializer
