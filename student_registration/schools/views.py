@@ -9,6 +9,7 @@ from dal import autocomplete
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin
 
+from student_registration.backends.models import Notification
 from student_registration.users.utils import force_default_language
 from .models import (
     School,
@@ -67,6 +68,18 @@ class ProfileView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+            notifications = Notification.objects.filter(
+                type='general',
+                schools=self.request.user.school
+            )
+            kwargs['notifications'] = notifications[:50]
+            kwargs['unread_notifications'] = notifications.filter(status=False).count()
+            tickets = Notification.objects.filter(
+                type='helpdesk',
+                school_id=self.request.user.school_id
+            )
+            kwargs['tickets'] = tickets[:50]
+            kwargs['unread_tickets'] = tickets.filter(status=False).count()
         return super(ProfileView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):

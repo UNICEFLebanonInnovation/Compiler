@@ -43,6 +43,7 @@ from student_registration.enrollments.views import (
     LoggingProgramMoveViewSet
 )
 from student_registration.outreach.views import HouseHoldViewSet, ChildViewSet
+from student_registration.backends.views import NotificationViewSet
 
 api = routers.SimpleRouter()
 api.register(r'alp', OutreachViewSet, base_name='alp')
@@ -64,6 +65,7 @@ api.register(r'clm-rs', RSViewSet, base_name='clm-rs')
 api.register(r'clm-cbece', CBECEViewSet, base_name='clm-cbece')
 api.register(r'clm-students', CLMStudentViewSet, base_name='clm-students')
 api.register(r'self-perception-grads', SelfPerceptionGradesViewSet, base_name='self-perception-grads')
+api.register(r'notifications', NotificationViewSet, base_name='notifications')
 
 schema_view = get_swagger_view(title='Compiler API')
 
