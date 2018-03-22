@@ -60,6 +60,8 @@ class BLNTable(CommonTable):
                                         accessor='english_improvement')
     french_improvement = tables.Column(verbose_name=_('French - Improvement'), orderable=False,
                                        accessor='french_improvement')
+    foreign_language_improvement = tables.Column(verbose_name=_('Foreign language - Improvement'), orderable=False,
+                                                 accessor='foreign_language_improvement')
     math_improvement = tables.Column(verbose_name=_('Math - Improvement'), orderable=False,
                                      accessor='math_improvement')
 
@@ -90,6 +92,7 @@ class BLNTable(CommonTable):
             'arabic_improvement',
             'english_improvement',
             'french_improvement',
+            'foreign_language_improvement',
             'math_improvement',
             'assessment_improvement',
             'participation',
@@ -227,6 +230,8 @@ class CBECETable(CommonTable):
                                     accessor='art_improvement')
     cognitive_improvement = tables.Column(verbose_name=_('Cognitive Domain - Improvement'), orderable=False,
                                         accessor='cognitive_improvement')
+    science_improvement = tables.Column(verbose_name=_('Cognitive domain Science - Improvement'), orderable=False,
+                                        accessor='science_improvement')
     social_improvement = tables.Column(verbose_name=_('Social Emotional Domain - Improvement'), orderable=False,
                                        accessor='social_improvement')
     psycho_improvement = tables.Column(verbose_name=_('Psychomotor Domain - Improvement'), orderable=False,
@@ -259,6 +264,7 @@ class CBECETable(CommonTable):
             'post_assessment_result',
             'assessment_improvement',
             'art_improvement',
+            'science_improvement',
             'cognitive_improvement',
             'social_improvement',
             'psycho_improvement',
