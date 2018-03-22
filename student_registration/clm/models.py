@@ -978,8 +978,12 @@ class CBECE(CLM):
         return str(self.domain_improvement('LanguageArtDomain')) + '%'
 
     @property
+    def science_improvement(self):
+        return str(self.domain_improvement('ScienceDomain')) + '%'
+
+    @property
     def cognitive_improvement(self):
-        return str(self.domain_improvement('CognitiveDomain')) + '%'
+        return str(self.domain_improvement('CognitiveDomian')) + '%'
 
     @property
     def social_improvement(self):
@@ -997,7 +1001,8 @@ class CBECE(CLM):
         program_cycle = str(self.cycle_id)
         keys = [
             'CBECE_ASSESSMENT/LanguageArtDomain'+program_cycle,
-            'CBECE_ASSESSMENT/CognitiveDomain'+program_cycle,
+            'CBECE_ASSESSMENT/CognitiveDomian'+program_cycle,
+            'CBECE_ASSESSMENT/ScienceDomain'+program_cycle,
             'CBECE_ASSESSMENT/SocialEmotionalDomain'+program_cycle,
             'CBECE_ASSESSMENT/PsychomotorDomain'+program_cycle,
             'CBECE_ASSESSMENT/ArtisticDomain'+program_cycle,
@@ -1008,7 +1013,10 @@ class CBECE(CLM):
             'pre_LanguageArtDomain': self.get_score_value('CBECE_ASSESSMENT/LanguageArtDomain' + program_cycle,
                                                           'pre_test'),
             'pre_CognitiveDomain': self.get_score_value(
-                'CBECE_ASSESSMENT/CognitiveDomain' + program_cycle,
+                'CBECE_ASSESSMENT/CognitiveDomian' + program_cycle,
+                'pre_test'),
+            'pre_ScienceDomain': self.get_score_value(
+                'CBECE_ASSESSMENT/ScienceDomain' + program_cycle,
                 'pre_test'),
             'pre_SocialEmotionalDomain': self.get_score_value('CBECE_ASSESSMENT/SocialEmotionalDomain' + program_cycle,
                                                               'pre_test'),
@@ -1020,8 +1028,11 @@ class CBECE(CLM):
             'post_LanguageArtDomain': self.get_score_value('CBECE_ASSESSMENT/LanguageArtDomain' + program_cycle,
                                                            'post_test'),
             'post_CognitiveDomain': self.get_score_value(
-                'CBECE_ASSESSMENT/CognitiveDomain' + program_cycle,
+                'CBECE_ASSESSMENT/CognitiveDomian' + program_cycle,
                 'post_test'),
+            'post_ScienceDomain': self.get_score_value(
+                'CBECE_ASSESSMENT/ScienceDomain' + program_cycle,
+                'pre_test'),
             'post_SocialEmotionalDomain': self.get_score_value('CBECE_ASSESSMENT/SocialEmotionalDomain' + program_cycle,
                                                                'post_test'),
             'post_PsychomotorDomain': self.get_score_value('CBECE_ASSESSMENT/PsychomotorDomain' + program_cycle,

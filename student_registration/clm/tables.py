@@ -227,6 +227,8 @@ class CBECETable(CommonTable):
                                     accessor='art_improvement')
     cognitive_improvement = tables.Column(verbose_name=_('Cognitive Domain - Improvement'), orderable=False,
                                         accessor='cognitive_improvement')
+    science_improvement = tables.Column(verbose_name=_('Cognitive domain Science - Improvement'), orderable=False,
+                                        accessor='science_improvement')
     social_improvement = tables.Column(verbose_name=_('Social Emotional Domain - Improvement'), orderable=False,
                                        accessor='social_improvement')
     psycho_improvement = tables.Column(verbose_name=_('Psychomotor Domain - Improvement'), orderable=False,
@@ -259,6 +261,7 @@ class CBECETable(CommonTable):
             'post_assessment_result',
             'assessment_improvement',
             'art_improvement',
+            'science_improvement',
             'cognitive_improvement',
             'social_improvement',
             'psycho_improvement',
