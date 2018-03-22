@@ -11,8 +11,13 @@ from import_export.admin import ExportMixin
 from import_export import resources, fields, widgets
 from student_registration.alp.templatetags.util_tags import has_group
 from student_registration.locations.models import Location
-from .models import (
+from student_registration.schools.models import (
     School,
+    ClassRoom,
+    Section,
+    EducationLevel,
+)
+from .models import (
     Attendance,
     BySchoolByDay,
     Absentee,
@@ -48,6 +53,93 @@ class SchoolFilter(admin.SimpleListFilter):
         """
         if self.value():
             return queryset.filter(school_id=self.value())
+        return queryset
+
+
+class ClassroomFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = '2nd-shift Level'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'classroom'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l.id, l.name) for l in ClassRoom.objects.all())
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(level=self.value())
+        return queryset
+
+
+class EducationLevelFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'ALP Level'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'level'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l.id, l.name) for l in EducationLevel.objects.all())
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(level=self.value())
+        return queryset
+
+
+class SectionFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Section'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'section'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return ((l.id, l.name) for l in Section.objects.all())
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        if self.value():
+            return queryset.filter(section=self.value())
         return queryset
 
 
@@ -184,6 +276,29 @@ class SchoolStatusFilter(admin.SimpleListFilter):
         return queryset
 
 
+class CycleFilter(admin.SimpleListFilter):
+    title = 'Cycle'
+
+    parameter_name = 'cycle'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('1', 'Cycle 1'),
+            ('2', 'Cycle 2'),
+            ('3', 'Cycle 3'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value():
+            if self.value() == '1':
+                return queryset.filter(level__in=[2, 3, 4])
+            if self.value() == '2':
+                return queryset.filter(level__in=[5, 6, 7])
+            if self.value() == '3':
+                return queryset.filter(level__in=[8, 9, 10])
+        return queryset
+
+
 class AbsenteeResource(resources.ModelResource):
     governorate = fields.Field(
         column_name='governorate',
@@ -203,6 +318,10 @@ class AbsenteeResource(resources.ModelResource):
             'school__name',
             'governorate',
             'district',
+            'education_year',
+            'alp_round',
+            'level',
+            'section',
             'student__number',
             'student__first_name',
             'student__father_name',
@@ -237,12 +356,14 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
     list_filter = (
         'education_year',
         'alp_round',
+        ClassroomFilter,
+        EducationLevelFilter,
+        SectionFilter,
+        CycleFilter,
         SchoolFilter,
         SchoolTypeFilter,
         LocationFilter,
         GovernorateFilter,
-        'level',
-        'section',
         'last_attendance_date',
         'validation_status',
         'dropout_status',
@@ -330,6 +451,7 @@ class AttendedDaysAdmin(AbsenteeAdmin):
         'total_attended_days'
     )
     list_filter = (
+        CycleFilter,
         SchoolFilter,
         SchoolTypeFilter,
         LocationFilter,

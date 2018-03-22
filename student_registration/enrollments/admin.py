@@ -37,6 +37,7 @@ class EnrollmentResource(resources.ModelResource):
         widget=ForeignKeyWidget(School, 'location_name')
     )
     student_age = fields.Field(column_name='Student age')
+    cycle_name = fields.Field(column_name='Cycle')
 
     class Meta:
         model = Enrollment
@@ -72,6 +73,7 @@ class EnrollmentResource(resources.ModelResource):
             'school__name',
             'section__name',
             'classroom__name',
+            'cycle_name',
             'number_in_previous_school',
             'last_education_level__name',
             'last_education_year',
@@ -97,6 +99,9 @@ class EnrollmentResource(resources.ModelResource):
 
     def dehydrate_student_age(self, obj):
         return obj.student_age
+
+    def dehydrate_cycle_name(self, obj):
+        return obj.cycle
 
 
 class GovernorateFilter(admin.SimpleListFilter):
@@ -186,6 +191,29 @@ class ToAgeFilter(admin.SimpleListFilter):
         if self.value():
             now = datetime.datetime.now()
             return queryset.filter(student__birthday_year__gte=(now.year - int(self.value())))
+        return queryset
+
+
+class CycleFilter(admin.SimpleListFilter):
+    title = 'Cycle'
+
+    parameter_name = 'cycle'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('1', 'Cycle 1'),
+            ('2', 'Cycle 2'),
+            ('3', 'Cycle 3'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value():
+            if self.value() == '1':
+                return queryset.filter(classroom_id__in=[2, 3, 4])
+            if self.value() == '2':
+                return queryset.filter(classromm_id__in=[5, 6, 7])
+            if self.value() == '3':
+                return queryset.filter(classromm_id__in=[8, 9, 10])
         return queryset
 
 
@@ -304,6 +332,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'school',
         'school__location',
         GovernorateFilter,
+        CycleFilter,
         'classroom',
         'section',
         'student__sex',

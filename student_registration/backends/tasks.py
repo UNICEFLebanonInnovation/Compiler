@@ -55,6 +55,7 @@ def export_2ndshift(params=None, return_data=False):
 
         _('Current Section'),
         _('Current Class'),
+        _('Current Cycle'),
         _('Education year'),
 
         _('Phone prefix'),
@@ -121,6 +122,7 @@ def export_2ndshift(params=None, return_data=False):
 
             line.section.name if line.section else '',
             line.classroom.name if line.classroom else '',
+            line.cycle,
             line.education_year.name if line.education_year else '',
 
             line.student.phone_prefix,
