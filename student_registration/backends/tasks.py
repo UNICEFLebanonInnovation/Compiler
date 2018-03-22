@@ -36,6 +36,9 @@ def export_2ndshift(params=None, return_data=False):
         'disabled',
         'moved',
 
+        'last_attendance_date',
+        'last_absent_date',
+
         _('Last non formal education - result'),
         _('Last non formal education - round'),
         _('Is the child participated in an ALP/2016-2 program'),
@@ -98,6 +101,9 @@ def export_2ndshift(params=None, return_data=False):
             line.dropout_status,
             line.disabled,
             line.moved,
+
+            line.last_attendance_date,
+            line.last_absent_date,
 
             line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
             line.last_informal_edu_round.name if line.last_informal_edu_round else '',

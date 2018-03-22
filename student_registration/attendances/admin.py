@@ -227,19 +227,31 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         'student_number',
         'district',
         'student',
+        'level',
+        'section',
         'last_attendance_date',
         'last_absent_date',
         'absent_days',
         'total_absent_days',
     )
     list_filter = (
+        'education_year',
+        'alp_round',
         SchoolFilter,
         SchoolTypeFilter,
         LocationFilter,
         GovernorateFilter,
+        'level',
+        'section',
         'last_attendance_date',
         'validation_status',
         'dropout_status',
+    )
+    search_fields = (
+        'student__first_name',
+        'student__father_name',
+        'student__last_name',
+        'student__id_number',
     )
     date_hierarchy = 'last_attendance_date'
     ordering = ('-absent_days',)
@@ -349,6 +361,8 @@ class AttendanceByStudentAdmin(AbsenteeAdmin):
         'student_number',
         'district',
         'student',
+        'level',
+        'section',
         'last_attendance_date',
         'attended_days',
         'total_attended_days',

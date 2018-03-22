@@ -197,6 +197,18 @@ class Absentee(TimeStampedModel):
         blank=True, default=False,
         verbose_name=_('disabled')
     )
+    education_year = models.ForeignKey(
+        EducationYear,
+        blank=True, null=True,
+        related_name='+',
+    )
+    alp_round= models.ForeignKey(
+        ALPRound,
+        blank=True, null=True,
+        related_name='+',
+    )
+    level = models.CharField(max_length=100, blank=True, null=True)
+    section = models.CharField(max_length=100, blank=True, null=True)
 
     def __unicode__(self):
         return '{} - {}'.format(self.student, self.school)

@@ -105,6 +105,20 @@ def find_attendances_gap_grouped(days):
 
 
 @app.task
+def calculate_last_attendance_date():
+    from .models import Absentee
+
+    queryset = Absentee.objects.all()
+
+    for line in queryset:
+        registry = line.student.current_secondshift_registration()
+        if not registry:
+            continue
+        registry.update(last_attendance_date=line.last_attendance_date,
+                        last_absent_date=line.last_absent_date)
+
+
+@app.task
 def dropout_students(from_date, to_date):
     from .models import Absentee
 

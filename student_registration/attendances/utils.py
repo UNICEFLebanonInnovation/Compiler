@@ -98,18 +98,24 @@ def calculate_absentees(attendance, students):
     from .models import Absentee
 
     for student in students:
+        print(student)
         try:
             absentee = Absentee.objects.get(student_id=student['student_id'])
         except Absentee.DoesNotExist:
             absentee = Absentee.objects.create(
                 student_id=student['student_id'],
                 school=attendance.school,
+                education_year=attendance.education_year,
+                alp_round=attendance.alp_round,
                 absent_days=0,
                 attended_days=0,
                 total_attended_days=0,
                 total_absent_days=0
             )
 
+        absentee.level = student['level']
+        absentee.section = student['section']
+        print(absentee)
         absentee.last_modification_date = datetime.datetime.now()
 
         if student['status'] == 'True':
