@@ -36,6 +36,16 @@ class ExporterAdmin(ImportExportModelAdmin):
 class NotificationResource(resources.ModelResource):
     class Meta:
         model = Notification
+        fields = (
+            'name',
+            'description',
+            'type',
+            'status',
+            'ticket',
+            'school',
+            'created',
+        )
+        export_order = fields
 
 
 class NotificationAdmin(ImportExportModelAdmin):
