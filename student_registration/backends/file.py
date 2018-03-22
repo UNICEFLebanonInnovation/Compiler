@@ -6,34 +6,54 @@ def get_default_provider():
     return Azure()
 
 
-def store_file(data, file_name):
+# azure-storage==0.36.0
+# def store_file_2(data, file_name):
+#
+#     from django.conf import settings
+#     from azure.storage import CloudStorageAccount
+#     from azure.storage.blob import ContentSettings
+#
+#     file_name = '{}.{}'.format(file_name, settings.DEFAULT_FILE_FORMAT)
+#
+#     file_settings = ContentSettings(content_type=settings.DEFAULT_FILE_CONTENT_TYPE,
+#                                     content_language=settings.DEFAULT_FILE_CONTENT_LANGUAGE)
+#
+#     storage_client = CloudStorageAccount(settings.AZURE_ACCOUNT_NAME,
+#                                          settings.AZURE_ACCOUNT_KEY)
+#     blob_service = storage_client.create_block_blob_service()
+#
+#     blob_service.create_blob_from_bytes(
+#         settings.AZURE_CONTAINER,
+#         file_name,
+#         data,
+#         content_settings=file_settings
+#     )
+#
+#     file_link = blob_service.make_blob_url(settings.AZURE_CONTAINER, file_name)
+#     create_record(file_link, file_name)
 
-    # provider = get_default_provider()
-    # file_link = provider.send_file(data)
-    # send_email(file_link)
+
+# azure-storage==0.20.0
+def store_file(data, file_name):
 
     from django.conf import settings
     from azure.storage import CloudStorageAccount
-    from azure.storage.blob import ContentSettings
 
     file_name = '{}.{}'.format(file_name, settings.DEFAULT_FILE_FORMAT)
 
-    file_settings = ContentSettings(content_type=settings.DEFAULT_FILE_CONTENT_TYPE,
-                                    content_language=settings.DEFAULT_FILE_CONTENT_LANGUAGE)
-
     storage_client = CloudStorageAccount(settings.AZURE_ACCOUNT_NAME,
                                          settings.AZURE_ACCOUNT_KEY)
-    blob_service = storage_client.create_block_blob_service()
+    blob_service = storage_client.create_blob_service()
 
-    blob_service.create_blob_from_bytes(
+    blob_service.put_block_blob_from_bytes(
         settings.AZURE_CONTAINER,
         file_name,
         data,
-        content_settings=file_settings
+        content_language=settings.DEFAULT_FILE_CONTENT_LANGUAGE,
+        x_ms_blob_content_type=settings.DEFAULT_FILE_CONTENT_TYPE
     )
 
     file_link = blob_service.make_blob_url(settings.AZURE_CONTAINER, file_name)
-    # send_email(file_link, file_name)
     create_record(file_link, file_name)
 
 

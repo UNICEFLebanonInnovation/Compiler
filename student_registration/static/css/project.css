@@ -184,6 +184,26 @@
   background-repeat: no-repeat;
 }
 
+.icon-mail-unread {
+  background-position: 0px 0px;
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+  background-image: url("../images/icon-mail-unread.png");
+  background-size: 25px 25px;
+  background-repeat: no-repeat;
+}
+
+.icon-mail-read {
+  background-position: 0px 0px;
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+  background-image: url("../images/icon-mail-read.png");
+  background-size: 25px 25px;
+  background-repeat: no-repeat;
+}
+
 .badge {
     margin-top: 3px;
     width: auto;
