@@ -115,7 +115,7 @@ def calculate_absentees(attendance, students):
 
         absentee.level = student['level']
         absentee.section = student['section']
-        print(absentee)
+
         absentee.last_modification_date = datetime.datetime.now()
 
         if student['status'] == 'True':
