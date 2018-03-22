@@ -1579,7 +1579,7 @@ msgstr " التقييم في آخر البرنامج"
 #: student_registration/clm/forms.py:625 student_registration/clm/forms.py:1165
 #: student_registration/clm/forms.py:1485
 msgid "School evaluation"
-msgstr " تقييم المدرسة "
+msgstr " تقييم المشاركة "
 
 #: student_registration/clm/forms.py:693
 msgid "Select the program type"
