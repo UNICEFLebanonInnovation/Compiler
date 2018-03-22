@@ -60,6 +60,8 @@ class BLNTable(CommonTable):
                                         accessor='english_improvement')
     french_improvement = tables.Column(verbose_name=_('French - Improvement'), orderable=False,
                                        accessor='french_improvement')
+    foreign_language_improvement = tables.Column(verbose_name=_('Foreign language - Improvement'), orderable=False,
+                                                 accessor='foreign_language_improvement')
     math_improvement = tables.Column(verbose_name=_('Math - Improvement'), orderable=False,
                                      accessor='math_improvement')
 
@@ -90,6 +92,7 @@ class BLNTable(CommonTable):
             'arabic_improvement',
             'english_improvement',
             'french_improvement',
+            'foreign_language_improvement',
             'math_improvement',
             'assessment_improvement',
             'participation',

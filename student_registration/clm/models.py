@@ -450,8 +450,9 @@ class BLN(CLM):
         keys = [
             'BLN_ASSESSMENT/arabic',
             'BLN_ASSESSMENT/math',
-            'BLN_ASSESSMENT/english',
-            'BLN_ASSESSMENT/french'
+            'BLN_ASSESSMENT/foreign_language',
+            # 'BLN_ASSESSMENT/english',
+            # 'BLN_ASSESSMENT/french'
         ]
         super(BLN, self).score(keys, stage)
 
@@ -495,6 +496,13 @@ class BLN(CLM):
     @property
     def french_improvement(self):
         return str(self.domain_improvement('french')) + '%'
+
+    @property
+    def foreign_language_improvement(self):
+        french_english = self.domain_improvement('english') + self.domain_improvement('french')
+        if not french_english:
+            return str(self.domain_improvement('foreign_language')) + '%'
+        return str(french_english) + '%'
 
     def pre_assessment_form(self):
         return self.assessment_form(stage='pre_test', assessment_slug='bln_pre_test')
