@@ -78,6 +78,7 @@ class CLMSerializer(serializers.ModelSerializer):
     student_family_status = serializers.CharField(source='student.family_status', required=False)
     student_have_children = serializers.CharField(source='student.have_children', required=False)
     comments = serializers.CharField(required=False)
+    unsuccessful_posttest_reason = serializers.CharField(required=False)
 
     student_outreach_child = serializers.IntegerField(source='student.outreach_child', required=False)
     student_outreach_child_id = serializers.IntegerField(source='student.outreach_child.id', read_only=True)
@@ -141,6 +142,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'csrfmiddlewaretoken',
             'save',
             'comments',
+            'unsuccessful_posttest_reason',
         )
 
 

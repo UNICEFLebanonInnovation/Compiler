@@ -358,6 +358,16 @@ class CLM(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Comments')
     )
+    unsuccessful_posttest_reason = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('dropout', _("Dropout from the round")),
+            ('uncompleted_participation', _("Uncompleted Participation"))
+        ),
+        verbose_name=_('unsuccessful post test reason')
+    )
 
     @property
     def student_fullname(self):
@@ -411,12 +421,13 @@ class BLN(CLM):
 
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
-        ('repeat_level', _('Repeat level')),
+        # ('repeat_level', _('Repeat level')),
         ('attended_public_school', _('Attended public school')),
         ('referred_to_alp', _('referred to ALP')),
+        ('referred_to_tvet', _('referred to TVET')),
         ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
         ('reenrolled_in_alp', _('Re-register on another round of BLN')),
-        ('not_enrolled_any_program', _('Not enrolled in any educational program')),
+        # ('not_enrolled_any_program', _('Not enrolled in any educational program')),
         # ('dropout', _('Dropout from school'))
     )
 
@@ -520,9 +531,8 @@ class RS(CLM):
 
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
-        ('repeat_level', _('Repeat level')),
-        # ('dropout', _('Dropout from school')),
-        ('graduated_next_level', _('Graduated to the next level'))
+        ('yes', _('Yes')),
+        ('no', _('No'))
     )
 
     SCHOOL_SHIFTS = Choices(
@@ -687,7 +697,7 @@ class RS(CLM):
         blank=True,
         null=True,
         choices=LEARNING_RESULT,
-        verbose_name=_('Learning result')
+        verbose_name=_('RS Learning result')
     )
     section = models.ForeignKey(
         Section,

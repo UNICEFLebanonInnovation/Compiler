@@ -343,6 +343,7 @@ class CommonForm(forms.ModelForm):
             'enrollment_id',
             'student_outreach_child',
             'comments',
+            'unsuccessful_posttest_reason',
         )
         initial_fields = fields
         widgets = {}
@@ -603,7 +604,7 @@ class BLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Academic data') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
                 ),
                 Div(
                     HTML('<div class="col-md-3"><a class="btn ' + pre_test_button + '" href="' +
@@ -626,10 +627,15 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('participation', css_class='col-md-3'),
+                    Div('unsuccessful_posttest_reason', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('barriers', css_class='col-md-3'),
+                    Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('barriers', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('learning_result', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -737,43 +743,43 @@ class RSForm(CommonForm):
         initial=0
     )
     pre_test_arabic = forms.FloatField(
-        label=_('Arabic'), required=False,
+        label=_('Arabic') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
     pre_test_language = forms.FloatField(
-        label=_('Foreign Language'), required=False,
+        label=_('Foreign Language') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
     pre_test_math = forms.FloatField(
-        label=_('Math'), required=False,
+        label=_('Math') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
     pre_test_science = forms.FloatField(
-        label=_('Science'), required=False,
+        label=_('Science') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
 
     post_test_arabic = forms.FloatField(
-        label=_('Arabic'), required=False,
+        label=_('Arabic') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
     post_test_language = forms.FloatField(
-        label=_('Foreign Language'), required=False,
+        label=_('Foreign Language') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
     post_test_math = forms.FloatField(
-        label=_('Math'), required=False,
+        label=_('Math') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
     post_test_science = forms.FloatField(
-        label=_('Science'), required=False,
+        label=_('Science') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
@@ -786,7 +792,7 @@ class RSForm(CommonForm):
         initial='academic'
     )
     learning_result = forms.ChoiceField(
-        label=_('Based on the overall score, what is the recommended learning path?'),
+        label=_('RS: Based on the overall score, what is the recommended learning path?'),
         widget=forms.Select, required=False,
         choices=(
             ('', '----------'),
@@ -1166,10 +1172,15 @@ class RSForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('participation', css_class='col-md-3'),
+                    Div('unsuccessful_posttest_reason', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('barriers', css_class='col-md-3'),
+                    Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('barriers', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('learning_result', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1486,10 +1497,15 @@ class CBECEForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('participation', css_class='col-md-3'),
+                    Div('unsuccessful_posttest_reason', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('barriers', css_class='col-md-3'),
+                    Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('barriers', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('learning_result', css_class='col-md-3'),
                     css_class='row',
                 ),
