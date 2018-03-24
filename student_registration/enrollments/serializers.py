@@ -318,3 +318,99 @@ class LoggingProgramMoveSerializer(serializers.ModelSerializer):
             'school_to',
             'eligibility',
         )
+
+
+class EnrollmentImportSerializer(serializers.ModelSerializer):
+
+    student_id = serializers.IntegerField(source='student.id', required=False)
+    student_first_name = serializers.CharField(source='student.first_name', required=False)
+    student_father_name = serializers.CharField(source='student.father_name', required=False)
+    student_last_name = serializers.CharField(source='student.last_name', required=False)
+    student_full_name = serializers.CharField(source='student.full_name', read_only=True)
+    student_mother_fullname = serializers.CharField(source='student.mother_fullname')
+    student_sex = serializers.CharField(source='student.sex')
+    student_birthday_year = serializers.CharField(source='student.birthday_year')
+    student_birthday_month = serializers.CharField(source='student.birthday_month')
+    student_birthday_day = serializers.CharField(source='student.birthday_day')
+    student_place_of_birth = serializers.CharField(source='student.place_of_birth', required=False)
+    student_age = serializers.CharField(source='student.age', read_only=True)
+    student_phone = serializers.CharField(source='student.phone', required=False)
+    student_phone_prefix = serializers.CharField(source='student.phone_prefix', required=False)
+    student_id_number = serializers.CharField(source='student.id_number', required=False)
+    student_registered_in_unhcr = serializers.CharField(source='student.registered_in_unhcr', required=False)
+    student_id_type = serializers.CharField(source='student.id_type.name', required=False)
+    student_number = serializers.CharField(source='student.number', read_only=True)
+    student_nationality = serializers.CharField(source='student.nationality.name', required=False)
+    student_mother_nationality = serializers.CharField(source='student.mother_nationality.name', required=False)
+    student_address = serializers.CharField(source='student.address', required=False)
+    school_name = serializers.CharField(source='school.name', read_only=True)
+    education_year = serializers.CharField(source='education_year.name', read_only=True)
+    school_number = serializers.CharField(source='school.number', read_only=True)
+    section_name = serializers.CharField(source='section.name', read_only=True)
+    classroom_name = serializers.CharField(source='classroom.name', read_only=True)
+    governorate = serializers.CharField(source='school.location.parent.name', read_only=True)
+    district = serializers.CharField(source='school.location.name', read_only=True)
+    last_school_name = serializers.CharField(source='last_school.name', read_only=True)
+    last_school_number = serializers.CharField(source='last_school.number', read_only=True)
+    last_informal_edu_round_name = serializers.CharField(source='last_informal_edu_round.name', read_only=True)
+    last_informal_edu_final_result_name = serializers.CharField(source='last_informal_edu_final_result.name', read_only=True)
+    last_education_level_name = serializers.CharField(source='last_education_level.name', read_only=True)
+
+    class Meta:
+        model = Enrollment
+        fields = (
+            'id',
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
+            'outreach_barcode',
+            'registration_date',
+            'student_id',
+            'student_registered_in_unhcr',
+            'student_id_type',
+            'student_id_number',
+            'student_number',
+            'student_first_name',
+            'student_father_name',
+            'student_last_name',
+            'student_full_name',
+            'student_mother_fullname',
+            'student_birthday_year',
+            'student_birthday_month',
+            'student_birthday_day',
+            'student_place_of_birth',
+            'student_age',
+            'student_sex',
+            'student_nationality',
+            'student_mother_nationality',
+            'student_phone_prefix',
+            'student_phone',
+            'student_address',
+            'governorate',
+            'district',
+            'school_number',
+            'school_name',
+            'education_year',
+            'section_name',
+            'classroom_name',
+            'number_in_previous_school',
+            'last_education_level_name',
+            'last_education_year',
+            'last_school_type',
+            'last_school_shift',
+            'last_school_name',
+            'last_school_number',
+            'last_year_result',
+            'participated_in_alp',
+            'last_informal_edu_round_name',
+            'last_informal_edu_final_result_name',
+            'age_min_restricted',
+            'age_max_restricted',
+            'last_attendance_date',
+            'last_absent_date',
+            'created',
+            'modified',
+            'moved',
+            'dropout_status',
+            'disabled',
+        )

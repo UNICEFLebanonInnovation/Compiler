@@ -39,6 +39,7 @@ from student_registration.clm.views import (
 from student_registration.users.views import LoginRedirectView
 from student_registration.enrollments.views import (
     EnrollmentViewSet,
+    EnrollmentImportViewSet,
     LoggingStudentMoveViewSet,
     LoggingProgramMoveViewSet
 )
@@ -48,6 +49,7 @@ from student_registration.backends.views import NotificationViewSet
 api = routers.SimpleRouter()
 api.register(r'alp', OutreachViewSet, base_name='alp')
 api.register(r'enrollments', EnrollmentViewSet, base_name='enrollments')
+api.register(r'import-enrollment', EnrollmentImportViewSet, base_name='import_enrollments')
 api.register(r'logging-student-move', LoggingStudentMoveViewSet, base_name='logging_student_move')
 api.register(r'logging-student-program-move', LoggingProgramMoveViewSet, base_name='logging_student_ptogram_move')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
