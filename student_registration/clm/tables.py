@@ -114,6 +114,10 @@ class RSTable(CommonTable):
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': '/api/clm-rs/'})
 
+    # Arabic reading result
+    arabic_reading_improvement = tables.Column(verbose_name=_('Arabic Reading - Improvement'), orderable=False,
+                                               accessor='arabic_reading_improvement')
+
     #  Academic Result
     pre_test_total = tables.Column(verbose_name=_('Assessment Result - Pre'), orderable=False,
                                    accessor='pretest_result')
@@ -183,6 +187,7 @@ class RSTable(CommonTable):
             'shift',
             'grade',
             'section',
+            'arabic_reading_improvement',
             'pre_test_total',
             'post_test_total',
             'arabic_improvement',

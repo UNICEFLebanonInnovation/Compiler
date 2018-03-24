@@ -1015,6 +1015,8 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             _('Class'),
             _('Reason of referral'),
 
+            _('Arabic reading - Improvement'),
+
             _('Academic Result - Pre'),
             _('Academic Result - Post'),
             _('Arabic - Improvement'),
@@ -1087,6 +1089,8 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
                 line.shift,
                 line.grade.name if line.grade else '',
                 line.referral,
+
+                line.arabic_reading_improvement,
 
                 line.pretest_result,
                 line.posttest_result,

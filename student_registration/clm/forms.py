@@ -807,18 +807,26 @@ class RSForm(CommonForm):
         self.request = kwargs.pop('request', None)
         super(RSForm, self).__init__(*args, **kwargs)
 
+        pre_reading_test = ''
+        post_reading_test = ''
+        pre_reading_test_button = ' btn-outline-success '
+        post_reading_test_button = ' btn-outline-secondary disabled '
+
         pre_test = ''
         post_test = ''
         pre_test_button = ' btn-outline-success '
         post_test_button = ' btn-outline-secondary disabled'
+
         pre_motivation = ''
         post_motivation = ''
         pre_motivation_button = ' btn-outline-success '
         post_motivation_button = ' btn-outline-secondary disabled'
+
         pre_self_assessment = ''
         post_self_assessment = ''
         pre_self_button = ' btn-outline-success '
         post_self_button = ' btn-outline-secondary disabled'
+
         display_assessment = ' d-none'
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
@@ -829,6 +837,23 @@ class RSForm(CommonForm):
             display_assessment = ''
             display_registry = ' d-none'
             form_action = reverse('clm:rs_edit', kwargs={'pk': instance.id})
+
+            #  Arabic reading test
+            pre_reading_test = instance.assessment_form(
+                stage='pre_reading',
+                assessment_slug='rs_pre_reading_test',
+                callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+             )
+            if instance.pre_reading:
+                pre_reading_test_button = ' btn-success '
+                post_reading_test_button = ' btn-outline-success '
+                post_reading_test = instance.assessment_form(
+                    stage='post_reading',
+                    assessment_slug='rs_post_reading_test',
+                    callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+                 )
+            if instance.post_reading:
+                post_reading_test_button = ' btn-success '
 
             #  Strategy Evaluation
             pre_test = instance.assessment_form(
@@ -1109,6 +1134,24 @@ class RSForm(CommonForm):
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'+display_assessment
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Arabic reading test') + '</h4>')
+                ),
+                Div(
+                    HTML('<div class="col-md-3"><a class="btn ' + pre_reading_test_button + '" href="' +
+                         pre_reading_test + '">' + _('Pre-assessment') + '</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn ' + post_reading_test_button + '" href="' +
+                         post_reading_test + '">' + _('Post-assessment') + '</a></div>'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<div class="p-3"></div>'),
+                    css_class='row'
+                ),
+                css_class='bd-callout bd-callout-warning' + display_assessment
             ),
             Fieldset(
                 None,

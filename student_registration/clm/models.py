@@ -662,6 +662,21 @@ class RS(CLM):
         verbose_name=_('Science')
     )
 
+    pre_reading = JSONField(blank=True, null=True)
+    pre_reading_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Arabic reading - Pre')
+    )
+    post_reading = JSONField(blank=True, null=True)
+    post_reading_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Arabic reading - Post')
+    )
+
     pre_self_assessment = JSONField(blank=True, null=True)
     pre_self_assessment_score = models.CharField(
         max_length=45,
@@ -775,6 +790,18 @@ class RS(CLM):
                 return 0.0
         return 0.0
 
+    @property
+    def arabic_reading_improvement(self):
+        if self.pre_reading_score and self.post_reading_score:
+            try:
+                return '{}{}'.format(
+                    round(((float(self.post_reading_score) - float(self.pre_reading_score)) /
+                            float(self.pre_reading_score)) * 100.0, 2),
+                    '%')
+            except ZeroDivisionError:
+                return 0.0
+        return 0.0
+
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
             assessment = Assessment.objects.get(slug=assessment_slug)
@@ -831,6 +858,10 @@ class RS(CLM):
                 'RS_ASSESSMENT/FL2',
                 'RS_ASSESSMENT/FL3',
                 'RS_ASSESSMENT/FL4',
+            ]
+        elif stage in ['pre_reading', 'post_reading']:
+            keys = [
+                'RS_ASSESSMENT/FL1',
             ]
         elif stage in ['pre_motivation', 'post_motivation']:
             keys = [
