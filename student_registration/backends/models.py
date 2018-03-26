@@ -30,7 +30,7 @@ class Exporter(TimeStampedModel):
 
 class Notification(TimeStampedModel):
 
-    name = models.CharField(max_length=100, blank=False, null=True)
+    name = models.CharField(max_length=500, blank=False, null=True)
     type = models.CharField(
         choices=Choices(
             ('general', 'General'),
