@@ -212,6 +212,7 @@ class CBECESerializer(CLMSerializer):
             'school',
             'referral',
             'child_muac',
+            'final_grade',
         )
 
 

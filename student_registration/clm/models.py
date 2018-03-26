@@ -981,6 +981,12 @@ class CBECE(CLM):
         choices=LEARNING_RESULT,
         verbose_name=_('Learning result')
     )
+    final_grade = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        blank=True, null=True,
+        # help_text='/80'
+    )
 
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
