@@ -2160,7 +2160,7 @@ msgstr "حذف"
 
 #: student_registration/enrollments/models.py:441
 msgid "Disabled?"
-msgstr "احتياجات خاصة"
+msgstr ""
 
 #: student_registration/enrollments/models.py:447
 msgid "Dropout?"

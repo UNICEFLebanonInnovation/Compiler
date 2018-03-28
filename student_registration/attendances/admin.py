@@ -366,7 +366,7 @@ class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
         GovernorateFilter,
         'last_attendance_date',
         'validation_status',
-        'dropout_status',
+        'disabled',
     )
     search_fields = (
         'student__first_name',
