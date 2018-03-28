@@ -113,8 +113,8 @@ def calculate_absentees(attendance, students):
                 total_absent_days=0
             )
 
-        absentee.level = student['level']
-        absentee.section = student['section']
+        absentee.level = student['level'] if 'level' in student else ''
+        absentee.section = student['section'] if 'section' in student else ''
 
         absentee.last_modification_date = datetime.datetime.now()
 
