@@ -43,7 +43,12 @@ from .forms import (
     StudentMovedForm,
     EditOldDataForm
 )
-from .serializers import EnrollmentSerializer, LoggingStudentMoveSerializer, LoggingProgramMoveSerializer
+from .serializers import (
+    EnrollmentSerializer,
+    EnrollmentImportSerializer,
+    LoggingStudentMoveSerializer,
+    LoggingProgramMoveSerializer
+)
 from student_registration.users.utils import force_default_language
 from student_registration.backends.tasks import export_2ndshift, export_2ndshift_gradings
 
@@ -413,6 +418,25 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
             enrollment.save()
         self.serializer_class = EnrollmentSerializer
         return super(EnrollmentViewSet, self).partial_update(request)
+
+
+class EnrollmentImportViewSet(mixins.ListModelMixin,
+                              viewsets.GenericViewSet,
+                              SuperuserRequiredMixin):
+    """
+    Provides API importation Enrollment records
+    """
+    model = Enrollment
+    queryset = Enrollment.objects.all()
+    serializer_class = EnrollmentImportSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.request.GET.get('offset', 0):
+            offset = int(self.request.GET.get('offset', 0))
+            limit = offset + 500
+            return self.queryset[offset:limit]
+        return []
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):
