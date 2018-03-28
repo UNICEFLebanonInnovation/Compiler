@@ -98,7 +98,7 @@ def calculate_absentees(attendance, students):
     from .models import Absentee
 
     for student in students:
-        print(student)
+
         try:
             absentee = Absentee.objects.get(student_id=student['student_id'])
         except Absentee.DoesNotExist:
