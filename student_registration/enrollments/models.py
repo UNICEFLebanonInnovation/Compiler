@@ -910,3 +910,15 @@ class LoggingProgramMove(TimeStampedModel):
 
     def __unicode__(self):
         return str(self.id)
+
+#
+# class ChargeSummary(models.Model):
+#     id = models.BigIntegerField(primary_key=True)
+#     month = models.CharField(max_length=200, blank=True, null=True)
+#     hardware = models.DecimalField(max_digits=19, decimal_places=2)
+#     software = models.DecimalField(max_digits=19, decimal_places=2)
+#
+#
+# class Meta:
+#     managed = False
+#     db_table = 'app_chargesummary'
