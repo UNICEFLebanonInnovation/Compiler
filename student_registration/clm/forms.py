@@ -343,6 +343,7 @@ class CommonForm(forms.ModelForm):
             'enrollment_id',
             'student_outreach_child',
             'comments',
+            'unsuccessful_posttest_reason',
         )
         initial_fields = fields
         widgets = {}
@@ -603,7 +604,7 @@ class BLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Academic data') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
                 ),
                 Div(
                     HTML('<div class="col-md-3"><a class="btn ' + pre_test_button + '" href="' +
@@ -626,10 +627,15 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('participation', css_class='col-md-3'),
+                    Div('unsuccessful_posttest_reason', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('barriers', css_class='col-md-3'),
+                    Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('barriers', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('learning_result', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -737,43 +743,43 @@ class RSForm(CommonForm):
         initial=0
     )
     pre_test_arabic = forms.FloatField(
-        label=_('Arabic'), required=False,
+        label=_('Arabic') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
     pre_test_language = forms.FloatField(
-        label=_('Foreign Language'), required=False,
+        label=_('Foreign Language') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
     pre_test_math = forms.FloatField(
-        label=_('Math'), required=False,
+        label=_('Math') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
     pre_test_science = forms.FloatField(
-        label=_('Science'), required=False,
+        label=_('Science') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
 
     post_test_arabic = forms.FloatField(
-        label=_('Arabic'), required=False,
+        label=_('Arabic') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
     post_test_language = forms.FloatField(
-        label=_('Foreign Language'), required=False,
+        label=_('Foreign Language') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
     post_test_math = forms.FloatField(
-        label=_('Math'), required=False,
+        label=_('Math') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
     post_test_science = forms.FloatField(
-        label=_('Science'), required=False,
+        label=_('Science') + ' (/20)', required=False,
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, max_value=20
     )
@@ -786,7 +792,7 @@ class RSForm(CommonForm):
         initial='academic'
     )
     learning_result = forms.ChoiceField(
-        label=_('Based on the overall score, what is the recommended learning path?'),
+        label=_('RS: Based on the overall score, what is the recommended learning path?'),
         widget=forms.Select, required=False,
         choices=(
             ('', '----------'),
@@ -801,18 +807,26 @@ class RSForm(CommonForm):
         self.request = kwargs.pop('request', None)
         super(RSForm, self).__init__(*args, **kwargs)
 
+        pre_reading_test = ''
+        post_reading_test = ''
+        pre_reading_test_button = ' btn-outline-success '
+        post_reading_test_button = ' btn-outline-secondary disabled '
+
         pre_test = ''
         post_test = ''
         pre_test_button = ' btn-outline-success '
         post_test_button = ' btn-outline-secondary disabled'
+
         pre_motivation = ''
         post_motivation = ''
         pre_motivation_button = ' btn-outline-success '
         post_motivation_button = ' btn-outline-secondary disabled'
+
         pre_self_assessment = ''
         post_self_assessment = ''
         pre_self_button = ' btn-outline-success '
         post_self_button = ' btn-outline-secondary disabled'
+
         display_assessment = ' d-none'
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
@@ -823,6 +837,23 @@ class RSForm(CommonForm):
             display_assessment = ''
             display_registry = ' d-none'
             form_action = reverse('clm:rs_edit', kwargs={'pk': instance.id})
+
+            #  Arabic reading test
+            pre_reading_test = instance.assessment_form(
+                stage='pre_reading',
+                assessment_slug='rs_pre_reading_test',
+                callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+             )
+            if instance.pre_reading:
+                pre_reading_test_button = ' btn-success '
+                post_reading_test_button = ' btn-outline-success '
+                post_reading_test = instance.assessment_form(
+                    stage='post_reading',
+                    assessment_slug='rs_post_reading_test',
+                    callback=self.request.build_absolute_uri(reverse('clm:rs_edit', kwargs={'pk': instance.id}))
+                 )
+            if instance.post_reading:
+                post_reading_test_button = ' btn-success '
 
             #  Strategy Evaluation
             pre_test = instance.assessment_form(
@@ -1107,6 +1138,24 @@ class RSForm(CommonForm):
             Fieldset(
                 None,
                 Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Arabic reading test') + '</h4>')
+                ),
+                Div(
+                    HTML('<div class="col-md-3"><a class="btn ' + pre_reading_test_button + '" href="' +
+                         pre_reading_test + '">' + _('Pre-assessment') + '</a></div>'),
+                    HTML('<div class="col-md-3"><a class="btn ' + post_reading_test_button + '" href="' +
+                         post_reading_test + '">' + _('Post-assessment') + '</a></div>'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<div class="p-3"></div>'),
+                    css_class='row'
+                ),
+                css_class='bd-callout bd-callout-warning' + display_assessment
+            ),
+            Fieldset(
+                None,
+                Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Strategy Evaluation') + '</h4>')
                 ),
                 Div(
@@ -1166,10 +1215,15 @@ class RSForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('participation', css_class='col-md-3'),
+                    Div('unsuccessful_posttest_reason', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('barriers', css_class='col-md-3'),
+                    Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('barriers', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('learning_result', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1258,6 +1312,11 @@ class CBECEForm(CommonForm):
             ('2', _('< 12.5 CM (moderate malnutrition)')),
         )
     )
+    final_grade = forms.FloatField(
+        label=_('Final grade') + ' (/80)', required=False,
+        widget=forms.NumberInput,
+        min_value=0, max_value=80
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -1269,6 +1328,7 @@ class CBECEForm(CommonForm):
         post_test_button = ' btn-outline-secondary disabled'
         display_assessment = ' d-none'
         display_registry = ''
+        display_final_grade = ' d-none'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:cbece_add')
         self.fields['clm_type'].initial = 'CBECE'
@@ -1294,6 +1354,9 @@ class CBECEForm(CommonForm):
                  )
             if instance.post_test:
                 post_test_button = ' btn-success '
+
+            if instance.cycle_id == 3:
+                display_final_grade = ''
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -1486,10 +1549,17 @@ class CBECEForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('participation', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('barriers', css_class='col-md-3'),
+                    Div('unsuccessful_posttest_reason', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default '+display_final_grade+'">2</span>'),
+                    Div('final_grade', css_class='col-md-3'+display_final_grade),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('participation', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('barriers', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('learning_result', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1514,6 +1584,7 @@ class CBECEForm(CommonForm):
             'school',
             'referral',
             'child_muac',
+            'final_grade',
         )
 
 
