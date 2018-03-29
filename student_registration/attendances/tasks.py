@@ -119,7 +119,7 @@ def calculate_last_attendance_date():
 
 
 @app.task
-def dropout_students(from_date, to_date):
+def dropout_students():
     from .models import Absentee
 
     queryset = Absentee.objects.exclude(absent_days__lt=10)
@@ -131,9 +131,7 @@ def dropout_students(from_date, to_date):
         registry = line.student.current_secondshift_registration()
         if not registry:
             continue
-        registry.update(disabled=True,
-                        last_attendance_date=line.last_attendance_date,
-                        last_absent_date=line.last_absent_date)
+        registry.update(disabled=True)
     #
     # for line in to_dropout:
     #     registry = line.student.last_enrollment()
@@ -142,6 +140,12 @@ def dropout_students(from_date, to_date):
     #     registry.update(dropout_status=True,
     #                     last_attendance_date=line.last_attendance_date,
     #                     last_absent_date=line.last_absent_date)
+
+
+@app.task
+def reset_absentees():
+    from .models import Absentee
+    Absentee.objects.all().delete()
 
 
 @app.task

@@ -9,8 +9,8 @@ class Command(BaseCommand):
     help = 'Calculate absentees'
 
     def add_arguments(self, parser):
-        parser.add_argument('--from_date', type=lambda d: datetime.strptime(d, '%Y%m%d'))
-        parser.add_argument('--to_date', type=lambda d: datetime.strptime(d, '%Y%m%d'))
+        parser.add_argument('--from_date', type=lambda d: datetime.strptime(d, '%Y-%m-%d'))
+        parser.add_argument('--to_date', type=lambda d: datetime.strptime(d, '%Y-%m-%d'))
 
     def handle(self, *args, **options):
         calculate_attendances_by_student(options['from_date'], options['to_date'])

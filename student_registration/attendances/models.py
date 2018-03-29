@@ -208,7 +208,9 @@ class Absentee(TimeStampedModel):
         related_name='+',
     )
     level = models.CharField(max_length=100, blank=True, null=True)
+    level_name = models.CharField(max_length=100, blank=True, null=True)
     section = models.CharField(max_length=100, blank=True, null=True)
+    section_name = models.CharField(max_length=100, blank=True, null=True)
 
     def __unicode__(self):
         return '{} - {}'.format(self.student, self.school)
