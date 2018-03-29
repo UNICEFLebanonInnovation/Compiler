@@ -48,24 +48,24 @@ class BLNTable(CommonTable):
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': '/api/clm-bln/'})
-
-    pre_assessment_result = tables.Column(verbose_name=_('Academic Result - Pre'), orderable=False,
-                                          accessor='pre_test_score')
-    post_assessment_result = tables.Column(verbose_name=_('Academic Result - Post'), orderable=False,
-                                           accessor='post_test_score')
-
+    #
+    # pre_assessment_result = tables.Column(verbose_name=_('Academic Result - Pre'), orderable=False,
+    #                                       accessor='pre_test_score')
+    # post_assessment_result = tables.Column(verbose_name=_('Academic Result - Post'), orderable=False,
+    #                                        accessor='post_test_score')
+    #
     arabic_improvement = tables.Column(verbose_name=_('Arabic - Improvement'), orderable=False,
                                        accessor='arabic_improvement')
-    english_improvement = tables.Column(verbose_name=_('English - Improvement'), orderable=False,
-                                        accessor='english_improvement')
-    french_improvement = tables.Column(verbose_name=_('French - Improvement'), orderable=False,
-                                       accessor='french_improvement')
+    # english_improvement = tables.Column(verbose_name=_('English - Improvement'), orderable=False,
+    #                                     accessor='english_improvement')
+    # french_improvement = tables.Column(verbose_name=_('French - Improvement'), orderable=False,
+    #                                    accessor='french_improvement')
     foreign_language_improvement = tables.Column(verbose_name=_('Foreign language - Improvement'), orderable=False,
                                                  accessor='foreign_language_improvement')
     math_improvement = tables.Column(verbose_name=_('Math - Improvement'), orderable=False,
                                      accessor='math_improvement')
 
-    assessment_improvement = tables.Column(verbose_name=_('Academic Result - Improvement'), orderable=False,
+    assessment_improvement = tables.Column(verbose_name=_('Assessment Result - Improvement'), orderable=False,
                                            accessor='assessment_improvement')
 
     class Meta:
@@ -87,14 +87,15 @@ class BLNTable(CommonTable):
             'student_birthday',
             'student.nationality',
             'student.mother_fullname',
-            'pre_assessment_result',
-            'post_assessment_result',
+            # 'pre_assessment_result',
+            # 'post_assessment_result',
             'arabic_improvement',
-            'english_improvement',
-            'french_improvement',
+            # 'english_improvement',
+            # 'french_improvement',
             'foreign_language_improvement',
             'math_improvement',
             'assessment_improvement',
+            'unsuccessful_posttest_reason',
             'participation',
             'learning_result',
             'owner',
@@ -114,10 +115,14 @@ class RSTable(CommonTable):
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': '/api/clm-rs/'})
 
+    # Arabic reading result
+    arabic_reading_improvement = tables.Column(verbose_name=_('Arabic Reading - Improvement'), orderable=False,
+                                               accessor='arabic_reading_improvement')
+
     #  Academic Result
-    pre_test_total = tables.Column(verbose_name=_('Academic Result - Pre'), orderable=False,
+    pre_test_total = tables.Column(verbose_name=_('Assessment Result - Pre'), orderable=False,
                                    accessor='pretest_result')
-    post_test_total = tables.Column(verbose_name=_('Academic Result - Post'), orderable=False,
+    post_test_total = tables.Column(verbose_name=_('Assessment Result - Post'), orderable=False,
                                     accessor='posttest_result')
     arabic_improvement = tables.Column(verbose_name=_('Arabic - Improvement'), orderable=False,
                                        accessor='arabic_improvement')
@@ -128,7 +133,7 @@ class RSTable(CommonTable):
     math_improvement = tables.Column(verbose_name=_('Math - Improvement'), orderable=False,
                                      accessor='math_improvement')
 
-    academic_test_improvement = tables.Column(verbose_name=_('Academic Result - Improvement'), orderable=False,
+    academic_test_improvement = tables.Column(verbose_name=_('Assessment Result - Improvement'), orderable=False,
                                               accessor='academic_test_improvement')
 
     # Strategy Evaluation Result
@@ -183,6 +188,7 @@ class RSTable(CommonTable):
             'shift',
             'grade',
             'section',
+            'arabic_reading_improvement',
             'pre_test_total',
             'post_test_total',
             'arabic_improvement',
@@ -199,6 +205,7 @@ class RSTable(CommonTable):
             'self_pre_assessment',
             'self_post_assessment',
             'self_assessment_improvement',
+            'unsuccessful_posttest_reason',
             'participation',
             'learning_result',
             'owner',
@@ -218,12 +225,12 @@ class CBECETable(CommonTable):
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': '/api/clm-cbece/'})
 
-    pre_assessment_result = tables.Column(verbose_name=_('Academic Result - Pre'), orderable=False,
+    pre_assessment_result = tables.Column(verbose_name=_('Assessment Result - Pre'), orderable=False,
                                           accessor='pre_test_score')
-    post_assessment_result = tables.Column(verbose_name=_('Academic Result - Post'), orderable=False,
+    post_assessment_result = tables.Column(verbose_name=_('Assessment Result - Post'), orderable=False,
                                            accessor='post_test_score')
 
-    assessment_improvement = tables.Column(verbose_name=_('Academic Result - Improvement'), orderable=False,
+    assessment_improvement = tables.Column(verbose_name=_('Assessment Result - Improvement'), orderable=False,
                                            accessor='assessment_improvement')
 
     art_improvement = tables.Column(verbose_name=_('Language Art Domain - Improvement'), orderable=False,
@@ -269,6 +276,8 @@ class CBECETable(CommonTable):
             'social_improvement',
             'psycho_improvement',
             'artistic_improvement',
+            'final_grade',
+            'unsuccessful_posttest_reason',
             'participation',
             'learning_result',
             'owner',
