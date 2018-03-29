@@ -393,6 +393,7 @@ class EnrollmentImportSerializer(serializers.ModelSerializer):
             'education_year',
             'section_name',
             'classroom_name',
+            'cycle',
             'number_in_previous_school',
             'last_education_level_name',
             'last_education_year',

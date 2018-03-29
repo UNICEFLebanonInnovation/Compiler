@@ -1,28 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-import functools
-import warnings
 
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.contrib.auth import (
-    REDIRECT_FIELD_NAME, get_user_model, login as auth_login,
-    logout as auth_logout, update_session_auth_hash,
-)
-from django.shortcuts import redirect
-from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
 
-from django.http import HttpResponseRedirect, HttpResponse
-from django.views.decorators.debug import sensitive_post_parameters
-from django.views.decorators.csrf import csrf_protect
-from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _
-from django.utils.decorators import method_decorator
+from django.views.generic import DetailView, ListView, RedirectView, UpdateView, TemplateView, FormView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import translation
 from student_registration.alp.templatetags.util_tags import has_group
-from django.contrib.auth.views import password_change
-from django.contrib.auth.forms import PasswordChangeForm
 
 from .models import User
 

@@ -488,7 +488,7 @@ class BLN(CLM):
             if self.pre_test and self.post_test:
                 return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
                               20.0) * 100.0, 2)
-        except ZeroDivisionError:
+        except Exception:
             return 0.0
         return 0.0
 

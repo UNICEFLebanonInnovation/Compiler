@@ -540,6 +540,16 @@ class Enrollment(TimeStampedModel):
     def student_address(self):
         return self.student.address
 
+    @property
+    def cycle(self):
+        if self.classroom_id in [2, 3, 4]:
+            return 'Cycle 1'
+        if self.classroom_id in [5, 6, 7]:
+            return 'Cycle 2'
+        if self.classroom_id in [8, 9, 10]:
+            return 'Cycle 3'
+        return ''
+
     def grading(self, term):
         if self.enrollment_gradings.count():
             return self.enrollment_gradings.get(exam_term=term).id
