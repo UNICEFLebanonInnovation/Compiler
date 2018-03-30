@@ -433,12 +433,12 @@ class EnrollmentImportViewSet(mixins.ListModelMixin,
 
     def get_queryset(self):
         queryset = self.queryset
-        max = int(self.request.GET.get('max', 500))
+        max_raw = int(self.request.GET.get('max', 500))
         if self.request.GET.get('year', 0):
             queryset = queryset.filter(education_year=int(self.request.GET.get('year', 0)))
         if self.request.GET.get('offset', 0):
             offset = int(self.request.GET.get('offset', 0))
-            limit = offset + max
+            limit = offset + max_raw
             return queryset[offset:limit]
         return []
 
