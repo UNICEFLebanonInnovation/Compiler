@@ -358,6 +358,16 @@ class CLM(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Comments')
     )
+    unsuccessful_posttest_reason = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('dropout', _("Dropout from the round")),
+            ('uncompleted_participation', _("Uncompleted Participation"))
+        ),
+        verbose_name=_('unsuccessful post test reason')
+    )
 
     @property
     def student_fullname(self):
@@ -411,12 +421,13 @@ class BLN(CLM):
 
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
-        ('repeat_level', _('Repeat level')),
+        # ('repeat_level', _('Repeat level')),
         ('attended_public_school', _('Attended public school')),
         ('referred_to_alp', _('referred to ALP')),
+        ('referred_to_tvet', _('referred to TVET')),
         ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
         ('reenrolled_in_alp', _('Re-register on another round of BLN')),
-        ('not_enrolled_any_program', _('Not enrolled in any educational program')),
+        # ('not_enrolled_any_program', _('Not enrolled in any educational program')),
         # ('dropout', _('Dropout from school'))
     )
 
@@ -477,7 +488,7 @@ class BLN(CLM):
             if self.pre_test and self.post_test:
                 return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
                               20.0) * 100.0, 2)
-        except ZeroDivisionError:
+        except Exception:
             return 0.0
         return 0.0
 
@@ -520,9 +531,8 @@ class RS(CLM):
 
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
-        ('repeat_level', _('Repeat level')),
-        # ('dropout', _('Dropout from school')),
-        ('graduated_next_level', _('Graduated to the next level'))
+        ('yes', _('Yes')),
+        ('no', _('No'))
     )
 
     SCHOOL_SHIFTS = Choices(
@@ -652,6 +662,21 @@ class RS(CLM):
         verbose_name=_('Science')
     )
 
+    pre_reading = JSONField(blank=True, null=True)
+    pre_reading_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Arabic reading - Pre')
+    )
+    post_reading = JSONField(blank=True, null=True)
+    post_reading_score = models.CharField(
+        max_length=45,
+        blank=True,
+        null=True,
+        verbose_name=_('Arabic reading - Post')
+    )
+
     pre_self_assessment = JSONField(blank=True, null=True)
     pre_self_assessment_score = models.CharField(
         max_length=45,
@@ -687,7 +712,7 @@ class RS(CLM):
         blank=True,
         null=True,
         choices=LEARNING_RESULT,
-        verbose_name=_('Learning result')
+        verbose_name=_('RS Learning result')
     )
     section = models.ForeignKey(
         Section,
@@ -765,6 +790,18 @@ class RS(CLM):
                 return 0.0
         return 0.0
 
+    @property
+    def arabic_reading_improvement(self):
+        if self.pre_reading_score and self.post_reading_score:
+            try:
+                return '{}{}'.format(
+                    round(((float(self.post_reading_score) - float(self.pre_reading_score)) /
+                            float(self.pre_reading_score)) * 100.0, 2),
+                    '%')
+            except ZeroDivisionError:
+                return 0.0
+        return 0.0
+
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
             assessment = Assessment.objects.get(slug=assessment_slug)
@@ -821,6 +858,10 @@ class RS(CLM):
                 'RS_ASSESSMENT/FL2',
                 'RS_ASSESSMENT/FL3',
                 'RS_ASSESSMENT/FL4',
+            ]
+        elif stage in ['pre_reading', 'post_reading']:
+            keys = [
+                'RS_ASSESSMENT/FL1',
             ]
         elif stage in ['pre_motivation', 'post_motivation']:
             keys = [
@@ -939,6 +980,12 @@ class CBECE(CLM):
         null=True,
         choices=LEARNING_RESULT,
         verbose_name=_('Learning result')
+    )
+    final_grade = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        blank=True, null=True,
+        # help_text='/80'
     )
 
     def assessment_form(self, stage, assessment_slug, callback=''):

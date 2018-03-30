@@ -954,51 +954,51 @@ class GradingTermForm(forms.ModelForm):
             )
 
         if enrollment_classroom == 1:
-            self.fields['exam_result_linguistic_ar'] = forms.IntegerField(
+            self.fields['exam_result_linguistic_ar'] = forms.FloatField(
                 label=_('Linguistic field/Arabic') + ' (/6)', required=True,
-                widget=forms.NumberInput(attrs=({'maxlength': 4})),
+                widget=forms.NumberInput,
                 min_value=0, max_value=6
             )
 
-            self.fields['exam_result_linguistic_en'] = forms.IntegerField(
+            self.fields['exam_result_linguistic_en'] = forms.FloatField(
                 label=_('Linguistic field/Foreign language') + ' (/6)', required=True,
-                widget=forms.NumberInput(attrs=({'maxlength': 4})),
+                widget=forms.NumberInput,
                 min_value=0, max_value=6
             )
 
-            self.fields['exam_result_sociology'] = forms.IntegerField(
+            self.fields['exam_result_sociology'] = forms.FloatField(
                 label=_('Sociology field') + ' (/6)', required=True,
-                widget=forms.NumberInput(attrs=({'maxlength': 4})),
+                widget=forms.NumberInput,
                 min_value=0, max_value=6
             )
 
-            self.fields['exam_result_physical'] = forms.IntegerField(
+            self.fields['exam_result_physical'] = forms.FloatField(
                 label=_('Physical field') + ' (/6)', required=True,
-                widget=forms.NumberInput(attrs=({'maxlength': 4})),
+                widget=forms.NumberInput,
                 min_value=0, max_value=6
             )
 
-            self.fields['exam_result_artistic'] = forms.IntegerField(
+            self.fields['exam_result_artistic'] = forms.FloatField(
                 label=_('Artistic field') + ' (/6)', required=True,
-                widget=forms.NumberInput(attrs=({'maxlength': 4})),
+                widget=forms.NumberInput,
                 min_value=0, max_value=6
             )
 
-            self.fields['exam_result_mathematics'] = forms.IntegerField(
+            self.fields['exam_result_mathematics'] = forms.FloatField(
                 label=_('Scientific domain/Mathematics') + ' (/6)', required=True,
-                widget=forms.NumberInput(attrs=({'maxlength': 4})),
+                widget=forms.NumberInput,
                 min_value=0, max_value=6
             )
 
-            self.fields['exam_result_sciences'] = forms.IntegerField(
+            self.fields['exam_result_sciences'] = forms.FloatField(
                 label=_('Scientific domain/Sciences') + ' (/6)', required=True,
-                widget=forms.NumberInput(attrs=({'maxlength': 4})),
+                widget=forms.NumberInput,
                 min_value=0, max_value=6
             )
 
-            self.fields['exam_total'] = forms.IntegerField(
+            self.fields['exam_total'] = forms.FloatField(
                 label=_('Total Grade') + ' (/6)', required=True,
-                widget=forms.NumberInput(attrs=({'maxlength': 4})),
+                widget=forms.NumberInput,
                 min_value=0, max_value=6
             )
 

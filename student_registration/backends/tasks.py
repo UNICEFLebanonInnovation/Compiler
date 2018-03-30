@@ -36,6 +36,9 @@ def export_2ndshift(params=None, return_data=False):
         'disabled',
         'moved',
 
+        'last_attendance_date',
+        'last_absent_date',
+
         _('Last non formal education - result'),
         _('Last non formal education - round'),
         _('Is the child participated in an ALP/2016-2 program'),
@@ -52,6 +55,7 @@ def export_2ndshift(params=None, return_data=False):
 
         _('Current Section'),
         _('Current Class'),
+        _('Current Cycle'),
         _('Education year'),
 
         _('Phone prefix'),
@@ -99,6 +103,9 @@ def export_2ndshift(params=None, return_data=False):
             line.disabled,
             line.moved,
 
+            line.last_attendance_date,
+            line.last_absent_date,
+
             line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
             line.last_informal_edu_round.name if line.last_informal_edu_round else '',
             _(line.participated_in_alp) if line.participated_in_alp else '',
@@ -115,6 +122,7 @@ def export_2ndshift(params=None, return_data=False):
 
             line.section.name if line.section else '',
             line.classroom.name if line.classroom else '',
+            line.cycle,
             line.education_year.name if line.education_year else '',
 
             line.student.phone_prefix,
