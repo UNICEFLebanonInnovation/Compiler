@@ -265,6 +265,7 @@ class AttendanceView(LoginRequiredMixin,
 
         base = datetime.datetime.now()
         dates = []
+        allowed_dates = []
         if school.attendance_from_beginning:
             start_date = school.academic_year_start
             end_date = datetime.date(base.year, base.month, base.day)
@@ -275,10 +276,17 @@ class AttendanceView(LoginRequiredMixin,
 
         for x in range(0, day_range):
             d = base - datetime.timedelta(days=x)
+            allowed_dates.append(d.strftime(date_format))
             dates.append({
                 'value': d.strftime(date_format),
                 'label': d.strftime(date_format_display)
             })
+
+        if selected_date not in allowed_dates:
+            messages.warning(self.request, _('This dates is blocked you are not allowed to take attendance for this date.'))
+            self.template_name = 'error.html'
+            return {
+            }
 
         return {
             'school_type': '2nd-shift',
@@ -437,6 +445,7 @@ class AttendanceALPView(LoginRequiredMixin,
 
         base = datetime.datetime.now()
         dates = []
+        allowed_dates = []
         if school.attendance_from_beginning:
             start_date = school.academic_year_start
             end_date = datetime.date(base.year, base.month, base.day)
@@ -447,10 +456,17 @@ class AttendanceALPView(LoginRequiredMixin,
 
         for x in range(0, day_range):
             d = base - datetime.timedelta(days=x)
+            allowed_dates.append(d.strftime(date_format))
             dates.append({
                 'value': d.strftime(date_format),
                 'label': d.strftime(date_format_display)
             })
+
+        if selected_date not in allowed_dates:
+            messages.warning(self.request, _('This dates is blocked you are not allowed to take attendance for this date.'))
+            self.template_name = 'error.html'
+            return {
+            }
 
         return {
             'school_type': 'ALP',
