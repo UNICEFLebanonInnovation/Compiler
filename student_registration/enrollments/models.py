@@ -504,7 +504,9 @@ class Enrollment(TimeStampedModel):
 
     @property
     def student_sex(self):
-        return self.student.sex
+        if self.student:
+            return self.student.sex
+        return ''
 
     @property
     def student_age(self):
@@ -514,7 +516,9 @@ class Enrollment(TimeStampedModel):
 
     @property
     def student_nationality(self):
-        return self.student.nationality
+        if self.student and self.student.nationality:
+            return self.student.nationality
+        return ''
 
     @property
     def student_id_type(self):
@@ -526,7 +530,9 @@ class Enrollment(TimeStampedModel):
 
     @property
     def student_mother_fullname(self):
-        return self.student.mother_fullname
+        if self.student:
+            return self.student.mother_fullname
+        return ''
 
     @property
     def student_mother_nationality(self):
