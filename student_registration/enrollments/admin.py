@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
 from django.utils.translation import ugettext as _
+from django.utils.html import escape, format_html, format_html_join, html_safe
 
 from import_export import resources, fields
 from import_export import fields
@@ -316,13 +317,22 @@ class EnrollmentAdmin(ImportExportModelAdmin):
     )
     list_display = (
         'student',
+        'student_link',
         'student_age',
-        'school',
+        'student_sex',
+        'student_nationality',
+        'student_mother_fullname',
+        # 'school',
+        'school_link',
         'caza',
         'governorate',
+        'cycle',
         'classroom',
         'section',
         'education_year',
+        'disabled',
+        'last_attendance_date',
+        'last_absent_date',
         'created',
         'modified',
     )
@@ -392,6 +402,24 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         if obj.school and obj.school.location and obj.school.location.parent:
             return obj.school.location.parent.name
         return ''
+
+    def school_link(self, obj):
+        if obj.school:
+            return '<a href="/admin/schools/school/%s/change/" target="_blank">%s</a>' % \
+                   (obj.school_id, escape(obj.school))
+        return ''
+
+    school_link.allow_tags = True
+    school_link.short_description = _("School")
+
+    def student_link(self, obj):
+        if obj.student:
+            return '<a href="/admin/students/student/%s/change/" target="_blank">%s</a>' % \
+                   (obj.student_id, 'student profile')
+        return ''
+
+    student_link.allow_tags = True
+    student_link.short_description = _("Student")
 
     def initiate_grading(self, request, queryset):
         for instance in queryset:

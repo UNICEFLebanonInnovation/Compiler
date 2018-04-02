@@ -17,6 +17,7 @@ from student_registration.alp.views import (
 from student_registration.attendances.views import (
     AttendanceViewSet,
     AbsenteeViewSet,
+    AttendancesExportViewSet,
 )
 from student_registration.students.views import (
     StudentViewSet,
@@ -41,7 +42,8 @@ from student_registration.enrollments.views import (
     EnrollmentViewSet,
     EnrollmentImportViewSet,
     LoggingStudentMoveViewSet,
-    LoggingProgramMoveViewSet
+    LoggingProgramMoveViewSet,
+    EnrollmentUpdateViewSet,
 )
 from student_registration.outreach.views import HouseHoldViewSet, ChildViewSet
 from student_registration.backends.views import NotificationViewSet
@@ -50,10 +52,12 @@ api = routers.SimpleRouter()
 api.register(r'alp', OutreachViewSet, base_name='alp')
 api.register(r'enrollments', EnrollmentViewSet, base_name='enrollments')
 api.register(r'import-enrollment', EnrollmentImportViewSet, base_name='import_enrollments')
+api.register(r'update-enrollment', EnrollmentUpdateViewSet, base_name='update_enrollments')
 api.register(r'logging-student-move', LoggingStudentMoveViewSet, base_name='logging_student_move')
 api.register(r'logging-student-program-move', LoggingProgramMoveViewSet, base_name='logging_student_ptogram_move')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
 api.register(r'absentees', AbsenteeViewSet, base_name='absentees')
+api.register(r'export-attendances', AttendancesExportViewSet, base_name='export_attendances')
 
 api.register(r'students', StudentViewSet, base_name='students')
 api.register(r'students-search', StudentSearchViewSet, base_name='students-search')
