@@ -29,6 +29,7 @@ from student_registration.alp.serializers import OutreachSerializer
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.schools.models import ClassRoom, School
+from student_registration.students.models import Student
 from .models import (
     Enrollment,
     EnrollmentGrading,
@@ -441,6 +442,33 @@ class EnrollmentImportViewSet(mixins.ListModelMixin,
             limit = offset + max_raw
             return queryset[offset:limit]
         return []
+
+
+class EnrollmentUpdateViewSet(mixins.RetrieveModelMixin,
+                              mixins.UpdateModelMixin,
+                              viewsets.GenericViewSet,
+                              SuperuserRequiredMixin):
+    """
+    Provides API operations around a Enrollment record
+    """
+    model = Enrollment
+    queryset = Enrollment.objects.all()
+    serializer_class = EnrollmentImportSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def partial_update(self, request, *args, **kwargs):
+        if request.POST.get('student', 0):
+            student = Student.objects.get(id=int(request.POST.get('student', 0)))
+            disabled = bool(request.POST.get('disabled', 0))
+            last_attendance_date = request.POST.get('last_attendance_date', 0)
+            last_absent_date = request.POST.get('last_absent_date', 0)
+
+            registry = student.current_secondshift_registration()
+            registry.update(disabled=disabled,
+                            last_attendance_date=last_attendance_date,
+                            last_absent_date=last_absent_date)
+
+        return JsonResponse({'status': status.HTTP_200_OK})
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):

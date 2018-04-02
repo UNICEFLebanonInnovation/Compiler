@@ -3,21 +3,17 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 import json
 
-from django.views import View
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
-from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
-from django.shortcuts import render
 
-from braces.views import GroupRequiredMixin
+from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.generics import ListAPIView
 from rest_framework import status
 
 from django.utils.translation import ugettext as _
-from import_export.formats import base_formats
 from student_registration.schools.models import (
     School,
     Section,
@@ -33,7 +29,7 @@ from student_registration.backends.tasks import export_attendance
 from student_registration.users.utils import force_default_language
 from .utils import find_attendances, calculate_absentees
 from .models import Attendance, Absentee
-from .serializers import AttendanceSerializer, AbsenteeSerializer
+from .serializers import AttendanceSerializer, AbsenteeSerializer, AttendanceExportSerializer
 
 
 class AttendanceViewSet(mixins.RetrieveModelMixin,
@@ -486,6 +482,34 @@ class AttendanceALPView(LoginRequiredMixin,
             'selected_date': selected_date,
             'selected_date_view': selected_date_view,
         }
+
+
+class AttendancesExportViewSet(mixins.ListModelMixin,
+                               viewsets.GenericViewSet,
+                               SuperuserRequiredMixin):
+    """
+    Provides API import attendance data
+    """
+    model = Attendance
+    queryset = Attendance.objects.exclude(close_reason__isnull=False)\
+        .exclude(students__isnull=True).order_by('attendance_date')
+    serializer_class = AttendanceExportSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        month = int(self.request.GET.get('month', 0))
+        year = int(self.request.GET.get('year', 0))
+        max_raw = int(self.request.GET.get('max', 500))
+        queryset = self.queryset
+
+        queryset = queryset.filter(attendance_date__month=month)
+        queryset = queryset.filter(attendance_date__year=year)
+
+        if self.request.GET.get('offset', 0):
+            offset = int(self.request.GET.get('offset', 0))
+            limit = offset + max_raw
+            return queryset[offset:limit]
+        return []
 
 
 class ExportView(LoginRequiredMixin, ListView):

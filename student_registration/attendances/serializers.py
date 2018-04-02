@@ -47,6 +47,25 @@ class AttendanceSerializer(serializers.ModelSerializer):
         )
 
 
+class AttendanceExportSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Attendance
+        fields = (
+            'id',
+            'school',
+            'school_type',
+            'attendance_date',
+            'validation_status',
+            'validation_date',
+            'validation_owner',
+            'close_reason',
+            'total_enrolled',
+            'students',
+            'owner',
+        )
+
+
 class AbsenteeSerializer(serializers.ModelSerializer):
     student_id = serializers.IntegerField(source='student.id', read_only=True)
 
