@@ -56,11 +56,6 @@ class AttendanceExportSerializer(serializers.ModelSerializer):
     education_year = serializers.CharField(source='education_year.name', read_only=True)
     alp_round = serializers.CharField(source='alp_round.name', read_only=True)
 
-    # total_registered_2ndshift_male = serializers.CharField(source='school.total_registered_2ndshift_male', read_only=True)
-    # total_registered_2ndshift_female = serializers.CharField(source='school.total_registered_2ndshift_female', read_only=True)
-    # total_registered_alp_male = serializers.CharField(source='school.total_registered_alp_male', read_only=True)
-    # total_registered_alp_female = serializers.CharField(source='school.total_registered_alp_female', read_only=True)
-
     class Meta:
         model = Attendance
         fields = (
@@ -77,10 +72,6 @@ class AttendanceExportSerializer(serializers.ModelSerializer):
             'validation_date',
             'validation_owner',
             'close_reason',
-            # 'total_registered_2ndshift_male',
-            # 'total_registered_2ndshift_female',
-            # 'total_registered_alp_male',
-            # 'total_registered_alp_female',
             'students',
         )
 
