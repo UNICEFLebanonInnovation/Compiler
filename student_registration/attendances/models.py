@@ -105,7 +105,7 @@ class Attendance(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
     )
-    alp_round= models.ForeignKey(
+    alp_round = models.ForeignKey(
         ALPRound,
         blank=True, null=True,
         related_name='+',
