@@ -491,8 +491,7 @@ class AttendancesExportViewSet(mixins.ListModelMixin,
     Provides API import attendance data
     """
     model = Attendance
-    queryset = Attendance.objects.exclude(close_reason__isnull=False)\
-        .exclude(students__isnull=True).order_by('attendance_date')
+    queryset = Attendance.objects.all().order_by('attendance_date')
     serializer_class = AttendanceExportSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
