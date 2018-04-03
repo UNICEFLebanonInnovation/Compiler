@@ -49,20 +49,30 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
 class AttendanceExportSerializer(serializers.ModelSerializer):
 
+    governorate = serializers.CharField(source='school.location.parent.name', read_only=True)
+    district = serializers.CharField(source='school.location.name', read_only=True)
+    school_number = serializers.CharField(source='school.number', read_only=True)
+    school_name = serializers.CharField(source='school.name', read_only=True)
+    education_year = serializers.CharField(source='education_year.name', read_only=True)
+    alp_round = serializers.CharField(source='alp_round.name', read_only=True)
+
     class Meta:
         model = Attendance
         fields = (
             'id',
-            'school',
+            'school_name',
+            'school_number',
             'school_type',
+            'education_year',
+            'alp_round',
+            'governorate',
+            'district',
             'attendance_date',
             'validation_status',
             'validation_date',
             'validation_owner',
             'close_reason',
-            'total_enrolled',
             'students',
-            'owner',
         )
 
 
