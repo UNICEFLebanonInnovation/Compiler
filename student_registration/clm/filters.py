@@ -13,11 +13,6 @@ class CommonFilter(FilterSet):
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
     district = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=False), empty_label=_('District'))
     student__nationality = ModelChoiceFilter(queryset=Nationality.objects.all(), empty_label=_('Nationality'))
-    school = ModelChoiceFilter(queryset=School.objects.all(), empty_label=_('School'))
-    registered_in_school = ModelChoiceFilter(queryset=School.objects.all(), empty_label=_('Registered in school'))
-    section = ModelChoiceFilter(queryset=Section.objects.all(), empty_label=_('Section'))
-    grade = ModelChoiceFilter(queryset=ClassRoom.objects.all(), empty_label=_('Class'))
-    cycle = ModelChoiceFilter(queryset=Cycle.objects.all(), empty_label=_('Cycle'))
 
 
 class BLNFilter(CommonFilter):
@@ -42,6 +37,11 @@ class BLNFilter(CommonFilter):
 
 
 class RSFilter(CommonFilter):
+    section = ModelChoiceFilter(queryset=Section.objects.all(), empty_label=_('Section'))
+    school = ModelChoiceFilter(queryset=School.objects.all(), empty_label=_('School'))
+    registered_in_school = ModelChoiceFilter(queryset=School.objects.all(), empty_label=_('Registered in school'))
+    grade = ModelChoiceFilter(queryset=ClassRoom.objects.all(), empty_label=_('Class'))
+
     class Meta:
         model = RS
         fields = {
@@ -69,6 +69,9 @@ class RSFilter(CommonFilter):
 
 
 class CBECEFilter(CommonFilter):
+    school = ModelChoiceFilter(queryset=School.objects.all(), empty_label=_('School'))
+    cycle = ModelChoiceFilter(queryset=Cycle.objects.all(), empty_label=_('Cycle'))
+
     class Meta:
         model = CBECE
         fields = {
