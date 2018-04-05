@@ -188,6 +188,8 @@ class RSTable(CommonTable):
             'shift',
             'grade',
             'section',
+            'pre_reading_score',
+            'post_reading_score',
             'arabic_reading_improvement',
             'pre_test_total',
             'post_test_total',

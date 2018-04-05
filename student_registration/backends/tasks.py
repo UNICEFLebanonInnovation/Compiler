@@ -14,7 +14,8 @@ def export_2ndshift(params=None, return_data=False):
     from student_registration.schools.models import EducationYear
 
     title = '2nd-shit-all'
-    queryset = Enrollment.objects.exclude(moved=True)
+    # queryset = Enrollment.objects.exclude(moved=True)
+    queryset = Enrollment.objects.all()
     if 'current' in params:
         title = '2nd-shit-current'
         queryset = queryset.filter(education_year__current_year=True)
@@ -575,6 +576,77 @@ def export_attendance(params=None, return_data=False):
                 data.append(content)
 
     timestamp = '{}-{}'.format('attendance', time.time())
+    file_format = base_formats.XLSX()
+    data = file_format.export_data(data)
+    if return_data:
+        return data
+    store_file(data, timestamp)
+    return True
+
+
+@app.task
+def export_attendance_by_student(params=None, return_data=False):
+    from student_registration.attendances.models import Absentee
+
+    queryset = Absentee.objects.all()
+
+    data = tablib.Dataset()
+
+    data.headers = [
+
+        'school_number',
+        'school_name',
+        'governorate',
+        'district',
+        'education_year/alp_round',
+        'level_name',
+        'section_name',
+        'student_first_name',
+        'student_father_name',
+        'student_last_name',
+        'student_mother_fullname',
+        'student_sex',
+        'student_age',
+        'last_attendance_date',
+        'attended_days',
+        'total_attended_days',
+        'last_absent_date',
+        'absent_days',
+        'total_absent_days',
+    ]
+
+    content = []
+    for line in queryset:
+        school = line.school
+        school_location = school.location
+        school_location_parent = school_location.parent
+        education_year = line.education_year
+        alp_round = line.alp_round
+
+        content = [
+            school.number,
+            school.name,
+            school_location_parent.name,
+            school_location.name,
+            education_year.name if education_year else alp_round.name,
+            line.level_name,
+            line.section_name,
+            line.student.first_name,
+            line.student.father_name,
+            line.student.last_name,
+            line.student.mother_fullname,
+            line.student.sex,
+            line.student.age,
+            line.last_attendance_date,
+            line.attended_days,
+            line.total_attended_days,
+            line.last_absent_date,
+            line.absent_days,
+            line.total_absent_days
+        ]
+        data.append(content)
+
+    timestamp = '{}-{}'.format('attendance_by_student', time.time())
     file_format = base_formats.XLSX()
     data = file_format.export_data(data)
     if return_data:
