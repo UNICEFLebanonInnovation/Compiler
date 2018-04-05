@@ -531,8 +531,8 @@ class RS(CLM):
 
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
-        ('yes', _('Yes')),
-        ('no', _('No'))
+        ('repeat_level', _('Yes')),
+        ('graduated_next_level', _('No'))
     )
 
     SCHOOL_SHIFTS = Choices(
