@@ -794,13 +794,10 @@ class RS(CLM):
     def arabic_reading_improvement(self):
         if self.pre_reading_score and self.post_reading_score:
             try:
-                return '{}{}'.format(
-                    round(((float(self.post_reading_score) - float(self.pre_reading_score)) /
-                            float(self.pre_reading_score)) * 100.0, 2),
-                    '%')
-            except ZeroDivisionError:
-                return 0.0
-        return 0.0
+                return self.pre_reading_score - self.post_reading_score
+            except Exception:
+                return 0
+        return 0
 
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
