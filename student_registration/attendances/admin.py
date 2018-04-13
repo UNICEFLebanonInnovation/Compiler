@@ -9,6 +9,9 @@ from django.utils.translation import ugettext as _
 
 from import_export.admin import ExportMixin
 from import_export import resources, fields, widgets
+from django.contrib.postgres.fields import JSONField
+from prettyjson import PrettyJSONWidget
+
 from student_registration.alp.templatetags.util_tags import has_group
 from student_registration.locations.models import Location
 from student_registration.schools.models import (
@@ -572,6 +575,10 @@ class AttendanceAdmin(ImportExportModelAdmin):
         SchoolStatusFilter,
     )
     date_hierarchy = 'attendance_date'
+
+    formfield_overrides = {
+        JSONField: {'widget': PrettyJSONWidget(attrs={'initial': 'parsed'})}
+    }
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
