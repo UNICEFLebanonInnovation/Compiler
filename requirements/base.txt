@@ -72,4 +72,5 @@ django-tables2==1.10.0
 #azure-storage==0.36.0
 azure-storage==0.20.0
 openpyxl==2.4.9
+django-prettyjson==0.3.3
 

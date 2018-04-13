@@ -24,7 +24,7 @@ from student_registration.enrollments.models import (
     Enrollment,
     EducationYear,
 )
-from student_registration.alp.models import Outreach
+from student_registration.alp.models import Outreach, ALPRound
 from student_registration.backends.tasks import export_attendance
 from student_registration.users.utils import force_default_language
 from .utils import find_attendances, calculate_absentees
@@ -335,6 +335,8 @@ class AttendanceALPView(LoginRequiredMixin,
         date_format = '%Y-%m-%d'
         date_format_display = '%A %d/%m/%Y'
 
+        alp_round = ALPRound.objects.get(current_round=True)
+
         if self.request.user.school:
             school = self.request.user.school
 
@@ -442,8 +444,8 @@ class AttendanceALPView(LoginRequiredMixin,
         base = datetime.datetime.now()
         dates = []
         allowed_dates = []
-        if school.attendance_from_beginning:
-            start_date = school.academic_year_start
+        if alp_round.round_start_date:
+            start_date = alp_round.round_start_date
             end_date = datetime.date(base.year, base.month, base.day)
             delta = end_date - start_date
             day_range = delta.days + 1

@@ -158,7 +158,7 @@ def calculate_attendances_by_student(from_date=None, to_date=None):
     # queryset = queryset.filter(school__number='340')
 
     # if not from_date:
-    Absentee.objects.all().delete()
+    # Absentee.objects.all().delete()
 
     if from_date:
         queryset = queryset.filter(attendance_date__gte=from_date)
