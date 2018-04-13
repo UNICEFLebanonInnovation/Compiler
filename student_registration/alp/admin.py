@@ -976,9 +976,25 @@ class PostTestAdmin(OutreachAdmin):
         )
 
 
+class ALPRoundAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'current_round',
+        'round_start_date',
+        'round_end_date',
+        'current_pre_test',
+        'current_post_test',
+    )
+    list_filter = (
+        'current_round',
+        'current_pre_test',
+        'current_post_test',
+    )
+
+
 admin.site.register(Outreach, OutreachAdmin)
 admin.site.register(CurrentOutreach, CurrentOutreachAdmin)
 admin.site.register(PreTest, PreTestAdmin)
 admin.site.register(CurrentRound, CurrentRoundAdmin)
 admin.site.register(PostTest, PostTestAdmin)
-admin.site.register(ALPRound)
+admin.site.register(ALPRound, ALPRoundAdmin)
