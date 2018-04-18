@@ -426,6 +426,34 @@ class PublicDocumentAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
+class CLMRoundResource(resources.ModelResource):
+    class Meta:
+        model = CLMRound
+        fields = (
+            'id',
+            'name',
+        )
+        export_order = fields
+
+
+class CLMRoundAdmin(ImportExportModelAdmin):
+    resource_class = CLMRoundResource
+
+
+class EducationalLevelResource(resources.ModelResource):
+    class Meta:
+        model = EducationalLevel
+        fields = (
+            'id',
+            'name',
+        )
+        export_order = fields
+
+
+class EducationalLevelAdmin(ImportExportModelAdmin):
+    resource_class = EducationalLevelResource
+
+
 admin.site.register(School, SchoolAdmin)
 admin.site.register(EducationLevel, EducationLevelAdmin)
 admin.site.register(ClassLevel, ClassLevelAdmin)
@@ -435,9 +463,9 @@ admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
 admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
 admin.site.register(EducationYear)
 # admin.site.register(Holiday)
-admin.site.register(CLMRound)
+admin.site.register(CLMRound, CLMRoundAdmin)
 admin.site.register(PublicDocument, PublicDocumentAdmin)
-admin.site.register(EducationalLevel)
+admin.site.register(EducationalLevel, EducationalLevelAdmin)
 admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
 
 
