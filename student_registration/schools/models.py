@@ -135,26 +135,41 @@ class School(models.Model):
     class Meta:
         ordering = ['number']
 
-    @property
-    def total_attendances_days_2ndshift(self):
+    def attendances_2ndshift(self):
         qs = self.attendances.filter(
             education_year__current_year=True,
-            school_type='2nd-shift',
-            close_reason__isnull=True,
+            school_type='2nd-shift'
         )
         if self.academic_year_start:
             qs = qs.filter(
                 attendance_date__gte=self.academic_year_start
             )
+        return qs
+
+    def attendances_alp(self):
+        return self.attendances.filter(
+            alp_round__current_round=True,
+            school_type='ALP'
+        )
+
+    @property
+    def total_attendances_days_2ndshift(self):
+        qs = self.attendances_2ndshift()
         return qs.count()
 
     @property
+    def total_attendances_days_2ndshift_open(self):
+        qs = self.attendances_2ndshift()
+        return qs.exclude(close_reason__isnull=False).count()
+
+    @property
     def total_attendances_days_alp(self):
-        return self.attendances.filter(
-            alp_round__current_round=True,
-            school_type='ALP',
-            close_reason__isnull=True,
-        ).count()
+        return self.attendances_alp().count()
+
+    @property
+    def total_attendances_days_alp_open(self):
+        qs = self.attendances_alp()
+        return qs.exclude(close_reason__isnull=False).count()
 
     @property
     def location_name(self):

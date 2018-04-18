@@ -58,12 +58,14 @@ class NotificationAdmin(ImportExportModelAdmin):
         'status',
         'ticket',
         'school',
+        'school_type',
         'created',
     )
 
     list_filter = (
         'type',
         'status',
+        'school_type',
         'school',
     )
 
