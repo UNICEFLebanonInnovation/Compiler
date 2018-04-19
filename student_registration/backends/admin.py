@@ -232,6 +232,7 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
         'title',
         'description',
         'comments',
+        'attachments',
         'is_2nd_shift',
         'is_alp',
         'priority',
@@ -317,8 +318,14 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
 
     def comments(self, obj):
         if obj.followup_set:
-            return format_html('<br/><br/>'.join(['<b>{}</b>: {}'.format(f.user, f.comment) for f in obj.followup_set.all()]))
+            return format_html('<br/><br/>'.join([unicode(f.user) + " : " + unicode(f.comment) for f in obj.followup_set.all()]))
         return ''
+
+    def attachments(self, obj):
+        attachments = ''
+        for followup in obj.followup_set.all():
+            attachments = format_html('<br/><br/>'.join([f.filename for f in followup.attachment_set.all()]))
+        return attachments
 
     # def is_2nd_shift(self, obj):
     #     result = False
