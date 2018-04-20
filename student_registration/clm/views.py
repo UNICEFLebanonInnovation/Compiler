@@ -535,6 +535,16 @@ class RSAddView(LoginRequiredMixin,
             instance = RS.objects.get(id=self.request.GET.get('enrollment_id'))
             data = RSSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
+
+            data['pre_test_arabic'] = 0
+            data['pre_test_language'] = 0
+            data['pre_test_math'] = 0
+            data['pre_test_science'] = 0
+            data['post_test_arabic'] = 0
+            data['post_test_language'] = 0
+            data['post_test_math'] = 0
+            data['post_test_science'] = 0
+
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
