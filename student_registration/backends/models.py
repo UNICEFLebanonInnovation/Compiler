@@ -39,6 +39,14 @@ class Notification(TimeStampedModel):
         max_length=50,
         blank=True, null=True
     )
+    school_type = models.CharField(
+        choices=Choices(
+            ('2ndshift', '2nd-shift'),
+            ('ALP', 'ALP'),
+        ),
+        max_length=50,
+        blank=True, null=True
+    )
     status = models.BooleanField(blank=True, default=False)
     description = models.TextField(max_length=500, blank=True, null=True)
     comments = models.TextField(max_length=500, blank=True, null=True)

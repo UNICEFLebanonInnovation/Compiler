@@ -478,11 +478,25 @@ class CBECEAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
+class DisabilityResource(resources.ModelResource):
+    class Meta:
+        model = Disability
+        fields = (
+            'id',
+            'name',
+        )
+        export_order = fields
+
+
+class DisabilityAdmin(ImportExportModelAdmin):
+    resource_class = DisabilityResource
+
+
 admin.site.register(Assessment)
 admin.site.register(Cycle)
 admin.site.register(Site)
 admin.site.register(Referral)
-admin.site.register(Disability)
+admin.site.register(Disability, DisabilityAdmin)
 
 admin.site.register(BLN, BLNAdmin)
 admin.site.register(RS, RSAdmin)
