@@ -492,6 +492,13 @@ class BLN(CLM):
             return 0.0
         return 0.0
 
+    def get_assessment_value(self, key, stage):
+        assessment = getattr(self, stage)
+        if assessment:
+            key = 'BLN_ASSESSMENT/'+key
+            return assessment.get(key, 0)
+        return 0
+
     @property
     def arabic_improvement(self):
         return str(self.domain_improvement('arabic')) + '%'
@@ -846,6 +853,15 @@ class RS(CLM):
     def science_improvement(self):
         return str(self.domain_improvement('science')) + '%'
 
+    def get_assessment_value(self, key, stage):
+        assessment = getattr(self, stage)
+        print(assessment)
+        if assessment:
+            key = 'RS_ASSESSMENT/'+key
+            print(assessment.get(key, 0))
+            return assessment.get(key, 0)
+        return 0
+
     def calculate_score(self, stage):
         keys = []
         if stage in ['pre_test', 'post_test']:
@@ -1016,6 +1032,14 @@ class CBECE(CLM):
             except ZeroDivisionError:
                 return 0.0
         return 0.0
+
+    def get_assessment_value(self, key, stage):
+        assessment = getattr(self, stage)
+        program_cycle = str(self.cycle_id)
+        if assessment:
+            key = 'CBECE_ASSESSMENT/{}{}'.format(key, program_cycle)
+            return assessment.get(key, 0)
+        return 0
 
     @property
     def pre_assessment_form(self):
