@@ -346,7 +346,7 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
                         '<a href="%s" target="_blank">%s</a>' % (url, f.filename)
                     )
                 attachments = format_html(''.join(attachments))
-        except Exception:
+        except Exception as ex:
             pass
         return attachments
 
