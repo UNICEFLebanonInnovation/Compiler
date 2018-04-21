@@ -604,11 +604,14 @@ class LoggingStudentMoveAdmin(ImportExportModelAdmin):
 
 
 class LoggingProgramMoveResource(resources.ModelResource):
+    is_eligibility = fields.Field(column_name='eligibility')
+    registry_alp_round = fields.Field(column_name='registry_alp_round')
 
     class Meta:
         model = LoggingProgramMove
         fields = (
-            'education_year',
+            'registry_alp_round',
+            # 'education_year',
             'student__first_name',
             'student__father_name',
             'student__last_name',
@@ -616,9 +619,21 @@ class LoggingProgramMoveResource(resources.ModelResource):
             'student__mother_fullname',
             'school_from__name',
             'school_to__name',
-            'eligibility',
+            'registry__refer_to_level__name',
+            'registry__registered_in_level__name',
+            'is_eligibility',
         )
         export_order = fields
+
+    def dehydrate_registry_alp_round(self, obj):
+        if obj.registry.alp_round:
+            return obj.registry.alp_round.name
+        return ''
+
+    def dehydrate_is_eligibility(self, obj):
+        refer_to_level = obj.registry.refer_to_level_id
+        eligibility = True if refer_to_level in [1, 10, 11, 12, 13, 14, 15, 16, 17] else False
+        return eligibility
 
 
 class LoggingProgramMoveAdmin(ImportExportModelAdmin):
@@ -626,7 +641,8 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
     fields = ()
 
     list_display = (
-        'education_year',
+        'registry_alp_round',
+        # 'education_year',
         'student',
         'school_from',
         'school_to',
@@ -647,6 +663,11 @@ class LoggingProgramMoveAdmin(ImportExportModelAdmin):
         'student__father_name',
         'student__last_name',
     )
+
+    def registry_alp_round(self, obj):
+        if obj.registry and obj.registry.alp_round:
+            return obj.registry.alp_round.name
+        return ''
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats

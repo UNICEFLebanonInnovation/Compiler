@@ -74,33 +74,78 @@ def track_student_program_moves():
     from student_registration.alp.models import Outreach
     from student_registration.enrollments.models import Enrollment, LoggingProgramMove
 
-    registrations = Outreach.objects.order_by('created')
+    LoggingProgramMove.objects.all().delete()
+
+    registrations = Outreach.objects.filter(alp_round__id__lte=6, registered_in_level__isnull=False).order_by('-alp_round')
+    print(registrations.count())
+    enrollments = Enrollment.objects.filter(education_year__id=2)
+    print(enrollments.count())
 
     for registry in registrations:
+        refer_to_level = registry.refer_to_level_id
+        eligibility = True if refer_to_level in [1, 10, 11, 12, 13, 14, 15, 16, 17] else False
         student = registry.student
-        match_records = Enrollment.objects.filter(
-            Q(student__number=student.number) |
-            Q(student__number_part1=student.number_part1)
-        )
-
-        if not match_records:
-            match_records = Enrollment.objects.filter(
-                student__first_name=student.first_name,
-                student__father_name=student.father_name,
-                student__last_name=student.last_name,
-            )
-
-        if len(match_records):
-            for item in match_records:
-                LoggingProgramMove.objects.get_or_create(
-                    student=item.student,
+        matched1 = enrollments.filter(
+            Q(student__number=student.number)
+        ).first()
+        if matched1:
+            try:
+                LoggingProgramMove.objects.get(student=matched1.student)
+            except Exception:
+                LoggingProgramMove.objects.create(
+                    student=matched1.student,
+                    enrollment=matched1,
                     registry=registry,
                     school_from=registry.school,
-                    school_to=item.school,
-                    education_year=item.education_year,
-                    eligibility=False,
-                    potential_move=True
+                    school_to=matched1.school,
+                    eligibility=eligibility
                 )
+
+            continue
+
+        matched2 = enrollments.filter(
+            student__first_name=student.first_name,
+            student__father_name=student.father_name,
+            student__last_name=student.last_name,
+            student__birthday_year=student.birthday_year,
+            student__sex=student.sex
+        ).first()
+        if matched2:
+            try:
+                LoggingProgramMove.objects.get(student=matched2.student)
+            except Exception:
+                LoggingProgramMove.objects.create(
+                    student=matched2.student,
+                    enrollment=matched2,
+                    registry=registry,
+                    school_from=registry.school,
+                    school_to=matched2.school,
+                    eligibility=eligibility
+                )
+
+            continue
+
+        matched3 = enrollments.filter(
+            student__first_name=student.first_name,
+            student__last_name=student.father_name,
+            student__mother_fullname=student.mother_fullname,
+            student__birthday_year=student.birthday_year,
+            student__sex=student.sex
+        ).first()
+        if matched3:
+            try:
+                LoggingProgramMove.objects.get(student=matched3.student)
+            except Exception:
+                LoggingProgramMove.objects.create(
+                    student=matched3.student,
+                    enrollment=matched3,
+                    registry=registry,
+                    school_from=registry.school,
+                    school_to=matched3.school,
+                    eligibility=eligibility
+                )
+
+            continue
 
 
 @app.task
@@ -134,3 +179,64 @@ def migrate_gradings():
             exam_result=registry.exam_result,
         )
         instance.save()
+
+
+def export_student_program_moves(params=None, return_data=False):
+    import tablib
+    from import_export.formats import base_formats
+    from student_registration.enrollments.models import LoggingProgramMove
+
+    queryset = LoggingProgramMove.objects.all().order_by('-registry__alp_round')
+    queryset2 = LoggingProgramMove.objects.all()
+
+    data = tablib.Dataset()
+    data.headers = [
+        'alp_round',
+        'student_first_name',
+        'student_father_name',
+        'student_last_name',
+        'student_sex',
+        'birthday',
+        'nationality',
+        'student_mother_fullname',
+        'from school',
+        'governorate',
+        'district',
+        'refer_to_level',
+        'registered_in_level',
+        'class level',
+        'to school',
+        'governorate',
+        'district',
+        'is_eligibility',
+    ]
+
+    content = []
+    for line in queryset:
+        # if LoggingProgramMove.objects.exclude(id=line.id).filter(student_id=line.student_id):
+        #     continue
+        content = [
+            line.registry.alp_round.name,
+            line.student.first_name,
+            line.student.father_name,
+            line.student.last_name,
+            line.student.sex,
+            line.student.birthday,
+            line.student.mother_fullname,
+            line.student.nationality.name,
+            line.school_from,
+            line.school_from.location.parent.name if line.school_from and line.school_from.location else '',
+            line.school_from.location.name if line.school_from and line.school_from.location else '',
+            line.registry.refer_to_level,
+            line.registry.registered_in_level.name,
+            line.enrollment.classroom.name,
+            line.school_to,
+            line.school_to.location.parent.name if line.school_to and line.school_to.location else '',
+            line.school_to.location.name if line.school_to and line.school_to.location else '',
+            line.eligibility
+        ]
+        data.append(content)
+
+    file_format = base_formats.XLSX()
+    data = file_format.export_data(data)
+    return data
