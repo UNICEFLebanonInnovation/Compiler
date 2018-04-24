@@ -80,6 +80,8 @@ class BLNAddView(LoginRequiredMixin,
             instance = BLN.objects.get(id=self.request.GET.get('enrollment_id'))
             data = BLNSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
+            data['learning_result'] = ''
+
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
@@ -544,6 +546,7 @@ class RSAddView(LoginRequiredMixin,
             data['post_test_language'] = 0
             data['post_test_math'] = 0
             data['post_test_science'] = 0
+            data['learning_result'] = ''
 
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
@@ -649,6 +652,8 @@ class CBECEAddView(LoginRequiredMixin,
             instance = CBECE.objects.get(id=self.request.GET.get('enrollment_id'))
             data = CBECESerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
+
+            data['learning_result'] = ''
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
