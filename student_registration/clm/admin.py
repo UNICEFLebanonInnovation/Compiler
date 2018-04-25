@@ -41,6 +41,14 @@ class BLNResource(resources.ModelResource):
         attribute='assessment_improvement',
     )
 
+    pre_test_arabic = fields.Field(column_name='pre_test_arabic')
+    pre_test_foreign_language = fields.Field(column_name='pre_test_foreign_language')
+    pre_test_math = fields.Field(column_name='pre_test_math')
+
+    post_test_arabic = fields.Field(column_name='post_test_arabic')
+    post_test_foreign_language = fields.Field(column_name='post_test_foreign_language')
+    post_test_math = fields.Field(column_name='post_test_math')
+
     class Meta:
         fields = (
             'id',
@@ -50,8 +58,8 @@ class BLNResource(resources.ModelResource):
             'have_barcode',
             'outreach_barcode',
             'round__name',
-            'governorate',
-            'district',
+            'governorate__name',
+            'district__name',
             'location',
             'language',
             'student__id',
@@ -68,7 +76,7 @@ class BLNResource(resources.ModelResource):
             'student__nationality__name',
             'student__sex',
             'student__p_code',
-            'disability',
+            'disability__name',
             'internal_number',
             'comments',
             'hh_educational_level',
@@ -77,7 +85,13 @@ class BLNResource(resources.ModelResource):
             'have_labour',
             'labours',
             'labour_hours',
+            'pre_test_arabic',
+            'pre_test_foreign_language',
+            'pre_test_math',
             'pre_test_score',
+            'post_test_arabic',
+            'post_test_foreign_language',
+            'post_test_math',
             'post_test_score',
             'arabic_improvement',
             'english_improvement',
@@ -93,8 +107,25 @@ class BLNResource(resources.ModelResource):
         model = BLN
         export_order = fields
 
-        # def dehydrate_arabic_improvement(self, obj):
-        #     return obj.arabic_improvement
+        def dehydrate_pre_test_arabic(self, obj):
+            return obj.get_assessment_value('arabic', 'pre_test')
+
+
+        def dehydrate_pre_test_foreign_language(self, obj):
+            return obj.get_assessment_value('foreign_language', 'pre_test')
+
+        def dehydrate_pre_test_math(self, obj):
+            return obj.get_assessment_value('math', 'pre_test')
+
+        def dehydrate_post_test_arabic(self, obj):
+            return obj.get_assessment_value('arabic', 'post_test')
+
+
+        def dehydrate_post_test_foreign_language(self, obj):
+            return obj.get_assessment_value('foreign_language', 'post_test')
+
+        def dehydrate_post_test_math(self, obj):
+            return obj.get_assessment_value('math', 'post_test')
 
 
 class BLNAdmin(ImportExportModelAdmin):
@@ -223,8 +254,8 @@ class RSResource(resources.ModelResource):
             'type',
             'site',
             'school',
-            'governorate',
-            'district',
+            'governorate__name',
+            'district__name',
             'location',
             'language',
             'student__id',
@@ -241,7 +272,7 @@ class RSResource(resources.ModelResource):
             'student__nationality__name',
             'student__sex',
             'student__p_code',
-            'disability',
+            'disability__name',
             'internal_number',
             'comments',
             'hh_educational_level',
@@ -371,6 +402,20 @@ class CBECEResource(resources.ModelResource):
         attribute='assessment_improvement',
     )
 
+    pre_test_LanguageArtDomain = fields.Field(column_name='pre_test_LanguageArtDomain')
+    pre_test_CognitiveDomian = fields.Field(column_name='pre_test_CognitiveDomian')
+    pre_test_ScienceDomain = fields.Field(column_name='pre_test_ScienceDomain')
+    pre_test_SocialEmotionalDomain = fields.Field(column_name='pre_test_SocialEmotionalDomain')
+    pre_test_PsychomotorDomain = fields.Field(column_name='pre_test_PsychomotorDomain')
+    pre_test_ArtisticDomain = fields.Field(column_name='pre_test_ArtisticDomain')
+
+    post_test_LanguageArtDomain = fields.Field(column_name='post_test_LanguageArtDomain')
+    post_test_CognitiveDomian = fields.Field(column_name='post_test_CognitiveDomian')
+    post_test_ScienceDomain = fields.Field(column_name='post_test_ScienceDomain')
+    post_test_SocialEmotionalDomain = fields.Field(column_name='post_test_SocialEmotionalDomain')
+    post_test_PsychomotorDomain = fields.Field(column_name='post_test_PsychomotorDomain')
+    post_test_ArtisticDomain = fields.Field(column_name='post_test_ArtisticDomain')
+
     class Meta:
         model = CBECE
         fields = (
@@ -411,7 +456,19 @@ class CBECEResource(resources.ModelResource):
             'have_labour',
             'labours',
             'labour_hours',
+            'pre_test_LanguageArtDomain',
+            'pre_test_CognitiveDomian',
+            'pre_test_ScienceDomain',
+            'pre_test_SocialEmotionalDomain',
+            'pre_test_PsychomotorDomain',
+            'pre_test_ArtisticDomain',
             'pre_test_score',
+            'post_test_LanguageArtDomain',
+            'post_test_CognitiveDomian',
+            'post_test_ScienceDomain',
+            'post_test_SocialEmotionalDomain',
+            'post_test_PsychomotorDomain',
+            'post_test_ArtisticDomain',
             'post_test_score',
             'art_improvement',
             'cognitive_improvement',
@@ -426,6 +483,43 @@ class CBECEResource(resources.ModelResource):
             'modified'
         )
         export_order = fields
+
+        def dehydrate_pre_test_LanguageArtDomain(self, obj):
+            return obj.get_assessment_value('LanguageArtDomain', 'pre_test')
+
+        def dehydrate_pre_test_CognitiveDomian(self, obj):
+            return obj.get_assessment_value('CognitiveDomian', 'pre_test')
+
+        def dehydrate_pre_test_ScienceDomain(self, obj):
+            return obj.get_assessment_value('ScienceDomain', 'pre_test')
+
+        def dehydrate_pre_test_SocialEmotionalDomain(self, obj):
+            return obj.get_assessment_value('SocialEmotionalDomain', 'pre_test')
+
+        def dehydrate_pre_test_PsychomotorDomain(self, obj):
+            return obj.get_assessment_value('PsychomotorDomain', 'pre_test')
+
+        def dehydrate_pre_test_ArtisticDomain(self, obj):
+            return obj.get_assessment_value('ArtisticDomain', 'pre_test')
+
+        def dehydrate_post_test_LanguageArtDomain(self, obj):
+            return obj.get_assessment_value('LanguageArtDomain', 'post_test')
+
+        def dehydrate_post_test_CognitiveDomian(self, obj):
+            return obj.get_assessment_value('CognitiveDomian', 'post_test')
+
+        def dehydrate_post_test_ScienceDomain(self, obj):
+            return obj.get_assessment_value('ScienceDomain', 'post_test')
+
+        def dehydrate_post_test_SocialEmotionalDomain(self, obj):
+            return obj.get_assessment_value('SocialEmotionalDomain', 'post_test')
+
+        def dehydrate_post_test_PsychomotorDomain(self, obj):
+            return obj.get_assessment_value('PsychomotorDomain', 'post_test')
+
+        def dehydrate_post_test_ArtisticDomain(self, obj):
+            return obj.get_assessment_value('ArtisticDomain', 'post_test')
+
 
 
 class CBECEAdmin(ImportExportModelAdmin):

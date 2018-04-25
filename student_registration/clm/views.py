@@ -916,6 +916,10 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             _("Student outreached?"),
             _("Have barcode with him?"),
 
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
         ]
 
         content = []
@@ -979,6 +983,11 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
                 line.new_registry,
                 line.student_outreached,
                 line.have_barcode,
+
+                line.owner,
+                line.modified_by,
+                line.created,
+                line.modified,
             ]
             data.append(content)
 
@@ -1089,6 +1098,11 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
 
             _("First time registered?"),
 
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
+
         ]
 
         content = []
@@ -1175,6 +1189,11 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
                 line.learning_result,
 
                 line.new_registry,
+
+                line.owner,
+                line.modified_by,
+                line.created,
+                line.modified,
             ]
             data.append(content)
 
@@ -1273,6 +1292,10 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             _("Student outreached?"),
             _("Have barcode with him?"),
 
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
         ]
 
         content = []
@@ -1348,6 +1371,11 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
                 line.new_registry,
                 line.student_outreached,
                 line.have_barcode,
+
+                line.owner,
+                line.modified_by,
+                line.created,
+                line.modified,
             ]
             data.append(content)
 
