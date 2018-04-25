@@ -72,6 +72,16 @@ def has_group(user, group_name):
         return False
 
 
+@register.filter(name='is_owner')
+def is_owner(user, instance):
+    try:
+        if user == instance.owner:
+            return True
+    except Group.DoesNotExist:
+        pass
+    return False
+
+
 @register.filter(name='user_main_role')
 def user_main_role(user):
     groups = user.groups.all()
