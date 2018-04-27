@@ -41,7 +41,7 @@ class BLNResource(resources.ModelResource):
         attribute='assessment_improvement',
     )
 
-    pre_test_arabic = fields.Field(column_name='pre_test_arabic')
+    pre_test_arabic = fields.Field(column_name='pre test arabic')
     pre_test_foreign_language = fields.Field(column_name='pre_test_foreign_language')
     pre_test_math = fields.Field(column_name='pre_test_math')
 
@@ -108,8 +108,8 @@ class BLNResource(resources.ModelResource):
         export_order = fields
 
         def dehydrate_pre_test_arabic(self, obj):
+            print(obj)
             return obj.get_assessment_value('arabic', 'pre_test')
-
 
         def dehydrate_pre_test_foreign_language(self, obj):
             return obj.get_assessment_value('foreign_language', 'pre_test')
@@ -119,7 +119,6 @@ class BLNResource(resources.ModelResource):
 
         def dehydrate_post_test_arabic(self, obj):
             return obj.get_assessment_value('arabic', 'post_test')
-
 
         def dehydrate_post_test_foreign_language(self, obj):
             return obj.get_assessment_value('foreign_language', 'post_test')

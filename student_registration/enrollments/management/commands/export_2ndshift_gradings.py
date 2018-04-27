@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         from student_registration.backends.tasks import export_2ndshift_gradings
-        data = export_2ndshift_gradings({}, return_data=True)
+        data = export_2ndshift_gradings({'term':1}, return_data=True)
         file_object = open("enrolment_grading_data.xlsx", "w")
         file_object.write(data)
         file_object.close()
