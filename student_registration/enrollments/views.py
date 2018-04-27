@@ -305,14 +305,14 @@ class GradingView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = EnrollmentGrading.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
+        instance = EnrollmentGrading.objects.get(id=self.kwargs['pk'], enrollment__school=self.request.user.school)
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance)
         else:
             return form_class(instance=instance)
 
     def form_valid(self, form):
-        instance = EnrollmentGrading.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
+        instance = EnrollmentGrading.objects.get(id=self.kwargs['pk'], enrollment__school=self.request.user.school)
         form.save(request=self.request, instance=instance)
         return super(GradingView, self).form_valid(form)
 
