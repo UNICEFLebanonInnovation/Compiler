@@ -855,10 +855,8 @@ class RS(CLM):
 
     def get_assessment_value(self, key, stage):
         assessment = getattr(self, stage)
-        print(assessment)
         if assessment:
             key = 'RS_ASSESSMENT/'+key
-            print(assessment.get(key, 0))
             return assessment.get(key, 0)
         return 0
 

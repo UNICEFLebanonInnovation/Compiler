@@ -6,6 +6,7 @@ from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from student_registration.taskapp.celery import app
 from .file import store_file
+from openpyxl import load_workbook
 
 
 @app.task
@@ -585,6 +586,52 @@ def export_attendance(params=None, return_data=False):
 
 
 @app.task
+def import_attendance_by_student():
+    from student_registration.attendances.models import Absentee
+    wb = load_workbook(filename='attendance_by_student.xlsx', read_only=True)
+    ws = wb['students']
+    ctr = 0
+
+    for row in ws.rows:
+        try:
+            if row[0].value == 'school_id':
+                continue
+
+            instance = Absentee.objects.create(
+                school_id=row[0].value,
+                student_id=row[6].value,
+                education_year_id=row[1].value,
+                level_name=row[2].value,
+                level=row[3].value,
+                section_name=row[4].value,
+                section=row[5].value,
+                attended_days=row[8].value,
+                total_attended_days=row[9].value,
+                absent_days=row[11].value,
+                total_absent_days=row[12].value,
+            )
+
+            if not row[7].value == 'None':
+                instance.last_attendance_date = row[7].value
+
+            if not row[10].value == 'None':
+                instance.last_absent_date = row[10].value
+
+            if not row[13].value == 'None':
+                instance.last_modification_date=row[13].value
+
+            instance.save()
+
+        except Exception as ex:
+            print("---------------")
+            ctr += 1
+            print("error: ", ex)
+            print("---------------")
+            pass
+    print(ctr)
+
+
+@app.task
 def export_attendance_by_student(params=None, return_data=False):
     from student_registration.attendances.models import Absentee
 
@@ -594,13 +641,19 @@ def export_attendance_by_student(params=None, return_data=False):
 
     data.headers = [
 
+        'school_id',
         'school_number',
         'school_name',
         'governorate',
         'district',
         'education_year/alp_round',
+        'education_year_id',
+        'alp_round_id',
         'level_name',
+        'level',
         'section_name',
+        'section',
+        'student_id',
         'student_first_name',
         'student_father_name',
         'student_last_name',
@@ -613,6 +666,7 @@ def export_attendance_by_student(params=None, return_data=False):
         'last_absent_date',
         'absent_days',
         'total_absent_days',
+        'last_modification_date',
     ]
 
     content = []
@@ -623,14 +677,23 @@ def export_attendance_by_student(params=None, return_data=False):
         education_year = line.education_year
         alp_round = line.alp_round
 
+        if not education_year:
+            continue
+
         content = [
+            school.id,
             school.number,
             school.name,
             school_location_parent.name,
             school_location.name,
-            education_year.name if education_year else alp_round.name,
+            education_year.name,
+            education_year.id if education_year else '',
+            alp_round.id if alp_round else '',
             line.level_name,
+            line.level,
             line.section_name,
+            line.section,
+            line.student_id,
             line.student.first_name,
             line.student.father_name,
             line.student.last_name,
@@ -642,7 +705,8 @@ def export_attendance_by_student(params=None, return_data=False):
             line.total_attended_days,
             line.last_absent_date,
             line.absent_days,
-            line.total_absent_days
+            line.total_absent_days,
+            line.last_modification_date
         ]
         data.append(content)
 
