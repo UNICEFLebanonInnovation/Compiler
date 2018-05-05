@@ -47,6 +47,7 @@ from .forms import (
 from .serializers import (
     EnrollmentSerializer,
     EnrollmentImportSerializer,
+    GradingImportSerializer,
     LoggingStudentMoveSerializer,
     LoggingProgramMoveSerializer
 )
@@ -446,6 +447,33 @@ class EnrollmentImportViewSet(mixins.ListModelMixin,
         return []
 
 
+class EnrollmentGradingImportViewSet(mixins.ListModelMixin,
+                                     viewsets.GenericViewSet,
+                                     SuperuserRequiredMixin):
+    """
+    Provides API importation Enrollment records
+    """
+    model = EnrollmentGrading
+    queryset = EnrollmentGrading.objects.all()
+    serializer_class = GradingImportSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = self.queryset
+        term = self.request.GET.get('term', 1)
+        max_raw = int(self.request.GET.get('max', 500))
+
+        queryset = queryset.filter(exam_term=term)
+
+        if self.request.GET.get('year', 0):
+            queryset = queryset.filter(enrollment__education_year=int(self.request.GET.get('year', 0)))
+        if self.request.GET.get('offset', 0):
+            offset = int(self.request.GET.get('offset', 0))
+            limit = offset + max_raw
+            return queryset[offset:limit]
+        return []
+
+
 class EnrollmentUpdateViewSet(mixins.RetrieveModelMixin,
                               mixins.UpdateModelMixin,
                               viewsets.GenericViewSet,
@@ -518,7 +546,7 @@ class ExportGradingViewSet(LoginRequiredMixin, ListView):
         return self.queryset
 
     def get(self, request, *args, **kwargs):
-        data= ''
+        data = ''
         school = request.GET.get('school', 0)
         classroom = request.GET.get('classroom', 0)
         section = request.GET.get('section', 0)

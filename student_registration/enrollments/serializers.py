@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Enrollment, LoggingStudentMove, LoggingProgramMove
+from .models import Enrollment, LoggingStudentMove, LoggingProgramMove, EnrollmentGrading
 
 
 class LoggingStudentMoveSerializer(serializers.ModelSerializer):
@@ -414,4 +414,37 @@ class EnrollmentImportSerializer(serializers.ModelSerializer):
             'moved',
             'dropout_status',
             'disabled',
+        )
+
+
+class GradingImportSerializer(serializers.ModelSerializer):
+
+    student_id = serializers.IntegerField(source='enrollment.student.id', required=False)
+
+    class Meta:
+        model = EnrollmentGrading
+        fields = (
+            'id',
+            'enrollment_id',
+            'student_id',
+            'exam_term',
+            'exam_result_arabic',
+            'exam_result_language',
+            'exam_result_education',
+            'exam_result_geo',
+            'exam_result_history',
+            'exam_result_math',
+            'exam_result_science',
+            'exam_result_physic',
+            'exam_result_chemistry',
+            'exam_result_bio',
+            'exam_result_linguistic_ar',
+            'exam_result_linguistic_en',
+            'exam_result_sociology',
+            'exam_result_physical',
+            'exam_result_artistic',
+            'exam_result_mathematics',
+            'exam_result_sciences',
+            'exam_total',
+            'exam_result',
         )

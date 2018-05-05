@@ -41,6 +41,7 @@ from student_registration.users.views import LoginRedirectView
 from student_registration.enrollments.views import (
     EnrollmentViewSet,
     EnrollmentImportViewSet,
+    EnrollmentGradingImportViewSet,
     LoggingStudentMoveViewSet,
     LoggingProgramMoveViewSet,
     EnrollmentUpdateViewSet,
@@ -52,6 +53,7 @@ api = routers.SimpleRouter()
 api.register(r'alp', OutreachViewSet, base_name='alp')
 api.register(r'enrollments', EnrollmentViewSet, base_name='enrollments')
 api.register(r'import-enrollment', EnrollmentImportViewSet, base_name='import_enrollments')
+api.register(r'import-grading', EnrollmentGradingImportViewSet, base_name='import_gradings')
 api.register(r'update-enrollment', EnrollmentUpdateViewSet, base_name='update_enrollments')
 api.register(r'logging-student-move', LoggingStudentMoveViewSet, base_name='logging_student_move')
 api.register(r'logging-student-program-move', LoggingProgramMoveViewSet, base_name='logging_student_ptogram_move')
