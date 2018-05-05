@@ -60,11 +60,14 @@ class AttendanceExportSerializer(serializers.ModelSerializer):
         model = Attendance
         fields = (
             'id',
+            'school_id',
             'school_name',
             'school_number',
             'school_type',
+            'education_year_id',
             'education_year',
             'alp_round',
+            'alp_round_id',
             'governorate',
             'district',
             'attendance_date',
