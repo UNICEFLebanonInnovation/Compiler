@@ -498,6 +498,8 @@ class AttendancesExportViewSet(mixins.ListModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+        from_day = int(self.request.GET.get('from_day', 1))
+        to_day = int(self.request.GET.get('to_day', 1))
         month = int(self.request.GET.get('month', 0))
         year = int(self.request.GET.get('year', 0))
         max_raw = int(self.request.GET.get('max', 500))
@@ -505,6 +507,7 @@ class AttendancesExportViewSet(mixins.ListModelMixin,
 
         queryset = queryset.filter(attendance_date__month=month)
         queryset = queryset.filter(attendance_date__year=year)
+        queryset = queryset.filter(attendance_date__day__gte=from_day, attendance_date__day__lte=to_day)
 
         if self.request.GET.get('offset', 0):
             offset = int(self.request.GET.get('offset', 0))

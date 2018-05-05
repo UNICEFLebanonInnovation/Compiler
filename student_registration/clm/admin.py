@@ -108,7 +108,6 @@ class BLNResource(resources.ModelResource):
         export_order = fields
 
         def dehydrate_pre_test_arabic(self, obj):
-            print(obj)
             return obj.get_assessment_value('arabic', 'pre_test')
 
         def dehydrate_pre_test_foreign_language(self, obj):
