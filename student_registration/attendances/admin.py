@@ -9,6 +9,9 @@ from django.utils.translation import ugettext as _
 
 from import_export.admin import ExportMixin
 from import_export import resources, fields, widgets
+from django.contrib.postgres.fields import JSONField
+from prettyjson import PrettyJSONWidget
+
 from student_registration.alp.templatetags.util_tags import has_group
 from student_registration.locations.models import Location
 from student_registration.schools.models import (
@@ -336,7 +339,23 @@ class AbsenteeResource(resources.ModelResource):
             'total_absent_days',
             'last_modification_date'
         )
-        export_order = fields
+        export_order = (
+            'school_id',
+            'student_id',
+            'last_attendance_date',
+            'attended_days',
+            'total_attended_days',
+            'last_absent_date',
+            'absent_days',
+            'total_absent_days',
+            'last_modification_date',
+            'education_year_id',
+            'alp_round',
+            'level',
+            'level_name',
+            'section',
+            'section_name'
+        )
 
 
 class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
@@ -572,6 +591,10 @@ class AttendanceAdmin(ImportExportModelAdmin):
         SchoolStatusFilter,
     )
     date_hierarchy = 'attendance_date'
+
+    formfield_overrides = {
+        JSONField: {'widget': PrettyJSONWidget(attrs={'initial': 'parsed'})}
+    }
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats

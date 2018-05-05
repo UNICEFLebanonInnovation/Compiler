@@ -6,6 +6,7 @@ from django.utils.translation import ugettext as _
 from import_export.formats import base_formats
 from student_registration.taskapp.celery import app
 from .file import store_file
+from openpyxl import load_workbook
 
 
 @app.task
@@ -14,7 +15,8 @@ def export_2ndshift(params=None, return_data=False):
     from student_registration.schools.models import EducationYear
 
     title = '2nd-shit-all'
-    queryset = Enrollment.objects.exclude(moved=True)
+    # queryset = Enrollment.objects.exclude(moved=True)
+    queryset = Enrollment.objects.all()
     if 'current' in params:
         title = '2nd-shit-current'
         queryset = queryset.filter(education_year__current_year=True)
@@ -575,6 +577,140 @@ def export_attendance(params=None, return_data=False):
                 data.append(content)
 
     timestamp = '{}-{}'.format('attendance', time.time())
+    file_format = base_formats.XLSX()
+    data = file_format.export_data(data)
+    if return_data:
+        return data
+    store_file(data, timestamp)
+    return True
+
+
+@app.task
+def import_attendance_by_student():
+    from student_registration.attendances.models import Absentee
+    wb = load_workbook(filename='attendance_by_student.xlsx', read_only=True)
+    ws = wb['students']
+    ctr = 0
+
+    for row in ws.rows:
+        try:
+            if row[0].value == 'school_id':
+                continue
+
+            instance = Absentee.objects.create(
+                school_id=row[0].value,
+                student_id=row[6].value,
+                education_year_id=row[1].value,
+                level_name=row[2].value,
+                level=row[3].value,
+                section_name=row[4].value,
+                section=row[5].value,
+                attended_days=row[8].value,
+                total_attended_days=row[9].value,
+                absent_days=row[11].value,
+                total_absent_days=row[12].value,
+            )
+
+            if not row[7].value == 'None':
+                instance.last_attendance_date = row[7].value
+
+            if not row[10].value == 'None':
+                instance.last_absent_date = row[10].value
+
+            if not row[13].value == 'None':
+                instance.last_modification_date=row[13].value
+
+            instance.save()
+
+        except Exception as ex:
+            print("---------------")
+            ctr += 1
+            print("error: ", ex)
+            print("---------------")
+            pass
+    print(ctr)
+
+
+@app.task
+def export_attendance_by_student(params=None, return_data=False):
+    from student_registration.attendances.models import Absentee
+
+    queryset = Absentee.objects.all()
+
+    data = tablib.Dataset()
+
+    data.headers = [
+
+        'school_id',
+        'school_number',
+        'school_name',
+        'governorate',
+        'district',
+        'education_year/alp_round',
+        'education_year_id',
+        'alp_round_id',
+        'level_name',
+        'level',
+        'section_name',
+        'section',
+        'student_id',
+        'student_first_name',
+        'student_father_name',
+        'student_last_name',
+        'student_mother_fullname',
+        'student_sex',
+        'student_age',
+        'last_attendance_date',
+        'attended_days',
+        'total_attended_days',
+        'last_absent_date',
+        'absent_days',
+        'total_absent_days',
+        'last_modification_date',
+    ]
+
+    content = []
+    for line in queryset:
+        school = line.school
+        school_location = school.location
+        school_location_parent = school_location.parent
+        education_year = line.education_year
+        alp_round = line.alp_round
+
+        if not education_year:
+            continue
+
+        content = [
+            school.id,
+            school.number,
+            school.name,
+            school_location_parent.name,
+            school_location.name,
+            education_year.name,
+            education_year.id if education_year else '',
+            alp_round.id if alp_round else '',
+            line.level_name,
+            line.level,
+            line.section_name,
+            line.section,
+            line.student_id,
+            line.student.first_name,
+            line.student.father_name,
+            line.student.last_name,
+            line.student.mother_fullname,
+            line.student.sex,
+            line.student.age,
+            line.last_attendance_date,
+            line.attended_days,
+            line.total_attended_days,
+            line.last_absent_date,
+            line.absent_days,
+            line.total_absent_days,
+            line.last_modification_date
+        ]
+        data.append(content)
+
+    timestamp = '{}-{}'.format('attendance_by_student', time.time())
     file_format = base_formats.XLSX()
     data = file_format.export_data(data)
     if return_data:

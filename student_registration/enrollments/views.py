@@ -15,7 +15,7 @@ from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from import_export.formats import base_formats
 
-from student_registration.alp.templatetags.util_tags import has_group
+from student_registration.alp.templatetags.util_tags import has_group, is_owner
 
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
@@ -47,6 +47,7 @@ from .forms import (
 from .serializers import (
     EnrollmentSerializer,
     EnrollmentImportSerializer,
+    GradingImportSerializer,
     LoggingStudentMoveSerializer,
     LoggingProgramMoveSerializer
 )
@@ -158,7 +159,7 @@ class EditView(LoginRequiredMixin,
         return super(EditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        instance = Enrollment.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
         if self.request.method == "POST":
             return EnrollmentForm(self.request.POST, instance=instance)
         else:
@@ -169,7 +170,7 @@ class EditView(LoginRequiredMixin,
             return EnrollmentForm(data, instance=instance)
 
     def form_valid(self, form):
-        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        instance = Enrollment.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
         form.save(request=self.request, instance=instance)
         return super(EditView, self).form_valid(form)
 
@@ -191,7 +192,7 @@ class EditOldDataView(LoginRequiredMixin,
         return super(EditOldDataView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
-        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        instance = Enrollment.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
         if self.request.method == "POST":
             return EditOldDataForm(self.request.POST, instance=instance)
         else:
@@ -199,7 +200,7 @@ class EditOldDataView(LoginRequiredMixin,
             return EditOldDataForm(data, instance=instance)
 
     def form_valid(self, form):
-        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        instance = Enrollment.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
         form.save(request=self.request, instance=instance)
         return super(EditOldDataView, self).form_valid(form)
 
@@ -305,14 +306,14 @@ class GradingView(LoginRequiredMixin,
 
     def get_form(self, form_class=None):
         form_class = self.get_form_class()
-        instance = EnrollmentGrading.objects.get(id=self.kwargs['pk'])
+        instance = EnrollmentGrading.objects.get(id=self.kwargs['pk'], enrollment__school=self.request.user.school)
         if self.request.method == "POST":
             return form_class(self.request.POST, instance=instance)
         else:
             return form_class(instance=instance)
 
     def form_valid(self, form):
-        instance = EnrollmentGrading.objects.get(id=self.kwargs['pk'])
+        instance = EnrollmentGrading.objects.get(id=self.kwargs['pk'], enrollment__school=self.request.user.school)
         form.save(request=self.request, instance=instance)
         return super(GradingView, self).form_valid(form)
 
@@ -401,7 +402,9 @@ class EnrollmentViewSet(mixins.RetrieveModelMixin,
         return self.queryset
 
     def delete(self, request, *args, **kwargs):
-        instance = self.model.objects.get(id=kwargs['pk'])
+        instance = self.model.objects.get(id=kwargs['pk'], school=self.request.user.school)
+        if not has_group(request.user, 'ENROL_DELETE') or not is_owner(request.user, instance):
+            return JsonResponse({'status': 500})
         instance.delete()
         return JsonResponse({'status': status.HTTP_200_OK})
 
@@ -437,6 +440,33 @@ class EnrollmentImportViewSet(mixins.ListModelMixin,
         max_raw = int(self.request.GET.get('max', 500))
         if self.request.GET.get('year', 0):
             queryset = queryset.filter(education_year=int(self.request.GET.get('year', 0)))
+        if self.request.GET.get('offset', 0):
+            offset = int(self.request.GET.get('offset', 0))
+            limit = offset + max_raw
+            return queryset[offset:limit]
+        return []
+
+
+class EnrollmentGradingImportViewSet(mixins.ListModelMixin,
+                                     viewsets.GenericViewSet,
+                                     SuperuserRequiredMixin):
+    """
+    Provides API importation Enrollment records
+    """
+    model = EnrollmentGrading
+    queryset = EnrollmentGrading.objects.all()
+    serializer_class = GradingImportSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = self.queryset
+        term = self.request.GET.get('term', 1)
+        max_raw = int(self.request.GET.get('max', 500))
+
+        queryset = queryset.filter(exam_term=term)
+
+        if self.request.GET.get('year', 0):
+            queryset = queryset.filter(enrollment__education_year=int(self.request.GET.get('year', 0)))
         if self.request.GET.get('offset', 0):
             offset = int(self.request.GET.get('offset', 0))
             limit = offset + max_raw
@@ -516,7 +546,7 @@ class ExportGradingViewSet(LoginRequiredMixin, ListView):
         return self.queryset
 
     def get(self, request, *args, **kwargs):
-        data= ''
+        data = ''
         school = request.GET.get('school', 0)
         classroom = request.GET.get('classroom', 0)
         section = request.GET.get('section', 0)

@@ -232,6 +232,7 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
         'title',
         'description',
         'comments',
+        'attachments',
         'is_2nd_shift',
         'is_alp',
         'priority',
@@ -316,27 +317,38 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
         return False
 
     def comments(self, obj):
-        if obj.followup_set:
-            return format_html('<br/><br/>'.join(['<b>{}</b>: {}'.format(f.user, f.comment) for f in obj.followup_set.all()]))
+        comments = []
+        try:
+            if obj.followup_set:
+                for f in obj.followup_set.all():
+                    if not f.comment:
+                        continue
+                    comments.append(
+                        '%s: %s' % (f.user, f.comment)
+                    )
+                return format_html('<br/><br/>'.join(comments))
+        except Exception:
+            pass
         return ''
 
-    # def is_2nd_shift(self, obj):
-    #     result = False
-    #     html_icon = '<i class="{} icon"></i>'
-    #     if self.school(obj):
-    #         result = self.school(obj).is_2nd_shift
-    #     if result:
-    #         return format_html(html_icon, mark_safe('check green'))
-    #     return format_html(html_icon, mark_safe('remove red'))
-    #
-    # def is_alp(self, obj):
-    #     result = False
-    #     html_icon = '<i class="{} icon"></i>'
-    #     if self.school(obj):
-    #         result = self.school(obj).is_alp
-    #     if result:
-    #         return format_html(html_icon, mark_safe('check green'))
-    #     return format_html(html_icon, mark_safe('remove red'))
+    def attachments(self, obj):
+        attachments = []
+        try:
+            for followup in obj.followup_set.all():
+                for f in followup.attachment_set.all():
+                    url = 'https://compiler.blob.core.windows.net/exports/helpdesk/attachments/{}-{}/{}/{}'.format(
+                        obj.queue.slug,
+                        obj.id,
+                        followup.id,
+                        f.filename
+                    )
+                    attachments.append(
+                        '<a href="%s" target="_blank">%s</a>' % (url, f.filename)
+                    )
+                attachments = format_html(''.join(attachments))
+        except Exception as ex:
+            pass
+        return attachments
 
 
 admin.site.register(LogEntry)

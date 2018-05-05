@@ -492,6 +492,13 @@ class BLN(CLM):
             return 0.0
         return 0.0
 
+    def get_assessment_value(self, key, stage):
+        assessment = getattr(self, stage)
+        if assessment:
+            key = 'BLN_ASSESSMENT/'+key
+            return assessment.get(key, 0)
+        return 0
+
     @property
     def arabic_improvement(self):
         return str(self.domain_improvement('arabic')) + '%'
@@ -531,8 +538,8 @@ class RS(CLM):
 
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
-        ('yes', _('Yes')),
-        ('no', _('No'))
+        ('repeat_level', _('Yes')),
+        ('graduated_next_level', _('No'))
     )
 
     SCHOOL_SHIFTS = Choices(
@@ -794,13 +801,10 @@ class RS(CLM):
     def arabic_reading_improvement(self):
         if self.pre_reading_score and self.post_reading_score:
             try:
-                return '{}{}'.format(
-                    round(((float(self.post_reading_score) - float(self.pre_reading_score)) /
-                            float(self.pre_reading_score)) * 100.0, 2),
-                    '%')
-            except ZeroDivisionError:
-                return 0.0
-        return 0.0
+                return self.pre_reading_score - self.post_reading_score
+            except Exception:
+                return 0
+        return 0
 
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
@@ -848,6 +852,13 @@ class RS(CLM):
     @property
     def science_improvement(self):
         return str(self.domain_improvement('science')) + '%'
+
+    def get_assessment_value(self, key, stage):
+        assessment = getattr(self, stage)
+        if assessment:
+            key = 'RS_ASSESSMENT/'+key
+            return assessment.get(key, 0)
+        return 0
 
     def calculate_score(self, stage):
         keys = []
@@ -1019,6 +1030,14 @@ class CBECE(CLM):
             except ZeroDivisionError:
                 return 0.0
         return 0.0
+
+    def get_assessment_value(self, key, stage):
+        assessment = getattr(self, stage)
+        program_cycle = str(self.cycle_id)
+        if assessment:
+            key = 'CBECE_ASSESSMENT/{}{}'.format(key, program_cycle)
+            return assessment.get(key, 0)
+        return 0
 
     @property
     def pre_assessment_form(self):

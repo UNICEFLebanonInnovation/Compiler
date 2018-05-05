@@ -80,7 +80,20 @@
               <div class="card-block">
                 <h3 class="card-title">ALP Pre-test</h3>
                 <p class="card-text">Export Pre-test gradings data entered by the partner for the current pre-test round.</p>
-                <a href="{% url 'dashboard:exporter' %}?report=export_alp&pre_test=true" class="btn btn-primary">Export</a>
+
+                <div class="btn-group">
+                  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="icon-export-sign icon-white"></i>&nbsp;
+                      {% trans "Export" %}
+                  </button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_alp&pre_test=true" target="_blank">Export Current</a>
+                    {% for item in alp_rounds %}
+                    <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_alp&pre_test=true&alp_round={{ item.id }}" target="_blank">Export round {{ item.name }}</a>
+                    {% endfor %}
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -112,8 +125,21 @@
             <div class="card m-3">
               <div class="card-block">
                 <h3 class="card-title">ALP Post-test</h3>
-                <p class="card-text">Export Post-test gradings data entered by the partner for the curent post-test round.</p>
-                <a href="{% url 'dashboard:exporter' %}?report=export_alp&post_test=true" class="btn btn-primary">Export</a>
+                <p class="card-text">Export Post-test gradings data entered by the partner for the current post-test round.</p>
+
+                <div class="btn-group">
+                  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="icon-export-sign icon-white"></i>&nbsp;
+                      {% trans "Export" %}
+                  </button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_alp&post_test=true" target="_blank">Export Current</a>
+                    {% for item in alp_rounds %}
+                    <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_alp&post_test=true&alp_round={{ item.id }}" target="_blank">Export round {{ item.name }}</a>
+                    {% endfor %}
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>

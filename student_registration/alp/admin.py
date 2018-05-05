@@ -6,6 +6,8 @@ from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import *
+from django.utils.html import escape, format_html, format_html_join, html_safe
+
 from .forms import OutreachAdminForm
 from .models import (
     Outreach,
@@ -654,9 +656,11 @@ class OutreachAdmin(ImportExportModelAdmin):
     )
     list_display = (
         'student',
+        'student_link',
         'student_age',
         'student_sex',
         'school',
+        'school_link',
         'caza',
         'governorate',
         'alp_round',
@@ -750,6 +754,24 @@ class OutreachAdmin(ImportExportModelAdmin):
 
     def re_enrolled(self, obj):
         return obj.student.alp_enrollment.count()
+
+    def school_link(self, obj):
+        if obj.school:
+            return '<a href="/admin/schools/school/%s/change/" target="_blank">%s</a>' % \
+                   (obj.school_id, escape(obj.school))
+        return ''
+
+    school_link.allow_tags = True
+    school_link.short_description = "School"
+
+    def student_link(self, obj):
+        if obj.student:
+            return '<a href="/admin/students/student/%s/change/" target="_blank">%s</a>' % \
+                   (obj.student_id, 'student profile')
+        return ''
+
+    student_link.allow_tags = True
+    student_link.short_description = "Student"
 
 
 class CurrentOutreach(Outreach):
@@ -976,9 +998,25 @@ class PostTestAdmin(OutreachAdmin):
         )
 
 
+class ALPRoundAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'current_round',
+        'round_start_date',
+        'round_end_date',
+        'current_pre_test',
+        'current_post_test',
+    )
+    list_filter = (
+        'current_round',
+        'current_pre_test',
+        'current_post_test',
+    )
+
+
 admin.site.register(Outreach, OutreachAdmin)
 admin.site.register(CurrentOutreach, CurrentOutreachAdmin)
 admin.site.register(PreTest, PreTestAdmin)
 admin.site.register(CurrentRound, CurrentRoundAdmin)
 admin.site.register(PostTest, PostTestAdmin)
-admin.site.register(ALPRound)
+admin.site.register(ALPRound, ALPRoundAdmin)

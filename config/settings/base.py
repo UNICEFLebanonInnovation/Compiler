@@ -57,6 +57,7 @@ DJANGO_APPS = [
     'bootstrapform',  # Required for nicer formatting of forms with the default templates
     'helpdesk',  # This is us!
     'rangefilter',
+    'prettyjson',
     #'storages',
 ]
 THIRD_PARTY_APPS = [

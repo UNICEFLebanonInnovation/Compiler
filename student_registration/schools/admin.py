@@ -35,7 +35,9 @@ class SchoolResource(resources.ModelResource):
     total_registered_alp_male = fields.Field(column_name='Total registered ALP - Male')
     total_registered_alp_female = fields.Field(column_name='Total registered ALP - Female')
     attendances_days_2ndshift = fields.Field(column_name='Attendances days 2nd shift')
+    attendances_days_2ndshift_open = fields.Field(column_name='Attendances days 2nd shift when school is open')
     attendances_days_alp = fields.Field(column_name='Attendances days ALP')
+    attendances_days_alp_open = fields.Field(column_name='Attendances days ALP when school is open')
 
     class Meta:
         model = School
@@ -72,7 +74,9 @@ class SchoolResource(resources.ModelResource):
             'is_2nd_shift',
             'number_students_2nd_shift',
             'attendances_days_2ndshift',
+            'attendances_days_2ndshift_open',
             'attendances_days_alp',
+            'attendances_days_alp_open',
         )
         export_order = fields
 
@@ -107,8 +111,14 @@ class SchoolResource(resources.ModelResource):
     def dehydrate_attendances_days_2ndshift(self, obj):
         return obj.total_attendances_days_2ndshift
 
+    def dehydrate_attendances_days_2ndshift_open(self, obj):
+        return obj.total_attendances_days_2ndshift_open
+
     def dehydrate_attendances_days_alp(self, obj):
         return obj.total_attendances_days_alp
+
+    def dehydrate_attendances_days_alp_open(self, obj):
+        return obj.total_attendances_days_alp_open
 
 
 class GovernorateFilter(admin.SimpleListFilter):
@@ -426,6 +436,34 @@ class PublicDocumentAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
+class CLMRoundResource(resources.ModelResource):
+    class Meta:
+        model = CLMRound
+        fields = (
+            'id',
+            'name',
+        )
+        export_order = fields
+
+
+class CLMRoundAdmin(ImportExportModelAdmin):
+    resource_class = CLMRoundResource
+
+
+class EducationalLevelResource(resources.ModelResource):
+    class Meta:
+        model = EducationalLevel
+        fields = (
+            'id',
+            'name',
+        )
+        export_order = fields
+
+
+class EducationalLevelAdmin(ImportExportModelAdmin):
+    resource_class = EducationalLevelResource
+
+
 admin.site.register(School, SchoolAdmin)
 admin.site.register(EducationLevel, EducationLevelAdmin)
 admin.site.register(ClassLevel, ClassLevelAdmin)
@@ -435,9 +473,9 @@ admin.site.register(PartnerOrganization, PartnerOrganizationAdmin)
 admin.site.register(ALPReferMatrix, ALPReferMatrixAdmin)
 admin.site.register(EducationYear)
 # admin.site.register(Holiday)
-admin.site.register(CLMRound)
+admin.site.register(CLMRound, CLMRoundAdmin)
 admin.site.register(PublicDocument, PublicDocumentAdmin)
-admin.site.register(EducationalLevel)
+admin.site.register(EducationalLevel, EducationalLevelAdmin)
 admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
 
 

@@ -24,7 +24,7 @@ from student_registration.enrollments.models import (
     Enrollment,
     EducationYear,
 )
-from student_registration.alp.models import Outreach
+from student_registration.alp.models import Outreach, ALPRound
 from student_registration.backends.tasks import export_attendance
 from student_registration.users.utils import force_default_language
 from .utils import find_attendances, calculate_absentees
@@ -335,6 +335,8 @@ class AttendanceALPView(LoginRequiredMixin,
         date_format = '%Y-%m-%d'
         date_format_display = '%A %d/%m/%Y'
 
+        alp_round = ALPRound.objects.get(current_round=True)
+
         if self.request.user.school:
             school = self.request.user.school
 
@@ -442,8 +444,8 @@ class AttendanceALPView(LoginRequiredMixin,
         base = datetime.datetime.now()
         dates = []
         allowed_dates = []
-        if school.attendance_from_beginning:
-            start_date = school.academic_year_start
+        if alp_round.round_start_date:
+            start_date = alp_round.round_start_date
             end_date = datetime.date(base.year, base.month, base.day)
             delta = end_date - start_date
             day_range = delta.days + 1
@@ -496,6 +498,8 @@ class AttendancesExportViewSet(mixins.ListModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+        from_day = int(self.request.GET.get('from_day', 1))
+        to_day = int(self.request.GET.get('to_day', 1))
         month = int(self.request.GET.get('month', 0))
         year = int(self.request.GET.get('year', 0))
         max_raw = int(self.request.GET.get('max', 500))
@@ -503,6 +507,7 @@ class AttendancesExportViewSet(mixins.ListModelMixin,
 
         queryset = queryset.filter(attendance_date__month=month)
         queryset = queryset.filter(attendance_date__year=year)
+        queryset = queryset.filter(attendance_date__day__gte=from_day, attendance_date__day__lte=to_day)
 
         if self.request.GET.get('offset', 0):
             offset = int(self.request.GET.get('offset', 0))

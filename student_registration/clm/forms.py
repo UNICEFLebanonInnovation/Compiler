@@ -1266,7 +1266,7 @@ class RSForm(CommonForm):
 
 class CBECEForm(CommonForm):
 
-    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 13, Person.CURRENT_YEAR - 3)))
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 13, Person.CURRENT_YEAR - 2)))
     YEARS_CB.insert(0, ('', '---------'))
 
     student_birthday_year = forms.ChoiceField(

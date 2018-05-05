@@ -80,6 +80,8 @@ class BLNAddView(LoginRequiredMixin,
             instance = BLN.objects.get(id=self.request.GET.get('enrollment_id'))
             data = BLNSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
+            data['learning_result'] = ''
+
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
@@ -535,6 +537,17 @@ class RSAddView(LoginRequiredMixin,
             instance = RS.objects.get(id=self.request.GET.get('enrollment_id'))
             data = RSSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
+
+            data['pre_test_arabic'] = 0
+            data['pre_test_language'] = 0
+            data['pre_test_math'] = 0
+            data['pre_test_science'] = 0
+            data['post_test_arabic'] = 0
+            data['post_test_language'] = 0
+            data['post_test_math'] = 0
+            data['post_test_science'] = 0
+            data['learning_result'] = ''
+
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
@@ -639,6 +652,8 @@ class CBECEAddView(LoginRequiredMixin,
             instance = CBECE.objects.get(id=self.request.GET.get('enrollment_id'))
             data = CBECESerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
+
+            data['learning_result'] = ''
         if self.request.GET.get('child_id'):
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
@@ -876,11 +891,20 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             _('What is the family status of the child?'),
             _("Does the child have children?"),
 
-            _('Academic Result - Pre'),
+            _('Arabic - Pre'),
+            _('Language - Pre'),
+            _('Math - Pre'),
+
+            _('Assessment Result - Pre'),
+
+            _('Arabic - Post'),
+            _('Language - Post'),
+            _('Math - Post'),
+
             _('Academic Result - Post'),
+
             _('Arabic - Improvement'),
-            _('English - Improvement'),
-            _('French - Improvement'),
+            _('Language - Improvement'),
             _('Math - Improvement'),
             _('Academic Result - Improvement'),
 
@@ -892,6 +916,10 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             _("Student outreached?"),
             _("Have barcode with him?"),
 
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
         ]
 
         content = []
@@ -931,11 +959,20 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
                 student.family_status,
                 student.have_children,
 
+                line.get_assessment_value('arabic', 'pre_test'),
+                line.get_assessment_value('foreign_language', 'pre_test'),
+                line.get_assessment_value('math', 'pre_test'),
+
                 line.pre_test_score,
+
+                line.get_assessment_value('arabic', 'post_test'),
+                line.get_assessment_value('foreign_language', 'post_test'),
+                line.get_assessment_value('math', 'post_test'),
+
                 line.post_test_score,
+
                 line.arabic_improvement,
-                line.english_improvement,
-                line.french_improvement,
+                line.foreign_language_improvement,
                 line.math_improvement,
                 line.assessment_improvement,
 
@@ -946,6 +983,11 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
                 line.new_registry,
                 line.student_outreached,
                 line.have_barcode,
+
+                line.owner,
+                line.modified_by,
+                line.created,
+                line.modified,
             ]
             data.append(content)
 
@@ -1015,15 +1057,28 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             _('Class'),
             _('Reason of referral'),
 
+            _('Arabic reading - Pre-test'),
+            _('Arabic reading - Post-test'),
             _('Arabic reading - Improvement'),
 
-            _('Academic Result - Pre'),
-            _('Academic Result - Post'),
+            _('Arabic - Pre'),
+            _('Language - Pre'),
+            _('Science - Pre'),
+            _('Math - Pre'),
+
+            _('Assessment Result - Pre'),
+
+            _('Arabic - Post'),
+            _('Language - Post'),
+            _('Science - Post'),
+            _('Math - Post'),
+
+            _('Assessment Result - Post'),
             _('Arabic - Improvement'),
             _('Language - Improvement'),
             _('Science - Improvement'),
             _('Math - Improvement'),
-            _('Academic Result - Improvement'),
+            _('Assessment Result - Improvement'),
 
             _('Strategy Evaluation Result - Pre'),
             _('Strategy Evaluation Result - Post'),
@@ -1042,6 +1097,11 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             _('Based on the overall score, what is the recommended learning path?'),
 
             _("First time registered?"),
+
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
 
         ]
 
@@ -1090,10 +1150,24 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
                 line.grade.name if line.grade else '',
                 line.referral,
 
+                line.pre_reading_score,
+                line.post_reading_score,
                 line.arabic_reading_improvement,
 
+                line.pre_test_arabic,
+                line.pre_test_language,
+                line.pre_test_math,
+                line.pre_test_science,
+
                 line.pretest_result,
+
+                line.post_test_arabic,
+                line.post_test_language,
+                line.post_test_math,
+                line.post_test_science,
+
                 line.posttest_result,
+
                 line.arabic_improvement,
                 line.language_improvement,
                 line.science_improvement,
@@ -1115,6 +1189,11 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
                 line.learning_result,
 
                 line.new_registry,
+
+                line.owner,
+                line.modified_by,
+                line.created,
+                line.modified,
             ]
             data.append(content)
 
@@ -1178,13 +1257,31 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             _('What is the type of work ?'),
             _('How many hours does this child work in a day?'),
 
+            _('Language Art Domain - Pre'),
+            _('Cognitive Domain - Pre'),
+            _('Science Domain - Pre'),
+            _('Social Emotional Domain - Pre'),
+            _('Psychomotor Domain - Pre'),
+            _('Artistic Domain - Pre'),
+
             _('Academic Result - Pre'),
+
+            _('Language Art Domain - Post'),
+            _('Cognitive Domain - Post'),
+            _('Science Domain - Post'),
+            _('Social Emotional Domain - Post'),
+            _('Psychomotor Domain - Post'),
+            _('Artistic Domain - Post'),
+
             _('Academic Result - Post'),
+
             _('Language Art Domain - Improvement'),
             _('Cognitive Domain - Improvement'),
+            _('Science Domain - Improvement'),
             _('Social Emotional Domain - Improvement'),
             _('Psychomotor Domain - Improvement'),
             _('Artistic Domain - Improvement'),
+
             _('Academic Result - Improvement'),
 
             _('How was the level of child participation in the program?'),
@@ -1195,6 +1292,10 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             _("Student outreached?"),
             _("Have barcode with him?"),
 
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
         ]
 
         content = []
@@ -1236,13 +1337,31 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
                 line.labours,
                 line.labour_hours,
 
+                line.get_assessment_value('LanguageArtDomain', 'pre_test'),
+                line.get_assessment_value('CognitiveDomian', 'pre_test'),
+                line.get_assessment_value('ScienceDomain', 'pre_test'),
+                line.get_assessment_value('SocialEmotionalDomain', 'pre_test'),
+                line.get_assessment_value('PsychomotorDomain', 'pre_test'),
+                line.get_assessment_value('ArtisticDomain', 'pre_test'),
+
                 line.pre_test_score,
+
+                line.get_assessment_value('LanguageArtDomain', 'post_test'),
+                line.get_assessment_value('CognitiveDomian', 'post_test'),
+                line.get_assessment_value('ScienceDomain', 'post_test'),
+                line.get_assessment_value('SocialEmotionalDomain', 'post_test'),
+                line.get_assessment_value('PsychomotorDomain', 'post_test'),
+                line.get_assessment_value('ArtisticDomain', 'post_test'),
+
                 line.post_test_score,
+
                 line.art_improvement,
                 line.cognitive_improvement,
+                line.science_improvement,
                 line.social_improvement,
                 line.psycho_improvement,
                 line.artistic_improvement,
+
                 line.assessment_improvement,
 
                 line.participation,
@@ -1252,6 +1371,11 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
                 line.new_registry,
                 line.student_outreached,
                 line.have_barcode,
+
+                line.owner,
+                line.modified_by,
+                line.created,
+                line.modified,
             ]
             data.append(content)
 

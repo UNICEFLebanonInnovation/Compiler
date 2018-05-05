@@ -16,10 +16,10 @@ class BootstrapTable(tables.Table):
 class EnrollmentTable(tables.Table):
 
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
-                                        template_name='django_tables2/edit_column.html',
+                                        template_name='enrollments/edit_column.html',
                                         attrs={'url': '/enrollments/edit/'})
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
-                                          template_name='django_tables2/delete_column.html',
+                                          template_name='enrollments/delete_column.html',
                                           attrs={'url': '/api/enrollments/'})
     moved_column = tables.TemplateColumn(verbose_name=_('Student moved'), orderable=False,
                                          template_name='django_tables2/moved_column.html')
