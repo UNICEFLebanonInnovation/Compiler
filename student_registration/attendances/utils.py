@@ -100,35 +100,45 @@ def calculate_absentees(attendance, students):
     for student in students:
 
         try:
-            absentee = Absentee.objects.get(student_id=student['student_id'])
-        except Absentee.DoesNotExist:
-            absentee = Absentee.objects.create(
-                student_id=student['student_id'],
-                school=attendance.school,
-                education_year=attendance.education_year,
-                alp_round=attendance.alp_round,
-                absent_days=0,
-                attended_days=0,
-                total_attended_days=0,
-                total_absent_days=0
-            )
 
-        absentee.level = student['level'] if 'level' in student else ''
-        absentee.level_name = student['level_name'] if 'level_name' in student else ''
-        absentee.section = student['section'] if 'section' in student else ''
-        absentee.section_name = student['section_name'] if 'section_name' in student else ''
+            try:
+                absentee = Absentee.objects.get(student_id=student['student_id'])
+                if absentee.last_attendance_date and absentee.last_attendance_date >= attendance.attendance_date:
+                    continue
+                if absentee.last_absent_date and absentee.last_absent_date >= attendance.attendance_date:
+                    continue
+            except Absentee.DoesNotExist:
+                absentee = Absentee.objects.create(
+                    student_id=student['student_id'],
+                    school=attendance.school,
+                    education_year=attendance.education_year,
+                    alp_round=attendance.alp_round,
+                    absent_days=0,
+                    attended_days=0,
+                    total_attended_days=0,
+                    total_absent_days=0
+                )
 
-        absentee.last_modification_date = datetime.datetime.now()
+            absentee.level = student['level'] if 'level' in student else ''
+            absentee.level_name = student['level_name'] if 'level_name' in student else ''
+            absentee.section = student['section'] if 'section' in student else ''
+            absentee.section_name = student['section_name'] if 'section_name' in student else ''
 
-        if student['status'] == 'True':
-            absentee.absent_days = 0
-            absentee.attended_days += 1
-            absentee.total_attended_days += 1
-            absentee.last_attendance_date = attendance.attendance_date
-        elif student['status'] == 'False':
-            absentee.last_absent_date = attendance.attendance_date
-            absentee.absent_days += 1
-            absentee.attended_days = 0
-            absentee.total_absent_days += 1
+            absentee.last_modification_date = datetime.datetime.now()
 
-        absentee.save()
+            if student['status'] == 'True':
+                absentee.absent_days = 0
+                absentee.attended_days += 1
+                absentee.total_attended_days += 1
+                absentee.last_attendance_date = attendance.attendance_date
+            elif student['status'] == 'False':
+                absentee.last_absent_date = attendance.attendance_date
+                absentee.absent_days += 1
+                absentee.attended_days = 0
+                absentee.total_absent_days += 1
+
+            absentee.save()
+
+        except Exception as ex:
+            print(ex.message)
+            continue

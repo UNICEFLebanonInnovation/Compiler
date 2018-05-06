@@ -1,5 +1,6 @@
 __author__ = 'achamseddine'
 
+import json
 import time
 import tablib
 from django.utils.translation import ugettext as _
@@ -7,6 +8,7 @@ from import_export.formats import base_formats
 from student_registration.taskapp.celery import app
 from .file import store_file
 from openpyxl import load_workbook
+from .utils import get_data
 
 
 @app.task
@@ -872,3 +874,133 @@ def export_winterization(return_data=False):
         return data
     store_file(data, timestamp)
     return True
+
+
+
+# @app.task
+# def import_2ndshift_data(params=None):
+#     from .models import ImportedData
+
+    # ImportedData.objects.filter(type='2nd-shift').delete()
+    # ImportedData.objects.filter(type__isnull=True).delete()
+
+    # for i in range(36, 320):
+    #     offset = 500 * i
+    #     print(i)
+    #     result = get_data('mdb2.azurewebsites.net', '/api/import-enrollment/?year=2&max=500&offset='+str(offset))
+    #     result = json.loads(result)
+    #     for item in result:
+    #         ImportedData.objects.create(enrollment=item, type='2nd-shift')
+    #     print('DONE')
+
+
+@app.task
+def import_grading_data(params=None):
+    from student_registration.enrollments.models import EnrollmentGrading
+
+    for i in range(314, 314):
+        offset = 500 * i
+        print(i)
+        result = get_data('mdb2.azurewebsites.net', '/api/import-grading/?term=1&year=2&max=500&offset='+str(offset))
+        result = json.loads(result)
+        for item in result:
+            try:
+                instance = EnrollmentGrading.objects.get(id=item['id'])
+            except Exception as ex:
+                print(ex.message)
+                try:
+                    instance = EnrollmentGrading.objects.create(
+                        id=item['id'],
+                        enrollment_id=item['enrollment_id'],
+                        exam_term='1',
+                    )
+                except Exception as ex:
+                    print(ex.message)
+                    continue
+
+            instance.exam_result_arabic=item['exam_result_arabic']
+            instance.exam_result_language=item['exam_result_language']
+            instance.exam_result_education=item['exam_result_education']
+            instance.exam_result_geo=item['exam_result_geo']
+            instance.exam_result_history=item['exam_result_history']
+            instance.exam_result_math=item['exam_result_math']
+            instance.exam_result_science=item['exam_result_science']
+            instance.exam_result_physic=item['exam_result_physic']
+            instance.exam_result_chemistry=item['exam_result_chemistry']
+            instance.exam_result_bio=item['exam_result_bio']
+            instance.exam_result_linguistic_ar=item['exam_result_linguistic_ar']
+            instance.exam_result_linguistic_en=item['exam_result_linguistic_en']
+            instance.exam_result_sociology=item['exam_result_sociology']
+            instance.exam_result_physical=item['exam_result_physical']
+            instance.exam_result_artistic=item['exam_result_artistic']
+            instance.exam_result_mathematics=item['exam_result_mathematics']
+            instance.exam_result_sciences=item['exam_result_sciences']
+            instance.exam_total=item['exam_total']
+            instance.exam_result=item['exam_result']
+
+            instance.save()
+
+        print('DONE')
+
+
+@app.task
+def import_attendance_data(params=None):
+    from student_registration.attendances.models import Attendance
+
+    month = '5'
+    year = '2018'
+    max_values = 200
+    from_day = 15
+    to_date = 30
+    for i in range(0, 1):
+        offset = max_values * i
+        print(i)
+        result = get_data('mdb2.azurewebsites.net', '/api/export-attendances/?year=2&from_day=3&to_day=3&max=200&offset='+str(offset)+'&month='+month+'&year='+year)
+        result = json.loads(result)
+        for item in result:
+            try:
+                instance = Attendance.objects.get(id=item['id'])
+            except Exception as ex:
+                print(ex.message)
+                try:
+                    instance = Attendance.objects.create(
+                        id=item['id'],
+                        school_id=item['school_id'],
+                        school_type=item['school_type'],
+                        education_year_id=item['education_year_id'],
+                        alp_round_id=item['alp_round_id'],
+                        attendance_date=item['attendance_date'],
+
+                    )
+                except Exception as ex:
+                    print(ex.message)
+                    continue
+
+            instance.validation_status = item['validation_status']
+            instance.validation_date = item['validation_date']
+            instance.validation_owner_id = item['validation_owner']
+            instance.close_reason = item['close_reason']
+            instance.students = item['students']
+
+            instance.save()
+
+        print('DONE')
+
+
+# @app.task
+# def import_attendance_data(params=None):
+    # from .models import ImportedData
+    #
+    # ImportedData.objects.filter(type='attendance').delete()
+    # month = '2'
+    # year = '2018'
+    # max_values = 50
+    #
+    # for i in range(0, 200):
+    #     offset = max_values * i
+    #     print(i)
+    #     result = get_data('mdb2.azurewebsites.net', '/api/export-attendances/?year=2&max=50&offset='+str(offset)+'&month='+month+'&year='+year)
+    #     result = json.loads(result)
+    #     for item in result:
+    #         ImportedData.objects.create(enrollment=item, type='attendance')
+    #     print('DONE')

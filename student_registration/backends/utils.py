@@ -44,3 +44,28 @@ def post_data(protocol, url, apifunc, token, data):
     conn.close()
 
     return result
+
+
+def get_data(url, apifunc, protocol='HTTPS'):
+
+    token = 'Token 045efd8f70311ace357198eb44f300cfabd2dfc7'
+    headers = {"Content-type": "application/json", "Authorization": token}
+
+    if protocol == 'HTTPS':
+        conn = httplib.HTTPSConnection(url)
+    else:
+        conn = httplib.HTTPConnection(url)
+
+    conn.request('GET', apifunc, "", headers)
+    response = conn.getresponse()
+    result = response.read()
+
+    if not response.status == 200:
+        if response.status == 400 or response.status == 403:
+            raise Exception(str(response.status) + response.reason + response.read())
+        else:
+            raise Exception(str(response.status) + response.reason)
+
+    conn.close()
+
+    return result
