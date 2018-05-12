@@ -212,9 +212,9 @@ class CycleFilter(admin.SimpleListFilter):
             if self.value() == '1':
                 return queryset.filter(classroom_id__in=[2, 3, 4])
             if self.value() == '2':
-                return queryset.filter(classromm_id__in=[5, 6, 7])
+                return queryset.filter(classroom_id__in=[5, 6, 7])
             if self.value() == '3':
-                return queryset.filter(classromm_id__in=[8, 9, 10])
+                return queryset.filter(classroom_id__in=[8, 9, 10])
         return queryset
 
 
