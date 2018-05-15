@@ -60,7 +60,7 @@ def store_file(data, file_name, params=None):
 def create_record(url, file_name, params):
     from .models import Exporter
     instance = Exporter.objects.create(name=file_name, file_url=url)
-    if 'user' in params:
+    if params and 'user' in params:
         instance.exported_by_id = int(params['user'])
     instance.save()
 
