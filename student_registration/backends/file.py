@@ -34,7 +34,7 @@ def get_default_provider():
 
 
 # azure-storage==0.20.0
-def store_file(data, file_name):
+def store_file(data, file_name, params=None):
 
     from django.conf import settings
     from azure.storage import CloudStorageAccount
@@ -54,12 +54,14 @@ def store_file(data, file_name):
     )
 
     file_link = blob_service.make_blob_url(settings.AZURE_CONTAINER, file_name)
-    create_record(file_link, file_name)
+    create_record(file_link, file_name, params)
 
 
-def create_record(url, file_name):
+def create_record(url, file_name, params):
     from .models import Exporter
     instance = Exporter.objects.create(name=file_name, file_url=url)
+    if params and 'user' in params:
+        instance.exported_by_id = int(params['user'])
     instance.save()
 
 

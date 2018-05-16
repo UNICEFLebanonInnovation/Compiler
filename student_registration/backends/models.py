@@ -1,15 +1,16 @@
 from __future__ import unicode_literals, absolute_import, division
 
-from model_utils.models import TimeStampedModel
-from model_utils import Choices
-
+from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.gis.db import models
 from django.db.models.signals import post_save
-from helpdesk.models import Ticket
-from .mailer import send_messaage
 from django.utils.encoding import force_text
 
+from model_utils.models import TimeStampedModel
+from model_utils import Choices
+from helpdesk.models import Ticket
+
+from .mailer import send_messaage
 from student_registration.users.models import User
 from student_registration.schools.models import School
 
@@ -18,6 +19,12 @@ class Exporter(TimeStampedModel):
 
     name = models.CharField(max_length=100)
     file_url = models.URLField(blank=True, null=True)
+    exported_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Exported by')
+    )
 
     class Meta:
         ordering = ['created']
