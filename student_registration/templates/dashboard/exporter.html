@@ -87,7 +87,6 @@
                       {% trans "Export" %}
                   </button>
                   <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_alp&pre_test=true" target="_blank">Export Current</a>
                     {% for item in alp_rounds %}
                     <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_alp&pre_test=true&alp_round={{ item.id }}" target="_blank">Export round {{ item.name }}</a>
                     {% endfor %}
@@ -110,7 +109,6 @@
                       {% trans "Export" %}
                   </button>
                   <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_alp&current=true" target="_blank">Export Current</a>
                     {% for item in alp_rounds %}
                     <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_alp&alp_round={{ item.id }}" target="_blank">Export round {{ item.name }}</a>
                     {% endfor %}
@@ -133,7 +131,6 @@
                       {% trans "Export" %}
                   </button>
                   <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_alp&post_test=true" target="_blank">Export Current</a>
                     {% for item in alp_rounds %}
                     <a class="dropdown-item" href="{% url 'dashboard:exporter' %}?report=export_alp&post_test=true&alp_round={{ item.id }}" target="_blank">Export round {{ item.name }}</a>
                     {% endfor %}

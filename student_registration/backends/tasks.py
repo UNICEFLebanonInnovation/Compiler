@@ -299,14 +299,14 @@ def export_alp(params=None, return_data=False):
     if 'pre_test' in params:
         title = 'alp-pre-test'
         queryset = queryset.filter(
-            alp_round__current_pre_test=True,
+            # alp_round__current_pre_test=True,
             level__isnull=False,
             assigned_to_level__isnull=False
         )
     if 'post_test' in params:
         title = 'alp-post-test'
         queryset = queryset.filter(
-            alp_round__current_post_test=True,
+            # alp_round__current_post_test=True,
             registered_in_level__isnull=False,
             refer_to_level__isnull=False
         )
