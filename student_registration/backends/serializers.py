@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Notification
+from .models import Notification, Exporter
 
 
 class NotificationSerializer(serializers.ModelSerializer):
@@ -9,4 +9,13 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = (
             'status',
+        )
+
+
+class ExporterSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Exporter
+        fields = (
+            'name',
         )
