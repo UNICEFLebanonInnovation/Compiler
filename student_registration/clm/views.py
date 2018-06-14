@@ -23,6 +23,7 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
+from student_registration.backends.djqscsv import write_csv, render_to_csv_response
 from student_registration.users.utils import force_default_language
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
@@ -856,150 +857,106 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
 
-        queryset = self.get_queryset()
-        data = tablib.Dataset()
+        headers = {
+            'round__name': 'CLM Round',
+            'governorate__name': 'Governorate',
+            'district__name': 'District',
+            'location': 'Location',
+            'language': 'The language supported in the program',
+            'student__first_name': 'First name',
+            'student__father_name': 'Father name',
+            'student__last_name': 'Last name',
+            'student__sex': 'Sex',
+            'student__birthday_day': 'Birthday - day',
+            'student__birthday_month': 'Birthday - month',
+            'student__birthday_year': 'Birthday - year',
+            'student__nationality__name': 'Nationality',
+            'student__mother_fullname': 'Mother fullname',
+            'student__p_code': 'P-Code If a child lives in a tent / Brax in a random camp',
+            'student__id_number': 'ID number',
+            'student__family_status': 'What is the family status of the child?',
+            'student__have_children': 'Does the child have children?',
+            'disability__name': 'Does the child have any disability or special need?',
+            'internal_number': 'Internal number',
+            'comments': 'Comments',
+            'hh_educational_level__name': 'What is the educational level of a person who is valuable to the child?',
+            'have_labour': 'Does the child participate in work?',
+            'labours': 'What is the type of work?',
+            'labour_hours': 'How many hours does this child work in a day?',
+            'pre_test_arabic': 'Pre-test Arabic',
+            'pre_test_foreign_language': 'Pre-test Foreign language',
+            'pre_test_math': 'Pre-test Math',
+            'pre_test_score': 'Pre-test score',
+            'post_test_arabic': 'Post-test Arabic',
+            'post_test_foreign_language': 'Post-test Foreign language',
+            'post_test_math': 'Post-test Math',
+            'post_test_score': 'Post-test Score',
+            'participation': 'How was the level of child participation in the program?',
+            'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
+            'learning_result': 'Based on the overall score, what is the recommended learning path?',
+            'new_registry': 'First time registered?',
+            'student_outreached': 'Student outreached?',
+            'have_barcode': 'Have barcode with him?',
+            'owner__username': 'owner',
+            'modified_by__username': 'modified_by',
+            'created': 'created',
+            'modified': 'modified',
+        }
 
-        data.headers = [
-            _('CLM round'),
-            _('Governorate'),
-            _('District'),
-            _('Location'),
-            _('The language supported in the program'),
-
-            _('First name'),
-            _('Father name'),
-            _('Last name'),
-            _('Sex'),
-            _('Birthday day'),
-            _('Birthday month'),
-            _('Birthday year'),
-            _('Birthday'),
-            _('Nationality'),
-            _('Mother fullname'),
-
-            _('P-Code If a child lives in a tent / Brax in a random camp'),
-            _('Does the child have any disability or special need?'),
-            _('Internal number'),
-            _('ID number'),
-            _('Comments'),
-
-            _('What is the educational level of a person who is valuable to the child?'),
-            _('Does the child participate in work?'),
-            _('What is the type of work ?'),
-            _('How many hours does this child work in a day?'),
-
-            _('What is the family status of the child?'),
-            _("Does the child have children?"),
-
-            _('Arabic - Pre'),
-            _('Language - Pre'),
-            _('Math - Pre'),
-
-            _('Assessment Result - Pre'),
-
-            _('Arabic - Post'),
-            _('Language - Post'),
-            _('Math - Post'),
-
-            _('Academic Result - Post'),
-
-            _('Arabic - Improvement'),
-            _('Language - Improvement'),
-            _('Math - Improvement'),
-            _('Academic Result - Improvement'),
-
-            _('How was the level of child participation in the program?'),
-            _('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
-            _('Based on the overall score, what is the recommended learning path?'),
-
-            _("First time registered?"),
-            _("Student outreached?"),
-            _("Have barcode with him?"),
-
-            'owner',
-            'modified_by',
+        qs = self.get_queryset().extra(select={
+            'pre_test_arabic': "pre_test->>'BLN_ASSESSMENT/arabic'",
+            'pre_test_foreign_language': "pre_test->>'BLN_ASSESSMENT/foreign_language'",
+            'pre_test_math': "pre_test->>'BLN_ASSESSMENT/math'",
+            'post_test_arabic': "pre_test->>'BLN_ASSESSMENT/arabic'",
+            'post_test_foreign_language': "pre_test->>'BLN_ASSESSMENT/foreign_language'",
+            'post_test_math': "pre_test->>'BLN_ASSESSMENT/math'",
+        }).values(
+            'round__name',
+            'governorate__name',
+            'district__name',
+            'location',
+            'language',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__sex',
+            'student__birthday_day',
+            'student__birthday_month',
+            'student__birthday_year',
+            'student__nationality__name',
+            'student__mother_fullname',
+            'student__p_code',
+            'student__id_number',
+            'student__family_status',
+            'student__have_children',
+            'disability__name',
+            'internal_number',
+            'comments',
+            'hh_educational_level__name',
+            'have_labour',
+            'labours',
+            'labour_hours',
+            'pre_test_arabic',
+            'pre_test_foreign_language',
+            'pre_test_math',
+            'pre_test_score',
+            'post_test_arabic',
+            'post_test_foreign_language',
+            'post_test_math',
+            'post_test_score',
+            'participation',
+            'barriers',
+            'learning_result',
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
+            'owner__username',
+            'modified_by__username',
             'created',
             'modified',
-        ]
-
-        content = []
-        for line in queryset:
-            if not line.student:
-                continue
-            student = line.student
-            content = [
-                line.round.name if line.round else '',
-                line.governorate.name if line.governorate else '',
-                line.district.name if line.district else '',
-                line.location,
-                line.language,
-
-                student.first_name,
-                student.father_name,
-                student.last_name,
-                student.sex,
-                student.birthday_day,
-                student.birthday_month,
-                student.birthday_year,
-                student.birthday,
-                student.nationality.name if student.nationality else '',
-                student.mother_fullname,
-
-                student.p_code,
-                line.disability.name if line.disability else '',
-                line.internal_number,
-                student.id_number,
-                line.comments,
-
-                line.hh_educational_level,
-                line.have_labour,
-                line.labours,
-                line.labour_hours,
-
-                student.family_status,
-                student.have_children,
-
-                line.get_assessment_value('arabic', 'pre_test'),
-                line.get_assessment_value('foreign_language', 'pre_test'),
-                line.get_assessment_value('math', 'pre_test'),
-
-                line.pre_test_score,
-
-                line.get_assessment_value('arabic', 'post_test'),
-                line.get_assessment_value('foreign_language', 'post_test'),
-                line.get_assessment_value('math', 'post_test'),
-
-                line.post_test_score,
-
-                line.arabic_improvement,
-                line.foreign_language_improvement,
-                line.math_improvement,
-                line.assessment_improvement,
-
-                line.participation,
-                line.barriers,
-                line.learning_result,
-
-                line.new_registry,
-                line.student_outreached,
-                line.have_barcode,
-
-                line.owner,
-                line.modified_by,
-                line.created,
-                line.modified,
-            ]
-            data.append(content)
-
-        file_format = base_formats.XLSX()
-        data = file_format.export_data(data)
-
-        response = HttpResponse(
-            data,
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         )
-        response['Content-Disposition'] = 'attachment; filename=bln_registrations_list.xlsx'
-        return response
+
+        return render_to_csv_response(qs, field_header_map=headers)
 
 
 class RSExportViewSet(LoginRequiredMixin, ListView):
@@ -1014,198 +971,139 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
 
-        queryset = self.get_queryset()
-        data = tablib.Dataset()
+        headers = {
+            'round__name': 'CLM Round',
+            'type': 'Program type',
+            'site': 'Program site',
+            'school__name': 'Attending in school',
+            'governorate__name': 'Governorate',
+            'district__name': 'District',
+            'location': 'Location',
+            'language': 'The language supported in the program',
+            'student__first_name': 'First name',
+            'student__father_name': 'Father name',
+            'student__last_name': 'Last name',
+            'student__sex': 'Sex',
+            'student__birthday_day': 'Birthday - day',
+            'student__birthday_month': 'Birthday - month',
+            'student__birthday_year': 'Birthday - year',
+            'student__nationality__name': 'Nationality',
+            'student__mother_fullname': 'Mother fullname',
+            'student__p_code': 'P-Code If a child lives in a tent / Brax in a random camp',
+            'student__id_number': 'ID number',
+            'student__family_status': 'What is the family status of the child?',
+            'student__have_children': 'Does the child have children?',
+            'disability__name': 'Does the child have any disability or special need?',
+            'internal_number': 'Internal number',
+            'comments': 'Comments',
+            'hh_educational_level__name': 'What is the educational level of a person who is valuable to the child?',
+            'have_labour': 'Does the child participate in work?',
+            'labours': 'What is the type of work?',
+            'labour_hours': 'How many hours does this child work in a day?',
+            'registered_in_school__name': 'Registered in school',
+            'shift': 'Shift',
+            'grade__name': 'Class',
+            'referral': 'Reason of referral',
 
-        data.headers = [
-            _('CLM round'),
-            _('Program type'),
-            _('Program site'),
-            _('Attending in school'),
-            _('Governorate'),
-            _('District'),
-            _('Location'),
-            _('The language supported in the program'),
+            'pre_reading_score': 'Arabic reading - Pre-test',
+            'post_reading_score': 'Arabic reading - Post-test',
 
-            _('First name'),
-            _('Father name'),
-            _('Last name'),
-            _('Sex'),
-            _('Birthday day'),
-            _('Birthday month'),
-            _('Birthday year'),
-            _('Birthday'),
-            _('Nationality'),
-            _('Mother fullname'),
+            'pre_test_arabic': 'Pre-test Arabic',
+            'pre_test_language': 'Pre-test language',
+            'pre_test_math': 'Pre-test Math',
+            'pre_test_science': 'Pre-test Science',
 
-            _('P-Code If a child lives in a tent / Brax in a random camp'),
-            _('Does the child have any disability or special need?'),
-            _('Internal number'),
-            _('ID number'),
-            _('Comments'),
+            'post_test_arabic': 'Post-test Arabic',
+            'post_test_language': 'Post-test language',
+            'post_test_math': 'Post-test Math',
+            'post_test_science': 'Post-test Science',
 
-            _('What is the educational level of a person who is valuable to the child?'),
-            _('Does the child participate in work?'),
-            _('What is the type of work ?'),
-            _('How many hours does this child work in a day?'),
+            'pre_test_score': 'Strategy Evaluation Result - Pre',
+            'post_test_score': 'Strategy Evaluation Result - Post',
 
-            _('What is the family status of the child?'),
-            _("Does the child have children?"),
+            'pre_motivation_score': 'Motivation - Pre',
+            'post_motivation_score': 'Motivation - Post',
+            'pre_self_assessment_score': 'Self Assessment - Pre',
+            'post_self_assessment_score': 'Self Assessment - Post',
 
-            _('Registered in school'),
-            _('Shift'),
-            _('Class'),
-            _('Reason of referral'),
+            'participation': 'How was the level of child participation in the program?',
+            'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
+            'learning_result': 'Based on the overall score, what is the recommended learning path?',
+            'new_registry': 'First time registered?',
+            'owner__username': 'owner',
+            'modified_by__username': 'modified_by',
+            'created': 'created',
+            'modified': 'modified',
+        }
 
-            _('Arabic reading - Pre-test'),
-            _('Arabic reading - Post-test'),
-            _('Arabic reading - Improvement'),
+        qs = self.get_queryset().values(
+            'round__name',
+            'type',
+            'site',
+            'school__name',
+            'governorate__name',
+            'district__name',
+            'location',
+            'language',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__sex',
+            'student__birthday_day',
+            'student__birthday_month',
+            'student__birthday_year',
+            'student__nationality__name',
+            'student__mother_fullname',
+            'student__p_code',
+            'student__id_number',
+            'student__family_status',
+            'student__have_children',
+            'disability__name',
+            'internal_number',
+            'comments',
+            'hh_educational_level__name',
+            'have_labour',
+            'labours',
+            'labour_hours',
 
-            _('Arabic - Pre'),
-            _('Language - Pre'),
-            _('Science - Pre'),
-            _('Math - Pre'),
+            'registered_in_school__name',
+            'shift',
+            'grade__name',
+            'referral',
 
-            _('Assessment Result - Pre'),
+            'pre_reading_score',
+            'post_reading_score',
 
-            _('Arabic - Post'),
-            _('Language - Post'),
-            _('Science - Post'),
-            _('Math - Post'),
+            'pre_test_arabic',
+            'pre_test_language',
+            'pre_test_math',
+            'pre_test_science',
 
-            _('Assessment Result - Post'),
-            _('Arabic - Improvement'),
-            _('Language - Improvement'),
-            _('Science - Improvement'),
-            _('Math - Improvement'),
-            _('Assessment Result - Improvement'),
+            'post_test_arabic',
+            'post_test_language',
+            'post_test_math',
+            'post_test_science',
 
-            _('Strategy Evaluation Result - Pre'),
-            _('Strategy Evaluation Result - Post'),
-            _('Strategy Evaluation Result - Improvement'),
+            'pre_test_score',
+            'post_test_score',
 
-            _('Motivation - Pre'),
-            _('Motivation - Post'),
-            _('Motivation - Improvement'),
+            'pre_motivation_score',
+            'post_motivation_score',
+            'pre_self_assessment_score',
+            'post_self_assessment_score',
 
-            _('Self Assessment - Pre'),
-            _('Self Assessment - Post'),
-            _('Self Assessment - Improvement'),
+            'participation',
+            'barriers',
+            'learning_result',
 
-            _('How was the level of child participation in the program?'),
-            _('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
-            _('Based on the overall score, what is the recommended learning path?'),
-
-            _("First time registered?"),
-
-            'owner',
-            'modified_by',
+            'new_registry',
+            'owner__username',
+            'modified_by__username',
             'created',
             'modified',
-
-        ]
-
-        content = []
-        for line in queryset:
-            if not line.student:
-                continue
-            student = line.student
-            content = [
-                line.round.name if line.round else '',
-                line.type,
-                line.site,
-                line.school.name if line.school else '',
-                line.governorate.name if line.governorate else '',
-                line.district.name if line.district else '',
-                line.location,
-                line.language,
-
-                student.first_name,
-                student.father_name,
-                student.last_name,
-                student.sex,
-                student.birthday_day,
-                student.birthday_month,
-                student.birthday_year,
-                student.birthday,
-                student.nationality.name if student.nationality else '',
-                student.mother_fullname,
-
-                student.p_code,
-                line.disability.name if line.disability else '',
-                line.internal_number,
-                student.id_number,
-                line.comments,
-
-                line.hh_educational_level,
-                line.have_labour,
-                line.labours,
-                line.labour_hours,
-
-                student.family_status,
-                student.have_children,
-
-                line.registered_in_school.name if line.registered_in_school else '',
-                line.shift,
-                line.grade.name if line.grade else '',
-                line.referral,
-
-                line.pre_reading_score,
-                line.post_reading_score,
-                line.arabic_reading_improvement,
-
-                line.pre_test_arabic,
-                line.pre_test_language,
-                line.pre_test_math,
-                line.pre_test_science,
-
-                line.pretest_result,
-
-                line.post_test_arabic,
-                line.post_test_language,
-                line.post_test_math,
-                line.post_test_science,
-
-                line.posttest_result,
-
-                line.arabic_improvement,
-                line.language_improvement,
-                line.science_improvement,
-                line.math_improvement,
-                line.academic_test_improvement,
-
-                line.pre_test_score,
-                line.post_test_score,
-                line.assessment_improvement,
-                line.pre_motivation_score,
-                line.post_motivation_score,
-                line.motivation_improvement,
-                line.pre_self_assessment_score,
-                line.post_self_assessment_score,
-                line.self_assessment_improvement,
-
-                line.participation,
-                line.barriers,
-                line.learning_result,
-
-                line.new_registry,
-
-                line.owner,
-                line.modified_by,
-                line.created,
-                line.modified,
-            ]
-            data.append(content)
-
-        file_format = base_formats.XLSX()
-        data = file_format.export_data(data)
-
-        response = HttpResponse(
-            data,
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         )
-        response['Content-Disposition'] = 'attachment; filename=rs_registrations_list.xlsx'
-        return response
+
+        return render_to_csv_response(qs, field_header_map=headers)
 
 
 class CBECEExportViewSet(LoginRequiredMixin, ListView):
@@ -1220,171 +1118,229 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
 
-        queryset = self.get_queryset()
-        data = tablib.Dataset()
+        headers = {
+            'round__name': 'CLM Round',
+            'cycle__name': 'Cycle',
+            'site': 'Program site',
+            'school__name': 'Attending in school',
+            'governorate__name': 'Governorate',
+            'district__name': 'District',
+            'location': 'Location',
+            'language': 'The language supported in the program',
+            'referral': 'Where was the child referred?',
 
-        data.headers = [
-            _('CLM round'),
-            _('Cycle'),
-            _('Program site'),
-            _('Attending in school'),
-            _('Governorate'),
-            _('District'),
-            _('Location'),
-            _('The language supported in the program'),
+            'student__first_name': 'First name',
+            'student__father_name': 'Father name',
+            'student__last_name': 'Last name',
+            'student__sex': 'Sex',
+            'student__birthday_day': 'Birthday - day',
+            'student__birthday_month': 'Birthday - month',
+            'student__birthday_year': 'Birthday - year',
+            'student__nationality__name': 'Nationality',
+            'student__mother_fullname': 'Mother fullname',
+            'student__p_code': 'P-Code If a child lives in a tent / Brax in a random camp',
+            'student__id_number': 'ID number',
+            'student__family_status': 'What is the family status of the child?',
+            'student__have_children': 'Does the child have children?',
+            'disability__name': 'Does the child have any disability or special need?',
+            'internal_number': 'Internal number',
+            'comments': 'Comments',
+            'child_muac': 'Child MUAC',
 
-            _('Where was the child referred?'),
-            _('First name'),
-            _('Father name'),
-            _('Last name'),
-            _('Sex'),
-            _('Birthday day'),
-            _('Birthday month'),
-            _('Birthday year'),
-            _('Birthday'),
-            _('Nationality'),
-            _('Mother fullname'),
+            'hh_educational_level__name': 'What is the educational level of a person who is valuable to the child?',
+            'have_labour': 'Does the child participate in work?',
+            'labours': 'What is the type of work?',
+            'labour_hours': 'How many hours does this child work in a day?',
 
-            _('P-Code If a child lives in a tent / Brax in a random camp'),
-            _('Does the child have any disability or special need?'),
-            _('Internal number'),
-            _('ID number'),
-            _('Comments'),
-            _('Child MUAC'),
+            'pre_test_score': 'Academic Result - Pre',
+            'post_test_score': 'Academic Result - Post',
 
-            _('What is the educational level of a person who is valuable to the child?'),
-            _('Does the child participate in work?'),
-            _('What is the type of work ?'),
-            _('How many hours does this child work in a day?'),
+            'pre_test_LanguageArtDomain1': 'Language Art Domain - Pre - Cycle 1',
+            'pre_test_CognitiveDomian1': 'Cognitive Domain - Pre - Cycle 1',
+            'pre_test_ScienceDomain1': 'Science Domain - Pre - Cycle 1',
+            'pre_test_SocialEmotionalDomain1': 'Social Emotional Domain - Pre - Cycle 1',
+            'pre_test_PsychomotorDomain1': 'Psychomotor Domain - Pre - Cycle 1',
+            'pre_test_ArtisticDomain1': 'Artistic Domain - Pre - Cycle 1',
 
-            _('Language Art Domain - Pre'),
-            _('Cognitive Domain - Pre'),
-            _('Science Domain - Pre'),
-            _('Social Emotional Domain - Pre'),
-            _('Psychomotor Domain - Pre'),
-            _('Artistic Domain - Pre'),
+            'post_test_LanguageArtDomain1': 'Language Art Domain - Post - Cycle 1',
+            'post_test_CognitiveDomian1': 'Cognitive Domain - Post - Cycle 1',
+            'post_test_ScienceDomain1': 'Science Domain - Post - Cycle 1',
+            'post_test_SocialEmotionalDomain1': 'Social Emotional Domain - Post - Cycle 1',
+            'post_test_PsychomotorDomain1': 'Psychomotor Domain - Post - Cycle 1',
+            'post_test_ArtisticDomain1': 'Artistic Domain - Post - Cycle 1',
 
-            _('Academic Result - Pre'),
+            'pre_test_LanguageArtDomain2': 'Language Art Domain - Pre - Cycle 2',
+            'pre_test_CognitiveDomian2': 'Cognitive Domain - Pre - Cycle 2',
+            'pre_test_ScienceDomain2': 'Science Domain - Pre - Cycle 2',
+            'pre_test_SocialEmotionalDomain2': 'Social Emotional Domain - Pre - Cycle 2',
+            'pre_test_PsychomotorDomain2': 'Psychomotor Domain - Pre - Cycle 2',
+            'pre_test_ArtisticDomain2': 'Artistic Domain - Pre - Cycle 2',
 
-            _('Language Art Domain - Post'),
-            _('Cognitive Domain - Post'),
-            _('Science Domain - Post'),
-            _('Social Emotional Domain - Post'),
-            _('Psychomotor Domain - Post'),
-            _('Artistic Domain - Post'),
+            'post_test_LanguageArtDomain2': 'Language Art Domain - Post - Cycle 2',
+            'post_test_CognitiveDomian2': 'Cognitive Domain - Post - Cycle 2',
+            'post_test_ScienceDomain2': 'Science Domain - Post - Cycle 2',
+            'post_test_SocialEmotionalDomain2': 'Social Emotional Domain - Post - Cycle 2',
+            'post_test_PsychomotorDomain2': 'Psychomotor Domain - Post - Cycle 2',
+            'post_test_ArtisticDomain2': 'Artistic Domain - Post - Cycle 2',
 
-            _('Academic Result - Post'),
+            'pre_test_LanguageArtDomain3': 'Language Art Domain - Pre - Cycle 3',
+            'pre_test_CognitiveDomian3': 'Cognitive Domain - Pre - Cycle 3',
+            'pre_test_ScienceDomain3': 'Science Domain - Pre - Cycle 3',
+            'pre_test_SocialEmotionalDomain3': 'Social Emotional Domain - Pre - Cycle 3',
+            'pre_test_PsychomotorDomain3': 'Psychomotor Domain - Pre - Cycle 3',
+            'pre_test_ArtisticDomain3': 'Artistic Domain - Pre - Cycle 3',
 
-            _('Language Art Domain - Improvement'),
-            _('Cognitive Domain - Improvement'),
-            _('Science Domain - Improvement'),
-            _('Social Emotional Domain - Improvement'),
-            _('Psychomotor Domain - Improvement'),
-            _('Artistic Domain - Improvement'),
+            'post_test_LanguageArtDomain3': 'Language Art Domain - Post - Cycle 3',
+            'post_test_CognitiveDomian3': 'Cognitive Domain - Post - Cycle 3',
+            'post_test_ScienceDomain3': 'Science Domain - Post - Cycle 3',
+            'post_test_SocialEmotionalDomain3': 'Social Emotional Domain - Post - Cycle 3',
+            'post_test_PsychomotorDomain3': 'Psychomotor Domain - Post - Cycle 3',
+            'post_test_ArtisticDomain3': 'Artistic Domain - Post - Cycle 3',
 
-            _('Academic Result - Improvement'),
+            'participation': 'How was the level of child participation in the program?',
+            'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
+            'learning_result': 'Based on the overall score, what is the recommended learning path?',
+            'new_registry': 'First time registered?',
+            'student_outreached': 'Student outreached?',
+            'have_barcode': 'Have barcode with him?',
+            'owner__username': 'owner',
+            'modified_by__username': 'modified_by',
+            'created': 'created',
+            'modified': 'modified',
+        }
 
-            _('How was the level of child participation in the program?'),
-            _('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
-            _('Based on the overall score, what is the recommended learning path?'),
+        qs = self.get_queryset().extra(select={
+            'pre_test_LanguageArtDomain1': "pre_test->>'CBECE_ASSESSMENT/LanguageArtDomain1'",
+            'pre_test_CognitiveDomian1': "pre_test->>'CBECE_ASSESSMENT/CognitiveDomian1'",
+            'pre_test_ScienceDomain1': "pre_test->>'CBECE_ASSESSMENT/ScienceDomain1'",
+            'pre_test_SocialEmotionalDomain1': "pre_test->>'CBECE_ASSESSMENT/SocialEmotionalDomain1'",
+            'pre_test_PsychomotorDomain1': "pre_test->>'CBECE_ASSESSMENT/PsychomotorDomain1'",
+            'pre_test_ArtisticDomain1': "pre_test->>'CBECE_ASSESSMENT/ArtisticDomain1'",
 
-            _("First time registered?"),
-            _("Student outreached?"),
-            _("Have barcode with him?"),
+            'post_test_LanguageArtDomain1': "pre_test->>'CBECE_ASSESSMENT/LanguageArtDomain1'",
+            'post_test_CognitiveDomian1': "pre_test->>'CBECE_ASSESSMENT/CognitiveDomian1'",
+            'post_test_ScienceDomain1': "pre_test->>'CBECE_ASSESSMENT/ScienceDomain1'",
+            'post_test_SocialEmotionalDomain1': "pre_test->>'CBECE_ASSESSMENT/SocialEmotionalDomain1'",
+            'post_test_PsychomotorDomain1': "pre_test->>'CBECE_ASSESSMENT/PsychomotorDomain1'",
+            'post_test_ArtisticDomain1': "pre_test->>'CBECE_ASSESSMENT/ArtisticDomain1'",
 
-            'owner',
-            'modified_by',
+            'pre_test_LanguageArtDomain2': "pre_test->>'CBECE_ASSESSMENT/LanguageArtDomain2'",
+            'pre_test_CognitiveDomian2': "pre_test->>'CBECE_ASSESSMENT/CognitiveDomian2'",
+            'pre_test_ScienceDomain2': "pre_test->>'CBECE_ASSESSMENT/ScienceDomain2'",
+            'pre_test_SocialEmotionalDomain2': "pre_test->>'CBECE_ASSESSMENT/SocialEmotionalDomain2'",
+            'pre_test_PsychomotorDomain2': "pre_test->>'CBECE_ASSESSMENT/PsychomotorDomain2'",
+            'pre_test_ArtisticDomain2': "pre_test->>'CBECE_ASSESSMENT/ArtisticDomain2'",
+
+            'post_test_LanguageArtDomain2': "pre_test->>'CBECE_ASSESSMENT/LanguageArtDomain2'",
+            'post_test_CognitiveDomian2': "pre_test->>'CBECE_ASSESSMENT/CognitiveDomian2'",
+            'post_test_ScienceDomain2': "pre_test->>'CBECE_ASSESSMENT/ScienceDomain2'",
+            'post_test_SocialEmotionalDomain2': "pre_test->>'CBECE_ASSESSMENT/SocialEmotionalDomain2'",
+            'post_test_PsychomotorDomain2': "pre_test->>'CBECE_ASSESSMENT/PsychomotorDomain2'",
+            'post_test_ArtisticDomain2': "pre_test->>'CBECE_ASSESSMENT/ArtisticDomain2'",
+
+            'pre_test_LanguageArtDomain3': "pre_test->>'CBECE_ASSESSMENT/LanguageArtDomain3'",
+            'pre_test_CognitiveDomian3': "pre_test->>'CBECE_ASSESSMENT/CognitiveDomian3'",
+            'pre_test_ScienceDomain3': "pre_test->>'CBECE_ASSESSMENT/ScienceDomain3'",
+            'pre_test_SocialEmotionalDomain3': "pre_test->>'CBECE_ASSESSMENT/SocialEmotionalDomain3'",
+            'pre_test_PsychomotorDomain3': "pre_test->>'CBECE_ASSESSMENT/PsychomotorDomain3'",
+            'pre_test_ArtisticDomain3': "pre_test->>'CBECE_ASSESSMENT/ArtisticDomain3'",
+
+            'post_test_LanguageArtDomain3': "pre_test->>'CBECE_ASSESSMENT/LanguageArtDomain3'",
+            'post_test_CognitiveDomian3': "pre_test->>'CBECE_ASSESSMENT/CognitiveDomian3'",
+            'post_test_ScienceDomain3': "pre_test->>'CBECE_ASSESSMENT/ScienceDomain3'",
+            'post_test_SocialEmotionalDomain3': "pre_test->>'CBECE_ASSESSMENT/SocialEmotionalDomain3'",
+            'post_test_PsychomotorDomain3': "pre_test->>'CBECE_ASSESSMENT/PsychomotorDomain3'",
+            'post_test_ArtisticDomain3': "pre_test->>'CBECE_ASSESSMENT/ArtisticDomain3'",
+
+        }).values(
+            'round__name',
+            'cycle__name',
+            'site',
+            'school__name',
+            'governorate__name',
+            'district__name',
+            'location',
+            'language',
+            'referral',
+
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__sex',
+            'student__birthday_day',
+            'student__birthday_month',
+            'student__birthday_year',
+            'student__nationality__name',
+            'student__mother_fullname',
+            'student__p_code',
+            'student__id_number',
+            'student__family_status',
+            'student__have_children',
+            'disability__name',
+            'internal_number',
+            'comments',
+            'child_muac',
+
+            'hh_educational_level__name',
+            'have_labour',
+            'labours',
+            'labour_hours',
+
+            'pre_test_score',
+            'post_test_score',
+
+            'pre_test_LanguageArtDomain1',
+            'pre_test_CognitiveDomian1',
+            'pre_test_ScienceDomain1',
+            'pre_test_SocialEmotionalDomain1',
+            'pre_test_PsychomotorDomain1',
+            'pre_test_ArtisticDomain1',
+
+            'post_test_LanguageArtDomain1',
+            'post_test_CognitiveDomian1',
+            'post_test_ScienceDomain1',
+            'post_test_SocialEmotionalDomain1',
+            'post_test_PsychomotorDomain1',
+            'post_test_ArtisticDomain1',
+
+            'pre_test_LanguageArtDomain2',
+            'pre_test_CognitiveDomian2',
+            'pre_test_ScienceDomain2',
+            'pre_test_SocialEmotionalDomain2',
+            'pre_test_PsychomotorDomain2',
+            'pre_test_ArtisticDomain2',
+
+            'post_test_LanguageArtDomain2',
+            'post_test_CognitiveDomian2',
+            'post_test_ScienceDomain2',
+            'post_test_SocialEmotionalDomain2',
+            'post_test_PsychomotorDomain2',
+            'post_test_ArtisticDomain2',
+
+            'pre_test_LanguageArtDomain3',
+            'pre_test_CognitiveDomian3',
+            'pre_test_ScienceDomain3',
+            'pre_test_SocialEmotionalDomain3',
+            'pre_test_PsychomotorDomain3',
+            'pre_test_ArtisticDomain3',
+
+            'post_test_LanguageArtDomain3',
+            'post_test_CognitiveDomian3',
+            'post_test_ScienceDomain3',
+            'post_test_SocialEmotionalDomain3',
+            'post_test_PsychomotorDomain3',
+            'post_test_ArtisticDomain3',
+
+            'participation',
+            'barriers',
+            'learning_result',
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
+            'owner__username',
+            'modified_by__username',
             'created',
             'modified',
-        ]
-
-        content = []
-        for line in queryset:
-            if not line.student:
-                continue
-            student = line.student
-            content = [
-                line.round.name if line.round else '',
-                line.cycle.name if line.cycle else '',
-                line.site,
-                line.school.name if line.school else '',
-                line.governorate.name if line.governorate else '',
-                line.district.name if line.district else '',
-                line.location,
-                line.language,
-
-                line.referral,
-                student.first_name,
-                student.father_name,
-                student.last_name,
-                student.sex,
-                student.birthday_day,
-                student.birthday_month,
-                student.birthday_year,
-                student.birthday,
-                student.nationality.name if student.nationality else '',
-                student.mother_fullname,
-
-                student.p_code,
-                line.disability.name if line.disability else '',
-                line.internal_number,
-                student.id_number,
-                line.comments,
-                line.child_muac,
-
-                line.hh_educational_level,
-                line.have_labour,
-                line.labours,
-                line.labour_hours,
-
-                line.get_assessment_value('LanguageArtDomain', 'pre_test'),
-                line.get_assessment_value('CognitiveDomian', 'pre_test'),
-                line.get_assessment_value('ScienceDomain', 'pre_test'),
-                line.get_assessment_value('SocialEmotionalDomain', 'pre_test'),
-                line.get_assessment_value('PsychomotorDomain', 'pre_test'),
-                line.get_assessment_value('ArtisticDomain', 'pre_test'),
-
-                line.pre_test_score,
-
-                line.get_assessment_value('LanguageArtDomain', 'post_test'),
-                line.get_assessment_value('CognitiveDomian', 'post_test'),
-                line.get_assessment_value('ScienceDomain', 'post_test'),
-                line.get_assessment_value('SocialEmotionalDomain', 'post_test'),
-                line.get_assessment_value('PsychomotorDomain', 'post_test'),
-                line.get_assessment_value('ArtisticDomain', 'post_test'),
-
-                line.post_test_score,
-
-                line.art_improvement,
-                line.cognitive_improvement,
-                line.science_improvement,
-                line.social_improvement,
-                line.psycho_improvement,
-                line.artistic_improvement,
-
-                line.assessment_improvement,
-
-                line.participation,
-                line.barriers,
-                line.learning_result,
-
-                line.new_registry,
-                line.student_outreached,
-                line.have_barcode,
-
-                line.owner,
-                line.modified_by,
-                line.created,
-                line.modified,
-            ]
-            data.append(content)
-
-        file_format = base_formats.XLSX()
-        data = file_format.export_data(data)
-
-        response = HttpResponse(
-            data,
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         )
-        response['Content-Disposition'] = 'attachment; filename=cbece_registrations_list.xlsx'
-        return response
+
+        return render_to_csv_response(qs, field_header_map=headers)
