@@ -2,9 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
-import tablib
 
-from django.utils.translation import ugettext as _
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
@@ -14,7 +12,6 @@ from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func
 from django.db.models.expressions import RawSQL
 
-from import_export.formats import base_formats
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
@@ -23,7 +20,7 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
-# from student_registration.backends.djqscsv import write_csv, render_to_csv_response
+from student_registration.backends.djqscsv import render_to_csv_response
 from student_registration.users.utils import force_default_language
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
@@ -956,7 +953,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'modified',
         )
 
-        # return render_to_csv_response(qs, field_header_map=headers)
+        return render_to_csv_response(qs, field_header_map=headers)
 
 
 class RSExportViewSet(LoginRequiredMixin, ListView):
@@ -1103,7 +1100,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             'modified',
         )
 
-        # return render_to_csv_response(qs, field_header_map=headers)
+        return render_to_csv_response(qs, field_header_map=headers)
 
 
 class CBECEExportViewSet(LoginRequiredMixin, ListView):
@@ -1343,4 +1340,4 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'modified',
         )
 
-        # return render_to_csv_response(qs, field_header_map=headers)
+        return render_to_csv_response(qs, field_header_map=headers)
