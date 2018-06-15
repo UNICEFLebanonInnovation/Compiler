@@ -12,6 +12,11 @@ urlpatterns = [
         name='exporter'
     ),
     url(
+        regex=r'^run-exporter/$',
+        view=views.RunExporterViewSet.as_view(),
+        name='run-exporter'
+    ),
+    url(
         regex=r'^registrations-alp/$',
         view=views.RegistrationsALPView.as_view(),
         name='registrations-alp'

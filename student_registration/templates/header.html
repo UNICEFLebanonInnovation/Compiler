@@ -33,9 +33,6 @@
 {#            </div>#}
 {#        </li>#}
 
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'backends:files_list' %}">{% trans "Exported files" %}</a>
-        </li>
         {% endif %}
         {% if request.user|has_group:"SCHOOL" or request.user|has_group:"DIRECTOR" %}
               <li class="nav-item">

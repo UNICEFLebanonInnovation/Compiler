@@ -37,13 +37,24 @@ class ExporterView(LoginRequiredMixin,
         return HttpResponseForbidden()
 
     def get_context_data(self, **kwargs):
-        if self.request.GET.get('report', None):
-            export_full_data(self.request.GET)
         return {
             'alp_rounds': ALPRound.objects.all(),
             'classrooms': ClassRoom.objects.all(),
             'education_years': EducationYear.objects.all()
         }
+
+
+class RunExporterViewSet(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         ListView):
+
+    group_required = [u"MEHE"]
+
+    def handle_no_permission(self, request):
+        return HttpResponseForbidden()
+
+    def get(self, request, *args, **kwargs):
+        return export_full_data(self.request.GET)
 
 
 class RegistrationsALPView(LoginRequiredMixin,

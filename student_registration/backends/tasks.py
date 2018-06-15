@@ -7,15 +7,14 @@ from import_export.formats import base_formats
 from student_registration.taskapp.celery import app
 from .file import store_file
 from openpyxl import load_workbook
+from student_registration.backends.djqscsv import render_to_csv_response
 
 
 @app.task
 def export_2ndshift(params=None, return_data=False):
     from student_registration.enrollments.models import Enrollment
-    from student_registration.schools.models import EducationYear
 
     title = '2nd-shit-all'
-    # queryset = Enrollment.objects.exclude(moved=True)
     queryset = Enrollment.objects.all()
     if 'current' in params:
         title = '2nd-shit-current'
@@ -29,148 +28,137 @@ def export_2ndshift(params=None, return_data=False):
     if 'section' in params and params['section']:
         queryset = queryset.filter(section_id=params['section'])
 
-    data = tablib.Dataset()
-    data.headers = [
+    headers = {
+        'school__number': _('School number'),
+        'school__name': _('School'),
+        'school__location__name': _('District'),
+        'school__location__parent__name':  _('Governorate'),
+        'education_year__name': _('Education year'),
+
+        'registration_date': _('Registration date'),
+        'student__first_name': _('Student first name'),
+        'student__father_name': _('Student father name'),
+        'student__last_name': _('Student last name'),
+        'student__mother_fullname': _('Mother fullname'),
+        'student__sex': _('Sex'),
+        'student__birthday_year': _('year'),
+        'student__birthday_month': _('month'),
+        'student__birthday_day': _('day'),
+        'student__place_of_birth': _('Place of birth'),
+        'student__phone': _('Phone number'),
+        'student__phone_prefix': _('Phone prefix'),
+        'student__registered_in_unhcr': _('Registered in UNHCR'),
+        'student__id_type__name': _('Student ID Type'),
+        'student__id_number': _('Student ID Number'),
+        'student__nationality__name': _('Student nationality'),
+        'student__mother_nationality__name': _('Mother nationality'),
+        'student__address': _('Student living address'),
+
+        'section__name': _('Current Section'),
+        'classroom__name': _('Current Class'),
+
+        'last_attendance_date': _('Last attendance date'),
+        'last_absent_date': _('Last absent date'),
+
+        'last_year_result': _('Last formal education - result'),
+        'last_school_type': _('Last formal education - school type'),
+        'last_school_shift': _('Last formal education - school shift'),
+        'last_school__name': _('Last formal education - school'),
+        'last_school__number': _('Last formal education - CERD'),
+        'last_education_level': _('Last formal education - level'),
+        'last_education_year': _('Last formal education - year'),
+
+        'number_in_previous_school': _('Serial number in previous school'),
+
+        'participated_in_alp': _('Is the child participated in an ALP/2016-2 program'),
+        'last_informal_edu_round__name': _('Last non formal education - round'),
+        'last_informal_edu_final_result__name': _('Last non formal education - result'),
+
+        'new_registry': _('First time registered?'),
+        'student_outreached': _('Student outreached?'),
+        'have_barcode': _('Have barcode with him?'),
+        'outreach_barcode': _('Outreach barcode'),
+
+        'age_min_restricted': 'age_min_restricted',
+        'age_max_restricted': 'age_max_restricted',
+
+        'created': 'created',
+        'modified': 'modified',
+        'dropout_status': 'dropout_status',
+        'disabled': 'disabled',
+        'moved': 'moved',
+    }
+
+    queryset = queryset.values(
+        'school__number',
+        'school__name',
+        'school__location__name',
+        'school__location__parent__name',
+        'education_year__name',
+
+        'registration_date',
+        'student__first_name',
+        'student__father_name',
+        'student__last_name',
+        'student__mother_fullname',
+        'student__sex',
+        'student__birthday_year',
+        'student__birthday_month',
+        'student__birthday_day',
+        'student__place_of_birth',
+        'student__phone',
+        'student__phone_prefix',
+        'student__registered_in_unhcr',
+        'student__id_type__name',
+        'student__id_number',
+        'student__nationality__name',
+        'student__mother_nationality__name',
+        'student__address',
+
+        'section__name',
+        'classroom__name',
+
+        'last_attendance_date',
+        'last_absent_date',
+
+        'last_year_result',
+        'last_school_type',
+        'last_school_shift',
+        'last_school__name',
+        'last_school__number',
+        'last_education_level',
+        'last_education_year',
+
+        'number_in_previous_school',
+
+        'participated_in_alp',
+        'last_informal_edu_round__name',
+        'last_informal_edu_final_result__name',
+
+        'new_registry',
+        'student_outreached',
+        'have_barcode',
+        'outreach_barcode',
+
+        'age_min_restricted',
+        'age_max_restricted',
 
         'created',
         'modified',
         'dropout_status',
         'disabled',
         'moved',
+    )
 
-        'last_attendance_date',
-        'last_absent_date',
+    return render_to_csv_response(queryset, field_header_map=headers)
 
-        _('Last non formal education - result'),
-        _('Last non formal education - round'),
-        _('Is the child participated in an ALP/2016-2 program'),
-
-        _('Last formal education - result'),
-        _('Last formal education - year'),
-        _('Last formal education - school shift'),
-        _('Last formal education - school type'),
-        _('Last formal education - school'),
-        _('Last formal education - CERD'),
-        _('Last formal education - level'),
-
-        _('Serial number in previous school'),
-
-        _('Current Section'),
-        _('Current Class'),
-        _('Current Cycle'),
-        _('Education year'),
-
-        _('Phone prefix'),
-        _('Phone number'),
-        _('Student living address'),
-        _('Student ID Number'),
-        _('Student ID Type'),
-        _('Registered in UNHCR'),
-        _('Mother nationality'),
-        _('Mother fullname'),
-        _('Student nationality'),
-        _('Student age'),
-        _('Student birthday'),
-        _('Place of birth'),
-        _('year'),
-        _('month'),
-        _('day'),
-        _('Sex'),
-        _('Student first name'),
-        _('Student father name'),
-        _('Student last name'),
-        _('Student fullname'),
-
-        _('First time registered?'),
-        _('Student outreached?'),
-        _('Have barcode with him?'),
-        _('Outreach barcode'),
-
-        _('Registration date'),
-        _('School'),
-        _('School number'),
-        _('District'),
-        _('Governorate')
-    ]
-
-    content = []
-    for line in queryset:
-        if not line.student or not line.school:
-            continue
-        content = [
-
-            line.created,
-            line.modified,
-            line.dropout_status,
-            line.disabled,
-            line.moved,
-
-            line.last_attendance_date,
-            line.last_absent_date,
-
-            line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
-            line.last_informal_edu_round.name if line.last_informal_edu_round else '',
-            _(line.participated_in_alp) if line.participated_in_alp else '',
-
-            _(line.last_year_result) if line.last_year_result else '',
-            line.last_education_year if line.last_education_year else '',
-            _(line.last_school_type) if line.last_school_type else '',
-            _(line.last_school_shift) if line.last_school_shift else '',
-            line.last_school.name if line.last_school else '',
-            line.last_school.number if line.last_school else '',
-            line.last_education_level.name if line.last_education_level else '',
-
-            line.number_in_previous_school,
-
-            line.section.name if line.section else '',
-            line.classroom.name if line.classroom else '',
-            line.cycle,
-            line.education_year.name if line.education_year else '',
-
-            line.student.phone_prefix,
-            line.student.phone,
-            line.student.address,
-
-            line.student.id_number,
-            line.student.id_type.name if line.student.id_type else '',
-            line.registered_in_unhcr,
-
-            line.student.mother_nationality.name if line.student.mother_nationality else '',
-            line.student.mother_fullname,
-            line.student.nationality_name(),
-
-            line.student.age,
-            line.student.birthday,
-            line.student.place_of_birth,
-            line.student.birthday_year,
-            line.student.birthday_month,
-            line.student.birthday_day,
-            _(line.student.sex) if line.student.sex else '',
-            line.student.first_name,
-            line.student.father_name,
-            line.student.last_name,
-            line.student.__unicode__(),
-
-            line.new_registry,
-            line.student_outreached,
-            line.have_barcode,
-            line.outreach_barcode,
-
-            line.registration_date,
-            line.school.name,
-            line.school.number,
-            line.school.location.name,
-            line.school.location.parent.name,
-        ]
-        data.append(content)
-
-    timestamp = '{}-{}'.format(title, time.time())
-    file_format = base_formats.XLSX()
-    data = file_format.export_data(data)
-    if return_data:
-        return data
-    store_file(data, timestamp)
-    return True
+    # timestamp = '{}-{}'.format(title, time.time())
+    # file_format = base_formats.XLSX()
+    # data = file_format.export_data(data)
+    # if return_data:
+    #     return data
+    # store_file(data, timestamp)
+    # return True
 
 
 @app.task
@@ -193,100 +181,105 @@ def export_2ndshift_gradings(params=None, return_data=False):
     if 'term' in params and params['term']:
         queryset = queryset.filter(exam_term=params['term'])
 
-    data = tablib.Dataset()
-    data.headers = [
-        _('Student status'),
-        _('Final Grade'),
-        _('Term'),
+    headers = {
+        'enrollment__school__number': _('School number'),
+        'enrollment__school__name': _('School'),
+        'enrollment__school__location__name': _('District'),
+        'enrollment__school__location__parent__name':  _('Governorate'),
+        'enrollment__education_year__name': _('Education year'),
 
-        _('Linguistic field/Arabic'),
-        _('Sociology field'),
-        _('Physical field'),
-        _('Artistic field'),
-        _('Linguistic field/Foreign language'),
-        _('Scientific domain/Mathematics'),
-        _('Scientific domain/Sciences'),
+        'enrollment__registration_date': _('Registration date'),
+        'enrollment__student__first_name': _('Student first name'),
+        'enrollment__student__father_name': _('Student father name'),
+        'enrollment__student__last_name': _('Student last name'),
+        'enrollment__student__mother_fullname': _('Mother fullname'),
+        'enrollment__student__sex': _('Sex'),
+        'enrollment__student__birthday_year': _('year'),
+        'enrollment__student__birthday_month': _('month'),
+        'enrollment__student__birthday_day': _('day'),
+        'enrollment__student__nationality__name': _('Student nationality'),
 
-        _('Biology'),
-        _('Chemistry'),
-        _('Physic'),
-        _('Science'),
-        _('Math'),
-        _('History'),
-        _('Geography'),
-        _('Education'),
-        _('Foreign language'),
-        _('Arabic'),
+        'enrollment__section__name': _('Current Section'),
+        'enrollment__classroom__name': _('Current Class'),
 
-        _('Current Section'),
-        _('Current Class'),
+        'exam_result': _('Student status'),
+        'exam_total': _('Final Grade'),
+        'exam_term': _('Term'),
 
-        _('Mother fullname'),
-        _('Student nationality'),
-        _('Sex'),
-        _('Student fullname'),
+        'exam_result_linguistic_ar': _('Linguistic field/Arabic'),
+        'exam_result_sociology': _('Sociology field'),
+        'exam_result_physical': _('Physical field'),
+        'exam_result_artistic': _('Artistic field'),
+        'exam_result_linguistic_en': _('Linguistic field/Foreign language'),
+        'exam_result_mathematics': _('Scientific domain/Mathematics'),
+        'exam_result_sciences': _('Scientific domain/Sciences'),
 
-        _('Registration date'),
-        _('School'),
-        _('School number'),
-        _('District'),
-        _('Governorate'),
-    ]
+        'exam_result_bio': _('Biology'),
+        'exam_result_chemistry': _('Chemistry'),
+        'exam_result_physic': _('Physic'),
+        'exam_result_science': _('Science'),
+        'exam_result_math': _('Math'),
+        'exam_result_history': _('History'),
+        'exam_result_geo': _('Geography'),
+        'exam_result_education': _('Education'),
+        'exam_result_language': _('Foreign language'),
+        'exam_result_arabic': _('Arabic'),
+    }
 
-    content = []
-    for line in queryset:
-        enrollment = line.enrollment
-        if not enrollment.student or not enrollment.school:
-            continue
-        content = [
+    queryset = queryset.values(
+        'enrollment__school__number',
+        'enrollment__school__name',
+        'enrollment__school__location__name',
+        'enrollment__school__location__parent__name',
+        'enrollment__education_year__name',
 
-            line.exam_result,
-            line.exam_total,
-            line.exam_term_name,
+        'enrollment__registration_date',
+        'enrollment__student__first_name',
+        'enrollment__student__father_name',
+        'enrollment__student__last_name',
+        'enrollment__student__mother_fullname',
+        'enrollment__student__sex',
+        'enrollment__student__birthday_year',
+        'enrollment__student__birthday_month',
+        'enrollment__student__birthday_day',
+        'enrollment__student__nationality__name',
 
-            line.exam_result_linguistic_ar,
-            line.exam_result_sociology,
-            line.exam_result_physical,
-            line.exam_result_artistic,
-            line.exam_result_linguistic_en,
-            line.exam_result_mathematics,
-            line.exam_result_sciences,
+        'enrollment__section__name',
+        'enrollment__classroom__name',
 
-            line.exam_result_bio,
-            line.exam_result_chemistry,
-            line.exam_result_physic,
-            line.exam_result_science,
-            line.exam_result_math,
-            line.exam_result_history,
-            line.exam_result_geo,
-            line.exam_result_education,
-            line.exam_result_language,
-            line.exam_result_arabic,
+        'exam_result',
+        'exam_total',
+        'exam_term',
 
-            enrollment.section.name if enrollment.section else '',
-            enrollment.classroom.name if enrollment.classroom else '',
+        'exam_result_linguistic_ar',
+        'exam_result_sociology',
+        'exam_result_physical',
+        'exam_result_artistic',
+        'exam_result_linguistic_en',
+        'exam_result_mathematics',
+        'exam_result_sciences',
 
-            enrollment.student.mother_fullname,
-            enrollment.student.nationality_name(),
+        'exam_result_bio',
+        'exam_result_chemistry',
+        'exam_result_physic',
+        'exam_result_science',
+        'exam_result_math',
+        'exam_result_history',
+        'exam_result_geo',
+        'exam_result_education',
+        'exam_result_language',
+        'exam_result_arabic',
+    )
 
-            _(enrollment.student.sex) if enrollment.student.sex else '',
-            enrollment.student.__unicode__(),
+    return render_to_csv_response(queryset, field_header_map=headers)
 
-            enrollment.registration_date,
-            enrollment.school.name,
-            enrollment.school.number,
-            enrollment.school.location.name,
-            enrollment.school.location.parent.name,
-        ]
-        data.append(content)
-
-    timestamp = '{}-{}'.format(title, time.time())
-    file_format = base_formats.XLSX()
-    data = file_format.export_data(data)
-    if return_data:
-        return data
-    store_file(data, timestamp)
-    return True
+    # timestamp = '{}-{}'.format(title, time.time())
+    # file_format = base_formats.XLSX()
+    # data = file_format.export_data(data)
+    # if return_data:
+    #     return data
+    # store_file(data, timestamp)
+    # return True
 
 
 @app.task
@@ -329,159 +322,150 @@ def export_alp(params=None, return_data=False):
     if 'school' in params:
         queryset = queryset.filter(school_id=params['school'])
 
-    data = tablib.Dataset()
+    headers = {
+        'school__number': _('School number'),
+        'school__name': _('School'),
+        'school__location__name': _('District'),
+        'school__location__parent__name':  _('Governorate'),
+        'alp_round__name': _('ALP round'),
 
-    data.headers = [
+        'student__first_name': _('Student first name'),
+        'student__father_name': _('Student father name'),
+        'student__last_name': _('Student last name'),
+        'student__mother_fullname': _('Mother fullname'),
+        'student__sex': _('Sex'),
+        'student__birthday_year': _('year'),
+        'student__birthday_month': _('month'),
+        'student__birthday_day': _('day'),
+        'student__phone': _('Phone number'),
+        'student__phone_prefix': _('Phone prefix'),
+        'student__registered_in_unhcr': _('Registered in UNHCR'),
+        'student__id_type__name': _('Student ID Type'),
+        'student__id_number': _('Student ID Number'),
+        'student__nationality__name': _('Student nationality'),
+        'student__mother_nationality__name': _('Mother nationality'),
+        'student__address': _('Student living address'),
 
-        _('ALP round'),
-        _('Governorate'),
-        _('District'),
-        _('School number'),
-        _('School'),
-        _('First name'),
+        'level__name': _('Pre-test level'),
+        'pre_test_room': _('Pre-test room'),
 
-        _('Father name'),
-        _('Last name'),
-        _('Mother fullname'),
-        _('Birthday day'),
-        _('Birthday month'),
+        'exam_result_arabic': _('Arabic'),
+        'exam_language': _('Exam language'),
+        'exam_result_language': _('Foreign language'),
 
-        _('Birthday year'),
-        _('Student age'),
-        _('Student sex'),
-        _('Student nationality'),
-        _('Mother nationality'),
+        'exam_result_math': _('Math'),
+        'exam_result_science': _('Science'),
+        'pre_comment': _('Comments'),
+        'assigned_to_level__name': _('Assigned to level'),
 
-        _('Registered in UNHCR'),
-        _('Student ID Type'),
-        _('Student ID Number'),
-        _('Phone prefix'),
-        _('Phone number'),
+        'section__name': _('Current Section'),
+        'registered_in_level__name': _('Registered in Level'),
+        'post_exam_result_arabic': _('Arabic'),
+        'post_exam_language': _('Exam language'),
 
-        _('Student living address'),
-        _('Pre-test level'),
-        _('Pre-test room'),
-        _('Arabic'),
-        _('Exam language'),
-        _('Foreign language'),
+        'post_exam_result_language': _('Foreign language'),
+        'post_exam_result_math': _('Math'),
+        'post_exam_result_science': _('Science'),
+        'post_test_room': _('Post-test room'),
+        'refer_to_level__name': _('Post-test result'),
+        'post_comment': _('Comments'),
 
-        _('Math'),
-        _('Science'),
-        _('Pre-test total'),
-        _('Comments'),
-        _('Assigned to level'),
+        'last_education_level__name': _('Last formal education - level'),
+        'last_education_year': _('Last formal education - year'),
 
-        _('Current Section'),
-        _('Registered in Level'),
-        _('Arabic'),
-        _('Exam language'),
+        'participated_in_alp': _('Is the child participated in an ALP program'),
+        'last_informal_edu_level__name': _('Last non formal education - level'),
+        'last_informal_edu_round__name': _('Last non formal education - round'),
 
-        _('Foreign language'),
-        _('Math'),
-        _('Science'),
-        _('Post-test room'),
-        _('Post-test total'),
-        _('Post-test result'),
+        'last_informal_edu_final_result__name': _('Last non formal education - result'),
 
-        _('Comments'),
+        'new_registry': _('First time registered?'),
+        'student_outreached': _('Student outreached?'),
+        'have_barcode': _('Have barcode with him?'),
+        'outreach_barcode': _('Outreach barcode'),
 
-        _('Last formal education - level'),
-        _('Last formal education - year'),
-        _('Is the child participated in an ALP program'),
-        _('Last non formal education - level'),
-        _('Last non formal education - round'),
+        'owner__username': 'owner',
+        'modified_by__username': 'modified_by',
+        'created': 'created',
+        'modified': 'modified',
+    }
 
-        _('Last non formal education - result'),
-        _('Created by'),
-        _('Modified by'),
-        _('Creation date'),
-        _('Modification date'),
-        _('Re-enrolled'),
+    queryset = queryset.values(
+        'school__number',
+        'school__name',
+        'school__location__name',
+        'school__location__parent__name',
+        'alp_round__name',
 
-    ]
+        'student__first_name',
+        'student__father_name',
+        'student__last_name',
+        'student__mother_fullname',
+        'student__sex',
+        'student__birthday_year',
+        'student__birthday_month',
+        'student__birthday_day',
+        'student__phone',
+        'student__phone_prefix',
+        'student__registered_in_unhcr',
+        'student__id_type__name',
+        'student__id_number',
+        'student__nationality__name',
+        'student__mother_nationality__name',
+        'student__address',
 
-    content = []
-    for line in queryset:
-        if not line.student or not line.school:
-            continue
-        student = line.student
-        content = [
+        'level__name',
+        'pre_test_room',
 
-            line.alp_round.name if line.alp_round else '',
-            line.school.location.parent.name,
-            line.school.location.name,
-            line.school.number,
-            line.school.name,
-            student.first_name,
+        'exam_result_arabic',
+        'exam_language',
+        'exam_result_language',
 
-            student.father_name,
-            student.last_name,
-            student.mother_fullname,
+        'exam_result_math',
+        'exam_result_science',
+        'pre_comment',
+        'assigned_to_level__name',
 
-            student.birthday_day,
-            student.birthday_month,
-            student.birthday_year,
-            student.age,
+        'section__name',
+        'registered_in_level__name',
+        'post_exam_result_arabic',
+        'post_exam_language',
 
-            student.sex,
-            student.nationality.name if student.nationality else '',
-            student.mother_nationality.name if student.mother_nationality else '',
+        'post_exam_result_language',
+        'post_exam_result_math',
+        'post_exam_result_science',
+        'post_test_room',
+        'refer_to_level__name',
+        'post_comment',
 
-            student.registered_in_unhcr,
-            student.id_type.name if student.id_type else '',
-            student.id_number,
-            student.phone_prefix,
-            student.phone,
+        'last_education_level__name',
+        'last_education_year',
 
-            student.address,
-            line.level.name if line.level else '',
-            line.pre_test_room,
-            line.exam_result_arabic,
-            line.exam_language,
-            line.exam_result_language,
+        'participated_in_alp',
+        'last_informal_edu_level__name',
+        'last_informal_edu_round__name',
+        'last_informal_edu_final_result__name',
 
-            line.exam_result_math,
-            line.exam_result_science,
-            line.exam_total,
-            line.pre_comment,
-            line.assigned_to_level.name if line.assigned_to_level else '',
+        'owner__username',
+        'modified_by__username',
+        'created',
+        'modified',
 
-            line.section.name if line.section else '',
-            line.registered_in_level.name if line.registered_in_level else '',
+        'new_registry',
+        'student_outreached',
+        'have_barcode',
+        'outreach_barcode',
+    )
 
-            line.post_exam_result_arabic,
-            line.post_exam_language,
+    return render_to_csv_response(queryset, field_header_map=headers)
 
-            line.post_exam_result_language,
-            line.post_exam_result_math,
-            line.post_exam_result_science,
-            line.post_test_room,
-            line.post_exam_total,
-            line.refer_to_level,
-            line.post_comment,
-
-            line.last_education_level.name if line.last_education_level else '',
-            line.last_education_year,
-            _(line.participated_in_alp) if line.participated_in_alp else '',
-            line.last_informal_edu_level.name if line.last_informal_edu_level else '',
-            line.last_informal_edu_round.name if line.last_informal_edu_round else '',
-
-            line.last_informal_edu_final_result.name if line.last_informal_edu_final_result else '',
-            line.owner.username if line.owner else '',
-            line.modified_by.username if line.modified_by else '',
-            line.created,
-            line.modified,
-            line.re_enrolled,
-        ]
-        data.append(content)
-
-    timestamp = '{}-{}'.format(title, time.time())
-    file_format = base_formats.XLSX()
-    data = file_format.export_data(data)
-    if return_data:
-        return data
-    store_file(data, timestamp)
-    return True
+    # timestamp = '{}-{}'.format(title, time.time())
+    # file_format = base_formats.XLSX()
+    # data = file_format.export_data(data)
+    # if return_data:
+    #     return data
+    # store_file(data, timestamp)
+    # return True
 
 
 @app.task
@@ -871,532 +855,4 @@ def export_winterization(return_data=False):
     if return_data:
         return data
     store_file(data, timestamp)
-    return True
-
-
-@app.task
-def export_bln_list(params=None, return_data=False):
-
-    from student_registration.clm.models import BLN
-
-    queryset = BLN.objects.all()
-    if 'partner' in params and params['partner']:
-        queryset = queryset.filter(partner_id=int(params['partner']))
-
-    data = tablib.Dataset()
-
-    data.headers = [
-        _('CLM round'),
-        _('Governorate'),
-        _('District'),
-        _('Location'),
-        _('The language supported in the program'),
-
-        _('First name'),
-        _('Father name'),
-        _('Last name'),
-        _('Sex'),
-        _('Birthday day'),
-        _('Birthday month'),
-        _('Birthday year'),
-        _('Birthday'),
-        _('Nationality'),
-        _('Mother fullname'),
-
-        _('P-Code If a child lives in a tent / Brax in a random camp'),
-        _('Does the child have any disability or special need?'),
-        _('Internal number'),
-        _('ID number'),
-        _('Comments'),
-
-        _('What is the educational level of a person who is valuable to the child?'),
-        _('Does the child participate in work?'),
-        _('What is the type of work ?'),
-        _('How many hours does this child work in a day?'),
-
-        _('What is the family status of the child?'),
-        _("Does the child have children?"),
-
-        _('Arabic - Pre'),
-        _('Language - Pre'),
-        _('Math - Pre'),
-
-        _('Assessment Result - Pre'),
-
-        _('Arabic - Post'),
-        _('Language - Post'),
-        _('Math - Post'),
-
-        _('Academic Result - Post'),
-
-        _('Arabic - Improvement'),
-        _('Language - Improvement'),
-        _('Math - Improvement'),
-        _('Academic Result - Improvement'),
-
-        _('How was the level of child participation in the program?'),
-        _('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
-        _('Based on the overall score, what is the recommended learning path?'),
-
-        _("First time registered?"),
-        _("Student outreached?"),
-        _("Have barcode with him?"),
-
-        'owner',
-        'modified_by',
-        'created',
-        'modified',
-    ]
-
-    content = []
-    for line in queryset:
-        if not line.student:
-            continue
-        student = line.student
-        content = [
-            line.round.name if line.round else '',
-            line.governorate.name if line.governorate else '',
-            line.district.name if line.district else '',
-            line.location,
-            line.language,
-
-            student.first_name,
-            student.father_name,
-            student.last_name,
-            student.sex,
-            student.birthday_day,
-            student.birthday_month,
-            student.birthday_year,
-            student.birthday,
-            student.nationality.name if student.nationality else '',
-            student.mother_fullname,
-
-            student.p_code,
-            line.disability.name if line.disability else '',
-            line.internal_number,
-            student.id_number,
-            line.comments,
-
-            line.hh_educational_level,
-            line.have_labour,
-            line.labours,
-            line.labour_hours,
-
-            student.family_status,
-            student.have_children,
-
-            line.get_assessment_value('arabic', 'pre_test'),
-            line.get_assessment_value('foreign_language', 'pre_test'),
-            line.get_assessment_value('math', 'pre_test'),
-
-            line.pre_test_score,
-
-            line.get_assessment_value('arabic', 'post_test'),
-            line.get_assessment_value('foreign_language', 'post_test'),
-            line.get_assessment_value('math', 'post_test'),
-
-            line.post_test_score,
-
-            line.arabic_improvement,
-            line.foreign_language_improvement,
-            line.math_improvement,
-            line.assessment_improvement,
-
-            line.participation,
-            line.barriers,
-            line.learning_result,
-
-            line.new_registry,
-            line.student_outreached,
-            line.have_barcode,
-
-            line.owner,
-            line.modified_by,
-            line.created,
-            line.modified,
-        ]
-        data.append(content)
-
-        timestamp = '{}-{}'.format('bln_registrations_list', time.time())
-        file_format = base_formats.XLSX()
-        data = file_format.export_data(data)
-        if return_data:
-            return data
-        store_file(data, timestamp, params)
-        return True
-
-
-@app.task
-def export_cbece_list(params=None, return_data=False):
-
-    from student_registration.clm.models import CBECE
-
-    queryset = CBECE.objects.all()
-    if 'partner' in params and params['partner']:
-        queryset = queryset.filter(partner_id=int(params['partner']))
-
-    data = tablib.Dataset()
-
-    data.headers = [
-        _('CLM round'),
-        _('Cycle'),
-        _('Program site'),
-        _('Attending in school'),
-        _('Governorate'),
-        _('District'),
-        _('Location'),
-        _('The language supported in the program'),
-
-        _('Where was the child referred?'),
-        _('First name'),
-        _('Father name'),
-        _('Last name'),
-        _('Sex'),
-        _('Birthday day'),
-        _('Birthday month'),
-        _('Birthday year'),
-        _('Birthday'),
-        _('Nationality'),
-        _('Mother fullname'),
-
-        _('P-Code If a child lives in a tent / Brax in a random camp'),
-        _('Does the child have any disability or special need?'),
-        _('Internal number'),
-        _('ID number'),
-        _('Comments'),
-        _('Child MUAC'),
-
-        _('What is the educational level of a person who is valuable to the child?'),
-        _('Does the child participate in work?'),
-        _('What is the type of work ?'),
-        _('How many hours does this child work in a day?'),
-
-        _('Language Art Domain - Pre'),
-        _('Cognitive Domain - Pre'),
-        _('Science Domain - Pre'),
-        _('Social Emotional Domain - Pre'),
-        _('Psychomotor Domain - Pre'),
-        _('Artistic Domain - Pre'),
-
-        _('Academic Result - Pre'),
-
-        _('Language Art Domain - Post'),
-        _('Cognitive Domain - Post'),
-        _('Science Domain - Post'),
-        _('Social Emotional Domain - Post'),
-        _('Psychomotor Domain - Post'),
-        _('Artistic Domain - Post'),
-
-        _('Academic Result - Post'),
-
-        _('Language Art Domain - Improvement'),
-        _('Cognitive Domain - Improvement'),
-        _('Science Domain - Improvement'),
-        _('Social Emotional Domain - Improvement'),
-        _('Psychomotor Domain - Improvement'),
-        _('Artistic Domain - Improvement'),
-
-        _('Academic Result - Improvement'),
-
-        _('How was the level of child participation in the program?'),
-        _('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
-        _('Based on the overall score, what is the recommended learning path?'),
-
-        _("First time registered?"),
-        _("Student outreached?"),
-        _("Have barcode with him?"),
-
-        'owner',
-        'modified_by',
-        'created',
-        'modified',
-    ]
-
-    content = []
-    for line in queryset:
-        if not line.student:
-            continue
-        student = line.student
-        content = [
-            line.round.name if line.round else '',
-            line.cycle.name if line.cycle else '',
-            line.site,
-            line.school.name if line.school else '',
-            line.governorate.name if line.governorate else '',
-            line.district.name if line.district else '',
-            line.location,
-            line.language,
-
-            line.referral,
-            student.first_name,
-            student.father_name,
-            student.last_name,
-            student.sex,
-            student.birthday_day,
-            student.birthday_month,
-            student.birthday_year,
-            student.birthday,
-            student.nationality.name if student.nationality else '',
-            student.mother_fullname,
-
-            student.p_code,
-            line.disability.name if line.disability else '',
-            line.internal_number,
-            student.id_number,
-            line.comments,
-            line.child_muac,
-
-            line.hh_educational_level,
-            line.have_labour,
-            line.labours,
-            line.labour_hours,
-
-            line.get_assessment_value('LanguageArtDomain', 'pre_test'),
-            line.get_assessment_value('CognitiveDomian', 'pre_test'),
-            line.get_assessment_value('ScienceDomain', 'pre_test'),
-            line.get_assessment_value('SocialEmotionalDomain', 'pre_test'),
-            line.get_assessment_value('PsychomotorDomain', 'pre_test'),
-            line.get_assessment_value('ArtisticDomain', 'pre_test'),
-
-            line.pre_test_score,
-
-            line.get_assessment_value('LanguageArtDomain', 'post_test'),
-            line.get_assessment_value('CognitiveDomian', 'post_test'),
-            line.get_assessment_value('ScienceDomain', 'post_test'),
-            line.get_assessment_value('SocialEmotionalDomain', 'post_test'),
-            line.get_assessment_value('PsychomotorDomain', 'post_test'),
-            line.get_assessment_value('ArtisticDomain', 'post_test'),
-
-            line.post_test_score,
-
-            line.art_improvement,
-            line.cognitive_improvement,
-            line.science_improvement,
-            line.social_improvement,
-            line.psycho_improvement,
-            line.artistic_improvement,
-
-            line.assessment_improvement,
-
-            line.participation,
-            line.barriers,
-            line.learning_result,
-
-            line.new_registry,
-            line.student_outreached,
-            line.have_barcode,
-
-            line.owner,
-            line.modified_by,
-            line.created,
-            line.modified,
-        ]
-        data.append(content)
-
-    timestamp = '{}-{}'.format('cbece_registrations_list', time.time())
-    file_format = base_formats.XLSX()
-    data = file_format.export_data(data)
-    if return_data:
-        return data
-    store_file(data, timestamp, params)
-    return True
-
-
-@app.task
-def export_bln_list(params=None, return_data=False):
-
-    from student_registration.clm.models import RS
-
-    queryset = RS.objects.all()
-    if 'partner' in params and params['partner']:
-        queryset = queryset.filter(partner_id=int(params['partner']))
-
-    data = tablib.Dataset()
-
-    data.headers = [
-        _('CLM round'),
-        _('Program type'),
-        _('Program site'),
-        _('Attending in school'),
-        _('Governorate'),
-        _('District'),
-        _('Location'),
-        _('The language supported in the program'),
-
-        _('First name'),
-        _('Father name'),
-        _('Last name'),
-        _('Sex'),
-        _('Birthday day'),
-        _('Birthday month'),
-        _('Birthday year'),
-        _('Birthday'),
-        _('Nationality'),
-        _('Mother fullname'),
-
-        _('P-Code If a child lives in a tent / Brax in a random camp'),
-        _('Does the child have any disability or special need?'),
-        _('Internal number'),
-        _('ID number'),
-        _('Comments'),
-
-        _('What is the educational level of a person who is valuable to the child?'),
-        _('Does the child participate in work?'),
-        _('What is the type of work ?'),
-        _('How many hours does this child work in a day?'),
-
-        _('What is the family status of the child?'),
-        _("Does the child have children?"),
-
-        _('Registered in school'),
-        _('Shift'),
-        _('Class'),
-        _('Reason of referral'),
-
-        _('Arabic reading - Pre-test'),
-        _('Arabic reading - Post-test'),
-        _('Arabic reading - Improvement'),
-
-        _('Arabic - Pre'),
-        _('Language - Pre'),
-        _('Science - Pre'),
-        _('Math - Pre'),
-
-        _('Assessment Result - Pre'),
-
-        _('Arabic - Post'),
-        _('Language - Post'),
-        _('Science - Post'),
-        _('Math - Post'),
-
-        _('Assessment Result - Post'),
-        _('Arabic - Improvement'),
-        _('Language - Improvement'),
-        _('Science - Improvement'),
-        _('Math - Improvement'),
-        _('Assessment Result - Improvement'),
-
-        _('Strategy Evaluation Result - Pre'),
-        _('Strategy Evaluation Result - Post'),
-        _('Strategy Evaluation Result - Improvement'),
-
-        _('Motivation - Pre'),
-        _('Motivation - Post'),
-        _('Motivation - Improvement'),
-
-        _('Self Assessment - Pre'),
-        _('Self Assessment - Post'),
-        _('Self Assessment - Improvement'),
-
-        _('How was the level of child participation in the program?'),
-        _('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
-        _('Based on the overall score, what is the recommended learning path?'),
-
-        _("First time registered?"),
-
-        'owner',
-        'modified_by',
-        'created',
-        'modified',
-
-    ]
-
-    content = []
-    for line in queryset:
-        if not line.student:
-            continue
-        student = line.student
-        content = [
-            line.round.name if line.round else '',
-            line.type,
-            line.site,
-            line.school.name if line.school else '',
-            line.governorate.name if line.governorate else '',
-            line.district.name if line.district else '',
-            line.location,
-            line.language,
-
-            student.first_name,
-            student.father_name,
-            student.last_name,
-            student.sex,
-            student.birthday_day,
-            student.birthday_month,
-            student.birthday_year,
-            student.birthday,
-            student.nationality.name if student.nationality else '',
-            student.mother_fullname,
-
-            student.p_code,
-            line.disability.name if line.disability else '',
-            line.internal_number,
-            student.id_number,
-            line.comments,
-
-            line.hh_educational_level,
-            line.have_labour,
-            line.labours,
-            line.labour_hours,
-
-            student.family_status,
-            student.have_children,
-
-            line.registered_in_school.name if line.registered_in_school else '',
-            line.shift,
-            line.grade.name if line.grade else '',
-            line.referral,
-
-            line.pre_reading_score,
-            line.post_reading_score,
-            line.arabic_reading_improvement,
-
-            line.pre_test_arabic,
-            line.pre_test_language,
-            line.pre_test_math,
-            line.pre_test_science,
-
-            line.pretest_result,
-
-            line.post_test_arabic,
-            line.post_test_language,
-            line.post_test_math,
-            line.post_test_science,
-
-            line.posttest_result,
-
-            line.arabic_improvement,
-            line.language_improvement,
-            line.science_improvement,
-            line.math_improvement,
-            line.academic_test_improvement,
-
-            line.pre_test_score,
-            line.post_test_score,
-            line.assessment_improvement,
-            line.pre_motivation_score,
-            line.post_motivation_score,
-            line.motivation_improvement,
-            line.pre_self_assessment_score,
-            line.post_self_assessment_score,
-            line.self_assessment_improvement,
-
-            line.participation,
-            line.barriers,
-            line.learning_result,
-
-            line.new_registry,
-
-            line.owner,
-            line.modified_by,
-            line.created,
-            line.modified,
-        ]
-        data.append(content)
-
-    timestamp = '{}-{}'.format('rs_registrations_list', time.time())
-    file_format = base_formats.XLSX()
-    data = file_format.export_data(data)
-    if return_data:
-        return data
-    store_file(data, timestamp, params)
     return True
