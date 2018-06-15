@@ -519,8 +519,8 @@ class ExportViewSet(LoginRequiredMixin, ListView):
 
         from student_registration.enrollments.models import Enrollment
         from student_registration.enrollments.serializers import EnrollmentSerializer
-        from student_registration.backends.djqscsv import write_csv, render_to_csv_response
-        from student_registration.clm.models import BLN
+        # from student_registration.backends.djqscsv import write_csv, render_to_csv_response
+        # from student_registration.clm.models import BLN
 
         headers = [
 
@@ -711,11 +711,7 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             'score_arabic': 'score',
         }
 
-        qs = BLN.objects.all().extra(select={'score_arabic':"pre_test->>'BLN_ASSESSMENT/arabic'"}).values(
-            'score_arabic'
-        )
-
-        return render_to_csv_response(qs, field_header_map=headers1)
+        # return render_to_csv_response(qs, field_header_map=headers1)
         # return render_to_csv_response(qs, use_verbose_names=True)
         # return render_to_csv_response(qs, use_verbose_names=True, field_header_map=headers)
 
