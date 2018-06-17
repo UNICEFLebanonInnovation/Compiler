@@ -471,22 +471,21 @@ class ExportViewSet(LoginRequiredMixin, ListView):
     model = Outreach
 
     def get(self, request, *args, **kwargs):
-        data = ''
         school = int(request.GET.get('school', 0))
         current_type = request.GET.get('current_type', 'current')
 
+        response = HttpResponse(
+            '',
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+
         if has_group(self.request.user, 'PARTNER'):
-            data = export_alp({'pre_test': 'true'})
+            response = export_alp({'pre_test': 'true'})
         if has_group(self.request.user, 'ALP_SCHOOL') and self.request.user.school_id:
             school = self.request.user.school_id
         if school:
-            data = export_alp({current_type: 'true', 'school': school}, return_data=True)
+            response = export_alp({current_type: 'true', 'school': school}, return_data=True)
 
-        response = HttpResponse(
-            data,
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        )
-        response['Content-Disposition'] = 'attachment; filename=registration_list.xlsx'
         return response
 
 

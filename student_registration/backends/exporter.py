@@ -5,5 +5,6 @@ def export_full_data(params):
 
     report = params['report']
     method_to_call = getattr(tasks, report)
-    method_to_call.delay(params)
-    return True
+    # method_to_call.delay(params)
+    return method_to_call(params)
+    # return True
