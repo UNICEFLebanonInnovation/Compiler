@@ -517,22 +517,221 @@ class ExportViewSet(LoginRequiredMixin, ListView):
         classroom = request.GET.get('classroom', 0)
         section = request.GET.get('section', 0)
 
-        if self.request.user.school_id:
-            school = self.request.user.school_id
-        if school:
-            data = export_2ndshift({
-                'current': 'true',
-                'school': school,
-                'classroom': classroom,
-                'section': section
-            }, return_data=True)
+        from student_registration.enrollments.models import Enrollment
+        from student_registration.enrollments.serializers import EnrollmentSerializer
+        # from student_registration.backends.djqscsv import write_csv, render_to_csv_response
+        # from student_registration.clm.models import BLN
 
-        response = HttpResponse(
-            data,
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        )
-        response['Content-Disposition'] = 'attachment; filename=registration_list.xlsx'
-        return response
+        headers = [
+
+            _('School number'),
+            _('School'),
+            _('District'),
+            _('Governorate'),
+            _('Education year'),
+
+            _('Registration date'),
+            _('Student first name'),
+            _('Student father name'),
+            _('Student last name'),
+            _('Mother fullname'),
+            _('Sex'),
+            _('Year'),
+            _('Month'),
+            _('Day'),
+            _('Place of birth'),
+            _('Phone number'),
+            _('Phone prefix'),
+            _('Registered in UNHCR'),
+            _('Student ID Type'),
+            _('Student ID Number'),
+            _('Student nationality'),
+            _('Mother nationality'),
+            _('Student living address'),
+            _('Current Section'),
+            _('Current Class'),
+
+            'last_attendance_date',
+            'last_absent_date',
+
+            _('Last formal education - result'),
+            _('Last formal education - school shift'),
+            _('Last formal education - school type'),
+            _('Last formal education - school'),
+            _('Last formal education - CERD'),
+            _('Last formal education - level'),
+            _('Last formal education - year'),
+
+            _('Serial number in previous school'),
+
+            _('Is the child participated in an ALP/2016-2 program'),
+            _('Last non formal education - round'),
+            _('Last non formal education - result'),
+
+            _('First time registered?'),
+            _('Student outreached?'),
+            _('Have barcode with him?'),
+            _('Outreach barcode'),
+
+            'age_min_restricted',
+            'age_max_restricted',
+
+            'created',
+            'modified',
+            'dropout_status',
+            'disabled',
+            'moved',
+
+        ]
+
+        qs0 = Enrollment.objects.exclude(deleted=True).values(
+            'school__number',
+            'school__name',
+            'school__location',
+            'school__location__parent',
+            'education_year__name',
+
+            'registration_date',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__mother_fullname',
+            'student__sex',
+            'student__birthday_year',
+            'student__birthday_month',
+            'student__birthday_day',
+            'student__place_of_birth',
+            'student__phone',
+            'student__phone_prefix',
+            'student__registered_in_unhcr',
+            'student__id_type__name',
+            'student__id_number',
+            'student__nationality__name',
+            'student__mother_nationality__name',
+            'student__address',
+
+            'section__name',
+            'classroom__name',
+
+            'last_attendance_date',
+            'last_absent_date',
+
+            'last_year_result',
+            'last_school_type',
+            'last_school_shift',
+            'last_school__name',
+            'last_school__number',
+            'last_education_level',
+            'last_education_year',
+
+            'number_in_previous_school',
+
+            'participated_in_alp',
+            'last_informal_edu_round__name',
+            'last_informal_edu_final_result__name',
+
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
+            'outreach_barcode',
+
+            'age_min_restricted',
+            'age_max_restricted',
+
+            'created',
+            'modified',
+            'dropout_status',
+            'disabled',
+            'moved',
+        )[0:10]
+
+        headers1 = {
+            'school__number': '',
+            'school__name': '',
+            'school__location': '',
+            'school__location__parent': '',
+            'education_year__name': '',
+
+            'registration_date': '',
+            'student__first_name': '',
+            'student__father_name': '',
+            'student__last_name': '',
+            'student__mother_fullname': '',
+            'student__sex': '',
+            'student__birthday_year': '',
+            'student__birthday_month': '',
+            'student__birthday_day': '',
+            'student__place_of_birth': '',
+            'student__phone': '',
+            'student__phone_prefix': '',
+            'student__registered_in_unhcr': '',
+            'student__id_type__name': '',
+            'student__id_number': '',
+            'student__nationality__name': '',
+            'student__mother_nationality__name': '',
+            'student__address': '',
+
+            'section__name': '',
+            'classroom__name': '',
+
+            'last_attendance_date': '',
+            'last_absent_date': '',
+
+            'last_year_result': '',
+            'last_school_type': '',
+            'last_school_shift': '',
+            'last_school__name': '',
+            'last_school__number': '',
+            'last_education_level': '',
+            'last_education_year': '',
+
+            'number_in_previous_school': '',
+
+            'participated_in_alp': '',
+            'last_informal_edu_round__name': '',
+            'last_informal_edu_final_result__name': '',
+
+            'new_registry': '',
+            'student_outreached': '',
+            'have_barcode': '',
+            'outreach_barcode': '',
+
+            'age_min_restricted': '',
+            'age_max_restricted': '',
+
+            'created': '',
+            'modified': '',
+            'dropout_status': '',
+            'disabled': '',
+            'moved': '',
+            # 'student_age': 'Age',
+        }
+
+        headers1 = {
+            'score_arabic': 'score',
+        }
+
+        # return render_to_csv_response(qs, field_header_map=headers1)
+        # return render_to_csv_response(qs, use_verbose_names=True)
+        # return render_to_csv_response(qs, use_verbose_names=True, field_header_map=headers)
+
+        #
+        # if self.request.user.school_id:
+        #     school = self.request.user.school_id
+        # if school:
+        #     data = export_2ndshift({
+        #         'current': 'true',
+        #         'school': school,
+        #         'classroom': classroom,
+        #         'section': section
+        #     }, return_data=True)
+        #
+        # response = HttpResponse(
+        #     data,
+        #     content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        # )
+        # response['Content-Disposition'] = 'attachment; filename=registration_list.xlsx'
+        # return response
 
 
 class ExportGradingViewSet(LoginRequiredMixin, ListView):

@@ -27,14 +27,14 @@
 
     <ol class="breadcrumb">
         <li class="breadcrumb-item active">
-            <a href="{% url "clm:bln_add" %}" class="btn btn-success">
+            <a href="{% url 'clm:bln_add' %}" class="btn btn-success">
                 <i class="icon-plus-sign icon-white"></i>
                 {% trans "Add new Child" %}
             </a>
-            <a href="{% url "clm:bln_dashboard" %}" class="btn btn-outline-primary" role="button" aria-pressed="true">Dashboard</a>
+            <a href="{% url 'clm:bln_dashboard' %}" class="btn btn-outline-primary" role="button" aria-pressed="true">Dashboard</a>
         </li>
         <li class="breadcrumb-item active">
-            <a class="btn btn-success export-link" itemref="report=export_bln_list">
+            <a href="{% url 'clm:bln_export' %}" class="btn btn-success">
                 <i class="icon-export-sign icon-white"></i>
                 {% trans "Export data" %}
             </a>
@@ -62,36 +62,7 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>
     <script>
-        var export_url = '/api/backend-exporter/';
         var user_token = '{{ user_token }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
-
-        $(document).ready(function() {
-            $('.export-link').click(function(){
-                export_file($(this).attr('itemref'), export_url);
-            });
-        });
-
-        function export_file(params, export_url)
-        {
-            alert("Your export request has been sent, you will find in exported file in the Exported files page");
-
-            $.ajax({
-                type: "GET",
-                url: export_url,
-                data: params,
-                cache: false,
-                headers: getHeader(),
-                dataType: 'json',
-                success: function (response, result, jqXHR) {
-                    if(jqXHR.status == 200){
-                    }
-                },
-                error: function (response) {
-                    console.log(response);
-                }
-            });
-        }
-
     </script>
 {% endblock %}
