@@ -105,12 +105,14 @@ def assign_alp_level():
 
 
 @app.task
-def auto_refer_to_alp_level():
+def auto_refer_to_alp_level(offset=0, limit=0):
     from student_registration.alp.utils import refer_to_level
     from student_registration.alp.models import Outreach, ALPRound
     alp_round = ALPRound.objects.get(current_post_test=True)
 
     records = Outreach.objects.filter(alp_round=alp_round)
+    if limit:
+        records = records[offset:limit]
 
     for record in records:
         try:

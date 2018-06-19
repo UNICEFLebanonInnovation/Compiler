@@ -715,6 +715,38 @@ class OutreachAdmin(ImportExportModelAdmin):
         'owner__username',
         'modified_by__username',
     )
+    actions = (
+        'run_post_test_matrix_3000',
+        'run_post_test_matrix_6000',
+        'run_post_test_matrix_9000',
+        'run_post_test_matrix_12000',
+        'run_post_test_matrix_15000',
+        'run_post_test_matrix_18000',
+    )
+
+    def run_post_test_matrix_3000(self, request, queryset):
+        from .tasks import auto_refer_to_alp_level
+        auto_refer_to_alp_level(0, 3000)
+
+    def run_post_test_matrix_6000(self, request, queryset):
+        from .tasks import auto_refer_to_alp_level
+        auto_refer_to_alp_level(3000, 6000)
+
+    def run_post_test_matrix_9000(self, request, queryset):
+        from .tasks import auto_refer_to_alp_level
+        auto_refer_to_alp_level(6000, 9000)
+
+    def run_post_test_matrix_12000(self, request, queryset):
+        from .tasks import auto_refer_to_alp_level
+        auto_refer_to_alp_level(9000, 12000)
+
+    def run_post_test_matrix_15000(self, request, queryset):
+        from .tasks import auto_refer_to_alp_level
+        auto_refer_to_alp_level(12000, 15000)
+
+    def run_post_test_matrix_18000(self, request, queryset):
+        from .tasks import auto_refer_to_alp_level
+        auto_refer_to_alp_level(15000, 18000)
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats

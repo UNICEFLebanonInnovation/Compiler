@@ -898,7 +898,7 @@ def export_winterization(return_data=False):
 def import_grading_data(params=None):
     from student_registration.enrollments.models import EnrollmentGrading
 
-    for i in range(120, 315):
+    for i in range(0, 315):
         offset = 500 * i
         print(i)
         result = get_data('mdb2.azurewebsites.net', '/api/import-grading/?term=1&year=2&max=500&offset='+str(offset))
@@ -947,15 +947,15 @@ def import_grading_data(params=None):
 def import_attendance_data(params=None):
     from student_registration.attendances.models import Attendance
 
-    month = '5'
+    month = '6'
     year = '2018'
     max_values = 50
     from_day = 15
     to_date = 30
-    for i in range(78, 200):
+    for i in range(0, 200):
         offset = max_values * i
         print(i)
-        result = get_data('mdb2.azurewebsites.net', '/api/export-attendances/?year=2&from_day=10&to_day=31&max=50&offset='+str(offset)+'&month='+month+'&year='+year)
+        result = get_data('mdb2.azurewebsites.net', '/api/export-attendances/?year=2&from_day=1&to_day=16&max=50&offset='+str(offset)+'&month='+month+'&year='+year)
         result = json.loads(result)
         for item in result:
             try:
