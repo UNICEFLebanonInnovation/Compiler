@@ -855,6 +855,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
 
         headers = {
+            'partner__name': 'Partner',
             'round__name': 'CLM Round',
             'governorate__name': 'Governorate',
             'district__name': 'District',
@@ -908,6 +909,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_foreign_language': "pre_test->>'BLN_ASSESSMENT/foreign_language'",
             'post_test_math': "pre_test->>'BLN_ASSESSMENT/math'",
         }).values(
+            'partner__name',
             'round__name',
             'governorate__name',
             'district__name',
@@ -969,6 +971,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
 
         headers = {
+            'partner__name': 'Partner',
             'round__name': 'CLM Round',
             'type': 'Program type',
             'site': 'Program site',
@@ -1034,6 +1037,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().values(
+            'partner__name',
             'round__name',
             'type',
             'site',
@@ -1116,6 +1120,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
 
         headers = {
+            'partner__name': 'Partner',
             'round__name': 'CLM Round',
             'cycle__name': 'Cycle',
             'site': 'Program site',
@@ -1250,6 +1255,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'post_test_ArtisticDomain3': "pre_test->>'CBECE_ASSESSMENT/ArtisticDomain3'",
 
         }).values(
+            'partner__name',
             'round__name',
             'cycle__name',
             'site',
