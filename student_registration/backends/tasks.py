@@ -939,7 +939,7 @@ def import_attendance_data(params=None):
     for i in range(0, 200):
         offset = max_values * i
         print(i)
-        result = get_data('mdb2.azurewebsites.net', '/api/export-attendances/?year=2&from_day=1&to_day=16&max=50&offset='+str(offset)+'&month='+month+'&year='+year)
+        result = get_data('mdb2.azurewebsites.net', '/api/export-attendances/?year=2&from_day=1&to_day=23&max=50&offset='+str(offset)+'&month='+month+'&year='+year)
         result = json.loads(result)
         for item in result:
             try:
