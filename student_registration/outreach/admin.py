@@ -5,7 +5,7 @@ from import_export import resources, fields
 from import_export import fields
 from django.db.models import Count
 from import_export.admin import ImportExportModelAdmin
-from .models import HouseHold, Child2, OutreachYear
+from .models import HouseHold, Child, Child2, OutreachYear
 from django.utils.translation import ugettext as _
 
 
@@ -80,17 +80,18 @@ class DisabilityFilter(admin.SimpleListFilter):
         return queryset.filter(disability_type__contains=[self.value()])
 
 
-class ChildResource(resources.ModelResource):
+class Child2Resource(resources.ModelResource):
     class Meta:
         model = Child2
         fields = ()
         export = fields
 
 
-class ChildAdmin(ImportExportModelAdmin):
-    resource_class = ChildResource
+class Child2Admin(ImportExportModelAdmin):
+    resource_class = Child2Resource
     list_display = (
         'form_id',
+        'formid_ind',
         'barcode_subset',
         'first_name',
         'father_name',
@@ -102,6 +103,7 @@ class ChildAdmin(ImportExportModelAdmin):
     )
     search_fields = (
         'form_id',
+        'formid_ind',
         'barcode_subset',
     )
     list_filter = (
@@ -115,21 +117,47 @@ class ChildAdmin(ImportExportModelAdmin):
         'referral_reason',
     )
 
-    # def get_queryset(self, request):
-        # from django.db.models import Q
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
 
-        # return Child.objects.all().distinct()
-        # return Child.objects.filter(disability_type__contains=['Seeing'])
-        # return Child.objects.filter(Q(disability_type__isnull=False) | Q(disability_type__in=['Walking', 'Seeing', 'Hearing', ]))
-    #
-    # ('Walking', _('Walking')),
-    # ('Seeing', _('Seeing')),
-    # ('Hearing', _('Hearing')),
-    # ('Speaking', _('Speaking')),
-    # ('Self_Care', _('Self Care')),
-    # ('Learning', _('Learning')),
-    # ('Interacting', _('Interacting')),
-    # ('Other', _('Other')),
+
+class ChildResource(resources.ModelResource):
+    class Meta:
+        model = Child
+        fields = ()
+        export = fields
+
+
+class ChildAdmin(ImportExportModelAdmin):
+    resource_class = ChildResource
+    list_display = (
+        'form_id',
+        'formid_ind',
+        'barcode_subset',
+        'first_name',
+        'father_name',
+        'last_name',
+        'mother_fullname',
+        'birthday',
+        'nationality',
+        'disability_type',
+    )
+    search_fields = (
+        'form_id',
+        'formid_ind',
+        'barcode_subset',
+    )
+    list_filter = (
+        'p_code',
+        'nationality',
+        'sex',
+        'disability_type',
+        'household__governorate',
+        DisabilityFilter,
+        'last_edu_system',
+        'referral_reason',
+    )
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
@@ -137,5 +165,6 @@ class ChildAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(HouseHold, HouseHoldAdmin)
-admin.site.register(Child2, ChildAdmin)
+admin.site.register(Child, ChildAdmin)
+admin.site.register(Child2, Child2Admin)
 admin.site.register(OutreachYear)

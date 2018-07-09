@@ -658,3 +658,109 @@ def calculate_child_age():
     for child in children:
         child.calculated_age = child.calc_age()
         child.save()
+
+
+@app.task
+def export_outreached_children(params=None, return_data=False):
+    import tablib
+    from import_export.formats import base_formats
+    from student_registration.outreach.models import Child2, Child
+    from student_registration.students.models import CrossMatching
+
+    queryset = Child2.objects.all()
+    queryset2 = CrossMatching.objects.all()
+
+    data = tablib.Dataset()
+    data.headers = [
+        'governorate',
+        'partner',
+        'first_name',
+        'father_name',
+        'last_name',
+        'mother_fullname',
+        'sex',
+        'birthday_year',
+        'birthday_month',
+        'birthday_day',
+        'calculated_age',
+        'id_number',
+        'id_type',
+        'nationality',
+        'mother_nationality',
+        'last_edu_system',
+        'last_school_formal_year',
+        'last_education_year',
+        'last_public_school_location',
+        'last_informal_education',
+        'not_enrolled_reasons',
+        'consent_child_protection',
+        'work_type',
+        'disability_type',
+        'disability_note',
+        'other_disability_note',
+        'school_name',
+        'retention_support',
+        'formal_education_type',
+        'formal_education_shift',
+        'informal_education_type',
+        'referred_school_first',
+        'referred_school_second',
+        'referred_school_alp',
+        'referred_org_bln',
+        'referred_org_ece',
+        'referral_reason',
+        'referral_note',
+        'matched?'
+    ]
+
+    content = []
+    for line in queryset:
+        matched = queryset2.filter(child__formid_ind=line.formid_ind).count()
+
+        content = [
+            line.household.governorate,
+            line.household.partner_name,
+            line.first_name,
+            line.father_name,
+            line.last_name,
+            line.mother_fullname,
+            line.sex,
+            line.birthday_year,
+            line.birthday_month,
+            line.birthday_day,
+            line.calculated_age,
+            line.id_number,
+            line.id_type,
+            line.nationality,
+            line.mother_nationality,
+            line.last_edu_system,
+            line.last_school_formal_year,
+            line.last_education_year,
+            line.last_public_school_location,
+            line.last_informal_education,
+            line.not_enrolled_reasons,
+            line.consent_child_protection,
+            line.work_type,
+            line.disability_type,
+            line.disability_note,
+            line.other_disability_note,
+            line.school_name,
+            line.retention_support,
+            line.formal_education_type,
+            line.formal_education_shift,
+            line.informal_education_type,
+            line.referred_school_first,
+            line.referred_school_second,
+            line.referred_school_alp,
+            line.referred_org_bln,
+            line.referred_org_ece,
+            line.referral_reason,
+            line.referral_note,
+            'Yes' if matched else 'No'
+            # 'Yes' if line.matched.count() > 0 else 'No'
+        ]
+        data.append(content)
+
+    file_format = base_formats.XLSX()
+    data = file_format.export_data(data)
+    return data

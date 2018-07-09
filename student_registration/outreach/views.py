@@ -379,30 +379,9 @@ class Export4View(LoginRequiredMixin, ListView):
         from import_export.formats import base_formats
         from django.utils.translation import ugettext as _
 
-        barriers = (
-                ('1', _('Reason 1')),
-                ('2', _('Reason 2')),
-                ('3', _('Reason 3')),
-                ('4', _('Reason 4')),
-                ('5', _('Reason 5')),
-                ('6', _('Reason 6')),
-                ('7', _('Reason 7')),
-                ('8', _('Reason 8')),
-                ('9', _('Reason 9')),
-                ('10', _('Reason 10')),
-                ('11', _('Reason 11')),
-                ('12', _('Reason 12')),
-                ('13', _('Reason 13')),
-                ('14', _('Reason 14')),
-                ('15', _('Reason 15')),
-                ('16', _('Reason 16')),
-                ('17', _('Reason 17')),
-                ('18', _('Reason 18')),
-            )
-
-        # items = Child2.objects.order_by('nationality_id').values_list('nationality_id').distinct()
+        items = Child2.objects.order_by('nationality_id').values_list('nationality_id').distinct()
         # items = Child2.objects.order_by('sex').values_list('sex').distinct()
-        items = Child2.objects.order_by('calculated_age').values_list('calculated_age').distinct()
+        # items = Child2.objects.order_by('calculated_age').values_list('calculated_age').distinct()
         # items = HouseHold.objects.order_by('partner_name').values_list('partner_name').distinct()
         # items = HouseHold.objects.order_by('governorate').values_list('governorate').distinct()
 
@@ -410,22 +389,22 @@ class Export4View(LoginRequiredMixin, ListView):
         data.headers = [
             # 'partner_name',
             # 'governorate',
-            # 'nationality',
+            'nationality',
             # 'sex',
-            'age',
+            # 'age',
             'count',
         ]
 
         content = []
         for item in items:
             queryset = self.queryset.filter(
-                # last_edu_system__in=['Prv. NFE prg. did not continue', 'Prv. formal edu., did not continue'],
-                # last_edu_system='Never been to school',
+                # last_edu_system__in=['Prv. NFE prg. did not continue', 'Prv. formal edu., did not continue'], # dropout
+                last_edu_system='Never been to school',  # never been in school
                 # household__partner_name=item[0]
                 # household__governorate=item[0]
-                # nationality_id=item[0]
+                nationality_id=item[0]
                 # sex=item[0]
-                calculated_age=item[0]
+                # calculated_age=item[0]
             )
 
             nbr_cls = queryset.filter(

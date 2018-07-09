@@ -714,6 +714,7 @@ class CrossMatchingAdmin(ImportExportModelAdmin):
     resource_class = CrossMatchingResource
     list_display = (
         'student',
+        'child_formid_ind',
         'child',
         'matched_on',
         'pertinence',
@@ -726,6 +727,9 @@ class CrossMatchingAdmin(ImportExportModelAdmin):
     search_fields = (
 
     )
+
+    def child_formid_ind(self, obj):
+        return obj.child.formid_ind
 
     def get_export_formats(self):
         from student_registration.users.utils import get_default_export_formats
