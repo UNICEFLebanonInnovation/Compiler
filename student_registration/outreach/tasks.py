@@ -672,6 +672,7 @@ def export_outreached_children(params=None, return_data=False):
 
     data = tablib.Dataset()
     data.headers = [
+        'form_id',
         'governorate',
         'partner',
         'first_name',
@@ -710,6 +711,7 @@ def export_outreached_children(params=None, return_data=False):
         'referred_org_ece',
         'referral_reason',
         'referral_note',
+        'formid_ind',
         'matched?'
     ]
 
@@ -718,6 +720,7 @@ def export_outreached_children(params=None, return_data=False):
         matched = queryset2.filter(child__formid_ind=line.formid_ind).count()
 
         content = [
+            line.form_id,
             line.household.governorate,
             line.household.partner_name,
             line.first_name,
@@ -756,6 +759,7 @@ def export_outreached_children(params=None, return_data=False):
             line.referred_org_ece,
             line.referral_reason,
             line.referral_note,
+            line.formid_ind,
             'Yes' if matched else 'No'
             # 'Yes' if line.matched.count() > 0 else 'No'
         ]
