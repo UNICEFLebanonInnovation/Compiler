@@ -74,7 +74,7 @@ def track_student_program_moves():
     from student_registration.alp.models import Outreach
     from student_registration.enrollments.models import Enrollment, LoggingProgramMove
 
-    registrations = Outreach.objects.order_by('created')
+    registrations = Outreach.objects.filter(registered_in_level__isnull=False).order_by('created')
 
     for registry in registrations:
         student = registry.student
@@ -88,19 +88,28 @@ def track_student_program_moves():
                 student__first_name=student.first_name,
                 student__father_name=student.father_name,
                 student__last_name=student.last_name,
+                student__sex=student.sex,
+                student__birthday_year=student.birthday_year,
+                student__birthday_month=student.birthday_month
             )
 
         if len(match_records):
             for item in match_records:
-                LoggingProgramMove.objects.get_or_create(
-                    student=item.student,
-                    registry=registry,
-                    school_from=registry.school,
-                    school_to=item.school,
-                    education_year=item.education_year,
-                    eligibility=False,
-                    potential_move=True
+                if not registry.student:
+                    continue
+                instance, created = LoggingProgramMove.objects.get_or_create(
+                    student=registry.student,
+                    alp_round=registry.alp_round,
+                    education_year=item.education_year
                 )
+                if created:
+                    instance.registry = registry
+                    instance.school_from = registry.school
+                    instance.school_to = item.school
+                    instance.eligibility = False
+                    instance.potential_move = True
+                    instance.save()
+
 
 
 @app.task

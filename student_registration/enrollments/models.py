@@ -900,8 +900,8 @@ class LoggingProgramMove(TimeStampedModel):
     )
     school_from = models.ForeignKey(
         School,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         related_name='+',
         verbose_name='From school',
     )
@@ -913,6 +913,11 @@ class LoggingProgramMove(TimeStampedModel):
     )
     education_year = models.ForeignKey(
         EducationYear,
+        blank=True, null=True,
+        related_name='+',
+    )
+    alp_round = models.ForeignKey(
+        ALPRound,
         blank=True, null=True,
         related_name='+',
     )
