@@ -308,7 +308,7 @@ class Student(Person):
 
     @property
     def last_enrollment(self):
-        return self.student_enrollment.all().last
+        return self.student_enrollment.all().order_by('pk').last
 
     @property
     def secondshift_registrations(self):
@@ -332,7 +332,7 @@ class Student(Person):
 
     @property
     def last_alp_registration(self):
-        return self.alp_enrollment.all().last
+        return self.alp_enrollment.all().order_by('pk').last
 
     @property
     def last_alp_round(self):
