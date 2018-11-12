@@ -16,6 +16,7 @@ class AssessmentResource(resources.ModelResource):
     locations_type = fields.Field()
     location_latitude = fields.Field()
     location_longitude = fields.Field()
+    comments = fields.Field()
 
     class Meta:
         model = Assessment
@@ -48,6 +49,7 @@ class AssessmentResource(resources.ModelResource):
             'moving_location',
             'new_district',
             'new_cadastral',
+            'comments',
             '_0_to_3_months',
             '_3_to_12_months',
             '_1_year_old',
@@ -107,6 +109,11 @@ class AssessmentResource(resources.ModelResource):
 
     def dehydrate_location_longitude(self, obj):
         return obj.location_longitude
+
+    def dehydrate_comments(self, obj):
+        if obj.comments:
+            return obj.comments[0]['comment']
+        return ''
 
 
 class AssessmentAdmin(ImportExportModelAdmin):
@@ -197,7 +204,8 @@ class AssessmentAdmin(ImportExportModelAdmin):
 
     def get_queryset(self, request):
         if request.user.id == 1 or request.user.id == 936:
-            return super(AssessmentAdmin, self).get_queryset(request)
+            return Assessment.objects.exclude(creation_date__startswith='2017')
+            # return super(AssessmentAdmin, self).get_queryset(request)
         return Assessment.objects.none()
 
 

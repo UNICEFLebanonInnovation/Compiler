@@ -305,6 +305,7 @@ class Assessment(models.Model):
         null=True,
         choices=CARD_LOADED
     )
+    comments = JSONField(blank=True, null=True)
 
     _0_to_3_months = models.IntegerField(
         blank=True,
