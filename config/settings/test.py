@@ -1,8 +1,8 @@
-'''
+"""
 Test settings
 
 - Used to run tests fast on the continuous integration server and locally
-'''
+"""
 
 from .base import *  # noqa
 
@@ -21,8 +21,8 @@ SECRET_KEY = env('DJANGO_SECRET_KEY', default='CHANGEME!!!')
 
 # Mail settings
 # ------------------------------------------------------------------------------
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
+# EMAIL_HOST = 'localhost'
+# EMAIL_PORT = 1025
 
 # In-memory email backend stores messages in django.core.mail.outbox
 # for unit testing purposes
@@ -60,11 +60,13 @@ TEMPLATES[0]['OPTIONS']['loaders'] = [
     ], ],
 ]
 
+
 class DisableMigrations(object):
     def __contains__(self, item):
         return True
 
     def __getitem__(self, item):
         return 'notmigrations'
+
 
 MIGRATION_MODULES = DisableMigrations()
