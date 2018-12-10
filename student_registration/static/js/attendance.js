@@ -159,11 +159,12 @@ function get_level_section_attendances(exam_day, not_attending)
     var total_absent_female = 0;
     $('.enrollment_id').each(function (i, item) {
         var enrollment_id = $(item).val();
+        var enrollment = $(item).val();
         var status = null;
-        var sex = $('#student_sex_'+enrollment_id).val();
+        var sex = $('#student_sex_'+enrollment).val();
         var absence_reason = null;
 
-        if($('#status_'+enrollment_id).val() == '' || $('#status_'+enrollment_id).val() == 'True' || $('#status_'+enrollment_id).val() == 'true'){
+        if($('#status_'+enrollment).val() == '' || $('#status_'+enrollment).val() == 'True' || $('#status_'+enrollment).val() == 'true'){
             status = 'True';
             absence_reason  = '';
             if(sex == 'Male'){
@@ -173,7 +174,7 @@ function get_level_section_attendances(exam_day, not_attending)
             }
         }else{
             status = 'False';
-            absence_reason  = $('.absence_reason_' + enrollment_id+':checked').val();
+            absence_reason  = $('.absence_reason_'+enrollment+':checked').val();
             if(sex == 'Male'){
                 total_absent_male = total_absent_male + 1;
             }else{
@@ -183,21 +184,21 @@ function get_level_section_attendances(exam_day, not_attending)
 
         total_attended = total_attended_male + total_attended_female;
         total_absences = total_absent_male + total_absent_female;
-        var student_id = $('#student_id_' + enrollment_id).val();
+        var student_id = $('#student_id_'+enrollment).val();
 
         students.push({
             student_id: student_id,
-            student_fullname: $('#student_fullname_' + enrollment_id).val(),
+            student_fullname: $('#student_fullname_'+enrollment).val(),
             student_sex: sex,
-            student_age: $('#student_age_' + enrollment_id).val(),
-            student_birthday: $('#student_birthday_' + enrollment_id).val(),
-            section: $('#section_' + enrollment_id).val(),
-            section_name: $('#section_name_' + enrollment_id).val(),
-            level: $('#level_' + enrollment_id).val(),
-            level_name: $('#level_name_' + enrollment_id).val(),
+            student_age: $('#student_age_'+enrollment).val(),
+            student_birthday: $('#student_birthday_'+enrollment).val(),
+            section: $('#section_'+enrollment).val(),
+            section_name: $('#section_name_'+enrollment).val(),
+            level: $('#level_'+enrollment).val(),
+            level_name: $('#level_name_'+enrollment).val(),
             status: status,
             absence_reason: absence_reason,
-            dropout: $('#student_dropout_' + enrollment_id).val()
+            dropout: $('#student_dropout_'+enrollment).val()
         });
 
     });
