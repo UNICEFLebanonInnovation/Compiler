@@ -41,6 +41,7 @@
     <script type="text/javascript" src="{% static 'js/registrations.js' %}"></script>
     <script>
         var user_token = '{{ user_token }}';
+        var href_full_path = '{{ request.build_absolute_uri }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
     </script>
 {% endblock %}

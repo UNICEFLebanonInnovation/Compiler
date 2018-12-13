@@ -158,13 +158,16 @@ function get_level_section_attendances(exam_day, not_attending)
     var total_absent_male = 0;
     var total_absent_female = 0;
     $('.enrollment_id').each(function (i, item) {
-        var enrollment_id = $(item).val();
-        var enrollment = $(item).val();
+        var enrollment = $(item).attr('itemref');
         var status = null;
-        var sex = $('#student_sex_'+enrollment).val();
+//        var sex = $('#student_sex_'+enrollment).val();
+//        var status = $('#status_'+enrollment).val();
+        var sex = $(item).attr('student_sex');
+        var status = $(item).attr('status');
+
         var absence_reason = null;
 
-        if($('#status_'+enrollment).val() == '' || $('#status_'+enrollment).val() == 'True' || $('#status_'+enrollment).val() == 'true'){
+        if(status == '' || status == 'True' || status == 'true'){
             status = 'True';
             absence_reason  = '';
             if(sex == 'Male'){
@@ -174,7 +177,9 @@ function get_level_section_attendances(exam_day, not_attending)
             }
         }else{
             status = 'False';
-            absence_reason  = $('.absence_reason_'+enrollment+':checked').val();
+//            absence_reason  = $('.absence_reason_'+enrollment+':checked').val();
+            console.log($(item).attr('absence_reason'));
+            absence_reason  = $($(item).attr('absence_reason')).val();
             if(sex == 'Male'){
                 total_absent_male = total_absent_male + 1;
             }else{
@@ -184,22 +189,43 @@ function get_level_section_attendances(exam_day, not_attending)
 
         total_attended = total_attended_male + total_attended_female;
         total_absences = total_absent_male + total_absent_female;
-        var student_id = $('#student_id_'+enrollment).val();
+
+//        var student_id = $('#student_id_'+enrollment).val();
+//        var student_fullname = $('#student_fullname_'+enrollment).val();
+//        var student_age = $('#student_age_'+enrollment).val();
+//        var student_birthday = $('#student_birthday_'+enrollment).val();
+//        var section = $('#section_'+enrollment).val();
+//        var section_name = $('#section_name_'+enrollment).val();
+//        var level = $('#level_'+enrollment).val();
+//        var level_name = $('#level_name_'+enrollment).val();
+//        var dropout = $('#student_dropout_'+enrollment).val();
+
+        var student_id = $(item).attr('student_id');
+        var student_fullname = $(item).attr('student_fullname');
+        var student_age = $(item).attr('student_age');
+        var student_birthday = $(item).attr('student_birthday');
+        var section = $(item).attr('section');
+        var section_name = $(item).attr('section_name');
+        var level = $(item).attr('level');
+        var level_name = $(item).attr('level_name');
+        var dropout = $(item).attr('student_dropout');
 
         students.push({
             student_id: student_id,
-            student_fullname: $('#student_fullname_'+enrollment).val(),
+            student_fullname: student_fullname,
             student_sex: sex,
-            student_age: $('#student_age_'+enrollment).val(),
-            student_birthday: $('#student_birthday_'+enrollment).val(),
-            section: $('#section_'+enrollment).val(),
-            section_name: $('#section_name_'+enrollment).val(),
-            level: $('#level_'+enrollment).val(),
-            level_name: $('#level_name_'+enrollment).val(),
+            student_age: student_age,
+            student_birthday: student_birthday,
+            section: section,
+            section_name: section_name,
+            level: level,
+            level_name: level_name,
             status: status,
             absence_reason: absence_reason,
-            dropout: $('#student_dropout_'+enrollment).val()
+            dropout: dropout
         });
+
+        console.log(students);
 
     });
 
