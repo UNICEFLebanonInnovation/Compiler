@@ -290,7 +290,7 @@ class OutreachForm(forms.ModelForm):
             serializer = OutreachSmallSerializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
-                instance.school = request.user.school
+                # instance.school = request.user.school
                 instance.owner = request.user
                 instance.alp_round = ALPRound.objects.get(current_pre_test=True)
                 instance.save()
