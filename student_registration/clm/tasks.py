@@ -109,7 +109,7 @@ def push_rs_data(file_name, base_url, token, protocol='HTTPS'):
     # objects = RS.objects.all()
     # objects.delete()
 
-    wb = load_workbook(filename='August_RS_CLM.XLSX', read_only=True)
+    wb = load_workbook(filename='44.XLSX', read_only=True)
     ws = wb['RS']
 
     for row in ws.rows:
@@ -123,8 +123,7 @@ def push_rs_data(file_name, base_url, token, protocol='HTTPS'):
             data['have_barcode'] = 'no'
             data['partner'] = 10
             # data['partner'] = row[0].value
-            data['round_id'] = 4
-            # data['round_id'] = row[1].value if row[1].value else 1
+            data['round'] = row[1].value if row[1].value else 4
             data['new_registry'] = 'yes'
             # data['type'] = row[3].value if row[3].value else 'homework_support'
             data['type'] = 'homework_support'
@@ -148,6 +147,7 @@ def push_rs_data(file_name, base_url, token, protocol='HTTPS'):
             data['student_p_code'] = row[19].value if row[19].value else 'None'
             data['disability'] = row[20].value if row[20].value else 1
             data['student_id_number'] = row[21].value if row[21].value else 'None'
+            data['internal_number'] = row[22].value if row[22].value else 'None'
             data['comments'] = row[23].value if row[23].value else 'None'
             data['hh_educational_level'] = row[27].value
             data['student_family_status'] = row[28].value if row[28].value else 'single'
@@ -164,9 +164,10 @@ def push_rs_data(file_name, base_url, token, protocol='HTTPS'):
             data['pre_test_language'] = row[39].value
             data['pre_test_math'] = row[40].value
             data['pre_test_science'] = row[41].value
-            data['unsuccessful_posttest_reason'] = row[92].value if row[92].value else 'None'
+            if row[92].value:
+                data['unsuccessful_posttest_reason'] = row[92].value
             data['participation'] = row[93].value
-            data['barriers'] = [row[94].value] if (row[94].value or row[94].value == ' ') else []
+            data['barriers'] = [''.join(row[94].value.split())] if (row[94].value or row[94].value == ' ') else []
             data['learning_result'] = row[95].value
             data['post_test_arabic'] = row[65].value
             data['post_test_language'] = row[66].value
@@ -281,9 +282,9 @@ def push_rs_data(file_name, base_url, token, protocol='HTTPS'):
                 assessment['enrollment_id'] = result['original_id']
                 assessment['enrollment_model'] = 'RS'
                 assessment['RS_ASSESSMENT/FL5'] = row[74].value if row[74].value else '1'
-                assessment['RS_ASSESSMENT/FL6'] = row[78].value if row[78].value else '1'
-                assessment['RS_ASSESSMENT/FL7'] = row[79].value if row[79].value else '1'
-                assessment['RS_ASSESSMENT/FL8'] = row[80].value if row[80].value else '1'
+                assessment['RS_ASSESSMENT/FL6'] = row[75].value if row[75].value else '1'
+                assessment['RS_ASSESSMENT/FL7'] = row[76].value if row[76].value else '1'
+                assessment['RS_ASSESSMENT/FL8'] = row[77].value if row[77].value else '1'
 
                 post_data(protocol=protocol, url=base_url, apifunc='/clm/assessment-submission/', token=token,
                           data=assessment)
