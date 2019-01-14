@@ -5,7 +5,12 @@ from django_filters import FilterSet, ModelChoiceFilter
 from student_registration.locations.models import Location
 from student_registration.schools.models import CLMRound, School, Section, ClassRoom
 from student_registration.students.models import Nationality
-from .models import BLN, RS, CBECE, Cycle, Disability
+from .models import (
+    BLN,
+    RS,
+    CBECE,
+    Cycle,
+    Disability)
 
 
 class CommonFilter(FilterSet):
