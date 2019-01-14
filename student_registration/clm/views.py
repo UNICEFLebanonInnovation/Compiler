@@ -28,7 +28,7 @@ from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
 from .filters import BLNFilter, RSFilter, CBECEFilter
 from .tables import BootstrapTable, BLNTable, RSTable, CBECETable
-from .models import BLN, RS, CBECE, SelfPerceptionGrades
+from .models import BLN, RS, CBECE, SelfPerceptionGrades, Disability
 from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 
@@ -294,6 +294,7 @@ class RSDashboardView(LoginRequiredMixin,
         clm_round = self.request.user.partner.rs_round
         clm_rounds = CLMRound.objects.all()
         governorates = Location.objects.filter(parent__isnull=True)
+        disability = Disability.objects.all()
 
         # queryset = self.model.objects.filter(round=clm_round)
         queryset = self.model.objects.all()
@@ -311,6 +312,11 @@ class RSDashboardView(LoginRequiredMixin,
         repeat_class = queryset.filter(learning_result='repeat_level')
         repeat_class_male = repeat_class.filter(student__sex='Male')
         repeat_class_female = repeat_class.filter(student__sex='Female')
+
+        student_male = queryset.filter(student__sex='Male')
+        student_female = queryset.filter(student__sex='Female')
+
+        dis_gov = []
 
         for gov in governorates:
 
@@ -364,12 +370,30 @@ class RSDashboardView(LoginRequiredMixin,
 
                 'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
                 'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
+
+
+                'repetition_male1': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0,
+                                         2) if total_gov else 0.0,
+                'repetition_female1': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0,
+                                           2) if total_gov else 0.0,
             })
 
+            dis_count = []
+            for dis in disability:
+                dis_count.append({
+                    'student_male_dis': student_male.filter(governorate=gov, disability=dis).count(),
+                    'student_female_dis': student_female.filter(governorate=gov, disability=dis).count(),
+                })
+            dis_gov.append({
+                'governorate': gov.name,
+                'dis': dis_count
+            })
         return {
             'clm_round': clm_round,
             'clm_rounds': clm_rounds,
-            'per_gov': per_gov
+            'per_gov': per_gov,
+            'disability': disability,
+            'dis_gov': dis_gov
         }
 
 
