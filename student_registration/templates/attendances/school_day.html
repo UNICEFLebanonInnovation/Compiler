@@ -143,6 +143,7 @@
     <script type="text/javascript" src="{% static 'js/attendance.js' %}"></script>
     <script>
         var user_token = '{{ user_token }}';
+        var href_full_path = '{{ request.build_absolute_uri }}';
         var school_type = '{{ school_type }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
     </script>
