@@ -350,7 +350,7 @@ class CommonForm(forms.ModelForm):
 
     class Media:
         js = (
-            # 'js/jquery-1.12.3.min.js',
+            # 'js/jquery-3.3.1.min.js',
             # 'js/jquery-ui-1.12.1.js',
             # 'js/validator.js',
             # 'js/registrations.js',
@@ -663,7 +663,7 @@ class BLNForm(CommonForm):
 
     class Media:
         js = (
-            # 'js/jquery-1.12.3.min.js',
+            # 'js/jquery-3.3.1.min.js',
             # 'js/jquery-ui-1.12.1.js',
             # 'js/validator.js',
             # 'js/registrations.js',

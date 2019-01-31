@@ -105,10 +105,14 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'student_registration.lockout_middleware.StudentLockoutMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+LOCKOUT_MAX_ATTEMPTS=10
+LOCKOUT_TIME=600
 
 # SECURITY CONFIGURATION
 X_FRAME_OPTIONS = 'DENY'
@@ -156,7 +160,7 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    'default': env.db('DATABASE_URL', default='postgres:///student_registration'),
+    'default': env.db('DATABASE_URL', default='postgres:///Student_Registration'),
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
@@ -288,6 +292,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -295,6 +302,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {'NAME': 'student_registration.password_validators.NumberValidator',
+     'OPTIONS': {
+         'min_digits': 3, }},
+    {'NAME': 'student_registration.password_validators.UppercaseValidator', },
+    {'NAME': 'student_registration.password_validators.LowercaseValidator', },
+    {'NAME': 'student_registration.password_validators.SymbolValidator', },
 ]
 
 # AUTHENTICATION CONFIGURATION
@@ -337,8 +350,8 @@ MONGODB_URI = env('MONGODB_URI', default='mongodb://localhost/education')
 
 # django-compressor
 # ------------------------------------------------------------------------------
-INSTALLED_APPS += ['compressor']
-STATICFILES_FINDERS += ['compressor.finders.CompressorFinder']
+# INSTALLED_APPS += ['compressor']
+# STATICFILES_FINDERS += ['compressor.finders.CompressorFinder']
 
 # Location of root django.contrib.admin URL, use {% url 'admin:index' %}
 ADMIN_URL = r'^admin/'
