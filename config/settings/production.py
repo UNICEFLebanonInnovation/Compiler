@@ -35,6 +35,7 @@ WHITENOISE_MIDDLEWARE = ['whitenoise.middleware.WhiteNoiseMiddleware', ]
 MIDDLEWARE = WHITENOISE_MIDDLEWARE + MIDDLEWARE
 RAVEN_MIDDLEWARE = ['raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware']
 MIDDLEWARE = RAVEN_MIDDLEWARE + MIDDLEWARE
+
 # opbeat integration
 # See https://opbeat.com/languages/django/
 # INSTALLED_APPS += ['opbeat.contrib.django', ]
@@ -212,3 +213,6 @@ ADMIN_URL = env('DJANGO_ADMIN_URL')
 
 # Your production stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
+
+# 6.2.1 Cookie Security: Cookie not Sent Over SSL
+SESSION_COOKIE_SECURE = True
