@@ -76,6 +76,7 @@ THIRD_PARTY_APPS = [
     'django_tables2',
     'django_celery_beat',
     'django_celery_results',
+    'lockout',
 ]
 
 # Apps specific for this project go here.
@@ -92,6 +93,7 @@ LOCAL_APPS = [
     'student_registration.dashboard',  # custom dashboard app
     'student_registration.winterization',  # custom winterization app
     'student_registration.backends',  # custom storage app
+    'student_registration.accounts',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -105,10 +107,14 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'student_registration.lockout_middleware.StudentLockoutMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+LOCKOUT_MAX_ATTEMPTS=10
+LOCKOUT_TIME=600
 
 # SECURITY CONFIGURATION
 X_FRAME_OPTIONS = 'DENY'
@@ -288,6 +294,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -295,6 +304,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {'NAME': 'student_registration.password_validators.NumberValidator',
+     'OPTIONS': {
+         'min_digits': 3, }},
+    {'NAME': 'student_registration.password_validators.UppercaseValidator', },
+    {'NAME': 'student_registration.password_validators.LowercaseValidator', },
+    {'NAME': 'student_registration.password_validators.SymbolValidator', },
 ]
 
 # AUTHENTICATION CONFIGURATION
@@ -445,3 +460,10 @@ HELPDESK_CREATE_TICKET_HIDE_ASSIGNED_TO = True
 HELPDESK_ENABLE_PER_QUEUE_PERMISSION = True
 HELPDESK_VIEW_A_TICKET_PUBLIC = False
 HELPDESK_SUBMIT_A_TICKET_PUBLIC = False
+
+# Auto logout delay in minutes
+AUTO_LOGOUT_DELAY = 5 #equivalent to 5 minutes
+
+# 6.2.2: Cookie Security: Persistent Cookie
+CSRF_USE_SESSIONS = True
+

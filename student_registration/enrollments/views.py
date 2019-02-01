@@ -344,6 +344,10 @@ class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
         if self.request.method in ["PATCH", "POST", "PUT"]:
             return self.queryset
         terms = self.request.GET.get('term', 0)
+
+        if '\0' in terms:
+            terms = ''
+
         current_year = EducationYear.objects.get(current_year=True)
         if terms:
             qs = self.queryset.filter(
