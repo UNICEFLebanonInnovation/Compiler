@@ -462,8 +462,9 @@ HELPDESK_VIEW_A_TICKET_PUBLIC = False
 HELPDESK_SUBMIT_A_TICKET_PUBLIC = False
 
 # Auto logout delay in minutes
-AUTO_LOGOUT_DELAY = 5 #equivalent to 5 minutes
+AUTO_LOGOUT_DELAY = 5  #equivalent to 5 minutes
 
 # 6.2.2: Cookie Security: Persistent Cookie
 CSRF_USE_SESSIONS = True
 
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
