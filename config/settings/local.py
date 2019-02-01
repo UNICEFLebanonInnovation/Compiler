@@ -44,8 +44,8 @@ CACHES = {
 
 # django-debug-toolbar
 # ------------------------------------------------------------------------------
-MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware','student_registration.middleware.AutoLogout','student_registration.cache_control_middleware.CacheControlMiddleware']
-INSTALLED_APPS += ['debug_toolbar','lockout']
+MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware','student_registration.middleware.AutoLogout','student_registration.cache_control_middleware.CacheControlMiddleware','student_registration.one_session.OneSessionPerUserMiddleware','student_registration.hsts_middleware.HSTSMiddleware','student_registration.xframe_middleware.XFrameMiddleware']
+INSTALLED_APPS += ['debug_toolbar','lockout','student_registration.accounts']
 
 INTERNAL_IPS = ['127.0.0.1', '10.0.2.2', ]
 
@@ -104,3 +104,7 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Auto logout delay in minutes
 AUTO_LOGOUT_DELAY = 5 #equivalent to 5 minutes
+
+CSRF_USE_SESSIONS = True
+
+#SESSION_COOKIE_SECURE = True
