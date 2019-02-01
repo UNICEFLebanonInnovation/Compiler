@@ -98,13 +98,13 @@ LOGGING = {
     },
 }
 
-
-
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Auto logout delay in minutes
 AUTO_LOGOUT_DELAY = 5 #equivalent to 5 minutes
 
+# 6.2.2: Cookie Security: Persistent Cookie
 CSRF_USE_SESSIONS = True
 
-#SESSION_COOKIE_SECURE = True
+# 6.2.1 Cookie Security: Cookie not Sent Over SSL
+SESSION_COOKIE_SECURE = True
