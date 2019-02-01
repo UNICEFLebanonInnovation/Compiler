@@ -33,6 +33,7 @@ if READ_DOT_ENV_FILE:
     env.read_env(env_file)
     print('The .env file has been loaded. See base.py for more information')
 
+
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
@@ -95,7 +96,8 @@ LOCAL_APPS = [
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = ['debug_toolbar','lockout','student_registration.accounts']
+INSTALLED_APPS += DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 # MIDDLEWARE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -458,3 +460,10 @@ HELPDESK_CREATE_TICKET_HIDE_ASSIGNED_TO = True
 HELPDESK_ENABLE_PER_QUEUE_PERMISSION = True
 HELPDESK_VIEW_A_TICKET_PUBLIC = False
 HELPDESK_SUBMIT_A_TICKET_PUBLIC = False
+
+# Auto logout delay in minutes
+AUTO_LOGOUT_DELAY = 5 #equivalent to 5 minutes
+
+# 6.2.2: Cookie Security: Persistent Cookie
+CSRF_USE_SESSIONS = True
+
