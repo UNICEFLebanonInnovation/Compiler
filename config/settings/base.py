@@ -33,7 +33,6 @@ if READ_DOT_ENV_FILE:
     env.read_env(env_file)
     print('The .env file has been loaded. See base.py for more information')
 
-
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
@@ -77,6 +76,7 @@ THIRD_PARTY_APPS = [
     'django_tables2',
     'django_celery_beat',
     'django_celery_results',
+    'lockout',
 ]
 
 # Apps specific for this project go here.
@@ -93,11 +93,11 @@ LOCAL_APPS = [
     'student_registration.dashboard',  # custom dashboard app
     'student_registration.winterization',  # custom winterization app
     'student_registration.backends',  # custom storage app
+    'student_registration.accounts',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
-INSTALLED_APPS = ['debug_toolbar','lockout','student_registration.accounts']
-INSTALLED_APPS += DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 # MIDDLEWARE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    'default': env.db('DATABASE_URL', default='postgres:///Student_Registration'),
+    'default': env.db('DATABASE_URL', default='postgres:///student_registration'),
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
@@ -352,8 +352,8 @@ MONGODB_URI = env('MONGODB_URI', default='mongodb://localhost/education')
 
 # django-compressor
 # ------------------------------------------------------------------------------
-# INSTALLED_APPS += ['compressor']
-# STATICFILES_FINDERS += ['compressor.finders.CompressorFinder']
+INSTALLED_APPS += ['compressor']
+STATICFILES_FINDERS += ['compressor.finders.CompressorFinder']
 
 # Location of root django.contrib.admin URL, use {% url 'admin:index' %}
 ADMIN_URL = r'^admin/'

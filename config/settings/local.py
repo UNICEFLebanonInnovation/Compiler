@@ -44,8 +44,9 @@ CACHES = {
 
 # django-debug-toolbar
 # ------------------------------------------------------------------------------
-MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware','student_registration.middleware.AutoLogout','student_registration.cache_control_middleware.CacheControlMiddleware','student_registration.one_session.OneSessionPerUserMiddleware','student_registration.hsts_middleware.HSTSMiddleware','student_registration.xframe_middleware.XFrameMiddleware']
+MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware',]
 
+INSTALLED_APPS += ['debug_toolbar', ]
 INTERNAL_IPS = ['127.0.0.1', '10.0.2.2', ]
 
 
