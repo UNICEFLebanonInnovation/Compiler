@@ -76,7 +76,6 @@ THIRD_PARTY_APPS = [
     'django_tables2',
     'django_celery_beat',
     'django_celery_results',
-    'lockout',
 ]
 
 # Apps specific for this project go here.
@@ -107,7 +106,7 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'student_registration.lockout_middleware.StudentLockoutMiddleware',
+    # 'student_registration.lockout_middleware.StudentLockoutMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
