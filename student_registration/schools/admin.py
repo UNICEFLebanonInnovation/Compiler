@@ -20,8 +20,7 @@ from .models import (
     EducationalLevel,
     Holiday,
     CLMRound,
-    PublicDocument,
-    Coordinator
+    PublicDocument
 )
 from student_registration.locations.models import Location
 
@@ -58,8 +57,7 @@ class SchoolResource(resources.ModelResource):
             'weekend',
             'it_name',
             'it_phone_number',
-            #'field_coordinator_name',
-            'coordinator',
+            'field_coordinator_name',
             'total_registered_2ndshift',
             'total_registered_2ndshift_male',
             'total_registered_2ndshift_female',
@@ -213,8 +211,7 @@ class SchoolAdmin(ImportExportModelAdmin):
         'weekend',
         'it_name',
         'it_phone_number',
-        #'field_coordinator_name',
-        'coordinator',
+        'field_coordinator_name',
         'academic_year_start',
         'academic_year_end',
         'academic_year_exam_end',
@@ -480,8 +477,6 @@ admin.site.register(CLMRound, CLMRoundAdmin)
 admin.site.register(PublicDocument, PublicDocumentAdmin)
 admin.site.register(EducationalLevel, EducationalLevelAdmin)
 admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
-admin.site.register(Coordinator)
-
 
 
 

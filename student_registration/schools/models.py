@@ -9,17 +9,6 @@ from django.utils.translation import ugettext as _
 from student_registration.locations.models import Location
 
 
-class Coordinator(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = 'Coordinator'
-
-    def __unicode__(self):
-            return self.name
-
-
 class School(models.Model):
 
     name = models.CharField(
@@ -89,16 +78,10 @@ class School(models.Model):
         blank=True, null=True,
         verbose_name=_('School IT phone number')
     )
-   # field_coordinator_name = models.CharField(
-    #    max_length=100,
-     #   blank=True, null=True,
-      #  verbose_name=_('Field coordinator name')
-    #)
-    coordinator = models.ForeignKey(
-        Coordinator,
+    field_coordinator_name = models.CharField(
+        max_length=100,
         blank=True, null=True,
-        verbose_name=_('coordinator'),
-        related_name='+',
+        verbose_name=_('Field coordinator name')
     )
     is_2nd_shift = models.BooleanField(
         blank=True,
@@ -213,7 +196,6 @@ class School(models.Model):
         from student_registration.enrollments.models import Enrollment
         return Enrollment.objects.filter(
             education_year__current_year=True,
-            moved=False,
             school_id=self.id
         ).count()
 
