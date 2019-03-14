@@ -15,7 +15,7 @@ def export_2ndshift(params=None, return_data=False):
     from student_registration.enrollments.models import Enrollment
 
     title = '2nd-shit-all'
-    queryset = Enrollment.objects.filter(moved=False)
+    queryset = Enrollment.objects.all()
     if 'current' in params:
         title = '2nd-shit-current'
         queryset = queryset.filter(education_year__current_year=True)

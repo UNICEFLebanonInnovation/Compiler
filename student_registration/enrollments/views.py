@@ -506,13 +506,14 @@ class EnrollmentUpdateViewSet(mixins.RetrieveModelMixin,
 
 
 class ExportViewSet(LoginRequiredMixin, ListView):
+
     model = Enrollment
     queryset = Enrollment.objects.all()
 
     def get_queryset(self):
         if not self.request.user.is_staff:
-            return self.queryset.filter(owner=self.request.user, moved=False)
-        return self.queryset.filter(moved=False)
+            return self.queryset.filter(owner=self.request.user)
+        return self.queryset
 
     def get(self, request, *args, **kwargs):
         school = request.GET.get('school', 0)
