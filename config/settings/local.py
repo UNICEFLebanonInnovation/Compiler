@@ -26,9 +26,9 @@ SECRET_KEY = env('DJANGO_SECRET_KEY', default='u1zvr)oodenne1(e9^6gp1r_9yt+yj0t4
 # Mail settings
 # ------------------------------------------------------------------------------
 
-# EMAIL_PORT = 1025
-#
-# EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+
+EMAIL_HOST = 'localhost'
 EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND',
                     default='django.core.mail.backends.console.EmailBackend')
 
@@ -44,8 +44,9 @@ CACHES = {
 
 # django-debug-toolbar
 # ------------------------------------------------------------------------------
-MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware',]
-INSTALLED_APPS += ['debug_toolbar', ]
+MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware','student_registration.middleware.AutoLogout' ]
+INSTALLED_APPS += ['debug_toolbar','lockout']
+
 INTERNAL_IPS = ['127.0.0.1', '10.0.2.2', ]
 
 
@@ -97,3 +98,9 @@ LOGGING = {
     },
 }
 
+
+
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+# Auto logout delay in minutes
+AUTO_LOGOUT_DELAY = 1 #equivalent to 5 minutes
