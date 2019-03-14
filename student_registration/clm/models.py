@@ -105,6 +105,7 @@ class Referral(models.Model):
 class Disability(models.Model):
 
     name = models.CharField(max_length=100)
+    active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['name']
@@ -357,6 +358,16 @@ class CLM(TimeStampedModel):
     comments = models.TextField(
         blank=True, null=True,
         verbose_name=_('Comments')
+    )
+    unsuccessful_pretest_reason = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('dropout', _("Dropout from the round")),
+            ('uncompleted_participation', _("Uncompleted Participation"))
+        ),
+        verbose_name=_('unsuccessful pre test reason')
     )
     unsuccessful_posttest_reason = models.CharField(
         max_length=100,

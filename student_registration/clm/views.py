@@ -294,7 +294,7 @@ class RSDashboardView(LoginRequiredMixin,
         clm_round = self.request.user.partner.rs_round
         clm_rounds = CLMRound.objects.all()
         governorates = Location.objects.filter(parent__isnull=True)
-        disability = Disability.objects.all()
+        disability = Disability.objects.filter(active=True)
 
         # queryset = self.model.objects.filter(round=clm_round)
         queryset = self.model.objects.all()
@@ -927,6 +927,8 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().extra(select={
+            'participation': "CONCAT(participation, '_absence')",
+            
             'pre_test_arabic': "pre_test->>'BLN_ASSESSMENT/arabic'",
             'pre_test_foreign_language': "pre_test->>'BLN_ASSESSMENT/foreign_language'",
             'pre_test_math': "pre_test->>'BLN_ASSESSMENT/math'",
@@ -1112,6 +1114,8 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().extra(select={
+            'participation': "CONCAT(participation, '_absence')",
+
             'pre_strategy_q1': "pre_test->>'RS_ASSESSMENT/FL1'",
             'pre_strategy_q2': "pre_test->>'RS_ASSESSMENT/FL2'",
             'pre_strategy_q3': "pre_test->>'RS_ASSESSMENT/FL3'",
@@ -1390,6 +1394,8 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().extra(select={
+            'participation': "CONCAT(participation, '_absence')",
+
             'pre_test_LanguageArtDomain1': "pre_test->>'CBECE_ASSESSMENT/LanguageArtDomain1'",
             'pre_test_CognitiveDomian1': "pre_test->>'CBECE_ASSESSMENT/CognitiveDomian1'",
             'pre_test_ScienceDomain1': "pre_test->>'CBECE_ASSESSMENT/ScienceDomain1'",
