@@ -94,12 +94,12 @@ class School(models.Model):
       #  blank=True, null=True,
        # verbose_name=_('Field coordinator name')
        #)
-    coordinator = models.ForeignKey(
-        Coordinator,
-        blank=True, null=True,
-        verbose_name=_('coordinator'),
-        related_name='+',
-    )
+    # coordinator = models.ForeignKey(
+    #     Coordinator,
+    #     blank=True, null=True,
+    #     verbose_name=_('coordinator'),
+    #     related_name='+',
+    # )
     is_2nd_shift = models.BooleanField(
         blank=True,
         default=False,
