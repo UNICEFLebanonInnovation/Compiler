@@ -100,6 +100,7 @@ class School(models.Model):
     #     verbose_name=_('coordinator'),
     #     related_name='+',
     # )
+
     is_2nd_shift = models.BooleanField(
         blank=True,
         default=False,
