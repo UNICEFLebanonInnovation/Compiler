@@ -92,31 +92,15 @@ LOCAL_APPS = [
     'student_registration.dashboard',  # custom dashboard app
     'student_registration.winterization',  # custom winterization app
     'student_registration.backends',  # custom storage app
-    'student_registration.accounts',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
-# MIDDLEWARE CONFIGURATION
-# ------------------------------------------------------------------------------
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'student_registration.lockout_middleware.StudentLockoutMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
 
-LOCKOUT_MAX_ATTEMPTS = 10
-LOCKOUT_TIME = 600
 
-# SECURITY CONFIGURATION
-X_FRAME_OPTIONS = 'DENY'
+# # SECURITY CONFIGURATION
+# X_FRAME_OPTIONS = 'DENY'
 
 # MIGRATIONS CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -161,8 +145,18 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    'default': env.db('DATABASE_URL', default='postgres:///student_registration'),
+    'default': env.db('DATABASE_URL', default='postgres:///Student_Registration'),
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'Student_Registration',
+#         'USER': 'postgres',
+#         'PASSWORD': 'pg007',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
 
@@ -351,8 +345,8 @@ MONGODB_URI = env('MONGODB_URI', default='mongodb://localhost/education')
 
 # django-compressor
 # ------------------------------------------------------------------------------
-INSTALLED_APPS += ['compressor']
-STATICFILES_FINDERS += ['compressor.finders.CompressorFinder']
+# INSTALLED_APPS += ['compressor']
+# STATICFILES_FINDERS += ['compressor.finders.CompressorFinder']
 
 # Location of root django.contrib.admin URL, use {% url 'admin:index' %}
 ADMIN_URL = r'^admin/'
@@ -459,11 +453,3 @@ HELPDESK_CREATE_TICKET_HIDE_ASSIGNED_TO = True
 HELPDESK_ENABLE_PER_QUEUE_PERMISSION = True
 HELPDESK_VIEW_A_TICKET_PUBLIC = False
 HELPDESK_SUBMIT_A_TICKET_PUBLIC = False
-
-# # Auto logout delay in minutes
-# AUTO_LOGOUT_DELAY = 1  #equivalent to 5 minutes
-
-# 6.2.2: Cookie Security: Persistent Cookie
-CSRF_USE_SESSIONS = True
-
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
