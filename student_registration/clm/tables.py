@@ -54,16 +54,22 @@ class BLNTable(CommonTable):
     # post_assessment_result = tables.Column(verbose_name=_('Academic Result - Post'), orderable=False,
     #                                        accessor='post_test_score')
     #
-    arabic_improvement = tables.Column(verbose_name=_('Arabic - Improvement'), orderable=False,
+    arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
                                        accessor='arabic_improvement')
     # english_improvement = tables.Column(verbose_name=_('English - Improvement'), orderable=False,
     #                                     accessor='english_improvement')
     # french_improvement = tables.Column(verbose_name=_('French - Improvement'), orderable=False,
     #                                    accessor='french_improvement')
-    foreign_language_improvement = tables.Column(verbose_name=_('Foreign language - Improvement'), orderable=False,
+    foreign_language_improvement = tables.Column(verbose_name=_('Foreign Language Development - Improvement'), orderable=False,
                                                  accessor='foreign_language_improvement')
-    math_improvement = tables.Column(verbose_name=_('Math - Improvement'), orderable=False,
+    math_improvement = tables.Column(verbose_name=_('Cognitive Development - Mathematics - Improvement'), orderable=False,
                                      accessor='math_improvement')
+    social_emotional_improvement = tables.Column(verbose_name=_('Social-Emotional Development - Improvement'), orderable=False,
+                                       accessor='arabic_improvement')
+    psychomotor_improvement = tables.Column(verbose_name=_('Psychomotor Development for children with special needs - Improvement'),
+                                       orderable=False, accessor='arabic_improvement')
+    artistic_improvement = tables.Column(verbose_name=_('Artistic Development - Improvement'), orderable=False,
+                                       accessor='arabic_improvement')
 
     assessment_improvement = tables.Column(verbose_name=_('Assessment Result - Improvement'), orderable=False,
                                            accessor='assessment_improvement')
@@ -94,6 +100,9 @@ class BLNTable(CommonTable):
             # 'french_improvement',
             'foreign_language_improvement',
             'math_improvement',
+            'social_emotional_improvement',
+            'psychomotor_improvement',
+            'artistic_improvement',
             'assessment_improvement',
             'unsuccessful_pretest_reason',
             'unsuccessful_posttest_reason',
@@ -237,17 +246,17 @@ class CBECETable(CommonTable):
     assessment_improvement = tables.Column(verbose_name=_('Assessment Result - Improvement'), orderable=False,
                                            accessor='assessment_improvement')
 
-    art_improvement = tables.Column(verbose_name=_('Language Art Domain - Improvement'), orderable=False,
+    art_improvement = tables.Column(verbose_name=_('Language Development - Improvement'), orderable=False,
                                     accessor='art_improvement')
-    cognitive_improvement = tables.Column(verbose_name=_('Cognitive Domain - Improvement'), orderable=False,
+    cognitive_improvement = tables.Column(verbose_name=_('Cognitive Development - Mathematics - Improvement'), orderable=False,
                                         accessor='cognitive_improvement')
-    science_improvement = tables.Column(verbose_name=_('Cognitive domain Science - Improvement'), orderable=False,
+    science_improvement = tables.Column(verbose_name=_('Cognitive Development - Science - Improvement'), orderable=False,
                                         accessor='science_improvement')
-    social_improvement = tables.Column(verbose_name=_('Social Emotional Domain - Improvement'), orderable=False,
+    social_improvement = tables.Column(verbose_name=_('Social-Emotional Development - Improvement'), orderable=False,
                                        accessor='social_improvement')
-    psycho_improvement = tables.Column(verbose_name=_('Psychomotor Domain - Improvement'), orderable=False,
+    psycho_improvement = tables.Column(verbose_name=_('Psychomotor Development - Improvement'), orderable=False,
                                        accessor='psycho_improvement')
-    artistic_improvement = tables.Column(verbose_name=_('Artistic Domain - Improvement'), orderable=False,
+    artistic_improvement = tables.Column(verbose_name=_('Artistic Development - Improvement'), orderable=False,
                                          accessor='artistic_improvement')
 
     class Meta:

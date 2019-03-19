@@ -473,6 +473,9 @@ class BLN(CLM):
             'BLN_ASSESSMENT/arabic',
             'BLN_ASSESSMENT/math',
             'BLN_ASSESSMENT/foreign_language',
+            'BLN_ASSESSMENT/social_emotional',
+            'BLN_ASSESSMENT/psychomotor',
+            'BLN_ASSESSMENT/artistic',
             # 'BLN_ASSESSMENT/english',
             # 'BLN_ASSESSMENT/french'
         ]
@@ -532,6 +535,18 @@ class BLN(CLM):
         if not french_english:
             return str(self.domain_improvement('foreign_language')) + '%'
         return str(french_english) + '%'
+
+    @property
+    def social_emotional_improvement(self):
+        return str(self.domain_improvement('social_emotional')) + '%'
+
+    @property
+    def psychomotor_improvement(self):
+        return str(self.domain_improvement('psychomotor')) + '%'
+
+    @property
+    def artistic_improvement(self):
+        return str(self.domain_improvement('artistic')) + '%'
 
     def pre_assessment_form(self):
         return self.assessment_form(stage='pre_test', assessment_slug='bln_pre_test')
