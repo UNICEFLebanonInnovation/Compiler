@@ -9,15 +9,15 @@ from django.utils.translation import ugettext as _
 from student_registration.locations.models import Location
 
 
-class Coordinator(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = 'Coordinator'
-
-    def __unicode__(self):
-            return self.name
+# class Coordinator(models.Model):
+#     name = models.CharField(max_length=200, unique=True)
+#
+#     class Meta:
+#         ordering = ['name']
+#         verbose_name = 'Coordinator'
+#
+#     def __unicode__(self):
+#             return self.name
 
 
 class School(models.Model):
