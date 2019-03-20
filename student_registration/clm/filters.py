@@ -18,7 +18,7 @@ class CommonFilter(FilterSet):
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
     district = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=False), empty_label=_('District'))
     student__nationality = ModelChoiceFilter(queryset=Nationality.objects.all(), empty_label=_('Nationality'))
-    disability = ModelChoiceFilter(queryset=Disability.objects.all(), empty_label=_('Disability'))
+    disability = ModelChoiceFilter(queryset=Disability.objects.filter(active=True), empty_label=_('Disability'))
 
 
 class BLNFilter(CommonFilter):

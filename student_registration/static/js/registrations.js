@@ -501,7 +501,19 @@ function reorganizeForm()
         $('div#labours').prev().removeClass('d-none');
         $('div#labour_hours').removeClass('d-none');
         $('div#labour_hours').prev().removeClass('d-none');
+        $('input#id_have_labour_1').attr('disabled', 'disabled');
+        $('input#id_have_labour_2').removeAttr('disabled');
+        $('input#id_have_labour_3').removeAttr('disabled');
     }else{
+        if(have_labour == 'no') {
+            $('input#id_have_labour_1').removeAttr('disabled');
+            $('input#id_have_labour_2').attr('disabled', 'disabled');
+            $('input#id_have_labour_3').attr('disabled', 'disabled');
+        }else{
+            $('input#id_have_labour_1').removeAttr('disabled');
+            $('input#id_have_labour_2').removeAttr('disabled');
+            $('input#id_have_labour_3').removeAttr('disabled');
+        }
         $('div#labours').addClass('d-none');
         $('div#labours').prev().addClass('d-none');
         $('div#labour_hours').addClass('d-none');
