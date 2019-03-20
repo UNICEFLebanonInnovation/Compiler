@@ -27,12 +27,13 @@ SECRET_KEY = env('DJANGO_SECRET_KEY', default='l^y44io8f!zr^#n(ui099rz+w2(p^ufz3
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # raven sentry client
 # See https://docs.sentry.io/clients/python/integrations/django/
-INSTALLED_APPS += ['raven.contrib.django.raven_compat', ]
+INSTALLED_APPS += ['raven.contrib.django.raven_compat','lockout' ]
 
 # Use Whitenoise to serve static files
 # See: https://whitenoise.readthedocs.io/
 WHITENOISE_MIDDLEWARE = ['whitenoise.middleware.WhiteNoiseMiddleware', ]
-MIDDLEWARE = WHITENOISE_MIDDLEWARE + MIDDLEWARE
+AUTOLOGOUT_MIDDLEWARE = ['student_registration.middleware.AutoLogout', ]
+MIDDLEWARE = WHITENOISE_MIDDLEWARE + MIDDLEWARE + AUTOLOGOUT_MIDDLEWARE
 RAVEN_MIDDLEWARE = ['raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware']
 MIDDLEWARE = RAVEN_MIDDLEWARE + MIDDLEWARE
 
@@ -210,6 +211,11 @@ RAVEN_CONFIG = {
 
 # Custom Admin URL, use {% url 'admin:index' %}
 ADMIN_URL = env('DJANGO_ADMIN_URL', default='admin')
+
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+# Auto logout delay in minutes
+AUTO_LOGOUT_DELAY = 5 #equivalent to 5 minutes
 
 # Your production stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------

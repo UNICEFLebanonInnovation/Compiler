@@ -76,7 +76,6 @@ THIRD_PARTY_APPS = [
     'django_tables2',
     'django_celery_beat',
     'django_celery_results',
-    'lockout',
 ]
 
 # Apps specific for this project go here.
@@ -461,8 +460,8 @@ HELPDESK_ENABLE_PER_QUEUE_PERMISSION = True
 HELPDESK_VIEW_A_TICKET_PUBLIC = False
 HELPDESK_SUBMIT_A_TICKET_PUBLIC = False
 
-# Auto logout delay in minutes
-AUTO_LOGOUT_DELAY = 5  #equivalent to 5 minutes
+# # Auto logout delay in minutes
+# AUTO_LOGOUT_DELAY = 1  #equivalent to 5 minutes
 
 # 6.2.2: Cookie Security: Persistent Cookie
 CSRF_USE_SESSIONS = True
