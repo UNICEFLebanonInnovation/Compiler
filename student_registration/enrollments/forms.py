@@ -525,11 +525,6 @@ class EnrollmentForm(forms.ModelForm):
             )
         )
 
-    # def clean(self):
-    #     super(EnrollmentForm, self).clean()
-        # print self.cleaned_data
-        # cc_myself = self.cleaned_data.get("cc_myself")
-
     def clean(self):
         from django.db.models import Q
         cleaned_data = super(EnrollmentForm, self).clean()
@@ -571,6 +566,10 @@ class EnrollmentForm(forms.ModelForm):
             ).exclude(id=edit).count()):
                 raise forms.ValidationError(_('Student name, already entered  '))
 
+    # def clean(self):
+    #     super(EnrollmentForm, self).clean()
+        # print self.cleaned_data
+        # cc_myself = self.cleaned_data.get("cc_myself")
 
     def save(self, request=None, instance=None):
         if instance:
