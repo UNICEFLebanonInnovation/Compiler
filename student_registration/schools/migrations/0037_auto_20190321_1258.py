@@ -5,18 +5,18 @@ from __future__ import unicode_literals
 from django.db import migrations
 
 
-class Migration(migrations.Migration):
-
-    dependencies = [
-        ('schools', '0036_auto_20190314_2029'),
-    ]
-
-    operations = [
-        # migrations.RemoveField(
-        #     model_name='school',
-        #     name='coordinator',
-        # ),
-        migrations.DeleteModel(
-            name='Coordinator',
-        ),
-    ]
+# class Migration(migrations.Migration):
+#
+#     dependencies = [
+#         ('schools', '0036_auto_20190314_2029'),
+#     ]
+#
+#     operations = [
+#         migrations.RemoveField(
+#             model_name='school',
+#             name='coordinator',
+#         ),
+#         migrations.DeleteModel(
+#             name='Coordinator',
+#         ),
+#     ]
