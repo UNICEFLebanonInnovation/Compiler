@@ -87,6 +87,7 @@ def export_2ndshift(params=None, return_data=False):
         'dropout_status': 'dropout_status',
         'disabled': 'disabled',
         'moved': 'moved',
+        'student__number': 'student number',
     }
 
     queryset = queryset.values(
@@ -148,6 +149,7 @@ def export_2ndshift(params=None, return_data=False):
         'dropout_status',
         'disabled',
         'moved',
+        'student__number',
     )
 
     return render_to_csv_response(queryset, field_header_map=headers)
@@ -388,6 +390,7 @@ def export_alp(params=None, return_data=False):
         'modified_by__username': 'modified_by',
         'created': 'created',
         'modified': 'modified',
+        'student__number': _('student number'),
     }
 
     queryset = queryset.values(
@@ -455,6 +458,7 @@ def export_alp(params=None, return_data=False):
         'student_outreached',
         'have_barcode',
         'outreach_barcode',
+        'student__number',
     )
 
     return render_to_csv_response(queryset, field_header_map=headers)

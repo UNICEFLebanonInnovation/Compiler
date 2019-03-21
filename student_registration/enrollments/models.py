@@ -74,6 +74,7 @@ class Enrollment(TimeStampedModel):
         ('out_the_country', _('School out of the country')),
         ('public_in_country', _('Public school in the country')),
         ('private_in_country', _('Private school in the country')),
+        ('CB_ECE', _('CB ECE')),
     )
 
     SCHOOL_SHIFT = Choices(

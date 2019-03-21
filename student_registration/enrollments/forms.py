@@ -638,6 +638,7 @@ class GradingTermForm(forms.ModelForm):
             (_('D'), _('D')),
             (_('E'), _('E')),
             (_('F'), _('F')),
+            (_('G'), _('G')),
         )
 
         if instance.exam_term in ['3', '4']:
@@ -870,7 +871,7 @@ class GradingTermForm(forms.ModelForm):
                 label=_('Math') + ' (/60)', required=True,
                 widget=forms.NumberInput(attrs=({'maxlength': 5})),
                 min_value=0, max_value=60
-            )
+              )
 
             self.fields['exam_result_physic'] = forms.FloatField(
                 label=_('Physic') + ' (/20)', required=True,
