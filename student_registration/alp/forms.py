@@ -873,6 +873,32 @@ class RegistrationForm(forms.ModelForm):
             )
         )
 
+    def clean(self):
+        from django.db.models import Q
+        cleaned_data = super(RegistrationForm, self).clean()
+        student_first_name = cleaned_data.get('student_first_name')
+        student_father_name = cleaned_data.get('student_father_name')
+        student_last_name = cleaned_data.get('student_last_name')
+        student_mother_fullname = cleaned_data.get('student_mother_fullname')
+        student_id_number = cleaned_data.get('student_id_number')
+        student_birthday_year = cleaned_data.get('student_birthday_year')
+        student_birthday_day = cleaned_data.get('student_birthday_day')
+        student_birthday_month = cleaned_data.get('student_birthday_month')
+
+        if (Student.objects.filter(
+            Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
+              mother_fullname=student_mother_fullname, birthday_year=student_birthday_year, birthday_month=
+              student_birthday_month, birthday_day=student_birthday_day)
+            | Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
+                mother_fullname=student_mother_fullname, id_number=student_id_number)
+            | Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
+                id_number=student_id_number, birthday_year=student_birthday_year, birthday_month=student_birthday_month,
+                birthday_day=student_birthday_day)
+            | Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
+                id_number=student_id_number, birthday_year=student_birthday_year)
+        ).count()):
+            raise forms.ValidationError(_('Student name, already entered  '))
+
     def save(self, instance=None, request=None):
         if instance:
             serializer = OutreachSerializer(instance, data=request.POST)
