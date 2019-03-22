@@ -555,6 +555,8 @@ class Enrollment(TimeStampedModel):
             return 'Cycle 2'
         if self.classroom_id in [8, 9, 10]:
             return 'Cycle 3'
+        if self.classroom_id == 1:
+            return 'KG'
         return ''
 
     def grading(self, term):
