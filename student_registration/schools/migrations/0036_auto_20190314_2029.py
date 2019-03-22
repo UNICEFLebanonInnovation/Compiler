@@ -13,27 +13,27 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # migrations.CreateModel(
-        #     name='Coordinator',
-        #     fields=[
-        #         ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-        #         ('name', models.CharField(max_length=200, unique=True)),
-        #     ],
-        #     options={
-        #         'ordering': ['name'],
-        #         'verbose_name': 'Coordinator',
-        #     },
-        # ),
-        # migrations.RemoveField(
-        #     model_name='school',
-        #     name='field_coordinator_name',
-        # ),
-        # migrations.AddField(
-        #     model_name='school',
-        #     name='coordinator',
-        #     field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.Coordinator', verbose_name='coordinator'),
-        # ),
-        migrations.DeleteModel(
+        migrations.CreateModel(
             name='Coordinator',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=200, unique=True)),
+            ],
+            options={
+                'ordering': ['name'],
+                'verbose_name': 'Coordinator',
+            },
         ),
+        migrations.RemoveField(
+            model_name='school',
+            name='field_coordinator_name',
+        ),
+        migrations.AddField(
+            model_name='school',
+            name='coordinator',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='schools.Coordinator', verbose_name='coordinator'),
+        ),
+        # migrations.DeleteModel(
+        #     name='Coordinator',
+        # ),
     ]
