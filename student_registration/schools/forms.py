@@ -92,7 +92,6 @@ class ProfileForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">10</span>'),
                     Div('it_phone_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">11</span>'),
-                    Div('field_coordinator_name', css_class='col-md-3'),
                     Div('coordinator', css_class='col-md-3'),
                     css_class='row',
                 ),
