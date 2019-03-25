@@ -105,6 +105,7 @@ class Referral(models.Model):
 class Disability(models.Model):
 
     name = models.CharField(max_length=100)
+    active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['name']
@@ -358,6 +359,16 @@ class CLM(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Comments')
     )
+    unsuccessful_pretest_reason = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('dropout', _("Dropout from the round")),
+            ('uncompleted_participation', _("Uncompleted Participation"))
+        ),
+        verbose_name=_('unsuccessful pre test reason')
+    )
     unsuccessful_posttest_reason = models.CharField(
         max_length=100,
         blank=True,
@@ -462,6 +473,9 @@ class BLN(CLM):
             'BLN_ASSESSMENT/arabic',
             'BLN_ASSESSMENT/math',
             'BLN_ASSESSMENT/foreign_language',
+            'BLN_ASSESSMENT/social_emotional',
+            'BLN_ASSESSMENT/psychomotor',
+            'BLN_ASSESSMENT/artistic',
             # 'BLN_ASSESSMENT/english',
             # 'BLN_ASSESSMENT/french'
         ]
@@ -521,6 +535,18 @@ class BLN(CLM):
         if not french_english:
             return str(self.domain_improvement('foreign_language')) + '%'
         return str(french_english) + '%'
+
+    @property
+    def social_emotional_improvement(self):
+        return str(self.domain_improvement('social_emotional')) + '%'
+
+    @property
+    def psychomotor_improvement(self):
+        return str(self.domain_improvement('psychomotor')) + '%'
+
+    @property
+    def artistic_improvement(self):
+        return str(self.domain_improvement('artistic')) + '%'
 
     def pre_assessment_form(self):
         return self.assessment_form(stage='pre_test', assessment_slug='bln_pre_test')
