@@ -20,8 +20,6 @@ class AutoLogout(object):
     return response
 
   def process_request(self, request):
-
-    print("PRRTLT")
     if not request.user.is_authenticated() :
       #Can't log out if not logged in
       return
