@@ -97,21 +97,10 @@ LOCAL_APPS = [
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
-# MIDDLEWARE CONFIGURATION
-# ------------------------------------------------------------------------------
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
 
-# SECURITY CONFIGURATION
-X_FRAME_OPTIONS = 'DENY'
+
+# # SECURITY CONFIGURATION
+# X_FRAME_OPTIONS = 'DENY'
 
 # MIGRATIONS CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -156,8 +145,18 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    'default': env.db('DATABASE_URL', default='postgres:///student_registration'),
+    'default': env.db('DATABASE_URL', default='postgres:///Student_Registration'),
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'Student_Registration',
+#         'USER': 'postgres',
+#         'PASSWORD': 'pg007',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
 
@@ -288,6 +287,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -295,6 +297,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {'NAME': 'student_registration.password_validators.NumberValidator',
+     'OPTIONS': {
+         'min_digits': 3, }},
+    {'NAME': 'student_registration.password_validators.UppercaseValidator', },
+    {'NAME': 'student_registration.password_validators.LowercaseValidator', },
+    {'NAME': 'student_registration.password_validators.SymbolValidator', },
 ]
 
 # AUTHENTICATION CONFIGURATION
@@ -337,8 +345,8 @@ MONGODB_URI = env('MONGODB_URI', default='mongodb://localhost/education')
 
 # django-compressor
 # ------------------------------------------------------------------------------
-INSTALLED_APPS += ['compressor']
-STATICFILES_FINDERS += ['compressor.finders.CompressorFinder']
+# INSTALLED_APPS += ['compressor']
+# STATICFILES_FINDERS += ['compressor.finders.CompressorFinder']
 
 # Location of root django.contrib.admin URL, use {% url 'admin:index' %}
 ADMIN_URL = r'^admin/'

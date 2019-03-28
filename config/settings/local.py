@@ -26,9 +26,9 @@ SECRET_KEY = env('DJANGO_SECRET_KEY', default='u1zvr)oodenne1(e9^6gp1r_9yt+yj0t4
 # Mail settings
 # ------------------------------------------------------------------------------
 
-EMAIL_PORT = 1025
-
-EMAIL_HOST = 'localhost'
+# EMAIL_PORT = 1025
+#
+# EMAIL_HOST = 'localhost'
 EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND',
                     default='django.core.mail.backends.console.EmailBackend')
 
@@ -44,11 +44,26 @@ CACHES = {
 
 # django-debug-toolbar
 # ------------------------------------------------------------------------------
-MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware', ]
-INSTALLED_APPS += ['debug_toolbar', ]
+# MIDDLEWARE CONFIGURATION
+# ------------------------------------------------------------------------------
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'student_registration.lockout_middleware.StudentLockoutMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware','student_registration.middleware.AutoLogout','student_registration.cache_control_middleware.CacheControlMiddleware','student_registration.one_session.OneSessionPerUserMiddleware','student_registration.hsts_middleware.HSTSMiddleware','student_registration.xframe_middleware.XFrameMiddleware']
+INSTALLED_APPS += ['debug_toolbar','lockout','student_registration.accounts']
 
 INTERNAL_IPS = ['127.0.0.1', '10.0.2.2', ]
 
+# SECURITY CONFIGURATION
+X_FRAME_OPTIONS = 'DENY'
 
 import socket
 import os
@@ -97,3 +112,12 @@ LOGGING = {
         'level': 'INFO'
     },
 }
+
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+# Auto logout delay in minutes
+AUTO_LOGOUT_DELAY = 60  # equivalent to 5 minutes
+CSRF_USE_SESSIONS = True
+LOCKOUT_MAX_ATTEMPTS = 10
+LOCKOUT_TIME = 60
+

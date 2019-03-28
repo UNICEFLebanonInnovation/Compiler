@@ -344,6 +344,10 @@ class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,
         if self.request.method in ["PATCH", "POST", "PUT"]:
             return self.queryset
         terms = self.request.GET.get('term', 0)
+
+        if '\0' in terms:
+            terms = ''
+
         current_year = EducationYear.objects.get(current_year=True)
         if terms:
             qs = self.queryset.filter(
@@ -508,8 +512,8 @@ class ExportViewSet(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         if not self.request.user.is_staff:
-            return self.queryset.filter(owner=self.request.user)
-        return self.queryset
+            return self.queryset.filter(owner=self.request.user,  moved=False)
+        return self.queryset.filter(moved=False)
 
     def get(self, request, *args, **kwargs):
         school = request.GET.get('school', 0)

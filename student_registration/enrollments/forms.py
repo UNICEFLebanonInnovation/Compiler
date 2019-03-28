@@ -525,6 +525,47 @@ class EnrollmentForm(forms.ModelForm):
             )
         )
 
+    def clean(self):
+        from django.db.models import Q
+        cleaned_data = super(EnrollmentForm, self).clean()
+        student_first_name = cleaned_data.get('student_first_name')
+        student_father_name = cleaned_data.get('student_father_name')
+        student_last_name = cleaned_data.get('student_last_name')
+        student_mother_fullname = cleaned_data.get('student_mother_fullname')
+        student_id_number = cleaned_data.get('student_id_number')
+        student_birthday_year = cleaned_data.get('student_birthday_year')
+        student_birthday_day = cleaned_data.get('student_birthday_day')
+        student_birthday_month = cleaned_data.get('student_birthday_month')
+        edit = cleaned_data.get('student_id')
+        if not edit:
+            if (Student.objects.filter(
+                Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
+                    mother_fullname=student_mother_fullname, birthday_year=student_birthday_year, birthday_month=
+                    student_birthday_month, birthday_day=student_birthday_day)
+                |Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
+                    mother_fullname=student_mother_fullname, id_number=student_id_number)
+                |Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
+                    id_number=student_id_number, birthday_year=student_birthday_year, birthday_month=student_birthday_month,
+                    birthday_day=student_birthday_day)
+                | Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
+                    id_number=student_id_number, birthday_year=student_birthday_year)).count()):
+                raise forms.ValidationError(_('Student name, already entered  '))
+        else:
+            print(edit)
+            if (Student.objects.filter(
+                Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
+                    mother_fullname=student_mother_fullname, birthday_year=student_birthday_year, birthday_month=
+                    student_birthday_month, birthday_day=student_birthday_day)
+                |Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
+                    mother_fullname=student_mother_fullname, id_number=student_id_number)
+                |Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
+                    id_number=student_id_number, birthday_year=student_birthday_year, birthday_month=student_birthday_month,
+                    birthday_day=student_birthday_day)
+                | Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
+                    id_number=student_id_number, birthday_year=student_birthday_year)
+            ).exclude(id=edit).count()):
+                raise forms.ValidationError(_('Student name, already entered  '))
+
     # def clean(self):
     #     super(EnrollmentForm, self).clean()
         # print self.cleaned_data
@@ -601,7 +642,7 @@ class EnrollmentForm(forms.ModelForm):
 
     class Media:
         js = (
-            # 'js/jquery-1.12.3.min.js',
+            # 'js/jquery-3.3.1.min.js',
             # 'js/jquery-ui-1.12.1.js',
             # 'js/validator.js',
             # 'js/registrations.js',
@@ -638,6 +679,7 @@ class GradingTermForm(forms.ModelForm):
             (_('D'), _('D')),
             (_('E'), _('E')),
             (_('F'), _('F')),
+            (_('G'), _('G')),
         )
 
         if instance.exam_term in ['3', '4']:
@@ -870,7 +912,7 @@ class GradingTermForm(forms.ModelForm):
                 label=_('Math') + ' (/60)', required=True,
                 widget=forms.NumberInput(attrs=({'maxlength': 5})),
                 min_value=0, max_value=60
-            )
+              )
 
             self.fields['exam_result_physic'] = forms.FloatField(
                 label=_('Physic') + ' (/20)', required=True,
@@ -1397,7 +1439,7 @@ class EditOldDataForm(forms.ModelForm):
 
     class Media:
         js = (
-            'js/jquery-1.12.3.min.js',
+            'js/jquery-3.3.1.min.js',
             'js/jquery-ui-1.12.1.js',
             'js/validator.js',
             'js/registrations.js',

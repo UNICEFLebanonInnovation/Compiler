@@ -194,6 +194,7 @@
     $('#id_academic_year_exam_end').datepicker({dateFormat: "yy-mm-dd"});
     var notification_url = '/api/notifications/';
     var user_token = '{{ user_token }}';
+    var href_full_path = '{{ request.build_absolute_uri }}';
     var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
 
     $(document).ready(function() {
