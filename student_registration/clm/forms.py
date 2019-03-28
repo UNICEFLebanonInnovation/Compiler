@@ -78,11 +78,11 @@ PARTICIPATION = (
 LEARNING_RESULT = (
     ('', '----------'),
     ('repeat_level', _('Repeat level')),
-    ('graduated_next_level', _('Graduated to the next level')),
-    ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
-    ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
+    ('graduated_next_level', _('Referred to the next level')),
+    ('graduated_to_formal_kg', _('Referred to formal education - KG')),
+    ('graduated_to_formal_level1', _('Referred to formal education - Level 1')),
     ('referred_to_another_program', _('Referred to another program')),
-    # ('dropout', _('Dropout from school'))
+    ('dropout', _('Dropout, referral not possible'))
 )
 
 
@@ -243,9 +243,9 @@ class CommonForm(forms.ModelForm):
         choices=(
             ('', '----------'),
             ('repeat_level', _('Repeat level')),
-            ('graduated_next_level', _('Graduated to the next level')),
-            ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
-            ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
+            ('graduated_next_level', _('Referred to the next level')),
+            ('graduated_to_formal_kg', _('Referred to formal education - KG')),
+            ('graduated_to_formal_level1', _('Referred to formal education - Level 1')),
             ('referred_to_another_program', _('Referred to another program')),
             # ('dropout', _('Dropout from school'))
         ),
@@ -400,12 +400,12 @@ class BLNForm(CommonForm):
         choices=(
             ('', '----------'),
             ('repeat_level', _('Repeat level')),
-            ('attended_public_school', _('Attended public school')),
+            ('attended_public_school', _('Referred public school')),
             ('referred_to_alp', _('referred to ALP')),
             ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
-            ('reenrolled_in_alp', _('Re-register on another round of BLN')),
+            ('reenrolled_in_bln', _('Re-register on another round of BLN')),
             ('not_enrolled_any_program', _('Not enrolled in any educational program')),
-            # ('dropout', _('Dropout from school'))
+            ('dropout', _('Dropout, referral not possible'))
         ),
         initial=''
     )
@@ -818,7 +818,7 @@ class RSForm(CommonForm):
             ('', '----------'),
             ('repeat_level', _('Repeat level')),
             # ('dropout', _('Dropout from school')),
-            ('graduated_next_level', _('Graduated to the next level')),
+            ('graduated_next_level', _('Referred to the next level')),
         ),
         initial=''
     )
