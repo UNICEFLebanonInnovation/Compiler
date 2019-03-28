@@ -209,27 +209,10 @@ class CommonForm(forms.ModelForm):
     )
 
     disability = forms.ModelChoiceField(
-        queryset=Disability.objects.all(), widget=forms.Select,
+        queryset=Disability.objects.filter(active=True), widget=forms.Select,
         label=_('Does the child have any disability or special need?'),
         required=True, to_field_name='id',
         initial=1
-    )
-
-    have_labour = forms.MultipleChoiceField(
-        label=_('Does the child participate in work?'),
-        choices=CLM.HAVE_LABOUR,
-        widget=forms.CheckboxSelectMultiple,
-        required=False, initial='no'
-    )
-    labours = forms.MultipleChoiceField(
-        label=_('What is the type of work ?'),
-        choices=CLM.LABOURS,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-    labour_hours = forms.CharField(
-        label=_('How many hours does this child work in a day?'),
-        widget=forms.TextInput, required=False
     )
     hh_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.all(), widget=forms.Select,
@@ -249,7 +232,7 @@ class CommonForm(forms.ModelForm):
         initial=''
     )
     barriers = forms.MultipleChoiceField(
-        label=_('The main barriers affecting the daily attendance and performance of the child or drop out of school?'),
+        label=_('The main barriers affecting the daily attendance and performance of the child or drop out of school? (Select more than one if applicable)'),
         choices=CLM.BARRIERS,
         widget=forms.CheckboxSelectMultiple,
         required=False
@@ -332,9 +315,9 @@ class CommonForm(forms.ModelForm):
             'student_id_number',
             'internal_number',
             'disability',
-            'have_labour',
-            'labours',
-            'labour_hours',
+            # 'have_labour',
+            # 'labours',
+            # 'labour_hours',
             'hh_educational_level',
             'participation',
             'barriers',
@@ -343,6 +326,7 @@ class CommonForm(forms.ModelForm):
             'enrollment_id',
             'student_outreach_child',
             'comments',
+            'unsuccessful_pretest_reason',
             'unsuccessful_posttest_reason',
         )
         initial_fields = fields
@@ -350,7 +334,7 @@ class CommonForm(forms.ModelForm):
 
     class Media:
         js = (
-            # 'js/jquery-1.12.3.min.js',
+            # 'js/jquery-3.3.1.min.js',
             # 'js/jquery-ui-1.12.1.js',
             # 'js/validator.js',
             # 'js/registrations.js',
@@ -393,6 +377,22 @@ class BLNForm(CommonForm):
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
         required=False,
+    )
+    have_labour = forms.MultipleChoiceField(
+        label=_('Does the child participate in work?'),
+        choices=CLM.HAVE_LABOUR,
+        widget=forms.CheckboxSelectMultiple,
+        required=False, initial='no'
+    )
+    labours = forms.MultipleChoiceField(
+        label=_('What is the type of work ?'),
+        choices=CLM.LABOURS,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    labour_hours = forms.CharField(
+        label=_('How many hours does this child work in a day?'),
+        widget=forms.TextInput, required=False
     )
     learning_result = forms.ChoiceField(
         label=_('Based on the overall score, what is the recommended learning path?'),
@@ -627,15 +627,17 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
+                    Div('unsuccessful_pretest_reason', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('unsuccessful_posttest_reason', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('barriers', css_class='col-md-3'),
+                    Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
+                    Div('barriers', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('learning_result', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -659,11 +661,14 @@ class BLNForm(CommonForm):
             'student_birthday_year',
             'student_family_status',
             'student_have_children',
+            'have_labour',
+            'labours',
+            'labour_hours',
         )
 
     class Media:
         js = (
-            # 'js/jquery-1.12.3.min.js',
+            # 'js/jquery-3.3.1.min.js',
             # 'js/jquery-ui-1.12.1.js',
             # 'js/validator.js',
             # 'js/registrations.js',
@@ -693,7 +698,22 @@ class RSForm(CommonForm):
         choices=(('no', _("No")), ),
         initial='no'
     )
-
+    have_labour = forms.MultipleChoiceField(
+        label=_('Does the child participate in work?'),
+        choices=CLM.HAVE_LABOUR,
+        widget=forms.CheckboxSelectMultiple,
+        required=False, initial='no'
+    )
+    labours = forms.MultipleChoiceField(
+        label=_('What is the type of work ?'),
+        choices=CLM.LABOURS,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    labour_hours = forms.CharField(
+        label=_('How many hours does this child work in a day?'),
+        widget=forms.TextInput, required=False
+    )
     type = forms.ChoiceField(
         widget=forms.Select, required=True,
         label=_('Select the program type'),
@@ -1215,15 +1235,17 @@ class RSForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
+                    Div('unsuccessful_pretest_reason', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('unsuccessful_posttest_reason', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('barriers', css_class='col-md-3'),
+                    Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
+                    Div('barriers', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('learning_result', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1250,6 +1272,9 @@ class RSForm(CommonForm):
             'grade',
             'section',
             'referral',
+            'have_labour',
+            'labours',
+            'labour_hours',
             'registered_in_school',
             'student_family_status',
             'student_have_children',
@@ -1513,15 +1538,15 @@ class CBECEForm(CommonForm):
                     Div('hh_educational_level', css_class='col-md-3'),
                     css_class='row',
                 ),
-                Div(
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('have_labour', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('labours', css_class='col-md-3', css_id='labours'),
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
-                    css_class='row',
-                ),
+                # Div(
+                #     HTML('<span class="badge badge-default">2</span>'),
+                #     Div('have_labour', css_class='col-md-3'),
+                #     HTML('<span class="badge badge-default">3</span>'),
+                #     Div('labours', css_class='col-md-3', css_id='labours'),
+                #     HTML('<span class="badge badge-default">4</span>'),
+                #     Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
+                #     css_class='row',
+                # ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
             Fieldset(
@@ -1549,17 +1574,19 @@ class CBECEForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
+                    Div('unsuccessful_pretest_reason', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('unsuccessful_posttest_reason', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default '+display_final_grade+'">2</span>'),
+                    HTML('<span class="badge badge-default '+display_final_grade+'">3</span>'),
                     Div('final_grade', css_class='col-md-3'+display_final_grade),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('barriers', css_class='col-md-3'),
+                    Div('participation', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
+                    Div('barriers', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('learning_result', css_class='col-md-3'),
                     css_class='row',
                 ),

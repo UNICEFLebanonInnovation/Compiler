@@ -19,7 +19,7 @@ from .base import *  # noqa
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 # Raises ImproperlyConfigured exception if DJANGO_SECRET_KEY not in os.environ
-SECRET_KEY = env('DJANGO_SECRET_KEY')
+SECRET_KEY = env('DJANGO_SECRET_KEY', default='l^y44io8f!zr^#n(ui099rz+w2(p^ufz3j726-^6)7g2ijcp!k')
 
 
 # This ensures that Django will be able to detect a secure connection
@@ -27,14 +27,35 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # raven sentry client
 # See https://docs.sentry.io/clients/python/integrations/django/
-INSTALLED_APPS += ['raven.contrib.django.raven_compat', ]
+INSTALLED_APPS += ['raven.contrib.django.raven_compat','lockout','student_registration.accounts' ]
 
 # Use Whitenoise to serve static files
 # See: https://whitenoise.readthedocs.io/
 WHITENOISE_MIDDLEWARE = ['whitenoise.middleware.WhiteNoiseMiddleware', ]
-MIDDLEWARE = WHITENOISE_MIDDLEWARE + MIDDLEWARE
+# MIDDLEWARE CONFIGURATION
+# ------------------------------------------------------------------------------
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'student_registration.lockout_middleware.StudentLockoutMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+EXTRA_MIDDLEWARE = ['student_registration.middleware.AutoLogout',
+                    'student_registration.cache_control_middleware.CacheControlMiddleware',
+                    'student_registration.one_session.OneSessionPerUserMiddleware',
+                    'student_registration.hsts_middleware.HSTSMiddleware',
+                    'student_registration.xframe_middleware.XFrameMiddleware', ]
+MIDDLEWARE = WHITENOISE_MIDDLEWARE + MIDDLEWARE + EXTRA_MIDDLEWARE
 RAVEN_MIDDLEWARE = ['raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware']
 MIDDLEWARE = RAVEN_MIDDLEWARE + MIDDLEWARE
+
+
 # opbeat integration
 # See https://opbeat.com/languages/django/
 # INSTALLED_APPS += ['opbeat.contrib.django', ]
@@ -51,6 +72,7 @@ MIDDLEWARE = RAVEN_MIDDLEWARE + MIDDLEWARE
 # See https://docs.djangoproject.com/en/dev/ref/middleware/#module-django.middleware.security
 # and https://docs.djangoproject.com/en/dev/howto/deployment/checklist/#run-manage-py-check-deploy
 
+
 # set this to 60 seconds and then to 518400 when you can prove it works
 SECURE_HSTS_SECONDS = 60
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
@@ -64,6 +86,9 @@ SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = 'DENY'
+LOCKOUT_MAX_ATTEMPTS=10
+LOCKOUT_TIME=600
+
 
 # SITE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -109,8 +134,8 @@ SERVER_EMAIL = env('DJANGO_SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
 # Anymail with Mailgun
 INSTALLED_APPS += ['anymail', ]
 ANYMAIL = {
-    'MAILGUN_API_KEY': env('DJANGO_MAILGUN_API_KEY'),
-    'MAILGUN_SENDER_DOMAIN': env('MAILGUN_SENDER_DOMAIN')
+    'MAILGUN_API_KEY': env('DJANGO_MAILGUN_API_KEY', default=''),
+    'MAILGUN_SENDER_DOMAIN': env('MAILGUN_SENDER_DOMAIN', default='')
 }
 EMAIL_BACKEND = 'anymail.backends.mailgun.MailgunBackend'
 
@@ -128,7 +153,7 @@ TEMPLATES[0]['OPTIONS']['loaders'] = [
 
 # Use the Heroku-style specification
 # Raises ImproperlyConfigured exception if DATABASE_URL not in os.environ
-DATABASES['default'] = env.db('DATABASE_URL')
+DATABASES['default'] = env.db('DATABASE_URL', default='postgres:///student_registration')
 
 if env.bool('DATABASE_SSL_ENABLED', default=False):
     DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
@@ -152,7 +177,7 @@ CACHES = {
 
 
 # Sentry Configuration
-SENTRY_DSN = env('DJANGO_SENTRY_DSN')
+SENTRY_DSN = env('DJANGO_SENTRY_DSN', default='')
 SENTRY_CLIENT = env('DJANGO_SENTRY_CLIENT', default='raven.contrib.django.raven_compat.DjangoClient')
 LOGGING = {
     'version': 1,
@@ -208,7 +233,13 @@ RAVEN_CONFIG = {
 }
 
 # Custom Admin URL, use {% url 'admin:index' %}
-ADMIN_URL = env('DJANGO_ADMIN_URL')
+ADMIN_URL = env('DJANGO_ADMIN_URL', default='admin')
+
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+# Auto logout delay in minutes
+AUTO_LOGOUT_DELAY = 1 #equivalent to 5 minutes
+CSRF_USE_SESSIONS = True
 
 # Your production stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------

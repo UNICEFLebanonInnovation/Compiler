@@ -8,6 +8,8 @@
 
 {% block inner %}
 
+{% load static %}
+
 <h1>{% trans "Sign In" %}</h1>
 
 {#{% get_providers as socialaccount_providers %}#}
@@ -43,6 +45,27 @@
 {#  <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>#}
   <button class="primaryAction btn btn-primary" type="submit">{% trans "Sign In" %}</button>
 </form>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+<script>
+$(document).ready(function(){
+
+   $("input, select, textarea").attr("autocomplete", "off");
+
+});
+</script>
+<style>html { display:none }</style>
+<script>
+    if (self == top){
+        document.documentElement.style.display = 'block';
+    } else {
+    top.location = self.location;
+    }
+</script>
 
 {% endblock %}
 

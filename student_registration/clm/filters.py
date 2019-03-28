@@ -5,7 +5,12 @@ from django_filters import FilterSet, ModelChoiceFilter
 from student_registration.locations.models import Location
 from student_registration.schools.models import CLMRound, School, Section, ClassRoom
 from student_registration.students.models import Nationality
-from .models import BLN, RS, CBECE, Cycle
+from .models import (
+    BLN,
+    RS,
+    CBECE,
+    Cycle,
+    Disability)
 
 
 class CommonFilter(FilterSet):
@@ -13,6 +18,7 @@ class CommonFilter(FilterSet):
     governorate = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=True), empty_label=_('Governorate'))
     district = ModelChoiceFilter(queryset=Location.objects.filter(parent__isnull=False), empty_label=_('District'))
     student__nationality = ModelChoiceFilter(queryset=Nationality.objects.all(), empty_label=_('Nationality'))
+    disability = ModelChoiceFilter(queryset=Disability.objects.filter(active=True), empty_label=_('Disability'))
 
 
 class BLNFilter(CommonFilter):
@@ -33,6 +39,7 @@ class BLNFilter(CommonFilter):
             'participation': ['exact'],
             'learning_result': ['exact'],
             'owner__username': ['contains'],
+            'disability': ['exact'],
         }
 
 
@@ -65,6 +72,7 @@ class RSFilter(CommonFilter):
             'participation': ['exact'],
             'learning_result': ['exact'],
             'owner__username': ['contains'],
+            'disability': ['exact'],
         }
 
 
@@ -91,4 +99,5 @@ class CBECEFilter(CommonFilter):
             'participation': ['exact'],
             'learning_result': ['exact'],
             'owner__username': ['contains'],
+            'disability': ['exact'],
         }

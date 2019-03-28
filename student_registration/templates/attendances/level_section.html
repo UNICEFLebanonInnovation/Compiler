@@ -85,7 +85,13 @@ div.row-student.disabled {
                     <input type="hidden" name="level" value="{{ level.id }}" id="level" />
                 {% for line in students %}
                     <div class="row row-student {% if line.disabled or line.dropout_status %}disabled{% endif %}">
-                        <input type="hidden" name="enrollment_id[]" value="{{ line.id }}" class="enrollment_id" />
+                        <input type="hidden" name="enrollment_id[]" value="{{ line.id }}" class="enrollment_id"
+                               itemref="{{ line.id }}" student_id="{{ line.student.id }}" student_fullname="{{ line.student }}"
+                               student_sex="{{ line.student.sex }}"  student_age="{{ line.student.age }}"
+                               student_dropout="{{ line.student.dropout }}" student_birthday="{{ line.student.birthday }}"
+                               level="{{ level.id }}" level_name="{{ level.name }}" section="{{ section.id }}" section_name="{{ section.name }}"
+                               absence_reason=".absence_reason_{{ line.id }}:checked"/>
+
                         <input type="hidden" name="student_id[]" id="student_id_{{ line.id }}" value="{{ line.student.id }}" />
                         <input type="hidden" name="student_fullname[]" id="student_fullname_{{ line.id }}" value="{{ line.student }}" />
                         <input type="hidden" name="student_sex[]" id="student_sex_{{ line.id }}" value="{{ line.student.sex }}" />
@@ -157,6 +163,7 @@ div.row-student.disabled {
     <script type="text/javascript" src="{% static 'js/attendance.js' %}"></script>
     <script>
         var user_token = '{{ user_token }}';
+        var href_full_path = '{{ request.build_absolute_uri }}';
         var school_type = '{{ school_type }}';
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
     </script>

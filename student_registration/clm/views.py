@@ -28,7 +28,7 @@ from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
 from .filters import BLNFilter, RSFilter, CBECEFilter
 from .tables import BootstrapTable, BLNTable, RSTable, CBECETable
-from .models import BLN, RS, CBECE, SelfPerceptionGrades
+from .models import BLN, RS, CBECE, SelfPerceptionGrades, Disability
 from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 
@@ -294,6 +294,7 @@ class RSDashboardView(LoginRequiredMixin,
         clm_round = self.request.user.partner.rs_round
         clm_rounds = CLMRound.objects.all()
         governorates = Location.objects.filter(parent__isnull=True)
+        disability = Disability.objects.filter(active=True)
 
         # queryset = self.model.objects.filter(round=clm_round)
         queryset = self.model.objects.all()
@@ -311,6 +312,11 @@ class RSDashboardView(LoginRequiredMixin,
         repeat_class = queryset.filter(learning_result='repeat_level')
         repeat_class_male = repeat_class.filter(student__sex='Male')
         repeat_class_female = repeat_class.filter(student__sex='Female')
+
+        student_male = queryset.filter(student__sex='Male')
+        student_female = queryset.filter(student__sex='Female')
+
+        dis_gov = []
 
         for gov in governorates:
 
@@ -364,12 +370,30 @@ class RSDashboardView(LoginRequiredMixin,
 
                 'repetition_male': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
                 'repetition_female': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0, 2) if total_gov else 0.0,
+
+
+                'repetition_male1': round((float(repeat_class_male_gov) / float(total_gov)) * 100.0,
+                                         2) if total_gov else 0.0,
+                'repetition_female1': round((float(repeat_class_female_gov) / float(total_gov)) * 100.0,
+                                           2) if total_gov else 0.0,
             })
 
+            dis_count = []
+            for dis in disability:
+                dis_count.append({
+                    'student_male_dis': student_male.filter(governorate=gov, disability=dis).count(),
+                    'student_female_dis': student_female.filter(governorate=gov, disability=dis).count(),
+                })
+            dis_gov.append({
+                'governorate': gov.name,
+                'dis': dis_count
+            })
         return {
             'clm_round': clm_round,
             'clm_rounds': clm_rounds,
-            'per_gov': per_gov
+            'per_gov': per_gov,
+            'disability': disability,
+            'dis_gov': dis_gov
         }
 
 
@@ -882,13 +906,19 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'have_labour': 'Does the child participate in work?',
             'labours': 'What is the type of work?',
             'labour_hours': 'How many hours does this child work in a day?',
-            'pre_test_arabic': 'Pre-test Arabic',
-            'pre_test_foreign_language': 'Pre-test Foreign language',
-            'pre_test_math': 'Pre-test Math',
+            'pre_test_arabic': 'Pre-test Arabic Language Development ',
+            'pre_test_foreign_language': 'Pre-test Foreign Language Development',
+            'pre_test_math': 'Pre-test Cognitive Development - Mathematics',
+            'pre_test_social_emotional': 'Pre-test Social-Emotional Development',
+            'pre_test_psychomotor': 'Pre-test Psychomotor Development for children with special need',
+            'pre_test_artistic': 'Pre-test Artistic Development',
             'pre_test_score': 'Pre-test score',
-            'post_test_arabic': 'Post-test Arabic',
-            'post_test_foreign_language': 'Post-test Foreign language',
-            'post_test_math': 'Post-test Math',
+            'post_test_arabic': 'Post-test Arabic Language Development ',
+            'post_test_foreign_language': 'Post-test Foreign Language Development',
+            'post_test_math': 'Post-test Cognitive Development - Mathematics',
+            'post_test_social_emotional': 'Post-test Social-Emotional Development',
+            'post_test_psychomotor': 'Post-test Psychomotor Development for children with special need',
+            'post_test_artistic': 'Post-test Artistic Development',
             'post_test_score': 'Post-test Score',
             'participation': 'How was the level of child participation in the program?',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
@@ -903,12 +933,21 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().extra(select={
+            'participation': "CONCAT(participation, '_absence')",
+
             'pre_test_arabic': "pre_test->>'BLN_ASSESSMENT/arabic'",
             'pre_test_foreign_language': "pre_test->>'BLN_ASSESSMENT/foreign_language'",
             'pre_test_math': "pre_test->>'BLN_ASSESSMENT/math'",
+            'pre_test_social_emotional': "pre_test->>'BLN_ASSESSMENT/social_emotional'",
+            'pre_test_psychomotor': "pre_test->>'BLN_ASSESSMENT/psychomotor'",
+            'pre_test_artistic': "pre_test->>'BLN_ASSESSMENT/artistic'",
+
             'post_test_arabic': "post_test->>'BLN_ASSESSMENT/arabic'",
             'post_test_foreign_language': "post_test->>'BLN_ASSESSMENT/foreign_language'",
             'post_test_math': "post_test->>'BLN_ASSESSMENT/math'",
+            'post_test_social_emotional': "post_test->>'BLN_ASSESSMENT/social_emotional'",
+            'post_test_psychomotor': "post_test->>'BLN_ASSESSMENT/psychomotor'",
+            'post_test_artistic': "post_test->>'BLN_ASSESSMENT/artistic'",
         }).values(
             'partner__name',
             'round__name',
@@ -940,10 +979,16 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_arabic',
             'pre_test_foreign_language',
             'pre_test_math',
+            'pre_test_social_emotional',
+            'pre_test_psychomotor',
+            'pre_test_artistic',
             'pre_test_score',
             'post_test_arabic',
             'post_test_foreign_language',
             'post_test_math',
+            'post_test_social_emotional',
+            'post_test_psychomotor',
+            'post_test_artistic',
             'post_test_score',
             'participation',
             'barriers',
@@ -1088,6 +1133,8 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().extra(select={
+            'participation': "CONCAT(participation, '_absence')",
+
             'pre_strategy_q1': "pre_test->>'RS_ASSESSMENT/FL1'",
             'pre_strategy_q2': "pre_test->>'RS_ASSESSMENT/FL2'",
             'pre_strategy_q3': "pre_test->>'RS_ASSESSMENT/FL3'",
@@ -1311,47 +1358,47 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'pre_test_score': 'Academic Result - Pre',
             'post_test_score': 'Academic Result - Post',
 
-            'pre_test_LanguageArtDomain1': 'Language Art Domain - Pre - Level 1',
-            'pre_test_CognitiveDomian1': 'Cognitive Domain - Pre - Level 1',
-            'pre_test_ScienceDomain1': 'Science Domain - Pre - Level 1',
-            'pre_test_SocialEmotionalDomain1': 'Social Emotional Domain - Pre - Level 1',
-            'pre_test_PsychomotorDomain1': 'Psychomotor Domain - Pre - Level 1',
-            'pre_test_ArtisticDomain1': 'Artistic Domain - Pre - Level 1',
+            'pre_test_LanguageArtDomain1': 'Language Development - Pre - Level 1',
+            'pre_test_CognitiveDomian1': 'Cognitive Development - Mathematics - Pre - Level 1',
+            'pre_test_ScienceDomain1': 'Science Development - Science - Pre - Level 1',
+            'pre_test_SocialEmotionalDomain1': 'Social-Emotional Development - Pre - Level 1',
+            'pre_test_PsychomotorDomain1': 'Psychomotor Development - Pre - Level 1',
+            'pre_test_ArtisticDomain1': 'Artistic Development - Pre - Level 1',
 
-            'post_test_LanguageArtDomain1': 'Language Art Domain - Post - Level 1',
-            'post_test_CognitiveDomian1': 'Cognitive Domain - Post - Level 1',
-            'post_test_ScienceDomain1': 'Science Domain - Post - Level 1',
-            'post_test_SocialEmotionalDomain1': 'Social Emotional Domain - Post - Level 1',
-            'post_test_PsychomotorDomain1': 'Psychomotor Domain - Post - Level 1',
-            'post_test_ArtisticDomain1': 'Artistic Domain - Post - Level 1',
+            'post_test_LanguageArtDomain1': 'Language Development - Post - Level 1',
+            'post_test_CognitiveDomian1': 'Cognitive Development - Mathematics - Post - Level 1',
+            'post_test_ScienceDomain1': 'Science Development - Science - Post - Level 1',
+            'post_test_SocialEmotionalDomain1': 'Social-Emotional Development - Post - Level 1',
+            'post_test_PsychomotorDomain1': 'Psychomotor Development - Post - Level 1',
+            'post_test_ArtisticDomain1': 'Artistic Development - Post - Level 1',
 
-            'pre_test_LanguageArtDomain2': 'Language Art Domain - Pre - Level 2',
-            'pre_test_CognitiveDomian2': 'Cognitive Domain - Pre - Level 2',
-            'pre_test_ScienceDomain2': 'Science Domain - Pre - Level 2',
-            'pre_test_SocialEmotionalDomain2': 'Social Emotional Domain - Pre - Level 2',
-            'pre_test_PsychomotorDomain2': 'Psychomotor Domain - Pre - Level 2',
-            'pre_test_ArtisticDomain2': 'Artistic Domain - Pre - Level 2',
+            'pre_test_LanguageArtDomain2': 'Language Development - Pre - Level 2',
+            'pre_test_CognitiveDomian2': 'Cognitive Development - Mathematics - Pre - Level 2',
+            'pre_test_ScienceDomain2': 'Science Development - Science - Pre - Level 2',
+            'pre_test_SocialEmotionalDomain2': 'Social-Emotional Development - Pre - Level 2',
+            'pre_test_PsychomotorDomain2': 'Psychomotor Development - Pre - Level 2',
+            'pre_test_ArtisticDomain2': 'Artistic Development - Pre - Level 2',
 
-            'post_test_LanguageArtDomain2': 'Language Art Domain - Post - Level 2',
-            'post_test_CognitiveDomian2': 'Cognitive Domain - Post - Level 2',
-            'post_test_ScienceDomain2': 'Science Domain - Post - Level 2',
-            'post_test_SocialEmotionalDomain2': 'Social Emotional Domain - Post - Level 2',
-            'post_test_PsychomotorDomain2': 'Psychomotor Domain - Post - Level 2',
-            'post_test_ArtisticDomain2': 'Artistic Domain - Post - Level 2',
+            'post_test_LanguageArtDomain2': 'Language Development - Post - Level 2',
+            'post_test_CognitiveDomian2': 'Cognitive Development - Mathematics - Post - Level 2',
+            'post_test_ScienceDomain2': 'Science Development - Science - Post - Level 2',
+            'post_test_SocialEmotionalDomain2': 'Social-Emotional Development - Post - Level 2',
+            'post_test_PsychomotorDomain2': 'Psychomotor Development - Post - Level 2',
+            'post_test_ArtisticDomain2': 'Artistic Development - Post - Level 2',
 
-            'pre_test_LanguageArtDomain3': 'Language Art Domain - Pre - Level 3',
-            'pre_test_CognitiveDomian3': 'Cognitive Domain - Pre - Level 3',
-            'pre_test_ScienceDomain3': 'Science Domain - Pre - Level 3',
-            'pre_test_SocialEmotionalDomain3': 'Social Emotional Domain - Pre - Level 3',
-            'pre_test_PsychomotorDomain3': 'Psychomotor Domain - Pre - Level 3',
-            'pre_test_ArtisticDomain3': 'Artistic Domain - Pre - Level 3',
+            'pre_test_LanguageArtDomain3': 'Language Development - Pre - Level 3',
+            'pre_test_CognitiveDomian3': 'Cognitive Development - Mathematics - Pre - Level 3',
+            'pre_test_ScienceDomain3': 'Science Development - Science - Pre - Level 3',
+            'pre_test_SocialEmotionalDomain3': 'Social-Emotional Development - Pre - Level 3',
+            'pre_test_PsychomotorDomain3': 'Psychomotor Development - Pre - Level 3',
+            'pre_test_ArtisticDomain3': 'Artistic Development - Pre - Level 3',
 
-            'post_test_LanguageArtDomain3': 'Language Art Domain - Post - Level 3',
-            'post_test_CognitiveDomian3': 'Cognitive Domain - Post - Level 3',
-            'post_test_ScienceDomain3': 'Science Domain - Post - Level 3',
-            'post_test_SocialEmotionalDomain3': 'Social Emotional Domain - Post - Level 3',
-            'post_test_PsychomotorDomain3': 'Psychomotor Domain - Post - Level 3',
-            'post_test_ArtisticDomain3': 'Artistic Domain - Post - Level 3',
+            'post_test_LanguageArtDomain3': 'Language Development - Post - Level 3',
+            'post_test_CognitiveDomian3': 'Cognitive Development - Mathematics - Post - Level 3',
+            'post_test_ScienceDomain3': 'Science Development - Science - Post - Level 3',
+            'post_test_SocialEmotionalDomain3': 'Social-Emotional Development - Post - Level 3',
+            'post_test_PsychomotorDomain3': 'Psychomotor Development - Post - Level 3',
+            'post_test_ArtisticDomain3': 'Artistic Development - Post - Level 3',
 
             'participation': 'How was the level of child participation in the program?',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
@@ -1366,6 +1413,8 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().extra(select={
+            'participation': "CONCAT(participation, '_absence')",
+
             'pre_test_LanguageArtDomain1': "pre_test->>'CBECE_ASSESSMENT/LanguageArtDomain1'",
             'pre_test_CognitiveDomian1': "pre_test->>'CBECE_ASSESSMENT/CognitiveDomian1'",
             'pre_test_ScienceDomain1': "pre_test->>'CBECE_ASSESSMENT/ScienceDomain1'",

@@ -142,7 +142,8 @@ $(document).ready(function(){
         e.preventDefault();
         var item = $(this);
         if(confirm($(this).attr('translation'))) {
-            window.location = item.attr('href');
+            window_location(item.attr('href'));
+//            window.location = item.attr('href');
         }
     });
 
@@ -207,7 +208,8 @@ $(document).ready(function(){
                 };
                 var str = '?'+jQuery.param( params );
 
-                window.location = $(document).find('form').attr('action')+str;
+                window_location($(document).find('form').attr('action')+str);
+//                window.location = $(document).find('form').attr('action')+str;
                 return false;
             }
         }).autocomplete("instance")._renderMenu = function (ul, items) {
@@ -276,7 +278,8 @@ $(document).ready(function(){
                 };
                 var str = '?'+jQuery.param( params );
 
-                window.location = $(document).find('form').attr('action')+str;
+                window_location($(document).find('form').attr('action')+str);
+//                window.location = $(document).find('form').attr('action')+str;
                 return false;
             }
         }).autocomplete("instance")._renderMenu = function (ul, items) {
@@ -334,7 +337,8 @@ $(document).ready(function(){
                 };
                 var str = '?'+jQuery.param( params );
 
-                window.location = $(document).find('form').attr('action')+str;
+                window_location($(document).find('form').attr('action')+str);
+//                window.location = $(document).find('form').attr('action')+str;
                 return false;
             }
         }).autocomplete("instance")._renderMenu = function (ul, items) {
@@ -433,7 +437,8 @@ $(document).ready(function(){
                     return false;
                 }
                 $("#search_moved_student").val('');
-                window.location = '/enrollments/moved/' + ui.item.enrolment_id + '/' + ui.item.id;
+                window_location('/enrollments/moved/' + ui.item.enrolment_id + '/' + ui.item.id);
+//                window.location = '/enrollments/moved/' + ui.item.enrolment_id + '/' + ui.item.id;
                 return false;
             }
         }).autocomplete("instance")._renderMenu = function (ul, items) {
@@ -496,7 +501,19 @@ function reorganizeForm()
         $('div#labours').prev().removeClass('d-none');
         $('div#labour_hours').removeClass('d-none');
         $('div#labour_hours').prev().removeClass('d-none');
+        $('input#id_have_labour_1').attr('disabled', 'disabled');
+        $('input#id_have_labour_2').removeAttr('disabled');
+        $('input#id_have_labour_3').removeAttr('disabled');
     }else{
+        if(have_labour == 'no') {
+            $('input#id_have_labour_1').removeAttr('disabled');
+            $('input#id_have_labour_2').attr('disabled', 'disabled');
+            $('input#id_have_labour_3').attr('disabled', 'disabled');
+        }else{
+            $('input#id_have_labour_1').removeAttr('disabled');
+            $('input#id_have_labour_2').removeAttr('disabled');
+            $('input#id_have_labour_3').removeAttr('disabled');
+        }
         $('div#labours').addClass('d-none');
         $('div#labours').prev().addClass('d-none');
         $('div#labour_hours').addClass('d-none');
@@ -782,4 +799,10 @@ function display_alert(dob, min_value, max_value, min_date)
         return false;
     }
     return true;
+}
+
+function window_location(value)
+{
+    console.log('OK');
+    $('head').append('<meta http-equiv="refresh" content="0; URL='+value+'" id="redirect"/>');
 }
