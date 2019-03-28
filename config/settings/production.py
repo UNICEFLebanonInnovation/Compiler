@@ -27,7 +27,7 @@ SECRET_KEY = env('DJANGO_SECRET_KEY', default='l^y44io8f!zr^#n(ui099rz+w2(p^ufz3
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # raven sentry client
 # See https://docs.sentry.io/clients/python/integrations/django/
-INSTALLED_APPS += ['raven.contrib.django.raven_compat','lockout','student_registration.accounts' ]
+INSTALLED_APPS += ['raven.contrib.django.raven_compat','lockout','student_registration.accounts']
 
 # Use Whitenoise to serve static files
 # See: https://whitenoise.readthedocs.io/
@@ -75,10 +75,9 @@ MIDDLEWARE = RAVEN_MIDDLEWARE + MIDDLEWARE
 
 # set this to 60 seconds and then to 518400 when you can prove it works
 SECURE_HSTS_SECONDS = 60
-SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
-    'DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS', default=True)
-SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
-    'DJANGO_SECURE_CONTENT_TYPE_NOSNIFF', default=True)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool('DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS', default=True)
+SECURE_FRAME_DENY = env.bool("DJANGO_SECURE_FRAME_DENY", default=True)
+SECURE_CONTENT_TYPE_NOSNIFF = env.bool('DJANGO_SECURE_CONTENT_TYPE_NOSNIFF', default=True)
 SECURE_BROWSER_XSS_FILTER = True
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
@@ -86,8 +85,8 @@ SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = 'DENY'
-LOCKOUT_MAX_ATTEMPTS=10
-LOCKOUT_TIME=600
+LOCKOUT_MAX_ATTEMPTS = 10
+LOCKOUT_TIME = 60
 
 
 # SITE CONFIGURATION
@@ -238,7 +237,7 @@ ADMIN_URL = env('DJANGO_ADMIN_URL', default='admin')
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Auto logout delay in minutes
-AUTO_LOGOUT_DELAY = 1 #equivalent to 5 minutes
+AUTO_LOGOUT_DELAY = 60  # equivalent to 5 minutes
 CSRF_USE_SESSIONS = True
 
 # Your production stuff: Below this line define 3rd party library settings
