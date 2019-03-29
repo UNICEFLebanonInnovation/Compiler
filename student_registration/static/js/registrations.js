@@ -67,6 +67,9 @@ $(document).ready(function(){
     $(document).on('change', 'select#id_new_registry', function(){
         reorganizeForm();
     });
+    $(document).on('change', 'select#id_cycle', function(){
+        reorganizeForm();
+    });
     $(document).on('change', 'select#id_student_outreached', function(){
         reorganizeForm();
     });
@@ -479,6 +482,7 @@ function reorganizeForm()
     var have_labour = $('input[name=have_labour]:checked').val();
     var program_site = $('select#id_site').val();
     var registered_unhcr = $('select#id_student_registered_in_unhcr').val();
+    var id_cycle = $('select#id_cycle').val();
 
     if(program_site == 'out_school') {
         $('div#div_id_school').parent().addClass('d-none');
@@ -496,7 +500,15 @@ function reorganizeForm()
         $('div#student_have_children').prev().addClass('d-none');
     }
 
-    if(have_labour == 'yes_morning' || have_labour == 'yes_afternoon'){
+    if(id_cycle == '3'){
+        $('option[value=graduated_to_formal_kg]').show();
+        $('option[value=graduated_to_formal_level1]').show();
+    }else{
+        $('option[value=graduated_to_formal_kg]').hide();
+        $('option[value=graduated_to_formal_level1]').hide();
+    }
+
+    if(have_labour == 'yes_morning' || have_labour == 'yes_afternoon' || have_labour == 'yes_all_day'){
         $('div#labours').removeClass('d-none');
         $('div#labours').prev().removeClass('d-none');
         $('div#labour_hours').removeClass('d-none');
@@ -504,15 +516,18 @@ function reorganizeForm()
         $('input#id_have_labour_1').attr('disabled', 'disabled');
         $('input#id_have_labour_2').removeAttr('disabled');
         $('input#id_have_labour_3').removeAttr('disabled');
+        $('input#id_have_labour_4').removeAttr('disabled');
     }else{
         if(have_labour == 'no') {
             $('input#id_have_labour_1').removeAttr('disabled');
             $('input#id_have_labour_2').attr('disabled', 'disabled');
             $('input#id_have_labour_3').attr('disabled', 'disabled');
+            $('input#id_have_labour_4').attr('disabled', 'disabled');
         }else{
             $('input#id_have_labour_1').removeAttr('disabled');
             $('input#id_have_labour_2').removeAttr('disabled');
             $('input#id_have_labour_3').removeAttr('disabled');
+            $('input#id_have_labour_4').removeAttr('disabled');
         }
         $('div#labours').addClass('d-none');
         $('div#labours').prev().addClass('d-none');

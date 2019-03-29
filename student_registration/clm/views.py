@@ -146,7 +146,7 @@ class AssessmentSubmission(SingleObjectMixin, View):
             return HttpResponseBadRequest()
 
         payload = json.loads(request.body.decode('utf-8'))
-        status = payload['status']
+        status1 = payload['status']
         enrollment_id = payload['enrollment_id']
         model = payload['enrollment_model']
 
@@ -157,12 +157,12 @@ class AssessmentSubmission(SingleObjectMixin, View):
         else:
             enrollment = CBECE.objects.get(id=int(enrollment_id))
 
-        enrollment.status = status
-        setattr(enrollment, status, payload)
-        enrollment.calculate_score(status)
+        enrollment.status = status1
+        setattr(enrollment, status1, payload)
+        enrollment.calculate_score(status1)
         enrollment.save()
 
-        return HttpResponse()
+        return JsonResponse({'status': status.HTTP_200_OK})
 
 
 class BLNListView(LoginRequiredMixin,
