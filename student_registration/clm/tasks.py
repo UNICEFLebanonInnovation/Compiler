@@ -12,94 +12,146 @@ from student_registration.backends.utils import post_data
 
 @app.task
 def push_bln_data(file_name, base_url, token, protocol='HTTPS'):
-
-    # from .models import BLN
-    # objects = BLN.objects.all()
+    # from .models import RS
+    # objects = RS.objects.all()
     # objects.delete()
 
-    # LEARNING_RESULT = ['repeat_level', 'attended_public_school', 'dropout',
-    #                    'referred_to_alp', 'ready_to_alp_but_not_possible',
-    #                    'reenrolled_in_alp', 'not_enrolled_any_program']
+    wb = load_workbook(filename='test.XLSX', read_only=True)
+    ws = wb['bln']
 
-    PARTICIPATION = ['less_than_5days', '5_10_days',
-                     '10_15_days', 'more_than_15days']
+    for row in ws.rows:
+        if row[0].value == 'skip':
+            continue
 
-    wb = load_workbook(filename=file_name, read_only=True)
-    for ws in wb:
-        for row in ws.rows:
-            try:
-                data = {}
-                data['new_registry'] = 'yes'
-                data['student_outreached'] = 'no'
-                data['have_barcode'] = 'no'
-                data['partner'] = row[0].value
-                data['round_id'] = row[1].value if row[1].value else 1
-                data['student_first_name'] = row[2].value if row[2].value else 'None'
-                data['student_father_name'] = row[3].value if row[3].value else 'None'
-                data['student_mother_fullname'] = row[4].value if row[4].value else 'None'
-                data['student_last_name'] = row[5].value if row[5].value else 'None'
-                data['student_sex'] = row[6].value if row[6].value else 'Male'
-                data['student_nationality'] = row[7].value if row[7].value else 1
-                data['student_birthday_year'] = row[8].value if row[8].value else 2009
-                # birthday_year = datetime.strptime(data['student_birthday_year'], '%Y-%m-%d')
-                # print(birthday_year.year)
-                # print(birthday_year.month)
-                # print(birthday_year.day)
-                data['student_birthday_month'] = 1
-                data['student_birthday_day'] = 1
-                data['governorate'] = row[9].value
-                data['district'] = row[10].value
-                data['learning_result'] = row[19].value
-                data['participation'] = random.choice(PARTICIPATION)
+        try:
+            data = {}
+            data['round'] = row[1].value if row[1].value else 1
+            data['new_registry'] = row[2].value if row[2].value else 'yes'
+            data['student_outreached'] = row[3].value if row[3].value else 'no'
+            data['have_barcode'] = row[4].value if row[4].value else 'no'
+            data['partner'] = 10
+            data['governorate'] = row[6].value
+            data['district'] = row[7].value
+            # data['location'] = row[8].value
+            data['language'] = row[8].value if row[8].value else 'english_arabic'
+            data['student_first_name'] = row[9].value if row[9].value else 'None'
+            data['student_father_name'] = row[10].value if row[10].value else 'None'
+            data['student_mother_fullname'] = row[11].value if row[11].value else 'None'
+            data['student_last_name'] = row[12].value if row[12].value else 'None'
+            data['student_sex'] = row[13].value if row[13].value else 'Male'
+            data['student_nationality'] = row[14].value if row[14].value else 1
+            data['student_birthday_year'] = row[15].value if row[15].value else '2009'
+            data['student_birthday_month'] = row[16].value if row[16].value else '1'
+            data['student_birthday_day'] = row[17].value if row[17].value else '1'
+            data['student_p_code'] = row[18].value if row[18].value else 'None'
+            data['disability'] = row[19].value if row[19].value else 1
+            data['student_id_number'] = row[20].value if row[20].value else 'None'
+            data['internal_number'] = row[21].value if row[21].value else 'None'
+            data['comments'] = row[22].value if row[22].value else 'None'
+            data['hh_educational_level'] = row[23].value
+            data['student_family_status'] = row[24].value if row[24].value else 'single'
+            data['student_have_children'] = row[25].value if row[25].value else 0
+            data['have_labour'] = [row[26].value] if row[26].value else []
+            # data['labours'] = row[27].value
+            data['labour_hours'] = row[28].value
+            data['pre_test_language'] = row[29].value
+            data['pre_test_math'] = row[30].value
+            data['pre_test_arabic'] = row[31].value
+            data['post_test_language'] = row[32].value
+            data['post_test_math'] = row[33].value
+            data['post_test_arabic'] = row[34].value
 
-                result = post_data(protocol=protocol, url=base_url, apifunc='/api/clm-bln/', token=token, data=data)
-                result = json.loads(result)
+            if row[35].value:
+                data['unsuccessful_posttest_reason'] = row[35].value
+            data['participation'] = row[36].value
 
-                try:
-                    assessment = {}
-                    assessment['status'] = 'pre_test'
-                    assessment['enrollment_id'] = result['id']
-                    assessment['enrollment_model'] = 'BLN'
-                    assessment['BLN_ASSESSMENT/arabic'] = row[11].value if row[11].value else '0'
-                    assessment['BLN_ASSESSMENT/english'] = row[12].value if row[12].value else '0'
-                    assessment['BLN_ASSESSMENT/french'] = row[13].value if row[13].value else '0'
-                    assessment['BLN_ASSESSMENT/math'] = row[14].value if row[14].value else '0'
+            # data['barriers'] = [''.join(row[37].value.split())] if (row[37].value or row[37].value == ' ') else []
+            data['learning_result'] = row[38].value
 
-                    post_data(protocol=protocol, url=base_url, apifunc='/clm/assessment-submission/', token=token,
-                              data=assessment)
-                except Exception as ex:
-                    print("---------------")
-                    print("error: ", ex.message)
-                    print(json.dumps(assessment, cls=DjangoJSONEncoder))
-                    print("---------------")
-                    pass
+            result = post_data(protocol=protocol, url=base_url, apifunc='/api/clm-bln/', token=token, data=data)
+            result = json.loads(result)
+            # print(sresult)
 
-                try:
-                    assessment = {}
-                    assessment['status'] = 'post_test'
-                    assessment['enrollment_id'] = result['id']
-                    assessment['enrollment_model'] = 'BLN'
-                    assessment['BLN_ASSESSMENT/arabic'] = row[15].value if row[15].value else '0'
-                    assessment['BLN_ASSESSMENT/english'] = row[16].value if row[16].value else '0'
-                    assessment['BLN_ASSESSMENT/french'] = row[17].value if row[17].value else '0'
-                    assessment['BLN_ASSESSMENT/math'] = row[18].value if row[18].value else '0'
+        except Exception as ex:
+            print("---------------1")
+            print("error: ", ex.message)
+            print(json.dumps(data, cls=DjangoJSONEncoder))
+            print("---------------")
+            continue
 
-                    post_data(protocol=protocol, url=base_url, apifunc='/clm/assessment-submission/', token=token,
-                              data=assessment)
-                except Exception as ex:
-                    print("---------------")
-                    print("error: ", ex.message)
-                    print (assessment)
-                    print(json.dumps(assessment, cls=DjangoJSONEncoder))
-                    print("---------------")
-                    pass
 
-            except Exception as ex:
-                print("---------------")
-                print("error: ", ex.message)
-                print(json.dumps(data, cls=DjangoJSONEncoder))
-                print("---------------")
-                continue
+@app.task
+def push_cbece_data(file_name, base_url, token, protocol='HTTPS'):
+    # from .models import RS
+    # objects = RS.objects.all()
+    # objects.delete()
+
+    wb = load_workbook(filename='test.XLSX', read_only=True)
+    ws = wb['cbece']
+
+    for row in ws.rows:
+        if row[0].value == 'skip':
+            continue
+
+        try:
+            data = {}
+            data['partner'] = 10
+            data['round'] = row[1].value if row[1].value else 1
+            data['new_registry'] = row[2].value if row[2].value else 'yes'
+            data['student_outreached'] = row[3].value if row[3].value else 'no'
+            data['have_barcode'] = row[4].value if row[4].value else 'no'
+            data['cycle'] = row[5].value if row[5].value else 1
+            data['id_site'] = row[6].value if row[5].value else 1
+            data['school'] = row[7].value
+            data['governorate'] = row[8].value
+            data['district'] = row[9].value
+            # data['location'] = row[10].value
+            data['language'] = row[11].value if row[11].value else 'english_arabic'
+            data['referral'] = [row[12].value] if row[12].value else []
+            data['student_first_name'] = row[13].value if row[13].value else 'None'
+            data['student_father_name'] = row[14].value if row[14].value else 'None'
+            data['student_mother_fullname'] = row[15].value if row[15].value else 'None'
+            data['student_last_name'] = row[16].value if row[16].value else 'None'
+            data['student_sex'] = row[17].value if row[17].value else 'Male'
+            data['student_nationality'] = row[18].value if row[18].value else 1
+            data['student_birthday_year'] = row[19].value if row[19].value else '2009'
+            data['student_birthday_month'] = row[20].value if row[20].value else '1'
+            data['student_birthday_day'] = row[21].value if row[21].value else '1'
+            data['student_p_code'] = row[22].value if row[22].value else 'None'
+            data['disability'] = row[23].value if row[23].value else 1
+            data['student_id_number'] = row[24].value if row[24].value else 'None'
+            data['internal_number'] = row[25].value if row[25].value else 'None'
+            data['comments'] = row[26].value if row[26].value else 'None'
+            data['child_muac'] = row[27].value if row[27].value else 2
+            data['hh_educational_level'] = row[28].value
+            data['have_labour'] = [row[29].value] if row[29].value else []
+            # data['labours'] = row[30].value
+            data['labour_hours'] = row[31].value
+
+            # data['pre_test_language'] = row[29].value
+            # data['pre_test_math'] = row[30].value
+            # data['pre_test_arabic'] = row[31].value
+            # data['post_test_language'] = row[32].value
+            # data['post_test_math'] = row[33].value
+            # data['post_test_arabic'] = row[34].value
+
+            if row[35].value:
+                data['unsuccessful_posttest_reason'] = row[44].value
+            data['participation'] = row[45].value
+
+            data['barriers'] = [''.join(row[46].value.split())] if (row[46].value or row[46].value == ' ') else []
+            data['learning_result'] = row[47].value
+
+            result = post_data(protocol=protocol, url=base_url, apifunc='/api/clm-bln/', token=token, data=data)
+            result = json.loads(result)
+            # print(sresult)
+
+        except Exception as ex:
+            print("---------------1")
+            print("error: ", ex.message)
+            print(json.dumps(data, cls=DjangoJSONEncoder))
+            print("---------------")
+            continue
 
 
 @app.task
@@ -109,7 +161,7 @@ def push_rs_data(file_name, base_url, token, protocol='HTTPS'):
     # objects = RS.objects.all()
     # objects.delete()
 
-    wb = load_workbook(filename='44.XLSX', read_only=True)
+    wb = load_workbook(filename='test.XLSX', read_only=True)
     ws = wb['RS']
 
     for row in ws.rows:
@@ -357,5 +409,4 @@ def push_rs_data(file_name, base_url, token, protocol='HTTPS'):
             print(json.dumps(data, cls=DjangoJSONEncoder))
             print("---------------")
             continue
-
 
