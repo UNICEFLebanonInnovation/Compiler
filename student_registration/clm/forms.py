@@ -232,7 +232,7 @@ class CommonForm(forms.ModelForm):
         initial=''
     )
     barriers = forms.MultipleChoiceField(
-        label=_('The main barriers affecting the daily attendance and performance of the child or drop out of school? (Select more than one if applicable)'),
+        label=_('The main barriers affecting the daily attendance and performance of the child or drop out of programme? (Select more than one if applicable)'),
         choices=CLM.BARRIERS,
         widget=forms.CheckboxSelectMultiple,
         required=False
@@ -1303,7 +1303,7 @@ class CBECEForm(CommonForm):
     cycle = forms.ModelChoiceField(
         queryset=Cycle.objects.all(), widget=forms.Select,
         label=_('In which cycle is this child registered?'),
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
         initial=0
     )
     site = forms.ChoiceField(
