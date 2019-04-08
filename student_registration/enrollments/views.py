@@ -279,7 +279,8 @@ class ListingView(LoginRequiredMixin,
         education_year = EducationYear.objects.get(current_year=True)
         return Enrollment.objects.exclude(moved=True).filter(
             education_year=education_year,
-            school=self.request.user.school_id
+            school=self.request.user.school_id,
+            dropout_status=False
         )
 
 
@@ -329,6 +330,27 @@ class LoggingProgramMoveViewSet(mixins.RetrieveModelMixin,
     queryset = LoggingProgramMove.objects.all()
     serializer_class = LoggingProgramMoveSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+
+class StudentDropoutViewSet(mixins.RetrieveModelMixin,
+                                mixins.ListModelMixin,
+                                viewsets.GenericViewSet):
+
+    model = Enrollment
+    queryset = Enrollment.objects.all()
+
+    def get_queryset(self):
+        if self.request.method in ["PATCH", "POST", "PUT"]:
+            return self.queryset
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('dropout_status', 0):
+            enrollment = Enrollment.objects.get(id=request.POST.get('dropout_status', 0))
+            dropout_date = request.POST.get('dropout_date', 0)
+            enrollment.dropout_status = True
+            enrollment.dropout_date = dropout_date
+            enrollment.save()
+        return JsonResponse({'status': status.HTTP_200_OK})
 
 
 class LoggingStudentMoveViewSet(mixins.RetrieveModelMixin,

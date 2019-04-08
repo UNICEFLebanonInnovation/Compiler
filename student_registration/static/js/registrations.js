@@ -21,7 +21,9 @@ $(document).ready(function(){
     if($(document).find('.moving-date-input').length >= 1) {
         $('.moving-date-input').datepicker({dateFormat: "yy-mm-dd"});
     }
-
+    if($(document).find('.dropout-date-input').length >= 1) {
+        $('.dropout-date-input').datepicker({dateFormat: "yy-mm-dd"});
+    }
     $("td[class='student.first_name']").addClass('font-bolder');
     $("td[class='student.father_name']").addClass('font-bolder');
     $("td[class='student.last_name']").addClass('font-bolder');
@@ -116,6 +118,29 @@ $(document).ready(function(){
         var itemscope = item.attr('itemscope');
         if($('#moving_date_'+itemscope).val()) {
             moved_student(item.attr('itemscope'), $('#moving_date_'+itemscope).val());
+            item.parents('tr').remove();
+        }
+    });
+
+    $(document).on('click', '.dropout-button', function(){
+        var item = $(this);
+        var itemscope = item.attr('itemscope');
+        if(confirm($(this).attr('translation'))) {
+
+            $('.dropout-date-block').addClass('d-none');
+            $('#dropout_date_block_'+itemscope).removeClass('d-none');
+        }
+    });
+    $(document).on('click', '.cancel-dropout-button', function(){
+        var itemscope = $(this).attr('itemscope');
+        $('#dropout_date_block_'+itemscope).addClass('d-none');
+        $('#dropout_button_'+itemscope).removeClass('d-none');
+    });
+    $(document).on('click', '.save-dropout-button', function(){
+        var item = $(this);
+        var itemscope = item.attr('itemscope');
+        if($('#dropout_date_'+itemscope).val()) {
+            dropout_student_enrollment(item.attr('itemscope'), $('#dropout_date_'+itemscope).val());
             item.parents('tr').remove();
         }
     });
@@ -608,6 +633,27 @@ function moved_student(item, moved_date)
     $.ajax({
         type: "POST",
         url: '/api/logging-student-move/',
+        data: data,
+        cache: false,
+        async: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            console.log(response);
+        },
+        error: function(response) {
+            console.log(response);
+        }
+    });
+}
+
+function dropout_student_enrollment(dropout_status, dropout_date)
+{
+    var data = {dropout_status: dropout_status, dropout_date: dropout_date};
+
+    $.ajax({
+        type: "POST",
+        url: '/api/student-dropout-enrollment/',
         data: data,
         cache: false,
         async: false,

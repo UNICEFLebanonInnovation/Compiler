@@ -488,7 +488,11 @@ class Enrollment(TimeStampedModel):
         null=True,
         verbose_name=_('Last moved date')
     )
-
+    dropout_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('dropout date')
+    )
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
     disabled_objects = EnrollmentDisabledManager()
