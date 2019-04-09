@@ -213,7 +213,7 @@ class School(models.Model):
     def total_registered_2ndshift(self):
         from student_registration.enrollments.models import Enrollment
         return Enrollment.objects.filter(
-            education_year__current_year=True, moved=False,
+            education_year__current_year=True, moved=False, dropout_status=False,
             school_id=self.id
         ).count()
 

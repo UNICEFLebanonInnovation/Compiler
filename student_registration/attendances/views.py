@@ -178,7 +178,8 @@ class AttendanceView(LoginRequiredMixin,
 
         # education_year = EducationYear.objects.get(current_year=True)
         queryset = Enrollment.objects.exclude(last_moved_date__lt=selected_date,
-                                              moved=True).filter(school_id=school, education_year__current_year=True)
+                                              moved=True).filter(school_id=school, education_year__current_year=True,
+                                                                 dropout_status=False)
         # queryset = Enrollment.objects.exclude(moved=True).filter(school_id=school, education_year=education_year)
         registrations = queryset.filter(
             classroom__isnull=False,
