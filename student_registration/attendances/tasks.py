@@ -107,8 +107,11 @@ def find_attendances_gap_grouped(days):
 @app.task
 def calculate_last_attendance_date():
     from .models import Absentee
+    from student_registration.schools.models import EducationYear
 
-    queryset = Absentee.objects.all()
+    current_year = EducationYear.objects.get(current_year=True)
+    queryset = Absentee.objects.filter(education_year_id=current_year)
+    #queryset = Absentee.objects.filter(school_id=123)
 
     for line in queryset:
         registry = line.student.current_secondshift_registration()
@@ -151,11 +154,11 @@ def reset_absentees():
 @app.task
 def calculate_attendances_by_student(from_date=None, to_date=None):
     from .utils import calculate_absentees
-    from .models import Attendance, Absentee
+    from .models import Attendance
 
     queryset = Attendance.objects.exclude(close_reason__isnull=False)\
         .exclude(students__isnull=True).order_by('attendance_date')
-    # queryset = queryset.filter(school__number='340')
+    #queryset = queryset.filter(school__id='123')
 
     # if not from_date:
     # Absentee.objects.all().delete()

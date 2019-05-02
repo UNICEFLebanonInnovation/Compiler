@@ -551,7 +551,6 @@ class EnrollmentForm(forms.ModelForm):
                     id_number=student_id_number, birthday_year=student_birthday_year)).count()):
                 raise forms.ValidationError(_('Student name, already entered  '))
         else:
-            print(edit)
             if (Student.objects.filter(
                 Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
                     mother_fullname=student_mother_fullname, birthday_year=student_birthday_year, birthday_month=
