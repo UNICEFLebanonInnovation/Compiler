@@ -116,8 +116,8 @@ LOGGING = {
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Auto logout delay in minutes
-AUTO_LOGOUT_DELAY = 1 #equivalent to 5 minutes
+AUTO_LOGOUT_DELAY = 60  # equivalent to 5 minutes
 CSRF_USE_SESSIONS = True
-LOCKOUT_MAX_ATTEMPTS=10
-LOCKOUT_TIME=600
+LOCKOUT_MAX_ATTEMPTS = 10
+LOCKOUT_TIME = 60
 

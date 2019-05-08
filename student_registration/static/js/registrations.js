@@ -21,7 +21,9 @@ $(document).ready(function(){
     if($(document).find('.moving-date-input').length >= 1) {
         $('.moving-date-input').datepicker({dateFormat: "yy-mm-dd"});
     }
-
+    if($(document).find('.dropout-date-input').length >= 1) {
+        $('.dropout-date-input').datepicker({dateFormat: "yy-mm-dd"});
+    }
     $("td[class='student.first_name']").addClass('font-bolder');
     $("td[class='student.father_name']").addClass('font-bolder');
     $("td[class='student.last_name']").addClass('font-bolder');
@@ -65,6 +67,9 @@ $(document).ready(function(){
     });
 
     $(document).on('change', 'select#id_new_registry', function(){
+        reorganizeForm();
+    });
+    $(document).on('change', 'select#id_cycle', function(){
         reorganizeForm();
     });
     $(document).on('change', 'select#id_student_outreached', function(){
@@ -116,6 +121,29 @@ $(document).ready(function(){
         var itemscope = item.attr('itemscope');
         if($('#moving_date_'+itemscope).val()) {
             moved_student(item.attr('itemscope'), $('#moving_date_'+itemscope).val());
+            item.parents('tr').remove();
+        }
+    });
+
+    $(document).on('click', '.dropout-button', function(){
+        var item = $(this);
+        var itemscope = item.attr('itemscope');
+        if(confirm($(this).attr('translation'))) {
+
+            $('.dropout-date-block').addClass('d-none');
+            $('#dropout_date_block_'+itemscope).removeClass('d-none');
+        }
+    });
+    $(document).on('click', '.cancel-dropout-button', function(){
+        var itemscope = $(this).attr('itemscope');
+        $('#dropout_date_block_'+itemscope).addClass('d-none');
+        $('#dropout_button_'+itemscope).removeClass('d-none');
+    });
+    $(document).on('click', '.save-dropout-button', function(){
+        var item = $(this);
+        var itemscope = item.attr('itemscope');
+        if($('#dropout_date_'+itemscope).val()) {
+            dropout_student_enrollment(item.attr('itemscope'), $('#dropout_date_'+itemscope).val());
             item.parents('tr').remove();
         }
     });
@@ -479,6 +507,7 @@ function reorganizeForm()
     var have_labour = $('input[name=have_labour]:checked').val();
     var program_site = $('select#id_site').val();
     var registered_unhcr = $('select#id_student_registered_in_unhcr').val();
+    var id_cycle = $('select#id_cycle').val();
 
     if(program_site == 'out_school') {
         $('div#div_id_school').parent().addClass('d-none');
@@ -496,7 +525,15 @@ function reorganizeForm()
         $('div#student_have_children').prev().addClass('d-none');
     }
 
-    if(have_labour == 'yes_morning' || have_labour == 'yes_afternoon'){
+    if(id_cycle == '3'){
+        $('option[value=graduated_to_formal_kg]').show();
+        $('option[value=graduated_to_formal_level1]').show();
+    }else{
+        $('option[value=graduated_to_formal_kg]').hide();
+        $('option[value=graduated_to_formal_level1]').hide();
+    }
+
+    if(have_labour == 'yes_morning' || have_labour == 'yes_afternoon' || have_labour == 'yes_all_day'){
         $('div#labours').removeClass('d-none');
         $('div#labours').prev().removeClass('d-none');
         $('div#labour_hours').removeClass('d-none');
@@ -504,15 +541,18 @@ function reorganizeForm()
         $('input#id_have_labour_1').attr('disabled', 'disabled');
         $('input#id_have_labour_2').removeAttr('disabled');
         $('input#id_have_labour_3').removeAttr('disabled');
+        $('input#id_have_labour_4').removeAttr('disabled');
     }else{
         if(have_labour == 'no') {
             $('input#id_have_labour_1').removeAttr('disabled');
             $('input#id_have_labour_2').attr('disabled', 'disabled');
             $('input#id_have_labour_3').attr('disabled', 'disabled');
+            $('input#id_have_labour_4').attr('disabled', 'disabled');
         }else{
             $('input#id_have_labour_1').removeAttr('disabled');
             $('input#id_have_labour_2').removeAttr('disabled');
             $('input#id_have_labour_3').removeAttr('disabled');
+            $('input#id_have_labour_4').removeAttr('disabled');
         }
         $('div#labours').addClass('d-none');
         $('div#labours').prev().addClass('d-none');
@@ -608,6 +648,27 @@ function moved_student(item, moved_date)
     $.ajax({
         type: "POST",
         url: '/api/logging-student-move/',
+        data: data,
+        cache: false,
+        async: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            console.log(response);
+        },
+        error: function(response) {
+            console.log(response);
+        }
+    });
+}
+
+function dropout_student_enrollment(dropout_status, dropout_date)
+{
+    var data = {dropout_status: dropout_status, dropout_date: dropout_date};
+
+    $.ajax({
+        type: "POST",
+        url: '/api/student-dropout-enrollment/',
         data: data,
         cache: false,
         async: false,

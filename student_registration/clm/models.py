@@ -151,12 +151,18 @@ class CLM(TimeStampedModel):
         ('weather', _('Weather')),
         ('sickness', _('Sickness')),
         ('security', _('Security')),
-        ('other', _('Other'))
+        ('family moved', _('Family moved')),
+        ('marriage engagement pregnancy', _('Marriage/Engagement/Pregnancy')),
+        ('violence bullying', _('Violence/Bullying')),
+        ('Full time job to support family financially', _('Full time job to support family financially')),
+        ('No interest in pursuing the programme/No value', _('No interest in pursuing the programme/No value')),
+        # ('other', _('Other'))
     )
     HAVE_LABOUR = Choices(
         ('no', _('No')),
         ('yes_morning', _('Yes - Morning')),
         ('yes_afternoon', _('Yes - Afternoon')),
+        ('yes_all_day', _('Yes - All day')),
     )
     LABOURS = Choices(
         ('agriculture', _('Agriculture')),
@@ -433,13 +439,13 @@ class BLN(CLM):
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
         # ('repeat_level', _('Repeat level')),
-        ('attended_public_school', _('Attended public school')),
+        ('attended_public_school', _('Referred public school')),
         ('referred_to_alp', _('referred to ALP')),
         ('referred_to_tvet', _('referred to TVET')),
         ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
         ('reenrolled_in_alp', _('Re-register on another round of BLN')),
-        # ('not_enrolled_any_program', _('Not enrolled in any educational program')),
-        # ('dropout', _('Dropout from school'))
+        ('not_enrolled_any_program', _('Not enrolled in any educational program')),
+        ('dropout', _('Dropout, referral not possible'))
     )
 
     cycle = models.ForeignKey(
@@ -946,7 +952,7 @@ class CBECE(CLM):
         ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
         ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
         ('referred_to_another_program', _('Referred to another program')),
-        # ('dropout', _('Dropout from school'))
+        ('dropout', _('Dropout, referral not possible'))
     )
 
     cycle = models.ForeignKey(

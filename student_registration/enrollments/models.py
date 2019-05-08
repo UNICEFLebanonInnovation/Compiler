@@ -74,6 +74,7 @@ class Enrollment(TimeStampedModel):
         ('out_the_country', _('School out of the country')),
         ('public_in_country', _('Public school in the country')),
         ('private_in_country', _('Private school in the country')),
+        ('CB_ECE', _('CB ECE')),
     )
 
     SCHOOL_SHIFT = Choices(
@@ -487,7 +488,11 @@ class Enrollment(TimeStampedModel):
         null=True,
         verbose_name=_('Last moved date')
     )
-
+    dropout_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('dropout date')
+    )
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
     disabled_objects = EnrollmentDisabledManager()
@@ -554,6 +559,8 @@ class Enrollment(TimeStampedModel):
             return 'Cycle 2'
         if self.classroom_id in [8, 9, 10]:
             return 'Cycle 3'
+        if self.classroom_id == 1:
+            return 'KG'
         return ''
 
     def grading(self, term):

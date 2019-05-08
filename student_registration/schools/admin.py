@@ -21,7 +21,7 @@ from .models import (
     Holiday,
     CLMRound,
     PublicDocument,
-    # Coordinator
+    Coordinator
 )
 from student_registration.locations.models import Location
 
@@ -214,10 +214,14 @@ class SchoolAdmin(ImportExportModelAdmin):
         'it_name',
         'it_phone_number',
         #'field_coordinator_name',
-        # 'coordinator',
+        'coordinator',
         'academic_year_start',
         'academic_year_end',
         'academic_year_exam_end',
+        'total_attendances_days_2ndshift',
+        'total_attendances_days_2ndshift_open',
+        'total_attendances_days_alp',
+        'total_attendances_days_alp_open',
     )
     list_display = (
         'name',
@@ -231,6 +235,12 @@ class SchoolAdmin(ImportExportModelAdmin):
         'total_registered_alp',
         'attendance_range',
         'attendance_from_beginning',
+        'weekend',
+        'academic_year_start',
+        'total_attendances_days_2ndshift',
+        'total_attendances_days_2ndshift_open',
+        'total_attendances_days_alp',
+        'total_attendances_days_alp_open',
     )
     search_fields = (
         'name',
@@ -480,4 +490,4 @@ admin.site.register(CLMRound, CLMRoundAdmin)
 admin.site.register(PublicDocument, PublicDocumentAdmin)
 admin.site.register(EducationalLevel, EducationalLevelAdmin)
 admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
-# admin.site.register(Coordinator)
+admin.site.register(Coordinator)

@@ -205,6 +205,7 @@ class CycleFilter(admin.SimpleListFilter):
             ('1', 'Cycle 1'),
             ('2', 'Cycle 2'),
             ('3', 'Cycle 3'),
+            ('4', 'KG'),
         )
 
     def queryset(self, request, queryset):
@@ -215,6 +216,8 @@ class CycleFilter(admin.SimpleListFilter):
                 return queryset.filter(classroom_id__in=[5, 6, 7])
             if self.value() == '3':
                 return queryset.filter(classroom_id__in=[8, 9, 10])
+            if self.value() == '4':
+                return queryset.filter(classroom_id__in=[1])
         return queryset
 
 
@@ -303,6 +306,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
                        'moved',
                        'last_moved_date',
                        'dropout_status',
+                       'dropout_date',
                        'disabled',
                        'last_attendance_date',
                        'last_absent_date',

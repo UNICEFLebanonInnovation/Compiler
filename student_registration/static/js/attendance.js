@@ -159,11 +159,12 @@ function get_level_section_attendances(exam_day, not_attending)
     var total_absent_female = 0;
     $('.enrollment_id').each(function (i, item) {
         var enrollment = $(item).attr('itemref');
+        var enrollment_id = $(item).val();
         var status = null;
 //        var sex = $('#student_sex_'+enrollment).val();
-//        var status = $('#status_'+enrollment).val();
+        var status = $('#status_'+enrollment_id).val();
         var sex = $(item).attr('student_sex');
-        var status = $(item).attr('status');
+//        var status = $(item).attr('status');
 
         var absence_reason = null;
 
@@ -225,7 +226,7 @@ function get_level_section_attendances(exam_day, not_attending)
             dropout: dropout
         });
 
-        console.log(students);
+//        console.log(students);
 
     });
 
