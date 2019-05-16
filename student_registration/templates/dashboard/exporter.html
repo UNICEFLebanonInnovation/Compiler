@@ -153,13 +153,46 @@
           </div>
 
           <div class="col-sm-4">
+            <form id="attendance-form" action="{% url 'dashboard:run-exporter-attendance' %}" method="GET">
             <div class="card m-3">
               <div class="card-block">
                 <h3 class="card-title">Last Attendances & Absences </h3>
                 <p class="card-text">Export Last Attendance/Absence for all students.</p>
-                <a href="{% url 'dashboard:run-exporter' %}?report=export_last_attendance " class="btn btn-primary">Export</a>
+                <table border="0">
+                  <th></th>
+                  <th></th>
+                  <tr><td>
+			          <div class="col-sm-4 pull-right">
+                  <label class="control-label  pull-left" for="txtfromschool" ><b>From School Number</b></label>
+				          <input type="text" class="form-control " id="txtfromschool" name="txtfromschool"  maxlength="80"/>
+			          </div>
+                <div class="col-sm-4 pull-right">
+                  <label class="control-label  pull-left" for="txttoschool"><b>To School Number</b></label>
+				          <input type="text" class="form-control" id="txttoschool" name="txttoschool"  maxlength="80"/>
+			           </div>
+                    </td>
+                </tr>
+                  <tr>
+                    <hr>
+                    <td>
+                   <hr>
+                  <div class="col-sm-4 pull-right">
+
+                    <label class="control-label  pull-left" for="txtfromdate"><b>From Date</b></label>
+				            <input type="date" name="txtfromdate">
+			           </div>
+                      <div class="col-sm-4 pull-right">
+                    <label class="control-label  pull-left" for="txttodate"><b>To Date</b></label>
+				             <input type="date" name="txttodate">
+			           </div>
+                    </td>
+                  </tr>
+                  </table>
+                 <br>
+                <input class="btn btn-primary" type="submit" value="Generate"/>
               </div>
             </div>
+            </form>
           </div>
 
           <!--<div class="col-sm-4">-->
@@ -173,7 +206,6 @@
           <!--</div>-->
 
         </div>
-
     </section>
 </section>
 {% endblock %}
