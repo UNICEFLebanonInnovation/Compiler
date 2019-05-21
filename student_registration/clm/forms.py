@@ -1342,6 +1342,18 @@ class CBECEForm(CommonForm):
         widget=forms.NumberInput,
         min_value=0, max_value=80
     )
+    learning_result = forms.ChoiceField(
+        label=_('Based on the overall score, what is the recommended learning path?'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('repeat_level', _('Repeat level')),
+            ('graduated_next_level', _('Referred to the next level')),
+            ('graduated_to_formal_education_level1', _('Referred to formal education - Level 1')),
+            ('referred_to_another_program', _('Referred to another program')),
+        ),
+        initial=''
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)

@@ -955,7 +955,7 @@ class CBECE(CLM):
         ('repeat_level', _('Repeat level')),
         ('graduated_next_level', _('Graduated to the next level')),
         ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
-        ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
+        ('graduated_to_formal_education_level1', _('Graduated to formal education - Level 1')),
         ('referred_to_another_program', _('Referred to another program')),
         ('dropout', _('Dropout, referral not possible'))
     )
