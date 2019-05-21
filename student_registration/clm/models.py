@@ -152,6 +152,8 @@ class CLM(TimeStampedModel):
         ('sickness', _('Sickness')),
         ('security', _('Security')),
         ('family moved', _('Family moved')),
+        ('Moved back to Syria', _('Moved back to Syria')),
+        ('Enrolled in formal education', _('Enrolled in formal education')),
         ('marriage engagement pregnancy', _('Marriage/Engagement/Pregnancy')),
         ('violence bullying', _('Violence/Bullying')),
         ('Full time job to support family financially', _('Full time job to support family financially')),
@@ -370,7 +372,9 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=Choices(
+            ('disability', _('Disability')),
             ('dropout', _("Dropout from the round")),
+            ('enrolled in formal', _("Enrolled in formal education")),
             ('uncompleted_participation', _("Uncompleted Participation"))
         ),
         verbose_name=_('unsuccessful pre test reason')
@@ -380,6 +384,7 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=Choices(
+            ('disability', _('Disability')),
             ('dropout', _("Dropout from the round")),
             ('uncompleted_participation', _("Uncompleted Participation"))
         ),
