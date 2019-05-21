@@ -864,9 +864,9 @@ def export_winterization(return_data=False):
 
 @app.task
 def export_last_attendance(params=None, return_data=False):
-    from student_registration.attendances.tasks import calculate_attendances_by_student, calculate_last_attendance_date
+    from student_registration.attendances.tasks import geo_calculate_attendances_by_student, calculate_last_attendance_date
     from student_registration.enrollments.models import Enrollment
-    calculate_attendances_by_student(from_date='2018-9-1', to_date='2019-10-1')
+
     calculate_last_attendance_date()
     title = 'Last_Attendance'
 
