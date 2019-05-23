@@ -443,7 +443,7 @@ class BLN(CLM):
 
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
-        # ('repeat_level', _('Repeat level')),
+        ('repeat_level', _('Repeat level')),
         ('attended_public_school', _('Referred public school')),
         ('referred_to_alp', _('referred to ALP')),
         ('referred_to_tvet', _('referred to TVET')),
