@@ -152,6 +152,8 @@ class CLM(TimeStampedModel):
         ('sickness', _('Sickness')),
         ('security', _('Security')),
         ('family moved', _('Family moved')),
+        ('Moved back to Syria', _('Moved back to Syria')),
+        ('Enrolled in formal education', _('Enrolled in formal education')),
         ('marriage engagement pregnancy', _('Marriage/Engagement/Pregnancy')),
         ('violence bullying', _('Violence/Bullying')),
         ('Full time job to support family financially', _('Full time job to support family financially')),
@@ -370,7 +372,9 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=Choices(
+            ('disability', _('Disability')),
             ('dropout', _("Dropout from the round")),
+            ('enrolled in formal', _("Enrolled in formal education")),
             ('uncompleted_participation', _("Uncompleted Participation"))
         ),
         verbose_name=_('unsuccessful pre test reason')
@@ -380,6 +384,7 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=Choices(
+            ('disability', _('Disability')),
             ('dropout', _("Dropout from the round")),
             ('uncompleted_participation', _("Uncompleted Participation"))
         ),
@@ -438,7 +443,7 @@ class BLN(CLM):
 
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
-        # ('repeat_level', _('Repeat level')),
+        ('repeat_level', _('Repeat level')),
         ('attended_public_school', _('Referred public school')),
         ('referred_to_alp', _('referred to ALP')),
         ('referred_to_tvet', _('referred to TVET')),
@@ -950,7 +955,7 @@ class CBECE(CLM):
         ('repeat_level', _('Repeat level')),
         ('graduated_next_level', _('Graduated to the next level')),
         ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
-        ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
+        ('graduated_to_formal_education_level1', _('Graduated to formal education - Level 1')),
         ('referred_to_another_program', _('Referred to another program')),
         ('dropout', _('Dropout, referral not possible'))
     )
