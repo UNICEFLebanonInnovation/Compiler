@@ -22,6 +22,11 @@ urlpatterns = [
         name='run-exporter-attendance'
     ),
     url(
+        regex=r'^run-to-excel/$',
+        view=views.run_to_excel,
+        name='run-to-excel'
+    ),
+    url(
         regex=r'^registrations-alp/$',
         view=views.RegistrationsALPView.as_view(),
         name='registrations-alp'

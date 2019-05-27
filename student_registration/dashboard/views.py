@@ -5,7 +5,7 @@ from __future__ import absolute_import, unicode_literals
 from django.contrib.auth.models import User
 from student_registration.backends.djqscsv import render_to_csv_response
 from django.utils.translation import ugettext as _
-
+from django.contrib import messages
 from django.shortcuts import render
 
 import datetime
@@ -66,16 +66,25 @@ class RunExporterViewSet(LoginRequiredMixin,
 def run_attendance(request):
     from student_registration.attendances.tasks import geo_calculate_attendances_by_student,\
         geo_calculate_last_attendance_date
-    from student_registration.enrollments.models import Enrollment
     from_school = request.GET['txtfromschool']
     to_school = request.GET['txttoschool']
     from_date = request.GET['txtfromdate']
     to_date = request.GET['txttodate']
     geo_calculate_attendances_by_student(from_school, to_school, from_date, to_date)
     geo_calculate_last_attendance_date(from_school, to_school)
-    title = 'Last_Attendance'
+    messages.add_message(request, messages.INFO, 'Finished !')
 
-    queryset = Enrollment.objects.filter(education_year__current_year=True)
+    ####
+    context = {}
+    return render(request, "dashboard/exporter.html", context)
+
+
+def run_to_excel(request):
+    from student_registration.enrollments.models import Enrollment
+    from_school = request.GET['txt_fromschool']
+    to_school = request.GET['txt_toschool']
+
+    queryset = Enrollment.objects.filter(education_year__current_year=True).order_by('school__number')
     queryset = queryset.filter(school__number__gte=from_school, school__number__lte=to_school)
 
     headers = {
@@ -137,10 +146,6 @@ def run_attendance(request):
     )
 
     return render_to_csv_response(queryset, field_header_map=headers)
-
-    ####
-    context = {}
-    return render(request, "dashboard/exporter.html", context)
 
 
 class RegistrationsALPView(LoginRequiredMixin,
