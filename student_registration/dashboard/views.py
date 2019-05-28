@@ -70,23 +70,85 @@ def run_attendance(request):
     to_school = request.GET['txttoschool']
     from_date = request.GET['txtfromdate']
     to_date = request.GET['txttodate']
-    geo_calculate_attendances_by_student(from_school, to_school, from_date, to_date)
-    geo_calculate_last_attendance_date(from_school, to_school)
-    messages.add_message(request, messages.INFO, 'Finished !')
+    if request.GET.get('btn_lastattendance') == 'Generate':
+        geo_calculate_attendances_by_student(from_school, to_school, from_date, to_date)
+        geo_calculate_last_attendance_date(from_school, to_school)
+        messages.add_message(request, messages.INFO, 'Finished !')
+        context = {}
+        return render(request, "dashboard/exporter.html", context)
+    else:
+        from student_registration.enrollments.models import Enrollment
+        queryset = Enrollment.objects.filter(education_year__current_year=True).order_by('school__number')
+        queryset = queryset.filter(school__number__gte=from_school, school__number__lte=to_school)
+        headers = {
+            'school__number': _('School number'),
+            'school__name': _('School'),
+            'school__location__name': _('District'),
+            'school__location__parent__name': _('Governorate'),
+            'student__number': 'student number',
+            'student__first_name': _('Student first name'),
+            'student__father_name': _('Student father name'),
+            'student__last_name': _('Student last name'),
+            'student__mother_fullname': _('Mother fullname'),
+            'student__sex': _('Sex'),
+            'student__birthday_year': _('year'),
+            'student__birthday_month': _('month'),
+            'student__birthday_day': _('day'),
+            'student__place_of_birth': _('Place of birth'),
+            'student__phone': _('Phone number'),
+            'student__phone_prefix': _('Phone prefix'),
+            'student__id_number': _('Student ID Number'),
+            'student__nationality__name': _('Student nationality'),
+            'section__name': _('Current Section'),
+            'classroom__name': _('Current Class'),
+            'last_attendance_date': _('Last attendance date'),
+            'last_absent_date': _('Last absent date'),
+            }
+        queryset = queryset.values(
+            'school__number',
+            'school__name',
+            'school__location__name',
+            'school__location__parent__name',
+            'student__number',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__mother_fullname',
+            'student__sex',
+            'student__birthday_year',
+            'student__birthday_month',
+            'student__birthday_day',
+            'student__place_of_birth',
+            'student__phone',
+            'student__phone_prefix',
+            'student__id_number',
+            'student__nationality__name',
+            'section__name',
+            'classroom__name',
+            'last_attendance_date',
+            'last_absent_date',
+            )
+        return render_to_csv_response(queryset, field_header_map=headers)
 
-    ####
-    context = {}
-    return render(request, "dashboard/exporter.html", context)
 
+def run_to_excel_per_day(request):
+    from student_registration.attendances.tasks import geo_calculate_attendances_per_day
+    from student_registration.attendances.models import AttendanceDt
+    from_school = request.GET['txt_from_school']
+    to_school = request.GET['txt_to_school']
+    from_date = request.GET['txt_from_date']
+    to_date = request.GET['txt_to_date']
+    if request.GET.get('btntype')=='Generate':
+        geo_calculate_attendances_per_day(from_school, to_school, from_date, to_date)
+        messages.add_message(request, messages.INFO, 'Finished !')
 
-def run_to_excel(request):
-    from student_registration.enrollments.models import Enrollment
-    from_school = request.GET['txt_fromschool']
-    to_school = request.GET['txt_toschool']
-
-    queryset = Enrollment.objects.filter(education_year__current_year=True).order_by('school__number')
-    queryset = queryset.filter(school__number__gte=from_school, school__number__lte=to_school)
-
+        context = {}
+        return render(request, "dashboard/exporter.html", context)
+    else:
+        qs_attendancedt = AttendanceDt.objects.filter(attendance_date__gte=from_date, attendance_date__lte=to_date,
+                                                      school__number__gte=from_school, school__number__lte=to_school
+                                                      ).\
+            order_by('attendance_date', 'school__number')
     headers = {
         'school__number': _('School number'),
         'school__name': _('School'),
@@ -109,14 +171,12 @@ def run_to_excel(request):
         'student__nationality__name': _('Student nationality'),
 
         'section__name': _('Current Section'),
-        'classroom__name': _('Current Class'),
+        'levelname': _('Current Class'),
 
-        'last_attendance_date': _('Last attendance date'),
-        'last_absent_date': _('Last absent date'),
+        'attendance_date': _('Attendance date'),
 
     }
-
-    queryset = queryset.values(
+    qs_attendancedt = qs_attendancedt.values(
         'school__number',
         'school__name',
         'school__location__name',
@@ -138,14 +198,14 @@ def run_to_excel(request):
         'student__nationality__name',
 
         'section__name',
-        'classroom__name',
+        'levelname',
+       # 'classroom__name',
 
-        'last_attendance_date',
-        'last_absent_date',
+        'attendance_date',
 
     )
 
-    return render_to_csv_response(queryset, field_header_map=headers)
+    return render_to_csv_response(qs_attendancedt, field_header_map=headers)
 
 
 class RegistrationsALPView(LoginRequiredMixin,
