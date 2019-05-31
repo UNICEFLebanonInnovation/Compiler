@@ -176,6 +176,7 @@ def run_to_excel_per_day(request):
         'levelname': _('Current Class'),
 
         'attendance_date': _('Attendance date'),
+        'is_present': _('Is Present'),
 
     }
     qs_attendancedt = qs_attendancedt.values(
@@ -201,9 +202,9 @@ def run_to_excel_per_day(request):
 
         'section__name',
         'levelname',
-       # 'classroom__name',
 
         'attendance_date',
+        'is_present',
 
     )
 
