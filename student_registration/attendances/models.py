@@ -226,6 +226,42 @@ class Absentee(TimeStampedModel):
         return self.student.number
 
 
+class AttendanceDt(models.Model):
+    attendance = models.ForeignKey(
+        Attendance,
+        blank=True, null=True,
+        related_name='attendances',
+    )
+    school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+    )
+    classroom = models.ForeignKey(
+        ClassRoom,
+        blank=True, null=True,
+    )
+    classlevel = models.ForeignKey(
+        EducationLevel,
+        blank=True, null=True,
+    )
+    section = models.ForeignKey(
+        Section,
+        blank=True, null=True,
+    )
+    student = models.ForeignKey(
+        Student,
+        blank=False, null=True,
+    )
+    is_present = models.BooleanField(default=False)
+    attendance_date = models.DateField(blank=True, null=True, db_index=True)
+    levelname = models.CharField(max_length=100, blank=True, null=True, default=None)
+
+    class Meta:
+        index_together = (
+            ('attendance_date', 'school'),
+        )
+
+
 class AttendanceSyncLog(models.Model):
 
     school = models.ForeignKey(School)

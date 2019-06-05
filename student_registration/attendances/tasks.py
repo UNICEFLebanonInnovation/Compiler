@@ -3,6 +3,7 @@ __author__ = 'jcranwellward'
 
 from datetime import date
 from student_registration.taskapp.celery import app
+import requests as req
 
 
 @app.task
@@ -121,6 +122,22 @@ def calculate_last_attendance_date():
                         last_absent_date=line.last_absent_date)
 
 
+def geo_calculate_last_attendance_date(from_school, to_school):
+    from .models import Absentee
+    from student_registration.schools.models import EducationYear
+
+    current_year = EducationYear.objects.get(current_year=True)
+    queryset = Absentee.objects.filter(education_year_id=current_year).order_by('school__number')
+    queryset = queryset.filter(school__number__gte=from_school, school__number__lte=to_school)
+
+    for line in queryset:
+        registry = line.student.current_secondshift_registration()
+        if not registry:
+            continue
+        registry.update(last_attendance_date=line.last_attendance_date,
+                        last_absent_date=line.last_absent_date)
+
+
 @app.task
 def dropout_students():
     from .models import Absentee
@@ -193,3 +210,49 @@ def split_attendance(school_type='2nd-shift'):
         queryset.update(education_year=education_year)
 
     queryset.update(school_type=school_type)
+
+
+def geo_calculate_attendances_per_day(from_school, to_school, from_date, to_date):
+    from .models import Attendance
+    from student_registration.schools.models import EducationYear
+    from .utils import add_attendance
+
+    current_year = EducationYear.objects.get(current_year=True)
+    queryset = Attendance.objects.exclude(close_reason__isnull=False).exclude(students__isnull=True)
+    queryset = queryset.filter(education_year_id=current_year, attendance_date__gte=from_date, attendance_date__lte=to_date,
+                               school__number__gte=from_school, school__number__lte=to_school).\
+        order_by('attendance_date', 'school__number')
+    for line in queryset:
+        if not line.students:
+            continue
+        for level_section in line.students:
+            attendances = line.students[level_section]
+            students = attendances['students']
+            add_attendance(attendance=line, students=students)
+
+
+def geo_calculate_attendances_by_student(from_school, to_school, from_date, to_date):
+    from .utils import calculate_absentees
+    from .models import Attendance
+    from student_registration.schools.models import EducationYear
+
+    current_year = EducationYear.objects.get(current_year=True)
+    queryset = Attendance.objects.exclude(close_reason__isnull=False)\
+        .exclude(students__isnull=True).order_by('school__number', 'attendance_date')
+    queryset = queryset.filter(education_year_id=current_year)
+    if from_date:
+        queryset = queryset.filter(attendance_date__gte=from_date)
+    if to_date:
+        queryset = queryset.filter(attendance_date__lte=to_date)
+    if from_school:
+        queryset = queryset.filter(school__number__gte=from_school)
+    if to_school:
+        queryset = queryset.filter(school__number__lte=to_school)
+
+    for line in queryset:
+        if not line.students:
+            continue
+        for level_section in line.students:
+            attendances = line.students[level_section]
+            students = attendances['students']
+            calculate_absentees(attendance=line, students=students)

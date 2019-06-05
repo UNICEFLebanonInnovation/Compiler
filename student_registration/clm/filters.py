@@ -28,6 +28,7 @@ class BLNFilter(CommonFilter):
         fields = {
             'round': ['exact'],
             'student__id_number': ['contains'],
+            'student__number': ['contains'],
             'internal_number': ['contains'],
             'student__first_name': ['contains'],
             'student__father_name': ['contains'],
@@ -54,6 +55,7 @@ class RSFilter(CommonFilter):
         fields = {
             'round': ['exact'],
             'student__id_number': ['contains'],
+            'student__number': ['contains'],
             'internal_number': ['contains'],
             'student__first_name': ['contains'],
             'student__father_name': ['contains'],
@@ -85,6 +87,7 @@ class CBECEFilter(CommonFilter):
         fields = {
             'round': ['exact'],
             'student__id_number': ['contains'],
+            'student__number': ['contains'],
             'internal_number': ['contains'],
             'student__first_name': ['contains'],
             'student__father_name': ['contains'],

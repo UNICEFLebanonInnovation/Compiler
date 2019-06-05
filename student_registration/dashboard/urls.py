@@ -17,6 +17,16 @@ urlpatterns = [
         name='run-exporter'
     ),
     url(
+        regex=r'^run-exporter-attendance/$',
+        view=views.run_attendance,# RunExporterAttendanceViewSet.as_view(),
+        name='run-exporter-attendance'
+    ),
+    url(
+        regex=r'^run-to-excel-per-day/$',
+        view=views.run_to_excel_per_day,
+        name='run-to-excel-per-day'
+    ),
+    url(
         regex=r'^registrations-alp/$',
         view=views.RegistrationsALPView.as_view(),
         name='registrations-alp'
