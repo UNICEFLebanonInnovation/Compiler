@@ -85,9 +85,6 @@ SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = 'DENY'
-LOCKOUT_MAX_ATTEMPTS = 10
-LOCKOUT_TIME = 60
-
 
 # SITE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -132,6 +129,8 @@ SERVER_EMAIL = env('DJANGO_SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
 
 # Anymail with Mailgun
 INSTALLED_APPS += ['anymail', ]
+# INSTALLED_APPS += ['django_extensions', ]
+
 ANYMAIL = {
     'MAILGUN_API_KEY': env('DJANGO_MAILGUN_API_KEY', default=''),
     'MAILGUN_SENDER_DOMAIN': env('MAILGUN_SENDER_DOMAIN', default='')
@@ -236,9 +235,12 @@ ADMIN_URL = env('DJANGO_ADMIN_URL', default='admin')
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
+
 # Auto logout delay in minutes
-AUTO_LOGOUT_DELAY = 60  # equivalent to 5 minutes
+AUTO_LOGOUT_DELAY = 20  # equivalent to 20 minutes
 CSRF_USE_SESSIONS = True
+LOCKOUT_MAX_ATTEMPTS = 5
+LOCKOUT_TIME = 15
 
 # Your production stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
