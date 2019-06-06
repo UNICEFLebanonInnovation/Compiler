@@ -34,17 +34,7 @@ INSTALLED_APPS += ['raven.contrib.django.raven_compat','lockout','student_regist
 WHITENOISE_MIDDLEWARE = ['whitenoise.middleware.WhiteNoiseMiddleware', ]
 # MIDDLEWARE CONFIGURATION
 # ------------------------------------------------------------------------------
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'student_registration.lockout_middleware.StudentLockoutMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+
 
 EXTRA_MIDDLEWARE = ['student_registration.middleware.AutoLogout',
                     'student_registration.cache_control_middleware.CacheControlMiddleware',
@@ -129,7 +119,6 @@ SERVER_EMAIL = env('DJANGO_SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
 
 # Anymail with Mailgun
 INSTALLED_APPS += ['anymail', ]
-# INSTALLED_APPS += ['django_extensions', ]
 
 ANYMAIL = {
     'MAILGUN_API_KEY': env('DJANGO_MAILGUN_API_KEY', default=''),
@@ -239,8 +228,6 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 # Auto logout delay in minutes
 AUTO_LOGOUT_DELAY = 20  # equivalent to 20 minutes
 CSRF_USE_SESSIONS = True
-LOCKOUT_MAX_ATTEMPTS = 5
-LOCKOUT_TIME = 15
 
 # Your production stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
