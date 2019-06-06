@@ -27,7 +27,7 @@ SECRET_KEY = env('DJANGO_SECRET_KEY', default='l^y44io8f!zr^#n(ui099rz+w2(p^ufz3
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # raven sentry client
 # See https://docs.sentry.io/clients/python/integrations/django/
-INSTALLED_APPS += ['raven.contrib.django.raven_compat','lockout','student_registration.accounts']
+INSTALLED_APPS += ['raven.contrib.django.raven_compat','student_registration.accounts']
 
 # Use Whitenoise to serve static files
 # See: https://whitenoise.readthedocs.io/
@@ -162,6 +162,7 @@ CACHES = {
     }
 }
 
+INSTALLED_APPS += ['lockout']
 
 # Sentry Configuration
 SENTRY_DSN = env('DJANGO_SENTRY_DSN', default='')
