@@ -34,17 +34,7 @@ INSTALLED_APPS += ['raven.contrib.django.raven_compat','lockout','student_regist
 WHITENOISE_MIDDLEWARE = ['whitenoise.middleware.WhiteNoiseMiddleware', ]
 # MIDDLEWARE CONFIGURATION
 # ------------------------------------------------------------------------------
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'student_registration.lockout_middleware.StudentLockoutMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+
 
 EXTRA_MIDDLEWARE = ['student_registration.middleware.AutoLogout',
                     'student_registration.cache_control_middleware.CacheControlMiddleware',
@@ -85,9 +75,6 @@ SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = 'DENY'
-LOCKOUT_MAX_ATTEMPTS = 10
-LOCKOUT_TIME = 60
-
 
 # SITE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -132,6 +119,7 @@ SERVER_EMAIL = env('DJANGO_SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
 
 # Anymail with Mailgun
 INSTALLED_APPS += ['anymail', ]
+
 ANYMAIL = {
     'MAILGUN_API_KEY': env('DJANGO_MAILGUN_API_KEY', default=''),
     'MAILGUN_SENDER_DOMAIN': env('MAILGUN_SENDER_DOMAIN', default='')
@@ -236,8 +224,9 @@ ADMIN_URL = env('DJANGO_ADMIN_URL', default='admin')
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
+
 # Auto logout delay in minutes
-AUTO_LOGOUT_DELAY = 60  # equivalent to 5 minutes
+AUTO_LOGOUT_DELAY = 20  # equivalent to 20 minutes
 CSRF_USE_SESSIONS = True
 
 # Your production stuff: Below this line define 3rd party library settings

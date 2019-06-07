@@ -97,14 +97,14 @@ class CommonForm(forms.ModelForm):
     student_outreached = forms.ChoiceField(
         label=_("Student outreached?"),
         widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        choices=(('no', _("No")), ('yes', _("Yes"))),
+        initial='no'
     )
     have_barcode = forms.ChoiceField(
         label=_("Have barcode with him?"),
         widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
+        choices=(('no', _("No")), ('yes', _("Yes"))),
+        initial='no'
     )
     search_clm_student = forms.CharField(
         label=_("Search a student"),
@@ -274,6 +274,7 @@ class CommonForm(forms.ModelForm):
                 instance = serializer.update(validated_data=serializer.validated_data, instance=instance)
                 instance.modified_by = request.user
                 instance.save()
+                request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
@@ -285,6 +286,7 @@ class CommonForm(forms.ModelForm):
                 instance.modified_by = request.user
                 instance.partner = request.user.partner
                 instance.save()
+                request.session['instance_id'] = instance.id
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
@@ -646,8 +648,10 @@ class BLNForm(CommonForm):
                 css_class='bd-callout bd-callout-warning'+display_assessment
             ),
             FormActions(
-                Submit('save', _('Save')),
-                Submit('save_add_another', _('Save and add another'), css_class='child_data'),
+                Submit('save', _('Save'), css_class='col-md-2'),
+                Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
+                Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data'),
+                Submit('save_and_pretest', _('Save and Fill pre-test'), css_class='col-md-2 child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -1254,8 +1258,10 @@ class RSForm(CommonForm):
                 css_class='bd-callout bd-callout-warning'+display_assessment
             ),
             FormActions(
-                Submit('save', _('Save')),
-                Submit('save_add_another', _('Save and add another'), css_class='child_data'),
+                Submit('save', _('Save'), css_class='col-md-2'),
+                Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
+                Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data'),
+                Submit('save_and_pretest', _('Save and Fill pre-test'), css_class='col-md-2 child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
@@ -1608,7 +1614,10 @@ class CBECEForm(CommonForm):
             ),
             FormActions(
                 Submit('save', _('Save')),
-                Submit('save_add_another', _('Save and add another'), css_class='child_data'),
+                Submit('save', _('Save'), css_class='col-md-2'),
+                Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
+                Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data'),
+                Submit('save_and_pretest', _('Save and Fill pre-test'), css_class='col-md-2 child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )

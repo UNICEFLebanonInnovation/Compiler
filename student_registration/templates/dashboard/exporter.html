@@ -157,7 +157,7 @@
             <div class="card m-3">
               <div class="card-block">
                 <h3 class="card-title">Last Attendances & Absences </h3>
-                <p class="card-text">Export Last Attendance/Absence for all students.</p>
+                <p class="card-text">Generate Last Attendance/Absence for all students.</p>
                 <table border="0">
                   <th></th>
                   <th></th>
@@ -177,7 +177,6 @@
                     <td>
                    <hr>
                   <div class="col-sm-4 pull-right">
-
                     <label class="control-label  pull-left" for="txtfromdate"><b>From Date</b></label>
 				            <input type="date" name="txtfromdate">
 			           </div>
@@ -189,11 +188,57 @@
                   </tr>
                   </table>
                  <br>
-                <input class="btn btn-primary" type="submit" value="Generate"/>
+                <input class="btn btn-primary" type="submit" value="Generate" name="btn_lastattendance" id="btn_lastattendance"/>
+
+                <input class="btn btn-primary" type="submit" value="Excel" name="btn_lastattendance" id="btn_lastattendanceex"  style="background-color: green;" />
+
               </div>
             </div>
             </form>
           </div>
+
+          <div class="col-sm-4"  >
+            <form id="attendance-per-day" action="{% url 'dashboard:run-to-excel-per-day' %}" method="GET" >
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">  Attendances & Absences per day </h3>
+                <p class="card-text">Export to Excel : Attendances & Absences per day</p>
+                <table border="0">
+                  <th></th>
+                  <th></th>
+                  <tr><td>
+			          <div class="col-sm-4 pull-right">
+                  <label class="control-label  pull-left" for="txt_from_school" ><b>From School </b></label>
+				          <input type="text" class="form-control " id="txt_from_school" name="txt_from_school"  maxlength="80"/>
+			          </div>
+                <div class="col-sm-4 pull-right">
+                  <label class="control-label  pull-left" for="txt_to_school"><b>To School </b></label>
+				          <input type="text" class="form-control" id="txt_to_school" name="txt_to_school"  maxlength="80"/>
+			           </div>
+                    </td>
+                </tr>
+                <tr><td>
+
+                  <div class="col-sm-4 pull-right">
+                    <label class="control-label  pull-left" for="txt_from_date"><b>From Date</b></label>
+				            <input type="date" name="txt_from_date">
+			           </div>
+                      <div class="col-sm-4 pull-right">
+                    <label class="control-label  pull-left" for="txt_to_date"><b>To Date</b></label>
+				             <input type="date" name="txt_to_date">
+			           </div>
+                    </td>
+                  </tr>
+                  </table>
+                <br>
+               <input class="btn btn-primary" type="submit" value="Generate" name="btntype" id="btntype1"/>
+               <input class="btn btn-primary" type="submit" value="Excel" name="btntype" id="btntype2"  style="background-color: green;" />
+              </div>
+            </div>
+            </form>
+          </div>
+
+
 
           <!--<div class="col-sm-4">-->
             <!--<div class="card m-3">-->
