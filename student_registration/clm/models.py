@@ -448,8 +448,9 @@ class BLN(CLM):
         ('referred_to_alp', _('referred to ALP')),
         ('referred_to_tvet', _('referred to TVET')),
         ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
-        ('reenrolled_in_alp', _('Re-register on another round of BLN')),
-        ('not_enrolled_any_program', _('Not enrolled in any educational program')),
+        # ('reenrolled_in_alp', _('Re-register on another round of BLN')),
+        ('graduated_to_bln_next_level', _('Graduated to the next level')),
+        # ('not_enrolled_any_program', _('Not enrolled in any educational program')),
         ('dropout', _('Dropout, referral not possible'))
     )
 
