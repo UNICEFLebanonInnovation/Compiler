@@ -36,6 +36,7 @@ if READ_DOT_ENV_FILE:
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
+    'djangosecure',
     # Default Django apps:
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,7 +57,7 @@ DJANGO_APPS = [
     'markdown_deux',  # Required for Knowledgebase item formatting
     'bootstrapform',  # Required for nicer formatting of forms with the default templates
     'helpdesk',  # This is us!
-    'rangefilter',
+    # 'rangefilter',
     'prettyjson',
     #'storages',
 ]
@@ -98,6 +99,7 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
+    'djangosecure.middleware.SecurityMiddleware'
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -107,6 +109,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # "djangosecure.check.csrf.check_csrf_middleware",
+    # "djangosecure.check.sessions.check_session_cookie_secure",
+    # "djangosecure.check.sessions.check_session_cookie_httponly",
+    # "djangosecure.check.djangosecure.check_security_middleware",
+    # "djangosecure.check.djangosecure.check_sts",
+    # "djangosecure.check.djangosecure.check_frame_deny",
+    # "djangosecure.check.djangosecure.check_content_type_nosniff",
+    # "djangosecure.check.djangosecure.check_ssl_redirect",
 ]
 
 LOCKOUT_MAX_ATTEMPTS = 5
@@ -321,6 +331,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # AUTHENTICATION CONFIGURATION
 # ------------------------------------------------------------------------------
 AUTHENTICATION_BACKENDS = [
+    # AxesBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
+    'axes.backends.AxesBackend',
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
@@ -345,7 +357,9 @@ LOGIN_URL = 'account_login'
 AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 
 ########## CELERY
-INSTALLED_APPS += ['student_registration.taskapp.celery.CeleryConfig']
+INSTALLED_APPS += ['student_registration.taskapp.celery.CeleryConfig',
+                   'axes',
+                   ]
 CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = 'django-db'
 ########## END CELERY

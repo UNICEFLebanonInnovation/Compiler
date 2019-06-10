@@ -27,7 +27,7 @@ SECRET_KEY = env('DJANGO_SECRET_KEY', default='l^y44io8f!zr^#n(ui099rz+w2(p^ufz3
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # raven sentry client
 # See https://docs.sentry.io/clients/python/integrations/django/
-INSTALLED_APPS += ['raven.contrib.django.raven_compat','student_registration.accounts']
+INSTALLED_APPS += ['raven.contrib.django.raven_compat','student_registration.accounts', ]
 
 # Use Whitenoise to serve static files
 # See: https://whitenoise.readthedocs.io/
@@ -43,8 +43,7 @@ EXTRA_MIDDLEWARE = ['student_registration.middleware.AutoLogout',
                     'student_registration.xframe_middleware.XFrameMiddleware', ]
 MIDDLEWARE = WHITENOISE_MIDDLEWARE + MIDDLEWARE + EXTRA_MIDDLEWARE
 RAVEN_MIDDLEWARE = ['raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware']
-MIDDLEWARE = RAVEN_MIDDLEWARE + MIDDLEWARE
-
+MIDDLEWARE = RAVEN_MIDDLEWARE + MIDDLEWARE + ['axes.middleware.AxesMiddleware']
 
 # opbeat integration
 # See https://opbeat.com/languages/django/
@@ -62,7 +61,7 @@ MIDDLEWARE = RAVEN_MIDDLEWARE + MIDDLEWARE
 # See https://docs.djangoproject.com/en/dev/ref/middleware/#module-django.middleware.security
 # and https://docs.djangoproject.com/en/dev/howto/deployment/checklist/#run-manage-py-check-deploy
 
-
+# SECURITY CONFIGURATION
 # set this to 60 seconds and then to 518400 when you can prove it works
 SECURE_HSTS_SECONDS = 60
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool('DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS', default=True)
@@ -75,6 +74,9 @@ SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = 'DENY'
+# SECURE_HSTS_PRELOAD = True
+# SECURE_REDIRECT_EXEMPT
+# SECURE_SSL_HOST
 
 # SITE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -145,8 +147,18 @@ DATABASES['default'] = env.db('DATABASE_URL', default='postgres:///student_regis
 if env.bool('DATABASE_SSL_ENABLED', default=False):
     DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
 
+
+AXES_CACHE = 'default'
+
 # CACHING
 # ------------------------------------------------------------------------------
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'LOCATION': ''
+    }
+}
+
 
 REDIS_LOCATION = '{0}/{1}'.format(env('REDIS_URL', default='redis://127.0.0.1:6379'), 0)
 # Heroku URL does not pass the DB number, so we parse it in
@@ -162,7 +174,7 @@ CACHES = {
     }
 }
 
-INSTALLED_APPS += ['lockout']
+INSTALLED_APPS += ['lockout', ]
 
 # Sentry Configuration
 SENTRY_DSN = env('DJANGO_SENTRY_DSN', default='')

@@ -33,11 +33,12 @@ EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND',
                     default='django.core.mail.backends.console.EmailBackend')
 
 
+AXES_CACHE = 'default'
 # CACHING
 # ------------------------------------------------------------------------------
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
         'LOCATION': ''
     }
 }
@@ -47,15 +48,35 @@ CACHES = {
 # MIDDLEWARE CONFIGURATION
 # ------------------------------------------------------------------------------
 
-
-
-MIDDLEWARE = MIDDLEWARE + ['debug_toolbar.middleware.DebugToolbarMiddleware','student_registration.middleware.AutoLogout','student_registration.cache_control_middleware.CacheControlMiddleware','student_registration.one_session.OneSessionPerUserMiddleware','student_registration.hsts_middleware.HSTSMiddleware','student_registration.xframe_middleware.XFrameMiddleware']
-INSTALLED_APPS += ['debug_toolbar','lockout','student_registration.accounts']
+MIDDLEWARE = MIDDLEWARE + ['debug_toolbar.middleware.DebugToolbarMiddleware',
+                           'student_registration.middleware.AutoLogout',
+                           'student_registration.cache_control_middleware.CacheControlMiddleware',
+                           'student_registration.one_session.OneSessionPerUserMiddleware',
+                           'student_registration.hsts_middleware.HSTSMiddleware',
+                           'student_registration.xframe_middleware.XFrameMiddleware',
+                           'axes.middleware.AxesMiddleware'
+                           ]
+INSTALLED_APPS += ['debug_toolbar','lockout','student_registration.accounts', ]
 
 INTERNAL_IPS = ['127.0.0.1', '10.0.2.2', ]
 
 # SECURITY CONFIGURATION
+SECURE_HSTS_SECONDS = 60
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool('DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS', default=True)
+SECURE_FRAME_DENY = env.bool("DJANGO_SECURE_FRAME_DENY", default=True)
+SECURE_CONTENT_TYPE_NOSNIFF = env.bool('DJANGO_SECURE_CONTENT_TYPE_NOSNIFF', default=True)
+SECURE_BROWSER_XSS_FILTER = True
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = 'DENY'
+# SECURE_HSTS_PRELOAD = True
+# SECURE_REDIRECT_EXEMPT
+# SECURE_SSL_HOST
+
+
 
 import socket
 import os
@@ -110,8 +131,8 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 # Auto logout delay in minutes
 AUTO_LOGOUT_DELAY = 20 # equivalent to 20 minutes
 CSRF_USE_SESSIONS = True
-# LOCKOUT_MAX_ATTEMPTS = 5
-# LOCKOUT_TIME = 15
+LOCKOUT_MAX_ATTEMPTS = 5
+LOCKOUT_TIME = 15
 
 
 
