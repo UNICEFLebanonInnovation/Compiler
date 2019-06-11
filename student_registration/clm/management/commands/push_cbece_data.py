@@ -16,9 +16,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         push_cbece_data(
             file_name='test.XLSX',
-            base_url='127.0.0.1:8000',
-            token='Token d170839fdc49d8bfd32d359bfe25da018ed45bab',
-            protocol='HTTP'
+            base_url='leb-container-test.azurewebsites.net',
+            token='Token 145f569650265eebb2cd5f92eabab8f886a0a0c2',
+            protocol='HTTPS'
             # file_name=options['file'],
             # base_url=options['url'],
             # token=options['token'],

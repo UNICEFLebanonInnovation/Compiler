@@ -35,8 +35,9 @@ def post_data(protocol, url, apifunc, token, data):
     response = conn.getresponse()
     result = response.read()
 
-    if not response.status == 201:
-        if response.status == 400:
+    status = int(response.status)
+    if status not in [201, 200]:
+        if status == 400 or status == 403:
             raise Exception(str(response.status) + response.reason + response.read())
         else:
             raise Exception(str(response.status) + response.reason)

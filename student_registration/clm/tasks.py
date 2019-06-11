@@ -1,20 +1,14 @@
-
-from student_registration.taskapp.celery import app
-
 import json
-import random
+
 from django.core.serializers.json import DjangoJSONEncoder
-from datetime import datetime
 from openpyxl import load_workbook
 
-from student_registration.backends.utils import post_data
+from utils import post_data
+from student_registration.taskapp.celery import app
 
 
 @app.task
 def push_bln_data(file_name, base_url, token, protocol='HTTPS'):
-    # from .models import RS
-    # objects = RS.objects.all()
-    # objects.delete()
 
     wb = load_workbook(filename='test.XLSX', read_only=True)
     ws = wb['bln']
@@ -45,8 +39,15 @@ def push_bln_data(file_name, base_url, token, protocol='HTTPS'):
             data['student_birthday_day'] = row[17].value if row[17].value else '1'
             data['student_p_code'] = row[18].value if row[18].value else 'None'
             data['disability'] = row[19].value if row[19].value else 1
-            data['student_id_number'] = row[20].value if row[20].value else 'None'
-            data['internal_number'] = row[21].value if row[21].value else 'None'
+            data['student_id_number'] =  row[20].value if row[20].value else 'None'
+
+            if row[21].value:
+                internal_number = row[21].value
+            else:
+                internal_number = 'None'
+
+            data['internal_number'] = internal_number
+
             data['comments'] = row[22].value if row[22].value else 'None'
             data['hh_educational_level'] = row[23].value
             data['student_family_status'] = row[24].value if row[24].value else 'single'
@@ -82,9 +83,6 @@ def push_bln_data(file_name, base_url, token, protocol='HTTPS'):
 
 @app.task
 def push_cbece_data(file_name, base_url, token, protocol='HTTPS'):
-    # from .models import RS
-    # objects = RS.objects.all()
-    # objects.delete()
 
     wb = load_workbook(filename='test.XLSX', read_only=True)
     ws = wb['cbece']
@@ -100,12 +98,13 @@ def push_cbece_data(file_name, base_url, token, protocol='HTTPS'):
             data['new_registry'] = row[2].value if row[2].value else 'yes'
             data['student_outreached'] = row[3].value if row[3].value else 'no'
             data['have_barcode'] = row[4].value if row[4].value else 'no'
-            data['cycle'] = row[5].value if row[5].value else 1
-            data['id_site'] = row[6].value if row[5].value else 1
+            cycle = row[5].value if row[5].value else 1
+            data['cycle'] = cycle
+            data['id_site'] = row[6].value if row[6].value else 1
             data['school'] = row[7].value
             data['governorate'] = row[8].value
             data['district'] = row[9].value
-            # data['location'] = row[10].value
+            data['location'] = row[10].value
             data['language'] = row[11].value if row[11].value else 'english_arabic'
             data['referral'] = [row[12].value] if row[12].value else []
             data['student_first_name'] = row[13].value if row[13].value else 'None'
@@ -125,26 +124,62 @@ def push_cbece_data(file_name, base_url, token, protocol='HTTPS'):
             data['child_muac'] = row[27].value if row[27].value else 2
             data['hh_educational_level'] = row[28].value
             data['have_labour'] = [row[29].value] if row[29].value else []
-            # data['labours'] = row[30].value
+            data['labours'] = row[30].value
             data['labour_hours'] = row[31].value
 
-            # data['pre_test_language'] = row[29].value
-            # data['pre_test_math'] = row[30].value
-            # data['pre_test_arabic'] = row[31].value
-            # data['post_test_language'] = row[32].value
-            # data['post_test_math'] = row[33].value
-            # data['post_test_arabic'] = row[34].value
-
-            if row[35].value:
+            if row[44].value:
                 data['unsuccessful_posttest_reason'] = row[44].value
             data['participation'] = row[45].value
-
             data['barriers'] = [''.join(row[46].value.split())] if (row[46].value or row[46].value == ' ') else []
             data['learning_result'] = row[47].value
 
-            result = post_data(protocol=protocol, url=base_url, apifunc='/api/clm-bln/', token=token, data=data)
+            result = post_data(protocol=protocol, url=base_url, apifunc='/api/clm-cbece/', token=token, data=data)
             result = json.loads(result)
             # print(sresult)
+
+            # pre test
+            try:
+                assessment = {}
+                assessment['status'] = 'pre_test'
+                assessment['enrollment_id'] = result['original_id']
+                assessment['enrollment_model'] = 'CBECE'
+                assessment['CBECE_ASSESSMENT/LanguageArtDomain' + str(cycle)] = row[32].value if row[32].value else '0'
+                assessment['CBECE_ASSESSMENT/CognitiveDomian' + str(cycle)] = row[33].value if row[33].value else '0'
+                assessment['CBECE_ASSESSMENT/ScienceDomain' + str(cycle)] = row[34].value if row[34].value else '0'
+                assessment['CBECE_ASSESSMENT/SocialEmotionalDomain' + str(cycle)] = row[35].value if row[35].value else '0'
+                assessment['CBECE_ASSESSMENT/PsychomotorDomain'+ str(cycle)] = row[36].value if row[36].value else '0'
+                assessment['CBECE_ASSESSMENT/ArtisticDomain' + str(cycle)] = row[37].value if row[37].value else '0'
+
+                post_data(protocol=protocol, url=base_url, apifunc='/clm/assessment-submission/', token=token,
+                          data=assessment)
+            except Exception as ex:
+                print("---------------1")
+                print("error: ", ex.message)
+                print(json.dumps(assessment, cls=DjangoJSONEncoder))
+                print("---------------")
+                pass
+
+            # post test
+            try:
+                assessment = {}
+                assessment['status'] = 'post_test'
+                assessment['enrollment_id'] = result['original_id']
+                assessment['enrollment_model'] = 'CBECE'
+                assessment['CBECE_ASSESSMENT/LanguageArtDomain' + str(cycle)] = row[38].value if row[38].value else '0'
+                assessment['CBECE_ASSESSMENT/CognitiveDomian' + str(cycle)] = row[39].value if row[39].value else '0'
+                assessment['CBECE_ASSESSMENT/ScienceDomain' + str(cycle)] = row[40].value if row[40].value else '0'
+                assessment['CBECE_ASSESSMENT/SocialEmotionalDomain' + str(cycle)] = row[41].value if row[41].value else '0'
+                assessment['CBECE_ASSESSMENT/PsychomotorDomain' + str(cycle)] = row[42].value if row[42].value else '0'
+                assessment['CBECE_ASSESSMENT/ArtisticDomain' + str(cycle)] = row[43].value if row[43].value else '0'
+
+                post_data(protocol=protocol, url=base_url, apifunc='/clm/assessment-submission/', token=token,
+                          data=assessment)
+            except Exception as ex:
+                print("---------------2")
+                print("error: ", ex.message)
+                print(json.dumps(assessment, cls=DjangoJSONEncoder))
+                print("---------------")
+                pass
 
         except Exception as ex:
             print("---------------1")
