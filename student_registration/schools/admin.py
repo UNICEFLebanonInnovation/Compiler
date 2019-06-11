@@ -230,12 +230,7 @@ class SchoolAdmin(ImportExportModelAdmin):
         'weekend',
         'it_name',
         'it_phone_number',
-<<<<<<< HEAD
-        #'field_coordinator_name',
-        # 'coordinator',
-=======
         'coordinator',
->>>>>>> develop
         'academic_year_start',
         'academic_year_end',
         'academic_year_exam_end',
