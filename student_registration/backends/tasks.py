@@ -860,3 +860,74 @@ def export_winterization(return_data=False):
         return data
     store_file(data, timestamp)
     return True
+
+@app.task
+def export_last_attendance(params=None, return_data=False):
+    from student_registration.attendances.tasks import geo_calculate_attendances_by_student, calculate_last_attendance_date
+    from student_registration.enrollments.models import Enrollment
+
+    calculate_last_attendance_date()
+    title = 'Last_Attendance'
+
+    queryset = Enrollment.objects.filter(education_year__current_year=True)
+
+    headers = {
+        'school__number': _('School number'),
+        'school__name': _('School'),
+        'school__location__name': _('District'),
+        'school__location__parent__name': _('Governorate'),
+        'student__number': 'student number',
+        'student__first_name': _('Student first name'),
+        'student__father_name': _('Student father name'),
+        'student__last_name': _('Student last name'),
+        'student__mother_fullname': _('Mother fullname'),
+        'student__sex': _('Sex'),
+        'student__birthday_year': _('year'),
+        'student__birthday_month': _('month'),
+        'student__birthday_day': _('day'),
+        'student__place_of_birth': _('Place of birth'),
+        'student__phone': _('Phone number'),
+        'student__phone_prefix': _('Phone prefix'),
+
+        'student__id_number': _('Student ID Number'),
+        'student__nationality__name': _('Student nationality'),
+
+        'section__name': _('Current Section'),
+        'classroom__name': _('Current Class'),
+
+        'last_attendance_date': _('Last attendance date'),
+        'last_absent_date': _('Last absent date'),
+
+    }
+
+    queryset = queryset.values(
+        'school__number',
+        'school__name',
+        'school__location__name',
+        'school__location__parent__name',
+        'student__number',
+        'student__first_name',
+        'student__father_name',
+        'student__last_name',
+        'student__mother_fullname',
+        'student__sex',
+        'student__birthday_year',
+        'student__birthday_month',
+        'student__birthday_day',
+        'student__place_of_birth',
+        'student__phone',
+        'student__phone_prefix',
+
+        'student__id_number',
+        'student__nationality__name',
+
+        'section__name',
+        'classroom__name',
+
+        'last_attendance_date',
+        'last_absent_date',
+
+    )
+
+    return render_to_csv_response(queryset, field_header_map=headers)
+

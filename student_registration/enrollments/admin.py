@@ -306,6 +306,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
                        'moved',
                        'last_moved_date',
                        'dropout_status',
+                       'dropout_date',
                        'disabled',
                        'last_attendance_date',
                        'last_absent_date',

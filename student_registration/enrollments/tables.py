@@ -23,6 +23,8 @@ class EnrollmentTable(tables.Table):
                                           attrs={'url': '/api/enrollments/'})
     moved_column = tables.TemplateColumn(verbose_name=_('Student moved'), orderable=False,
                                          template_name='django_tables2/moved_column.html')
+    dropout_column = tables.TemplateColumn(verbose_name=_('dropout students'), orderable=False,
+                                           template_name='django_tables2/dropout_column.html')
     grading_term1 = tables.TemplateColumn(verbose_name=_('Term 1'), orderable=False,
                                           template_name='django_tables2/grading_term1_column.html')
     grading_term2 = tables.TemplateColumn(verbose_name=_('Term 2'), orderable=False,
@@ -45,6 +47,7 @@ class EnrollmentTable(tables.Table):
             'edit_column',
             'delete_column',
             'moved_column',
+            'dropout_column',
             'grading_term1',
             'grading_term2',
             'grading_final',

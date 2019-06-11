@@ -94,6 +94,27 @@ def find_attendances(governorate=None, student_id=None, from_date=None, to_date=
     return data
 
 
+def add_attendance(attendance, students):
+    from .models import AttendanceDt
+
+    for student in students:
+        try:
+            AttendanceDt.objects.get(student_id=student['student_id'], attendance_date=attendance.attendance_date)
+        except AttendanceDt.DoesNotExist:
+            attendance_dt = AttendanceDt.objects.create(
+                student_id=student['student_id'],
+                attendance_date=attendance.attendance_date,
+                is_present=student['status'],
+                school_id=attendance.school_id,
+                section_id=student['section'],
+                classlevel_id=student['level'],
+                classroom_id=attendance.classroom_id,
+                attendance_id=attendance.id,
+                levelname=student['level_name'],
+            )
+            attendance_dt.save()
+
+
 def calculate_absentees(attendance, students):
     from .models import Absentee
 

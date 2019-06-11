@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func
 from django.db.models.expressions import RawSQL
+from django.core.urlresolvers import reverse
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
@@ -28,7 +29,7 @@ from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
 from .filters import BLNFilter, RSFilter, CBECEFilter
 from .tables import BootstrapTable, BLNTable, RSTable, CBECETable
-from .models import BLN, RS, CBECE, SelfPerceptionGrades, Disability
+from .models import BLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment
 from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 
@@ -46,6 +47,19 @@ class CLMView(LoginRequiredMixin,
         return {}
 
 
+def assessment_form(instance_id, stage, assessment_slug, callback=''):
+    try:
+        assessment = Assessment.objects.get(slug=assessment_slug)
+        return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=RS&returnURL={callback}'.format(
+            form=assessment.assessment_form,
+            status=stage,
+            enrollment_id=instance_id,
+            callback=callback
+        )
+    except Assessment.DoesNotExist:
+        return ''
+
+
 class BLNAddView(LoginRequiredMixin,
                  GroupRequiredMixin,
                  FormView):
@@ -58,6 +72,15 @@ class BLNAddView(LoginRequiredMixin,
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
             return '/clm/bln-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/bln-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get('save_and_pretest', None):
+            return assessment_form(
+                instance_id=self.request.session.get('instance_id'),
+                stage='pre_test',
+                assessment_slug='bln_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:bln_edit',
+                                                         kwargs={'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -108,6 +131,8 @@ class BLNEditView(LoginRequiredMixin,
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
             return '/clm/bln-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/cbece-edit/' + str(self.request.session.get('instance_id')) + '/'
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -539,6 +564,16 @@ class RSAddView(LoginRequiredMixin,
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
             return '/clm/rs-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/rs-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get('save_and_pretest', None):
+            return assessment_form(
+                instance_id=self.request.session.get('instance_id'),
+                stage='pre_test',
+                assessment_slug='rs_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:rs_edit',
+                                                         kwargs={'pk': self.request.session.get('instance_id')})))
+
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -598,6 +633,8 @@ class RSEditView(LoginRequiredMixin,
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
             return '/clm/rs-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/cbece-edit/' + str(self.request.session.get('instance_id')) + '/'
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -654,6 +691,15 @@ class CBECEAddView(LoginRequiredMixin,
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
             return '/clm/cbece-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/cbece-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get('save_and_pretest', None):
+            return assessment_form(
+                instance_id=self.request.session.get('instance_id'),
+                stage='pre_test',
+                assessment_slug='cbece_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:cbece_edit',
+                                                         kwargs={'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -704,6 +750,8 @@ class CBECEEditView(LoginRequiredMixin,
     def get_success_url(self):
         if self.request.POST.get('save_add_another', None):
             return '/clm/cbece-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/cbece-edit/' + str(self.request.session.get('instance_id')) + '/'
         return self.success_url
 
     def get_context_data(self, **kwargs):

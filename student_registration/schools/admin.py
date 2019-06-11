@@ -39,6 +39,7 @@ class SchoolResource(resources.ModelResource):
     attendances_days_2ndshift_open = fields.Field(column_name='Attendances days 2nd shift when school is open')
     attendances_days_alp = fields.Field(column_name='Attendances days ALP')
     attendances_days_alp_open = fields.Field(column_name='Attendances days ALP when school is open')
+    total_attendances_days_2ndshift = fields.Field(column_name='Total attendance days in 2ndshift')
 
     class Meta:
         model = School
@@ -79,6 +80,10 @@ class SchoolResource(resources.ModelResource):
             'attendances_days_2ndshift_open',
             'attendances_days_alp',
             'attendances_days_alp_open',
+            'total_attendances_days_2ndshift',
+            'total_attendances_days_alp',
+            'total_attendances_days_alp_open',
+            'total_attendances_days_2ndshift_open',
         )
         export_order = fields
 
@@ -94,6 +99,18 @@ class SchoolResource(resources.ModelResource):
 
     def dehydrate_total_registered_2ndshift(self, obj):
         return obj.total_registered
+
+    def dehydrate_total_attendances_days_2ndshif(self, obj):
+        return obj.total_attendances_days_2ndshif
+
+    def dehydrate_total_attendances_days_alp(self, obj):
+        return obj.total_attendances_days_alp
+
+    def dehydrate_total_attendances_days_alp_open(self, obj):
+        return obj.total_attendances_days_alp_open
+
+    def dehydrate_total_attendances_days_2ndshift_open(self, obj):
+        return obj.total_attendances_days_2ndshift_open
 
     def dehydrate_total_registered_2ndshift_male(self, obj):
         return obj.total_registered_2ndshift_male
@@ -213,11 +230,19 @@ class SchoolAdmin(ImportExportModelAdmin):
         'weekend',
         'it_name',
         'it_phone_number',
+<<<<<<< HEAD
         #'field_coordinator_name',
         # 'coordinator',
+=======
+        'coordinator',
+>>>>>>> develop
         'academic_year_start',
         'academic_year_end',
         'academic_year_exam_end',
+        #'total_attendances_days_2ndshift',
+        #'total_attendances_days_2ndshift_open',
+        #'total_attendances_days_alp',
+        #'total_attendances_days_alp_open',
     )
     list_display = (
         'name',
@@ -231,6 +256,12 @@ class SchoolAdmin(ImportExportModelAdmin):
         'total_registered_alp',
         'attendance_range',
         'attendance_from_beginning',
+        'weekend',
+        'academic_year_start',
+        'total_attendances_days_2ndshift',
+        'total_attendances_days_2ndshift_open',
+        'total_attendances_days_alp',
+        'total_attendances_days_alp_open',
     )
     search_fields = (
         'name',

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-28 14:13+0200\n"
+"POT-Creation-Date: 2019-04-03 12:28+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,7 +51,7 @@ msgstr ""
 #: student_registration/alp/filters.py:58
 #: student_registration/backends/tasks.py:518
 #: student_registration/clm/filters.py:47
-#: student_registration/clm/models.py:755
+#: student_registration/clm/models.py:760
 #: student_registration/enrollments/filters.py:13
 msgid "Section"
 msgstr ""
@@ -73,10 +73,10 @@ msgstr ""
 #: student_registration/alp/models.py:425 student_registration/clm/forms.py:37
 #: student_registration/clm/forms.py:94 student_registration/clm/forms.py:100
 #: student_registration/clm/forms.py:106 student_registration/clm/models.py:131
-#: student_registration/clm/models.py:325
-#: student_registration/clm/models.py:332
-#: student_registration/clm/models.py:339
-#: student_registration/clm/models.py:568
+#: student_registration/clm/models.py:330
+#: student_registration/clm/models.py:337
+#: student_registration/clm/models.py:344
+#: student_registration/clm/models.py:573
 #: student_registration/enrollments/forms.py:31
 #: student_registration/enrollments/forms.py:66
 #: student_registration/enrollments/forms.py:72
@@ -103,11 +103,11 @@ msgstr ""
 #: student_registration/clm/forms.py:94 student_registration/clm/forms.py:100
 #: student_registration/clm/forms.py:106 student_registration/clm/forms.py:692
 #: student_registration/clm/forms.py:698 student_registration/clm/models.py:132
-#: student_registration/clm/models.py:157
-#: student_registration/clm/models.py:325
-#: student_registration/clm/models.py:332
-#: student_registration/clm/models.py:339
-#: student_registration/clm/models.py:569
+#: student_registration/clm/models.py:162
+#: student_registration/clm/models.py:330
+#: student_registration/clm/models.py:337
+#: student_registration/clm/models.py:344
+#: student_registration/clm/models.py:574
 #: student_registration/enrollments/forms.py:31
 #: student_registration/enrollments/forms.py:66
 #: student_registration/enrollments/forms.py:72
@@ -474,9 +474,9 @@ msgstr ""
 #: student_registration/backends/tasks.py:355
 #: student_registration/backends/tasks.py:366
 #: student_registration/clm/forms.py:766 student_registration/clm/forms.py:787
-#: student_registration/clm/models.py:647
-#: student_registration/clm/models.py:675
-#: student_registration/clm/models.py:994
+#: student_registration/clm/models.py:652
+#: student_registration/clm/models.py:680
+#: student_registration/clm/models.py:999
 #: student_registration/enrollments/forms.py:700
 #: student_registration/enrollments/forms.py:788
 #: student_registration/enrollments/forms.py:882
@@ -491,9 +491,9 @@ msgstr ""
 #: student_registration/alp/forms.py:1125
 #: student_registration/alp/models.py:263
 #: student_registration/alp/models.py:349 student_registration/clm/forms.py:771
-#: student_registration/clm/forms.py:792 student_registration/clm/models.py:654
-#: student_registration/clm/models.py:682
-#: student_registration/clm/models.py:1000
+#: student_registration/clm/forms.py:792 student_registration/clm/models.py:659
+#: student_registration/clm/models.py:687
+#: student_registration/clm/models.py:1005
 #: student_registration/enrollments/models.py:268
 #: student_registration/enrollments/models.py:410
 msgid "Foreign Language"
@@ -507,9 +507,9 @@ msgstr ""
 #: student_registration/backends/tasks.py:359
 #: student_registration/backends/tasks.py:370
 #: student_registration/clm/forms.py:776 student_registration/clm/forms.py:797
-#: student_registration/clm/models.py:661
-#: student_registration/clm/models.py:689
-#: student_registration/clm/models.py:1006
+#: student_registration/clm/models.py:666
+#: student_registration/clm/models.py:694
+#: student_registration/clm/models.py:1011
 #: student_registration/enrollments/forms.py:720
 #: student_registration/enrollments/forms.py:812
 #: student_registration/enrollments/forms.py:912
@@ -527,9 +527,9 @@ msgstr ""
 #: student_registration/backends/tasks.py:360
 #: student_registration/backends/tasks.py:371
 #: student_registration/clm/forms.py:781 student_registration/clm/forms.py:802
-#: student_registration/clm/models.py:668
-#: student_registration/clm/models.py:696
-#: student_registration/clm/models.py:1012
+#: student_registration/clm/models.py:673
+#: student_registration/clm/models.py:701
+#: student_registration/clm/models.py:1017
 #: student_registration/enrollments/forms.py:725
 #: student_registration/enrollments/forms.py:818
 #: student_registration/enrollments/models.py:303
@@ -544,7 +544,7 @@ msgstr ""
 #: student_registration/alp/forms.py:525 student_registration/alp/models.py:412
 #: student_registration/backends/tasks.py:78
 #: student_registration/backends/tasks.py:385
-#: student_registration/clm/forms.py:92 student_registration/clm/models.py:326
+#: student_registration/clm/forms.py:92 student_registration/clm/models.py:331
 #: student_registration/enrollments/forms.py:64
 #: student_registration/enrollments/models.py:465
 msgid "First time registered?"
@@ -554,7 +554,7 @@ msgstr ""
 #: student_registration/backends/tasks.py:79
 #: student_registration/backends/tasks.py:386
 #: student_registration/clm/forms.py:98 student_registration/clm/forms.py:690
-#: student_registration/clm/models.py:333
+#: student_registration/clm/models.py:338
 #: student_registration/enrollments/forms.py:70
 #: student_registration/enrollments/models.py:472
 msgid "Student outreached?"
@@ -564,7 +564,7 @@ msgstr ""
 #: student_registration/backends/tasks.py:80
 #: student_registration/backends/tasks.py:387
 #: student_registration/clm/forms.py:104 student_registration/clm/forms.py:696
-#: student_registration/clm/models.py:340
+#: student_registration/clm/models.py:345
 #: student_registration/enrollments/forms.py:76
 #: student_registration/enrollments/models.py:479
 msgid "Have barcode with him?"
@@ -588,7 +588,7 @@ msgstr ""
 #: student_registration/alp/forms.py:559 student_registration/alp/models.py:405
 #: student_registration/backends/tasks.py:81
 #: student_registration/backends/tasks.py:388
-#: student_registration/clm/models.py:319
+#: student_registration/clm/models.py:324
 #: student_registration/enrollments/forms.py:115
 #: student_registration/enrollments/models.py:458
 msgid "Outreach barcode"
@@ -749,12 +749,12 @@ msgid "Created by"
 msgstr ""
 
 #: student_registration/alp/models.py:102
-#: student_registration/clm/models.py:310
+#: student_registration/clm/models.py:315
 msgid "Modified by"
 msgstr ""
 
 #: student_registration/alp/models.py:114
-#: student_registration/clm/models.py:203
+#: student_registration/clm/models.py:208
 msgid "Location"
 msgstr ""
 
@@ -804,7 +804,7 @@ msgstr ""
 #: student_registration/alp/models.py:435
 #: student_registration/backends/tasks.py:361
 #: student_registration/backends/tasks.py:374
-#: student_registration/clm/models.py:361
+#: student_registration/clm/models.py:366
 #: student_registration/schools/models.py:71
 msgid "Comments"
 msgstr ""
@@ -892,7 +892,7 @@ msgstr ""
 #: student_registration/backends/tasks.py:331
 #: student_registration/backends/tasks.py:507
 #: student_registration/clm/filters.py:19 student_registration/clm/forms.py:129
-#: student_registration/clm/models.py:197
+#: student_registration/clm/models.py:202
 #: student_registration/enrollments/views.py:593
 #: student_registration/enrollments/views.py:640
 msgid "District"
@@ -904,7 +904,7 @@ msgstr ""
 #: student_registration/backends/tasks.py:332
 #: student_registration/backends/tasks.py:508
 #: student_registration/clm/filters.py:18 student_registration/clm/forms.py:122
-#: student_registration/clm/models.py:191
+#: student_registration/clm/models.py:196
 #: student_registration/enrollments/views.py:594
 #: student_registration/enrollments/views.py:641
 msgid "Governorate"
@@ -990,7 +990,7 @@ msgstr ""
 
 #: student_registration/backends/tasks.py:39
 #: student_registration/backends/tasks.py:194
-#: student_registration/clm/models.py:345
+#: student_registration/clm/models.py:350
 #: student_registration/enrollments/forms.py:122
 #: student_registration/enrollments/models.py:484
 msgid "Registration date"
@@ -1337,29 +1337,29 @@ msgid "Dropout"
 msgstr ""
 
 #: student_registration/clm/filters.py:17 student_registration/clm/forms.py:136
-#: student_registration/clm/models.py:184
+#: student_registration/clm/models.py:189
 msgid "Round"
 msgstr ""
 
 #: student_registration/clm/filters.py:21
-#: student_registration/clm/models.py:222
+#: student_registration/clm/models.py:227
 msgid "Disability"
 msgstr ""
 
 #: student_registration/clm/filters.py:49
-#: student_registration/clm/models.py:616
+#: student_registration/clm/models.py:621
 msgid "Registered in school"
 msgstr ""
 
 #: student_registration/clm/filters.py:50 student_registration/clm/forms.py:761
-#: student_registration/clm/models.py:629
+#: student_registration/clm/models.py:634
 #: student_registration/enrollments/filters.py:14
 msgid "Class"
 msgstr ""
 
 #: student_registration/clm/filters.py:81
-#: student_registration/clm/models.py:450
-#: student_registration/clm/models.py:957
+#: student_registration/clm/models.py:455
+#: student_registration/clm/models.py:962
 msgid "Cycle"
 msgstr ""
 
@@ -1406,7 +1406,7 @@ msgstr ""
 
 #: student_registration/clm/forms.py:80 student_registration/clm/forms.py:245
 #: student_registration/clm/forms.py:402 student_registration/clm/forms.py:819
-#: student_registration/clm/models.py:945
+#: student_registration/clm/models.py:950
 msgid "Repeat level"
 msgstr ""
 
@@ -1424,16 +1424,18 @@ msgid "Referred to formal education - Level 1"
 msgstr ""
 
 #: student_registration/clm/forms.py:84 student_registration/clm/forms.py:249
-#: student_registration/clm/models.py:176
-#: student_registration/clm/models.py:949
+#: student_registration/clm/models.py:181
+#: student_registration/clm/models.py:954
 msgid "Referred to another program"
 msgstr ""
 
 #: student_registration/clm/forms.py:85 student_registration/clm/forms.py:408
+#: student_registration/clm/models.py:448
+#: student_registration/clm/models.py:955
 msgid "Dropout, referral not possible"
 msgstr ""
 
-#: student_registration/clm/forms.py:147 student_registration/clm/models.py:210
+#: student_registration/clm/forms.py:147 student_registration/clm/models.py:215
 msgid "The language supported in the program"
 msgstr ""
 
@@ -1445,7 +1447,7 @@ msgstr ""
 msgid "Does the child have any disability or special need?"
 msgstr ""
 
-#: student_registration/clm/forms.py:219 student_registration/clm/models.py:255
+#: student_registration/clm/forms.py:219 student_registration/clm/models.py:260
 msgid "What is the educational level of a person who is valuable to the child?"
 msgstr ""
 
@@ -1456,7 +1458,7 @@ msgstr ""
 #: student_registration/clm/forms.py:235
 msgid ""
 "The main barriers affecting the daily attendance and performance of the "
-"child or drop out of school? (Select more than one if applicable)"
+"child or drop out of programme? (Select more than one if applicable)"
 msgstr ""
 
 #: student_registration/clm/forms.py:241 student_registration/clm/forms.py:398
@@ -1472,37 +1474,37 @@ msgid "Does the child have children?"
 msgstr ""
 
 #: student_registration/clm/forms.py:382 student_registration/clm/forms.py:702
-#: student_registration/clm/models.py:233
+#: student_registration/clm/models.py:238
 msgid "Does the child participate in work?"
 msgstr ""
 
 #: student_registration/clm/forms.py:388 student_registration/clm/forms.py:708
-#: student_registration/clm/models.py:244
+#: student_registration/clm/models.py:249
 msgid "What is the type of work ?"
 msgstr ""
 
 #: student_registration/clm/forms.py:394 student_registration/clm/forms.py:714
-#: student_registration/clm/models.py:249
+#: student_registration/clm/models.py:254
 msgid "How many hours does this child work in a day?"
 msgstr ""
 
-#: student_registration/clm/forms.py:403 student_registration/clm/models.py:437
+#: student_registration/clm/forms.py:403 student_registration/clm/models.py:442
 msgid "Referred public school"
 msgstr ""
 
-#: student_registration/clm/forms.py:404 student_registration/clm/models.py:438
+#: student_registration/clm/forms.py:404 student_registration/clm/models.py:443
 msgid "referred to ALP"
 msgstr ""
 
-#: student_registration/clm/forms.py:405 student_registration/clm/models.py:440
+#: student_registration/clm/forms.py:405 student_registration/clm/models.py:445
 msgid "Ready for ALP but referral is not possible"
 msgstr ""
 
-#: student_registration/clm/forms.py:406 student_registration/clm/models.py:441
+#: student_registration/clm/forms.py:406 student_registration/clm/models.py:446
 msgid "Re-register on another round of BLN"
 msgstr ""
 
-#: student_registration/clm/forms.py:407 student_registration/clm/models.py:442
+#: student_registration/clm/forms.py:407 student_registration/clm/models.py:447
 msgid "Not enrolled in any educational program"
 msgstr ""
 
@@ -1535,7 +1537,7 @@ msgstr ""
 #: student_registration/clm/forms.py:1201
 #: student_registration/clm/forms.py:1219
 #: student_registration/clm/forms.py:1559
-#: student_registration/clm/models.py:264
+#: student_registration/clm/models.py:269
 msgid "Pre-assessment"
 msgstr ""
 
@@ -1544,7 +1546,7 @@ msgstr ""
 #: student_registration/clm/forms.py:1203
 #: student_registration/clm/forms.py:1222
 #: student_registration/clm/forms.py:1561
-#: student_registration/clm/models.py:271
+#: student_registration/clm/models.py:276
 msgid "Post-assessment"
 msgstr ""
 
@@ -1569,8 +1571,8 @@ msgstr ""
 msgid "The school where the child is registered"
 msgstr ""
 
-#: student_registration/clm/forms.py:742 student_registration/clm/models.py:573
-#: student_registration/clm/models.py:623
+#: student_registration/clm/forms.py:742 student_registration/clm/models.py:578
+#: student_registration/clm/models.py:628
 msgid "Shift"
 msgstr ""
 
@@ -1615,19 +1617,19 @@ msgid "In which cycle is this child registered?"
 msgstr ""
 
 #: student_registration/clm/forms.py:1314
-#: student_registration/clm/models.py:584
-#: student_registration/clm/models.py:940
+#: student_registration/clm/models.py:589
+#: student_registration/clm/models.py:945
 msgid "Inside the school"
 msgstr ""
 
 #: student_registration/clm/forms.py:1315
-#: student_registration/clm/models.py:585
-#: student_registration/clm/models.py:941
+#: student_registration/clm/models.py:590
+#: student_registration/clm/models.py:946
 msgid "Outside the school"
 msgstr ""
 
 #: student_registration/clm/forms.py:1326
-#: student_registration/clm/models.py:981
+#: student_registration/clm/models.py:986
 msgid "Where was the child referred?"
 msgstr ""
 
@@ -1636,12 +1638,12 @@ msgid "What is the measurement of the child's arm circumference? (Centimeter)"
 msgstr ""
 
 #: student_registration/clm/forms.py:1336
-#: student_registration/clm/models.py:935
+#: student_registration/clm/models.py:940
 msgid "< 11.5 CM (severe malnutrition)"
 msgstr ""
 
 #: student_registration/clm/forms.py:1337
-#: student_registration/clm/models.py:936
+#: student_registration/clm/models.py:941
 msgid "< 12.5 CM (moderate malnutrition)"
 msgstr ""
 
@@ -1684,7 +1686,7 @@ msgid "Referral from the displaced community"
 msgstr ""
 
 #: student_registration/clm/models.py:142
-#: student_registration/clm/models.py:280
+#: student_registration/clm/models.py:285
 msgid "Participation"
 msgstr ""
 
@@ -1709,76 +1711,95 @@ msgid "Security"
 msgstr ""
 
 #: student_registration/clm/models.py:154
-#: student_registration/clm/models.py:169
-#: student_registration/outreach/models.py:104
-#: student_registration/outreach/models.py:170
-msgid "Other"
+msgid "Family moved"
+msgstr ""
+
+#: student_registration/clm/models.py:155
+msgid "Marriage/Engagement/Pregnancy"
+msgstr ""
+
+#: student_registration/clm/models.py:156
+msgid "Violence/Bullying"
+msgstr ""
+
+#: student_registration/clm/models.py:157
+msgid "Full time job to support family financially"
 msgstr ""
 
 #: student_registration/clm/models.py:158
-msgid "Yes - Morning"
-msgstr ""
-
-#: student_registration/clm/models.py:159
-msgid "Yes - Afternoon"
-msgstr ""
-
-#: student_registration/clm/models.py:160
-msgid "Yes - All day"
+msgid "No interest in pursuing the programme/No value"
 msgstr ""
 
 #: student_registration/clm/models.py:163
-msgid "Agriculture"
+msgid "Yes - Morning"
 msgstr ""
 
 #: student_registration/clm/models.py:164
-msgid "Building"
+msgid "Yes - Afternoon"
 msgstr ""
 
 #: student_registration/clm/models.py:165
-msgid "Manufacturing"
-msgstr ""
-
-#: student_registration/clm/models.py:166
-msgid "Retail / Store"
-msgstr ""
-
-#: student_registration/clm/models.py:167
-msgid "Begging"
+msgid "Yes - All day"
 msgstr ""
 
 #: student_registration/clm/models.py:168
+msgid "Agriculture"
+msgstr ""
+
+#: student_registration/clm/models.py:169
+msgid "Building"
+msgstr ""
+
+#: student_registration/clm/models.py:170
+msgid "Manufacturing"
+msgstr ""
+
+#: student_registration/clm/models.py:171
+msgid "Retail / Store"
+msgstr ""
+
+#: student_registration/clm/models.py:172
+msgid "Begging"
+msgstr ""
+
+#: student_registration/clm/models.py:173
 msgid ""
 "Other (hotel, restaurant, transport, personal services such as cleaning, "
 "hair care, cooking and childcare)"
 msgstr ""
 
-#: student_registration/clm/models.py:172
-#: student_registration/clm/models.py:298
-#: student_registration/clm/models.py:435
-#: student_registration/clm/models.py:469
-#: student_registration/clm/models.py:567
-#: student_registration/clm/models.py:944
-#: student_registration/clm/models.py:1020
+#: student_registration/clm/models.py:174
+#: student_registration/outreach/models.py:104
+#: student_registration/outreach/models.py:170
+msgid "Other"
+msgstr ""
+
+#: student_registration/clm/models.py:177
+#: student_registration/clm/models.py:303
+#: student_registration/clm/models.py:440
+#: student_registration/clm/models.py:474
+#: student_registration/clm/models.py:572
+#: student_registration/clm/models.py:949
+#: student_registration/clm/models.py:1025
 msgid "Learning result"
 msgstr ""
 
-#: student_registration/clm/models.py:173
-#: student_registration/clm/models.py:946
+#: student_registration/clm/models.py:178
+#: student_registration/clm/models.py:951
 msgid "Graduated to the next level"
 msgstr ""
 
-#: student_registration/clm/models.py:174
-#: student_registration/clm/models.py:947
+#: student_registration/clm/models.py:179
+#: student_registration/clm/models.py:952
 msgid "Graduated to formal education - KG"
 msgstr ""
 
-#: student_registration/clm/models.py:175
-#: student_registration/clm/models.py:948
+#: student_registration/clm/models.py:180
+#: student_registration/clm/models.py:953
 msgid "Graduated to formal education - Level 1"
 msgstr ""
 
-#: student_registration/clm/models.py:216
+#: student_registration/clm/models.py:221
 #: student_registration/enrollments/admin.py:425
 #: student_registration/enrollments/models.py:848
 #: student_registration/templates/alp/test_grading.html:19
@@ -1787,150 +1808,146 @@ msgstr ""
 msgid "Student"
 msgstr ""
 
-#: student_registration/clm/models.py:291
+#: student_registration/clm/models.py:296
 msgid "Barriers"
 msgstr ""
 
-#: student_registration/clm/models.py:350
+#: student_registration/clm/models.py:355
 #: student_registration/users/models.py:21
 msgid "Partner"
 msgstr ""
 
-#: student_registration/clm/models.py:357
+#: student_registration/clm/models.py:362
 msgid "Internal number"
 msgstr ""
 
-#: student_registration/clm/models.py:368
-#: student_registration/clm/models.py:378
+#: student_registration/clm/models.py:373
+#: student_registration/clm/models.py:383
 msgid "Dropout from the round"
 msgstr ""
 
-#: student_registration/clm/models.py:369
-#: student_registration/clm/models.py:379
+#: student_registration/clm/models.py:374
+#: student_registration/clm/models.py:384
 msgid "Uncompleted Participation"
 msgstr ""
 
-#: student_registration/clm/models.py:371
+#: student_registration/clm/models.py:376
 msgid "unsuccessful pre test reason"
 msgstr ""
 
-#: student_registration/clm/models.py:381
+#: student_registration/clm/models.py:386
 msgid "unsuccessful post test reason"
 msgstr ""
 
-#: student_registration/clm/models.py:439
+#: student_registration/clm/models.py:444
 msgid "referred to TVET"
 msgstr ""
 
-#: student_registration/clm/models.py:443
-msgid "Dropout, referred not possible"
-msgstr ""
-
-#: student_registration/clm/models.py:461
+#: student_registration/clm/models.py:466
 msgid "Referral"
 msgstr ""
 
-#: student_registration/clm/models.py:574
+#: student_registration/clm/models.py:579
 #: student_registration/enrollments/models.py:82
 #: student_registration/outreach/models.py:213
 msgid "First shift"
 msgstr ""
 
-#: student_registration/clm/models.py:575
+#: student_registration/clm/models.py:580
 #: student_registration/enrollments/models.py:83
 #: student_registration/outreach/models.py:214
 msgid "Second shift"
 msgstr ""
 
-#: student_registration/clm/models.py:578
-#: student_registration/clm/models.py:597
+#: student_registration/clm/models.py:583
+#: student_registration/clm/models.py:602
 msgid "Program type"
 msgstr ""
 
-#: student_registration/clm/models.py:579
+#: student_registration/clm/models.py:584
 msgid "Homework Support"
 msgstr ""
 
-#: student_registration/clm/models.py:580
+#: student_registration/clm/models.py:585
 msgid "Remedial Support"
 msgstr ""
 
-#: student_registration/clm/models.py:583
-#: student_registration/clm/models.py:604
-#: student_registration/clm/models.py:939
-#: student_registration/clm/models.py:964
+#: student_registration/clm/models.py:588
+#: student_registration/clm/models.py:609
+#: student_registration/clm/models.py:944
+#: student_registration/clm/models.py:969
 msgid "Program site"
 msgstr ""
 
-#: student_registration/clm/models.py:588
+#: student_registration/clm/models.py:593
 msgid "Academic"
 msgstr ""
 
-#: student_registration/clm/models.py:589
+#: student_registration/clm/models.py:594
 msgid "Absence"
 msgstr ""
 
-#: student_registration/clm/models.py:610
-#: student_registration/clm/models.py:970
+#: student_registration/clm/models.py:615
+#: student_registration/clm/models.py:975
 msgid "Attending in school"
 msgstr ""
 
-#: student_registration/clm/models.py:640
+#: student_registration/clm/models.py:645
 msgid "Reason of referral"
 msgstr ""
 
-#: student_registration/clm/models.py:704
+#: student_registration/clm/models.py:709
 msgid "Arabic reading - Pre"
 msgstr ""
 
-#: student_registration/clm/models.py:711
+#: student_registration/clm/models.py:716
 msgid "Arabic reading - Post"
 msgstr ""
 
-#: student_registration/clm/models.py:719
+#: student_registration/clm/models.py:724
 msgid "Self-assessment - Pre"
 msgstr ""
 
-#: student_registration/clm/models.py:726
+#: student_registration/clm/models.py:731
 msgid "Self-assessment - Post"
 msgstr ""
 
-#: student_registration/clm/models.py:734
+#: student_registration/clm/models.py:739
 #: student_registration/clm/tables.py:159
 msgid "Motivation - Pre"
 msgstr ""
 
-#: student_registration/clm/models.py:741
+#: student_registration/clm/models.py:746
 #: student_registration/clm/tables.py:161
 msgid "Motivation - Post"
 msgstr ""
 
-#: student_registration/clm/models.py:749
+#: student_registration/clm/models.py:754
 msgid "RS Learning result"
 msgstr ""
 
-#: student_registration/clm/models.py:934
+#: student_registration/clm/models.py:939
 msgid "MUAC"
 msgstr ""
 
-#: student_registration/clm/models.py:988
+#: student_registration/clm/models.py:993
 msgid "Child MUAC"
 msgstr ""
 
-#: student_registration/clm/models.py:1156
+#: student_registration/clm/models.py:1161
 #: student_registration/enrollments/models.py:855
 msgid "Enrollment"
 msgstr ""
 
-#: student_registration/clm/models.py:1162
+#: student_registration/clm/models.py:1167
 msgid "Assessment type"
 msgstr ""
 
-#: student_registration/clm/models.py:1167
+#: student_registration/clm/models.py:1172
 msgid "Assessment date"
 msgstr ""
 
-#: student_registration/clm/models.py:1173
+#: student_registration/clm/models.py:1178
 msgid "Assessment answers"
 msgstr ""
 

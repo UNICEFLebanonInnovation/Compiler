@@ -83,6 +83,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     last_informal_edu_final_result_id = serializers.CharField(source='last_informal_edu_final_result.id', read_only=True)
 
     moved = serializers.CharField(read_only=True)
+    dropout_status = serializers.CharField(read_only=True)
 
     student_outreach_child = serializers.IntegerField(source='student.outreach_child', required=False)
     student_outreach_child_id = serializers.IntegerField(source='student.outreach_child.id', read_only=True)
@@ -204,6 +205,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'last_informal_edu_round_id',
             'last_informal_edu_final_result_id',
             'moved',
+            'dropout_status',
             'exam_result_arabic',
             'exam_result_language',
             'exam_result_education',

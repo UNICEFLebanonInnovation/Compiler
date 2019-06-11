@@ -46,18 +46,10 @@ CACHES = {
 # ------------------------------------------------------------------------------
 # MIDDLEWARE CONFIGURATION
 # ------------------------------------------------------------------------------
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'student_registration.lockout_middleware.StudentLockoutMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
-MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware','student_registration.middleware.AutoLogout','student_registration.cache_control_middleware.CacheControlMiddleware','student_registration.one_session.OneSessionPerUserMiddleware','student_registration.hsts_middleware.HSTSMiddleware','student_registration.xframe_middleware.XFrameMiddleware']
+
+
+
+MIDDLEWARE = MIDDLEWARE + ['debug_toolbar.middleware.DebugToolbarMiddleware','student_registration.middleware.AutoLogout','student_registration.cache_control_middleware.CacheControlMiddleware','student_registration.one_session.OneSessionPerUserMiddleware','student_registration.hsts_middleware.HSTSMiddleware','student_registration.xframe_middleware.XFrameMiddleware']
 INSTALLED_APPS += ['debug_toolbar','lockout','student_registration.accounts']
 
 INTERNAL_IPS = ['127.0.0.1', '10.0.2.2', ]
@@ -116,8 +108,10 @@ LOGGING = {
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Auto logout delay in minutes
-AUTO_LOGOUT_DELAY = 60  # equivalent to 5 minutes
+AUTO_LOGOUT_DELAY = 20 # equivalent to 20 minutes
 CSRF_USE_SESSIONS = True
-LOCKOUT_MAX_ATTEMPTS = 10
-LOCKOUT_TIME = 60
+# LOCKOUT_MAX_ATTEMPTS = 5
+# LOCKOUT_TIME = 15
+
+
 

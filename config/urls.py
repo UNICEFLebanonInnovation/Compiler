@@ -45,6 +45,7 @@ from student_registration.enrollments.views import (
     LoggingStudentMoveViewSet,
     LoggingProgramMoveViewSet,
     EnrollmentUpdateViewSet,
+    StudentDropoutViewSet,
 )
 from student_registration.outreach.views import HouseHoldViewSet, ChildViewSet
 from student_registration.backends.views import NotificationViewSet, ExporterViewSet
@@ -56,6 +57,7 @@ api.register(r'import-enrollment', EnrollmentImportViewSet, base_name='import_en
 api.register(r'import-grading', EnrollmentGradingImportViewSet, base_name='import_gradings')
 api.register(r'update-enrollment', EnrollmentUpdateViewSet, base_name='update_enrollments')
 api.register(r'logging-student-move', LoggingStudentMoveViewSet, base_name='logging_student_move')
+api.register(r'student-dropout-enrollment', StudentDropoutViewSet, base_name='student_dropout_enrollment')
 api.register(r'logging-student-program-move', LoggingProgramMoveViewSet, base_name='logging_student_ptogram_move')
 api.register(r'attendances', AttendanceViewSet, base_name='attendances')
 api.register(r'absentees', AbsenteeViewSet, base_name='absentees')
