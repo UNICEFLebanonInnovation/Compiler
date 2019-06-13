@@ -10,7 +10,6 @@ def create_instance(validated_data, model):
     from student_registration.students.models import Student
 
     student_data = validated_data.pop('student', None)
-    # print student_data
 
     if 'id' in student_data and student_data['id']:
         student_serializer = StudentSerializer(Student.objects.get(id=student_data['id']), data=student_data)
@@ -21,15 +20,16 @@ def create_instance(validated_data, model):
         student_serializer.is_valid(raise_exception=True)
         student_serializer.instance = student_serializer.save()
 
-    from student_registration.students.serializers import StudentSerializer
-    student_data = validated_data.pop('student', None)
-
     if 'internal_number' in validated_data and validated_data['internal_number']:
         internal_number = validated_data['internal_number']
         queryset = model.objects.filter(internal_number=internal_number).first()
 
         if queryset and queryset.student:
-            model.student = queryset.student
+            student_id = queryset.student.id
+            student_serializer = StudentSerializer(Student.objects.get(id=student_id), data=student_data)
+            student_serializer.is_valid(raise_exception=True)
+            student_serializer.instance = student_serializer.save()
+            # model.student = queryset.student
         else:
             student_serializer = StudentSerializer(data=student_data)
             student_serializer.is_valid(raise_exception=True)
