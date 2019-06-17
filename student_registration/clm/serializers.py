@@ -20,6 +20,23 @@ def create_instance(validated_data, model):
         student_serializer.is_valid(raise_exception=True)
         student_serializer.instance = student_serializer.save()
 
+    if 'internal' in validated_data and validated_data['internal']:
+        if validated_data['internal'] == 'yes':
+            if 'internal_number' in validated_data and validated_data['internal_number']:
+                internal_number = validated_data['internal_number']
+                queryset = model.objects.filter(internal_number=internal_number).first()
+
+                if queryset and queryset.student:
+                    student_id = queryset.student.id
+                    student_serializer = StudentSerializer(Student.objects.get(id=student_id), data=student_data)
+                    student_serializer.is_valid(raise_exception=True)
+                    student_serializer.instance = student_serializer.save()
+                    # model.student = queryset.student
+                else:
+                    student_serializer = StudentSerializer(data=student_data)
+                    student_serializer.is_valid(raise_exception=True)
+                    student_serializer.instance = student_serializer.save()
+
     try:
         instance = model.objects.create(**validated_data)
         instance.student = student_serializer.instance
@@ -79,12 +96,14 @@ class CLMSerializer(serializers.ModelSerializer):
     student_have_children = serializers.CharField(source='student.have_children', required=False)
     comments = serializers.CharField(required=False)
     unsuccessful_posttest_reason = serializers.CharField(required=False)
+    unsuccessful_pretest_reason = serializers.CharField(required=False)
 
     student_outreach_child = serializers.IntegerField(source='student.outreach_child', required=False)
     student_outreach_child_id = serializers.IntegerField(source='student.outreach_child.id', read_only=True)
 
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
     save = serializers.IntegerField(source='owner.id', read_only=True)
+    internal = serializers.CharField(read_only=True)
     enrollment_id = serializers.IntegerField(source='id', read_only=True)
     search_clm_student = serializers.CharField(source='student.full_name', read_only=True)
     search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
@@ -143,6 +162,8 @@ class CLMSerializer(serializers.ModelSerializer):
             'save',
             'comments',
             'unsuccessful_posttest_reason',
+            'unsuccessful_pretest_reason',
+            'internal',
         )
 
 
