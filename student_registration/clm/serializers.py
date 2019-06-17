@@ -160,6 +160,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'save',
             'comments',
             'unsuccessful_posttest_reason',
+            'internal',
         )
 
 
