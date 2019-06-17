@@ -102,6 +102,7 @@ class CLMSerializer(serializers.ModelSerializer):
 
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
     save = serializers.IntegerField(source='owner.id', read_only=True)
+    internal = serializers.CharField(source='owner.id', read_only=True)
     enrollment_id = serializers.IntegerField(source='id', read_only=True)
     search_clm_student = serializers.CharField(source='student.full_name', read_only=True)
     search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
