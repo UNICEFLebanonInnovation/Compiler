@@ -33,7 +33,7 @@ EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND',
                     default='django.core.mail.backends.console.EmailBackend')
 
 
-# AXES_CACHE = 'default'
+AXES_CACHE = 'default'
 # CACHING
 # ------------------------------------------------------------------------------
 CACHES = {
