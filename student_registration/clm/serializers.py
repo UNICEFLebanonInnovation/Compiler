@@ -20,8 +20,8 @@ def create_instance(validated_data, model):
         student_serializer.is_valid(raise_exception=True)
         student_serializer.instance = student_serializer.save()
 
-    if 'internal' in validated_data and validated_data['internal']:
-        if validated_data['internal'] == 'yes':
+    if 'partner' in validated_data and validated_data['partner']:
+        if validated_data['partner'] == 10:
             if 'internal_number' in validated_data and validated_data['internal_number']:
                 internal_number = validated_data['internal_number']
                 queryset = model.objects.filter(internal_number=internal_number).first()
@@ -103,10 +103,11 @@ class CLMSerializer(serializers.ModelSerializer):
 
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
     save = serializers.IntegerField(source='owner.id', read_only=True)
-    internal = serializers.CharField(read_only=True)
+    # internal = serializers.CharField(read_only=True)
     enrollment_id = serializers.IntegerField(source='id', read_only=True)
     search_clm_student = serializers.CharField(source='student.full_name', read_only=True)
     search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
+
 
     class Meta:
         model = CLM
@@ -163,7 +164,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'comments',
             'unsuccessful_posttest_reason',
             'unsuccessful_pretest_reason',
-            'internal',
+            # 'internal',
         )
 
 
