@@ -12,7 +12,7 @@ def create_instance(validated_data, model):
     student_data = validated_data.pop('student', None)
     student = None
 
-    if 'partner' in validated_data and int(validated_data['partner']) == 10:
+    if 'partner' in validated_data and validated_data['partner'].id == 10:
         if 'internal_number' in validated_data and validated_data['internal_number']:
             queryset = model.objects.filter(internal_number=validated_data['internal_number'])
 
@@ -31,21 +31,6 @@ def create_instance(validated_data, model):
         student_serializer.instance = student_serializer.save()
         student = student_serializer.instance
 
-    if 'internal_number' in validated_data and validated_data['internal_number']:
-        internal_number = validated_data['internal_number']
-        queryset = model.objects.filter(internal_number=internal_number).first()
-
-        if queryset and queryset.student:
-            student_id = queryset.student.id
-            student_serializer = StudentSerializer(Student.objects.get(id=student_id), data=student_data)
-            student_serializer.is_valid(raise_exception=True)
-            student_serializer.instance = student_serializer.save()
-            # model.student = queryset.student
-        else:
-            student_serializer = StudentSerializer(data=student_data)
-            student_serializer.is_valid(raise_exception=True)
-            student_serializer.instance = student_serializer.save()
-
     try:
         instance = model.objects.create(**validated_data)
         instance.student = student
@@ -60,17 +45,6 @@ def create_instance(validated_data, model):
 def update_instance(instance, validated_data):
     from student_registration.students.serializers import StudentSerializer
     student_data = validated_data.pop('student', None)
-
-    # if 'internal_number' in validated_data and validated_data['internal_number']:
-    #     internal_number = validated_data['internal_number']
-    #     queryset = instance.objects.filter(internal_number=internal_number).first()
-    #
-    #     if queryset and queryset.student:
-    #         instance.student = queryset.student
-    #     else:
-    #         student_serializer = StudentSerializer(data=student_data)
-    #         student_serializer.is_valid(raise_exception=True)
-    #         student_serializer.instance = student_serializer.save()
 
     if student_data:
         student_serializer = StudentSerializer(instance.student, data=student_data)

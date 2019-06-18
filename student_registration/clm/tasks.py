@@ -26,7 +26,6 @@ def push_bln_data(file_name, base_url, token, protocol='HTTPS'):
             data['partner'] = 10
             data['governorate'] = row[6].value
             data['district'] = row[7].value
-            # data['location'] = row[8].value
             data['language'] = row[8].value if row[8].value else 'english_arabic'
             data['student_first_name'] = row[9].value if row[9].value else 'None'
             data['student_father_name'] = row[10].value if row[10].value else 'None'
@@ -39,15 +38,12 @@ def push_bln_data(file_name, base_url, token, protocol='HTTPS'):
             data['student_birthday_day'] = row[17].value if row[17].value else '1'
             data['student_p_code'] = row[18].value if row[18].value else 'None'
             data['disability'] = row[19].value if row[19].value else 1
-            data['student_id_number'] =  row[20].value if row[20].value else 'None'
-
+            data['student_id_number'] = row[20].value if row[20].value else 'None'
             if row[21].value:
                 internal_number = row[21].value
             else:
                 internal_number = 'None'
-
             data['internal_number'] = internal_number
-
             data['comments'] = row[22].value if row[22].value else 'None'
             data['hh_educational_level'] = row[23].value
             data['student_family_status'] = row[24].value if row[24].value else 'single'
@@ -66,15 +62,16 @@ def push_bln_data(file_name, base_url, token, protocol='HTTPS'):
                 data['unsuccessful_posttest_reason'] = row[35].value
             data['participation'] = row[36].value
 
-            # data['barriers'] = [''.join(row[37].value.split())] if (row[37].value or row[37].value == ' ') else []
+            data['barriers'] = [''.join(row[37].value.split())] if (row[37].value or row[37].value == ' ') else []
             data['learning_result'] = row[38].value
 
             result = post_data(protocol=protocol, url=base_url, apifunc='/api/clm-bln/', token=token, data=data)
+            # print(result)
             result = json.loads(result)
-            # print(sresult)
+            # print(result)
 
         except Exception as ex:
-            print("---------------1")
+            print("---------------")
             print("error: ", ex.message)
             print(json.dumps(data, cls=DjangoJSONEncoder))
             print("---------------")
@@ -117,6 +114,10 @@ def push_cbece_data(file_name, base_url, token, protocol='HTTPS'):
             data['student_birthday_month'] = row[20].value if row[20].value else '1'
             data['student_birthday_day'] = row[21].value if row[21].value else '1'
             data['student_p_code'] = row[22].value if row[22].value else 'None'
+            data['student_outreach_child'] = 1
+            data['student_address'] = 'None'
+            data['student_family_status'] = 'single'
+            data['student_have_children'] = 0
             data['disability'] = row[23].value if row[23].value else 1
             data['student_id_number'] = row[24].value if row[24].value else 'None'
             data['internal_number'] = row[25].value if row[25].value else 'None'
@@ -133,9 +134,11 @@ def push_cbece_data(file_name, base_url, token, protocol='HTTPS'):
             data['barriers'] = [''.join(row[46].value.split())] if (row[46].value or row[46].value == ' ') else []
             data['learning_result'] = row[47].value
 
+            # print data
             result = post_data(protocol=protocol, url=base_url, apifunc='/api/clm-cbece/', token=token, data=data)
+            print(result)
             result = json.loads(result)
-            # print(sresult)
+            # print(result)
 
             # pre test
             try:
@@ -182,7 +185,7 @@ def push_cbece_data(file_name, base_url, token, protocol='HTTPS'):
                 pass
 
         except Exception as ex:
-            print("---------------1")
+            print("---------------3")
             print("error: ", ex.message)
             print(json.dumps(data, cls=DjangoJSONEncoder))
             print("---------------")
