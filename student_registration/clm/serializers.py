@@ -12,7 +12,7 @@ def create_instance(validated_data, model):
     student_data = validated_data.pop('student', None)
     student = None
 
-    if 'partner' in validated_data and int(validated_data['partner']) == 10:
+    if 'partner' in validated_data and validated_data['partner'] and validated_data['partner'].id == 10:
         if 'internal_number' in validated_data and validated_data['internal_number']:
             queryset = model.objects.filter(internal_number=validated_data['internal_number'])
 
@@ -43,11 +43,10 @@ def create_instance(validated_data, model):
 
 
 def update_instance(instance, validated_data):
+    from student_registration.students.serializers import StudentSerializer
     student_data = validated_data.pop('student', None)
 
     if student_data:
-        from student_registration.students.serializers import StudentSerializer
-
         student_serializer = StudentSerializer(instance.student, data=student_data)
         student_serializer.is_valid(raise_exception=True)
         student_serializer.instance = student_serializer.save()
