@@ -11,15 +11,6 @@ def create_instance(validated_data, model):
 
     student_data = validated_data.pop('student', None)
 
-    if 'id' in student_data and student_data['id']:
-        student_serializer = StudentSerializer(Student.objects.get(id=student_data['id']), data=student_data)
-        student_serializer.is_valid(raise_exception=True)
-        student_serializer.instance = student_serializer.save()
-    else:
-        student_serializer = StudentSerializer(data=student_data)
-        student_serializer.is_valid(raise_exception=True)
-        student_serializer.instance = student_serializer.save()
-
     if 'partner' in validated_data and validated_data['partner']:
         if validated_data['partner'] == 10:
             if 'internal_number' in validated_data and validated_data['internal_number']:
@@ -36,6 +27,15 @@ def create_instance(validated_data, model):
                     student_serializer = StudentSerializer(data=student_data)
                     student_serializer.is_valid(raise_exception=True)
                     student_serializer.instance = student_serializer.save()
+    else:
+        if 'id' in student_data and student_data['id']:
+            student_serializer = StudentSerializer(Student.objects.get(id=student_data['id']), data=student_data)
+            student_serializer.is_valid(raise_exception=True)
+            student_serializer.instance = student_serializer.save()
+        else:
+            student_serializer = StudentSerializer(data=student_data)
+            student_serializer.is_valid(raise_exception=True)
+            student_serializer.instance = student_serializer.save()
 
     try:
         instance = model.objects.create(**validated_data)
