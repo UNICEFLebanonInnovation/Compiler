@@ -12,11 +12,7 @@ def create_instance(validated_data, model):
     student_data = validated_data.pop('student', None)
     student = None
 
-<<<<<<< HEAD
-    if 'partner' in validated_data and validated_data['partner'].id == 10:
-=======
     if 'partner' in validated_data and validated_data['partner'] and validated_data['partner'].id == 10:
->>>>>>> develop
         if 'internal_number' in validated_data and validated_data['internal_number']:
             queryset = model.objects.filter(internal_number=validated_data['internal_number'])
 
