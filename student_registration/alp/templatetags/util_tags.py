@@ -324,3 +324,15 @@ def get_item_by_key(dictionary, level, age):
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
+
+
+@register.filter
+def is_allowed_create(programme):
+    from student_registration.clm.utils import is_allowed_create
+    return is_allowed_create(programme)
+
+
+@register.filter
+def is_allowed_edit(programme):
+    from student_registration.clm.utils import is_allowed_edit
+    return is_allowed_edit(programme)
