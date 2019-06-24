@@ -326,6 +326,26 @@ class ClassRoom(models.Model):
 class CLMRound(models.Model):
     name = models.CharField(max_length=45, unique=True)
 
+    current_round_bln = models.BooleanField(blank=True, default=False)
+    current_round_abln = models.BooleanField(blank=True, default=False)
+    current_round_cbece = models.BooleanField(blank=True, default=False)
+
+    start_date_bln = models.DateField(blank=True, null=True)
+    end_date_bln = models.DateField(blank=True, null=True)
+    start_date_bln_edit = models.DateField(blank=True, null=True)
+    end_date_bln_edit = models.DateField(blank=True, null=True)
+
+    start_date_abln = models.DateField(blank=True, null=True)
+    end_date_abln = models.DateField(blank=True, null=True)
+    start_date_abln_edit = models.DateField(blank=True, null=True)
+    end_date_abln_edit = models.DateField(blank=True, null=True)
+
+    start_date_cbece = models.DateField(blank=True, null=True)
+    end_date_cbece = models.DateField(blank=True, null=True)
+    start_date_cbece_edit = models.DateField(blank=True, null=True)
+    end_date_cbece_edit = models.DateField(blank=True, null=True)
+
+
     class Meta:
         ordering = ['name']
         verbose_name = "CLM Round"

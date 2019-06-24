@@ -21,12 +21,6 @@ class CommonTable(tables.Table):
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'),
                                           template_name='django_tables2/delete_column.html',
                                           attrs={'url': ''})
-    # pre_assessment = tables.TemplateColumn(verbose_name=_('Pre-assessment'),
-    #                                        template_name='django_tables2/clm_pre_assessment.html',
-    #                                        attrs={'url': ''})
-    # post_assessment = tables.TemplateColumn(verbose_name=_('Post-assessment'),
-    #                                         template_name='django_tables2/clm_post_assessment.html',
-    #                                         attrs={'url': ''})
 
     student_age = tables.Column(verbose_name=_('Age'), accessor='student.age')
     student_birthday = tables.Column(verbose_name=_('Birthday'), accessor='student.birthday')
@@ -43,23 +37,13 @@ class CommonTable(tables.Table):
 class BLNTable(CommonTable):
 
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
-                                        template_name='django_tables2/edit_column.html',
-                                        attrs={'url': '/clm/bln-edit/'})
+                                        template_name='django_tables2/clm_edit_column.html',
+                                        attrs={'url': '/clm/bln-edit/', 'programme': 'BLN'})
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
-                                          template_name='django_tables2/delete_column.html',
-                                          attrs={'url': '/api/clm-bln/'})
-    #
-    # pre_assessment_result = tables.Column(verbose_name=_('Academic Result - Pre'), orderable=False,
-    #                                       accessor='pre_test_score')
-    # post_assessment_result = tables.Column(verbose_name=_('Academic Result - Post'), orderable=False,
-    #                                        accessor='post_test_score')
-    #
+                                          template_name='django_tables2/clm_delete_column.html',
+                                          attrs={'url': '/api/clm-bln/', 'programme': 'BLN'})
     arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
                                        accessor='arabic_improvement')
-    # english_improvement = tables.Column(verbose_name=_('English - Improvement'), orderable=False,
-    #                                     accessor='english_improvement')
-    # french_improvement = tables.Column(verbose_name=_('French - Improvement'), orderable=False,
-    #                                    accessor='french_improvement')
     foreign_language_improvement = tables.Column(verbose_name=_('Foreign Language Development - Improvement'), orderable=False,
                                                  accessor='foreign_language_improvement')
     math_improvement = tables.Column(verbose_name=_('Cognitive Development - Mathematics - Improvement'), orderable=False,
@@ -94,11 +78,7 @@ class BLNTable(CommonTable):
             'student_birthday',
             'student.nationality',
             'student.mother_fullname',
-            # 'pre_assessment_result',
-            # 'post_assessment_result',
             'arabic_improvement',
-            # 'english_improvement',
-            # 'french_improvement',
             'foreign_language_improvement',
             'math_improvement',
             'social_emotional_improvement',
@@ -121,10 +101,10 @@ class RSTable(CommonTable):
 
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/edit_column.html',
-                                        attrs={'url': '/clm/rs-edit/'})
+                                        attrs={'url': '/clm/rs-edit/', 'programme': 'RS'})
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/delete_column.html',
-                                          attrs={'url': '/api/clm-rs/'})
+                                          attrs={'url': '/api/clm-rs/', 'programme': 'RS'})
 
     # Arabic reading result
     arabic_reading_improvement = tables.Column(verbose_name=_('Arabic Reading - Improvement'), orderable=False,
@@ -234,11 +214,11 @@ class RSTable(CommonTable):
 class CBECETable(CommonTable):
 
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
-                                        template_name='django_tables2/edit_column.html',
-                                        attrs={'url': '/clm/cbece-edit/'})
+                                        template_name='django_tables2/clm_edit_column.html',
+                                        attrs={'url': '/clm/cbece-edit/', 'programme': 'CBECE'})
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
-                                          template_name='django_tables2/delete_column.html',
-                                          attrs={'url': '/api/clm-cbece/'})
+                                          template_name='django_tables2/clm_delete_column.html',
+                                          attrs={'url': '/api/clm-cbece/', 'programme': 'CBECE'})
 
     pre_assessment_result = tables.Column(verbose_name=_('Assessment Result - Pre'), orderable=False,
                                           accessor='pre_test_score')

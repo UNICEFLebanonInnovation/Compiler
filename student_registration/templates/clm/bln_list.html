@@ -27,10 +27,12 @@
 
     <ol class="breadcrumb">
         <li class="breadcrumb-item active">
+            {% if 'BLN'|is_allowed_create %}
             <a href="{% url 'clm:bln_add' %}" class="btn btn-success">
                 <i class="icon-plus-sign icon-white"></i>
                 {% trans "Add new Child" %}
             </a>
+            {% endif %}
             <a href="{% url 'clm:bln_dashboard' %}" class="btn btn-outline-primary" role="button" aria-pressed="true">Dashboard</a>
         </li>
         <li class="breadcrumb-item active">
