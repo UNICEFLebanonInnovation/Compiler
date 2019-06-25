@@ -391,6 +391,71 @@ class CLM(TimeStampedModel):
         verbose_name=_('unsuccessful post test reason')
     )
 
+    phone_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Phone number')
+    )
+    phone_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Phone number confirm')
+    )
+
+    case_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Case number')
+    )
+    case_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Case number confirm')
+    )
+
+    individual_case_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Individual Case number')
+    )
+    individual_case_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Individual Case number confirm')
+    )
+
+    recorded_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Recorded number')
+    )
+    recorded_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Recorded number confirm')
+    )
+
+    national_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Syrian / Lebanese ID number ')
+    )
+    national_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Syrian / Lebanese ID number confirm')
+    )
+
     @property
     def student_fullname(self):
         if self.student:
