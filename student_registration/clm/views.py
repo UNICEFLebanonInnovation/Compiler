@@ -134,7 +134,7 @@ class BLNEditView(LoginRequiredMixin,
         if self.request.POST.get('save_add_another', None):
             return '/clm/bln-add/'
         if self.request.POST.get('save_and_continue', None):
-            return '/clm/cbece-edit/' + str(self.request.session.get('instance_id')) + '/'
+            return '/clm/bln-edit/' + str(self.request.session.get('instance_id')) + '/'
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -638,7 +638,7 @@ class RSEditView(LoginRequiredMixin,
         if self.request.POST.get('save_add_another', None):
             return '/clm/rs-add/'
         if self.request.POST.get('save_and_continue', None):
-            return '/clm/cbece-edit/' + str(self.request.session.get('instance_id')) + '/'
+            return '/clm/rs-edit/' + str(self.request.session.get('instance_id')) + '/'
         return self.success_url
 
     def get_context_data(self, **kwargs):
