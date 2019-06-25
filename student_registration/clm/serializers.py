@@ -2,7 +2,7 @@
 import json
 
 from rest_framework import serializers
-from .models import CLM, BLN, RS, CBECE, SelfPerceptionGrades
+from .models import CLM, BLN, ABLN, RS, CBECE, SelfPerceptionGrades
 
 
 def create_instance(validated_data, model):
@@ -171,6 +171,27 @@ class BLNSerializer(CLMSerializer):
 
     class Meta:
         model = BLN
+        fields = CLMSerializer.Meta.fields + (
+            # 'cycle',
+            # 'referral',
+            'have_labour',
+            'labours',
+            'labour_hours',
+            'student_family_status',
+            'student_have_children',
+        )
+
+
+class ABLNSerializer(CLMSerializer):
+
+    def create(self, validated_data):
+        return create_instance(validated_data=validated_data, model=self.Meta.model)
+
+    def update(self, instance, validated_data):
+        return update_instance(instance=instance, validated_data=validated_data)
+
+    class Meta:
+        model = ABLN
         fields = CLMSerializer.Meta.fields + (
             # 'cycle',
             # 'referral',

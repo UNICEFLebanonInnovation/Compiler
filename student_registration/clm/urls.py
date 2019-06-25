@@ -98,4 +98,26 @@ urlpatterns = [
         view=views.CBECEListView.as_view(),
         name='cbece_list'
     ),
+
+    url(
+        regex=r'^abln-add/$',
+        view=views.ABLNAddView.as_view(),
+        name='abln_add'
+    ),
+    url(
+        regex=r'^abln-edit/(?P<pk>[\w.@+-]+)/$',
+        view=views.ABLNEditView.as_view(),
+        name='abln_edit'
+    ),
+    url(
+        regex=r'^abln-export/$',
+        view=views.ABLNExportViewSet.as_view(),
+        name='abln_export'
+    ),
+    url(
+        regex=r'^abln-list/$',
+        view=views.ABLNListView.as_view(),
+        name='abln_list'
+    ),
+
 ]

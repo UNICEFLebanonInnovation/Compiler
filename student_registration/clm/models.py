@@ -1191,3 +1191,136 @@ class SelfPerceptionGrades(models.Model):
 
     def __unicode__(self):
         return self.enrollment
+
+
+class ABLN(CLM):
+
+    LEARNING_RESULT = Choices(
+        ('', _('Learning result')),
+        ('repeat_level', _('Repeat level')),
+        ('attended_public_school', _('Referred public school')),
+        ('referred_to_alp', _('referred to ALP')),
+        ('referred_to_tvet', _('referred to TVET')),
+        ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
+        # ('reenrolled_in_alp', _('Re-register on another round of BLN')),
+        ('graduated_to_bln_next_level', _('Graduated to the next level')),
+        # ('not_enrolled_any_program', _('Not enrolled in any educational program')),
+        ('dropout', _('Dropout, referral not possible'))
+    )
+
+    cycle = models.ForeignKey(
+        Cycle,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Cycle')
+    )
+    referral = ArrayField(
+        models.CharField(
+            choices=CLM.REFERRAL,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Referral')
+    )
+
+    learning_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LEARNING_RESULT,
+        verbose_name=_('Learning result')
+    )
+
+    def calculate_score(self, stage):
+        keys = [
+            'BLN_ASSESSMENT/arabic',
+            'BLN_ASSESSMENT/math',
+            'BLN_ASSESSMENT/foreign_language',
+            'BLN_ASSESSMENT/social_emotional',
+            'BLN_ASSESSMENT/psychomotor',
+            'BLN_ASSESSMENT/artistic',
+            # 'BLN_ASSESSMENT/english',
+            # 'BLN_ASSESSMENT/french'
+        ]
+        super(ABLN, self).score(keys, stage)
+
+    def assessment_form(self, stage, assessment_slug, callback=''):
+        try:
+            assessment = Assessment.objects.get(slug=assessment_slug)
+            return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=BLN&returnURL={callback}'.format(
+                form=assessment.assessment_form,
+                status=stage,
+                enrollment_id=self.id,
+                callback=callback
+            )
+        except Assessment.DoesNotExist as ex:
+            return ''
+
+    def domain_improvement(self, domain_mame):
+        key = '{}/{}'.format(
+            'BLN_ASSESSMENT',
+            domain_mame,
+        )
+        try:
+            if self.pre_test and self.post_test:
+                return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
+                              20.0) * 100.0, 2)
+        except Exception:
+            return 0.0
+        return 0.0
+
+    def get_assessment_value(self, key, stage):
+        assessment = getattr(self, stage)
+        if assessment:
+            key = 'BLN_ASSESSMENT/'+key
+            return assessment.get(key, 0)
+        return 0
+
+    @property
+    def arabic_improvement(self):
+        return str(self.domain_improvement('arabic')) + '%'
+
+    @property
+    def math_improvement(self):
+        return str(self.domain_improvement('math')) + '%'
+
+    @property
+    def english_improvement(self):
+        return str(self.domain_improvement('english')) + '%'
+
+    @property
+    def french_improvement(self):
+        return str(self.domain_improvement('french')) + '%'
+
+    @property
+    def foreign_language_improvement(self):
+        french_english = self.domain_improvement('english') + self.domain_improvement('french')
+        if not french_english:
+            return str(self.domain_improvement('foreign_language')) + '%'
+        return str(french_english) + '%'
+
+    @property
+    def social_emotional_improvement(self):
+        return str(self.domain_improvement('social_emotional')) + '%'
+
+    @property
+    def psychomotor_improvement(self):
+        return str(self.domain_improvement('psychomotor')) + '%'
+
+    @property
+    def artistic_improvement(self):
+        return str(self.domain_improvement('artistic')) + '%'
+
+    def pre_assessment_form(self):
+        return self.assessment_form(stage='pre_test', assessment_slug='bln_pre_test')
+
+    def post_assessment_form(self):
+        return self.assessment_form(stage='post_test', assessment_slug='bln_post_test')
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "ABLN"
+        verbose_name_plural = "ABLN"

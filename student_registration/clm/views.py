@@ -27,11 +27,11 @@ from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
-from .filters import BLNFilter, RSFilter, CBECEFilter
-from .tables import BootstrapTable, BLNTable, RSTable, CBECETable
-from .models import BLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment
-from .forms import BLNForm, RSForm, CBECEForm
-from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
+from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter
+from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable
+from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment
+from .forms import BLNForm, ABLNForm, RSForm, CBECEForm
+from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 from .utils import is_allowed_create, is_allowed_edit
 
 
@@ -305,6 +305,125 @@ class BLNDashboardView(LoginRequiredMixin,
             'clm_rounds': clm_rounds,
             'per_gov': per_gov
         }
+
+
+class ABLNAddView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FormView):
+
+    template_name = 'clm/create_form.html'
+    form_class = ABLNForm
+    success_url = '/clm/abln-list/'
+    group_required = [u"CLM_ABLN"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/abln-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/abln-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get('save_and_pretest', None):
+            return assessment_form(
+                instance_id=self.request.session.get('instance_id'),
+                stage='pre_test',
+                assessment_slug='abln_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:abln_edit',
+                                                         kwargs={'pk': self.request.session.get('instance_id')})))
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['is_allowed_create'] = is_allowed_create('ABLN')
+        return super(ABLNAddView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        initial = super(ABLNAddView, self).get_initial()
+        data = {
+            'new_registry': self.request.GET.get('new_registry', ''),
+            'student_outreached': self.request.GET.get('student_outreached', ''),
+            'have_barcode': self.request.GET.get('have_barcode', '')
+        }
+        if self.request.GET.get('enrollment_id'):
+            instance = ABLN.objects.get(id=self.request.GET.get('enrollment_id'))
+            data = ABLNSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            data['learning_result'] = ''
+
+        if self.request.GET.get('child_id'):
+            instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
+            data = ChildSerializer(instance).data
+        if data:
+            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['student_outreached'] = self.request.GET.get('student_outreached', '')
+            data['have_barcode'] = self.request.GET.get('have_barcode', '')
+        initial = data
+
+        return initial
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super(ABLNAddView, self).form_valid(form)
+
+
+class ABLNEditView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   FormView):
+
+    template_name = 'clm/edit_form.html'
+    form_class = ABLNForm
+    success_url = '/clm/Abln-list/'
+    group_required = [u"CLM_ABLN"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/clm/abln-add/'
+        if self.request.POST.get('save_and_continue', None):
+            return '/clm/abln-edit/' + str(self.request.session.get('instance_id')) + '/'
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        kwargs['is_allowed_edit'] = is_allowed_edit('ABLN')
+        return super(ABLNEditView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = ABLN.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return ABLNForm(self.request.POST, instance=instance, request=self.request)
+        else:
+            data = ABLNSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            return ABLNForm(data, instance=instance, request=self.request)
+
+    def form_valid(self, form):
+        instance = ABLN.objects.get(id=self.kwargs['pk'])
+        form.save(request=self.request, instance=instance)
+        return super(ABLNEditView, self).form_valid(form)
+
+
+class ABLNListView(LoginRequiredMixin,
+                   GroupRequiredMixin,
+                   FilterView,
+                   ExportMixin,
+                   SingleTableView,
+                   RequestConfig):
+
+    table_class = ABLNTable
+    model = ABLN
+    template_name = 'clm/Abln_list.html'
+    table = BootstrapTable(ABLN.objects.all(), order_by='id')
+    group_required = [u"CLM_ABLN"]
+
+    filterset_class = ABLNFilter
+
+    def get_queryset(self):
+        force_default_language(self.request)
+        return ABLN.objects.filter(partner=self.request.user.partner_id)
 
 
 class RSDashboardView(LoginRequiredMixin,
@@ -830,6 +949,30 @@ class BLNViewSet(mixins.RetrieveModelMixin,
         return JsonResponse({'status': status.HTTP_200_OK})
 
 
+class ABLNViewSet(mixins.RetrieveModelMixin,
+                  mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  mixins.UpdateModelMixin,
+                  viewsets.GenericViewSet):
+
+    model = ABLN
+    queryset = ABLN.objects.all()
+    serializer_class = ABLNSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        qs = self.queryset
+        if self.request.GET.get('school', None):
+            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+
+        return qs
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+
 class RSViewSet(mixins.RetrieveModelMixin,
                 mixins.ListModelMixin,
                 mixins.CreateModelMixin,
@@ -925,6 +1068,145 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
 
     model = BLN
     queryset = BLN.objects.all()
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return self.queryset.filter(partner=self.request.user.partner)
+        return self.queryset
+
+    def get(self, request, *args, **kwargs):
+
+        headers = {
+            'partner__name': 'Partner',
+            'round__name': 'CLM Round',
+            'governorate__name': 'Governorate',
+            'district__name': 'District',
+            'location': 'Location',
+            'language': 'The language supported in the program',
+            'student__first_name': 'First name',
+            'student__father_name': 'Father name',
+            'student__last_name': 'Last name',
+            'student__sex': 'Sex',
+            'student__birthday_day': 'Birthday - day',
+            'student__birthday_month': 'Birthday - month',
+            'student__birthday_year': 'Birthday - year',
+            'student__nationality__name': 'Nationality',
+            'student__mother_fullname': 'Mother fullname',
+            'student__p_code': 'P-Code If a child lives in a tent / Brax in a random camp',
+            'student__id_number': 'ID number',
+            'student__number': 'unique number',
+            'student__family_status': 'What is the family status of the child?',
+            'student__have_children': 'Does the child have children?',
+            'disability__name': 'Does the child have any disability or special need?',
+            'internal_number': 'Internal number',
+            'comments': 'Comments',
+            'hh_educational_level__name': 'What is the educational level of a person who is valuable to the child?',
+            'have_labour': 'Does the child participate in work?',
+            'labours': 'What is the type of work?',
+            'labour_hours': 'How many hours does this child work in a day?',
+            'pre_test_arabic': 'Pre-test Arabic Language Development ',
+            'pre_test_foreign_language': 'Pre-test Foreign Language Development',
+            'pre_test_math': 'Pre-test Cognitive Development - Mathematics',
+            'pre_test_social_emotional': 'Pre-test Social-Emotional Development',
+            'pre_test_psychomotor': 'Pre-test Psychomotor Development for children with special need',
+            'pre_test_artistic': 'Pre-test Artistic Development',
+            'pre_test_score': 'Pre-test score',
+            'post_test_arabic': 'Post-test Arabic Language Development ',
+            'post_test_foreign_language': 'Post-test Foreign Language Development',
+            'post_test_math': 'Post-test Cognitive Development - Mathematics',
+            'post_test_social_emotional': 'Post-test Social-Emotional Development',
+            'post_test_psychomotor': 'Post-test Psychomotor Development for children with special need',
+            'post_test_artistic': 'Post-test Artistic Development',
+            'post_test_score': 'Post-test Score',
+            'participation': 'How was the level of child participation in the program?',
+            'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
+            'learning_result': 'Based on the overall score, what is the recommended learning path?',
+            'new_registry': 'First time registered?',
+            'student_outreached': 'Student outreached?',
+            'have_barcode': 'Have barcode with him?',
+            'owner__username': 'owner',
+            'modified_by__username': 'modified_by',
+            'created': 'created',
+            'modified': 'modified',
+        }
+
+        qs = self.get_queryset().extra(select={
+            'participation': "CONCAT(participation, '_absence')",
+
+            'pre_test_arabic': "pre_test->>'BLN_ASSESSMENT/arabic'",
+            'pre_test_foreign_language': "pre_test->>'BLN_ASSESSMENT/foreign_language'",
+            'pre_test_math': "pre_test->>'BLN_ASSESSMENT/math'",
+            'pre_test_social_emotional': "pre_test->>'BLN_ASSESSMENT/social_emotional'",
+            'pre_test_psychomotor': "pre_test->>'BLN_ASSESSMENT/psychomotor'",
+            'pre_test_artistic': "pre_test->>'BLN_ASSESSMENT/artistic'",
+
+            'post_test_arabic': "post_test->>'BLN_ASSESSMENT/arabic'",
+            'post_test_foreign_language': "post_test->>'BLN_ASSESSMENT/foreign_language'",
+            'post_test_math': "post_test->>'BLN_ASSESSMENT/math'",
+            'post_test_social_emotional': "post_test->>'BLN_ASSESSMENT/social_emotional'",
+            'post_test_psychomotor': "post_test->>'BLN_ASSESSMENT/psychomotor'",
+            'post_test_artistic': "post_test->>'BLN_ASSESSMENT/artistic'",
+        }).values(
+            'partner__name',
+            'round__name',
+            'governorate__name',
+            'district__name',
+            'location',
+            'language',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__sex',
+            'student__birthday_day',
+            'student__birthday_month',
+            'student__birthday_year',
+            'student__nationality__name',
+            'student__mother_fullname',
+            'student__p_code',
+            'student__id_number',
+            'student__number',
+            'student__family_status',
+            'student__have_children',
+            'disability__name',
+            'internal_number',
+            'comments',
+            'hh_educational_level__name',
+            'have_labour',
+            'labours',
+            'labour_hours',
+            'pre_test_arabic',
+            'pre_test_foreign_language',
+            'pre_test_math',
+            'pre_test_social_emotional',
+            'pre_test_psychomotor',
+            'pre_test_artistic',
+            'pre_test_score',
+            'post_test_arabic',
+            'post_test_foreign_language',
+            'post_test_math',
+            'post_test_social_emotional',
+            'post_test_psychomotor',
+            'post_test_artistic',
+            'post_test_score',
+            'participation',
+            'barriers',
+            'learning_result',
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
+            'owner__username',
+            'modified_by__username',
+            'created',
+            'modified',
+        )
+
+        return render_to_csv_response(qs, field_header_map=headers)
+
+
+class ABLNExportViewSet(LoginRequiredMixin, ListView):
+
+    model = ABLN
+    queryset = ABLN.objects.all()
 
     def get_queryset(self):
         if not self.request.user.is_staff:
