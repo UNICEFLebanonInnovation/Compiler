@@ -5,7 +5,7 @@ import json
 
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import SingleObjectMixin
@@ -32,6 +32,7 @@ from .tables import BootstrapTable, BLNTable, RSTable, CBECETable
 from .models import BLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment
 from .forms import BLNForm, RSForm, CBECEForm
 from .serializers import BLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
+from .utils import is_allowed_create, is_allowed_edit
 
 
 class CLMView(LoginRequiredMixin,
@@ -64,7 +65,7 @@ class BLNAddView(LoginRequiredMixin,
                  GroupRequiredMixin,
                  FormView):
 
-    template_name = 'clm/common_form.html'
+    template_name = 'clm/create_form.html'
     form_class = BLNForm
     success_url = '/clm/bln-list/'
     group_required = [u"CLM_BLN"]
@@ -88,6 +89,7 @@ class BLNAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+        kwargs['is_allowed_create'] = is_allowed_create('BLN')
         return super(BLNAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -123,7 +125,7 @@ class BLNEditView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
 
-    template_name = 'clm/common_form.html'
+    template_name = 'clm/edit_form.html'
     form_class = BLNForm
     success_url = '/clm/bln-list/'
     group_required = [u"CLM_BLN"]
@@ -132,7 +134,7 @@ class BLNEditView(LoginRequiredMixin,
         if self.request.POST.get('save_add_another', None):
             return '/clm/bln-add/'
         if self.request.POST.get('save_and_continue', None):
-            return '/clm/cbece-edit/' + str(self.request.session.get('instance_id')) + '/'
+            return '/clm/bln-edit/' + str(self.request.session.get('instance_id')) + '/'
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -140,6 +142,7 @@ class BLNEditView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+        kwargs['is_allowed_edit'] = is_allowed_edit('BLN')
         return super(BLNEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -556,7 +559,7 @@ class RSAddView(LoginRequiredMixin,
                 GroupRequiredMixin,
                 FormView):
 
-    template_name = 'clm/common_form.html'
+    template_name = 'clm/create_form.html'
     form_class = RSForm
     success_url = '/clm/rs-list/'
     group_required = [u"CLM_RS"]
@@ -581,6 +584,7 @@ class RSAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+        kwargs['is_allowed_create'] = True
         return super(RSAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -625,7 +629,7 @@ class RSEditView(LoginRequiredMixin,
                  GroupRequiredMixin,
                  FormView):
 
-    template_name = 'clm/common_form.html'
+    template_name = 'clm/edit_form.html'
     form_class = RSForm
     success_url = '/clm/rs-list/'
     group_required = [u"CLM_RS"]
@@ -634,7 +638,7 @@ class RSEditView(LoginRequiredMixin,
         if self.request.POST.get('save_add_another', None):
             return '/clm/rs-add/'
         if self.request.POST.get('save_and_continue', None):
-            return '/clm/cbece-edit/' + str(self.request.session.get('instance_id')) + '/'
+            return '/clm/rs-edit/' + str(self.request.session.get('instance_id')) + '/'
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -642,6 +646,7 @@ class RSEditView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+        kwargs['is_allowed_edit'] = True
         return super(RSEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
@@ -683,7 +688,7 @@ class CBECEAddView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FormView):
 
-    template_name = 'clm/common_form.html'
+    template_name = 'clm/create_form.html'
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
     group_required = [u"CLM_CBECE"]
@@ -707,6 +712,7 @@ class CBECEAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+        kwargs['is_allowed_create'] = is_allowed_create('CBECE')
         return super(CBECEAddView, self).get_context_data(**kwargs)
 
     def get_initial(self):
@@ -742,7 +748,7 @@ class CBECEEditView(LoginRequiredMixin,
                     GroupRequiredMixin,
                     FormView):
 
-    template_name = 'clm/common_form.html'
+    template_name = 'clm/edit_form.html'
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
     group_required = [u"CLM_CBECE"]
@@ -759,6 +765,7 @@ class CBECEEditView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
+        kwargs['is_allowed_edit'] = is_allowed_edit('CBECE')
         return super(CBECEEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
