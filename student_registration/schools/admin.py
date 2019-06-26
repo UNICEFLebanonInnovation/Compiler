@@ -478,6 +478,13 @@ class CLMRoundResource(resources.ModelResource):
 class CLMRoundAdmin(ImportExportModelAdmin):
     resource_class = CLMRoundResource
 
+    list_display = (
+        'name',
+        'current_round_bln',
+        'current_round_abln',
+        'current_round_cbece',
+    )
+
 
 class EducationalLevelResource(resources.ModelResource):
     class Meta:

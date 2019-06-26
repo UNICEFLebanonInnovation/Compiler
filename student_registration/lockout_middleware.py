@@ -9,6 +9,8 @@ class StudentLockoutMiddleware(object):
     details.
     """
 
+    __state = {}  # Borg pattern
+
     def __init__(self, get_response=None):
         self.__dict__ = self.__state
 
@@ -33,7 +35,6 @@ class StudentLockoutMiddleware(object):
             response = self.process_response(request, response)
         return response
 
-    __state = {}  # Borg pattern
 
     def process_request(self, request):
         thread_namespace.lockoutrequest = request

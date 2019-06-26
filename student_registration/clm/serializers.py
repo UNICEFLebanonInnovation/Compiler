@@ -10,19 +10,30 @@ def create_instance(validated_data, model):
     from student_registration.students.models import Student
 
     student_data = validated_data.pop('student', None)
+    student = None
+
+    if 'partner' in validated_data and validated_data['partner'] and validated_data['partner'].id == 10:
+        if 'internal_number' in validated_data and validated_data['internal_number']:
+            queryset = model.objects.filter(internal_number=validated_data['internal_number'])
+
+            if queryset.count():
+                student = queryset.first().student
 
     if 'id' in student_data and student_data['id']:
         student_serializer = StudentSerializer(Student.objects.get(id=student_data['id']), data=student_data)
         student_serializer.is_valid(raise_exception=True)
         student_serializer.instance = student_serializer.save()
-    else:
+        student = student_serializer.instance
+
+    if not student:
         student_serializer = StudentSerializer(data=student_data)
         student_serializer.is_valid(raise_exception=True)
         student_serializer.instance = student_serializer.save()
+        student = student_serializer.instance
 
     try:
         instance = model.objects.create(**validated_data)
-        instance.student = student_serializer.instance
+        instance.student = student
         instance.save()
 
     except Exception as ex:
@@ -32,11 +43,10 @@ def create_instance(validated_data, model):
 
 
 def update_instance(instance, validated_data):
+    from student_registration.students.serializers import StudentSerializer
     student_data = validated_data.pop('student', None)
 
     if student_data:
-        from student_registration.students.serializers import StudentSerializer
-
         student_serializer = StudentSerializer(instance.student, data=student_data)
         student_serializer.is_valid(raise_exception=True)
         student_serializer.instance = student_serializer.save()
@@ -79,15 +89,18 @@ class CLMSerializer(serializers.ModelSerializer):
     student_have_children = serializers.CharField(source='student.have_children', required=False)
     comments = serializers.CharField(required=False)
     unsuccessful_posttest_reason = serializers.CharField(required=False)
+    unsuccessful_pretest_reason = serializers.CharField(required=False)
 
     student_outreach_child = serializers.IntegerField(source='student.outreach_child', required=False)
     student_outreach_child_id = serializers.IntegerField(source='student.outreach_child.id', read_only=True)
 
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
     save = serializers.IntegerField(source='owner.id', read_only=True)
+    # internal = serializers.CharField(read_only=True)
     enrollment_id = serializers.IntegerField(source='id', read_only=True)
     search_clm_student = serializers.CharField(source='student.full_name', read_only=True)
     search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
+
 
     class Meta:
         model = CLM
@@ -143,6 +156,8 @@ class CLMSerializer(serializers.ModelSerializer):
             'save',
             'comments',
             'unsuccessful_posttest_reason',
+            'unsuccessful_pretest_reason',
+            # 'internal',
         )
 
 
