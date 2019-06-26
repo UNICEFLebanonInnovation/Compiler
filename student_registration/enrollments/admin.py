@@ -93,7 +93,9 @@ class EnrollmentResource(resources.ModelResource):
             'created',
             'modified',
             'moved',
+            'last_moved_date',
             'dropout_status',
+            'dropout_date',
             'disabled',
         )
         export_order = fields

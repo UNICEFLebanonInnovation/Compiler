@@ -104,6 +104,9 @@ def run_attendance(request):
             'last_attendance_date': _('Last attendance date'),
             'last_absent_date': _('Last absent date'),
             'dropout_status': _('dropout status'),
+            'dropout_date': _('dropout date'),
+            'moved': _('moved'),
+            'last_moved_date': _('last moved date'),
             }
         queryset = queryset.values(
             'school__number',
@@ -129,6 +132,9 @@ def run_attendance(request):
             'last_attendance_date',
             'last_absent_date',
             'dropout_status',
+            'dropout_date',
+            'moved',
+            'last_moved_date',
             )
         return render_to_csv_response(queryset, field_header_map=headers)
 

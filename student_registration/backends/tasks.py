@@ -86,8 +86,10 @@ def export_2ndshift(params=None, return_data=False):
         'created': 'created',
         'modified': 'modified',
         'dropout_status': 'dropout_status',
+        'dropout_date': _('dropout date'),
         'disabled': 'disabled',
         'moved': 'moved',
+        'last_moved_date': _('last moved date'),
         'student__number': 'student number',
     }
 
@@ -148,8 +150,10 @@ def export_2ndshift(params=None, return_data=False):
         'created',
         'modified',
         'dropout_status',
+        'dropout_date',
         'disabled',
         'moved',
+        'last_moved_date',
         'student__number',
     )
 
