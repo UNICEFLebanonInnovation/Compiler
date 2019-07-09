@@ -14,6 +14,7 @@ from student_registration.students.models import (
     Student,
     Person,
     Nationality,
+    IDType,
 )
 from student_registration.schools.models import (
     School,
@@ -33,7 +34,7 @@ from .models import (
     Assessment,
     CLMRound,
 )
-from .serializers import BLNSerializer, RSSerializer, CBECESerializer
+from .serializers import BLNSerializer, RSSerializer, CBECESerializer, ABLNSerializer
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
@@ -1697,6 +1698,82 @@ class ABLNForm(CommonForm):
         initial=''
     )
 
+    phone_number = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=True,
+        label=_('Phone number')
+    )
+    phone_number_confirm = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=True,
+        label=_('Phone number confirm')
+    )
+
+    id_type = forms.ChoiceField(
+        label=_("ID type"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('UNHCR Registered', _('UNHCR Registered')),
+            ('UNHCR Recorded', _("UNHCR Recorded")),
+            ('Syrian national ID', _("Syrian national ID")),
+            ('Lebanese national ID', _("Lebanese national ID"))
+        ),
+        initial=''
+    )
+
+    case_number = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        required=False,
+        label=_('Case number')
+    )
+    case_number_confirm = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        required=False,
+        label=_('Case number confirm')
+    )
+
+    individual_case_number = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        required=False,
+        label=_('Individual Case number')
+    )
+    individual_case_number_confirm = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        required=False,
+        label=_('Individual Case number confirm')
+    )
+
+    recorded_number = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX'}),
+        required=False,
+        label=_('Recorded number')
+    )
+    recorded_number_confirm = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX'}),
+        required=False,
+        label=_('Recorded number confirm')
+    )
+
+    national_number = forms.RegexField(
+        regex=r'^[0-9]*$',
+        required=False,
+        label=_('Syrian / Lebanese ID number ')
+    )
+    national_number_confirm = forms.RegexField(
+        regex=r'^^[0-9]*$',
+        required=False,
+        label=_('Syrian / Lebanese ID number confirm')
+    )
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(ABLNForm, self).__init__(*args, **kwargs)
@@ -1853,13 +1930,72 @@ class ABLNForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default d-none">13</span>'),
+                    Div('student_id_number', css_class='col-md-3 d-none'),
                     HTML('<span class="badge badge-default">13</span>'),
-                    Div('student_id_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">14</span>'),
                     Div('internal_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('comments', css_class='col-md-3'),
                     css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child Identification') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('phone_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('phone_number_confirm', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('id_type', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('case_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('case_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/unhcr_certificate.jpg" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id1',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('individual_case_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('individual_case_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id1',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('recorded_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('recorded_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id2',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('national_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('national_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id3',
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
@@ -1939,6 +2075,85 @@ class ABLNForm(CommonForm):
             )
         )
 
+    def clean(self):
+        cleaned_data = super(ABLNForm, self).clean()
+        phone_number = cleaned_data.get("phone_number")
+        phone_number_confirm = cleaned_data.get("phone_number_confirm")
+        id_type = cleaned_data.get("id_type")
+        case_number = cleaned_data.get("case_number")
+        case_number_confirm = cleaned_data.get("case_number_confirm")
+        individual_case_number = cleaned_data.get("individual_case_number")
+        individual_case_number_confirm = cleaned_data.get("individual_case_number_confirm")
+        recorded_number = cleaned_data.get("recorded_number")
+        recorded_number_confirm = cleaned_data.get("recorded_number_confirm")
+        national_number = cleaned_data.get("national_number")
+        national_number_confirm = cleaned_data.get("national_number_confirm")
+
+        if phone_number != phone_number_confirm:
+            msg = "The phone numbers are not matched"
+            self.add_error('phone_number_confirm', msg)
+
+        if id_type == 'UNHCR Registered':
+            if not case_number:
+                self.add_error('case_number', 'This field is required')
+            if not individual_case_number:
+                self.add_error('individual_case_number', 'This field is required')
+
+            if case_number != case_number_confirm:
+                msg = "The case numbers are not matched"
+                self.add_error('case_number_confirm', msg)
+
+            if individual_case_number != individual_case_number_confirm:
+                msg = "The individual case numbers are not matched"
+                self.add_error('individual_case_number_confirm', msg)
+
+        if id_type == 'UNHCR Recorded':
+            if not recorded_number:
+                self.add_error('recorded_number', 'This field is required')
+
+            if recorded_number != recorded_number_confirm:
+                msg = "The recorded numbers are not matched"
+                self.add_error('recorded_number_confirm', msg)
+
+        if id_type == 'Syrian national ID':
+
+            if not national_number:
+                self.add_error('national_number', 'This field is required')
+
+            if not national_number_confirm:
+                self.add_error('national_number_confirm', 'This field is required')
+
+            if national_number and not len(national_number) == 11:
+                msg = "Please enter a valid number (11 digits)"
+                self.add_error('national_number', msg)
+
+            if national_number_confirm and not len(national_number_confirm) == 11:
+                msg = "Please enter a valid number (11 digits)"
+                self.add_error('national_number_confirm', msg)
+
+            if national_number != national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('national_number_confirm', msg)
+
+        if id_type == 'Lebanese national ID':
+            if not national_number:
+                self.add_error('national_number', 'This field is required')
+
+            if not national_number_confirm:
+                self.add_error('national_number_confirm', 'This field is required')
+
+            if not len(national_number) == 12:
+                msg = "Please enter a valid number (12 digits)"
+                self.add_error('national_number', msg)
+
+            if not len(national_number_confirm) == 12:
+                msg = "Please enter a valid number (12 digits)"
+                self.add_error('national_number_confirm', msg)
+
+            if national_number != national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('national_number_confirm', msg)
+
     def save(self, request=None, instance=None, serializer=None):
         super(ABLNForm, self).save(request=request, instance=instance, serializer=ABLNSerializer)
 
@@ -1953,6 +2168,17 @@ class ABLNForm(CommonForm):
             'have_labour',
             'labours',
             'labour_hours',
+            'phone_number',
+            'phone_number_confirm',
+            'id_type',
+            'case_number',
+            'case_number_confirm',
+            'individual_case_number',
+            'individual_case_number_confirm',
+            'recorded_number',
+            'recorded_number_confirm',
+            'national_number',
+            'national_number_confirm',
         )
 
     class Media:

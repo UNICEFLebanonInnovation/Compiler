@@ -404,6 +404,19 @@ class CLM(TimeStampedModel):
         verbose_name=_('Phone number confirm')
     )
 
+    id_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('UNHCR Registered', _('UNHCR Registered')),
+            ('UNHCR Recorded', _("UNHCR Recorded")),
+            ('Syrian national ID', _("Syrian national ID")),
+            ('Lebanese national ID', _("Lebanese national ID"))
+        ),
+        verbose_name=_('ID type')
+    )
+
     case_number = models.CharField(
         max_length=50,
         blank=True,

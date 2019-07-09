@@ -83,6 +83,10 @@ $(document).ready(function(){
         reorganizeForm();
     });
 
+    $(document).on('change', '#id_id_type', function(){
+        reorganizeForm();
+    });
+
     $(document).on('blur', arabic_fields, function(){
         checkArabicOnly($(this));
     });
@@ -508,6 +512,29 @@ function reorganizeForm()
     var program_site = $('select#id_site').val();
     var registered_unhcr = $('select#id_student_registered_in_unhcr').val();
     var id_cycle = $('select#id_cycle').val();
+    var id_type = $('select#id_id_type').val();
+
+    if(id_type == ''){
+        $('div.child_id').addClass('d-none');
+    }
+
+    if(id_type == 'UNHCR Registered'){
+        $('div.child_id1').removeClass('d-none');
+        $('div.child_id2').addClass('d-none');
+        $('div.child_id3').addClass('d-none');
+    }
+
+    if(id_type == 'UNHCR Recorded'){
+        $('div.child_id2').removeClass('d-none');
+        $('div.child_id1').addClass('d-none');
+        $('div.child_id3').addClass('d-none');
+    }
+
+    if(id_type == 'Syrian national ID' || id_type == 'Lebanese national ID'){
+        $('div.child_id3').removeClass('d-none');
+        $('div.child_id1').addClass('d-none');
+        $('div.child_id2').addClass('d-none');
+    }
 
     if(program_site == 'out_school') {
         $('div#div_id_school').parent().addClass('d-none');

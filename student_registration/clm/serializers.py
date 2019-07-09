@@ -200,6 +200,17 @@ class ABLNSerializer(CLMSerializer):
             'labour_hours',
             'student_family_status',
             'student_have_children',
+            'phone_number',
+            'phone_number_confirm',
+            'id_type',
+            'case_number',
+            'case_number_confirm',
+            'individual_case_number',
+            'individual_case_number_confirm',
+            'recorded_number',
+            'recorded_number_confirm',
+            'national_number',
+            'national_number_confirm',
         )
 
 
