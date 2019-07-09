@@ -142,21 +142,32 @@ def run_attendance(request):
 def run_to_excel_per_day(request):
     from student_registration.attendances.tasks import geo_calculate_attendances_per_day
     from student_registration.attendances.models import AttendanceDt
+    from student_registration.students.models import Student
     from_school = request.GET['txt_from_school']
     to_school = request.GET['txt_to_school']
     from_date = request.GET['txt_from_date']
     to_date = request.GET['txt_to_date']
+    txt_std = request.GET['txt_student']
     if request.GET.get('btntype') == 'Generate':
-        geo_calculate_attendances_per_day(from_school, to_school, from_date, to_date)
+        geo_calculate_attendances_per_day(from_school, to_school, from_date, to_date, txt_std)
         messages.add_message(request, messages.INFO, 'Finished !')
-
         context = {}
         return render(request, "dashboard/exporter.html", context)
     else:
-        qs_attendancedt = AttendanceDt.objects.filter(attendance_date__gte=from_date, attendance_date__lte=to_date,
-                                                      school__number__gte=from_school, school__number__lte=to_school
-                                                      ).\
-            order_by('attendance_date', 'school__number')
+        if txt_std:
+            std_id = ()
+            std = Student.objects.filter(number=txt_std)
+            for st in std:
+                std_id = st.id,
+            qs_attendancedt = AttendanceDt.objects.filter(attendance_date__gte=from_date, attendance_date__lte=to_date,
+                                                          school__number__gte=from_school, school__number__lte=to_school,
+                                                          student_id__in=std_id).\
+                order_by('attendance_date', 'school__number')
+        else:
+            qs_attendancedt = AttendanceDt.objects.filter(attendance_date__gte=from_date, attendance_date__lte=to_date,
+                                                          school__number__gte=from_school, school__number__lte=to_school
+                                                          ).order_by('attendance_date', 'school__number')
+
     headers = {
         'school__number': _('School number'),
         'school__name': _('School'),
