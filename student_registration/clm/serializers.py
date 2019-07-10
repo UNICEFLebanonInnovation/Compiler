@@ -93,6 +93,10 @@ class CLMSerializer(serializers.ModelSerializer):
 
     student_outreach_child = serializers.IntegerField(source='student.outreach_child', required=False)
     student_outreach_child_id = serializers.IntegerField(source='student.outreach_child.id', read_only=True)
+    governorate_name = serializers.CharField(source='governorate.name', read_only=True)
+    district_name = serializers.CharField(source='district.name', read_only=True)
+    partner_name = serializers.CharField(source='partner.name', read_only=True)
+    created = serializers.CharField(read_only=True)
 
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
     save = serializers.IntegerField(source='owner.id', read_only=True)
@@ -112,6 +116,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'student_id',
             'round',
             'partner',
+            'partner_name',
             'language',
             'student_outreach_child',
             'student_outreach_child_id',
@@ -134,7 +139,9 @@ class CLMSerializer(serializers.ModelSerializer):
             'owner',
             'modified_by',
             'governorate',
+            'governorate_name',
             'district',
+            'district_name',
             'location',
             'outreach_barcode',
             'disability',
@@ -157,6 +164,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'comments',
             'unsuccessful_posttest_reason',
             'unsuccessful_pretest_reason',
+            'created',
             # 'internal',
         )
 
