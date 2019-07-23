@@ -2248,3 +2248,86 @@ class CBECEAdminForm(forms.ModelForm):
     class Meta:
         model = CBECE
         fields = '__all__'
+
+
+class ABLNReferralForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ABLNReferralForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance']
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = reverse('alp:post_test_grading', kwargs={'pk': instance.id})
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Referral 1') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('referral_programme_type_1', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('referral_partner_1', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Referral 2') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('referral_programme_type_2', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('referral_partner_2', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Referral 3') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('referral_programme_type_3', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('referral_partner_3', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' +
+                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def save(self, instance=None, request=None):
+        instance = super(ABLNReferralForm, self).save()
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = ABLN
+        fields = (
+            'referral_programme_type_1',
+            'referral_partner_1',
+            'referral_programme_type_2',
+            'referral_partner_2',
+            'referral_programme_type_3',
+            'referral_partner_3',
+        )
+
+    class Media:
+        js = (
+            # 'js/validator.js',
+        )

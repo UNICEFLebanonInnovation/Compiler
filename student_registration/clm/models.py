@@ -469,6 +469,78 @@ class CLM(TimeStampedModel):
         verbose_name=_('Syrian / Lebanese ID number confirm')
     )
 
+    referral_programme_type_1 = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('Formal Education', _('Formal Education')),
+            ('ALP', _('ALP')),
+            ('BLN', _('BLN')),
+            ('CP (PSS and/or Case Management)', _('CP (PSS and/or Case Management)')),
+            ('Youth', _('Youth')),
+            ('Health', _('Health')),
+            ('WASH', _('WASH')),
+            ('Specialized Services', _('Specialized Services')),
+            ('Other', _('Other')),
+        ),
+        verbose_name=_('Programme Type')
+    )
+    referral_partner_1 = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('Partner')
+    )
+
+    referral_programme_type_2 = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('Formal Education', _('Formal Education')),
+            ('ALP', _('ALP')),
+            ('BLN', _('BLN')),
+            ('CP (PSS and/or Case Management)', _('CP (PSS and/or Case Management)')),
+            ('Youth', _('Youth')),
+            ('Health', _('Health')),
+            ('WASH', _('WASH')),
+            ('Specialized Services', _('Specialized Services')),
+            ('Other', _('Other')),
+        ),
+        verbose_name=_('Programme Type')
+    )
+    referral_partner_2 = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('Partner')
+    )
+
+    referral_programme_type_3 = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('Formal Education', _('Formal Education')),
+            ('ALP', _('ALP')),
+            ('BLN', _('BLN')),
+            ('CP (PSS and/or Case Management)', _('CP (PSS and/or Case Management)')),
+            ('Youth', _('Youth')),
+            ('Health', _('Health')),
+            ('WASH', _('WASH')),
+            ('Specialized Services', _('Specialized Services')),
+            ('Other', _('Other')),
+        ),
+        verbose_name=_('Programme Type')
+    )
+    referral_partner_3 = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('Partner')
+    )
+
     @property
     def student_fullname(self):
         if self.student:
