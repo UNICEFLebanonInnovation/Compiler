@@ -492,6 +492,16 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Partner')
     )
+    referral_date_1 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Referral date')
+    )
+    confirmation_date_1 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date when the receiving organization confirms accepting the child (or child receiving service)')
+    )
 
     referral_programme_type_2 = models.CharField(
         max_length=100,
@@ -516,6 +526,16 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Partner')
     )
+    referral_date_2 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Referral date')
+    )
+    confirmation_date_2 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date when the receiving organization confirms accepting the child (or child receiving service)')
+    )
 
     referral_programme_type_3 = models.CharField(
         max_length=100,
@@ -539,6 +559,16 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Partner')
+    )
+    referral_date_3 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Referral date')
+    )
+    confirmation_date_3 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date when the receiving organization confirms accepting the child (or child receiving service)')
     )
 
     @property

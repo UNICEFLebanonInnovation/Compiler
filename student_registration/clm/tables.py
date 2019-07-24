@@ -105,6 +105,9 @@ class ABLNTable(CommonTable):
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/clm_delete_column.html',
                                           attrs={'url': '/api/clm-abln/', 'programme': 'ABLN'})
+    referral_column = tables.TemplateColumn(verbose_name=_('refer'), orderable=False,
+                                            template_name='django_tables2/clm_referral_column.html',
+                                            attrs={'url': '/clm/abln-referral/', 'programme': 'ABLN'})
     arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
                                        accessor='arabic_improvement')
     foreign_language_improvement = tables.Column(verbose_name=_('Foreign Language Development - Improvement'), orderable=False,
@@ -126,6 +129,7 @@ class ABLNTable(CommonTable):
         fields = (
             'edit_column',
             'delete_column',
+            'referral_column',
             'round',
             # 'cycle',
             'governorate',

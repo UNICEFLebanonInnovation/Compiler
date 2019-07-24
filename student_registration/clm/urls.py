@@ -119,5 +119,10 @@ urlpatterns = [
         view=views.ABLNListView.as_view(),
         name='abln_list'
     ),
+    url(
+        regex=r'^abln-referral/(?P<pk>[\w.@+-]+)/$',
+        view=views.ABLNReferralView.as_view(),
+        name='abln_referral'
+    ),
 
 ]

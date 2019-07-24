@@ -18,6 +18,27 @@ $(document).ready(function(){
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
     }
 
+    if($(document).find('#id_referral_date_1').length == 1) {
+        $('#id_referral_date_1').datepicker({dateFormat: "yy-mm-dd"});
+    }
+    if($(document).find('#id_confirmation_date_1').length == 1) {
+        $('#id_confirmation_date_1').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
+    if($(document).find('#id_referral_date_2').length == 1) {
+        $('#id_referral_date_2').datepicker({dateFormat: "yy-mm-dd"});
+    }
+    if($(document).find('#id_confirmation_date_2').length == 1) {
+        $('#id_confirmation_date_2').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
+    if($(document).find('#id_referral_date_3').length == 1) {
+        $('#id_referral_date_3').datepicker({dateFormat: "yy-mm-dd"});
+    }
+    if($(document).find('#id_confirmation_date_3').length == 1) {
+        $('#id_confirmation_date_3').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
     if($(document).find('.moving-date-input').length >= 1) {
         $('.moving-date-input').datepicker({dateFormat: "yy-mm-dd"});
     }

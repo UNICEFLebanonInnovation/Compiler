@@ -2259,7 +2259,7 @@ class ABLNReferralForm(forms.ModelForm):
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
-        self.helper.form_action = reverse('alp:post_test_grading', kwargs={'pk': instance.id})
+        self.helper.form_action = reverse('clm:abln_referral', kwargs={'pk': instance.id})
         self.helper.layout = Layout(
             Fieldset(
                 None,
@@ -2271,6 +2271,13 @@ class ABLNReferralForm(forms.ModelForm):
                     Div('referral_programme_type_1', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('referral_partner_1', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('referral_date_1', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('confirmation_date_1', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
@@ -2287,6 +2294,13 @@ class ABLNReferralForm(forms.ModelForm):
                     Div('referral_partner_2', css_class='col-md-3'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('referral_date_2', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('confirmation_date_2', css_class='col-md-3'),
+                    css_class='row',
+                ),
                 css_class='bd-callout bd-callout-warning'
             ),
             Fieldset(
@@ -2301,12 +2315,18 @@ class ABLNReferralForm(forms.ModelForm):
                     Div('referral_partner_3', css_class='col-md-3'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('referral_date_3', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('confirmation_date_3', css_class='col-md-3'),
+                    css_class='row',
+                ),
                 css_class='bd-callout bd-callout-warning'
             ),
             FormActions(
                 Submit('save', _('Save')),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' +
-                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info" href="/clm/abln-list/">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -2321,10 +2341,16 @@ class ABLNReferralForm(forms.ModelForm):
         fields = (
             'referral_programme_type_1',
             'referral_partner_1',
+            'referral_date_1',
+            'confirmation_date_1',
             'referral_programme_type_2',
             'referral_partner_2',
+            'referral_date_2',
+            'confirmation_date_2',
             'referral_programme_type_3',
             'referral_partner_3',
+            'referral_date_3',
+            'confirmation_date_3',
         )
 
     class Media:
