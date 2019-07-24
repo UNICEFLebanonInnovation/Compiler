@@ -124,5 +124,9 @@ urlpatterns = [
         view=views.ABLNReferralView.as_view(),
         name='abln_referral'
     ),
-
+    url(
+        regex=r'^abln-followup/(?P<pk>[\w.@+-]+)/$',
+        view=views.ABLNFollowupView.as_view(),
+        name='abln_followup'
+    ),
 ]

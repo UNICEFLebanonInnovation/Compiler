@@ -571,6 +571,54 @@ class CLM(TimeStampedModel):
         verbose_name=_('Date when the receiving organization confirms accepting the child (or child receiving service)')
     )
 
+    followup_call_reason_1 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Reason')
+    )
+    followup_call_result_1 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Results')
+    )
+    followup_call_date_1 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Call date')
+    )
+
+    followup_call_reason_2 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Reason')
+    )
+    followup_call_result_2 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Results')
+    )
+    followup_call_date_2 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Call date')
+    )
+
+    followup_visit_reason_1 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Reason')
+    )
+    followup_visit_result_1 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Results')
+    )
+    followup_visit_date_1 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Visit date')
+    )
+
     @property
     def student_fullname(self):
         if self.student:

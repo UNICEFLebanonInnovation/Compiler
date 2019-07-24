@@ -39,6 +39,16 @@ $(document).ready(function(){
         $('#id_confirmation_date_3').datepicker({dateFormat: "yy-mm-dd"});
     }
 
+    if($(document).find('#id_followup_call_date_1').length == 1) {
+        $('#id_followup_call_date_1').datepicker({dateFormat: "yy-mm-dd"});
+    }
+    if($(document).find('#id_followup_call_date_2').length == 1) {
+        $('#id_followup_call_date_2').datepicker({dateFormat: "yy-mm-dd"});
+    }
+    if($(document).find('#id_followup_visit_date_1').length == 1) {
+        $('#id_followup_visit_date_1').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
     if($(document).find('.moving-date-input').length >= 1) {
         $('.moving-date-input').datepicker({dateFormat: "yy-mm-dd"});
     }

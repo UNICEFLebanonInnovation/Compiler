@@ -108,6 +108,9 @@ class ABLNTable(CommonTable):
     referral_column = tables.TemplateColumn(verbose_name=_('refer'), orderable=False,
                                             template_name='django_tables2/clm_referral_column.html',
                                             attrs={'url': '/clm/abln-referral/', 'programme': 'ABLN'})
+    followup_column = tables.TemplateColumn(verbose_name=_('Follow-up'), orderable=False,
+                                            template_name='django_tables2/clm_followup_column.html',
+                                            attrs={'url': '/clm/abln-followup/', 'programme': 'ABLN'})
     arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
                                        accessor='arabic_improvement')
     foreign_language_improvement = tables.Column(verbose_name=_('Foreign Language Development - Improvement'), orderable=False,
@@ -130,6 +133,7 @@ class ABLNTable(CommonTable):
             'edit_column',
             'delete_column',
             'referral_column',
+            'followup_column',
             'round',
             # 'cycle',
             'governorate',
