@@ -231,6 +231,8 @@ def export_2ndshift_gradings(params=None, return_data=False):
         'exam_result_education': _('Education'),
         'exam_result_language': _('Foreign language'),
         'exam_result_arabic': _('Arabic'),
+        'enrollment__dropout_status': _('dropout_status'),
+        'enrollment__dropout_date': _('dropout date'),
     }
 
     queryset = queryset.values(
@@ -276,6 +278,8 @@ def export_2ndshift_gradings(params=None, return_data=False):
         'exam_result_education',
         'exam_result_language',
         'exam_result_arabic',
+        'enrollment__dropout_status',
+        'enrollment__dropout_date',
     )
 
     return render_to_csv_response(queryset, field_header_map=headers)
