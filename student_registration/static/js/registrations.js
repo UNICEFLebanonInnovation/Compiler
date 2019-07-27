@@ -49,6 +49,32 @@ $(document).ready(function(){
         $('#id_followup_visit_date_1').datepicker({dateFormat: "yy-mm-dd"});
     }
 
+    $(document).on('change', '#id_id_type', function(){
+        if($(this).val() != 'Child have no ID'){
+
+            return true;
+        }
+        if(confirm($(this).attr('translation'))) {
+            $('#id_no_child_id_confirmation').val('confirmed');
+        }else{
+            $('#id_id_type').val('');
+            $('#id_no_child_id_confirmation').val('');
+        }
+    });
+
+    $(document).on('change', '#id_parent_id_type', function(){
+        if($(this).val() != 'Parent have no ID'){
+
+            return true;
+        }
+        if(confirm($(this).attr('translation'))) {
+            $('#id_no_parent_id_confirmation').val('confirmed');
+        }else{
+            $('#id_parent_id_type').val('');
+            $('#id_no_child_id_confirmation').val('');
+        }
+    });
+
     if($(document).find('.moving-date-input').length >= 1) {
         $('.moving-date-input').datepicker({dateFormat: "yy-mm-dd"});
     }

@@ -412,9 +412,10 @@ class CLM(TimeStampedModel):
             ('UNHCR Registered', _('UNHCR Registered')),
             ('UNHCR Recorded', _("UNHCR Recorded")),
             ('Syrian national ID', _("Syrian national ID")),
-            ('Lebanese national ID', _("Lebanese national ID"))
+            ('Lebanese national ID', _("Lebanese national ID")),
+            ('Child have no ID', _("Child have no ID"))
         ),
-        verbose_name=_('ID type')
+        verbose_name=_('Child ID type')
     )
 
     case_number = models.CharField(
@@ -463,6 +464,74 @@ class CLM(TimeStampedModel):
         verbose_name=_('Syrian / Lebanese ID number ')
     )
     national_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Syrian / Lebanese ID number confirm')
+    )
+
+    source_of_identification = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('Family walked in to NGO', _('Family walked in to NGO')),
+            ('Referral from another NGO or municipality', _("Referral from another NGO or municipality")),
+            ('Direct outreach', _("Direct outreach")),
+            ('List database', _("List database"))
+        ),
+        verbose_name=_('Source of identification of the child')
+    )
+
+    no_child_id_confirmation = models.CharField(max_length=50, blank=True, null=True,)
+    no_parent_id_confirmation = models.CharField(max_length=50, blank=True, null=True,)
+
+    parent_id_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('UNHCR Registered', _('UNHCR Registered')),
+            ('Syrian national ID', _("Syrian national ID")),
+            ('Lebanese national ID', _("Lebanese national ID")),
+            ('Parent have no ID', _("Parent have no ID"))
+        ),
+        verbose_name=_('Parent ID type')
+    )
+
+    parent_case_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Case number')
+    )
+    parent_case_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Case number confirm')
+    )
+
+    parent_individual_case_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Individual Case number')
+    )
+    parent_individual_case_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Individual Case number confirm')
+    )
+
+    parent_national_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Syrian / Lebanese ID number ')
+    )
+    parent_national_number_confirm = models.CharField(
         max_length=50,
         blank=True,
         null=True,

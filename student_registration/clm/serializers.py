@@ -219,6 +219,16 @@ class ABLNSerializer(CLMSerializer):
             'recorded_number_confirm',
             'national_number',
             'national_number_confirm',
+            'parent_id_type',
+            'parent_case_number',
+            'parent_case_number_confirm',
+            'parent_individual_case_number',
+            'parent_individual_case_number_confirm',
+            'parent_national_number',
+            'parent_national_number_confirm',
+            'no_child_id_confirmation',
+            'no_parent_id_confirmation',
+            'source_of_identification',
         )
 
 
