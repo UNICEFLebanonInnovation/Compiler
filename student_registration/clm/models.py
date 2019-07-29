@@ -492,6 +492,7 @@ class CLM(TimeStampedModel):
         null=True,
         choices=Choices(
             ('UNHCR Registered', _('UNHCR Registered')),
+            ('UNHCR Recorded', _("UNHCR Recorded")),
             ('Syrian national ID', _("Syrian national ID")),
             ('Lebanese national ID', _("Lebanese national ID")),
             ('Parent have no ID', _("Parent have no ID"))

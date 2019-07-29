@@ -1733,6 +1733,7 @@ class ABLNForm(CommonForm):
         choices=(
             ('', '----------'),
             ('UNHCR Registered', _('UNHCR Registered')),
+            ('UNHCR Recorded', _("UNHCR Recorded")),
             ('Syrian national ID', _("Syrian national ID")),
             ('Lebanese national ID', _("Lebanese national ID")),
             ('Parent have no ID', _("Parent have no ID"))
@@ -1828,7 +1829,7 @@ class ABLNForm(CommonForm):
     no_child_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
     no_parent_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    source_of_identification = forms.CharField(
+    source_of_identification = forms.ChoiceField(
         label=_("Source of identification of the child"),
         widget=forms.Select,
         required=True,
@@ -2075,29 +2076,29 @@ class ABLNForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parent Identification') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">1</span>'),
                     Div('parent_id_type', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('parent_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('parent_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/unhcr_certificate.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id1',
+                    css_class='row parent_id parent_id1',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('parent_individual_case_number', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id1',
+                    css_class='row parent_id parent_id2',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
@@ -2107,7 +2108,7 @@ class ABLNForm(CommonForm):
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-                    css_class='row child_id child_id3',
+                    css_class='row parent_id parent_id3',
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),

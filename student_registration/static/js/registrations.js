@@ -50,6 +50,7 @@ $(document).ready(function(){
     }
 
     $(document).on('change', '#id_id_type', function(){
+        reorganizeForm();
         if($(this).val() != 'Child have no ID'){
 
             return true;
@@ -63,6 +64,7 @@ $(document).ready(function(){
     });
 
     $(document).on('change', '#id_parent_id_type', function(){
+        reorganizeForm();
         if($(this).val() != 'Parent have no ID'){
 
             return true;
@@ -71,7 +73,7 @@ $(document).ready(function(){
             $('#id_no_parent_id_confirmation').val('confirmed');
         }else{
             $('#id_parent_id_type').val('');
-            $('#id_no_child_id_confirmation').val('');
+            $('#id_no_parent_id_confirmation').val('');
         }
     });
 
@@ -137,10 +139,6 @@ $(document).ready(function(){
     });
 
     $(document).on('change', '#id_student_family_status', function(){
-        reorganizeForm();
-    });
-
-    $(document).on('change', '#id_id_type', function(){
         reorganizeForm();
     });
 
@@ -570,9 +568,13 @@ function reorganizeForm()
     var registered_unhcr = $('select#id_student_registered_in_unhcr').val();
     var id_cycle = $('select#id_cycle').val();
     var id_type = $('select#id_id_type').val();
+    var parent_id_type = $('select#id_parent_id_type').val();
+
+    $('div.child_id').addClass('d-none');
+    $('div.parent_id').addClass('d-none');
 
     if(id_type == ''){
-        $('div.child_id').addClass('d-none');
+//        $('select#id_parent_id_type').val('');
     }
 
     if(id_type == 'UNHCR Registered'){
@@ -591,6 +593,35 @@ function reorganizeForm()
         $('div.child_id3').removeClass('d-none');
         $('div.child_id1').addClass('d-none');
         $('div.child_id2').addClass('d-none');
+    }
+
+    if(id_type == 'Child have no ID'){
+    }
+
+    if(parent_id_type == 'UNHCR Registered'){
+        if(id_type == 'UNHCR Registered'){
+            $('div.parent_id1').addClass('d-none');
+        }else{
+            $('div.parent_id1').removeClass('d-none');
+        }
+        $('div.parent_id2').removeClass('d-none');
+        $('div.parent_id3').addClass('d-none');
+    }
+
+    if(parent_id_type == 'UNHCR Recorded'){
+        if(id_type != 'UNHCR Recorded'){
+            $('select#id_parent_id_type').val('');
+            // @todo selection error popup message
+        }
+        $('div.parent_id1').addClass('d-none');
+        $('div.parent_id2').addClass('d-none');
+        $('div.parent_id3').addClass('d-none');
+    }
+
+    if(parent_id_type == 'Syrian national ID' || parent_id_type == 'Lebanese national ID'){
+        $('div.parent_id3').removeClass('d-none');
+        $('div.parent_id1').addClass('d-none');
+        $('div.parent_id2').addClass('d-none');
     }
 
     if(program_site == 'out_school') {
