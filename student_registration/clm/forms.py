@@ -2276,10 +2276,11 @@ class ABLNForm(CommonForm):
                 self.add_error('national_number_confirm', msg)
 
         if parent_id_type == 'UNHCR Registered':
-            if not parent_case_number:
-                self.add_error('parent_case_number', 'This field is required')
-            if not parent_individual_case_number:
-                self.add_error('parent_individual_case_number', 'This field is required')
+            if not id_type == 'UNHCR Registered':
+                if not parent_case_number:
+                    self.add_error('parent_case_number', 'This field is required')
+                if not parent_individual_case_number:
+                    self.add_error('parent_individual_case_number', 'This field is required')
 
             if parent_case_number != parent_case_number_confirm:
                 msg = "The case numbers are not matched"
@@ -2290,7 +2291,6 @@ class ABLNForm(CommonForm):
                 self.add_error('parent_individual_case_number_confirm', msg)
 
         if parent_id_type == 'Syrian national ID':
-
             if not parent_national_number:
                 self.add_error('parent_national_number', 'This field is required')
 
