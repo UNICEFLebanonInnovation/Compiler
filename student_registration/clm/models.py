@@ -173,7 +173,7 @@ class CLM(TimeStampedModel):
         ('retail_store', _('Retail / Store')),
         ('begging', _('Begging')),
         ('other_many_other', _('Other (hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)')),
-        ('other', _('Other')),
+        # ('other', _('Other')),
     )
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
@@ -412,6 +412,7 @@ class CLM(TimeStampedModel):
             ('UNHCR Registered', _('UNHCR Registered')),
             ('UNHCR Recorded', _("UNHCR Recorded")),
             ('Syrian national ID', _("Syrian national ID")),
+            ('Palestinian national ID', _("Palestinian national ID")),
             ('Lebanese national ID', _("Lebanese national ID")),
             ('Child have no ID', _("Child have no ID"))
         ),
@@ -457,17 +458,48 @@ class CLM(TimeStampedModel):
         verbose_name=_('Recorded number confirm')
     )
 
+    other_nationality = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name=_('Specify the nationality')
+    )
+
     national_number = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Syrian / Lebanese ID number ')
+        verbose_name=_('Lebanese ID number ')
     )
     national_number_confirm = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Syrian / Lebanese ID number confirm')
+        verbose_name=_('Lebanese ID number confirm')
+    )
+    syrian_national_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Syrian ID number ')
+    )
+    syrian_national_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Syrian ID number confirm')
+    )
+    sop_national_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Palestinian ID number ')
+    )
+    sop_national_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Palestinian ID number confirm')
     )
 
     source_of_identification = models.CharField(
@@ -494,6 +526,7 @@ class CLM(TimeStampedModel):
             ('UNHCR Registered', _('UNHCR Registered')),
             ('UNHCR Recorded', _("UNHCR Recorded")),
             ('Syrian national ID', _("Syrian national ID")),
+            ('Palestinian national ID', _("Palestinian national ID")),
             ('Lebanese national ID', _("Lebanese national ID")),
             ('Parent have no ID', _("Parent have no ID"))
         ),
@@ -530,13 +563,37 @@ class CLM(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Syrian / Lebanese ID number ')
+        verbose_name=_('Lebanese ID number ')
     )
     parent_national_number_confirm = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Syrian / Lebanese ID number confirm')
+        verbose_name=_('Lebanese ID number confirm')
+    )
+    parent_syrian_national_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Syrian ID number ')
+    )
+    parent_syrian_national_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Syrian ID number confirm')
+    )
+    parent_sop_national_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Palestinian ID number ')
+    )
+    parent_sop_national_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Palestinian ID number confirm')
     )
 
     referral_programme_type_1 = models.CharField(
@@ -1495,13 +1552,13 @@ class ABLN(CLM):
 
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
-        ('repeat_level', _('Repeat level')),
-        ('attended_public_school', _('Referred public school')),
-        ('referred_to_alp', _('referred to ALP')),
-        ('referred_to_tvet', _('referred to TVET')),
-        ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
+        ('repeat_abln_level', _('Repeat ABLN level')),
+        # ('attended_public_school', _('Referred public school')),
+        # ('referred_to_alp', _('referred to ALP')),
+        # ('referred_to_tvet', _('referred to TVET')),
+        # ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
         # ('reenrolled_in_alp', _('Re-register on another round of BLN')),
-        ('graduated_to_bln_next_level', _('Graduated to the next level')),
+        ('graduated_to_abln_next_level', _('Graduated to the ABLN next level')),
         # ('not_enrolled_any_program', _('Not enrolled in any educational program')),
         ('dropout', _('Dropout, referral not possible'))
     )
@@ -1534,14 +1591,12 @@ class ABLN(CLM):
 
     def calculate_score(self, stage):
         keys = [
-            'BLN_ASSESSMENT/arabic',
-            'BLN_ASSESSMENT/math',
-            'BLN_ASSESSMENT/foreign_language',
-            'BLN_ASSESSMENT/social_emotional',
-            'BLN_ASSESSMENT/psychomotor',
-            'BLN_ASSESSMENT/artistic',
-            # 'BLN_ASSESSMENT/english',
-            # 'BLN_ASSESSMENT/french'
+            'ABLN_ASSESSMENT/arabic',
+            'ABLN_ASSESSMENT/math',
+            'ABLN_ASSESSMENT/foreign_language',
+            'ABLN_ASSESSMENT/social_emotional',
+            'ABLN_ASSESSMENT/psychomotor',
+            'ABLN_ASSESSMENT/artistic',
         ]
         super(ABLN, self).score(keys, stage)
 
@@ -1559,7 +1614,7 @@ class ABLN(CLM):
 
     def domain_improvement(self, domain_mame):
         key = '{}/{}'.format(
-            'BLN_ASSESSMENT',
+            'ABLN_ASSESSMENT',
             domain_mame,
         )
         try:
@@ -1573,7 +1628,7 @@ class ABLN(CLM):
     def get_assessment_value(self, key, stage):
         assessment = getattr(self, stage)
         if assessment:
-            key = 'BLN_ASSESSMENT/'+key
+            key = 'ABLN_ASSESSMENT/'+key
             return assessment.get(key, 0)
         return 0
 

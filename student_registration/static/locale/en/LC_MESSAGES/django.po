@@ -1720,7 +1720,7 @@ msgstr ""
 
 #: student_registration/clm/models.py:156
 msgid "Violence/Bullying"
-msgstr ""
+msgstr "العنف / التنمر"
 
 #: student_registration/clm/models.py:157
 msgid "Full time job to support family financially"

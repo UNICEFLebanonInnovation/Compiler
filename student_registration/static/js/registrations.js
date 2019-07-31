@@ -113,6 +113,10 @@ $(document).ready(function(){
          reorganizeForm();
     });
 
+    $(document).on('change', 'select#id_student_nationality', function(){
+         reorganizeForm();
+    });
+
     $(document).on('change', 'select#id_classroom, select#id_student_birthday_day, select#id_student_birthday_month, select#id_student_birthday_year', function(){
          verify_age_level();
     });
@@ -569,59 +573,50 @@ function reorganizeForm()
     var id_cycle = $('select#id_cycle').val();
     var id_type = $('select#id_id_type').val();
     var parent_id_type = $('select#id_parent_id_type').val();
+    var nationality = $('select#id_student_nationality').val();
 
     $('div.child_id').addClass('d-none');
     $('div.parent_id').addClass('d-none');
+    $('div#div_id_other_nationality').addClass('d-none');
 
-    if(id_type == ''){
-//        $('select#id_parent_id_type').val('');
+    if(nationality == '6'){
+        $('#div_id_other_nationality').removeClass('d-none');
     }
 
     if(id_type == 'UNHCR Registered'){
         $('div.child_id1').removeClass('d-none');
-        $('div.child_id2').addClass('d-none');
-        $('div.child_id3').addClass('d-none');
     }
 
     if(id_type == 'UNHCR Recorded'){
         $('div.child_id2').removeClass('d-none');
-        $('div.child_id1').addClass('d-none');
-        $('div.child_id3').addClass('d-none');
     }
 
-    if(id_type == 'Syrian national ID' || id_type == 'Lebanese national ID'){
+    if(id_type == 'Lebanese national ID'){
         $('div.child_id3').removeClass('d-none');
-        $('div.child_id1').addClass('d-none');
-        $('div.child_id2').addClass('d-none');
+    }
+
+    if(id_type == 'Syrian national ID'){
+        $('div.child_id4').removeClass('d-none');
+    }
+
+    if(id_type == 'Palestinian national ID'){
+        $('div.child_id5').removeClass('d-none');
     }
 
     if(id_type == 'Child have no ID'){
+        //@todo show / hide parent info
     }
 
-    if(parent_id_type == 'UNHCR Registered'){
-        if(id_type == 'UNHCR Registered'){
-            $('div.parent_id1').addClass('d-none');
-        }else{
-            $('div.parent_id1').removeClass('d-none');
-        }
-        $('div.parent_id2').removeClass('d-none');
-        $('div.parent_id3').addClass('d-none');
-    }
-
-    if(parent_id_type == 'UNHCR Recorded'){
-        if(id_type != 'UNHCR Recorded'){
-            $('select#id_parent_id_type').val('');
-            // @todo selection error popup message
-        }
-        $('div.parent_id1').addClass('d-none');
-        $('div.parent_id2').addClass('d-none');
-        $('div.parent_id3').addClass('d-none');
-    }
-
-    if(parent_id_type == 'Syrian national ID' || parent_id_type == 'Lebanese national ID'){
+    if(parent_id_type == 'Lebanese national ID'){
         $('div.parent_id3').removeClass('d-none');
-        $('div.parent_id1').addClass('d-none');
-        $('div.parent_id2').addClass('d-none');
+    }
+
+    if(parent_id_type == 'Syrian national ID'){
+        $('div.parent_id4').removeClass('d-none');
+    }
+
+    if(parent_id_type == 'Palestinian national ID'){
+        $('div.parent_id5').removeClass('d-none');
     }
 
     if(program_site == 'out_school') {
@@ -632,13 +627,13 @@ function reorganizeForm()
         $('div#div_id_school').parent().prev().removeClass('d-none');
     }
 
-    if(family_status == 'married' || family_status == 'divorced' || family_status == 'widower'){
-        $('div#student_have_children').removeClass('d-none');
-        $('div#student_have_children').prev().removeClass('d-none');
-    }else{
-        $('div#student_have_children').addClass('d-none');
-        $('div#student_have_children').prev().addClass('d-none');
-    }
+//    if(family_status == 'married' || family_status == 'divorced' || family_status == 'widower'){
+//        $('div#student_have_children').removeClass('d-none');
+//        $('div#student_have_children').prev().removeClass('d-none');
+//    }else{
+//        $('div#student_have_children').addClass('d-none');
+//        $('div#student_have_children').prev().addClass('d-none');
+//    }
 
     if(id_cycle == '3'){
         $('option[value=graduated_to_formal_kg]').show();
