@@ -217,8 +217,8 @@ class CommonForm(forms.ModelForm):
         initial=1
     )
     hh_educational_level = forms.ModelChoiceField(
-        queryset=EducationalLevel.objects.all(), widget=forms.Select,
-        label=_('What is the educational level of a person who is valuable to the child?'),
+        queryset=EducationalLevel.objects.exclude(id=3), widget=forms.Select,
+        label=_('What is the educational level of the mother?'),
         required=False, to_field_name='id',
     )
 
@@ -363,6 +363,19 @@ class BLNForm(CommonForm):
     YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 16, Person.CURRENT_YEAR)))
     YEARS_BLN.insert(0, ('', '---------'))
 
+    participation = forms.ChoiceField(
+        label=_('How was the level of child participation in the program?'),
+        widget=forms.Select, required=False,
+        choices=(
+                ('', '----------'),
+                ('less_than_10days', _('Less than 10 absence days')),
+                ('10_15_days', _('10 to 15 absence days')),
+                ('15_20_days', _('15 to 20 absence days')),
+                ('more_than_20days', _('More than 20 absence days'))
+            ),
+        initial=''
+    )
+
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
         widget=forms.Select, required=True,
@@ -403,15 +416,12 @@ class BLNForm(CommonForm):
         widget=forms.Select, required=False,
         choices=(
             ('', '----------'),
-            ('repeat_level', _('Repeat level')),
-            ('attended_public_school', _('Referred public school')),
-            ('referred_to_alp', _('referred to ALP')),
-            ('referred_to_tvet', _('referred to TVET')),
-            ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
             ('graduated_to_bln_next_level', _('Graduated to the next level')),
-            # ('reenrolled_in_bln', _('Re-register on another round of BLN')),
-            # ('not_enrolled_any_program', _('Not enrolled in any educational program')),
-            ('dropout', _('Dropout, referral not possible'))
+            ('referred_to_alp', _('referred to ALP')),
+            ('referred_public_school', _('Referred to public school')),
+            ('referred_to_tvet', _('Referred to TVET')),
+            ('referred_to_ybln', _('Referred to YBLN')),
+            ('dropout', _('Dropout, referral not possible')),
         ),
         initial=''
     )
@@ -1645,6 +1655,19 @@ class ABLNForm(CommonForm):
     YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 16, Person.CURRENT_YEAR)))
     YEARS_BLN.insert(0, ('', '---------'))
 
+    participation = forms.ChoiceField(
+        label=_('How was the level of child participation in the program?'),
+        widget=forms.Select, required=False,
+        choices=(
+                ('', '----------'),
+                ('less_than_3days', _('Less than 3 absence days')),
+                ('3_7_days', _('3 to 7 absence days')),
+                ('7_12_days', _('7 to 12 absence days')),
+                ('more_than_12days', _('More than 12 absence days'))
+            ),
+        initial=''
+    )
+
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
         widget=forms.Select, required=True,
@@ -1685,15 +1708,23 @@ class ABLNForm(CommonForm):
         widget=forms.Select, required=False,
         choices=(
             ('', '----------'),
-            ('repeat_level', _('Repeat level')),
-            ('attended_public_school', _('Referred public school')),
-            ('referred_to_alp', _('referred to ALP')),
-            ('referred_to_tvet', _('referred to TVET')),
-            ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
-            ('graduated_to_bln_next_level', _('Graduated to the next level')),
-            # ('reenrolled_in_bln', _('Re-register on another round of BLN')),
-            # ('not_enrolled_any_program', _('Not enrolled in any educational program')),
-            ('dropout', _('Dropout, referral not possible'))
+            ('graduated_to_abln_next_level', _('Graduated to the ABLN next level')),
+            ('referred_to_bln', _('Referred to BLN')),
+            ('referred_to_ybln', _('Referred to YBLN')),
+            ('referred_to_alp', _('Referred to ALP')),
+            ('referred_to_cbt', _('Referred to CBT')),
+            ('dropout', _('Dropout, referral not possible')),
+        ),
+        initial=''
+    )
+
+    education_status = forms.ChoiceField(
+        label=_('Education status'),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('Never been in formal education', _('Disability')),
+            ('Enrolled in formal education but did not continue', _('Enrolled in formal education but did not continue')),
         ),
         initial=''
     )
@@ -1707,7 +1738,7 @@ class ABLNForm(CommonForm):
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=True,
-        label=_('Phone number')
+        label=_('Phone number (own or closest relative)')
     )
     phone_number_confirm = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
@@ -1752,13 +1783,13 @@ class ABLNForm(CommonForm):
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
         required=False,
-        label=_('Case number')
+        label=_('Household Case number')
     )
     case_number_confirm = forms.RegexField(
         regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
         required=False,
-        label=_('Case number confirm')
+        label=_('Household Case number confirm')
     )
 
     individual_case_number = forms.RegexField(
@@ -1997,6 +2028,8 @@ class ABLNForm(CommonForm):
                     Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('language', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('education_status', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
@@ -2141,7 +2174,7 @@ class ABLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parent Identification') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parent/Caregiver Identification') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -2456,6 +2489,7 @@ class ABLNForm(CommonForm):
             'no_parent_id_confirmation',
             'source_of_identification',
             'other_nationality',
+            'education_status',
         )
 
     class Media:

@@ -146,6 +146,7 @@ class CLM(TimeStampedModel):
         ('more_than_15days', _('More than 15 absence days'))
     )
     BARRIERS = Choices(
+        ('Full time job to support family financially', _('Full time job to support family financially')),
         ('seasonal_work', _('Seasonal work')),
         ('transportation', _('Transportation')),
         ('weather', _('Weather')),
@@ -156,7 +157,6 @@ class CLM(TimeStampedModel):
         ('Enrolled in formal education', _('Enrolled in formal education')),
         ('marriage engagement pregnancy', _('Marriage/Engagement/Pregnancy')),
         ('violence bullying', _('Violence/Bullying')),
-        ('Full time job to support family financially', _('Full time job to support family financially')),
         ('No interest in pursuing the programme/No value', _('No interest in pursuing the programme/No value')),
         # ('other', _('Other'))
     )
@@ -172,7 +172,7 @@ class CLM(TimeStampedModel):
         ('manufacturing', _('Manufacturing')),
         ('retail_store', _('Retail / Store')),
         ('begging', _('Begging')),
-        ('other_many_other', _('Other (hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)')),
+        ('other_many_other', _('Other services (hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)')),
         # ('other', _('Other')),
     )
     LEARNING_RESULT = Choices(
@@ -373,9 +373,8 @@ class CLM(TimeStampedModel):
         null=True,
         choices=Choices(
             ('disability', _('Disability')),
-            ('dropout', _("Dropout from the round")),
+            ('enrolled and did not do the pre-test', _("Enrolled and did not do the pre-test")),
             ('enrolled in formal', _("Enrolled in formal education")),
-            ('uncompleted_participation', _("Uncompleted Participation"))
         ),
         verbose_name=_('unsuccessful pre test reason')
     )
@@ -402,6 +401,17 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Phone number confirm')
+    )
+
+    education_status = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('Never been in formal education', _('Disability')),
+            ('enrolled in formal educarioh but did not continue', _("Enrolled in formal educarioh but did not continue")),
+        ),
+        verbose_name=_('Education status')
     )
 
     id_type = models.CharField(
@@ -798,15 +808,12 @@ class BLN(CLM):
 
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
-        ('repeat_level', _('Repeat level')),
-        ('attended_public_school', _('Referred public school')),
-        ('referred_to_alp', _('referred to ALP')),
-        ('referred_to_tvet', _('referred to TVET')),
-        ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
-        # ('reenrolled_in_alp', _('Re-register on another round of BLN')),
         ('graduated_to_bln_next_level', _('Graduated to the next level')),
-        # ('not_enrolled_any_program', _('Not enrolled in any educational program')),
-        ('dropout', _('Dropout, referral not possible'))
+        ('referred_to_alp', _('referred to ALP')),
+        ('referred_public_school', _('Referred to public school')),
+        ('referred_to_tvet', _('Referred to TVET')),
+        ('referred_to_ybln', _('Referred to YBLN')),
+        ('dropout', _('Dropout, referral not possible')),
     )
 
     cycle = models.ForeignKey(
@@ -833,6 +840,19 @@ class BLN(CLM):
         null=True,
         choices=LEARNING_RESULT,
         verbose_name=_('Learning result')
+    )
+
+    participation = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('less_than_10days', _('Less than 10 absence days')),
+            ('10_15_days', _('10 to 15 absence days')),
+            ('15_20_days', _('15 to 20 absence days')),
+            ('more_than_20days', _('More than 20 absence days'))
+        ),
+        verbose_name=_('Participation')
     )
 
     def calculate_score(self, stage):
@@ -1552,15 +1572,12 @@ class ABLN(CLM):
 
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
-        ('repeat_abln_level', _('Repeat ABLN level')),
-        # ('attended_public_school', _('Referred public school')),
-        # ('referred_to_alp', _('referred to ALP')),
-        # ('referred_to_tvet', _('referred to TVET')),
-        # ('ready_to_alp_but_not_possible', _('Ready for ALP but referral is not possible')),
-        # ('reenrolled_in_alp', _('Re-register on another round of BLN')),
         ('graduated_to_abln_next_level', _('Graduated to the ABLN next level')),
-        # ('not_enrolled_any_program', _('Not enrolled in any educational program')),
-        ('dropout', _('Dropout, referral not possible'))
+        ('referred_to_bln', _('Referred to BLN')),
+        ('referred_to_ybln', _('Referred to YBLN')),
+        ('referred_to_alp', _('Referred to ALP')),
+        ('referred_to_cbt', _('Referred to CBT')),
+        ('dropout', _('Dropout, referral not possible')),
     )
 
     cycle = models.ForeignKey(
@@ -1587,6 +1604,19 @@ class ABLN(CLM):
         null=True,
         choices=LEARNING_RESULT,
         verbose_name=_('Learning result')
+    )
+
+    participation = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('less_than_3days', _('Less than 3 absence days')),
+            ('3_7_days', _('3 to 7 absence days')),
+            ('7_12_days', _('7 to 12 absence days')),
+            ('more_than_12days', _('More than 12 absence days'))
+        ),
+        verbose_name=_('Participation')
     )
 
     def calculate_score(self, stage):

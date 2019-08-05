@@ -234,6 +234,7 @@ class ABLNSerializer(CLMSerializer):
             'no_parent_id_confirmation',
             'source_of_identification',
             'other_nationality',
+            'education_status',
         )
 
 
