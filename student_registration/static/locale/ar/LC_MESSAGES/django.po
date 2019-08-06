@@ -1726,7 +1726,7 @@ msgstr "زواج/خطوبة/حمل"
 
 #: student_registration/clm/models.py:156
 msgid "Violence/Bullying"
-msgstr "بلطجة/عنف"
+msgstr " خلال الدورة او على طريقه الى المركز)  تنمر/عنف)"
 
 #: student_registration/clm/models.py:157
 msgid "Full time job to support family financially"
