@@ -1024,6 +1024,8 @@ class ABLNViewSet(mixins.RetrieveModelMixin,
 
     def get_queryset(self):
         qs = self.queryset
+        if self.request.GET.get('creation_date', None):
+            return self.queryset.filter(created=self.request.GET.get('creation_date', None))
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
