@@ -1862,7 +1862,7 @@ msgstr " حدد الجنسية"
 
 #: student_registration/clm/forms.py:1741
 msgid "Phone number (own or closest relative)"
-msgstr ""
+msgstr "رقم الهاتف - الخاص أو الأقرب "
 
 #: student_registration/clm/forms.py:1747
 #: student_registration/clm/models.py:403
@@ -1876,7 +1876,7 @@ msgstr "نوع البطاقة"
 
 #: student_registration/clm/forms.py:1752
 msgid "Child no ID confirmation popup message"
-msgstr ""
+msgstr "هل انت متأكد ان الطفل لا يملك اي نوع من البطاقات المدرجه اعلاه؟ "
 
 #: student_registration/clm/forms.py:1756
 #: student_registration/clm/models.py:422
@@ -1895,26 +1895,26 @@ msgstr ""
 #: student_registration/clm/models.py:424
 #: student_registration/clm/models.py:538
 msgid "Syrian national ID"
-msgstr ""
+msgstr "بطاقة الهوية السورية"
 
 #: student_registration/clm/forms.py:1759
 #: student_registration/clm/forms.py:1775
 #: student_registration/clm/models.py:425
 #: student_registration/clm/models.py:539
 msgid "Palestinian national ID"
-msgstr ""
+msgstr "البطاقة الفلسطنية"
 
 #: student_registration/clm/forms.py:1760
 #: student_registration/clm/forms.py:1776
 #: student_registration/clm/models.py:426
 #: student_registration/clm/models.py:540
 msgid "Lebanese national ID"
-msgstr ""
+msgstr "بطاقة الهوية اللبنانية"
 
 #: student_registration/clm/forms.py:1761
 #: student_registration/clm/models.py:427
 msgid "Child have no ID"
-msgstr ""
+msgstr "بدون اوراق "
 
 #: student_registration/clm/forms.py:1767
 #: student_registration/clm/models.py:543
@@ -1923,12 +1923,12 @@ msgstr "نوع البطاقة الخاصة "
 
 #: student_registration/clm/forms.py:1768
 msgid "Parent no ID confirmation popup message"
-msgstr ""
+msgstr "هل انت متأكد ان الاب لا يملك اي نوع من البطاقات المدرجه اعلاه؟ "
 
 #: student_registration/clm/forms.py:1777
 #: student_registration/clm/models.py:541
 msgid "Parent have no ID"
-msgstr ""
+msgstr "بدون اوراق"
 
 #: student_registration/clm/forms.py:1786
 msgid "Household Case number"
@@ -1965,14 +1965,14 @@ msgstr ""
 #: student_registration/clm/models.py:482
 #: student_registration/clm/models.py:576
 msgid "Lebanese ID number "
-msgstr " رقم البطاقةاللبنانية"
+msgstr " رقم البطاقة اللبنانية"
 
 #: student_registration/clm/forms.py:1829
 #: student_registration/clm/forms.py:1884
 #: student_registration/clm/models.py:488
 #: student_registration/clm/models.py:582
 msgid "Lebanese ID number confirm"
-msgstr ""
+msgstr "تأكيد رقم الهوية اللبنانية"
 
 #: student_registration/clm/forms.py:1834
 #: student_registration/clm/forms.py:1889
@@ -2005,7 +2005,7 @@ msgstr ""
 #: student_registration/clm/forms.py:1911
 #: student_registration/clm/models.py:525
 msgid "Source of identification of the child"
-msgstr ""
+msgstr "مصدر التعرف على الطفل"
 
 #: student_registration/clm/forms.py:1916
 #: student_registration/clm/models.py:520
@@ -2033,7 +2033,7 @@ msgstr "المعلومات الشخصية للطفل"
 
 #: student_registration/clm/forms.py:2177
 msgid "Parent/Caregiver Identification"
-msgstr ""
+msgstr "تحديد هوية الوالد / مقدم الرعاية"
 
 #: student_registration/clm/forms.py:2578
 msgid "Referral 1"
@@ -2049,15 +2049,15 @@ msgstr " الإحالة ٣ "
 
 #: student_registration/clm/forms.py:2687
 msgid "Follow-up first call"
-msgstr ""
+msgstr "المتابعة - الاتصال الاول"
 
 #: student_registration/clm/forms.py:2706
 msgid "Follow-up second call"
-msgstr ""
+msgstr "المتابعة - الاتصال الثاني"
 
 #: student_registration/clm/forms.py:2725
 msgid "Follow-up Household visit"
-msgstr ""
+msgstr "المتابعة - الزيارة المنزلية"
 
 #: student_registration/clm/models.py:122
 msgid "English/Arabic"
@@ -2126,12 +2126,12 @@ msgstr "تبديل مكان السكن"
 
 #: student_registration/clm/models.py:156
 msgid "Moved back to Syria"
-msgstr ""
+msgstr "انتقل الى سوريا"
 
 #: student_registration/clm/models.py:157
 #: student_registration/clm/models.py:377
 msgid "Enrolled in formal education"
-msgstr ""
+msgstr "مسجل من التعليم الاساسي"
 
 #: student_registration/clm/models.py:158
 msgid "Marriage/Engagement/Pregnancy"
@@ -2139,7 +2139,7 @@ msgstr "زواج/خطوبة/حمل"
 
 #: student_registration/clm/models.py:159
 msgid "Violence/Bullying"
-msgstr " خلال الدورة او على طريقه الى المركز)  تنمر/عنف)"
+msgstr "  تنمر/عنف - خلال الدورة او على طريقه الى المركز "
 
 #: student_registration/clm/models.py:160
 msgid "No interest in pursuing the programme/No value"
@@ -2238,7 +2238,7 @@ msgstr "رقم تسلسلي خاص بالجمعية"
 
 #: student_registration/clm/models.py:376
 msgid "Enrolled and did not do the pre-test"
-msgstr ""
+msgstr "Pre-test مسجل ولكن لم يقم بال"
 
 #: student_registration/clm/models.py:379
 msgid "unsuccessful pre test reason"
@@ -2284,7 +2284,7 @@ msgstr ""
 #: student_registration/outreach/models.py:224
 #: student_registration/outreach/models.py:237
 msgid "ALP"
-msgstr "ALP"
+msgstr ""
 
 #: student_registration/clm/models.py:616
 #: student_registration/clm/models.py:650
@@ -2351,7 +2351,7 @@ msgstr "تاريخ الاحالة"
 msgid ""
 "Date when the receiving organization confirms accepting the child (or child "
 "receiving service)"
-msgstr ""
+msgstr "التاريخ الذي تؤكد فيه المنظمة المستقبلة قبول الطفل أو خدمة تلقي الطفل"
 
 #: student_registration/clm/models.py:714
 #: student_registration/clm/models.py:730
@@ -2363,12 +2363,12 @@ msgstr "السبب"
 #: student_registration/clm/models.py:735
 #: student_registration/clm/models.py:751
 msgid "Results"
-msgstr ""
+msgstr "النتيجة"
 
 #: student_registration/clm/models.py:724
 #: student_registration/clm/models.py:740
 msgid "Call date"
-msgstr ""
+msgstr "تاريخ الاتصال"
 
 #: student_registration/clm/models.py:756
 msgid "Visit date"
@@ -2523,7 +2523,7 @@ msgstr "الإحالة "
 #: student_registration/clm/tables.py:111
 #: student_registration/templates/django_tables2/clm_followup_column.html:6
 msgid "Follow-up"
-msgstr ""
+msgstr "المتابعة"
 
 #: student_registration/clm/tables.py:181
 msgid "Arabic Reading - Improvement"
