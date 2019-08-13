@@ -31,6 +31,7 @@ from student_registration.schools.views import (
 )
 from student_registration.clm.views import (
     BLNViewSet,
+    ABLNViewSet,
     RSViewSet,
     CBECEViewSet,
     CLMStudentViewSet,
@@ -71,6 +72,7 @@ api.register(r'schools', SchoolViewSet, base_name='schools')
 api.register(r'classrooms', ClassRoomViewSet, base_name='classrooms')
 api.register(r'sections', SectionViewSet, base_name='sections')
 api.register(r'clm-bln', BLNViewSet, base_name='clm-bln')
+api.register(r'clm-abln', ABLNViewSet, base_name='clm-abln')
 api.register(r'clm-rs', RSViewSet, base_name='clm-rs')
 api.register(r'clm-cbece', CBECEViewSet, base_name='clm-cbece')
 api.register(r'clm-students', CLMStudentViewSet, base_name='clm-students')
