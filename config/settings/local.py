@@ -33,12 +33,10 @@ EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND',
                     default='django.core.mail.backends.console.EmailBackend')
 
 
-# AXES_CACHE = 'default'
 # CACHING
 # ------------------------------------------------------------------------------
 CACHES = {
     'default': {
-        # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': ''
     }
@@ -55,7 +53,6 @@ MIDDLEWARE = MIDDLEWARE + ['debug_toolbar.middleware.DebugToolbarMiddleware',
                            'student_registration.one_session.OneSessionPerUserMiddleware',
                            'student_registration.hsts_middleware.HSTSMiddleware',
                            'student_registration.xframe_middleware.XFrameMiddleware',
-                           # 'axes.middleware.AxesMiddleware'
                            ]
 INSTALLED_APPS += ['debug_toolbar','lockout','student_registration.accounts', ]
 

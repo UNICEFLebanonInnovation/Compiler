@@ -44,7 +44,6 @@ EXTRA_MIDDLEWARE = ['student_registration.middleware.AutoLogout',
 MIDDLEWARE = WHITENOISE_MIDDLEWARE + MIDDLEWARE + EXTRA_MIDDLEWARE
 RAVEN_MIDDLEWARE = ['raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware']
 MIDDLEWARE = RAVEN_MIDDLEWARE + MIDDLEWARE
-             # + ['axes.middleware.AxesMiddleware']
 
 # opbeat integration
 # See https://opbeat.com/languages/django/
@@ -147,7 +146,6 @@ if env.bool('DATABASE_SSL_ENABLED', default=False):
     DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
 
 
-# AXES_CACHE = 'default'
 
 # CACHING
 # ------------------------------------------------------------------------------
