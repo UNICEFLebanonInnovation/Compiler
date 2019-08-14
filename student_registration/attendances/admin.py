@@ -4,11 +4,11 @@ from __future__ import absolute_import, unicode_literals
 from django.db import models
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
-from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
+# from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 from django.utils.translation import ugettext as _
 
 from import_export.admin import ExportMixin
-from import_export import resources, fields, widgets
+from import_export import resources
 from django.contrib.postgres.fields import JSONField
 from prettyjson import PrettyJSONWidget
 
@@ -303,16 +303,16 @@ class CycleFilter(admin.SimpleListFilter):
 
 
 class AbsenteeResource(resources.ModelResource):
-    governorate = fields.Field(
-        column_name='governorate',
-        attribute='school',
-        widget=widgets.ForeignKeyWidget(School, 'location_parent_name')
-    )
-    district = fields.Field(
-        column_name='district',
-        attribute='school',
-        widget=widgets.ForeignKeyWidget(School, 'location_name')
-    )
+    # governorate = fields.Field(
+    #     column_name='governorate',
+    #     attribute='school',
+    #     widget=widgets.ForeignKeyWidget(School, 'location_parent_name')
+    # )
+    # district = fields.Field(
+    #     column_name='district',
+    #     attribute='school',
+    #     widget=widgets.ForeignKeyWidget(School, 'location_name')
+    # )
 
     class Meta:
         model = Absentee

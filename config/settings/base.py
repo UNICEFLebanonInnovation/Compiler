@@ -36,6 +36,7 @@ if READ_DOT_ENV_FILE:
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
+    'djangosecure',
     # Default Django apps:
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,7 +57,6 @@ DJANGO_APPS = [
     'markdown_deux',  # Required for Knowledgebase item formatting
     'bootstrapform',  # Required for nicer formatting of forms with the default templates
     'helpdesk',  # This is us!
-    'rangefilter',
     'prettyjson',
     #'storages',
 ]
