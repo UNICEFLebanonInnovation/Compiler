@@ -109,9 +109,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-LOCKOUT_MAX_ATTEMPTS = 5
-LOCKOUT_TIME = 15
-
 # # SECURITY CONFIGURATION
 # X_FRAME_OPTIONS = 'DENY'
 
