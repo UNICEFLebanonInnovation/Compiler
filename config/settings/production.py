@@ -61,7 +61,6 @@ MIDDLEWARE = RAVEN_MIDDLEWARE + MIDDLEWARE
 # See https://docs.djangoproject.com/en/dev/ref/middleware/#module-django.middleware.security
 # and https://docs.djangoproject.com/en/dev/howto/deployment/checklist/#run-manage-py-check-deploy
 
-# SECURITY CONFIGURATION
 # set this to 60 seconds and then to 518400 when you can prove it works
 SECURE_HSTS_SECONDS = 60
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool('DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS', default=True)
@@ -144,8 +143,6 @@ DATABASES['default'] = env.db('DATABASE_URL', default='postgres:///student_regis
 
 if env.bool('DATABASE_SSL_ENABLED', default=False):
     DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
-
-
 
 # CACHING
 # ------------------------------------------------------------------------------
