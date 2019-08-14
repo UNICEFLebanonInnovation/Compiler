@@ -236,6 +236,8 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 # Auto logout delay in minutes
 AUTO_LOGOUT_DELAY = 20  # equivalent to 20 minutes
 CSRF_USE_SESSIONS = True
+LOCKOUT_MAX_ATTEMPTS = 5
+LOCKOUT_TIME = 15
 
 # Your production stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
