@@ -35,10 +35,16 @@ EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND',
 
 # CACHING
 # ------------------------------------------------------------------------------
+#CACHES = {
+#   'default': {
+#        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',#
+#        'LOCATION': ''
+#    }
+#}
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': ''
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/var/tmp/django_cache',
     }
 }
 
@@ -66,9 +72,9 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool('DJANGO_SECURE_CONTENT_TYPE_NOSNIFF', def
 SECURE_BROWSER_XSS_FILTER = True
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
-SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
+# SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)
+# CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_HTTPONLY = True
 SECURE_HSTS_PRELOAD = True
 # SECURE_REDIRECT_EXEMPT
 # SECURE_SSL_HOST
@@ -126,7 +132,7 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 # Auto logout delay in minutes
 AUTO_LOGOUT_DELAY = 20 # equivalent to 20 minutes
-CSRF_USE_SESSIONS = True
+#CSRF_USE_SESSIONS = True
 LOCKOUT_MAX_ATTEMPTS = 5
 LOCKOUT_TIME = 15
 

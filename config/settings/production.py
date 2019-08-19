@@ -146,28 +146,34 @@ if env.bool('DATABASE_SSL_ENABLED', default=False):
 
 # CACHING
 # ------------------------------------------------------------------------------
+# CACHES = {
+#     'default': {
+#         # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+#         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+#         'LOCATION': ''
+#     }
+# }
+
 CACHES = {
     'default': {
-        # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': ''
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/var/tmp/django_cache',
     }
 }
 
-
-REDIS_LOCATION = '{0}/{1}'.format(env('REDIS_URL', default='redis://127.0.0.1:6379'), 0)
+# REDIS_LOCATION = '{0}/{1}'.format(env('REDIS_URL', default='redis://127.0.0.1:6379'), 0)
 # Heroku URL does not pass the DB number, so we parse it in
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': REDIS_LOCATION,
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'IGNORE_EXCEPTIONS': True,  # mimics memcache behavior.
-                                        # http://niwinz.github.io/django-redis/latest/#_memcached_exceptions_behavior
-        }
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         'LOCATION': REDIS_LOCATION,
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+#             'IGNORE_EXCEPTIONS': True,  # mimics memcache behavior.
+#                                         # http://niwinz.github.io/django-redis/latest/#_memcached_exceptions_behavior
+#         }
+#     }
+# }
 
 INSTALLED_APPS += ['lockout', ]
 
@@ -236,6 +242,8 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 # Auto logout delay in minutes
 AUTO_LOGOUT_DELAY = 20  # equivalent to 20 minutes
 CSRF_USE_SESSIONS = True
+LOCKOUT_MAX_ATTEMPTS = 5
+LOCKOUT_TIME = 15
 
 # Your production stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
