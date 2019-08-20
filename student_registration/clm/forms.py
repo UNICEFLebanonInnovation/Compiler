@@ -2298,11 +2298,15 @@ class ABLNForm(CommonForm):
         national_number_confirm = cleaned_data.get("national_number_confirm")
         syrian_national_number = cleaned_data.get("syrian_national_number")
         syrian_national_number_confirm = cleaned_data.get("syrian_national_number_confirm")
+        sop_national_number = cleaned_data.get("sop_national_number")
+        sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
 
         parent_individual_case_number = cleaned_data.get("parent_individual_case_number")
         parent_individual_case_number_confirm = cleaned_data.get("parent_individual_case_number_confirm")
         parent_national_number = cleaned_data.get("parent_national_number")
         parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
+        sop_parent_national_number = cleaned_data.get("parent_national_number")
+        sop_parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
         parent_syrian_national_number = cleaned_data.get("parent_syrian_national_number")
         parent_syrian_national_number_confirm = cleaned_data.get("parent_syrian_national_number_confirm")
 
@@ -2320,7 +2324,7 @@ class ABLNForm(CommonForm):
 
             if parent_individual_case_number != parent_individual_case_number_confirm:
                 msg = "The individual case numbers are not matched"
-                self.add_error('individual_case_number_confirm', msg)
+                self.add_error('parent_individual_case_number_confirm', msg)
 
             if individual_case_number != individual_case_number_confirm:
                 msg = "The individual case numbers are not matched"
@@ -2337,41 +2341,64 @@ class ABLNForm(CommonForm):
         if id_type == 'Syrian national ID':
 
             if not parent_syrian_national_number:
-                self.add_error('national_number', 'This field is required')
+                self.add_error('parent_syrian_national_number', 'This field is required')
 
             if not parent_syrian_national_number_confirm:
-                self.add_error('national_number_confirm', 'This field is required')
+                self.add_error('parent_syrian_national_number_confirm', 'This field is required')
 
             if parent_syrian_national_number and not len(parent_syrian_national_number_confirm) == 11:
                 msg = "Please enter a valid number (11 digits)"
-                self.add_error('national_number', msg)
+                self.add_error('parent_syrian_national_number_confirm', msg)
 
             if parent_syrian_national_number and not len(parent_syrian_national_number) == 11:
                 msg = "Please enter a valid number (11 digits)"
                 self.add_error('national_number_confirm', msg)
 
-            if national_number != national_number_confirm:
+            if parent_syrian_national_number != parent_syrian_national_number_confirm:
                 msg = "The national numbers are not matched"
-                self.add_error('national_number_confirm', msg)
+                self.add_error('parent_syrian_national_number_confirm', msg)
+
+            if syrian_national_number != syrian_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('syrian_national_number_confirm', msg)
 
         if id_type == 'Lebanese national ID':
-            if not national_number:
-                self.add_error('national_number', 'This field is required')
+            if not parent_national_number:
+                self.add_error('parent_national_number', 'This field is required')
 
-            if not national_number_confirm:
-                self.add_error('national_number_confirm', 'This field is required')
+            if not parent_national_number_confirm:
+                self.add_error('parent_national_number_confirm', 'This field is required')
 
-            if not len(national_number) == 12:
+            if parent_national_number and not len(parent_national_number) == 12:
                 msg = "Please enter a valid number (12 digits)"
-                self.add_error('national_number', msg)
+                self.add_error('parent_national_number', msg)
 
-            if not len(national_number_confirm) == 12:
+            if parent_national_number_confirm and not len(parent_national_number_confirm) == 12:
                 msg = "Please enter a valid number (12 digits)"
-                self.add_error('national_number_confirm', msg)
+                self.add_error('parent_national_number_confirm', msg)
+
+            if parent_national_number != parent_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('parent_national_number_confirm', msg)
 
             if national_number != national_number_confirm:
                 msg = "The national numbers are not matched"
                 self.add_error('national_number_confirm', msg)
+
+        if id_type == 'Palestinian national ID':
+            if not sop_parent_national_number:
+                self.add_error('sop_parent_national_number', 'This field is required')
+
+            if not sop_parent_national_number_confirm:
+                self.add_error('sop_parent_national_number_confirm', 'This field is required')
+
+            if sop_parent_national_number != sop_parent_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('sop_parent_national_number_confirm', msg)
+
+            if sop_national_number != sop_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('sop_national_number_confirm', msg)
 
     def save(self, request=None, instance=None, serializer=None):
         super(ABLNForm, self).save(request=request, instance=instance, serializer=ABLNSerializer)
