@@ -119,6 +119,7 @@ class Disability(models.Model):
 class CLM(TimeStampedModel):
 
     LANGUAGES = Choices(
+        ('arabic', _('Arabic')),
         ('english_arabic', _('English/Arabic')),
         ('french_arabic', _('French/Arabic'))
     )
@@ -259,7 +260,14 @@ class CLM(TimeStampedModel):
         EducationalLevel,
         blank=True, null=True,
         related_name='+',
-        verbose_name=_('What is the educational level of a person who is valuable to the child?')
+        verbose_name=_('What is the educational level of the mother?')
+    )
+
+    father_educational_level = models.ForeignKey(
+        EducationalLevel,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('What is the educational level of the father?')
     )
 
     status = models.CharField(max_length=50, choices=STATUS, default=STATUS.enrolled)
@@ -408,8 +416,8 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=Choices(
-            ('Never been in formal education', _('Disability')),
-            ('enrolled in formal educarioh but did not continue', _("Enrolled in formal educarioh but did not continue")),
+            ('out of school', _('Out of school')),
+            ('enrolled in formal education but did not continue', _("Enrolled in formal education but did not continue")),
         ),
         verbose_name=_('Education status')
     )
@@ -517,8 +525,11 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=Choices(
+            ('Referred by CP partner', _('Referred by CP partner')),
+            ('Referred by youth partner', _('Referred by youth partner')),
             ('Family walked in to NGO', _('Family walked in to NGO')),
-            ('Referral from another NGO or municipality', _("Referral from another NGO or municipality")),
+            ('Referral from another NGO', _("Referral from another NGO")),
+            ('Referral from another Municipality', _("Referral from Municipality")),
             ('Direct outreach', _("Direct outreach")),
             ('List database', _("List database"))
         ),

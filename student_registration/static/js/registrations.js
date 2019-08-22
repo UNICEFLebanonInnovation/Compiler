@@ -572,11 +572,9 @@ function reorganizeForm()
     var registered_unhcr = $('select#id_student_registered_in_unhcr').val();
     var id_cycle = $('select#id_cycle').val();
     var id_type = $('select#id_id_type').val();
-    var parent_id_type = $('select#id_parent_id_type').val();
     var nationality = $('select#id_student_nationality').val();
 
     $('div.child_id').addClass('d-none');
-    $('div.parent_id').addClass('d-none');
     $('div#div_id_other_nationality').addClass('d-none');
 
     if(nationality == '6'){
@@ -601,22 +599,6 @@ function reorganizeForm()
 
     if(id_type == 'Palestinian national ID'){
         $('div.child_id5').removeClass('d-none');
-    }
-
-    if(id_type == 'Child have no ID'){
-        //@todo show / hide parent info
-    }
-
-    if(parent_id_type == 'Lebanese national ID'){
-        $('div.parent_id3').removeClass('d-none');
-    }
-
-    if(parent_id_type == 'Syrian national ID'){
-        $('div.parent_id4').removeClass('d-none');
-    }
-
-    if(parent_id_type == 'Palestinian national ID'){
-        $('div.parent_id5').removeClass('d-none');
     }
 
     if(program_site == 'out_school') {

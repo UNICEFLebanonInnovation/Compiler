@@ -375,7 +375,7 @@ class ABLNEditView(LoginRequiredMixin,
 
     template_name = 'clm/edit_form.html'
     form_class = ABLNForm
-    success_url = '/clm/Abln-list/'
+    success_url = '/clm/abln-list/'
     group_required = [u"CLM_ABLN"]
 
     def get_success_url(self):
