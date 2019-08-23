@@ -60,11 +60,11 @@ TEMPLATES[0]['OPTIONS']['loaders'] = [
     ], ],
 ]
 
-class DisableMigrations(object):
-    def __contains__(self, item):
-        return True
-
-    def __getitem__(self, item):
-        return 'notmigrations'
-
-MIGRATION_MODULES = DisableMigrations()
+# class DisableMigrations(object):
+#     def __contains__(self, item):
+#         return True
+#
+#     def __getitem__(self, item):
+#         return 'notmigrations'
+#
+# MIGRATION_MODULES = DisableMigrations()
