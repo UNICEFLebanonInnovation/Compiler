@@ -2,7 +2,7 @@
  * Created by ali on 7/22/17.
  */
 
-var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname, input#id_location";
+var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname, input#id_location, #id_caretaker_mother_name, #id_caretaker_last_name, #id_caretaker_middle_name, #id_caretaker_first_name";
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
 var moved_student_path = host+'/api/logging-student-move/';
