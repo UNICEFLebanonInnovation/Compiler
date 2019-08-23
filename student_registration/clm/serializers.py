@@ -236,6 +236,10 @@ class ABLNSerializer(CLMSerializer):
             'source_of_identification',
             'other_nationality',
             'education_status',
+            'caretaker_first_name',
+            'caretaker_middle_name',
+            'caretaker_last_name',
+            'caretaker_mother_name',
         )
 
 

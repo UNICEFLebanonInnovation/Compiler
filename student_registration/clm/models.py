@@ -767,6 +767,31 @@ class CLM(TimeStampedModel):
         verbose_name=_('Visit date')
     )
 
+    caretaker_first_name = models.CharField(
+        max_length=500,
+        blank=False,
+        null=True,
+        verbose_name=_('Caretaker First Name')
+    )
+    caretaker_middle_name = models.CharField(
+        max_length=500,
+        blank=False,
+        null=True,
+        verbose_name=_('Caretaker Middle Name')
+    )
+    caretaker_last_name = models.CharField(
+        max_length=500,
+        blank=False,
+        null=True,
+        verbose_name=_('Caretaker Last Name')
+    )
+    caretaker_mother_name = models.CharField(
+        max_length=500,
+        blank=False,
+        null=True,
+        verbose_name=_('Caretaker Mother Name')
+    )
+
     @property
     def student_fullname(self):
         if self.student:
