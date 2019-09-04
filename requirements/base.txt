@@ -74,5 +74,4 @@ azure-storage==0.20.0
 openpyxl==2.4.9
 django-prettyjson==0.3.3
 unicodecsv==0.14.1
-django-lockout==0.1.1
 djangosecure==0.0.11
