@@ -23,6 +23,19 @@
   </div>
 </div>
     {% endif %}
+    {% if request.user|has_group:"CLM_ABLN" %}
+<div class="col-sm-4">
+  <div class="card">
+    <a href="{% url "clm:abln_list" %}">
+        <img class="card-img-top" data-src="holder.js/250px250/" alt="100%x180" src="{% static 'images/clm-bln-icon.png' %}" data-holder-rendered="true" style="height: 250px; width: 250px; display: block;">
+    </a>
+    <div class="card-block" style="border-top: 1px solid rgba(0,0,0,.125)">
+        <a href="{% url "clm:abln_list" %}" class="btn btn-primary btn-lg btn-block" role="button" aria-pressed="true"><h3>ABLN</h3></a>
+        <!--<a href="{% url "clm:bln_dashboard" %}" class="btn btn-outline-primary btn-lg btn-block " role="button" aria-pressed="true">Dashboard</a>-->
+    </div>
+  </div>
+</div>
+    {% endif %}
     {% if request.user|has_group:"CLM_RS" %}
 <div class="col-sm-4">
   <div class="card">

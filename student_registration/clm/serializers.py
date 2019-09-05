@@ -2,7 +2,7 @@
 import json
 
 from rest_framework import serializers
-from .models import CLM, BLN, RS, CBECE, SelfPerceptionGrades
+from .models import CLM, BLN, ABLN, RS, CBECE, SelfPerceptionGrades
 
 
 def create_instance(validated_data, model):
@@ -93,6 +93,10 @@ class CLMSerializer(serializers.ModelSerializer):
 
     student_outreach_child = serializers.IntegerField(source='student.outreach_child', required=False)
     student_outreach_child_id = serializers.IntegerField(source='student.outreach_child.id', read_only=True)
+    governorate_name = serializers.CharField(source='governorate.name', read_only=True)
+    district_name = serializers.CharField(source='district.name', read_only=True)
+    partner_name = serializers.CharField(source='partner.name', read_only=True)
+    created = serializers.CharField(read_only=True)
 
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
     save = serializers.IntegerField(source='owner.id', read_only=True)
@@ -112,6 +116,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'student_id',
             'round',
             'partner',
+            'partner_name',
             'language',
             'student_outreach_child',
             'student_outreach_child_id',
@@ -134,7 +139,9 @@ class CLMSerializer(serializers.ModelSerializer):
             'owner',
             'modified_by',
             'governorate',
+            'governorate_name',
             'district',
+            'district_name',
             'location',
             'outreach_barcode',
             'disability',
@@ -144,6 +151,7 @@ class CLMSerializer(serializers.ModelSerializer):
             # 'labours',
             # 'labour_hours',
             'hh_educational_level',
+            'father_educational_level',
             'participation',
             'barriers',
             'learning_result',
@@ -157,6 +165,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'comments',
             'unsuccessful_posttest_reason',
             'unsuccessful_pretest_reason',
+            'created',
             # 'internal',
         )
 
@@ -179,6 +188,58 @@ class BLNSerializer(CLMSerializer):
             'labour_hours',
             'student_family_status',
             'student_have_children',
+        )
+
+
+class ABLNSerializer(CLMSerializer):
+
+    def create(self, validated_data):
+        return create_instance(validated_data=validated_data, model=self.Meta.model)
+
+    def update(self, instance, validated_data):
+        return update_instance(instance=instance, validated_data=validated_data)
+
+    class Meta:
+        model = ABLN
+        fields = CLMSerializer.Meta.fields + (
+            # 'cycle',
+            # 'referral',
+            'have_labour',
+            'labours',
+            'labour_hours',
+            'student_family_status',
+            'student_have_children',
+            'phone_number',
+            'phone_number_confirm',
+            'id_type',
+            'case_number',
+            'case_number_confirm',
+            'individual_case_number',
+            'individual_case_number_confirm',
+            'parent_individual_case_number',
+            'parent_individual_case_number_confirm',
+            'recorded_number',
+            'recorded_number_confirm',
+            'national_number',
+            'national_number_confirm',
+            'syrian_national_number',
+            'syrian_national_number_confirm',
+            'sop_national_number',
+            'sop_national_number_confirm',
+            'parent_national_number',
+            'parent_national_number_confirm',
+            'parent_syrian_national_number',
+            'parent_syrian_national_number_confirm',
+            'parent_sop_national_number',
+            'parent_sop_national_number_confirm',
+            'no_child_id_confirmation',
+            'source_of_identification',
+            'other_nationality',
+            'education_status',
+            'caretaker_first_name',
+            'caretaker_middle_name',
+            'caretaker_last_name',
+            'caretaker_mother_name',
         )
 
 

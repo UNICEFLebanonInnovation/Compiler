@@ -6,7 +6,7 @@ from import_export import resources, fields
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 
-from .forms import BLNAdminForm, RSAdminForm, CBECEAdminForm
+from .forms import BLNAdminForm, ABLNAdminForm, RSAdminForm, CBECEAdminForm
 from .models import (
     Assessment,
     Cycle,
@@ -14,6 +14,7 @@ from .models import (
     Referral,
     Disability,
     BLN,
+    ABLN,
     RS,
     CBECE
 )
@@ -570,6 +571,159 @@ class CBECEAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
+class ABLNResource(resources.ModelResource):
+    arabic_improvement = fields.Field(
+        column_name='arabic improvement',
+        attribute='arabic_improvement',
+    )
+    english_improvement = fields.Field(
+        column_name='english_improvement',
+        attribute='english_improvement',
+    )
+    french_improvement = fields.Field(
+        column_name='french_improvement',
+        attribute='french_improvement',
+    )
+    math_improvement = fields.Field(
+        column_name='math_improvement',
+        attribute='math_improvement',
+    )
+    assessment_improvement = fields.Field(
+        column_name='assessment_improvement',
+        attribute='assessment_improvement',
+    )
+
+    pre_test_arabic = fields.Field(column_name='pre test arabic')
+    pre_test_foreign_language = fields.Field(column_name='pre_test_foreign_language')
+    pre_test_math = fields.Field(column_name='pre_test_math')
+
+    post_test_arabic = fields.Field(column_name='post_test_arabic')
+    post_test_foreign_language = fields.Field(column_name='post_test_foreign_language')
+    post_test_math = fields.Field(column_name='post_test_math')
+
+    class Meta:
+        fields = (
+            'id',
+            'partner__name',
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
+            'outreach_barcode',
+            'round__name',
+            'governorate__name',
+            'district__name',
+            'location',
+            'language',
+            'student__id',
+            'student__id_type',
+            'student__id_number',
+            'student__number',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__mother_fullname',
+            'student__birthday_year',
+            'student__birthday_month',
+            'student__birthday_day',
+            'student__nationality__name',
+            'student__sex',
+            'student__p_code',
+            'disability__name',
+            'internal_number',
+            'comments',
+            'hh_educational_level',
+            'student__family_status',
+            'student__have_children',
+            'have_labour',
+            'labours',
+            'labour_hours',
+            'pre_test_arabic',
+            'pre_test_foreign_language',
+            'pre_test_math',
+            'pre_test_score',
+            'post_test_arabic',
+            'post_test_foreign_language',
+            'post_test_math',
+            'post_test_score',
+            'arabic_improvement',
+            'english_improvement',
+            'french_improvement',
+            'math_improvement',
+            'assessment_improvement',
+            'participation',
+            'barriers',
+            'learning_result',
+            'created',
+            'modified'
+        )
+        model = ABLN
+        export_order = fields
+
+        def dehydrate_pre_test_arabic(self, obj):
+            return obj.get_assessment_value('arabic', 'pre_test')
+
+        def dehydrate_pre_test_foreign_language(self, obj):
+            return obj.get_assessment_value('foreign_language', 'pre_test')
+
+        def dehydrate_pre_test_math(self, obj):
+            return obj.get_assessment_value('math', 'pre_test')
+
+        def dehydrate_post_test_arabic(self, obj):
+            return obj.get_assessment_value('arabic', 'post_test')
+
+        def dehydrate_post_test_foreign_language(self, obj):
+            return obj.get_assessment_value('foreign_language', 'post_test')
+
+        def dehydrate_post_test_math(self, obj):
+            return obj.get_assessment_value('math', 'post_test')
+
+
+class ABLNAdmin(ImportExportModelAdmin):
+    resource_class = ABLNResource
+    form = ABLNAdminForm
+    # fields = '__all__'
+
+    list_display = (
+        'student',
+        'governorate',
+        'district',
+        'partner',
+        'created',
+        'modified',
+    )
+    list_filter = (
+        'round',
+        'governorate',
+        'district',
+        'partner',
+        'language',
+        'student__sex',
+        'student__nationality',
+        'disability',
+        'hh_educational_level',
+        'student__family_status',
+        'student__have_children',
+        'have_labour',
+        'labours',
+        'labour_hours',
+        'participation',
+        'barriers',
+        'learning_result',
+        'created',
+        'modified',
+    )
+    search_fields = (
+        'student__first_name',
+        'student__father_name',
+        'student__last_name',
+        'student__mother_fullname',
+    )
+
+    def get_export_formats(self):
+        from student_registration.users.utils import get_default_export_formats
+        return get_default_export_formats()
+
+
 class DisabilityResource(resources.ModelResource):
     class Meta:
         model = Disability
@@ -591,5 +745,6 @@ admin.site.register(Referral)
 admin.site.register(Disability, DisabilityAdmin)
 
 admin.site.register(BLN, BLNAdmin)
+admin.site.register(ABLN, ABLNAdmin)
 admin.site.register(RS, RSAdmin)
 admin.site.register(CBECE, CBECEAdmin)

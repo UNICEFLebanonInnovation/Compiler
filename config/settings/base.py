@@ -36,6 +36,7 @@ if READ_DOT_ENV_FILE:
 # APP CONFIGURATION
 # ------------------------------------------------------------------------------
 DJANGO_APPS = [
+    'djangosecure',
     # Default Django apps:
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,7 +57,6 @@ DJANGO_APPS = [
     'markdown_deux',  # Required for Knowledgebase item formatting
     'bootstrapform',  # Required for nicer formatting of forms with the default templates
     'helpdesk',  # This is us!
-    'rangefilter',
     'prettyjson',
     #'storages',
 ]
@@ -108,9 +108,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-LOCKOUT_MAX_ATTEMPTS = 5
-LOCKOUT_TIME = 15
 
 # # SECURITY CONFIGURATION
 # X_FRAME_OPTIONS = 'DENY'

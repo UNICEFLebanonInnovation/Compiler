@@ -5,7 +5,7 @@
 wheel==0.29.0
 
 # Bleeding edge Django
-django==1.10.7 # pyup: >=1.10,<1.11
+django==1.11.23 # pyup: >=1.10,<1.11
 
 # Configuration
 django-environ==0.4.3
@@ -29,7 +29,7 @@ argon2-cffi==16.3.0
 django-allauth==0.32.0
 
 # Python-PostgreSQL Database Adapter
-psycopg2==2.7.3
+psycopg2==2.7.3.2
 
 # Unicode slugification
 awesome-slugify==1.6.5
@@ -53,13 +53,13 @@ django-compressor==2.1.1
 django-datatables-view==1.13.0
 django-mptt==0.8.7
 django-makemessages-xgettext==0.1.1
-djangorestframework==3.6.3
+djangorestframework==3.9.1
 markdown==2.6.6
-django-filter==0.13.0
+django-filter==1.1.0
 django-rest-swagger==2.1.2
 drf-nested-routers==0.11.1
 xlsxwriter==0.9.2
-tablib==0.11.2
+tablib==0.11.5
 django-import-export==0.5.0
 django-suit==0.2.21
 django-autocomplete-light==3.2.1
@@ -75,3 +75,4 @@ openpyxl==2.4.9
 django-prettyjson==0.3.3
 unicodecsv==0.14.1
 django-lockout==0.1.1
+djangosecure==0.0.11

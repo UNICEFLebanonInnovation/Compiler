@@ -2,7 +2,7 @@
  * Created by ali on 7/22/17.
  */
 
-var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname, input#id_location";
+var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname, input#id_location, #id_caretaker_mother_name, #id_caretaker_last_name, #id_caretaker_middle_name, #id_caretaker_first_name";
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
 var moved_student_path = host+'/api/logging-student-move/';
@@ -17,6 +17,65 @@ $(document).ready(function(){
     if($(document).find('#id_registration_date').length == 1) {
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
     }
+
+    if($(document).find('#id_referral_date_1').length == 1) {
+        $('#id_referral_date_1').datepicker({dateFormat: "yy-mm-dd"});
+    }
+    if($(document).find('#id_confirmation_date_1').length == 1) {
+        $('#id_confirmation_date_1').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
+    if($(document).find('#id_referral_date_2').length == 1) {
+        $('#id_referral_date_2').datepicker({dateFormat: "yy-mm-dd"});
+    }
+    if($(document).find('#id_confirmation_date_2').length == 1) {
+        $('#id_confirmation_date_2').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
+    if($(document).find('#id_referral_date_3').length == 1) {
+        $('#id_referral_date_3').datepicker({dateFormat: "yy-mm-dd"});
+    }
+    if($(document).find('#id_confirmation_date_3').length == 1) {
+        $('#id_confirmation_date_3').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
+    if($(document).find('#id_followup_call_date_1').length == 1) {
+        $('#id_followup_call_date_1').datepicker({dateFormat: "yy-mm-dd"});
+    }
+    if($(document).find('#id_followup_call_date_2').length == 1) {
+        $('#id_followup_call_date_2').datepicker({dateFormat: "yy-mm-dd"});
+    }
+    if($(document).find('#id_followup_visit_date_1').length == 1) {
+        $('#id_followup_visit_date_1').datepicker({dateFormat: "yy-mm-dd"});
+    }
+
+    $(document).on('change', '#id_id_type', function(){
+        reorganizeForm();
+        if($(this).val() != 'Child have no ID'){
+
+            return true;
+        }
+        if(confirm($(this).attr('translation'))) {
+            $('#id_no_child_id_confirmation').val('confirmed');
+        }else{
+            $('#id_id_type').val('');
+            $('#id_no_child_id_confirmation').val('');
+        }
+    });
+
+    $(document).on('change', '#id_parent_id_type', function(){
+        reorganizeForm();
+        if($(this).val() != 'Parent have no ID'){
+
+            return true;
+        }
+        if(confirm($(this).attr('translation'))) {
+            $('#id_no_parent_id_confirmation').val('confirmed');
+        }else{
+            $('#id_parent_id_type').val('');
+            $('#id_no_parent_id_confirmation').val('');
+        }
+    });
 
     if($(document).find('.moving-date-input').length >= 1) {
         $('.moving-date-input').datepicker({dateFormat: "yy-mm-dd"});
@@ -51,6 +110,10 @@ $(document).ready(function(){
                 .end();
 
     $(document).on('change', 'select#id_site', function(){
+         reorganizeForm();
+    });
+
+    $(document).on('change', 'select#id_student_nationality', function(){
          reorganizeForm();
     });
 
@@ -508,6 +571,35 @@ function reorganizeForm()
     var program_site = $('select#id_site').val();
     var registered_unhcr = $('select#id_student_registered_in_unhcr').val();
     var id_cycle = $('select#id_cycle').val();
+    var id_type = $('select#id_id_type').val();
+    var nationality = $('select#id_student_nationality').val();
+
+    $('div.child_id').addClass('d-none');
+    $('div#div_id_other_nationality').addClass('d-none');
+
+    if(nationality == '6'){
+        $('#div_id_other_nationality').removeClass('d-none');
+    }
+
+    if(id_type == 'UNHCR Registered'){
+        $('div.child_id1').removeClass('d-none');
+    }
+
+    if(id_type == 'UNHCR Recorded'){
+        $('div.child_id2').removeClass('d-none');
+    }
+
+    if(id_type == 'Lebanese national ID'){
+        $('div.child_id3').removeClass('d-none');
+    }
+
+    if(id_type == 'Syrian national ID'){
+        $('div.child_id4').removeClass('d-none');
+    }
+
+    if(id_type == 'Palestinian national ID'){
+        $('div.child_id5').removeClass('d-none');
+    }
 
     if(program_site == 'out_school') {
         $('div#div_id_school').parent().addClass('d-none');
@@ -517,13 +609,13 @@ function reorganizeForm()
         $('div#div_id_school').parent().prev().removeClass('d-none');
     }
 
-    if(family_status == 'married' || family_status == 'divorced' || family_status == 'widower'){
-        $('div#student_have_children').removeClass('d-none');
-        $('div#student_have_children').prev().removeClass('d-none');
-    }else{
-        $('div#student_have_children').addClass('d-none');
-        $('div#student_have_children').prev().addClass('d-none');
-    }
+//    if(family_status == 'married' || family_status == 'divorced' || family_status == 'widower'){
+//        $('div#student_have_children').removeClass('d-none');
+//        $('div#student_have_children').prev().removeClass('d-none');
+//    }else{
+//        $('div#student_have_children').addClass('d-none');
+//        $('div#student_have_children').prev().addClass('d-none');
+//    }
 
     if(id_cycle == '3'){
         $('option[value=graduated_to_formal_kg]').show();

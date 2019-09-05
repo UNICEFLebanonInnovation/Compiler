@@ -2,7 +2,7 @@
 import django_tables2 as tables
 from django.utils.translation import ugettext as _
 
-from .models import CLM, BLN, RS, CBECE
+from .models import CLM, BLN, ABLN, RS, CBECE
 
 
 class BootstrapTable(tables.Table):
@@ -63,6 +63,77 @@ class BLNTable(CommonTable):
         fields = (
             'edit_column',
             'delete_column',
+            'round',
+            # 'cycle',
+            'governorate',
+            'district',
+            'internal_number',
+            'student.id_number',
+            'student.number',
+            'student.first_name',
+            'student.father_name',
+            'student.last_name',
+            'student.sex',
+            'student_age',
+            'student_birthday',
+            'student.nationality',
+            'student.mother_fullname',
+            'arabic_improvement',
+            'foreign_language_improvement',
+            'math_improvement',
+            'social_emotional_improvement',
+            'psychomotor_improvement',
+            'artistic_improvement',
+            'assessment_improvement',
+            'unsuccessful_pretest_reason',
+            'unsuccessful_posttest_reason',
+            'participation',
+            'learning_result',
+            'owner',
+            'modified_by',
+            'created',
+            'modified',
+            'comments',
+        )
+
+
+class ABLNTable(CommonTable):
+
+    edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
+                                        template_name='django_tables2/clm_edit_column.html',
+                                        attrs={'url': '/clm/abln-edit/', 'programme': 'ABLN'})
+    delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
+                                          template_name='django_tables2/clm_delete_column.html',
+                                          attrs={'url': '/api/clm-abln/', 'programme': 'ABLN'})
+    referral_column = tables.TemplateColumn(verbose_name=_('refer'), orderable=False,
+                                            template_name='django_tables2/clm_referral_column.html',
+                                            attrs={'url': '/clm/abln-referral/', 'programme': 'ABLN'})
+    followup_column = tables.TemplateColumn(verbose_name=_('Follow-up'), orderable=False,
+                                            template_name='django_tables2/clm_followup_column.html',
+                                            attrs={'url': '/clm/abln-followup/', 'programme': 'ABLN'})
+    arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
+                                       accessor='arabic_improvement')
+    foreign_language_improvement = tables.Column(verbose_name=_('Foreign Language Development - Improvement'), orderable=False,
+                                                 accessor='foreign_language_improvement')
+    math_improvement = tables.Column(verbose_name=_('Cognitive Development - Mathematics - Improvement'), orderable=False,
+                                     accessor='math_improvement')
+    social_emotional_improvement = tables.Column(verbose_name=_('Social-Emotional Development - Improvement'), orderable=False,
+                                       accessor='arabic_improvement')
+    psychomotor_improvement = tables.Column(verbose_name=_('Psychomotor Development for children with special needs - Improvement'),
+                                       orderable=False, accessor='arabic_improvement')
+    artistic_improvement = tables.Column(verbose_name=_('Artistic Development - Improvement'), orderable=False,
+                                       accessor='arabic_improvement')
+
+    assessment_improvement = tables.Column(verbose_name=_('Assessment Result - Improvement'), orderable=False,
+                                           accessor='assessment_improvement')
+
+    class Meta:
+        model = ABLN
+        fields = (
+            'edit_column',
+            'delete_column',
+            'referral_column',
+            'followup_column',
             'round',
             # 'cycle',
             'governorate',

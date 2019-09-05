@@ -7,6 +7,7 @@ from student_registration.schools.models import CLMRound, School, Section, Class
 from student_registration.students.models import Nationality
 from .models import (
     BLN,
+    ABLN,
     RS,
     CBECE,
     Cycle,
@@ -25,6 +26,29 @@ class BLNFilter(CommonFilter):
 
     class Meta:
         model = BLN
+        fields = {
+            'round': ['exact'],
+            'student__id_number': ['contains'],
+            'student__number': ['contains'],
+            'internal_number': ['contains'],
+            'student__first_name': ['contains'],
+            'student__father_name': ['contains'],
+            'student__last_name': ['contains'],
+            'student__mother_fullname': ['contains'],
+            'student__nationality': ['exact'],
+            'governorate': ['exact'],
+            'district': ['exact'],
+            'participation': ['exact'],
+            'learning_result': ['exact'],
+            'owner__username': ['contains'],
+            'disability': ['exact'],
+        }
+
+
+class ABLNFilter(CommonFilter):
+
+    class Meta:
+        model = ABLN
         fields = {
             'round': ['exact'],
             'student__id_number': ['contains'],
