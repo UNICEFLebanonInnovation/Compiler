@@ -2,7 +2,7 @@
  * Created by ali on 7/22/17.
  */
 
-var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname, input#id_location";
+var arabic_fields = "#id_student_first_name, #id_student_father_name, #id_student_last_name, #id_student_mother_fullname, input#id_location, #id_caretaker_mother_name, #id_caretaker_last_name, #id_caretaker_middle_name, #id_caretaker_first_name";
 var protocol = window.location.protocol;
 var host = protocol+window.location.host;
 var moved_student_path = host+'/api/logging-student-move/';
@@ -572,11 +572,9 @@ function reorganizeForm()
     var registered_unhcr = $('select#id_student_registered_in_unhcr').val();
     var id_cycle = $('select#id_cycle').val();
     var id_type = $('select#id_id_type').val();
-    var parent_id_type = $('select#id_parent_id_type').val();
     var nationality = $('select#id_student_nationality').val();
 
     $('div.child_id').addClass('d-none');
-    $('div.parent_id').addClass('d-none');
     $('div#div_id_other_nationality').addClass('d-none');
 
     if(nationality == '6'){
@@ -601,22 +599,6 @@ function reorganizeForm()
 
     if(id_type == 'Palestinian national ID'){
         $('div.child_id5').removeClass('d-none');
-    }
-
-    if(id_type == 'Child have no ID'){
-        //@todo show / hide parent info
-    }
-
-    if(parent_id_type == 'Lebanese national ID'){
-        $('div.parent_id3').removeClass('d-none');
-    }
-
-    if(parent_id_type == 'Syrian national ID'){
-        $('div.parent_id4').removeClass('d-none');
-    }
-
-    if(parent_id_type == 'Palestinian national ID'){
-        $('div.parent_id5').removeClass('d-none');
     }
 
     if(program_site == 'out_school') {
