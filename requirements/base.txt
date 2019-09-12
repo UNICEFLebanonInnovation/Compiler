@@ -66,13 +66,13 @@ django-autocomplete-light==3.2.1
 django-helpdesk==0.1.18
 mongoengine==0.11.0
 django-admin-rangefilter==0.3.0
-django-bootstrap3==8.2.3
+django-bootstrap4==0.0.8
 bootstrap3-datetime==2.4
 django-tables2==1.10.0
 #azure-storage==0.36.0
 azure-storage==0.20.0
 openpyxl==2.4.9
-django-prettyjson==0.3.3
+django-prettyjson==0.4.1
 unicodecsv==0.14.1
 django-lockout==0.1.1
 djangosecure==0.0.11

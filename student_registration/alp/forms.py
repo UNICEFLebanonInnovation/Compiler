@@ -321,7 +321,7 @@ class OutreachForm(forms.ModelForm):
 
     class Media:
         js = (
-            'js/jquery-3.3.1.min.js',
+            'js/jquery-3.4.1.min.js',
             'js/jquery-ui-1.12.1.js',
             'js/validator.js',
             'js/registrations.js',
@@ -512,7 +512,7 @@ class PreTestForm(forms.ModelForm):
 
     class Media:
         js = (
-            'js/jquery-3.3.1.min.js',
+            'js/jquery-3.4.1.min.js',
             'js/jquery-ui-1.12.1.js',
             'js/validator.js',
             'js/registrations.js',
@@ -976,7 +976,7 @@ class RegistrationForm(forms.ModelForm):
 
     class Media:
         js = (
-            'js/jquery-3.3.1.min.js',
+            'js/jquery-3.4.1.min.js',
             'js/jquery-ui-1.12.1.js',
             'js/validator.js',
             'js/registrations.js',
@@ -1097,7 +1097,7 @@ class PreTestGradingForm(forms.ModelForm):
 
     class Media:
         js = (
-            'js/jquery-3.3.1.min.js',
+            'js/jquery-3.4.1.min.js',
             'js/jquery-ui-1.12.1.js',
             'js/registrations.js',
         )

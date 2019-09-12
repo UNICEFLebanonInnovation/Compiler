@@ -28,11 +28,10 @@ CACHE MANIFEST
 /static/css/bootstrap-breadcrumbs.css
 /static/js/project.js
 /static/js/angular.min.js
-/static/js/jquery.min.js
+/static/js/jquery-3.4.1.min.js
 /static/js/tether.min.js
 /static/js/bootstrap.js
 /static/js/bootstrap.min.js
-/static/js/jquery-1.12.3.min.js
 /static/js/bootstrap-switch.min.js
 /static/js/util.js
 /static/js/plugins.js
