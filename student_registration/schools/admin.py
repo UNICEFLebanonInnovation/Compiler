@@ -38,8 +38,11 @@ class SchoolResource(resources.ModelResource):
     attendances_days_2ndshift = fields.Field(column_name='Attendances days 2nd shift')
     attendances_days_2ndshift_open = fields.Field(column_name='Attendances days 2nd shift when school is open')
     attendances_days_alp = fields.Field(column_name='Attendances days ALP')
+    total_attendances_days_alp = fields.Field(column_name='Total Attendances days ALP')
     attendances_days_alp_open = fields.Field(column_name='Attendances days ALP when school is open')
+    total_attendances_days_alp_open = fields.Field(column_name='Total Attendances days ALP when school is open')
     total_attendances_days_2ndshift = fields.Field(column_name='Total attendance days in 2ndshift')
+    total_attendances_days_2ndshift_open = fields.Field(column_name='Total attendance days in 2ndshift is open')
 
     class Meta:
         model = School
