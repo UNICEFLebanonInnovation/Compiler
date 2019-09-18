@@ -113,8 +113,6 @@ class ABLNTable(CommonTable):
                                             attrs={'url': '/clm/abln-followup/', 'programme': 'ABLN'})
     arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
                                        accessor='arabic_improvement')
-    foreign_language_improvement = tables.Column(verbose_name=_('Foreign Language Development - Improvement'), orderable=False,
-                                                 accessor='foreign_language_improvement')
     math_improvement = tables.Column(verbose_name=_('Cognitive Development - Mathematics - Improvement'), orderable=False,
                                      accessor='math_improvement')
     social_emotional_improvement = tables.Column(verbose_name=_('Social-Emotional Development - Improvement'), orderable=False,
@@ -150,7 +148,6 @@ class ABLNTable(CommonTable):
             'student.nationality',
             'student.mother_fullname',
             'arabic_improvement',
-            'foreign_language_improvement',
             'math_improvement',
             'social_emotional_improvement',
             'psychomotor_improvement',

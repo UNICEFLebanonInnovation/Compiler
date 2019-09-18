@@ -418,6 +418,7 @@ class CLM(TimeStampedModel):
         choices=Choices(
             ('out of school', _('Out of school')),
             ('enrolled in formal education but did not continue', _("Enrolled in formal education but did not continue")),
+            ('enrolled in ABLN', _("Enrolled in ABLN")),
         ),
         verbose_name=_('Education status')
     )
@@ -1659,7 +1660,6 @@ class ABLN(CLM):
         keys = [
             'ABLN_ASSESSMENT/arabic',
             'ABLN_ASSESSMENT/math',
-            'ABLN_ASSESSMENT/foreign_language',
             'ABLN_ASSESSMENT/social_emotional',
             'ABLN_ASSESSMENT/psychomotor',
             'ABLN_ASSESSMENT/artistic',
@@ -1713,13 +1713,6 @@ class ABLN(CLM):
     @property
     def french_improvement(self):
         return str(self.domain_improvement('french')) + '%'
-
-    @property
-    def foreign_language_improvement(self):
-        french_english = self.domain_improvement('english') + self.domain_improvement('french')
-        if not french_english:
-            return str(self.domain_improvement('foreign_language')) + '%'
-        return str(french_english) + '%'
 
     @property
     def social_emotional_improvement(self):

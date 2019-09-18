@@ -387,6 +387,13 @@ class BLNForm(CommonForm):
         widget=forms.Select, required=True,
         choices=YEARS_BLN
     )
+    round = forms.ModelChoiceField(
+        queryset=CLMRound.objects.all(), widget=forms.Select,
+        label=_('Round'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+        initial=CLMRound.objects.filter(current_round_bln=True).first().id
+    )
 
     student_family_status = forms.ChoiceField(
         label=_('What is the family status of the child?'),
@@ -1390,6 +1397,13 @@ class CBECEForm(CommonForm):
         ),
         initial=''
     )
+    round = forms.ModelChoiceField(
+        queryset=CLMRound.objects.all(), widget=forms.Select,
+        label=_('Round'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+        initial=CLMRound.objects.filter(current_round_cbece=True).first().id
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -1685,7 +1699,13 @@ class ABLNForm(CommonForm):
             ),
         initial=''
     )
-
+    round = forms.ModelChoiceField(
+        queryset=CLMRound.objects.all(), widget=forms.Select,
+        label=_('Round'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+        initial=CLMRound.objects.filter(current_round_abln=True).first().id
+    )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
         widget=forms.Select, required=True,
@@ -1743,6 +1763,7 @@ class ABLNForm(CommonForm):
             ('', '----------'),
             ('out of school', _('Out of school')),
             ('enrolled in formal education but did not continue', _("Enrolled in formal education but did not continue")),
+            ('enrolled in ABLN', _("Enrolled in ABLN")),
         ),
         initial=''
     )
@@ -1925,6 +1946,7 @@ class ABLNForm(CommonForm):
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:abln_add')
         self.fields['clm_type'].initial = 'ABLN'
+        self.fields['district'].queryset = Location.objects.none()
 
         if instance:
             display_assessment = ''
@@ -2019,8 +2041,6 @@ class ABLNForm(CommonForm):
                     Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('language', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('education_status', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
@@ -2080,6 +2100,10 @@ class ABLNForm(CommonForm):
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('comments', css_class='col-md-3'),
                     css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('education_status', css_class='col-md-3'),
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
