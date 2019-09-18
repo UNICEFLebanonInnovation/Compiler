@@ -36,4 +36,15 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>
 
+    <script>
+      var url = "{% url 'clm:load_districts' %}";
+
+      $(document).ready(function () {
+          load_districts(url);
+      });
+
+      $("#id_governorate").change(function () {
+          load_districts(url);
+      });
+    </script>
 {% endblock %}

@@ -36,22 +36,16 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>
 
-  <script>
-    $("#id_governorate").change(function () {
+    <script>
       var url = "{% url 'clm:load_districts' %}";
-      var id_governorate = $(this).val();
 
-      $.ajax({
-        url: url,
-        data: {
-          'id_governorate': id_governorate
-        },
-        success: function (data) {
-          $("#id_district").html(data);
-        }
+      $(document).ready(function () {
+          load_districts(url);
       });
 
-    });
-  </script>
+      $("#id_governorate").change(function () {
+          load_districts(url);
+      });
+    </script>
 
 {% endblock %}
