@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% load util_tags %}
+{% load static %}
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% load render_table from django_tables2 %}
+
+
+{% block extra_head %}
+
+
+{% endblock %}
+{% block content-full-page %}
+
+      <form name = "form" enctype = "multipart/form-data"  method = "POST" >{% csrf_token %}
+        <table border="0" width="40%">
+          <tr style="height:100px;">
+            <th  bgcolor=#BEE7FD> <font color ="navy">
+              &nbsp;&nbsp;Profile Picture
+              </font>
+            </th>
+            <td  bgcolor=#BEE7FD>
+              <div style = "max-width:470px;">
+                <center>
+                  <input type = "file" style = "margin-left:10%;"
+                         placeholder = "Picture" name = "picture" />
+                </center>
+              </div>
+            </td>
+            <td>
+              {% if student_detail.std_image %}
+              <img src="{{ student_detail.std_image.url }} " width="100" height="100" >
+              {% endif %}
+            </td>
+          </tr>
+          <tr style="height:100px;">
+            <th  bgcolor=#E2F3FF><font color ="navy">
+              &nbsp;&nbsp; ID Picture
+              </font>
+            </th>
+            <td  bgcolor=#E2F3FF>
+              <div style = "max-width:470px;">
+                <center>
+                  <input type = "file" style = "margin-left:10%;"
+                         placeholder = "id_picture" name = "id_picture" />
+                </center>
+              </div>
+            </td>
+            <td>
+              {% if student_detail.id_image %}
+              <img src="{{ student_detail.id_image.url }} " width="100" height="100" >
+              {% endif %}
+            </td>
+          </tr>
+          <tr style="height:100px;">
+            <th bgcolor=#BEE7FD><font color ="navy">
+              &nbsp;&nbsp; Birth Document
+              </font>
+            </th>
+            <td bgcolor=#BEE7FD>
+              <div style = "max-width:470px;">
+                <center>
+                  <input type = "file" style = "margin-left:10%;"
+                         placeholder = "birthdoc_picture" name = "birthdoc_picture" />
+                </center>
+              </div>
+            </td>
+            <td>
+              {% if student_detail.birthdoc_image %}
+              <img src="{{ student_detail.birthdoc_image.url }} " width="100" height="100" >
+              {% endif %}
+            </td>
+          </tr>
+          <tr style="height:100px;">
+            <th  bgcolor=#E2F3FF><font color ="navy">
+              &nbsp;&nbsp; UNHCR Document
+              </font>
+            </th>
+            <td   bgcolor=#E2F3FF>
+              <div style = "max-width:470px;">
+                <center>
+                  <input type = "file" style = "margin-left:10%;"
+                         placeholder = "unhcr_picture" name = "unhcr_picture" />
+                </center>
+              </div>
+            </td>
+            <td>
+              {% if student_detail.unhcr_image %}
+              <img src="{{ student_detail.unhcrc_image.url }} " width="100" height="100" >
+              {% endif %}
+            </td>
+          </tr>
+        </table>
+
+        <div style = "max-width:470px;">
+          <center>
+            <button style = "border:0px;background-color:#25AB0D; margin-top:8%;
+                  height:35px; width:50%; margin-left:19%;" type = "submit" value = "upload" >
+              <strong>upload</strong>
+            </button>
+
+          </center>
+         </div>
+      </form>
+
+
+
+{% endblock %}

@@ -150,6 +150,21 @@ class UserAdmin(AuthUserAdmin):
             user.groups.remove(group)
         queryset.update(is_staff=False)
 
+    def allow_staffenroll_create(self, request, queryset):
+        group = Group.objects.get(name='STAFFENROL_CREATE')
+        for user in queryset:
+            user.groups.add(group)
+
+    def allow_staffenroll_edit(self, request, queryset):
+        group = Group.objects.get(name='STAFFENROL_EDIT')
+        for user in queryset:
+            user.groups.add(group)
+
+    def allow_staffenroll_delete(self, request, queryset):
+        group = Group.objects.get(name='STAFFENROL_DELETE')
+        for user in queryset:
+            user.groups.add(group)
+
 admin.site.register(User, UserAdmin)
 
 

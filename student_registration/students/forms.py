@@ -5,8 +5,6 @@ from django import forms
 from student_registration.students.models import (
     Student
 )
-from student_registration.locations.models import Location
-from student_registration.schools.models import School
 
 
 class StudentEnrollmentForm(forms.ModelForm):
@@ -33,4 +31,11 @@ class StudentEnrollmentForm(forms.ModelForm):
             'phone_prefix',
             'address',
             'number',
+          #  'std_image',
         )
+
+
+class ImageUploadForm(forms.Form):
+    image = forms.ImageField()
+
+

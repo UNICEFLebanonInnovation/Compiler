@@ -1,3 +1,4 @@
+
 from __future__ import unicode_literals, absolute_import, division
 
 from django.utils.translation import ugettext as _
@@ -15,6 +16,9 @@ from student_registration.students.models import (
     Student,
     IDType,
     Nationality,
+    SpecialNeeds,
+    SpecialNeedsDt,
+    FinancialSupport,
 )
 from student_registration.schools.models import (
     School,
@@ -27,6 +31,7 @@ from student_registration.alp.models import ALPRound
 from .models import Enrollment, LoggingStudentMove, EducationYear
 from .serializers import EnrollmentSerializer
 from .utils import initiate_grading
+from student_registration.enrollments.models import DuplicateStd
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
@@ -38,6 +43,13 @@ YEARS.insert(0, ('', '---------'))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
 DAYS.insert(0, ('', '---------'))
+
+
+class DuplicateStdAdminForm(forms.ModelForm):
+
+    class Meta:
+        model = DuplicateStd
+        fields = '__all__'
 
 
 class EnrollmentAdminForm(forms.ModelForm):
@@ -307,7 +319,47 @@ class EnrollmentForm(forms.ModelForm):
         required=True, to_field_name='id',
         initial=27
     )
-
+    student_is_justified = forms.BooleanField(required=False, label=_('Justified'))
+    student_is_specialneeds = forms.BooleanField(required=False, label=_('Special Needs'))
+    student_specialneeds = forms.ModelChoiceField(
+        label=_('Special needs program'),
+        queryset=SpecialNeeds.objects.all(),
+        widget=forms.Select,
+        required=False, to_field_name='id'
+    )
+    student_specialneedsdt = forms.ModelChoiceField(
+        label=_('Details Special needs'),
+        queryset=SpecialNeedsDt.objects.all(),
+        widget=forms.Select,
+        required=False, to_field_name='id'
+    )
+    student_is_financialsupport = forms.BooleanField(required=False, label=_('Is Financial Support'))
+    student_Financialsupport_number = forms.CharField(
+        label=_('Financial Support Nb'),
+        required=False,
+        widget=forms.TextInput,
+    )
+    student_financialsupport = forms.ModelChoiceField(
+        label=_('Financial Support Program'),
+        queryset=FinancialSupport.objects.all(),
+        widget=forms.Select,
+        required=False, to_field_name='id'
+    )
+    student_unhcr_family = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        required=False,
+        label=_('UNHCR Family Nb.'),
+    )
+    student_unhcr_personal = forms.RegexField(
+        label=_('UNHCR Personal Nb.'),
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        required=False,
+    )
+ #   student_id_image = forms.ImageField(
+     #   required=False,
+     #   label='_(ID Picture)')
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
     student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -323,9 +375,16 @@ class EnrollmentForm(forms.ModelForm):
         display_registry = ''
         self.helper = FormHelper()
         self.helper.form_show_labels = True
+        str_image = ''
+        str_id = '-1'
         if instance:
             display_registry = ' d-none'
             form_action = reverse('enrollments:edit', kwargs={'pk': instance.id})
+            if instance.student.std_image:
+                str_image = instance.student.std_image.url
+
+            if instance.student.id:
+                str_id = str(instance.student.id)
         else:
             form_action = reverse('enrollments:add')
             try:
@@ -335,7 +394,6 @@ class EnrollmentForm(forms.ModelForm):
             self.fields['last_school'].initial = na_school
 
         self.helper.form_action = form_action
-
         self.helper.layout = Layout(
             Fieldset(
                 None,
@@ -391,6 +449,14 @@ class EnrollmentForm(forms.ModelForm):
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">'+_('Basic Data')+'</h4>')
                 ),
+
+                Div(
+
+                    HTML('<img src= '+str_image+' enctype=multipart/form-data  height="100" width="100">'),
+
+                    #Div('student_std_image', css_class='col-md-3'),
+                ),
+
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('registration_date', css_class='col-md-3'),
@@ -444,6 +510,13 @@ class EnrollmentForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">15.1</span>'),
+                    Div('student_unhcr_family', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">15.2</span>'),
+                    Div('student_unhcr_personal', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">16</span>'),
                     Div('student_phone_prefix', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">17</span>'),
@@ -461,6 +534,43 @@ class EnrollmentForm(forms.ModelForm):
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<div style="background-color:#e6f7ff"> '),
+                    Div(
+                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('More Information') + '</h4>')
+                        ),
+                    Div(
+                        HTML('<font color="red"><b>'),
+                        Div('student_is_justified', css_class='col-md-3'),
+                        HTML('</b></font>'),
+                        ),
+                        Div(
+                        HTML('<font color="green"><b>'),
+                        Div('student_is_specialneeds', css_class='col-md-3'),
+                        HTML('</b></font>'),
+                        ),
+                        Div(
+                        Div('student_specialneeds', css_class='col-md-3'),
+                        Div('student_specialneedsdt', css_class='col-md-3'),
+                        css_class='row',
+                        ),
+                        Div(
+                        HTML('<font color="navy"><b>'),
+                        Div('student_is_financialsupport', css_class='col-md-3'),
+                        HTML('</b></font>'),
+                        ),
+                        Div(
+                        Div('student_financialsupport', css_class='col-md-3'),
+                            Div('student_Financialsupport_number', css_class='col-md-3'),
+                            css_class='row',
+                     ),
+                     css_class='bd-callout bd-callout-warning child_data'
+                ),
+                HTML('</div>'),
+            ),
+
             Fieldset(
                 None,
                 Div(
@@ -522,48 +632,16 @@ class EnrollmentForm(forms.ModelForm):
                 # Submit('save_continue_editing', _('Save and continue editing')),
                 HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+            ),
+        Fieldset(
+            None,
+            Div(
+                HTML('<a class="btn btn-success" href={% url "enrollments:saveimage" pk=' + str_id + ' %}>' + _('Upload Pictures') + '  </a>')
+
             )
         )
 
-    def clean(self):
-        from django.db.models import Q
-        cleaned_data = super(EnrollmentForm, self).clean()
-        student_first_name = cleaned_data.get('student_first_name')
-        student_father_name = cleaned_data.get('student_father_name')
-        student_last_name = cleaned_data.get('student_last_name')
-        student_mother_fullname = cleaned_data.get('student_mother_fullname')
-        student_id_number = cleaned_data.get('student_id_number')
-        student_birthday_year = cleaned_data.get('student_birthday_year')
-        student_birthday_day = cleaned_data.get('student_birthday_day')
-        student_birthday_month = cleaned_data.get('student_birthday_month')
-        edit = cleaned_data.get('student_id')
-        if not edit:
-            if (Student.objects.filter(
-                Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-                    mother_fullname=student_mother_fullname, birthday_year=student_birthday_year, birthday_month=
-                    student_birthday_month, birthday_day=student_birthday_day)
-                |Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-                    mother_fullname=student_mother_fullname, id_number=student_id_number)
-                |Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-                    id_number=student_id_number, birthday_year=student_birthday_year, birthday_month=student_birthday_month,
-                    birthday_day=student_birthday_day)
-                | Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-                    id_number=student_id_number, birthday_year=student_birthday_year)).count()):
-                raise forms.ValidationError(_('Student name, already entered  '))
-        else:
-            if (Student.objects.filter(
-                Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-                    mother_fullname=student_mother_fullname, birthday_year=student_birthday_year, birthday_month=
-                    student_birthday_month, birthday_day=student_birthday_day)
-                |Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-                    mother_fullname=student_mother_fullname, id_number=student_id_number)
-                |Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-                    id_number=student_id_number, birthday_year=student_birthday_year, birthday_month=student_birthday_month,
-                    birthday_day=student_birthday_day)
-                | Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-                    id_number=student_id_number, birthday_year=student_birthday_year)
-            ).exclude(id=edit).count()):
-                raise forms.ValidationError(_('Student name, already entered  '))
+        )
 
     # def clean(self):
     #     super(EnrollmentForm, self).clean()
@@ -585,7 +663,6 @@ class EnrollmentForm(forms.ModelForm):
                 instance.school = request.user.school
                 instance.owner = request.user
                 instance.education_year = EducationYear.objects.get(current_year=True)
-                instance.save()
                 initiate_grading(enrollment=instance, term=1)
                 initiate_grading(enrollment=instance, term=2)
                 initiate_grading(enrollment=instance, term=3)
@@ -593,6 +670,88 @@ class EnrollmentForm(forms.ModelForm):
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
+        if instance.id:
+            from django.db.models import Q
+            std = Student.objects.filter(id=instance.student_id)
+            for st in std:
+                q_students = Student.objects.filter(
+                    Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                      mother_fullname=st.mother_fullname, birthday_year=st.birthday_year, birthday_month=
+                        st.birthday_month, birthday_day=st.birthday_day)
+                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                        mother_fullname=st.mother_fullname, id_number=st.id_number)
+                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                        id_number=st.id_number, birthday_year=st.birthday_year,
+                        birthday_month=st.birthday_month,
+                        birthday_day=st.birthday_day)
+                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                        id_number=st.id_number, birthday_year=st.birthday_year)).exclude(id=st.id)
+            q_enr = Enrollment.objects.filter(education_year=EducationYear.objects.get(current_year=True), student__in=q_students)
+            if q_enr:
+                try:
+                    DuplicateStd.objects.get(enrollment_id=instance.id, is_solved=False)
+                except DuplicateStd.DoesNotExist:
+                    # SAVING THE CURRENT ROW
+                    q_coordinator = School.objects.get(id=instance.last_school_id)
+                    model_duplicatestd = DuplicateStd.objects.create(
+                        enrollment_id=instance.id,
+                        is_solved=False,
+                        school_type='2ndshift',
+                        owner=request.user,
+                        coordinator_id=q_coordinator.coordinator_id,
+                        Level_id=instance.last_education_level_id,
+                        section_id=instance.section_id,
+                        classroom_id=instance.classroom_id,
+                    )
+                    model_duplicatestd.save()
+                    # SAVING THE SAME AS IT
+                    for enr in q_enr:
+                        try:
+                            DuplicateStd.objects.get(enrollment_id=enr.id, is_solved=False)
+                        except DuplicateStd.DoesNotExist:
+                            # SAVING THE CURRENT ROW
+                            print (enr.school_id)
+                            q_coordinator = School.objects.get(id=enr.last_school_id)
+                            model_duplicatestd = DuplicateStd.objects.create(
+                                enrollment_id=enr.id,
+                                is_solved=False,
+                                school_type='2ndshift',
+                                owner=enr.owner,
+                                coordinator_id=q_coordinator.coordinator_id,
+                                Level_id=enr.last_education_level_id,
+                                section_id=enr.section_id,
+                                classroom_id=enr.classroom_id,
+                            )
+                            model_duplicatestd.save()
+
+
+
+
+        '''old procedure std = Student.objects.filter(id=instance.student_id)
+            for st in std:
+                from django.db.models import Q
+                if (Student.objects.filter(
+                    Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                        mother_fullname=st.mother_fullname, birthday_year=st.birthday_year, birthday_month=
+                      st.birthday_month, birthday_day=st.birthday_day)
+                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                        mother_fullname=st.mother_fullname, id_number=st.id_number)
+                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                        id_number=st.id_number, birthday_year=st.birthday_year,
+                        birthday_month=st.birthday_month,
+                        birthday_day=st.birthday_day)
+                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                        id_number=st.id_number, birthday_year=st.birthday_year)).exclude(id=st.id).count()):
+                    try:
+                        DuplicateStd.objects.get(enrollment_id=instance.id, is_solved=False)
+                    except DuplicateStd.DoesNotExist:
+                        Duplicate_Std = DuplicateStd.objects.create(
+                            enrollment_id=instance.id,
+                            is_solved=False,
+                            school_type='2ndshift',
+                            owner=request.user,
+                        )
+                        Duplicate_Std.save();'''
 
     class Meta:
         model = Enrollment
@@ -635,6 +794,16 @@ class EnrollmentForm(forms.ModelForm):
             'have_barcode',
             'age_min_restricted',
             'age_max_restricted',
+            'student_is_justified',
+            'student_is_specialneeds',
+            'student_specialneeds',
+            'student_specialneedsdt',
+            'student_is_financialsupport',
+            'student_Financialsupport_number',
+            'student_financialsupport',
+            'student_unhcr_family',
+            'student_unhcr_personal',
+
         )
         initial_fields = fields
         widgets = {}
@@ -1416,6 +1585,7 @@ class EditOldDataForm(forms.ModelForm):
             if serializer.is_valid():
                 serializer.update(validated_data=serializer.validated_data, instance=instance)
                 messages.success(request, _('Your data has been sent successfully to the server'))
+
             else:
                 messages.warning(request, serializer.errors)
 
@@ -1443,3 +1613,15 @@ class EditOldDataForm(forms.ModelForm):
             'js/validator.js',
             'js/registrations.js',
         )
+
+
+class ImageStudentForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = [
+            'std_image',
+            'std_image',
+            'unhcr_image',
+            'birthdoc_image',
+            'id',
+        ]

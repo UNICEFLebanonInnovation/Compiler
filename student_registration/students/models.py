@@ -8,6 +8,15 @@ from django.utils.translation import ugettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from .utils import *
+from django.core.exceptions import ValidationError
+
+
+def validate_file_size(value):
+    filesize = value.size
+    if filesize > 250000:
+        raise ValidationError("The maximum file size that can be uploaded is 250K")
+    else:
+        return value
 
 
 class StudentManager(models.Manager):
@@ -51,6 +60,33 @@ class IDType(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "ID Type"
+
+    def __unicode__(self):
+        return self.name
+
+
+class SpecialNeeds(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class SpecialNeedsDt(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    specialneeds = models.ForeignKey(
+        SpecialNeeds,
+        blank=True,
+        null=True,
+        verbose_name=_('Detail Special Needs'),
+    )
+
+    def __unicode__(self):
+        return self.name
+
+
+class FinancialSupport(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
     def __unicode__(self):
         return self.name
@@ -221,6 +257,7 @@ class Person(TimeStampedModel):
     number = models.CharField(max_length=45, blank=True, null=True)
     number_part1 = models.CharField(max_length=45, blank=True, null=True)
     number_part2 = models.CharField(max_length=45, blank=True, null=True)
+    std_phone = models.CharField(max_length=74, blank=True, null=True)
 
     def __unicode__(self):
         if not self.first_name:
@@ -271,6 +308,8 @@ class Person(TimeStampedModel):
         abstract = True
 
     def save(self, **kwargs):
+        if self.phone:
+            self.std_phone = self.phone_prefix+self.phone
         """
         Generate unique IDs for every person
         :param kwargs:
@@ -286,7 +325,7 @@ class Person(TimeStampedModel):
                 self.birthday_day,
                 self.birthday_month,
                 self.birthday_year
-            )
+            )+self.id_number
 
         super(Person, self).save(**kwargs)
 
@@ -301,10 +340,85 @@ class Student(Person):
         Child,
         blank=True, null=True,
     )
+    std_image = models.ImageField(
+        upload_to="profiles",
+        null=True,
+        blank=True,
+        help_text=_('Profile Picture'),
+        verbose_name=_('Profile Picture'),
+        validators=[validate_file_size]
+    )
 
     objects = StudentManager()
     second_shift = Student2ndShiftManager()
     alp = StudentALPManager()
+    is_justified = models.BooleanField(default=True)
+    is_specialneeds = models.BooleanField(default=False)
+    specialneeds = models.ForeignKey(
+        SpecialNeeds,
+        blank=True,
+        null=True,
+        verbose_name=_('Types Special Needs'),
+        related_name='specialneeds'
+    )
+    specialneedsdt = models.ForeignKey(
+        SpecialNeedsDt,
+        blank=True,
+        null=True,
+        verbose_name=_('Details Special Needs')
+    )
+    id_image = models.ImageField(
+        upload_to='profiles/ids',
+        blank=True,
+        null=True,
+        help_text=_('Identification picture'),
+        validators=[validate_file_size]
+    )
+    unhcr_image = models.ImageField(
+        upload_to='profiles/unhcr',
+        blank=True,
+        null=True,
+        help_text=_('UNHCR picture'),
+        validators=[validate_file_size]
+    )
+    birthdoc_image = models.ImageField(
+        upload_to='profiles/birthdoc',
+        blank=True,
+        null=True,
+        help_text=_('Birth Document'),
+        validators=[validate_file_size]
+    )
+    unhcr_family = models.CharField(
+        max_length=150,
+        blank=True,
+        null=True,
+        verbose_name=_('UNHCR Family Number')
+    )
+    unhcr_personal = models.CharField(
+        max_length=150,
+        blank=True,
+        null=True,
+        db_index=True,
+        verbose_name=_('UNHCR Personal Number')
+    )
+    is_financialsupport = models.BooleanField(default=False)
+    Financialsupport_number = models.CharField(
+        max_length=64,
+        blank=True,
+        null=True,
+        verbose_name=_('Financial Support Number'),
+    )
+    financialsupport = models.ForeignKey(
+        FinancialSupport,
+        blank=True,
+        null=True,
+        verbose_name=_('Financial Support Program'),
+        related_name='financialsupport'
+    )
+   # @property
+    #def image_url(self):
+     #   if self.std_image and hasattr(self.std_image, 'url'):
+      #      return self.std_image.url
 
     @property
     def last_enrollment(self):

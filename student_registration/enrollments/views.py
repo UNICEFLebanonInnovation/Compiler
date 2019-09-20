@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-import datetime
 import tablib
 
-from django.views.generic import ListView, FormView, TemplateView, UpdateView
+from django.views.generic import ListView, FormView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from django.db.models import Q
-
+from django.shortcuts import render, get_object_or_404
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from import_export.formats import base_formats
-
+from django.contrib import messages
 from student_registration.alp.templatetags.util_tags import has_group, is_owner
 
 from django_filters.views import FilterView
@@ -42,7 +41,8 @@ from .forms import (
     GradingTermForm,
     GradingIncompleteForm,
     StudentMovedForm,
-    EditOldDataForm
+    EditOldDataForm,
+    ImageStudentForm,
 )
 from .serializers import (
     EnrollmentSerializer,
@@ -692,3 +692,41 @@ class ExportByCycleView(LoginRequiredMixin, ListView):
         )
         response['Content-Disposition'] = 'attachment; filename=student_by_cycle.xls'
         return response
+
+
+class Update_Image(UpdateView):
+    model = Student
+    form_class = ImageStudentForm
+
+    template_name = 'students/imagestd.html'
+    success_url = '/enrollments/list'
+    context_object_name = 'student_detail'
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(Update_Image, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Student.objects.get(id=self.kwargs['pk'])
+
+        if self.request.method == "POST":
+            instance = Student.objects.get(id=self.kwargs['pk'])
+            if self.request.FILES:
+                if self.request.FILES.get('picture', False):
+                    instance.std_image = self.request.FILES['picture']
+                if self.request.FILES.get('id_picture', False):
+                    instance.id_image = self.request.FILES['id_picture']
+                if self.request.FILES.get('unhcr_picture', False):
+                    instance.unhcr_image = self.request.FILES['unhcr_picture']
+                if self.request.FILES.get('birthdoc_picture', False):
+                    instance.birthdoc_image = self.request.FILES['birthdoc_picture']
+                instance.save()
+            #return ImageStudentForm(self.request.POST, instance=instance)
+            #else:
+            return ImageStudentForm(instance=instance)
+        else:
+            return ImageStudentForm(instance=instance)
+
