@@ -124,14 +124,14 @@ class CommonForm(forms.ModelForm):
         label=_('Governorate'),
         empty_label='-------',
         required=True, to_field_name='id',
-        initial=0
+        # initial=0
     )
     district = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
         label=_('District'),
         empty_label='-------',
         required=True, to_field_name='id',
-        initial=0
+        # initial=0
     )
     round = forms.ModelChoiceField(
         queryset=CLMRound.objects.all(), widget=forms.Select,
@@ -386,6 +386,13 @@ class BLNForm(CommonForm):
         label=_("Birthday year"),
         widget=forms.Select, required=True,
         choices=YEARS_BLN
+    )
+    round = forms.ModelChoiceField(
+        queryset=CLMRound.objects.all(), widget=forms.Select,
+        label=_('Round'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+        initial=CLMRound.objects.filter(current_round_bln=True).first().id
     )
 
     student_family_status = forms.ChoiceField(
@@ -1390,6 +1397,13 @@ class CBECEForm(CommonForm):
         ),
         initial=''
     )
+    round = forms.ModelChoiceField(
+        queryset=CLMRound.objects.all(), widget=forms.Select,
+        label=_('Round'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+        initial=CLMRound.objects.filter(current_round_cbece=True).first().id
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -1685,7 +1699,13 @@ class ABLNForm(CommonForm):
             ),
         initial=''
     )
-
+    round = forms.ModelChoiceField(
+        queryset=CLMRound.objects.all(), widget=forms.Select,
+        label=_('Round'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+        initial=CLMRound.objects.filter(current_round_abln=True).first().id
+    )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
         widget=forms.Select, required=True,
@@ -1743,6 +1763,7 @@ class ABLNForm(CommonForm):
             ('', '----------'),
             ('out of school', _('Out of school')),
             ('enrolled in formal education but did not continue', _("Enrolled in formal education but did not continue")),
+            ('enrolled in ABLN', _("Enrolled in ABLN")),
         ),
         initial=''
     )
@@ -1766,7 +1787,7 @@ class ABLNForm(CommonForm):
     )
 
     id_type = forms.ChoiceField(
-        label=_("ID type of the child and the caretaker"),
+        label=_("ID type of the caretaker"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
         required=True,
         choices=(
@@ -1904,10 +1925,10 @@ class ABLNForm(CommonForm):
             ('Referred by CP partner', _('Referred by CP partner')),
             ('Referred by youth partner', _('Referred by youth partner')),
             ('Family walked in to NGO', _('Family walked in to NGO')),
-            ('Referral from another NGO', _("Referral from another NGO")),
-            ('Referral from another Municipality', _("Referral from Municipality")),
-            ('Direct outreach', _("Direct outreach")),
-            ('List database', _("List database"))
+            ('Referral from another NGO', _('Referral from another NGO')),
+            ('Referral from another Municipality', _('Referral from Municipality')),
+            ('Direct outreach', _('Direct outreach')),
+            ('List database', _('List database'))
         ),
         initial=''
     )
@@ -2019,8 +2040,6 @@ class ABLNForm(CommonForm):
                     Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('language', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('education_status', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
@@ -2070,16 +2089,22 @@ class ABLNForm(CommonForm):
                     Div('student_p_code', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">12</span>'),
                     Div('disability', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('education_status', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default d-none">13</span>'),
+                    HTML('<span class="badge badge-default d-none">14</span>'),
                     Div('student_id_number', css_class='col-md-3 d-none'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('internal_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('comments', css_class='col-md-3'),
                     css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">17</span>'),
+                    Div('education_status', css_class='col-md-3'),
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
@@ -2299,6 +2324,7 @@ class ABLNForm(CommonForm):
 
     def clean(self):
         cleaned_data = super(ABLNForm, self).clean()
+
         phone_number = cleaned_data.get("phone_number")
         phone_number_confirm = cleaned_data.get("phone_number_confirm")
         id_type = cleaned_data.get("id_type")
@@ -2467,6 +2493,136 @@ class ABLNForm(CommonForm):
             # 'js/jquery-ui-1.12.1.js',
             # 'js/validator.js',
             # 'js/registrations.js',
+        )
+
+
+class ABLNAssessmentForm(forms.ModelForm):
+
+    participation = forms.ChoiceField(
+        label=_('How was the level of child participation in the program?'),
+        widget=forms.Select, required=False,
+        choices=(
+                ('', '----------'),
+                ('less_than_3days', _('Less than 3 absence days')),
+                ('3_7_days', _('3 to 7 absence days')),
+                ('7_12_days', _('7 to 12 absence days')),
+                ('more_than_12days', _('More than 12 absence days'))
+            ),
+        initial=''
+    )
+    learning_result = forms.ChoiceField(
+        label=_('Based on the overall score, what is the recommended learning path?'),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('graduated_to_abln_next_level', _('Graduated to the ABLN next level')),
+            ('referred_to_bln', _('Referred to BLN')),
+            ('referred_to_ybln', _('Referred to YBLN')),
+            ('referred_to_alp', _('Referred to ALP')),
+            ('referred_to_cbt', _('Referred to CBT')),
+            ('dropout', _('Dropout, referral not possible')),
+        ),
+        initial=''
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(ABLNAssessmentForm, self).__init__(*args, **kwargs)
+
+        pre_test = ''
+        post_test = ''
+        pre_test_button = ' btn-outline-success '
+        post_test_button = ' btn-outline-secondary disabled'
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        self.fields['clm_type'].initial = 'ABLN'
+        self.fields['district'].queryset = Location.objects.none()
+
+        display_assessment = ''
+        form_action = reverse('clm:abln_assessment', kwargs={'pk': instance.id})
+
+        pre_test = instance.assessment_form(
+            stage='pre_test',
+            assessment_slug='abln_pre_test',
+            callback=self.request.build_absolute_uri(reverse('clm:abln_assessment', kwargs={'pk': instance.id}))
+         )
+        if instance.pre_test:
+            pre_test_button = ' btn-success '
+            post_test_button = ' btn-outline-success '
+            post_test = instance.assessment_form(
+                stage='post_test',
+                assessment_slug='abln_post_test',
+                callback=self.request.build_absolute_uri(reverse('clm:abln_assessment', kwargs={'pk': instance.id}))
+             )
+        if instance.post_test:
+            post_test_button = ' btn-success '
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
+                ),
+                Div(
+                    HTML('<div class="col-md-3"><a class="btn ' + pre_test_button + '" href="' +
+                         pre_test + '">' + _('Pre-assessment') + '</a></div>'),
+                    HTML(
+                        '<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
+                        post_test + '">' + _('Post-assessment') + '</a></div>'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<div class="p-3"></div>'),
+                    css_class='row'
+                ),
+                css_class='bd-callout bd-callout-warning' + display_assessment
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('unsuccessful_pretest_reason', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('unsuccessful_posttest_reason', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('participation', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('barriers', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('learning_result', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'+display_assessment
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def save(self, instance=None, request=None):
+        instance = super(ABLNAssessmentForm, self).save()
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = ABLN
+        fields = (
+            'participation',
+            'barriers',
+            'learning_result',
+            'unsuccessful_pretest_reason',
+            'unsuccessful_posttest_reason',
         )
 
 

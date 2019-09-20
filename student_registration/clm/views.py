@@ -1341,14 +1341,12 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'labours': 'What is the type of work?',
             'labour_hours': 'How many hours does this child work in a day?',
             'pre_test_arabic': 'Pre-test Arabic Language Development ',
-            'pre_test_foreign_language': 'Pre-test Foreign Language Development',
             'pre_test_math': 'Pre-test Cognitive Development - Mathematics',
             'pre_test_social_emotional': 'Pre-test Social-Emotional Development',
             'pre_test_psychomotor': 'Pre-test Psychomotor Development for children with special need',
             'pre_test_artistic': 'Pre-test Artistic Development',
             'pre_test_score': 'Pre-test score',
             'post_test_arabic': 'Post-test Arabic Language Development ',
-            'post_test_foreign_language': 'Post-test Foreign Language Development',
             'post_test_math': 'Post-test Cognitive Development - Mathematics',
             'post_test_social_emotional': 'Post-test Social-Emotional Development',
             'post_test_psychomotor': 'Post-test Psychomotor Development for children with special need',
@@ -1397,14 +1395,12 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'participation': "CONCAT(participation, '_absence')",
 
             'pre_test_arabic': "pre_test->>'ABLN_ASSESSMENT/arabic'",
-            'pre_test_foreign_language': "pre_test->>'ABLN_ASSESSMENT/foreign_language'",
             'pre_test_math': "pre_test->>'ABLN_ASSESSMENT/math'",
             'pre_test_social_emotional': "pre_test->>'ABLN_ASSESSMENT/social_emotional'",
             'pre_test_psychomotor': "pre_test->>'ABLN_ASSESSMENT/psychomotor'",
             'pre_test_artistic': "pre_test->>'ABLN_ASSESSMENT/artistic'",
 
             'post_test_arabic': "post_test->>'ABLN_ASSESSMENT/arabic'",
-            'post_test_foreign_language': "post_test->>'ABLN_ASSESSMENT/foreign_language'",
             'post_test_math': "post_test->>'ABLN_ASSESSMENT/math'",
             'post_test_social_emotional': "post_test->>'ABLN_ASSESSMENT/social_emotional'",
             'post_test_psychomotor': "post_test->>'ABLN_ASSESSMENT/psychomotor'",
@@ -1438,14 +1434,12 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'labours',
             'labour_hours',
             'pre_test_arabic',
-            'pre_test_foreign_language',
             'pre_test_math',
             'pre_test_social_emotional',
             'pre_test_psychomotor',
             'pre_test_artistic',
             'pre_test_score',
             'post_test_arabic',
-            'post_test_foreign_language',
             'post_test_math',
             'post_test_social_emotional',
             'post_test_psychomotor',
@@ -2064,3 +2058,11 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
         )
 
         return render_to_csv_response(qs, field_header_map=headers)
+
+
+def load_districts(request):
+    from django.shortcuts import render
+
+    id_governorate = request.GET.get('id_governorate')
+    cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
+    return render(request, 'clm/city_dropdown_list_options.html', {'cities': cities})
