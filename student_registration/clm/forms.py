@@ -2102,10 +2102,6 @@ class ABLNForm(CommonForm):
                     Div('comments', css_class='col-md-3'),
                     css_class='row',
                 ),
-                Div(
-                    HTML('<span class="badge badge-default">17</span>'),
-                    Div('education_status', css_class='col-md-3'),
-                ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
             Fieldset(
