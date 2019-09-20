@@ -1864,14 +1864,12 @@ msgstr "لم يتم التسجيل ابدا في المدرسة من قبل"
 #: student_registration/clm/forms.py:1765
 #: student_registration/clm/models.py:420
 msgid "Enrolled in formal education but did not continue"
-msgstr ""
+msgstr "كان مسجلا في المدرسة ولم يكمل"
 
 #: student_registration/clm/forms.py:1766
 #: student_registration/clm/models.py:421
-#, fuzzy
-#| msgid "Enrollment"
 msgid "Enrolled in ABLN"
-msgstr "التسجيل"
+msgstr " كان مسجلا في برنامج ABLN"
 
 #: student_registration/clm/forms.py:1772
 #: student_registration/clm/models.py:484
@@ -1888,7 +1886,7 @@ msgid "Phone number confirm"
 msgstr " تأكيد الهاتف"
 
 #: student_registration/clm/forms.py:1790
-msgid "ID type of the child and the caretaker"
+msgid "ID type of the caretaker"
 msgstr ""
 
 #: student_registration/clm/forms.py:1791
@@ -1971,10 +1969,8 @@ msgid "Confirm UNHCR Barcode number (Shifra number)"
 msgstr ""
 
 #: student_registration/clm/forms.py:1860
-#, fuzzy
-#| msgid "Lebanese ID number confirm"
 msgid "Lebanese ID number of the child (Optional)"
-msgstr "تأكيد رقم الهوية اللبنانية"
+msgstr ""
 
 #: student_registration/clm/forms.py:1865
 msgid "Confirm Lebanese ID number of the child (optional)"
@@ -1997,10 +1993,8 @@ msgid "Confirm Palestinian ID number of the child (optional)"
 msgstr ""
 
 #: student_registration/clm/forms.py:1888
-#, fuzzy
-#| msgid "Lebanese ID number confirm"
 msgid "Lebanese ID number of the caretaker (Mandatory)"
-msgstr "تأكيد رقم الهوية اللبنانية"
+msgstr ""
 
 #: student_registration/clm/forms.py:1893
 msgid "Confirm Lebanese ID number of the caretaker (Mandatory)"
@@ -2025,12 +2019,12 @@ msgstr ""
 #: student_registration/clm/forms.py:1920
 #: student_registration/clm/models.py:537
 msgid "Source of identification of the child"
-msgstr "ABLN مصدر احالة الطفل  إلى برنامج "
+msgstr "مصدر احالة الطفل  إلى برنامج ABLN"
 
 #: student_registration/clm/forms.py:1925
 #: student_registration/clm/models.py:529
 msgid "Referred by CP partner"
-msgstr "CP partner احالة من قبل شركاء في بر نامج حماية الطفل"
+msgstr " احالة من قبل شركاء في بر نامج حماية الطفل CP partner"
 
 #: student_registration/clm/forms.py:1926
 #: student_registration/clm/models.py:530
@@ -2060,13 +2054,11 @@ msgstr "احالة من قبل حملات التوعية"
 #: student_registration/clm/forms.py:1931
 #: student_registration/clm/models.py:535
 msgid "List database"
-msgstr "Profiling Database احلة عن طريق  "
+msgstr " احلة عن طريق Profiling Database"
 
 #: student_registration/clm/forms.py:2113
-#, fuzzy
-#| msgid "Parent/Caregiver Identification"
 msgid "Parent/Caregiver Information"
-msgstr "تحديد هوية الوالد / مقدم الرعاية"
+msgstr ""
 
 #: student_registration/clm/forms.py:2571
 msgid "Referral 1"
@@ -2267,7 +2259,7 @@ msgstr "رقم تسلسلي خاص بالجمعية"
 
 #: student_registration/clm/models.py:384
 msgid "Enrolled and did not do the pre-test"
-msgstr "Pre-test مسجل ولكن لم يقم بال"
+msgstr " مسجل ولكن لم يقم بال Pre-test"
 
 #: student_registration/clm/models.py:387
 msgid "unsuccessful pre test reason"
@@ -2460,10 +2452,8 @@ msgid "Visit date"
 msgstr "تاريخ الزيارة"
 
 #: student_registration/clm/models.py:775
-#, fuzzy
-#| msgid "First name"
 msgid "Caretaker First Name"
-msgstr "الاسم الاول"
+msgstr ""
 
 #: student_registration/clm/models.py:781
 msgid "Caretaker Middle Name"

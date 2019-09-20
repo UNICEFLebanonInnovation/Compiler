@@ -529,10 +529,10 @@ class CLM(TimeStampedModel):
             ('Referred by CP partner', _('Referred by CP partner')),
             ('Referred by youth partner', _('Referred by youth partner')),
             ('Family walked in to NGO', _('Family walked in to NGO')),
-            ('Referral from another NGO', _("Referral from another NGO")),
-            ('Referral from another Municipality', _("Referral from Municipality")),
-            ('Direct outreach', _("Direct outreach")),
-            ('List database', _("List database"))
+            ('Referral from another NGO', _('Referral from another NGO')),
+            ('Referral from another Municipality', _('Referral from Municipality')),
+            ('Direct outreach', _('Direct outreach')),
+            ('List database', _('List database'))
         ),
         verbose_name=_('Source of identification of the child')
     )

@@ -1787,7 +1787,7 @@ class ABLNForm(CommonForm):
     )
 
     id_type = forms.ChoiceField(
-        label=_("ID type of the child and the caretaker"),
+        label=_("ID type of the caretaker"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
         required=True,
         choices=(
@@ -1925,10 +1925,10 @@ class ABLNForm(CommonForm):
             ('Referred by CP partner', _('Referred by CP partner')),
             ('Referred by youth partner', _('Referred by youth partner')),
             ('Family walked in to NGO', _('Family walked in to NGO')),
-            ('Referral from another NGO', _("Referral from another NGO")),
-            ('Referral from another Municipality', _("Referral from Municipality")),
-            ('Direct outreach', _("Direct outreach")),
-            ('List database', _("List database"))
+            ('Referral from another NGO', _('Referral from another NGO')),
+            ('Referral from another Municipality', _('Referral from Municipality')),
+            ('Direct outreach', _('Direct outreach')),
+            ('List database', _('List database'))
         ),
         initial=''
     )
@@ -1946,7 +1946,6 @@ class ABLNForm(CommonForm):
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:abln_add')
         self.fields['clm_type'].initial = 'ABLN'
-        self.fields['district'].queryset = Location.objects.none()
 
         if instance:
             display_assessment = ''
@@ -2090,19 +2089,21 @@ class ABLNForm(CommonForm):
                     Div('student_p_code', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">12</span>'),
                     Div('disability', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('education_status', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default d-none">13</span>'),
+                    HTML('<span class="badge badge-default d-none">14</span>'),
                     Div('student_id_number', css_class='col-md-3 d-none'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">15</span>'),
                     Div('internal_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('comments', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">17</span>'),
                     Div('education_status', css_class='col-md-3'),
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
@@ -2323,6 +2324,7 @@ class ABLNForm(CommonForm):
 
     def clean(self):
         cleaned_data = super(ABLNForm, self).clean()
+
         phone_number = cleaned_data.get("phone_number")
         phone_number_confirm = cleaned_data.get("phone_number_confirm")
         id_type = cleaned_data.get("id_type")
