@@ -15,8 +15,11 @@ class StudentSerializer(serializers.ModelSerializer):
     place_of_birth = serializers.CharField(required=False)
     registration = OutreachSerializer(source='last_alp_registration', read_only=True)
     enrollment = EnrollmentSerializer(source='last_enrollment', read_only=True)
+    have_children = serializers.CharField(required=False)
+
     alp_registrations = OutreachSerializer(read_only=True, many=True)
     secondshift_registrations = EnrollmentSerializer(read_only=True, many=True)
+
     current_alp_registration = OutreachSerializer(read_only=True, many=True)
     current_secondshift_registration = EnrollmentSerializer(read_only=True, many=True)
 
@@ -25,6 +28,7 @@ class StudentSerializer(serializers.ModelSerializer):
         try:
             instance = Student.objects.create(**validated_data)
             instance.save()
+
         except Exception as ex:
             raise serializers.ValidationError({'Student instance': ex.message})
 
@@ -63,6 +67,7 @@ class StudentSerializer(serializers.ModelSerializer):
             'secondshift_registrations',
             'current_alp_registration',
             'current_secondshift_registration',
+            'have_children',
             'is_justified',
             'is_specialneeds',
             'specialneeds',
