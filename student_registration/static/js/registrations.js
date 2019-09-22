@@ -51,6 +51,28 @@ $(document).ready(function(){
 
     $(document).on('change', '#id_id_type', function(){
         reorganizeForm();
+
+        $('#id_case_number').val('');
+        $('#id_case_number_confirm').val('');
+        $('#id_individual_case_number').val('');
+        $('#id_individual_case_number_confirm').val('');
+        $('#id_parent_individual_case_number').val('');
+        $('#id_parent_individual_case_number_confirm').val('');
+        $('#id_recorded_number').val('');
+        $('#id_recorded_number_confirm').val('');
+        $('#id_national_number').val('');
+        $('#id_national_number_confirm').val('');
+        $('#id_syrian_national_number').val('');
+        $('#id_syrian_national_number_confirm').val('');
+        $('#id_sop_national_number').val('');
+        $('#id_sop_national_number_confirm').val('');
+        $('#id_parent_national_number').val('');
+        $('#id_parent_national_number_confirm').val('');
+        $('#id_parent_syrian_national_number').val('');
+        $('#id_parent_syrian_national_number_confirm').val('');
+        $('#id_parent_sop_national_number').val('');
+        $('#id_parent_sop_national_number_confirm').val('');
+
         if($(this).val() != 'Child have no ID'){
 
             return true;
@@ -958,4 +980,18 @@ function window_location(value)
 {
     console.log('OK');
     $('head').append('<meta http-equiv="refresh" content="0; URL='+value+'" id="redirect"/>');
+}
+
+function load_districts(url)
+{
+    var value = $("#id_governorate").val();
+    $.ajax({
+        url: url,
+        data: {
+            'id_governorate': value
+        },
+        success: function (data) {
+            $("#id_district").html(data);
+        }
+    })
 }

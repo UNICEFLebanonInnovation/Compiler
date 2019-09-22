@@ -129,4 +129,9 @@ urlpatterns = [
         view=views.ABLNFollowupView.as_view(),
         name='abln_followup'
     ),
+    url(
+        'load-districts/$',
+        views.load_districts,
+        name='load_districts'
+    ),
 ]
