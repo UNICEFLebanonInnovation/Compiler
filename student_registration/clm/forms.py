@@ -392,7 +392,7 @@ class BLNForm(CommonForm):
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
-        initial=CLMRound.objects.filter(current_round_bln=True).first().id
+        # initial=CLMRound.objects.filter(current_round_bln=True).first().id
     )
 
     student_family_status = forms.ChoiceField(
@@ -1402,7 +1402,7 @@ class CBECEForm(CommonForm):
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
-        initial=CLMRound.objects.filter(current_round_cbece=True).first().id
+        # initial=CLMRound.objects.filter(current_round_cbece=True).first().id
     )
 
     def __init__(self, *args, **kwargs):
@@ -1704,7 +1704,7 @@ class ABLNForm(CommonForm):
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
-        initial=CLMRound.objects.filter(current_round_abln=True).first().id
+        # initial=CLMRound.objects.filter(current_round_abln=True).first().id
     )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
@@ -2101,10 +2101,6 @@ class ABLNForm(CommonForm):
                     HTML('<span class="badge badge-default">16</span>'),
                     Div('comments', css_class='col-md-3'),
                     css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">17</span>'),
-                    Div('education_status', css_class='col-md-3'),
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
