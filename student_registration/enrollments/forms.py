@@ -453,8 +453,6 @@ class EnrollmentForm(forms.ModelForm):
                 Div(
 
                     HTML('<img src= '+str_image+' enctype=multipart/form-data  height="100" width="100">'),
-
-                    #Div('student_std_image', css_class='col-md-3'),
                 ),
 
                 Div(

@@ -14,7 +14,9 @@ class BootstrapTable(tables.Table):
 
 
 class EnrollmentTable(tables.Table):
-
+    image_column = tables.TemplateColumn(verbose_name=_('upload image'), orderable=False,
+                                        template_name='enrollments/image_column.html',
+                                        attrs={'url': '/enrollments/saveimage/'})
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='enrollments/edit_column.html',
                                         attrs={'url': '/enrollments/edit/'})
@@ -44,6 +46,7 @@ class EnrollmentTable(tables.Table):
         model = Enrollment
         template = 'django_tables2/bootstrap.html'
         fields = (
+            'image_column',
             'edit_column',
             'delete_column',
             'moved_column',
