@@ -1010,8 +1010,8 @@ class BLNForm(CommonForm):
         parent_individual_case_number_confirm = cleaned_data.get("parent_individual_case_number_confirm")
         parent_national_number = cleaned_data.get("parent_national_number")
         parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
-        sop_parent_national_number = cleaned_data.get("parent_national_number")
-        sop_parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
+        sop_parent_national_number = cleaned_data.get("parent_sop_national_number")
+        sop_parent_national_number_confirm = cleaned_data.get("parent_sop_national_number_confirm")
         parent_syrian_national_number = cleaned_data.get("parent_syrian_national_number")
         parent_syrian_national_number_confirm = cleaned_data.get("parent_syrian_national_number_confirm")
 
@@ -1092,14 +1092,14 @@ class BLNForm(CommonForm):
 
         if id_type == 'Palestinian national ID':
             if not sop_parent_national_number:
-                self.add_error('sop_parent_national_number', 'This field is required')
+                self.add_error('parent_sop_national_number', 'This field is required')
 
             if not sop_parent_national_number_confirm:
-                self.add_error('sop_parent_national_number_confirm', 'This field is required')
+                self.add_error('parent_sop_national_number_confirm', 'This field is required')
 
             if sop_parent_national_number != sop_parent_national_number_confirm:
                 msg = "The national numbers are not matched"
-                self.add_error('sop_parent_national_number_confirm', msg)
+                self.add_error('parent_sop_national_number_confirm', msg)
 
             if sop_national_number != sop_national_number_confirm:
                 msg = "The national numbers are not matched"
@@ -2791,8 +2791,8 @@ class ABLNForm(CommonForm):
         parent_individual_case_number_confirm = cleaned_data.get("parent_individual_case_number_confirm")
         parent_national_number = cleaned_data.get("parent_national_number")
         parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
-        sop_parent_national_number = cleaned_data.get("parent_national_number")
-        sop_parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
+        sop_parent_national_number = cleaned_data.get("parent_sop_national_number")
+        sop_parent_national_number_confirm = cleaned_data.get("parent_sop_national_number_confirm")
         parent_syrian_national_number = cleaned_data.get("parent_syrian_national_number")
         parent_syrian_national_number_confirm = cleaned_data.get("parent_syrian_national_number_confirm")
 
@@ -2873,14 +2873,14 @@ class ABLNForm(CommonForm):
 
         if id_type == 'Palestinian national ID':
             if not sop_parent_national_number:
-                self.add_error('sop_parent_national_number', 'This field is required')
+                self.add_error('parent_sop_national_number', 'This field is required')
 
             if not sop_parent_national_number_confirm:
-                self.add_error('sop_parent_national_number_confirm', 'This field is required')
+                self.add_error('parent_sop_national_number_confirm', 'This field is required')
 
             if sop_parent_national_number != sop_parent_national_number_confirm:
                 msg = "The national numbers are not matched"
-                self.add_error('sop_parent_national_number_confirm', msg)
+                self.add_error('parent_sop_national_number_confirm', msg)
 
             if sop_national_number != sop_national_number_confirm:
                 msg = "The national numbers are not matched"
