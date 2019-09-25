@@ -529,7 +529,7 @@ class BLNForm(CommonForm):
         label=_('Lebanese ID number of the child (Optional)')
     )
     national_number_confirm = forms.RegexField(
-        regex=r'^^[0-9]\d{10}$',
+        regex=r'^[0-9]\d{10}$',
         required=False,
         label=_('Confirm Lebanese ID number of the child (optional)')
     )
@@ -539,7 +539,7 @@ class BLNForm(CommonForm):
         label=_('National ID number of the child (Optional)')
     )
     syrian_national_number_confirm = forms.RegexField(
-        regex=r'^^[0-9]\d{11}$',
+        regex=r'^[0-9]\d{11}$',
         required=False,
         label=_('Confirm National ID number of the child (Optional)')
     )
@@ -557,7 +557,7 @@ class BLNForm(CommonForm):
         label=_('Lebanese ID number of the caretaker (Mandatory)')
     )
     parent_national_number_confirm = forms.RegexField(
-        regex=r'^^[0-9]\d{10}$',
+        regex=r'^[0-9]\d{10}$',
         required=False,
         label=_('Confirm Lebanese ID number of the caretaker (Mandatory)')
     )
@@ -567,7 +567,7 @@ class BLNForm(CommonForm):
         label=_('National ID number of the Caretaker (Mandatory)')
     )
     parent_syrian_national_number_confirm = forms.RegexField(
-        regex=r'^^[0-9]\d{11}$',
+        regex=r'^[0-9]\d{11}$',
         required=False,
         label=_('Confirm National ID number of the Caretaker (Mandatory)')
     )
@@ -577,7 +577,7 @@ class BLNForm(CommonForm):
         label=_('Palestinian ID number of the Caretaker (Mandatory)')
     )
     parent_sop_national_number_confirm = forms.CharField(
-        # regex=r'^^[0-9]\d{11}$',
+        # regex=r'^[0-9]\d{11}$',
         required=False,
         label=_('Confirm Palestinian ID number of the Caretaker (Mandatory)')
     )
@@ -2310,7 +2310,7 @@ class ABLNForm(CommonForm):
         label=_('Lebanese ID number of the child (Optional)')
     )
     national_number_confirm = forms.RegexField(
-        regex=r'^^[0-9]\d{10}$',
+        regex=r'^[0-9]\d{10}$',
         required=False,
         label=_('Confirm Lebanese ID number of the child (optional)')
     )
@@ -2320,7 +2320,7 @@ class ABLNForm(CommonForm):
         label=_('National ID number of the child (Optional)')
     )
     syrian_national_number_confirm = forms.RegexField(
-        regex=r'^^[0-9]\d{11}$',
+        regex=r'^[0-9]\d{11}$',
         required=False,
         label=_('Confirm National ID number of the child (Optional)')
     )
@@ -2338,7 +2338,7 @@ class ABLNForm(CommonForm):
         label=_('Lebanese ID number of the caretaker (Mandatory)')
     )
     parent_national_number_confirm = forms.RegexField(
-        regex=r'^^[0-9]\d{10}$',
+        regex=r'^[0-9]\d{10}$',
         required=False,
         label=_('Confirm Lebanese ID number of the caretaker (Mandatory)')
     )
@@ -2348,7 +2348,7 @@ class ABLNForm(CommonForm):
         label=_('National ID number of the Caretaker (Mandatory)')
     )
     parent_syrian_national_number_confirm = forms.RegexField(
-        regex=r'^^[0-9]\d{11}$',
+        regex=r'^[0-9]\d{11}$',
         required=False,
         label=_('Confirm National ID number of the Caretaker (Mandatory)')
     )
@@ -2358,7 +2358,7 @@ class ABLNForm(CommonForm):
         label=_('Palestinian ID number of the Caretaker (Mandatory)')
     )
     parent_sop_national_number_confirm = forms.CharField(
-        # regex=r'^^[0-9]\d{11}$',
+        # regex=r'^[0-9]\d{11}$',
         required=False,
         label=_('Confirm Palestinian ID number of the Caretaker (Mandatory)')
     )
