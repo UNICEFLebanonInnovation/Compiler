@@ -1051,7 +1051,7 @@ class BLNForm(CommonForm):
             if not parent_syrian_national_number_confirm:
                 self.add_error('parent_syrian_national_number_confirm', 'This field is required')
 
-            if parent_syrian_national_number and not len(parent_syrian_national_number_confirm) == 11:
+            if parent_syrian_national_number_confirm and not len(parent_syrian_national_number_confirm) == 11:
                 msg = "Please enter a valid number (11 digits)"
                 self.add_error('parent_syrian_national_number_confirm', msg)
 
@@ -2832,7 +2832,7 @@ class ABLNForm(CommonForm):
             if not parent_syrian_national_number_confirm:
                 self.add_error('parent_syrian_national_number_confirm', 'This field is required')
 
-            if parent_syrian_national_number and not len(parent_syrian_national_number_confirm) == 11:
+            if parent_syrian_national_number_confirm and not len(parent_syrian_national_number_confirm) == 11:
                 msg = "Please enter a valid number (11 digits)"
                 self.add_error('parent_syrian_national_number_confirm', msg)
 
