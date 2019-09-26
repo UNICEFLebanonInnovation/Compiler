@@ -38,7 +38,7 @@ WHITENOISE_MIDDLEWARE = ['whitenoise.middleware.WhiteNoiseMiddleware', ]
 
 EXTRA_MIDDLEWARE = ['student_registration.middleware.AutoLogout',
                     'student_registration.cache_control_middleware.CacheControlMiddleware',
-                    'student_registration.one_session.OneSessionPerUserMiddleware',
+                    # 'student_registration.one_session.OneSessionPerUserMiddleware',
                     'student_registration.hsts_middleware.HSTSMiddleware',
                     'student_registration.xframe_middleware.XFrameMiddleware', ]
 MIDDLEWARE = WHITENOISE_MIDDLEWARE + MIDDLEWARE + EXTRA_MIDDLEWARE
