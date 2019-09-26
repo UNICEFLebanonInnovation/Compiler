@@ -1669,7 +1669,7 @@ class ABLN(CLM):
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
             assessment = Assessment.objects.get(slug=assessment_slug)
-            return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=BLN&returnURL={callback}'.format(
+            return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=ABLN&returnURL={callback}'.format(
                 form=assessment.assessment_form,
                 status=stage,
                 enrollment_id=self.id,
