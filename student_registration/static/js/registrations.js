@@ -909,14 +909,16 @@ function verify_age_level()
     var year = $('select#id_student_birthday_year').val();
     var birthday = year+"-"+month+"-"+day;
     var dob = new Date(birthday);
-    var min_date = new Date('2019-01-31');
+    //var min_date = new Date('2019-01-31');
+    var min_date = new Date('2020-01-31');
 
     if(dob == NaN || level == '') {
         return false;
     }
 
     if(level == '1') { //KG
-        min_date = new Date('2018-09-14');
+        //min_date = new Date('2018-09-14');
+        min_date = new Date('2019-09-14');
         display_alert_restriction(dob, 5, 9, min_date);
     }
     if(level == '2') { //Level 1

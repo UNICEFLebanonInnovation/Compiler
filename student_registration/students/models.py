@@ -60,6 +60,7 @@ class IDType(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "ID Type"
+        verbose_name_plural = 'ID Types'
 
     def __unicode__(self):
         return self.name
@@ -67,6 +68,9 @@ class IDType(models.Model):
 
 class SpecialNeeds(models.Model):
     name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        verbose_name_plural = 'Special Needs'
 
     def __unicode__(self):
         return self.name
@@ -80,6 +84,10 @@ class SpecialNeedsDt(models.Model):
         null=True,
         verbose_name=_('Detail Special Needs'),
     )
+
+    class Meta:
+        verbose_name_plural = 'Details Special Needs '
+        verbose_name ='Detail Special Needs'
 
     def __unicode__(self):
         return self.name

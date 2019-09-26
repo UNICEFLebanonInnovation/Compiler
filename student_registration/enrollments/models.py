@@ -1069,3 +1069,6 @@ class DuplicateStd(models.Model):
         if self.coordinator:
             return self.coordinator.name
         return ''
+
+    class Meta:
+        verbose_name = 'Duplicated Students'

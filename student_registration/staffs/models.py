@@ -27,6 +27,7 @@ class Bank(models.Model):
 
     class Meta:
         ordering = ['code']
+        verbose_name_plural = "Bank"
 
     def __unicode__(self):
         return self.name
@@ -47,6 +48,7 @@ class University(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name_plural = 'Universities'
 
     def __unicode__(self):
         return self.name
@@ -256,3 +258,15 @@ class Staffs(models.Model):
         related_name='staff_caza'
     )
 
+    def __unicode__(self):
+        if not self.first_name:
+            return 'No name'
+
+        return u'{} {} {}'.format(
+            self.first_name,
+            self.father_name,
+            self.last_name,
+        )
+
+    class Meta:
+        verbose_name_plural = "Staff"
