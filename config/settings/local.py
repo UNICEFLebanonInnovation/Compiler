@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Local settings
-
 - Run in Debug mode
-
 - Use console backend for emails
-
 - Add Django Debug Toolbar
 - Add django-extensions as app
 """
@@ -64,11 +61,11 @@ INTERNAL_IPS = ['127.0.0.1', '10.0.2.2', ]
 # SECURE_FRAME_DENY = env.bool("DJANGO_SECURE_FRAME_DENY", default=True)
 # SECURE_CONTENT_TYPE_NOSNIFF = env.bool('DJANGO_SECURE_CONTENT_TYPE_NOSNIFF', default=True)
 # SECURE_BROWSER_XSS_FILTER = True
-#SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_HTTPONLY = True
+# SESSION_COOKIE_SECURE = True
+# SESSION_COOKIE_HTTPONLY = True
 # SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)
-#CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
+# CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_HTTPONLY = True
 # SECURE_HSTS_PRELOAD = True
 # SECURE_REDIRECT_EXEMPT
 # SECURE_SSL_HOST
@@ -123,13 +120,3 @@ LOGGING = {
 }
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
-
-# Auto logout delay in minutes
-AUTO_LOGOUT_DELAY = 20 # equivalent to 20 minutes
-CSRF_USE_SESSIONS = True
-LOCKOUT_MAX_ATTEMPTS = 5
-LOCKOUT_TIME = 15
-
-CSRF_COOKIE_AGE = None
-
-

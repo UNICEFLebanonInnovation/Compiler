@@ -27,46 +27,6 @@ from .models import (
     AttendanceSyncLog,
 )
 
-from prettyjson import widgets
-
-
-class PrettyJSONWidgetStudentRegistration(widgets.widgets.Textarea):
-
-    DEFAULT_ATTR = 'raw'
-
-    def render(self, name, value, attrs=None):
-        html = super(PrettyJSONWidget, self).render(name, value, attrs)
-
-        start_as = self.attrs.get("initial", self.DEFAULT_ATTR)
-
-        if (start_as not in self._allowed_attrs()):
-            start_as = self.DEFAULT_ATTR
-
-        return ('<div class="jsonwidget" data-initial="' + start_as + '"><p><button class="parseraw" '
-                'type="button">Show parsed</button> <button class="parsed" '
-                'type="button">Collapse all</button> <button class="parsed" '
-                'type="button">Expand all</button></p>' + html + '<div '
-                'class="parsed"></div></div>')
-
-    @staticmethod
-    def _allowed_attrs():
-        return (PrettyJSONWidget.DEFAULT_ATTR, 'parsed')
-
-    @property
-    def media(self):
-        extra = '' if settings.DEBUG else '.min'
-        return widgets.Media(
-            js=(
-                'js/jquery-3.4.1.min.js',
-                'admin/js/jquery.init.js',
-                'prettyjson/prettyjson.js',
-            ),
-            css={
-                'all': ('prettyjson/prettyjson.css', )
-            },
-        )
-
-
 
 class SchoolFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
@@ -633,7 +593,7 @@ class AttendanceAdmin(ImportExportModelAdmin):
     date_hierarchy = 'attendance_date'
 
     formfield_overrides = {
-        JSONField: {'widget': PrettyJSONWidgetStudentRegistration(attrs={'initial': 'parsed'})}
+        JSONField: {'widget': PrettyJSONWidget(attrs={'initial': 'parsed'})}
     }
 
     def get_export_formats(self):
@@ -645,7 +605,3 @@ admin.site.register(Attendance, AttendanceAdmin)
 admin.site.register(Absentee, AbsenteeAdmin)
 admin.site.register(AttendedDays, AttendedDaysAdmin)
 admin.site.register(AttendanceByStudent, AttendanceByStudentAdmin)
-
-from django.conf import settings
-from django.forms import widgets
-
