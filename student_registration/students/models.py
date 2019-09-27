@@ -333,7 +333,7 @@ class Person(TimeStampedModel):
                 self.birthday_day,
                 self.birthday_month,
                 self.birthday_year
-            )+self.id_number
+            )
 
         super(Person, self).save(**kwargs)
 
