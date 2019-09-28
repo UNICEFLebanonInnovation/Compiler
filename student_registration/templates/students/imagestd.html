@@ -34,28 +34,10 @@
               {% endif %}
             </td>
           </tr>
-          <tr style="height:100px;">
-            <th  bgcolor=#E2F3FF><font color ="navy">
-              &nbsp;&nbsp; &nbsp;{% trans  'ID Picture' %}
-              </font>
-            </th>
-            <td  bgcolor=#E2F3FF>
-              <div style = "max-width:470px;">
-                <center>
-                  <input type = "file" style = "margin-left:10%;"
-                         placeholder = "id_picture" name = "id_picture" />
-                </center>
-              </div>
-            </td>
-            <td>
-              {% if student_detail.id_image %}
-              <img src="{{ student_detail.id_image.url }} " width="100" height="100" >
-              {% endif %}
-            </td>
-          </tr>
+
           <tr style="height:100px;">
             <th bgcolor=#BEE7FD><font color ="navy">
-              {% trans  'Birth Document' %}&nbsp;&nbsp;
+              {% trans  'ID Picture' %}&nbsp;&nbsp;
               </font>
             </th>
             <td bgcolor=#BEE7FD>
@@ -74,7 +56,7 @@
           </tr>
           <tr style="height:100px;">
             <th  bgcolor=#E2F3FF><font color ="navy">
-              {% trans  'UNHCR Document' %}&nbsp;&nbsp;&nbsp;&nbsp;
+              {% trans  'Birth Document' %}&nbsp;&nbsp;&nbsp;&nbsp;
               </font>
             </th>
             <td   bgcolor=#E2F3FF>
@@ -88,6 +70,25 @@
             <td>
               {% if student_detail.unhcr_image %}
               <img src="{{ student_detail.unhcr_image.url }} " width="100" height="100" >
+              {% endif %}
+            </td>
+          </tr>
+          <tr style="height:100px;">
+            <th  bgcolor=#E2F3FF><font color ="navy">
+              &nbsp;&nbsp; &nbsp;{% trans  'picture of previous education' %}
+              </font>
+            </th>
+            <td  bgcolor=#E2F3FF>
+              <div style = "max-width:470px;">
+                <center>
+                  <input type = "file" style = "margin-left:10%;"
+                         placeholder = "id_picture" name = "id_picture" />
+                </center>
+              </div>
+            </td>
+            <td>
+              {% if student_detail.id_image %}
+              <img src="{{ student_detail.id_image.url }} " width="100" height="100" >
               {% endif %}
             </td>
           </tr>

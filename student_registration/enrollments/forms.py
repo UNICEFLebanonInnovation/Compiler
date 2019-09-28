@@ -535,9 +535,9 @@ class EnrollmentForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<div style="background-color:#e6f7ff"> '),
+                   # HTML('<div style="background-color:#e6f7ff"> '),
                     Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('More Information') + '</h4>')
+                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Special needs') + '</h4>')
                         ),
                     Div(
                         HTML('<font color="red"><b>'),
@@ -554,19 +554,31 @@ class EnrollmentForm(forms.ModelForm):
                         Div('student_specialneedsdt', css_class='col-md-3'),
                         css_class='row',
                         ),
-                        Div(
+                     ),
+                     css_class='bd-callout bd-callout-warning child_data'
+               # HTML('</div>'),
+            ),
+            Fieldset(
+                None,
+                Div(
+                    # HTML('<div style="background-color:#e6f7ff"> '),
+                    Div(
+                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Financial support') + '</h4>')
+                    ),
+
+                    Div(
                         HTML('<font color="navy"><b>'),
                         Div('student_is_financialsupport', css_class='col-md-3'),
                         HTML('</b></font>'),
-                        ),
-                        Div(
+                    ),
+                    Div(
                         Div('student_financialsupport', css_class='col-md-3'),
-                            Div('student_Financialsupport_number', css_class='col-md-3'),
-                            css_class='row',
-                     ),
-                     css_class='bd-callout bd-callout-warning child_data'
+                        Div('student_Financialsupport_number', css_class='col-md-3'),
+                        css_class='row',
+                    ),
+                    css_class='bd-callout bd-callout-warning child_data'
                 ),
-                HTML('</div>'),
+                # HTML('</div>'),
             ),
 
             Fieldset(
