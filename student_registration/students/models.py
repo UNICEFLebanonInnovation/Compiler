@@ -266,6 +266,7 @@ class Person(TimeStampedModel):
     number_part1 = models.CharField(max_length=45, blank=True, null=True)
     number_part2 = models.CharField(max_length=45, blank=True, null=True)
     std_phone = models.CharField(max_length=74, blank=True, null=True)
+    recordnumber = models.CharField(max_length=45, blank=True, null=True, verbose_name=_('Identity record number'))
 
     def __unicode__(self):
         if not self.first_name:

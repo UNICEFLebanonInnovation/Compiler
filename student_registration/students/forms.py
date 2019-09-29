@@ -30,6 +30,7 @@ class StudentEnrollmentForm(forms.ModelForm):
             'phone',
             'phone_prefix',
             'address',
+            'recordnumber',
             'number',
           #  'std_image',
         )

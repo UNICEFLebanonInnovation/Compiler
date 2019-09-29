@@ -247,6 +247,10 @@ class EnrollmentForm(forms.ModelForm):
         label=_("Place of birth"),
         widget=forms.TextInput, required=False
     )
+    student_recordnumber = forms.CharField(
+        label=_('Identity record number'),
+        widget=forms.TextInput, required=False
+    )
     number_in_previous_school = forms.CharField(
         label=_("Serial number in previous school"),
         widget=forms.TextInput, required=False
@@ -527,6 +531,8 @@ class EnrollmentForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">19</span>'),
                     Div('student_place_of_birth', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">20</span>'),
+                    Div('student_recordnumber', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">21</span>'),
                     Div('number_in_previous_school', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -777,6 +783,7 @@ class EnrollmentForm(forms.ModelForm):
             'student_birthday_month',
             'student_birthday_day',
             'student_place_of_birth',
+            'student_recordnumber',
             'student_phone',
             'student_phone_prefix',
             'student_id_number',
