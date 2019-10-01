@@ -120,3 +120,5 @@ LOGGING = {
 }
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+AUTO_LOGOUT_DELAY = 1000  # equivalent to 20 minutes

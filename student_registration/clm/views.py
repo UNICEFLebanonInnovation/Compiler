@@ -30,7 +30,17 @@ from student_registration.locations.models import Location
 from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter
 from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable
 from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment
-from .forms import BLNForm, ABLNForm, RSForm, CBECEForm, ABLNReferralForm, ABLNFollowupForm
+from .forms import (
+    BLNForm,
+    ABLNForm,
+    RSForm,
+    CBECEForm,
+    ABLNReferralForm,
+    ABLNFollowupForm,
+    BLNAssessmentForm,
+    ABLNAssessmentForm,
+    CBECEAssessmentForm,
+)
 from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 from .utils import is_allowed_create, is_allowed_edit
 
@@ -456,6 +466,96 @@ class ABLNReferralView(LoginRequiredMixin,
         instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
         form.save(request=self.request, instance=instance)
         return super(ABLNReferralView, self).form_valid(form)
+
+
+class ABLNPostAssessmentView(LoginRequiredMixin,
+                             GroupRequiredMixin,
+                             FormView):
+
+    template_name = 'clm/abln_post_assessment.html'
+    form_class = ABLNAssessmentForm
+    success_url = '/clm/abln-list/'
+    group_required = [u"CLM_ABLN"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(ABLNPostAssessmentView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(ABLNPostAssessmentView, self).form_valid(form)
+
+
+class BLNPostAssessmentView(LoginRequiredMixin,
+                            GroupRequiredMixin,
+                            FormView):
+
+    template_name = 'clm/bln_post_assessment.html'
+    form_class = BLNAssessmentForm
+    success_url = '/clm/bln-list/'
+    group_required = [u"CLM_BLN"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(BLNPostAssessmentView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(BLNPostAssessmentView, self).form_valid(form)
+
+
+class CBECEPostAssessmentView(LoginRequiredMixin,
+                              GroupRequiredMixin,
+                              FormView):
+
+    template_name = 'clm/cbece_post_assessment.html'
+    form_class = CBECEAssessmentForm
+    success_url = '/clm/cbece-list/'
+    group_required = [u"CLM_CBECE"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(CBECEPostAssessmentView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(CBECEPostAssessmentView, self).form_valid(form)
 
 
 class ABLNFollowupView(LoginRequiredMixin,
