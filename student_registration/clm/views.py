@@ -30,7 +30,17 @@ from student_registration.locations.models import Location
 from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter
 from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable
 from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment
-from .forms import BLNForm, ABLNForm, RSForm, CBECEForm, ABLNReferralForm, ABLNFollowupForm
+from .forms import (
+    BLNForm,
+    ABLNForm,
+    RSForm,
+    CBECEForm,
+    ABLNReferralForm,
+    ABLNFollowupForm,
+    BLNAssessmentForm,
+    ABLNAssessmentForm,
+    CBECEAssessmentForm,
+)
 from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 from .utils import is_allowed_create, is_allowed_edit
 
@@ -456,6 +466,96 @@ class ABLNReferralView(LoginRequiredMixin,
         instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
         form.save(request=self.request, instance=instance)
         return super(ABLNReferralView, self).form_valid(form)
+
+
+class ABLNPostAssessmentView(LoginRequiredMixin,
+                             GroupRequiredMixin,
+                             FormView):
+
+    template_name = 'clm/abln_post_assessment.html'
+    form_class = ABLNAssessmentForm
+    success_url = '/clm/abln-list/'
+    group_required = [u"CLM_ABLN"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(ABLNPostAssessmentView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = ABLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(ABLNPostAssessmentView, self).form_valid(form)
+
+
+class BLNPostAssessmentView(LoginRequiredMixin,
+                            GroupRequiredMixin,
+                            FormView):
+
+    template_name = 'clm/bln_post_assessment.html'
+    form_class = BLNAssessmentForm
+    success_url = '/clm/bln-list/'
+    group_required = [u"CLM_BLN"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(BLNPostAssessmentView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = BLN.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(BLNPostAssessmentView, self).form_valid(form)
+
+
+class CBECEPostAssessmentView(LoginRequiredMixin,
+                              GroupRequiredMixin,
+                              FormView):
+
+    template_name = 'clm/cbece_post_assessment.html'
+    form_class = CBECEAssessmentForm
+    success_url = '/clm/cbece-list/'
+    group_required = [u"CLM_CBECE"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(CBECEPostAssessmentView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(CBECEPostAssessmentView, self).form_valid(form)
 
 
 class ABLNFollowupView(LoginRequiredMixin,
@@ -1184,7 +1284,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_psychomotor': 'Post-test Psychomotor Development for children with special need',
             'post_test_artistic': 'Post-test Artistic Development',
             'post_test_score': 'Post-test Score',
-            'participation': 'How was the level of child participation in the program?',
+            'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
             'new_registry': 'First time registered?',
@@ -1197,7 +1297,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().extra(select={
-            'participation': "CONCAT(participation, '_absence')",
+            # 'participation': "CONCAT(participation, '_absence')",
 
             'pre_test_arabic': "pre_test->>'BLN_ASSESSMENT/arabic'",
             'pre_test_foreign_language': "pre_test->>'BLN_ASSESSMENT/foreign_language'",
@@ -1336,7 +1436,8 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'caretaker_last_name': 'Caretaker last name',
             'caretaker_mother_name': 'Caretaker mother name',
 
-            'hh_educational_level__name': 'What is the educational level of a person who is valuable to the child?',
+            'hh_educational_level__name': 'What is the educational level of the mother?',
+            'father_educational_level__name': 'What is the educational level of the father?',
             'have_labour': 'Does the child participate in work?',
             'labours': 'What is the type of work?',
             'labour_hours': 'How many hours does this child work in a day?',
@@ -1352,7 +1453,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_psychomotor': 'Post-test Psychomotor Development for children with special need',
             'post_test_artistic': 'Post-test Artistic Development',
             'post_test_score': 'Post-test Score',
-            'participation': 'How was the level of child participation in the program?',
+            'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
             'new_registry': 'First time registered?',
@@ -1390,9 +1491,236 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'followup_visit_reason_1': 'Follow-up visit 1 reason',
             'followup_visit_result_1': 'Follow-up visit 1 result',
         }
+        header_list = (
+            'Partner',
+            'Source of Identification',
+            'CLM Round',
+            'Governorate',
+            'District',
+            'Location',
+            'The language supported in the program',
+            'First name',
+            'Father name',
+            'Last name',
+            'Sex',
+            'Birthday - day',
+            'Birthday - month',
+            'Birthday - year',
+            'Nationality',
+            'Mother fullname',
+            'P-Code If a child lives in a tent / Brax in a random camp',
+            'ID number',
+            'unique number',
+            'What is the family status of the child?',
+            'Does the child have children?',
+            'Does the child have any disability or special need?',
+            'Internal number',
+            'Comments',
+
+            'Phone number',
+            'Phone number confirm',
+
+            'ID Type',
+            'UNHCR case number',
+            'UNHCR case number confirm',
+            'Child individual ID',
+            'Child individual ID confirm',
+            'Parent individual ID',
+            'Parent individual ID confirm',
+            'UNHCR recorded barcode',
+            'UNHCR recorded barcode confirm',
+            'Child Lebanese ID number',
+            'Child Lebanese ID number confirm',
+            'Child Syrian ID number',
+            'Child Syrian ID number confirm',
+            'Child Palestinian ID number',
+            'Child Palestinian ID number confirm',
+            'Parent Lebanese ID number',
+            'Parent Lebanese ID number confirm',
+            'Parent Syrian ID number',
+            'Parent Syrian ID number confirm',
+            'Parent Palestinian ID number',
+            'Parent Palestinian ID number confirm',
+            'Caretaker first name',
+            'Caretaker middle name',
+            'Caretaker last name',
+            'Caretaker mother name',
+
+            'What is the educational level of a person who is valuable to the child?',
+            'Does the child participate in work?',
+            'What is the type of work?',
+            'How many hours does this child work in a day?',
+            'Pre-test Arabic Language Development ',
+            'Pre-test Cognitive Development - Mathematics',
+            'Pre-test Social-Emotional Development',
+            'Pre-test Psychomotor Development for children with special need',
+            'Pre-test Artistic Development',
+            'Pre-test score',
+            'Post-test Arabic Language Development ',
+            'Post-test Cognitive Development - Mathematics',
+            'Post-test Social-Emotional Development',
+            'Post-test Psychomotor Development for children with special need',
+            'Post-test Artistic Development',
+            'Post-test Score',
+            'Level of participation / Absence',
+            'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
+            'Based on the overall score, what is the recommended learning path?',
+            'cycle_completed',
+            'enrolled_at_school',
+
+            'Referral programme type 1',
+            'Referral partner 1',
+            'Referral date 1',
+            'Referral confirmation date 1',
+
+            'Referral programme type 2',
+            'Referral partner 2',
+            'Referral date 2',
+            'Referral confirmation date 2',
+
+            'Referral programme type 3',
+            'Referral partner 3',
+            'Referral date 3',
+            'Referral confirmation date 3',
+
+            'Follow-up call 1 date',
+            'Follow-up call 1 reason',
+            'Follow-up call 1 result',
+
+            'Follow-up call 2 date',
+            'Follow-up call 2 reason',
+            'Follow-up call 2 result',
+
+            'Follow-up visit 1 date',
+            'Follow-up visit 1 reason',
+            'Follow-up visit 1 result',
+
+            'First time registered?',
+            'Student outreached?',
+            'Have barcode with him?',
+            'owner',
+            'modified_by',
+            'created',
+            'modified'
+        )
+        field_list = (
+            'partner__name',
+            'source_of_identification',
+            'round__name',
+            'governorate__name',
+            'district__name',
+            'location',
+            'language',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__sex',
+            'student__birthday_day',
+            'student__birthday_month',
+            'student__birthday_year',
+            'student__nationality__name',
+            'student__mother_fullname',
+            'student__p_code',
+            'student__id_number',
+            'student__number',
+            'student__family_status',
+            'student__have_children',
+            'disability__name',
+            'internal_number',
+            'comments',
+
+            'phone_number',
+            'phone_number_confirm',
+
+            'id_type',
+            'case_number',
+            'case_number_confirm',
+            'individual_case_number',
+            'individual_case_number_confirm',
+            'parent_individual_case_number',
+            'parent_individual_case_number_confirm',
+            'recorded_number',
+            'recorded_number_confirm',
+            'national_number',
+            'national_number_confirm',
+            'syrian_national_number',
+            'syrian_national_number_confirm',
+            'sop_national_number',
+            'sop_national_number_confirm',
+            'parent_national_number',
+            'parent_national_number_confirm',
+            'parent_syrian_national_number',
+            'parent_syrian_national_number_confirm',
+            'parent_sop_national_number',
+            'parent_sop_national_number_confirm',
+            'caretaker_first_name',
+            'caretaker_middle_name',
+            'caretaker_last_name',
+            'caretaker_mother_name',
+
+            'hh_educational_level__name',
+            'father_educational_level__name',
+            'have_labour',
+            'labours',
+            'labour_hours',
+
+            'pre_test_arabic',
+            'post_test_arabic',
+            'pre_test_math',
+            'post_test_math',
+            'pre_test_social_emotional',
+            'post_test_social_emotional',
+            'pre_test_psychomotor',
+            'post_test_psychomotor',
+            'pre_test_artistic',
+            'post_test_artistic',
+            'pre_test_score',
+            'post_test_score',
+
+            'participation',
+            'barriers',
+            'learning_result',
+            'cycle_completed',
+            'enrolled_at_school',
+
+            'referral_programme_type_1',
+            'referral_partner_1',
+            'referral_date_1',
+            'confirmation_date_1',
+
+            'referral_programme_type_2',
+            'referral_partner_2',
+            'referral_date_2',
+            'confirmation_date_2',
+
+            'referral_programme_type_3',
+            'referral_partner_3',
+            'referral_date_3',
+            'confirmation_date_3',
+
+            'followup_call_date_1',
+            'followup_call_reason_1',
+            'followup_call_result_1',
+
+            'followup_call_date_2',
+            'followup_call_reason_2',
+            'followup_call_result_2',
+
+            'followup_visit_date_1',
+            'followup_visit_reason_1',
+            'followup_visit_result_1',
+
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
+            'owner__username',
+            'modified_by__username',
+            'created',
+            'modified',
+        )
 
         qs = self.get_queryset().extra(select={
-            'participation': "CONCAT(participation, '_absence')",
+            # 'participation': "CONCAT(participation, '_absence')",
 
             'pre_test_arabic': "pre_test->>'ABLN_ASSESSMENT/arabic'",
             'pre_test_math': "pre_test->>'ABLN_ASSESSMENT/math'",
@@ -1430,6 +1758,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'internal_number',
             'comments',
             'hh_educational_level__name',
+            'father_educational_level__name',
             'have_labour',
             'labours',
             'labour_hours',
@@ -1448,6 +1777,8 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'participation',
             'barriers',
             'learning_result',
+            'cycle_completed',
+            'enrolled_at_school',
             'new_registry',
             'student_outreached',
             'have_barcode',
@@ -1509,7 +1840,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'followup_visit_result_1',
         )
 
-        return render_to_csv_response(qs, field_header_map=headers)
+        return render_to_csv_response(qs, field_header_map=headers, field_order=field_list)
 
 
 class RSExportViewSet(LoginRequiredMixin, ListView):
@@ -1629,7 +1960,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             'post_self_q13': ' يصغي اليّ أستاذي باهتمام عندما أتحدث - Self Assessment - Post',
             'post_self_q14': 'عندما أكون بحاجة إلى المساعدة أحصل عليها من معلمي - Self Assessment - Post',
 
-            'participation': 'How was the level of child participation in the program?',
+            'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
             'new_registry': 'First time registered?',
@@ -1640,7 +1971,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().extra(select={
-            'participation': "CONCAT(participation, '_absence')",
+            # 'participation': "CONCAT(participation, '_absence')",
 
             'pre_strategy_q1': "pre_test->>'RS_ASSESSMENT/FL1'",
             'pre_strategy_q2': "pre_test->>'RS_ASSESSMENT/FL2'",
@@ -1907,7 +2238,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'post_test_PsychomotorDomain3': 'Psychomotor Development - Post - Level 3',
             'post_test_ArtisticDomain3': 'Artistic Development - Post - Level 3',
 
-            'participation': 'How was the level of child participation in the program?',
+            'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
             'new_registry': 'First time registered?',
@@ -1920,7 +2251,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().extra(select={
-            'participation': "CONCAT(participation, '_absence')",
+            # 'participation': "CONCAT(participation, '_absence')",
 
             'pre_test_LanguageArtDomain1': "pre_test->>'CBECE_ASSESSMENT/LanguageArtDomain1'",
             'pre_test_CognitiveDomian1': "pre_test->>'CBECE_ASSESSMENT/CognitiveDomian1'",
