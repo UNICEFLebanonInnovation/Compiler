@@ -1284,7 +1284,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_psychomotor': 'Post-test Psychomotor Development for children with special need',
             'post_test_artistic': 'Post-test Artistic Development',
             'post_test_score': 'Post-test Score',
-            'participation': 'How was the level of child participation in the program?',
+            'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
             'new_registry': 'First time registered?',
@@ -1297,7 +1297,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().extra(select={
-            'participation': "CONCAT(participation, '_absence')",
+            # 'participation': "CONCAT(participation, '_absence')",
 
             'pre_test_arabic': "pre_test->>'BLN_ASSESSMENT/arabic'",
             'pre_test_foreign_language': "pre_test->>'BLN_ASSESSMENT/foreign_language'",
@@ -1452,7 +1452,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_psychomotor': 'Post-test Psychomotor Development for children with special need',
             'post_test_artistic': 'Post-test Artistic Development',
             'post_test_score': 'Post-test Score',
-            'participation': 'How was the level of child participation in the program?',
+            'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
             'new_registry': 'First time registered?',
@@ -1492,7 +1492,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().extra(select={
-            'participation': "CONCAT(participation, '_absence')",
+            # 'participation': "CONCAT(participation, '_absence')",
 
             'pre_test_arabic': "pre_test->>'ABLN_ASSESSMENT/arabic'",
             'pre_test_math': "pre_test->>'ABLN_ASSESSMENT/math'",
@@ -1729,7 +1729,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             'post_self_q13': ' يصغي اليّ أستاذي باهتمام عندما أتحدث - Self Assessment - Post',
             'post_self_q14': 'عندما أكون بحاجة إلى المساعدة أحصل عليها من معلمي - Self Assessment - Post',
 
-            'participation': 'How was the level of child participation in the program?',
+            'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
             'new_registry': 'First time registered?',
@@ -1740,7 +1740,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().extra(select={
-            'participation': "CONCAT(participation, '_absence')",
+            # 'participation': "CONCAT(participation, '_absence')",
 
             'pre_strategy_q1': "pre_test->>'RS_ASSESSMENT/FL1'",
             'pre_strategy_q2': "pre_test->>'RS_ASSESSMENT/FL2'",
@@ -2007,7 +2007,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'post_test_PsychomotorDomain3': 'Psychomotor Development - Post - Level 3',
             'post_test_ArtisticDomain3': 'Artistic Development - Post - Level 3',
 
-            'participation': 'How was the level of child participation in the program?',
+            'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
             'new_registry': 'First time registered?',
@@ -2020,7 +2020,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
         }
 
         qs = self.get_queryset().extra(select={
-            'participation': "CONCAT(participation, '_absence')",
+            # 'participation': "CONCAT(participation, '_absence')",
 
             'pre_test_LanguageArtDomain1': "pre_test->>'CBECE_ASSESSMENT/LanguageArtDomain1'",
             'pre_test_CognitiveDomian1': "pre_test->>'CBECE_ASSESSMENT/CognitiveDomian1'",
