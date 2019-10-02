@@ -2160,7 +2160,7 @@ class ABLNForm(CommonForm):
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
-        # initial=CLMRound.objects.filter(current_round_abln=True).first().id
+        initial=8
     )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
