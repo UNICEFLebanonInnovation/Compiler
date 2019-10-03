@@ -190,7 +190,7 @@ class AssessmentSubmission(SingleObjectMixin, View):
 
         if model == 'BLN':
             enrollment = BLN.objects.get(id=int(enrollment_id))
-        elif model == 'ABLN':
+        elif model == 'ABLN' or model == 'RS':
             enrollment = ABLN.objects.get(id=int(enrollment_id))
         elif model == 'RS':
             enrollment = RS.objects.get(id=int(enrollment_id))
