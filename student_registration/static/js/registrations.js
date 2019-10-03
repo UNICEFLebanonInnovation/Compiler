@@ -48,33 +48,6 @@ $(document).ready(function(){
     if($(document).find('#id_followup_visit_date_1').length == 1) {
         $('#id_followup_visit_date_1').datepicker({dateFormat: "yy-mm-dd"});
     }
-    $(document).on('change', '#id_student_specialneeds', function(){
-
-       var id_special_needs = $(this).val();
-       request_url = '/enrollments/ajax_combobox/'
-       $.ajax({
-        url: request_url,
-          data: {
-              'id_spneeds': id_special_needs
-          },
-        dataType: 'json',
-        success: function (data) {
-         $('#id_student_specialneedsdt').html('<option selected="' + "selected" + '">' + '' +'</option>');
-         for(var i = 0; i<=data['sn_count']; i++){
-                $('#id_student_specialneedsdt').append('<option value="' + data.sn[i]['id']+ '">' + data.sn[i]['name'] +'</option>');
-         }
-
-
-        }
-      });
-
-
-
-
-
-
-    });
-
 
     $(document).on('change', '#id_id_type', function(){
         reorganizeForm();

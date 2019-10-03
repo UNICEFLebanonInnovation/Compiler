@@ -527,12 +527,6 @@ class Enrollment(TimeStampedModel):
         return ''
 
     @property
-    def student_specialneeds(self):
-        if self.student and self.student.specialneeds:
-            return self.student.specialneeds
-        return ''
-
-    @property
     def student_id_type(self):
         return self.student.id_type
 

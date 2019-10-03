@@ -12,12 +12,6 @@ urlpatterns = [
         name='add'
     ),
     url(
-        regex=r'^ajax_combobox/$',
-        view=views.load_specialneedsdt,
-        name='ajax_combobox'
-    ),
-
-    url(
         regex=r'^edit/(?P<pk>[\w.@+-]+)/$',
         view=views.EditView.as_view(),
         name='edit'
