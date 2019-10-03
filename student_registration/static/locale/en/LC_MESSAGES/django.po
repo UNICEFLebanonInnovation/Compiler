@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-01 17:06+0300\n"
+"POT-Creation-Date: 2019-10-03 23:28+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2520,6 +2520,14 @@ msgstr ""
 
 #: student_registration/clm/models.py:795
 msgid "Caretaker Mother Name"
+msgstr ""
+
+#: student_registration/clm/models.py:798
+msgid "Course completed successfully"
+msgstr ""
+
+#: student_registration/clm/models.py:799
+msgid "Enrolled at School"
 msgstr ""
 
 #: student_registration/clm/models.py:878
