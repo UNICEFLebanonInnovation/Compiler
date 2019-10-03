@@ -2414,8 +2414,8 @@ class ABLNForm(CommonForm):
                 assessment_slug='abln_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:abln_edit', kwargs={'pk': instance.id}))
              )
-            # if instance.pre_test:
-            #     pre_test_button = ' btn-success '
+            if instance.pre_test:
+                pre_test_button = ' btn-success '
             #     post_test_button = ' btn-outline-success '
             #     post_test = instance.assessment_form(
             #         stage='post_test',
