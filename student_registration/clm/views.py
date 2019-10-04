@@ -187,13 +187,16 @@ class AssessmentSubmission(SingleObjectMixin, View):
         status = payload['status']
         enrollment_id = payload['enrollment_id']
         model = payload['enrollment_model']
+        static_model_value = payload['static_model_value'] if 'static_model_value' in payload else ''
 
-        if model == 'BLN':
+        if model == 'BLN' or 'BLN_ASSESSMENT/arabic' in payload:
             enrollment = BLN.objects.get(id=int(enrollment_id))
-        elif model == 'ABLN' or model == 'RS':
+        elif model == 'ABLN' or 'ABLN_ASSESSMENT/arabic' in payload:
             enrollment = ABLN.objects.get(id=int(enrollment_id))
-        elif model == 'RS':
-            enrollment = RS.objects.get(id=int(enrollment_id))
+        elif model == 'CBECE':
+            enrollment = CBECE.objects.get(id=int(enrollment_id))
+        # elif model == 'RS':
+        #     enrollment = RS.objects.get(id=int(enrollment_id))
         else:
             enrollment = CBECE.objects.get(id=int(enrollment_id))
 

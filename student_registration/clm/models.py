@@ -795,8 +795,8 @@ class CLM(TimeStampedModel):
         verbose_name=_('Caretaker Mother Name')
     )
 
-    cycle_completed = models.BooleanField(blank=True, default=False)
-    enrolled_at_school = models.BooleanField(blank=True, default=False)
+    cycle_completed = models.BooleanField(blank=True, default=False, verbose_name=_('Course completed successfully'))
+    enrolled_at_school = models.BooleanField(blank=True, default=False, verbose_name=_('Enrolled at School'))
 
     @property
     def student_fullname(self):
