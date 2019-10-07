@@ -166,6 +166,8 @@ class CLMSerializer(serializers.ModelSerializer):
             'unsuccessful_posttest_reason',
             'unsuccessful_pretest_reason',
             'created',
+            'cycle_completed',
+            'enrolled_at_school',
             # 'internal',
         )
 
