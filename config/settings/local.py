@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Local settings
-
 - Run in Debug mode
-
 - Use console backend for emails
-
 - Add Django Debug Toolbar
 - Add django-extensions as app
 """
@@ -124,6 +121,7 @@ LOGGING = {
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
+<<<<<<< HEAD
 # Auto logout delay in minutes
 AUTO_LOGOUT_DELAY = 20 # equivalent to 20 minutes
 CSRF_USE_SESSIONS = True
@@ -133,3 +131,6 @@ LOCKOUT_TIME = 15
 CSRF_COOKIE_AGE = None
 
 
+=======
+AUTO_LOGOUT_DELAY = 1000  # equivalent to 20 minutes
+>>>>>>> develop

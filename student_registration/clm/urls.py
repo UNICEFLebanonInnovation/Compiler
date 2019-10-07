@@ -130,6 +130,21 @@ urlpatterns = [
         name='abln_followup'
     ),
     url(
+        regex=r'^abln-post-assessment/(?P<pk>[\w.@+-]+)/$',
+        view=views.ABLNPostAssessmentView.as_view(),
+        name='abln_post_assessment'
+    ),
+    url(
+        regex=r'^bln-post-assessment/(?P<pk>[\w.@+-]+)/$',
+        view=views.BLNPostAssessmentView.as_view(),
+        name='bln_post_assessment'
+    ),
+    url(
+        regex=r'^cbece-post-assessment/(?P<pk>[\w.@+-]+)/$',
+        view=views.CBECEPostAssessmentView.as_view(),
+        name='cbece_post_assessment'
+    ),
+    url(
         'load-districts/$',
         views.load_districts,
         name='load_districts'

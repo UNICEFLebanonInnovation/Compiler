@@ -179,6 +179,8 @@ class CLM(TimeStampedModel):
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
         ('graduated_next_level', _('Graduated to the next level')),
+        ('graduated_next_round_same_level', _('Graduated to the next round, same level')),
+        ('graduated_next_round_higher_level', _('Graduated to the next round, higher level')),
         ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
         ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
         ('referred_to_another_program', _('Referred to another program')),
@@ -793,6 +795,9 @@ class CLM(TimeStampedModel):
         verbose_name=_('Caretaker Mother Name')
     )
 
+    cycle_completed = models.BooleanField(blank=True, default=False, verbose_name=_('Course completed successfully'))
+    enrolled_at_school = models.BooleanField(blank=True, default=False, verbose_name=_('Enrolled at School'))
+
     @property
     def student_fullname(self):
         if self.student:
@@ -846,6 +851,8 @@ class BLN(CLM):
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
         ('graduated_to_bln_next_level', _('Graduated to the next level')),
+        ('graduated_to_bln_next_round_same_level', _('Graduated to the next round, same level')),
+        ('graduated_to_bln_next_round_higher_level', _('Graduated to the next round, higher level')),
         ('referred_to_alp', _('referred to ALP')),
         ('referred_public_school', _('Referred to public school')),
         ('referred_to_tvet', _('Referred to TVET')),
@@ -1610,6 +1617,8 @@ class ABLN(CLM):
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
         ('graduated_to_abln_next_level', _('Graduated to the ABLN next level')),
+        ('graduated_to_abln_next_round_same_level', _('Graduated to the next round, same level')),
+        ('graduated_to_abln_next_round_higher_level', _('Graduated to the next round, higher level')),
         ('referred_to_bln', _('Referred to BLN')),
         ('referred_to_ybln', _('Referred to YBLN')),
         ('referred_to_alp', _('Referred to ALP')),
@@ -1669,7 +1678,7 @@ class ABLN(CLM):
     def assessment_form(self, stage, assessment_slug, callback=''):
         try:
             assessment = Assessment.objects.get(slug=assessment_slug)
-            return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=BLN&returnURL={callback}'.format(
+            return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=ABLN&returnURL={callback}'.format(
                 form=assessment.assessment_form,
                 status=stage,
                 enrollment_id=self.id,
