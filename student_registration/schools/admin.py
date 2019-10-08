@@ -87,6 +87,7 @@ class SchoolResource(resources.ModelResource):
             'total_attendances_days_alp',
             'total_attendances_days_alp_open',
             'total_attendances_days_2ndshift_open',
+            'is_closed',
         )
         export_order = fields
 
@@ -237,6 +238,7 @@ class SchoolAdmin(ImportExportModelAdmin):
         'academic_year_start',
         'academic_year_end',
         'academic_year_exam_end',
+        'is_closed',
         #'total_attendances_days_2ndshift',
         #'total_attendances_days_2ndshift_open',
         #'total_attendances_days_alp',
@@ -260,6 +262,7 @@ class SchoolAdmin(ImportExportModelAdmin):
         'total_attendances_days_2ndshift_open',
         'total_attendances_days_alp',
         'total_attendances_days_alp_open',
+        'is_closed',
     )
     search_fields = (
         'name',
@@ -274,6 +277,7 @@ class SchoolAdmin(ImportExportModelAdmin):
         'is_alp',
         'is_2nd_shift',
         'weekend',
+        'is_closed',
     )
     date_hierarchy = 'academic_year_start'
 

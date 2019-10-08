@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% load util_tags %}
+{% load static %}
+{% load render_table from django_tables2 %}
+{% load bootstrap3 %}
+{% bootstrap_css %}
+
+{% block extra_head %}
+    <link href="{% static 'django_tables2/bootstrap.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui-1.12.1.css' %}">
+{% endblock %}
+
+{% block content-full-page-ar %}
+
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><span class="badge badge-primary">{{ table.rows|length }}</span></li>
+            <li class="breadcrumb-item">{{ request.user.school }}</li>
+            <li class="breadcrumb-item">{{ request.user.school.location }}</li>
+            <li class="breadcrumb-item">{{ request.user.school.location.parent }}</li>
+        </ol>
+
+        <ol class="breadcrumb">
+          {% if request.user|has_group:"ENROL_CREATE" %}
+          <li class="breadcrumb-item">
+                <a href="{% url "staffenroll:add" %}" class="btn btn-success">
+                    <i class="icon-plus-sign icon-white"></i>
+                    {% trans "Add new Student" %}
+                </a>
+          </li>
+        {% endif %}
+          <li class="breadcrumb-item">
+            <a class="btn btn-info export-info" href="{% url "enrollments:export" %}" target="_blank">
+                <i class="icon-export-sign icon-white"></i>&nbsp;
+                    {% trans "Export students infos" %}
+            </a>
+          </li>
+          <li class="breadcrumb-item">
+            <div class="btn-group">
+              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="icon-export-sign icon-white"></i>&nbsp;
+                  {% trans "Export students grading" %}
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item export-grading" href="{% url "enrollments:export_grading" %}" target="_blank" itemscope="">{% trans 'All Terms' %}</a>
+                <a class="dropdown-item export-grading1" href="{% url "enrollments:export_grading" %}" target="_blank" itemscope="1">{% trans 'Term1' %}</a>
+                <a class="dropdown-item export-grading2" href="{% url "enrollments:export_grading" %}" target="_blank" itemscope="2">{% trans 'Term2' %}</a>
+                <a class="dropdown-item export-grading3" href="{% url "enrollments:export_grading" %}" target="_blank" itemscope="3">{% trans 'Term3' %}</a>
+                <a class="dropdown-item export-grading4" href="{% url "enrollments:export_grading" %}" target="_blank" itemscope="4">{% trans 'Term4' %}</a>
+              </div>
+            </div>
+
+          </li>
+          <li class="breadcrumb-item">
+              <input type="text" id="search_moved_student" size="400" style="width: 400px;" placeholder="{% trans "Search moved student" %}" />
+          </li>
+        </ol>
+        <div class="pb-5 pr-5 list-filter">
+            <form action="" method="get" class="form form-inline">
+                    {% bootstrap_form filter.form layout='inline' %}
+                    {% bootstrap_button _('filter') button_class="btn-primary" %}
+                    {% bootstrap_button _('reset') button_type="link" button_class="btn-warning" href='/enrollments/list/' %}
+            </form>
+        </div>
+        <div class="col-sm-10">
+            {% csrf_token %}
+            {% render_table table 'django_tables2/bootstrap.html' %}
+        </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    {% get_user_token request.user.id as user_token %}
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-1.12.3.min.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/jquery-ui-1.12.1.js' %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/validator.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/registrations.js' %}"></script>
+    <script>
+        var user_token = '{{ user_token }}';
+        var href_full_path = '{{ request.build_absolute_uri }}';
+        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+        var export_info = '{% url "enrollments:export" %}';
+        var export_grading = '{% url "enrollments:export_grading" %}';
+        var export_grading1 = '{% url "enrollments:export_grading" %}?term=1';
+        var export_grading2 = '{% url "enrollments:export_grading" %}?term=2';
+        var export_grading3 = '{% url "enrollments:export_grading" %}?term=3';
+        var export_grading4 = '{% url "enrollments:export_grading" %}?term=4';
+        $(document).ready(function(){
+            var params = '?classroom='+$('select#id_classroom').val() + '&section='+$('select#id_section').val();
+            var params2 = '&classroom='+$('select#id_classroom').val() + '&section='+$('select#id_section').val();
+            $('a.export-info').attr('href', export_info+params);
+            $('a.export-grading').attr('href', export_grading+params);
+            $('a.export-grading1').attr('href', export_grading1+params2);
+            $('a.export-grading2').attr('href', export_grading2+params2);
+            $('a.export-grading3').attr('href', export_grading3+params2);
+            $('a.export-grading4').attr('href', export_grading4+params2);
+        });
+    </script>
+{% endblock %}

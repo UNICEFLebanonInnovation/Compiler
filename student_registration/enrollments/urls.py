@@ -17,6 +17,11 @@ urlpatterns = [
         name='edit'
     ),
     url(
+        regex=r'^saveimage/(?P<pk>[\w.@+-]+)/$',
+        view=views.Update_Image.as_view(),
+        name='saveimage'
+    ),
+    url(
         regex=r'^edit-old-data/(?P<pk>[\w.@+-]+)/$',
         view=views.EditOldDataView.as_view(),
         name='edit_old_data'

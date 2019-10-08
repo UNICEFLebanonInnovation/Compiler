@@ -13,6 +13,9 @@ from .models import (
     Nationality,
     IDType,
     Labour,
+    FinancialSupport,
+    SpecialNeeds,
+    SpecialNeedsDt,
 )
 from .forms import StudentEnrollmentForm
 from student_registration.schools.models import (
@@ -589,6 +592,8 @@ class StudentResource(resources.ModelResource):
             'address',
             'phone',
             'phone_prefix',
+            'std_image',
+            'recordnumber',
         )
         export_order = (
             'enrollment_school',
@@ -631,6 +636,7 @@ class StudentAdmin(ImportExportModelAdmin):
         'sex',
         'nationality',
         'mother_nationality',
+
     )
     list_filter = (
         FromAgeFilter,
@@ -709,3 +715,6 @@ admin.site.register(Nationality, NationalityAdmin)
 admin.site.register(StudentMatching, StudentMatchingAdmin)
 admin.site.register(IDType, IDTypeAdmin)
 admin.site.register(Labour)
+admin.site.register(SpecialNeeds)
+admin.site.register(SpecialNeedsDt)
+admin.site.register(FinancialSupport)
