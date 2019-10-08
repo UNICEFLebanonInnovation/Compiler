@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-08 10:32+0300\n"
+"POT-Creation-Date: 2019-10-08 14:28+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgstr "امتحان الدخول"
 #: student_registration/clm/filters.py:106
 #: student_registration/dashboard/views.py:85
 #: student_registration/dashboard/views.py:173
-#: student_registration/enrollments/admin.py:444
+#: student_registration/enrollments/admin.py:443
 #: student_registration/enrollments/models.py:122
 #: student_registration/staffenroll/models.py:78
 #: student_registration/templates/alp/test_grading.html:21
@@ -390,7 +390,7 @@ msgstr "جنسية الأم"
 #: student_registration/backends/tasks.py:361
 #: student_registration/enrollments/forms.py:204
 #: student_registration/enrollments/tables.py:40
-#: student_registration/enrollments/tables.py:102
+#: student_registration/enrollments/tables.py:103
 #: student_registration/students/models.py:229
 msgid "Registered in UNHCR"
 msgstr "مسجل لدى المفوضية"
@@ -428,7 +428,7 @@ msgstr "رمز رقم الهاتف "
 #: student_registration/dashboard/views.py:186
 #: student_registration/enrollments/forms.py:226
 #: student_registration/enrollments/tables.py:39
-#: student_registration/enrollments/tables.py:101
+#: student_registration/enrollments/tables.py:102
 #: student_registration/staffs/forms.py:84
 #: student_registration/staffs/models.py:182
 #: student_registration/students/models.py:222
@@ -937,13 +937,13 @@ msgstr "حذف التلميذ "
 #: student_registration/backends/tasks.py:541
 #: student_registration/clm/tables.py:25
 #: student_registration/enrollments/tables.py:37
-#: student_registration/enrollments/tables.py:99
+#: student_registration/enrollments/tables.py:100
 msgid "Age"
 msgstr "العمر"
 
 #: student_registration/alp/tables.py:26 student_registration/clm/tables.py:26
 #: student_registration/enrollments/tables.py:38
-#: student_registration/enrollments/tables.py:100
+#: student_registration/enrollments/tables.py:101
 msgid "Birthday"
 msgstr "تاريخ الولادة"
 
@@ -2364,7 +2364,7 @@ msgid "Learning result"
 msgstr " نتيجة التعلم"
 
 #: student_registration/clm/models.py:226
-#: student_registration/enrollments/admin.py:453
+#: student_registration/enrollments/admin.py:452
 #: student_registration/enrollments/models.py:853
 #: student_registration/templates/alp/test_grading.html:19
 #: student_registration/templates/enrollments/grading.html:18
@@ -2852,28 +2852,28 @@ msgstr "انتقل"
 msgid "Is Present"
 msgstr "حاضر"
 
-#: student_registration/enrollments/admin.py:258
+#: student_registration/enrollments/admin.py:257
 #: student_registration/enrollments/models.py:835
 #: student_registration/templates/enrollments/list.html:46
 #: student_registration/templates/staffs/list.html:46
 msgid "Term1"
 msgstr " الفصل الاول "
 
-#: student_registration/enrollments/admin.py:259
+#: student_registration/enrollments/admin.py:258
 #: student_registration/enrollments/models.py:836
 #: student_registration/templates/enrollments/list.html:47
 #: student_registration/templates/staffs/list.html:47
 msgid "Term2"
 msgstr " الفصل الثاني "
 
-#: student_registration/enrollments/admin.py:260
+#: student_registration/enrollments/admin.py:259
 #: student_registration/enrollments/models.py:837
 #: student_registration/templates/enrollments/list.html:48
 #: student_registration/templates/staffs/list.html:48
 msgid "Term3"
 msgstr "اخر السنة "
 
-#: student_registration/enrollments/admin.py:261
+#: student_registration/enrollments/admin.py:260
 #: student_registration/enrollments/models.py:838
 #: student_registration/templates/enrollments/list.html:49
 #: student_registration/templates/staffs/list.html:49
@@ -3111,6 +3111,7 @@ msgid "Final"
 msgstr "العلامة النهائية"
 
 #: student_registration/enrollments/tables.py:34
+#: student_registration/enrollments/tables.py:98
 msgid "Incomplete?"
 msgstr "اكمال"
 
@@ -3672,7 +3673,9 @@ msgstr "المعلومات الشخصية للطفل"
 
 #: student_registration/students/models.py:390
 msgid "UNHCR picture"
-msgstr "صورة عن بطاقة العائلة لدى المفوضية السامية للأمم المتحدة لشؤون اللاجئين UNHCR File"
+msgstr ""
+"صورة عن بطاقة العائلة لدى المفوضية السامية للأمم المتحدة لشؤون اللاجئين "
+"UNHCR File"
 
 #: student_registration/students/models.py:397
 #: student_registration/templates/students/imagestd.html:59
