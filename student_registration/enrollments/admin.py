@@ -34,7 +34,6 @@ class DuplicateStdResource(resources.ModelResource):
         fields =(
             'is_solved',
             'remark',
-            'sysdate',
             'student_fullname',
             'student_birthday',
             'student_mother_fullname',
@@ -831,7 +830,6 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
         'coordinator_name',
         'remark',
         'owner',
-        'sysdate',
         'is_solved',
         'is_deleted',
 

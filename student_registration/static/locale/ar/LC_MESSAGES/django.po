@@ -3488,7 +3488,7 @@ msgstr " موقع المدرسة "
 
 #: student_registration/schools/models.py:155
 msgid "is closed"
-msgstr ""
+msgstr "مغلقة"
 
 #: student_registration/schools/models.py:370
 msgid "BLN current round"
@@ -3509,7 +3509,7 @@ msgstr "وصف المشكلة"
 #: student_registration/staffenroll/models.py:25
 #: student_registration/staffenroll/models.py:128
 msgid "Hour Rate"
-msgstr ""
+msgstr "القيمة"
 
 #: student_registration/staffenroll/models.py:66
 msgid "Jobs"
@@ -3517,15 +3517,15 @@ msgstr ""
 
 #: student_registration/staffenroll/models.py:96
 msgid "Subjects"
-msgstr ""
+msgstr "المواد"
 
 #: student_registration/staffenroll/models.py:123
 msgid "Weekly Nb of hours"
-msgstr ""
+msgstr "عدد الساعات في الأسبوع"
 
 #: student_registration/staffenroll/tables.py:18
 msgid "Edit Staff"
-msgstr ""
+msgstr "تعديل العامل"
 
 #: student_registration/staffenroll/tables.py:21
 msgid "Delete Staff"
@@ -3549,77 +3549,77 @@ msgstr "وضع التلميذ"
 
 #: student_registration/staffs/forms.py:92
 msgid "Minister Approval"
-msgstr ""
+msgstr "موافقة الوزير"
 
 #: student_registration/staffs/forms.py:95
 #: student_registration/staffs/models.py:64
 msgid "Exceptional Approved"
-msgstr ""
+msgstr "موافقة استثنائية"
 
 #: student_registration/staffs/forms.py:96
 #: student_registration/staffs/models.py:65
 msgid "Consent According to Conditions"
-msgstr ""
+msgstr "موافقة بحسب الشروط في المذكرة"
 
 #: student_registration/staffs/forms.py:97
 #: student_registration/staffs/models.py:66
 msgid "Cadre / Contractual"
-msgstr ""
+msgstr "ملاك او متعاقد وفق الاصول"
 
 #: student_registration/staffs/forms.py:106
 #: student_registration/staffs/models.py:203
 msgid "Bank"
-msgstr ""
+msgstr "البنك"
 
 #: student_registration/staffs/forms.py:111
 #: student_registration/staffs/models.py:209
 msgid "Branch"
-msgstr ""
+msgstr "الفرع"
 
 #: student_registration/staffs/forms.py:116
 #: student_registration/staffs/models.py:228
 msgid "Certificate"
-msgstr ""
+msgstr "الشهادة"
 
 #: student_registration/staffs/forms.py:121
 msgid "University"
-msgstr ""
+msgstr "الجامعة"
 
 #: student_registration/staffs/forms.py:126
 #: student_registration/staffs/models.py:215
 msgid "IBAN"
-msgstr ""
+msgstr "رقم الحساب البنكي IBAN"
 
 #: student_registration/staffs/forms.py:131
 #: student_registration/staffs/models.py:239
 msgid "Automated Nb"
-msgstr ""
+msgstr "الرقم الالي"
 
 #: student_registration/staffs/forms.py:136
 #: student_registration/staffs/models.py:244
 msgid "Financial Nb"
-msgstr ""
+msgstr "الرقم المالي"
 
 #: student_registration/staffs/forms.py:146
 #: student_registration/staffs/models.py:257
 msgid "Caza"
-msgstr ""
+msgstr "القضاء"
 
 #: student_registration/staffs/models.py:59
 msgid "Cadre"
-msgstr ""
+msgstr "ملاك"
 
 #: student_registration/staffs/models.py:60
 msgid "Contractual"
-msgstr ""
+msgstr "متعاقد"
 
 #: student_registration/staffs/models.py:61
 msgid "Supporter"
-msgstr ""
+msgstr "مستعان به"
 
 #: student_registration/staffs/models.py:122
 msgid "Minister Approved"
-msgstr ""
+msgstr "موافقة الوزير"
 
 #: student_registration/staffs/models.py:128
 #: student_registration/staffs/models.py:129
@@ -3627,7 +3627,7 @@ msgstr ""
 #: student_registration/students/models.py:357
 #: student_registration/templates/students/imagestd.html:20
 msgid "Profile Picture"
-msgstr ""
+msgstr "الصورة الشمسية"
 
 #: student_registration/staffs/models.py:180
 #: student_registration/students/models.py:213
@@ -3636,19 +3636,19 @@ msgstr "وضع التلميذ"
 
 #: student_registration/staffs/models.py:222
 msgid "Type on Employment"
-msgstr ""
+msgstr "نوع الوظيفة"
 
 #: student_registration/staffs/models.py:234
 msgid "University Name"
-msgstr ""
+msgstr "إسم الجامعة"
 
 #: student_registration/staffs/views.py:21
 msgid "STAFF FORM"
-msgstr ""
+msgstr "العاملين"
 
 #: student_registration/students/models.py:85
 msgid "Detail Special Needs"
-msgstr ""
+msgstr "تفاصيل الاحتياجات الخاصة"
 
 #: student_registration/students/models.py:220
 msgid "Have children"
@@ -3660,11 +3660,11 @@ msgstr ""
 
 #: student_registration/students/models.py:370
 msgid "Types Special Needs"
-msgstr ""
+msgstr "الاحتياجات الخاصة"
 
 #: student_registration/students/models.py:377
 msgid "Details Special Needs"
-msgstr ""
+msgstr "تفاصيل الاحتياجات الخاصة"
 
 #: student_registration/students/models.py:383
 msgid "Identification picture"
@@ -3672,24 +3672,24 @@ msgstr "المعلومات الشخصية للطفل"
 
 #: student_registration/students/models.py:390
 msgid "UNHCR picture"
-msgstr ""
+msgstr "صورة عن بطاقة العائلة لدى المفوضية السامية للأمم المتحدة لشؤون اللاجئين UNHCR File"
 
 #: student_registration/students/models.py:397
 #: student_registration/templates/students/imagestd.html:59
 msgid "Birth Document"
-msgstr "تاريخ الولادة - الشهر"
+msgstr "صورة الهوية/اخراج قيد/إفادة مختار"
 
 #: student_registration/students/models.py:404
 msgid "UNHCR Family Number"
-msgstr ""
+msgstr "الرقم العائلي بحسب بطاقة المفوضية السامية للأمم المتحدة"
 
 #: student_registration/students/models.py:411
 msgid "UNHCR Personal Number"
-msgstr "رقم تسلسلي خاص بالجمعية"
+msgstr "الرقم الشخصي بحسب بطاقة المفوضية السامية للأمم المتحدة"
 
 #: student_registration/students/models.py:418
 msgid "Financial Support Number"
-msgstr ""
+msgstr "رقم الدعم المادي"
 
 #: student_registration/templates/account/account_inactive.html:5
 #: student_registration/templates/account/account_inactive.html:8
