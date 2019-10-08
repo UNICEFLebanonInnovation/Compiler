@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Local settings
-
 - Run in Debug mode
-
 - Use console backend for emails
-
 - Add Django Debug Toolbar
 - Add django-extensions as app
 """
@@ -50,7 +47,7 @@ CACHES = {
 MIDDLEWARE = MIDDLEWARE + ['debug_toolbar.middleware.DebugToolbarMiddleware',
                            'student_registration.middleware.AutoLogout',
                            'student_registration.cache_control_middleware.CacheControlMiddleware',
-                           'student_registration.one_session.OneSessionPerUserMiddleware',
+                           # 'student_registration.one_session.OneSessionPerUserMiddleware',
                            'student_registration.hsts_middleware.HSTSMiddleware',
                            'student_registration.xframe_middleware.XFrameMiddleware',
                            ]
@@ -124,11 +121,4 @@ LOGGING = {
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
-# Auto logout delay in minutes
-AUTO_LOGOUT_DELAY = 20 # equivalent to 20 minutes
-#CSRF_USE_SESSIONS = True
-LOCKOUT_MAX_ATTEMPTS = 5
-LOCKOUT_TIME = 15
-
-
-
+AUTO_LOGOUT_DELAY = 1000  # equivalent to 20 minutes

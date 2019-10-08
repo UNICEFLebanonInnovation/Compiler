@@ -232,32 +232,32 @@ class CommonForm(forms.ModelForm):
     student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    participation = forms.ChoiceField(
-        label=_('How was the level of child participation in the program?'),
-        widget=forms.Select, required=False,
-        choices=PARTICIPATION,
-        initial=''
-    )
-    barriers = forms.MultipleChoiceField(
-        label=_('The main barriers affecting the daily attendance and performance of the child or drop out of programme? (Select more than one if applicable)'),
-        choices=CLM.BARRIERS,
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-    learning_result = forms.ChoiceField(
-        label=_('Based on the overall score, what is the recommended learning path?'),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('repeat_level', _('Repeat level')),
-            ('graduated_next_level', _('Referred to the next level')),
-            ('graduated_to_formal_kg', _('Referred to formal education - KG')),
-            ('graduated_to_formal_level1', _('Referred to formal education - Level 1')),
-            ('referred_to_another_program', _('Referred to another program')),
-            # ('dropout', _('Dropout from school'))
-        ),
-        initial=''
-    )
+    # participation = forms.ChoiceField(
+    #     label=_('How was the level of child participation in the program?'),
+    #     widget=forms.Select, required=False,
+    #     choices=PARTICIPATION,
+    #     initial=''
+    # )
+    # barriers = forms.MultipleChoiceField(
+    #     label=_('The main barriers affecting the daily attendance and performance of the child or drop out of programme? (Select more than one if applicable)'),
+    #     choices=CLM.BARRIERS,
+    #     widget=forms.CheckboxSelectMultiple,
+    #     required=False
+    # )
+    # learning_result = forms.ChoiceField(
+    #     label=_('Based on the overall score, what is the recommended learning path?'),
+    #     widget=forms.Select, required=False,
+    #     choices=(
+    #         ('', '----------'),
+    #         ('repeat_level', _('Repeat level')),
+    #         ('graduated_next_level', _('Referred to the next level')),
+    #         ('graduated_to_formal_kg', _('Referred to formal education - KG')),
+    #         ('graduated_to_formal_level1', _('Referred to formal education - Level 1')),
+    #         ('referred_to_another_program', _('Referred to another program')),
+    #         # ('dropout', _('Dropout from school'))
+    #     ),
+    #     initial=''
+    # )
 
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)
@@ -329,15 +329,15 @@ class CommonForm(forms.ModelForm):
             # 'labour_hours',
             'hh_educational_level',
             'father_educational_level',
-            'participation',
-            'barriers',
-            'learning_result',
+            # 'participation',
+            # 'barriers',
+            # 'learning_result',
             'student_id',
             'enrollment_id',
             'student_outreach_child',
             'comments',
             'unsuccessful_pretest_reason',
-            'unsuccessful_posttest_reason',
+            # 'unsuccessful_posttest_reason',
         )
         initial_fields = fields
         widgets = {}
@@ -353,46 +353,32 @@ class CommonForm(forms.ModelForm):
 
 class BLNForm(CommonForm):
 
-    # cycle = forms.ModelChoiceField(
-    #     empty_label='----------',
-    #     queryset=Cycle.objects.all(), widget=forms.Select,
-    #     label=_('In which cycle is this child registered?'),
-    #     required=True, to_field_name='id',
-    #     initial=0
-    # )
-    # referral = forms.MultipleChoiceField(
-    #     label=_('Where was the child referred?'),
-    #     choices=CLM.REFERRAL,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=True,
-    # )
     YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 16, Person.CURRENT_YEAR)))
     YEARS_BLN.insert(0, ('', '---------'))
 
-    participation = forms.ChoiceField(
-        label=_('How was the level of child participation in the program?'),
-        widget=forms.Select, required=False,
-        choices=(
-                ('', '----------'),
-                ('less_than_10days', _('Less than 10 absence days')),
-                ('10_15_days', _('10 to 15 absence days')),
-                ('15_20_days', _('15 to 20 absence days')),
-                ('more_than_20days', _('More than 20 absence days'))
-            ),
-        initial=''
-    )
-
-    student_birthday_year = forms.ChoiceField(
-        label=_("Birthday year"),
-        widget=forms.Select, required=True,
-        choices=YEARS_BLN
-    )
+    # participation = forms.ChoiceField(
+    #     label=_('How was the level of child participation in the program?'),
+    #     widget=forms.Select, required=False,
+    #     choices=(
+    #             ('', '----------'),
+    #             ('less_than_10days', _('Less than 10 absence days')),
+    #             ('10_15_days', _('10 to 15 absence days')),
+    #             ('15_20_days', _('15 to 20 absence days')),
+    #             ('more_than_20days', _('More than 20 absence days'))
+    #         ),
+    #     initial=''
+    # )
     round = forms.ModelChoiceField(
         queryset=CLMRound.objects.all(), widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
         # initial=CLMRound.objects.filter(current_round_bln=True).first().id
+    )
+    student_birthday_year = forms.ChoiceField(
+        label=_("Birthday year"),
+        widget=forms.Select, required=True,
+        choices=YEARS_BLN
     )
 
     student_family_status = forms.ChoiceField(
@@ -406,13 +392,13 @@ class BLNForm(CommonForm):
         choices=YES_NO_CHOICE,
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
-        required=False,
+        required=True,
     )
     have_labour = forms.MultipleChoiceField(
         label=_('Does the child participate in work?'),
         choices=CLM.HAVE_LABOUR,
         widget=forms.CheckboxSelectMultiple,
-        required=False, initial='no'
+        required=True, initial='no'
     )
     labours = forms.MultipleChoiceField(
         label=_('What is the type of work ?'),
@@ -424,17 +410,195 @@ class BLNForm(CommonForm):
         label=_('How many hours does this child work in a day?'),
         widget=forms.TextInput, required=False
     )
-    learning_result = forms.ChoiceField(
-        label=_('Based on the overall score, what is the recommended learning path?'),
-        widget=forms.Select, required=False,
+    # learning_result = forms.ChoiceField(
+    #     label=_('Based on the overall score, what is the recommended learning path?'),
+    #     widget=forms.Select, required=False,
+    #     choices=(
+    #         ('', '----------'),
+    #         ('graduated_to_bln_next_round_same_level', _('Graduated to the next round, same level')),
+    #         ('graduated_to_bln_next_round_higher_level', _('Graduated to the next round, higher level')),
+    #         ('referred_to_alp', _('referred to ALP')),
+    #         ('referred_public_school', _('Referred to public school')),
+    #         ('referred_to_tvet', _('Referred to TVET')),
+    #         ('referred_to_ybln', _('Referred to YBLN')),
+    #         ('dropout', _('Dropout, referral not possible')),
+    #     ),
+    #     initial=''
+    # )
+
+    education_status = forms.ChoiceField(
+        label=_('Education status'),
+        widget=forms.Select, required=True,
         choices=(
             ('', '----------'),
-            ('graduated_to_bln_next_level', _('Graduated to the next level')),
-            ('referred_to_alp', _('referred to ALP')),
-            ('referred_public_school', _('Referred to public school')),
-            ('referred_to_tvet', _('Referred to TVET')),
-            ('referred_to_ybln', _('Referred to YBLN')),
-            ('dropout', _('Dropout, referral not possible')),
+            ('out of school', _('Out of school')),
+            ('enrolled in formal education but did not continue', _("Enrolled in formal education but did not continue")),
+            ('enrolled in BLN', _("Enrolled in BLN")),
+        ),
+        initial=''
+    )
+
+    other_nationality = forms.CharField(
+        label=_('Specify the nationality'),
+        widget=forms.TextInput, required=False
+    )
+
+    phone_number = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=True,
+        label=_('Phone number (own or closest relative)')
+    )
+    phone_number_confirm = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=True,
+        label=_('Phone number confirm')
+    )
+
+    id_type = forms.ChoiceField(
+        label=_("ID type of the caretaker"),
+        widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
+        required=True,
+        choices=(
+            ('', '----------'),
+            ('UNHCR Registered', _('UNHCR Registered')),
+            ('UNHCR Recorded', _("UNHCR Recorded")),
+            ('Syrian national ID', _("Syrian national ID")),
+            ('Palestinian national ID', _("Palestinian national ID")),
+            ('Lebanese national ID', _("Lebanese national ID")),
+            ('Child have no ID', _("Child have no ID"))
+        ),
+        initial=''
+    )
+    case_number = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        required=False,
+        label=_('UNHCR Case Number')
+    )
+    case_number_confirm = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        required=False,
+        label=_('Confirm UNHCR Case Number')
+    )
+    parent_individual_case_number = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        required=False,
+        label=_(
+            'Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+    )
+    parent_individual_case_number_confirm = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        required=False,
+        label=_(
+            'Confirm Caretaker Individual ID from the certificate (Optional, in case not listed in the certificate)')
+    )
+    individual_case_number = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        required=False,
+        label=_(
+            'Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
+    )
+    individual_case_number_confirm = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        required=False,
+        label=_(
+                'Confirm Individual ID of the Child from the certificate (Optional, in case not listed in the certificate)')
+    )
+    recorded_number = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX'}),
+        required=False,
+        label=_('UNHCR Barcode number (Shifra number)')
+    )
+    recorded_number_confirm = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: LEB-XXCXXXXX'}),
+        required=False,
+        label=_('Confirm UNHCR Barcode number (Shifra number)')
+    )
+
+    national_number = forms.RegexField(
+        regex=r'^\d{12}$',
+        required=False,
+        label=_('Lebanese ID number of the child (Optional)')
+    )
+    national_number_confirm = forms.RegexField(
+        regex=r'^\d{12}$',
+        required=False,
+        label=_('Confirm Lebanese ID number of the child (optional)')
+    )
+    syrian_national_number = forms.RegexField(
+        regex=r'^\d{11}$',
+        required=False,
+        label=_('National ID number of the child (Optional)')
+    )
+    syrian_national_number_confirm = forms.RegexField(
+        regex=r'^\d{11}$',
+        required=False,
+        label=_('Confirm National ID number of the child (Optional)')
+    )
+    sop_national_number = forms.CharField(
+        required=False,
+        label=_('Palestinian ID number of the child (Optional)')
+    )
+    sop_national_number_confirm = forms.CharField(
+        required=False,
+        label=_('Confirm Palestinian ID number of the child (optional)')
+    )
+    parent_national_number = forms.RegexField(
+        regex=r'^\d{12}$',
+        required=False,
+        label=_('Lebanese ID number of the caretaker (Mandatory)')
+    )
+    parent_national_number_confirm = forms.RegexField(
+        regex=r'^\d{12}$',
+        required=False,
+        label=_('Confirm Lebanese ID number of the caretaker (Mandatory)')
+    )
+    parent_syrian_national_number = forms.RegexField(
+        regex=r'^\d{11}$',
+        required=False,
+        label=_('National ID number of the Caretaker (Mandatory)')
+    )
+    parent_syrian_national_number_confirm = forms.RegexField(
+        regex=r'^\d{11}$',
+        required=False,
+        label=_('Confirm National ID number of the Caretaker (Mandatory)')
+    )
+    parent_sop_national_number = forms.CharField(
+        # regex=r'^\d{11}$',
+        required=False,
+        label=_('Palestinian ID number of the Caretaker (Mandatory)')
+    )
+    parent_sop_national_number_confirm = forms.CharField(
+        # regex=r'^\d{11}$',
+        required=False,
+        label=_('Confirm Palestinian ID number of the Caretaker (Mandatory)')
+    )
+
+    no_child_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
+    no_parent_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    source_of_identification = forms.ChoiceField(
+        label=_("Source of identification of the child to BLN"),
+        widget=forms.Select,
+        required=True,
+        choices=(
+            ('', '----------'),
+            ('Referred by CP partner', _('Referred by CP partner')),
+            ('Referred by youth partner', _('Referred by youth partner')),
+            ('Family walked in to NGO', _('Family walked in to NGO')),
+            ('Referral from another NGO', _('Referral from another NGO')),
+            ('Referral from another Municipality', _('Referral from Municipality')),
+            ('Direct outreach', _('Direct outreach')),
+            ('List database', _('List database'))
         ),
         initial=''
     )
@@ -465,14 +629,14 @@ class BLNForm(CommonForm):
              )
             if instance.pre_test:
                 pre_test_button = ' btn-success '
-                post_test_button = ' btn-outline-success '
-                post_test = instance.assessment_form(
-                    stage='post_test',
-                    assessment_slug='bln_post_test',
-                    callback=self.request.build_absolute_uri(reverse('clm:bln_edit', kwargs={'pk': instance.id}))
-                 )
-            if instance.post_test:
-                post_test_button = ' btn-success '
+                # post_test_button = ' btn-outline-success '
+                # post_test = instance.assessment_form(
+                #     stage='post_test',
+                #     assessment_slug='bln_post_test',
+                #     callback=self.request.build_absolute_uri(reverse('clm:bln_edit', kwargs={'pk': instance.id}))
+                #  )
+            # if instance.post_test:
+            #     post_test_button = ' btn-success '
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -530,19 +694,21 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('round', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('source_of_identification', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
+                    Div('governorate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('district', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
+                    Div('location', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('language', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -574,6 +740,7 @@ class BLNForm(CommonForm):
                     Div('student_sex', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
                     Div('student_nationality', css_class='col-md-3'),
+                    Div('other_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -592,14 +759,16 @@ class BLNForm(CommonForm):
                     Div('student_p_code', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">12</span>'),
                     Div('disability', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('education_status', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
-                    Div('student_id_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">14</span>'),
-                    Div('internal_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default d-none">14</span>'),
+                    Div('student_id_number', css_class='col-md-3 d-none'),
                     HTML('<span class="badge badge-default">15</span>'),
+                    Div('internal_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('comments', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -608,7 +777,7 @@ class BLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Family Status') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parent/Caregiver Information') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -619,17 +788,150 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('student_family_status', css_class='col-md-3'),
+                    Div('phone_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('student_have_children', css_class='col-md-3', css_id='student_have_children'),
+                    Div('phone_number_confirm', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('have_labour', css_class='col-md-4'),
+                    Div('caretaker_first_name', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('labours', css_class='col-md-3', css_id='labours'),
+                    Div('caretaker_middle_name', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">7</span>'),
+                    Div('caretaker_last_name', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('caretaker_mother_name', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('id_type', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('case_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('case_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/unhcr_certificate.jpg" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id1',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('parent_individual_case_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('parent_individual_case_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id1',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('individual_case_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('individual_case_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id1',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('recorded_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('recorded_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id2',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('parent_national_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('parent_national_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id3',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('national_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('national_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id3',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('parent_syrian_national_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id4',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('syrian_national_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('syrian_national_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id4',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('parent_sop_national_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('parent_sop_national_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/sop_nationalID.png" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id5',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('sop_national_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('sop_national_number_confirm', css_class='col-md-4'),
+                    HTML('<span style="padding-top: 37px;">' +
+                         '<a href="/static/images/sop_nationalID.png" target="_blank">' +
+                         '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+                    css_class='row child_id child_id5',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Family Status') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_family_status', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('student_have_children', css_class='col-md-3', css_id='student_have_children'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('have_labour', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('labours', css_class='col-md-3', css_id='labours'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
                     css_class='row',
                 ),
@@ -641,11 +943,14 @@ class BLNForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">1</span>'),
                     HTML('<div class="col-md-3"><a class="btn ' + pre_test_button + '" href="' +
                          pre_test + '">' + _('Pre-assessment') + '</a></div>'),
-                    HTML(
-                        '<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
-                        post_test + '">' + _('Post-assessment') + '</a></div>'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('unsuccessful_pretest_reason', css_class='col-md-3'),
+                    # HTML(
+                    #     '<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
+                    #     post_test + '">' + _('Post-assessment') + '</a></div>'),
                     css_class='row',
                 ),
                 Div(
@@ -654,29 +959,29 @@ class BLNForm(CommonForm):
                 ),
                 css_class='bd-callout bd-callout-warning' + display_assessment
             ),
-            Fieldset(
-                None,
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('unsuccessful_pretest_reason', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('unsuccessful_posttest_reason', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('participation', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('barriers', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('learning_result', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                css_class='bd-callout bd-callout-warning'+display_assessment
-            ),
+            # Fieldset(
+            #     None,
+            #     Div(
+            #         HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">1</span>'),
+            #         Div('unsuccessful_pretest_reason', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">2</span>'),
+            #         Div('unsuccessful_posttest_reason', css_class='col-md-3'),
+            #         css_class='row',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">3</span>'),
+            #         Div('participation', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">4</span>'),
+            #         Div('barriers', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">5</span>'),
+            #         Div('learning_result', css_class='col-md-3'),
+            #         css_class='row',
+            #     ),
+            #     css_class='bd-callout bd-callout-warning'+display_assessment
+            # ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
@@ -685,6 +990,124 @@ class BLNForm(CommonForm):
                 HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
+
+    def clean(self):
+        cleaned_data = super(BLNForm, self).clean()
+
+        phone_number = cleaned_data.get("phone_number")
+        phone_number_confirm = cleaned_data.get("phone_number_confirm")
+        id_type = cleaned_data.get("id_type")
+        case_number = cleaned_data.get("case_number")
+        case_number_confirm = cleaned_data.get("case_number_confirm")
+        individual_case_number = cleaned_data.get("individual_case_number")
+        individual_case_number_confirm = cleaned_data.get("individual_case_number_confirm")
+        recorded_number = cleaned_data.get("recorded_number")
+        recorded_number_confirm = cleaned_data.get("recorded_number_confirm")
+        national_number = cleaned_data.get("national_number")
+        national_number_confirm = cleaned_data.get("national_number_confirm")
+        syrian_national_number = cleaned_data.get("syrian_national_number")
+        syrian_national_number_confirm = cleaned_data.get("syrian_national_number_confirm")
+        sop_national_number = cleaned_data.get("sop_national_number")
+        sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
+
+        parent_individual_case_number = cleaned_data.get("parent_individual_case_number")
+        parent_individual_case_number_confirm = cleaned_data.get("parent_individual_case_number_confirm")
+        parent_national_number = cleaned_data.get("parent_national_number")
+        parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
+        sop_parent_national_number = cleaned_data.get("parent_sop_national_number")
+        sop_parent_national_number_confirm = cleaned_data.get("parent_sop_national_number_confirm")
+        parent_syrian_national_number = cleaned_data.get("parent_syrian_national_number")
+        parent_syrian_national_number_confirm = cleaned_data.get("parent_syrian_national_number_confirm")
+
+        if phone_number != phone_number_confirm:
+            msg = "The phone numbers are not matched"
+            self.add_error('phone_number_confirm', msg)
+
+        if id_type == 'UNHCR Registered':
+            if not case_number:
+                self.add_error('case_number', 'This field is required')
+
+            if case_number != case_number_confirm:
+                msg = "The case numbers are not matched"
+                self.add_error('case_number_confirm', msg)
+
+            if parent_individual_case_number != parent_individual_case_number_confirm:
+                msg = "The individual case numbers are not matched"
+                self.add_error('parent_individual_case_number_confirm', msg)
+
+            if individual_case_number != individual_case_number_confirm:
+                msg = "The individual case numbers are not matched"
+                self.add_error('individual_case_number_confirm', msg)
+
+        if id_type == 'UNHCR Recorded':
+            if not recorded_number:
+                self.add_error('recorded_number', 'This field is required')
+
+            if recorded_number != recorded_number_confirm:
+                msg = "The recorded numbers are not matched"
+                self.add_error('recorded_number_confirm', msg)
+
+        if id_type == 'Syrian national ID':
+
+            if not parent_syrian_national_number:
+                self.add_error('parent_syrian_national_number', 'This field is required')
+
+            if not parent_syrian_national_number_confirm:
+                self.add_error('parent_syrian_national_number_confirm', 'This field is required')
+
+            if parent_syrian_national_number_confirm and not len(parent_syrian_national_number_confirm) == 11:
+                msg = "Please enter a valid number (11 digits)"
+                self.add_error('parent_syrian_national_number_confirm', msg)
+
+            if parent_syrian_national_number and not len(parent_syrian_national_number) == 11:
+                msg = "Please enter a valid number (11 digits)"
+                self.add_error('parent_syrian_national_number', msg)
+
+            if parent_syrian_national_number != parent_syrian_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('parent_syrian_national_number_confirm', msg)
+
+            if syrian_national_number != syrian_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('syrian_national_number_confirm', msg)
+
+        if id_type == 'Lebanese national ID':
+            if not parent_national_number:
+                self.add_error('parent_national_number', 'This field is required')
+
+            if not parent_national_number_confirm:
+                self.add_error('parent_national_number_confirm', 'This field is required')
+
+            if parent_national_number and not len(parent_national_number) == 12:
+                msg = "Please enter a valid number (12 digits)"
+                self.add_error('parent_national_number', msg)
+
+            if parent_national_number_confirm and not len(parent_national_number_confirm) == 12:
+                msg = "Please enter a valid number (12 digits)"
+                self.add_error('parent_national_number_confirm', msg)
+
+            if parent_national_number != parent_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('parent_national_number_confirm', msg)
+
+            if national_number != national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('national_number_confirm', msg)
+
+        if id_type == 'Palestinian national ID':
+            if not sop_parent_national_number:
+                self.add_error('parent_sop_national_number', 'This field is required')
+
+            if not sop_parent_national_number_confirm:
+                self.add_error('parent_sop_national_number_confirm', 'This field is required')
+
+            if sop_parent_national_number != sop_parent_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('parent_sop_national_number_confirm', msg)
+
+            if sop_national_number != sop_national_number_confirm:
+                msg = "The national numbers are not matched"
+                self.add_error('sop_national_number_confirm', msg)
 
     def save(self, request=None, instance=None, serializer=None):
         super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
@@ -700,6 +1123,37 @@ class BLNForm(CommonForm):
             'have_labour',
             'labours',
             'labour_hours',
+            'phone_number',
+            'phone_number_confirm',
+            'id_type',
+            'case_number',
+            'case_number_confirm',
+            'individual_case_number',
+            'individual_case_number_confirm',
+            'parent_individual_case_number',
+            'parent_individual_case_number_confirm',
+            'recorded_number',
+            'recorded_number_confirm',
+            'national_number',
+            'national_number_confirm',
+            'syrian_national_number',
+            'syrian_national_number_confirm',
+            'sop_national_number',
+            'sop_national_number_confirm',
+            'parent_national_number',
+            'parent_national_number_confirm',
+            'parent_syrian_national_number',
+            'parent_syrian_national_number_confirm',
+            'parent_sop_national_number',
+            'parent_sop_national_number_confirm',
+            'no_child_id_confirmation',
+            'source_of_identification',
+            'other_nationality',
+            'education_status',
+            'caretaker_first_name',
+            'caretaker_middle_name',
+            'caretaker_last_name',
+            'caretaker_mother_name',
         )
 
     class Media:
@@ -1385,18 +1839,18 @@ class CBECEForm(CommonForm):
         widget=forms.NumberInput,
         min_value=0, max_value=80
     )
-    learning_result = forms.ChoiceField(
-        label=_('Based on the overall score, what is the recommended learning path?'),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('repeat_level', _('Repeat level')),
-            ('graduated_next_level', _('Referred to the next level')),
-            ('graduated_to_formal_education_level1', _('Referred to formal education - Level 1')),
-            ('referred_to_another_program', _('Referred to another program')),
-        ),
-        initial=''
-    )
+    # learning_result = forms.ChoiceField(
+    #     label=_('Based on the overall score, what is the recommended learning path?'),
+    #     widget=forms.Select, required=False,
+    #     choices=(
+    #         ('', '----------'),
+    #         ('repeat_level', _('Repeat level')),
+    #         ('graduated_next_level', _('Referred to the next level')),
+    #         ('graduated_to_formal_education_level1', _('Referred to formal education - Level 1')),
+    #         ('referred_to_another_program', _('Referred to another program')),
+    #     ),
+    #     initial=''
+    # )
     round = forms.ModelChoiceField(
         queryset=CLMRound.objects.all(), widget=forms.Select,
         label=_('Round'),
@@ -1433,14 +1887,14 @@ class CBECEForm(CommonForm):
 
             if instance.pre_test:
                 pre_test_button = ' btn-success '
-                post_test_button = ' btn-outline-success '
-                post_test = instance.assessment_form(
-                    stage='post_test',
-                    assessment_slug='cbece_post_test',
-                    callback=self.request.build_absolute_uri(reverse('clm:cbece_edit', kwargs={'pk': instance.id}))
-                 )
-            if instance.post_test:
-                post_test_button = ' btn-success '
+                # post_test_button = ' btn-outline-success '
+                # post_test = instance.assessment_form(
+                #     stage='post_test',
+                #     assessment_slug='cbece_post_test',
+                #     callback=self.request.build_absolute_uri(reverse('clm:cbece_edit', kwargs={'pk': instance.id}))
+                #  )
+            # if instance.post_test:
+            #     post_test_button = ' btn-success '
 
             if instance.cycle_id == 3:
                 display_final_grade = ''
@@ -1619,11 +2073,14 @@ class CBECEForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment') + '</h4>')
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">1</span>'),
                     HTML('<div class="col-md-3"><a class="btn ' + pre_test_button + '" href="' +
                          pre_test+'">' + _('Pre-assessment') + '</a></div>'),
-                    HTML('<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
-                         post_test+'">' + _('Post-assessment') + '</a></div>'),
-                    css_class='row',
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('unsuccessful_pretest_reason', css_class='col-md-3'),
+                    # HTML('<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
+                    #      post_test+'">' + _('Post-assessment') + '</a></div>'),
+                    # css_class='row',
                 ),
                 Div(
                     HTML('<div class="p-3"></div>'),
@@ -1631,33 +2088,32 @@ class CBECEForm(CommonForm):
                 ),
                 css_class='bd-callout bd-callout-warning'+display_assessment
             ),
-            Fieldset(
-                None,
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('unsuccessful_pretest_reason', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('unsuccessful_posttest_reason', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default '+display_final_grade+'">3</span>'),
-                    Div('final_grade', css_class='col-md-3'+display_final_grade),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('participation', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('barriers', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6</span>'),
-                    Div('learning_result', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                css_class='bd-callout bd-callout-warning'+display_assessment
-            ),
+            # Fieldset(
+            #     None,
+            #     Div(
+            #         HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">1</span>'),
+            #         Div('unsuccessful_pretest_reason', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">2</span>'),
+            #         Div('unsuccessful_posttest_reason', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default '+display_final_grade+'">3</span>'),
+            #         Div('final_grade', css_class='col-md-3'+display_final_grade),
+            #         css_class='row',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">4</span>'),
+            #         Div('participation', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">5</span>'),
+            #         Div('barriers', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">6</span>'),
+            #         Div('learning_result', css_class='col-md-3'),
+            #         css_class='row',
+            #     ),
+            #     css_class='bd-callout bd-callout-warning'+display_assessment
+            # ),
             FormActions(
-                Submit('save', _('Save')),
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
                 Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data'),
@@ -1678,7 +2134,7 @@ class CBECEForm(CommonForm):
             'school',
             'referral',
             'child_muac',
-            'final_grade',
+            # 'final_grade',
         )
 
 
@@ -1687,24 +2143,24 @@ class ABLNForm(CommonForm):
     YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 16, Person.CURRENT_YEAR)))
     YEARS_BLN.insert(0, ('', '---------'))
 
-    participation = forms.ChoiceField(
-        label=_('How was the level of child participation in the program?'),
-        widget=forms.Select, required=False,
-        choices=(
-                ('', '----------'),
-                ('less_than_3days', _('Less than 3 absence days')),
-                ('3_7_days', _('3 to 7 absence days')),
-                ('7_12_days', _('7 to 12 absence days')),
-                ('more_than_12days', _('More than 12 absence days'))
-            ),
-        initial=''
-    )
+    # participation = forms.ChoiceField(
+    #     label=_('How was the level of child participation in the program?'),
+    #     widget=forms.Select, required=False,
+    #     choices=(
+    #             ('', '----------'),
+    #             ('less_than_3days', _('Less than 3 absence days')),
+    #             ('3_7_days', _('3 to 7 absence days')),
+    #             ('7_12_days', _('7 to 12 absence days')),
+    #             ('more_than_12days', _('More than 12 absence days'))
+    #         ),
+    #     initial=''
+    # )
     round = forms.ModelChoiceField(
         queryset=CLMRound.objects.all(), widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
-        # initial=CLMRound.objects.filter(current_round_abln=True).first().id
+        initial=8
     )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
@@ -1741,20 +2197,21 @@ class ABLNForm(CommonForm):
         label=_('How many hours does this child work in a day?'),
         widget=forms.TextInput, required=False
     )
-    learning_result = forms.ChoiceField(
-        label=_('Based on the overall score, what is the recommended learning path?'),
-        widget=forms.Select, required=False,
-        choices=(
-            ('', '----------'),
-            ('graduated_to_abln_next_level', _('Graduated to the ABLN next level')),
-            ('referred_to_bln', _('Referred to BLN')),
-            ('referred_to_ybln', _('Referred to YBLN')),
-            ('referred_to_alp', _('Referred to ALP')),
-            ('referred_to_cbt', _('Referred to CBT')),
-            ('dropout', _('Dropout, referral not possible')),
-        ),
-        initial=''
-    )
+    # learning_result = forms.ChoiceField(
+    #     label=_('Based on the overall score, what is the recommended learning path?'),
+    #     widget=forms.Select, required=False,
+    #     choices=(
+    #         ('', '----------'),
+    #         ('graduated_to_abln_next_round_same_level', _('Graduated to the next round, same level')),
+    #         ('graduated_to_abln_next_round_higher_level', _('Graduated to the next round, higher level')),
+    #         ('referred_to_bln', _('Referred to BLN')),
+    #         ('referred_to_ybln', _('Referred to YBLN')),
+    #         ('referred_to_alp', _('Referred to ALP')),
+    #         ('referred_to_cbt', _('Referred to CBT')),
+    #         ('dropout', _('Dropout, referral not possible')),
+    #     ),
+    #     initial=''
+    # )
 
     education_status = forms.ChoiceField(
         label=_('Education status'),
@@ -1768,7 +2225,7 @@ class ABLNForm(CommonForm):
         initial=''
     )
 
-    other_nationality = forms.ChoiceField(
+    other_nationality = forms.CharField(
         label=_('Specify the nationality'),
         widget=forms.TextInput, required=False
     )
@@ -1855,22 +2312,22 @@ class ABLNForm(CommonForm):
     )
 
     national_number = forms.RegexField(
-        regex=r'^[0-9]\d{10}$',
+        regex=r'^\d{12}$',
         required=False,
         label=_('Lebanese ID number of the child (Optional)')
     )
     national_number_confirm = forms.RegexField(
-        regex=r'^^[0-9]\d{10}$',
+        regex=r'^\d{12}$',
         required=False,
         label=_('Confirm Lebanese ID number of the child (optional)')
     )
     syrian_national_number = forms.RegexField(
-        regex=r'^[0-9]\d{11}$',
+        regex=r'^\d{11}$',
         required=False,
         label=_('National ID number of the child (Optional)')
     )
     syrian_national_number_confirm = forms.RegexField(
-        regex=r'^^[0-9]\d{11}$',
+        regex=r'^\d{11}$',
         required=False,
         label=_('Confirm National ID number of the child (Optional)')
     )
@@ -1883,32 +2340,32 @@ class ABLNForm(CommonForm):
         label=_('Confirm Palestinian ID number of the child (optional)')
     )
     parent_national_number = forms.RegexField(
-        regex=r'^[0-9]\d{10}$',
+        regex=r'^\d{12}$',
         required=False,
         label=_('Lebanese ID number of the caretaker (Mandatory)')
     )
     parent_national_number_confirm = forms.RegexField(
-        regex=r'^^[0-9]\d{10}$',
+        regex=r'^\d{12}$',
         required=False,
         label=_('Confirm Lebanese ID number of the caretaker (Mandatory)')
     )
     parent_syrian_national_number = forms.RegexField(
-        regex=r'^[0-9]\d{11}$',
+        regex=r'^\d{11}$',
         required=False,
         label=_('National ID number of the Caretaker (Mandatory)')
     )
     parent_syrian_national_number_confirm = forms.RegexField(
-        regex=r'^^[0-9]\d{11}$',
+        regex=r'^\d{11}$',
         required=False,
         label=_('Confirm National ID number of the Caretaker (Mandatory)')
     )
-    parent_sop_national_number = forms.RegexField(
-        regex=r'^[0-9]\d{11}$',
+    parent_sop_national_number = forms.CharField(
+        # regex=r'^\d{11}$',
         required=False,
         label=_('Palestinian ID number of the Caretaker (Mandatory)')
     )
-    parent_sop_national_number_confirm = forms.RegexField(
-        regex=r'^^[0-9]\d{11}$',
+    parent_sop_national_number_confirm = forms.CharField(
+        # regex=r'^\d{11}$',
         required=False,
         label=_('Confirm Palestinian ID number of the Caretaker (Mandatory)')
     )
@@ -1938,9 +2395,9 @@ class ABLNForm(CommonForm):
         super(ABLNForm, self).__init__(*args, **kwargs)
 
         pre_test = ''
-        post_test = ''
+        # post_test = ''
         pre_test_button = ' btn-outline-success '
-        post_test_button = ' btn-outline-secondary disabled'
+        # post_test_button = ' btn-outline-secondary disabled'
         display_assessment = ' d-none'
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
@@ -1959,14 +2416,14 @@ class ABLNForm(CommonForm):
              )
             if instance.pre_test:
                 pre_test_button = ' btn-success '
-                post_test_button = ' btn-outline-success '
-                post_test = instance.assessment_form(
-                    stage='post_test',
-                    assessment_slug='abln_post_test',
-                    callback=self.request.build_absolute_uri(reverse('clm:abln_edit', kwargs={'pk': instance.id}))
-                 )
-            if instance.post_test:
-                post_test_button = ' btn-success '
+            #     post_test_button = ' btn-outline-success '
+            #     post_test = instance.assessment_form(
+            #         stage='post_test',
+            #         assessment_slug='abln_post_test',
+            #         callback=self.request.build_absolute_uri(reverse('clm:abln_edit', kwargs={'pk': instance.id}))
+            #      )
+            # if instance.post_test:
+            #     post_test_button = ' btn-success '
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -2273,11 +2730,14 @@ class ABLNForm(CommonForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
                 ),
                 Div(
+                    HTML('<span class="badge badge-default">1</span>'),
                     HTML('<div class="col-md-3"><a class="btn ' + pre_test_button + '" href="' +
                          pre_test + '">' + _('Pre-assessment') + '</a></div>'),
-                    HTML(
-                        '<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
-                        post_test + '">' + _('Post-assessment') + '</a></div>'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('unsuccessful_pretest_reason', css_class='col-md-3'),
+                    # HTML(
+                    #     '<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
+                    #     post_test + '">' + _('Post-assessment') + '</a></div>'),
                     css_class='row',
                 ),
                 Div(
@@ -2286,29 +2746,29 @@ class ABLNForm(CommonForm):
                 ),
                 css_class='bd-callout bd-callout-warning' + display_assessment
             ),
-            Fieldset(
-                None,
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('unsuccessful_pretest_reason', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('unsuccessful_posttest_reason', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('participation', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('barriers', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('learning_result', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                css_class='bd-callout bd-callout-warning'+display_assessment
-            ),
+            # Fieldset(
+            #     None,
+            #     Div(
+            #         HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">1</span>'),
+            #         Div('unsuccessful_pretest_reason', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">2</span>'),
+            #         Div('unsuccessful_posttest_reason', css_class='col-md-3'),
+            #         css_class='row',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">3</span>'),
+            #         Div('participation', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">4</span>'),
+            #         Div('barriers', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">5</span>'),
+            #         Div('learning_result', css_class='col-md-3'),
+            #         css_class='row',
+            #     ),
+            #     css_class='bd-callout bd-callout-warning'+display_assessment
+            # ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
@@ -2341,8 +2801,8 @@ class ABLNForm(CommonForm):
         parent_individual_case_number_confirm = cleaned_data.get("parent_individual_case_number_confirm")
         parent_national_number = cleaned_data.get("parent_national_number")
         parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
-        sop_parent_national_number = cleaned_data.get("parent_national_number")
-        sop_parent_national_number_confirm = cleaned_data.get("parent_national_number_confirm")
+        sop_parent_national_number = cleaned_data.get("parent_sop_national_number")
+        sop_parent_national_number_confirm = cleaned_data.get("parent_sop_national_number_confirm")
         parent_syrian_national_number = cleaned_data.get("parent_syrian_national_number")
         parent_syrian_national_number_confirm = cleaned_data.get("parent_syrian_national_number_confirm")
 
@@ -2382,13 +2842,13 @@ class ABLNForm(CommonForm):
             if not parent_syrian_national_number_confirm:
                 self.add_error('parent_syrian_national_number_confirm', 'This field is required')
 
-            if parent_syrian_national_number and not len(parent_syrian_national_number_confirm) == 11:
+            if parent_syrian_national_number_confirm and not len(parent_syrian_national_number_confirm) == 11:
                 msg = "Please enter a valid number (11 digits)"
                 self.add_error('parent_syrian_national_number_confirm', msg)
 
             if parent_syrian_national_number and not len(parent_syrian_national_number) == 11:
                 msg = "Please enter a valid number (11 digits)"
-                self.add_error('national_number_confirm', msg)
+                self.add_error('parent_syrian_national_number', msg)
 
             if parent_syrian_national_number != parent_syrian_national_number_confirm:
                 msg = "The national numbers are not matched"
@@ -2423,14 +2883,14 @@ class ABLNForm(CommonForm):
 
         if id_type == 'Palestinian national ID':
             if not sop_parent_national_number:
-                self.add_error('sop_parent_national_number', 'This field is required')
+                self.add_error('parent_sop_national_number', 'This field is required')
 
             if not sop_parent_national_number_confirm:
-                self.add_error('sop_parent_national_number_confirm', 'This field is required')
+                self.add_error('parent_sop_national_number_confirm', 'This field is required')
 
             if sop_parent_national_number != sop_parent_national_number_confirm:
                 msg = "The national numbers are not matched"
-                self.add_error('sop_parent_national_number_confirm', msg)
+                self.add_error('parent_sop_national_number_confirm', msg)
 
             if sop_national_number != sop_national_number_confirm:
                 msg = "The national numbers are not matched"
@@ -2496,7 +2956,7 @@ class ABLNAssessmentForm(forms.ModelForm):
 
     participation = forms.ChoiceField(
         label=_('How was the level of child participation in the program?'),
-        widget=forms.Select, required=False,
+        widget=forms.Select, required=True,
         choices=(
                 ('', '----------'),
                 ('less_than_3days', _('Less than 3 absence days')),
@@ -2508,10 +2968,11 @@ class ABLNAssessmentForm(forms.ModelForm):
     )
     learning_result = forms.ChoiceField(
         label=_('Based on the overall score, what is the recommended learning path?'),
-        widget=forms.Select, required=False,
+        widget=forms.Select, required=True,
         choices=(
             ('', '----------'),
-            ('graduated_to_abln_next_level', _('Graduated to the ABLN next level')),
+            ('graduated_to_abln_next_round_same_level', _('Graduated to the next round, same level')),
+            ('graduated_to_abln_next_round_higher_level', _('Graduated to the next round, higher level')),
             ('referred_to_bln', _('Referred to BLN')),
             ('referred_to_ybln', _('Referred to YBLN')),
             ('referred_to_alp', _('Referred to ALP')),
@@ -2520,34 +2981,50 @@ class ABLNAssessmentForm(forms.ModelForm):
         ),
         initial=''
     )
+    barriers = forms.MultipleChoiceField(
+        label=_('The main barriers affecting the daily attendance and performance '
+                'of the child or drop out of programme? (Select more than one if applicable)'),
+        choices=CLM.BARRIERS,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+
+    # cycle_completed = forms.TypedChoiceField(
+    #     label=_("Completed the cycle?"),
+    #     choices=YES_NO_CHOICE,
+    #     coerce=lambda x: bool(int(x)),
+    #     widget=forms.RadioSelect,
+    #     required=True,
+    #     initial=False,
+    # )
+    # enrolled_at_school = forms.TypedChoiceField(
+    #     label=_("Enrolled at school?"),
+    #     choices=YES_NO_CHOICE,
+    #     coerce=lambda x: bool(int(x)),
+    #     widget=forms.RadioSelect,
+    #     required=True,
+    #     initial=False,
+    # )
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(ABLNAssessmentForm, self).__init__(*args, **kwargs)
 
-        pre_test = ''
         post_test = ''
-        pre_test_button = ' btn-outline-success '
         post_test_button = ' btn-outline-secondary disabled'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         self.fields['clm_type'].initial = 'ABLN'
-        self.fields['district'].queryset = Location.objects.none()
 
         display_assessment = ''
-        form_action = reverse('clm:abln_assessment', kwargs={'pk': instance.id})
+        form_action = reverse('clm:abln_post_assessment', kwargs={'pk': instance.id})
 
-        pre_test = instance.assessment_form(
-            stage='pre_test',
-            assessment_slug='abln_pre_test',
-            callback=self.request.build_absolute_uri(reverse('clm:abln_assessment', kwargs={'pk': instance.id}))
-         )
         if instance.pre_test:
-            pre_test_button = ' btn-success '
             post_test_button = ' btn-outline-success '
             post_test = instance.assessment_form(
                 stage='post_test',
                 assessment_slug='abln_post_test',
-                callback=self.request.build_absolute_uri(reverse('clm:abln_assessment', kwargs={'pk': instance.id}))
+                callback=self.request.build_absolute_uri(reverse('clm:abln_post_assessment', kwargs={'pk': instance.id}))
              )
         if instance.post_test:
             post_test_button = ' btn-success '
@@ -2559,11 +3036,10 @@ class ABLNAssessmentForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
+                    'clm_type',
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
                 ),
                 Div(
-                    HTML('<div class="col-md-3"><a class="btn ' + pre_test_button + '" href="' +
-                         pre_test + '">' + _('Pre-assessment') + '</a></div>'),
                     HTML(
                         '<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
                         post_test + '">' + _('Post-assessment') + '</a></div>'),
@@ -2582,26 +3058,31 @@ class ABLNAssessmentForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('unsuccessful_pretest_reason', css_class='col-md-3'),
+                    Div('unsuccessful_posttest_reason', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('unsuccessful_posttest_reason', css_class='col-md-3'),
+                    Div('participation', css_class='col-md-4'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('participation', css_class='col-md-3'),
+                    Div('barriers', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('barriers', css_class='col-md-3'),
+                    Div('learning_result', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('learning_result', css_class='col-md-3'),
+                    Div('cycle_completed', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('enrolled_at_school', css_class='col-md-4'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'+display_assessment
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' +
+                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
         )
 
@@ -2617,8 +3098,307 @@ class ABLNAssessmentForm(forms.ModelForm):
             'participation',
             'barriers',
             'learning_result',
-            'unsuccessful_pretest_reason',
             'unsuccessful_posttest_reason',
+            'cycle_completed',
+            'enrolled_at_school',
+        )
+
+
+class BLNAssessmentForm(forms.ModelForm):
+
+    participation = forms.ChoiceField(
+        label=_('How was the level of child participation in the program?'),
+        widget=forms.Select, required=True,
+        choices=(
+                ('', '----------'),
+                ('less_than_10days', _('Less than 10 absence days')),
+                ('10_15_days', _('10 to 15 absence days')),
+                ('15_20_days', _('15 to 20 absence days')),
+                ('more_than_20days', _('More than 20 absence days'))
+            ),
+        initial=''
+    )
+    learning_result = forms.ChoiceField(
+        label=_('Based on the overall score, what is the recommended learning path?'),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('graduated_to_bln_next_level', _('Graduated to the next level')),
+            ('graduated_to_bln_next_round_same_level', _('Graduated to the next round, same level')),
+            ('graduated_to_bln_next_round_higher_level', _('Graduated to the next round, higher level')),
+            ('referred_to_alp', _('referred to ALP')),
+            ('referred_public_school', _('Referred to public school')),
+            ('referred_to_tvet', _('Referred to TVET')),
+            ('referred_to_ybln', _('Referred to YBLN')),
+            ('dropout', _('Dropout, referral not possible')),
+        ),
+        initial=''
+    )
+    barriers = forms.MultipleChoiceField(
+        label=_('The main barriers affecting the daily attendance and performance '
+                'of the child or drop out of programme? (Select more than one if applicable)'),
+        choices=CLM.BARRIERS,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(BLNAssessmentForm, self).__init__(*args, **kwargs)
+
+        post_test = ''
+        post_test_button = ' btn-outline-secondary disabled'
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        self.fields['clm_type'].initial = 'BLN'
+
+        display_assessment = ''
+        form_action = reverse('clm:bln_post_assessment', kwargs={'pk': instance.id})
+
+        if instance.pre_test:
+            post_test_button = ' btn-outline-success '
+            post_test = instance.assessment_form(
+                stage='post_test',
+                assessment_slug='bln_post_test',
+                callback=self.request.build_absolute_uri(reverse('clm:bln_post_assessment', kwargs={'pk': instance.id}))
+             )
+        if instance.post_test:
+            post_test_button = ' btn-success '
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    'clm_type',
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
+                ),
+                Div(
+                    HTML(
+                        '<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
+                        post_test + '">' + _('Post-assessment') + '</a></div>'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<div class="p-3"></div>'),
+                    css_class='row'
+                ),
+                css_class='bd-callout bd-callout-warning' + display_assessment
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('unsuccessful_posttest_reason', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('participation', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('barriers', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('learning_result', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('cycle_completed', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('enrolled_at_school', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'+display_assessment
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' +
+                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def save(self, instance=None, request=None):
+        instance = super(BLNAssessmentForm, self).save()
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = BLN
+        fields = (
+            'participation',
+            'barriers',
+            'learning_result',
+            'unsuccessful_posttest_reason',
+            'cycle_completed',
+            'enrolled_at_school',
+        )
+
+
+class CBECEAssessmentForm(forms.ModelForm):
+
+    participation = forms.ChoiceField(
+        label=_('How was the level of child participation in the program?'),
+        widget=forms.Select, required=True,
+        choices=(
+                ('', '----------'),
+                ('less_than_5days', _('Less than 5 absence days')),
+                ('5_10_days', _('5 to 10 absence days')),
+                ('10_15_days', _('10 to 15 absence days')),
+                ('more_than_15days', _('More than 15 absence days'))
+            ),
+        initial=''
+    )
+    learning_result = forms.ChoiceField(
+        label=_('Based on the overall score, what is the recommended learning path?'),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('repeat_level', _('Repeat level')),
+            ('graduated_next_level', _('Graduated to the next level')),
+            ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
+            ('graduated_to_formal_education_level1', _('Graduated to formal education - Level 1')),
+            ('referred_to_another_program', _('Referred to another program')),
+            ('dropout', _('Dropout, referral not possible'))
+        ),
+        initial=''
+    )
+    barriers = forms.MultipleChoiceField(
+        label=_('The main barriers affecting the daily attendance and performance '
+                'of the child or drop out of programme? (Select more than one if applicable)'),
+        choices=CLM.BARRIERS,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+    final_grade = forms.FloatField(
+        label=_('Final grade') + ' (/80)', required=False,
+        widget=forms.NumberInput,
+        min_value=0, max_value=80
+    )
+    # cycle_completed = forms.TypedChoiceField(
+    #     label=_("Completed the cycle?"),
+    #     choices=YES_NO_CHOICE,
+    #     coerce=lambda x: bool(int(x)),
+    #     widget=forms.RadioSelect,
+    #     required=True,
+    #     initial=False,
+    # )
+    # enrolled_at_school = forms.TypedChoiceField(
+    #     label=_("Enrolled at school?"),
+    #     choices=YES_NO_CHOICE,
+    #     coerce=lambda x: bool(int(x)),
+    #     widget=forms.RadioSelect,
+    #     required=True,
+    #     initial=False,
+    # )
+    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(CBECEAssessmentForm, self).__init__(*args, **kwargs)
+
+        post_test = ''
+        post_test_button = ' btn-outline-secondary disabled'
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+        self.fields['clm_type'].initial = 'CBECE'
+
+        display_assessment = ''
+        form_action = reverse('clm:cbece_post_assessment', kwargs={'pk': instance.id})
+
+        if instance.pre_test:
+            post_test_button = ' btn-outline-success '
+            post_test = instance.assessment_form(
+                stage='post_test',
+                assessment_slug='cbece_post_test',
+                callback=self.request.build_absolute_uri(reverse('clm:cbece_post_assessment', kwargs={'pk': instance.id}))
+             )
+        if instance.post_test:
+            post_test_button = ' btn-success '
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    'clm_type',
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
+                ),
+                Div(
+                    HTML(
+                        '<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
+                        post_test + '">' + _('Post-assessment') + '</a></div>'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<div class="p-3"></div>'),
+                    css_class='row'
+                ),
+                css_class='bd-callout bd-callout-warning' + display_assessment
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('final_grade', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('unsuccessful_posttest_reason', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('participation', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('barriers', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('learning_result', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('cycle_completed', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('enrolled_at_school', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'+display_assessment
+            ),
+            FormActions(
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' +
+                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def save(self, instance=None, request=None):
+        instance = super(CBECEAssessmentForm, self).save()
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = CBECE
+        fields = (
+            'final_grade',
+            'participation',
+            'barriers',
+            'learning_result',
+            'unsuccessful_posttest_reason',
+            'cycle_completed',
+            'enrolled_at_school',
         )
 
 
