@@ -95,7 +95,8 @@ class EnrollmentOldDataTable(tables.Table):
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='django_tables2/edit_column.html',
                                         attrs={'url': '/enrollments/edit-old-data/'})
-
+    grading_incomplete = tables.TemplateColumn(verbose_name=_('Incomplete?'), orderable=False,
+                                               template_name='django_tables2/grading_incomplete_column.html')
     student_age = tables.Column(verbose_name=_('Age'), accessor='student.age', orderable=False,)
     student_birthday = tables.Column(verbose_name=_('Birthday'), accessor='student.birthday', orderable=False,)
     student_phone_number = tables.Column(verbose_name=_('Phone number'), accessor='student.phone_number', orderable=False,)
@@ -107,6 +108,7 @@ class EnrollmentOldDataTable(tables.Table):
         template = 'django_tables2/bootstrap.html'
         fields = (
             'edit_column',
+            'grading_incomplete',
             'student.first_name',
             'student.father_name',
             'student.last_name',
