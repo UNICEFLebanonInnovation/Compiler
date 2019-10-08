@@ -936,13 +936,13 @@ class LoggingProgramMove(TimeStampedModel):
         return str(self.id)
 
 
-class DuplicateStd(models.Model):
+class DuplicateStd(TimeStampedModel):
     enrollment = models.ForeignKey(
         Enrollment,
         blank=False, null=False,
         related_name='enrollment_id'
     )
-    sysdate = models.DateTimeField(default=django.utils.timezone.now)
+    #sysdate = models.DateTimeField(default=django.utils.timezone.now)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,
