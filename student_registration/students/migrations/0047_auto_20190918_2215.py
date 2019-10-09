@@ -13,21 +13,21 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # migrations.AddField(
-        #     model_name='student',
-        #     name='birthdoc_image',
-        #     field=models.ImageField(blank=True, help_text='Birth Document', null=True, upload_to='profiles/birthdoc', validators=[student_registration.students.models.validate_file_size]),
-        # ),
+        migrations.AddField(
+            model_name='student',
+            name='birthdoc_image',
+            field=models.ImageField(blank=True, help_text='Birth Document', null=True, upload_to='profiles/birthdoc', validators=[student_registration.students.models.validate_file_size]),
+        ),
         migrations.AddField(
             model_name='student',
             name='unhcr_family',
             field=models.CharField(blank=True, max_length=150, null=True, verbose_name='UNHCR Family Number'),
         ),
-        # migrations.AddField(
-        #     model_name='student',
-        #     name='unhcr_image',
-        #     field=models.ImageField(blank=True, help_text='UNHCR picture', null=True, upload_to='profiles/unhcr', validators=[student_registration.students.models.validate_file_size]),
-        # ),
+        migrations.AddField(
+            model_name='student',
+            name='unhcr_image',
+            field=models.ImageField(blank=True, help_text='UNHCR picture', null=True, upload_to='profiles/unhcr', validators=[student_registration.students.models.validate_file_size]),
+        ),
         migrations.AddField(
             model_name='student',
             name='unhcr_personal',
