@@ -592,7 +592,7 @@ class StudentResource(resources.ModelResource):
             'address',
             'phone',
             'phone_prefix',
-            'std_image',
+            # 'std_image',
             'recordnumber',
         )
         export_order = (

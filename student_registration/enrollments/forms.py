@@ -1638,9 +1638,9 @@ class ImageStudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = [
-            'std_image',
-            'std_image',
-            'unhcr_image',
-            'birthdoc_image',
+            # 'std_image',
+            # 'std_image',
+            # 'unhcr_image',
+            # 'birthdoc_image',
             'id',
         ]

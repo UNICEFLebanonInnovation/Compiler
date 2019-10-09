@@ -349,14 +349,14 @@ class Student(Person):
         Child,
         blank=True, null=True,
     )
-    std_image = models.ImageField(
-        upload_to="profiles",
-        null=True,
-        blank=True,
-        help_text=_('Profile Picture'),
-        verbose_name=_('Profile Picture'),
-        validators=[validate_file_size]
-    )
+    # std_image = models.ImageField(
+    #     upload_to="profiles",
+    #     null=True,
+    #     blank=True,
+    #     help_text=_('Profile Picture'),
+    #     verbose_name=_('Profile Picture'),
+    #     validators=[validate_file_size]
+    # )
 
     objects = StudentManager()
     second_shift = Student2ndShiftManager()
@@ -376,27 +376,27 @@ class Student(Person):
         null=True,
         verbose_name=_('Details Special Needs')
     )
-    id_image = models.ImageField(
-        upload_to='profiles/ids',
-        blank=True,
-        null=True,
-        help_text=_('Identification picture'),
-        validators=[validate_file_size]
-    )
-    unhcr_image = models.ImageField(
-        upload_to='profiles/unhcr',
-        blank=True,
-        null=True,
-        help_text=_('UNHCR picture'),
-        validators=[validate_file_size]
-    )
-    birthdoc_image = models.ImageField(
-        upload_to='profiles/birthdoc',
-        blank=True,
-        null=True,
-        help_text=_('Birth Document'),
-        validators=[validate_file_size]
-    )
+    # id_image = models.ImageField(
+    #     upload_to='profiles/ids',
+    #     blank=True,
+    #     null=True,
+    #     help_text=_('Identification picture'),
+    #     validators=[validate_file_size]
+    # )
+    # unhcr_image = models.ImageField(
+    #     upload_to='profiles/unhcr',
+    #     blank=True,
+    #     null=True,
+    #     help_text=_('UNHCR picture'),
+    #     validators=[validate_file_size]
+    # )
+    # birthdoc_image = models.ImageField(
+    #     upload_to='profiles/birthdoc',
+    #     blank=True,
+    #     null=True,
+    #     help_text=_('Birth Document'),
+    #     validators=[validate_file_size]
+    # )
     unhcr_family = models.CharField(
         max_length=150,
         blank=True,
