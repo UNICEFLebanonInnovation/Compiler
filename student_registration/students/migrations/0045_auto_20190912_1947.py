@@ -33,11 +33,11 @@ class Migration(migrations.Migration):
             name='Financialsupport_number',
             field=models.CharField(blank=True, max_length=64, null=True, verbose_name='Financial Support Number'),
         ),
-        # migrations.AddField(
-        #     model_name='student',
-        #     name='id_image',
-        #     field=models.ImageField(blank=True, help_text='Identification picture', null=True, upload_to='profiles/ids', validators=[student_registration.students.models.validate_file_size]),
-        # ),
+        migrations.AddField(
+            model_name='student',
+            name='id_image',
+            field=models.ImageField(blank=True, help_text='Identification picture', null=True, upload_to='profiles/ids', validators=[student_registration.students.models.validate_file_size]),
+        ),
         migrations.AddField(
             model_name='student',
             name='is_financialsupport',
@@ -53,11 +53,11 @@ class Migration(migrations.Migration):
             name='is_specialneeds',
             field=models.BooleanField(default=False),
         ),
-        # migrations.AlterField(
-        #     model_name='student',
-        #     name='std_image',
-        #     field=models.ImageField(blank=True, help_text='Profile Picture', null=True, upload_to='profiles', validators=[student_registration.students.models.validate_file_size], verbose_name='Profile Picture'),
-        # ),
+        migrations.AlterField(
+            model_name='student',
+            name='std_image',
+            field=models.ImageField(blank=True, help_text='Profile Picture', null=True, upload_to='profiles', validators=[student_registration.students.models.validate_file_size], verbose_name='Profile Picture'),
+        ),
         migrations.AddField(
             model_name='student',
             name='financialsupport',
