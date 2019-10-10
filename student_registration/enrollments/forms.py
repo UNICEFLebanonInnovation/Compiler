@@ -678,13 +678,14 @@ class EnrollmentForm(forms.ModelForm):
             serializer = EnrollmentSerializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
-                instance.school = request.user.school
+                instance.school_id = request.user.school_id
                 instance.owner = request.user
                 instance.education_year = EducationYear.objects.get(current_year=True)
                 initiate_grading(enrollment=instance, term=1)
                 initiate_grading(enrollment=instance, term=2)
                 initiate_grading(enrollment=instance, term=3)
                 initiate_grading(enrollment=instance, term=4)
+                instance.save()
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
@@ -742,34 +743,6 @@ class EnrollmentForm(forms.ModelForm):
                             )
                             model_duplicatestd.save()
 
-
-
-
-        '''old procedure std = Student.objects.filter(id=instance.student_id)
-            for st in std:
-                from django.db.models import Q
-                if (Student.objects.filter(
-                    Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
-                        mother_fullname=st.mother_fullname, birthday_year=st.birthday_year, birthday_month=
-                      st.birthday_month, birthday_day=st.birthday_day)
-                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
-                        mother_fullname=st.mother_fullname, id_number=st.id_number)
-                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
-                        id_number=st.id_number, birthday_year=st.birthday_year,
-                        birthday_month=st.birthday_month,
-                        birthday_day=st.birthday_day)
-                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
-                        id_number=st.id_number, birthday_year=st.birthday_year)).exclude(id=st.id).count()):
-                    try:
-                        DuplicateStd.objects.get(enrollment_id=instance.id, is_solved=False)
-                    except DuplicateStd.DoesNotExist:
-                        Duplicate_Std = DuplicateStd.objects.create(
-                            enrollment_id=instance.id,
-                            is_solved=False,
-                            school_type='2ndshift',
-                            owner=request.user,
-                        )
-                        Duplicate_Std.save();'''
 
     class Meta:
         model = Enrollment
