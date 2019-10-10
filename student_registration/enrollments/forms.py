@@ -743,34 +743,6 @@ class EnrollmentForm(forms.ModelForm):
                             model_duplicatestd.save()
 
 
-
-
-        '''old procedure std = Student.objects.filter(id=instance.student_id)
-            for st in std:
-                from django.db.models import Q
-                if (Student.objects.filter(
-                    Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
-                        mother_fullname=st.mother_fullname, birthday_year=st.birthday_year, birthday_month=
-                      st.birthday_month, birthday_day=st.birthday_day)
-                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
-                        mother_fullname=st.mother_fullname, id_number=st.id_number)
-                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
-                        id_number=st.id_number, birthday_year=st.birthday_year,
-                        birthday_month=st.birthday_month,
-                        birthday_day=st.birthday_day)
-                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
-                        id_number=st.id_number, birthday_year=st.birthday_year)).exclude(id=st.id).count()):
-                    try:
-                        DuplicateStd.objects.get(enrollment_id=instance.id, is_solved=False)
-                    except DuplicateStd.DoesNotExist:
-                        Duplicate_Std = DuplicateStd.objects.create(
-                            enrollment_id=instance.id,
-                            is_solved=False,
-                            school_type='2ndshift',
-                            owner=request.user,
-                        )
-                        Duplicate_Std.save();'''
-
     class Meta:
         model = Enrollment
         fields = (
