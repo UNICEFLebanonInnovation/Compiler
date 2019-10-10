@@ -130,3 +130,4 @@ class StudentAutocomplete(autocomplete.Select2QuerySetView):
             )
 
         return qs
+

@@ -2,6 +2,43 @@
 {% get_current_language as LANGUAGE_CODE %}
 {% load util_tags %}
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+<style>
+  .fa {
+  padding: 10px;
+  font-size: 10px;
+  width: 30px;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* Add a hover effect if you want */
+.fa:hover {
+  opacity: 0.7;
+}
+
+/* Set a specific color for each brand */
+
+/* Facebook */
+.fa-facebook {
+  background: #3B5998;
+  color: white;
+}
+
+/* Twitter */
+.fa-twitter {
+  background: #55ACEE;
+  color: white;
+
+}
+.fa-instagram {
+  background: red;
+  color: white;
+}
+</style>
+
 <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -36,8 +73,15 @@
         {% endif %}
         {% if request.user|has_group:"SCHOOL" or request.user|has_group:"DIRECTOR" %}
               <li class="nav-item">
+
                 <a class="nav-link" href="{% url 'enrollments:list' %}">{% trans "2nd shift Registration" %}</a>
+
               </li>
+      <!--
+              <li class="nav-item">
+
+                <a class="nav-link" href="{% url 'staffs:stafflist' %}"> <img src = '/static/images/staff.png' height="40" width="40">{% trans "Staff" %}</a>
+              </li> -->
             {% if request.user|has_group:"ENROL_EDIT_OLD" %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'enrollments:list_old_data' %}">{% trans "2nd shift old data" %}</a>
@@ -122,4 +166,11 @@
         {% block header %}{% endblock %}
     </ul>
   </div>
+  <div class="social">
+					<ul class="social-share social-share-pad">
+						<li><a href="https://www.facebook.com/mehe.pmu" title="Facebook" target="_blank" class="facebook-blue"><i class="fa fa-facebook"></i></a></li>
+            <li><a href="https://www.instagram.com/mehe.pmu" title="instagram" target="_blank" class="instagram-red"><i class="fa fa-instagram"></i></a></li>
+            <li><a href=" http://www.racepmulebanon.com" title="PMU" target="_blank" class=""><font color="white">PMU</font></a></li>
+					</ul>
+				</div>
 </nav>

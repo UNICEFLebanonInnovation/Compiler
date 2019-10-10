@@ -1,11 +1,11 @@
 from __future__ import unicode_literals, absolute_import, division
 
 import datetime
+import django.utils.timezone
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
-
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
@@ -17,6 +17,7 @@ from student_registration.schools.models import (
     ClassRoom,
     Section,
     EducationYear,
+    Coordinator,
 )
 from student_registration.locations.models import Location
 from student_registration.alp.models import ALPRound, Outreach
@@ -933,3 +934,135 @@ class LoggingProgramMove(TimeStampedModel):
 
     def __unicode__(self):
         return str(self.id)
+
+
+class DuplicateStd(TimeStampedModel):
+    enrollment = models.ForeignKey(
+        Enrollment,
+        blank=False, null=False,
+        related_name='enrollment_id'
+    )
+    #sysdate = models.DateTimeField(default=django.utils.timezone.now)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Created by')
+    )
+    is_solved = models.BooleanField(default=False)
+    remark = models.CharField(
+        max_length=500,
+        blank=True,
+    )
+    school_type = models.CharField(
+        max_length=20,
+    )
+    coordinator = models.ForeignKey(
+        Coordinator,
+        blank=True,
+        null=True,
+        verbose_name=_('Coordinator')
+    )
+    is_deleted = models.BooleanField(default=False)
+    current_year = models.CharField(
+        max_length=10,
+        default=datetime.datetime.now().year
+    )
+    Level = models.ForeignKey(
+        ClassLevel,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Class Level'),
+    )
+    section = models.ForeignKey(
+        Section,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Current Section')
+    )
+    classroom = models.ForeignKey(
+        ClassRoom,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Current Class')
+    )
+
+    @property
+    def student_fullname(self):
+        if self.enrollment.student:
+            return self.enrollment.student.full_name
+        return ''
+
+    @property
+    def student_birthday(self):
+        return self.enrollment.student.birthday
+
+    @property
+    def student_mother_fullname(self):
+        if self.enrollment.student:
+            return self.enrollment.student.mother_fullname
+        return ''
+
+    @property
+    def school_name(self):
+        if self.enrollment.school:
+            return self.enrollment.school.name
+        return ''
+
+    @property
+    def student_id_number(self):
+        if self.enrollment.student:
+            return self.enrollment.student.id_number
+        return ''
+
+    @property
+    def student_number(self):
+        if self.enrollment.student:
+            return self.enrollment.student.number
+        return ''
+
+    @property
+    def student_sex(self):
+        if self.enrollment.student:
+            return self.enrollment.student.sex
+        return ''
+
+    @property
+    def school_location(self):
+        if self.enrollment.school:
+            if self.enrollment.school.location:
+                return self.enrollment.school.location.name
+            return ''
+
+    @property
+    def school_number(self):
+        if self.enrollment.school:
+            return self.enrollment.school.number
+        return ''
+
+    @property
+    def classroom_name(self):
+        if self.classroom:
+            return self.classroom.name
+        return ''
+
+    @property
+    def section_name(self):
+        if self.section:
+            return self.section.name
+        return ''
+
+    @property
+    def level_name(self):
+        if self.Level:
+            return self.level.name
+        return ''
+
+    @property
+    def coordinator_name(self):
+        if self.coordinator:
+            return self.coordinator.name
+        return ''
+
+    class Meta:
+        verbose_name = 'Duplicated Students'

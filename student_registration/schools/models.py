@@ -149,6 +149,11 @@ class School(models.Model):
         verbose_name=_('School location'),
         related_name='+',
     )
+    is_closed = models.BooleanField(
+        default=False,
+        blank=True,
+        verbose_name=_('is closed')
+    )
 
     class Meta:
         ordering = ['number']

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% load util_tags %}
+{% load static %}
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+
+<head>
+    <h1 align="center">
+      <font color="navy">
+          Staff Form
+      </font>
+
+    </h1>
+   <hr>
+</head>
+
+
+<form  method="post"  enctype="multipart/form-data" style="background-color: #f0f5f5;" >
+ <div class="col-mod-4">
+
+       {% csrf_token %}
+       <table width="100%">
+        {{ form.as_table }}
+       </table>
+       <hr>
+       <input type="submit" name="submit" value="save" class="btn btn-success">
+  </div>
+</form>
+
+
+{% endblock %}

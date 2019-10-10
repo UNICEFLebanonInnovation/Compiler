@@ -1,4 +1,3 @@
-
 from rest_framework import serializers
 from .models import Enrollment, LoggingStudentMove, LoggingProgramMove, EnrollmentGrading
 
@@ -54,6 +53,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     student_birthday_month = serializers.CharField(source='student.birthday_month')
     student_birthday_day = serializers.CharField(source='student.birthday_day')
     student_place_of_birth = serializers.CharField(source='student.place_of_birth', required=False)
+    student_recordnumber = serializers.CharField(source='student.recordnumber', required=False)
     student_age = serializers.CharField(source='student.age', read_only=True)
     student_phone = serializers.CharField(source='student.phone', required=False)
     student_phone_prefix = serializers.CharField(source='student.phone_prefix', required=False)
@@ -87,7 +87,6 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
     student_outreach_child = serializers.IntegerField(source='student.outreach_child', required=False)
     student_outreach_child_id = serializers.IntegerField(source='student.outreach_child.id', read_only=True)
-
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
     save = serializers.IntegerField(source='owner.id', read_only=True)
     enrollment_id = serializers.IntegerField(source='id', read_only=True)
@@ -95,6 +94,18 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     search_school = serializers.CharField(source='school.id', read_only=True)
     school_type = serializers.CharField(source='school.name', read_only=True)
     search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
+    student_is_justified = serializers.BooleanField(source='student.is_justified', required=False)
+    student_is_specialneeds = serializers.BooleanField(source='student.is_specialneeds', required=False)
+    student_specialneeds = serializers.CharField(source='student.specialneeds', required=False)
+    student_specialneeds_id = serializers.CharField(source='student.specialneeds.id', read_only=True)
+    student_specialneedsdt = serializers.CharField(source='student.specialneedsdt', required=False)
+    student_specialneedsdt_id = serializers.CharField(source='student.specialneedsdt.id', read_only=True)
+    student_is_financialsupport = serializers.BooleanField(source='student.is_financialsupport', required=False)
+    student_Financialsupport_number = serializers.CharField(source='student.Financialsupport_number', required=False)
+    student_financialsupport = serializers.CharField(source='student.financialsupport', required=False)
+    student_financialsupport_id = serializers.CharField(source='student.financialsupport.id', read_only=True)
+    student_unhcr_family = serializers.CharField(source='student.unhcr_family', required=False)
+    student_unhcr_personal = serializers.CharField(source='student.unhcr_personal', required=False)
 
     def create(self, validated_data):
         from student_registration.students.serializers import StudentSerializer
@@ -110,7 +121,6 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             student_serializer = StudentSerializer(data=student_data)
             student_serializer.is_valid(raise_exception=True)
             student_serializer.instance = student_serializer.save()
-
         try:
             instance = Enrollment.objects.create(**validated_data)
             instance.student = student_serializer.instance
@@ -131,7 +141,6 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             student_serializer = StudentSerializer(instance.student, data=student_data)
             student_serializer.is_valid(raise_exception=True)
             student_serializer.instance = student_serializer.save()
-
         try:
 
             for key in validated_data:
@@ -164,6 +173,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'student_birthday_month',
             'student_birthday_day',
             'student_place_of_birth',
+            'student_recordnumber',
             'student_age',
             'student_phone',
             'student_phone_prefix',
@@ -240,6 +250,18 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'school_type',
             'age_min_restricted',
             'age_max_restricted',
+            'student_is_justified',
+            'student_is_specialneeds',
+            'student_specialneeds',
+            'student_specialneedsdt',
+            'student_specialneeds_id',
+            'student_specialneedsdt_id',
+            'student_is_financialsupport',
+            'student_Financialsupport_number',
+            'student_financialsupport',
+            'student_financialsupport_id',
+            'student_unhcr_personal',
+            'student_unhcr_family',
         )
 
 
