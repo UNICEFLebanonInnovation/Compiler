@@ -444,6 +444,7 @@ class Enrollment(TimeStampedModel):
     )
     last_attendance_date = models.DateField(blank=True, null=True)
     last_absent_date = models.DateField(blank=True, null=True)
+    nb_consecutiveabsences =models.IntegerField(blank=True, null=True)
     dropout_status = models.BooleanField(
         blank=True, default=False,
         verbose_name=_('Dropout?')
