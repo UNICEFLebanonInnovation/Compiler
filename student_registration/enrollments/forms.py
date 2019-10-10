@@ -678,13 +678,14 @@ class EnrollmentForm(forms.ModelForm):
             serializer = EnrollmentSerializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
-                instance.school = request.user.school
+                instance.school_id = request.user.school_id
                 instance.owner = request.user
                 instance.education_year = EducationYear.objects.get(current_year=True)
                 initiate_grading(enrollment=instance, term=1)
                 initiate_grading(enrollment=instance, term=2)
                 initiate_grading(enrollment=instance, term=3)
                 initiate_grading(enrollment=instance, term=4)
+                instance.save()
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
