@@ -1225,7 +1225,7 @@ class CLMStudentViewSet(mixins.RetrieveModelMixin,
             self.model = CBECE
             self.serializer_class = CBECESerializer
 
-        qs = self.model.objects.all()
+        qs = self.model.objects.filter(partner=self.request.user.partner_id)
 
         if terms:
             for term in terms.split():
