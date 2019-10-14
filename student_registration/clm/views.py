@@ -1102,7 +1102,11 @@ class BLNViewSet(mixins.RetrieveModelMixin,
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
+        from datetime import datetime
+
         qs = self.queryset
+        if self.request.GET.get('creation_date', None):
+            return self.queryset.filter(created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
         if self.request.GET.get('school', None):
             return self.queryset.filter(school_id=self.request.GET.get('school', None))
 
@@ -1221,7 +1225,7 @@ class CLMStudentViewSet(mixins.RetrieveModelMixin,
             self.model = CBECE
             self.serializer_class = CBECESerializer
 
-        qs = self.model.objects.all()
+        qs = self.model.objects.filter(partner=self.request.user.partner_id)
 
         if terms:
             for term in terms.split():
