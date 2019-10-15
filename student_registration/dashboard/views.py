@@ -63,6 +63,33 @@ class RunExporterViewSet(LoginRequiredMixin,
         return export_full_data(self.request.GET)
 
 
+def fill_data(request, *args):
+    from student_registration.enrollments.models import Enrollment
+    from student_registration.schools.models import ClassRoom
+
+    T_Enrollment = Enrollment.objects.filter(created__gt='2019-10-9', created__lt='2019-10-11', school_id__isnull=True,
+                                             education_year_id__isnull=True)# classroom_id__isnull=True,
+    for T_Enr in T_Enrollment:
+        try:
+            last_enrollment = Enrollment.objects.filter(student_id=T_Enr.student_id, education_year_id=3).order_by('-created')[:1]
+            for line in last_enrollment:
+                T_Enr.school_id = line.school_id
+                T_Enr.education_year_id = 4
+
+                try:
+                    last_class = ClassRoom.objects.filter(id__gt=line.classroom_id)[:1]
+                    for v_class in last_class:
+                        T_Enr.classroom_id = v_class.id
+                except ClassRoom.DoesNotExist:
+                    False
+                T_Enr.owner_id = line.owner_id
+                T_Enr.save()
+        except Enrollment.DoesNotExist:
+            continue
+    context = {}
+    return render(request, "dashboard/exporter.html", context)
+
+
 def run_attendance(request):
     from student_registration.attendances.tasks import geo_calculate_attendances_by_student,\
         geo_calculate_last_attendance_date
