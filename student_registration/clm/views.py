@@ -2404,3 +2404,32 @@ def load_districts(request):
     id_governorate = request.GET.get('id_governorate')
     cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
     return render(request, 'clm/city_dropdown_list_options.html', {'cities': cities})
+
+
+def search_clm_child(request):
+    clm_type = request.GET.get('clm_type', 'BLN')
+    terms = request.GET.get('term', 0)
+    model = BLN
+    if clm_type == 'RS':
+        model = RS
+    elif clm_type == 'ABLN':
+        model = ABLN
+    elif clm_type == 'CBECE':
+        model = CBECE
+
+    qs = model.objects.filter(partner=request.user.partner_id)
+
+    if terms:
+        for term in terms.split():
+            qs = qs.filter(
+                Q(student__first_name__contains=term) |
+                Q(student__father_name__contains=term) |
+                Q(student__last_name__contains=term) |
+                Q(student__id_number=term) |
+                Q(internal_number=term)
+            ).values('id', 'student__first_name', 'student__father_name',
+                     'student__last_name', 'student__mother_fullname',
+                     'student__sex', 'student__birthday_day', 'student__birthday_month',
+                     'student__birthday_year', 'internal_number').distinct()
+
+        return JsonResponse({'result': json.dumps(list(qs))})
