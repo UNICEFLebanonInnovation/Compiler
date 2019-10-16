@@ -7,6 +7,11 @@ from student_registration.dashboard.secondshift import views as secondshift
 
 urlpatterns = [
     url(
+        regex=r'^run-filling_data/$',
+        view=views.fill_data,
+        name='run-filling_data'
+    ),
+    url(
         regex=r'^exporter/$',
         view=views.ExporterView.as_view(),
         name='exporter'
