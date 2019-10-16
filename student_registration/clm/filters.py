@@ -38,7 +38,7 @@ class BLNFilter(CommonFilter):
             'student__nationality': ['exact'],
             'governorate': ['exact'],
             'district': ['exact'],
-            'participation': ['exact'],
+            # 'participation': ['exact'],
             'learning_result': ['exact'],
             'owner__username': ['contains'],
             'disability': ['exact'],
