@@ -71,7 +71,7 @@ def fill_data(request, *args):
                                              education_year_id__isnull=True)# classroom_id__isnull=True,
     for T_Enr in T_Enrollment:
         try:
-            last_enrollment = Enrollment.objects.filter(student_id=T_Enr.student_id, education_year_id=2).order_by('-created')[:1]
+            last_enrollment = Enrollment.objects.filter(student_id=T_Enr.student_id, education_year_id=1).order_by('-created')[:1]
             for line in last_enrollment:
                 T_Enr.school_id = line.school_id
                 T_Enr.education_year_id = 4
