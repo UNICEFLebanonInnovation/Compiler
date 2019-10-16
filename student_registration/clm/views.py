@@ -1309,6 +1309,10 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'have_labour': 'Does the child participate in work?',
             'labours': 'What is the type of work?',
             'labour_hours': 'How many hours does this child work in a day?',
+
+            'unsuccessful_pretest_reason': 'Reason why not doing the Pre-test',
+            'unsuccessful_posttest_reason': 'Reason why not doing the Post-test',
+
             'pre_test_arabic': 'Pre-test Arabic Language Development ',
             'pre_test_foreign_language': 'Pre-test Foreign Language Development',
             'pre_test_math': 'Pre-test Cognitive Development - Mathematics',
@@ -1420,6 +1424,10 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'Does the child participate in work?',
             'What is the type of work?',
             'How many hours does this child work in a day?',
+
+            'Reason why not doing the Pre-test',
+            'Reason why not doing the Post-test',
+
             'Pre-test Arabic Language Development ',
             'Pre-test Cognitive Development - Mathematics',
             'Pre-test Social-Emotional Development',
@@ -1534,6 +1542,9 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'labours',
             'labour_hours',
 
+            'unsuccessful_pretest_reason',
+            'unsuccessful_posttest_reason',
+
             'pre_test_arabic',
             'post_test_arabic',
             'pre_test_foreign_language',
@@ -1636,6 +1647,8 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'have_labour',
             'labours',
             'labour_hours',
+            'unsuccessful_pretest_reason',
+            'unsuccessful_posttest_reason',
             'pre_test_arabic',
             'pre_test_foreign_language',
             'pre_test_math',
@@ -1791,6 +1804,10 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'have_labour': 'Does the child participate in work?',
             'labours': 'What is the type of work?',
             'labour_hours': 'How many hours does this child work in a day?',
+
+            'unsuccessful_pretest_reason': 'Reason why not doing the Pre-test',
+            'unsuccessful_posttest_reason': 'Reason why not doing the Post-test',
+
             'pre_test_arabic': 'Pre-test Arabic Language Development ',
             'pre_test_math': 'Pre-test Cognitive Development - Mathematics',
             'pre_test_social_emotional': 'Pre-test Social-Emotional Development',
@@ -1900,6 +1917,10 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'Does the child participate in work?',
             'What is the type of work?',
             'How many hours does this child work in a day?',
+
+            'Reason why not doing the Pre-test',
+            'Reason why not doing the Post-test',
+
             'Pre-test Arabic Language Development ',
             'Pre-test Cognitive Development - Mathematics',
             'Pre-test Social-Emotional Development',
@@ -2014,6 +2035,9 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'labours',
             'labour_hours',
 
+            'unsuccessful_pretest_reason',
+            'unsuccessful_posttest_reason',
+
             'pre_test_arabic',
             'post_test_arabic',
             'pre_test_math',
@@ -2112,6 +2136,8 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'have_labour',
             'labours',
             'labour_hours',
+            'unsuccessful_pretest_reason',
+            'unsuccessful_posttest_reason',
             'pre_test_arabic',
             'pre_test_math',
             'pre_test_social_emotional',
