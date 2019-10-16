@@ -363,17 +363,18 @@ $(document).ready(function(){
         $("#id_search_clm_student").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '/api/clm-students/?clm_type='+$('#id_clm_type').val(),
+                    url: '/clm/search-clm-child/?clm_type='+$('#id_clm_type').val(),
                     dataType: "json",
                     data: {
                         term: request.term
                     },
                     success: function (data) {
-                       if(!data.length){
+                       var result = JSON.parse(data.result);
+                       if(!result.length){
                             var result = [{ error: 'No matches found',  value: response.term }];
                             response(result);
                          }else{
-                            response(data);
+                            response(result);
                         }
                     }
                 });
@@ -407,11 +408,13 @@ $(document).ready(function(){
             if(item.error) {
                 return $("<li>").append('<div class="error">No result found</div>').appendTo(ul);
             }
+            var full_name = item.student__first_name+" "+item.student__father_name+" "+item.student__last_name;
+            var student_birthday = item.student__birthday_day+"/"+item.student__birthday_month+"/"+item.student__birthday_year;
             return $("<li>")
                 .append("<div style='border: 1px solid;'>"
-                    + "<b>Base Data:</b> " + item.student_full_name + " - " + item.student_mother_fullname
-                    + "<br/> <b>Gender - Birthday:</b> " + item.student_sex + " - " + item.student_birthday
-                    // + "<br/> <b>Round:</b> " + item.round_name
+                    + "<b>Base Data:</b> " + full_name + " - " + item.student__mother_fullname
+                    + "<br/> <b>Gender - Birthday:</b> " + item.student__sex + " - " + student_birthday
+                     + "<br/> <b>Internal number:</b> " + item.internal_number
                     + "</div>")
                 .appendTo(ul);
         };
