@@ -58,12 +58,13 @@ class CLMView(LoginRequiredMixin,
         return {}
 
 
-def assessment_form(instance_id, stage, assessment_slug, callback=''):
+def assessment_form(instance_id, stage, enrollment_model, assessment_slug, callback=''):
     try:
         assessment = Assessment.objects.get(slug=assessment_slug)
-        return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=RS&returnURL={callback}'.format(
+        return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]={enrollment_model}&returnURL={callback}'.format(
             form=assessment.assessment_form,
             status=stage,
+            enrollment_model=enrollment_model,
             enrollment_id=instance_id,
             callback=callback
         )
@@ -89,6 +90,7 @@ class BLNAddView(LoginRequiredMixin,
             return assessment_form(
                 instance_id=self.request.session.get('instance_id'),
                 stage='pre_test',
+                enrollment_model='BLN',
                 assessment_slug='bln_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:bln_edit',
                                                          kwargs={'pk': self.request.session.get('instance_id')})))
@@ -340,6 +342,7 @@ class ABLNAddView(LoginRequiredMixin,
             return assessment_form(
                 instance_id=self.request.session.get('instance_id'),
                 stage='pre_test',
+                enrollment_model='ABLN',
                 assessment_slug='abln_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:abln_edit',
                                                          kwargs={'pk': self.request.session.get('instance_id')})))
@@ -857,6 +860,7 @@ class RSAddView(LoginRequiredMixin,
             return assessment_form(
                 instance_id=self.request.session.get('instance_id'),
                 stage='pre_test',
+                enrollment_model='RS',
                 assessment_slug='rs_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:rs_edit',
                                                          kwargs={'pk': self.request.session.get('instance_id')})))
@@ -986,6 +990,7 @@ class CBECEAddView(LoginRequiredMixin,
             return assessment_form(
                 instance_id=self.request.session.get('instance_id'),
                 stage='pre_test',
+                enrollment_model='CBECE',
                 assessment_slug='cbece_pre_test',
                 callback=self.request.build_absolute_uri(reverse('clm:cbece_edit',
                                                          kwargs={'pk': self.request.session.get('instance_id')})))
