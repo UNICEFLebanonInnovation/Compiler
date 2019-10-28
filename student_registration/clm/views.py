@@ -147,6 +147,14 @@ class BLNEditView(LoginRequiredMixin,
             return '/clm/bln-add/'
         if self.request.POST.get('save_and_continue', None):
             return '/clm/bln-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get('save_and_pretest', None):
+            return assessment_form(
+                instance_id=self.request.session.get('instance_id'),
+                stage='pre_test',
+                enrollment_model='BLN',
+                assessment_slug='bln_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:bln_edit',
+                                                         kwargs={'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -399,6 +407,14 @@ class ABLNEditView(LoginRequiredMixin,
             return '/clm/abln-add/'
         if self.request.POST.get('save_and_continue', None):
             return '/clm/abln-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get('save_and_pretest', None):
+            return assessment_form(
+                instance_id=self.request.session.get('instance_id'),
+                stage='pre_test',
+                enrollment_model='ABLN',
+                assessment_slug='abln_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:abln_edit',
+                                                         kwargs={'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
@@ -1047,6 +1063,14 @@ class CBECEEditView(LoginRequiredMixin,
             return '/clm/cbece-add/'
         if self.request.POST.get('save_and_continue', None):
             return '/clm/cbece-edit/' + str(self.request.session.get('instance_id')) + '/'
+        if self.request.POST.get('save_and_pretest', None):
+            return assessment_form(
+                instance_id=self.request.session.get('instance_id'),
+                stage='pre_test',
+                enrollment_model='CBECE',
+                assessment_slug='cbece_pre_test',
+                callback=self.request.build_absolute_uri(reverse('clm:cbece_edit',
+                                                         kwargs={'pk': self.request.session.get('instance_id')})))
         return self.success_url
 
     def get_context_data(self, **kwargs):
