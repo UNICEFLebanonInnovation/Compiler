@@ -986,7 +986,7 @@ class BLN(CLM):
         return self.assessment_form(stage='post_test', assessment_slug='bln_post_test')
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-id']
         verbose_name = "BLN"
         verbose_name_plural = "BLN"
 
@@ -1186,7 +1186,7 @@ class RS(CLM):
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-id']
         verbose_name = "RS"
         verbose_name_plural = "RS"
 
@@ -1572,7 +1572,7 @@ class CBECE(CLM):
         }
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-id']
         verbose_name = "CB-ECE"
         verbose_name_plural = "CB-ECE"
 
@@ -1742,6 +1742,6 @@ class ABLN(CLM):
         return self.assessment_form(stage='post_test', assessment_slug='bln_post_test')
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-id']
         verbose_name = "ABLN"
         verbose_name_plural = "ABLN"
