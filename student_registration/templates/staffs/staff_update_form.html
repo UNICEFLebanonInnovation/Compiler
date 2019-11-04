@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% load util_tags %}
+{% load static %}
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% load render_table from django_tables2 %}
+
+
+{% block extra_head %}
+
+<br>
+<head>
+    <b>
+    {{ title }}
+    </b>
+
+</head>
+{% endblock %}
+
+
+{% block content %}
+
+<form  method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <table>
+        {{ form.as_table  }}
+    </table>
+
+    <button type="submit" class="btn btn-success">update</button>
+     <a href="#" class="btn btn-outline-secondary" role="button">Cancel</a>
+</form>
+
+{% endblock %}

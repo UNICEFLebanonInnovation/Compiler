@@ -27,7 +27,7 @@ from student_registration.enrollments.models import (
 from student_registration.alp.models import Outreach, ALPRound
 from student_registration.backends.tasks import export_attendance
 from student_registration.users.utils import force_default_language
-from .utils import find_attendances, calculate_absentees
+from .utils import find_attendances, fill_attendancedt #calculate_absentees
 from .models import Attendance, Absentee
 from .serializers import AttendanceSerializer, AbsenteeSerializer, AttendanceExportSerializer
 
@@ -93,6 +93,8 @@ class AttendanceViewSet(mixins.RetrieveModelMixin,
         elif level_section:
             instance.students[level_section] = data[level_section]
         instance.save()
+        if instance.students:
+            fill_attendancedt(instance, data[level_section]['students'])
         # calculate_absentees(instance, data[level_section]['students'])
         return JsonResponse({'status': status.HTTP_200_OK, 'data': instance.id})
 

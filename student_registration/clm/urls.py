@@ -149,4 +149,9 @@ urlpatterns = [
         views.load_districts,
         name='load_districts'
     ),
+    url(
+        'search-clm-child/$',
+        views.search_clm_child,
+        name='search_clm_child'
+    ),
 ]

@@ -369,7 +369,8 @@ class BLNForm(CommonForm):
     #     initial=''
     # )
     round = forms.ModelChoiceField(
-        queryset=CLMRound.objects.all(), widget=forms.Select,
+        # queryset=CLMRound.objects.filter(current_round_bln=True), widget=forms.Select,
+        queryset=CLMRound.objects.filter(name__contains=Person.CURRENT_YEAR), widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
@@ -2156,11 +2157,11 @@ class ABLNForm(CommonForm):
     #     initial=''
     # )
     round = forms.ModelChoiceField(
-        queryset=CLMRound.objects.all(), widget=forms.Select,
+        queryset=CLMRound.objects.filter(current_round_abln=True), widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
-        initial=8
+        # initial=8
     )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),

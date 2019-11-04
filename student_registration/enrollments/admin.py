@@ -16,14 +16,38 @@ from .models import (
     EnrollmentGrading,
     StudentMove,
     LoggingStudentMove,
-    LoggingProgramMove
+    LoggingProgramMove,
+    DuplicateStd,
 )
-from .forms import EnrollmentAdminForm, LoggingStudentMoveForm
+from .forms import EnrollmentAdminForm, LoggingStudentMoveForm, DuplicateStdAdminForm
 from .utils import initiate_grading
 from student_registration.schools.models import (
     School,
 )
 from student_registration.locations.models import Location
+
+
+class DuplicateStdResource(resources.ModelResource):
+    class Meta:
+        model = DuplicateStd
+        form = DuplicateStdAdminForm
+        fields =(
+            'is_solved',
+            'remark',
+            'student_fullname',
+            'student_birthday',
+            'student_mother_fullname',
+            'school_name',
+            'student_id_number',
+            'student_number',
+            'student_sex',
+            'school_location',
+            'school_number',
+            'classroom_name',
+            'section_name',
+            'coordinator_name',
+            'is_deleted',
+        )
 
 
 class EnrollmentResource(resources.ModelResource):
@@ -783,10 +807,52 @@ class GradingAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
+class DuplicateStdAdmin(ImportExportModelAdmin):
+    resource_class = DuplicateStdResource
+    form = DuplicateStdAdminForm
+    fields = (
+        'is_solved',
+        'remark',
+        'is_deleted',
+    )
+    list_display = (
+        'student_fullname',
+        'student_birthday',
+        'student_sex',
+        'student_id_number',
+        'student_number',
+        'student_mother_fullname',
+        'school_number',
+        'classroom_name',
+        'section_name',
+        'school_name',
+        'school_location',
+        'coordinator_name',
+        'remark',
+        'owner',
+        'is_solved',
+        'is_deleted',
+
+    )
+    list_filter =(
+        'is_solved',
+    )
+
+    def save_model(self, request, obj, form, change):
+        try:
+            Enrollment.objects.filter(id=obj.enrollment_id).update(disabled=obj.is_deleted)
+            Enrollment.save()
+        except:
+            Enrollment.DoesNotExist
+        obj.save()
+
+
+admin.site.register(DuplicateStd, DuplicateStdAdmin)
 admin.site.register(Enrollment, EnrollmentAdmin)
 admin.site.register(Dropout, DropoutAdmin)
 admin.site.register(Disabled, DisabledAdmin)
-# admin.site.register(StudentMove, StudentMoveAdmin)
+admin.site.register(StudentMove, StudentMoveAdmin)
 admin.site.register(LoggingStudentMove, LoggingStudentMoveAdmin)
 admin.site.register(LoggingProgramMove, LoggingProgramMoveAdmin)
 admin.site.register(EnrollmentGrading, GradingAdmin)
+
