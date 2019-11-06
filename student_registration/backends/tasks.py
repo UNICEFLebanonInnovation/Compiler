@@ -91,6 +91,8 @@ def export_2ndshift(params=None, return_data=False):
         'moved': 'moved',
         'last_moved_date': _('last moved date'),
         'student__number': 'student number',
+        'student__id': 'student id',
+        'id': 'enrollment id',
     }
 
     queryset = queryset.values(
@@ -155,6 +157,8 @@ def export_2ndshift(params=None, return_data=False):
         'moved',
         'last_moved_date',
         'student__number',
+        'student__id',
+        'id',
     )
 
     return render_to_csv_response(queryset, field_header_map=headers)
