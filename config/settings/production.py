@@ -249,3 +249,5 @@ CSRF_COOKIE_AGE = None
 
 # Your production stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
