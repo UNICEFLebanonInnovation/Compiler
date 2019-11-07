@@ -51,11 +51,11 @@
   <div class="collapse navbar-collapse" id="navbarNavDropdown">
   {% if request.user.is_authenticated %}
     <ul class="nav navbar-nav mr-auto mt-2 mt-lg-0">
-        {% if request.user.is_superuser %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'admin:index' %}">{% trans "Admin" %}</a>
-          </li>
-        {% endif %}
+{#        {% if request.user.is_superuser %}#}
+{#          <li class="nav-item">#}
+{#            <a class="nav-link" href="{% url 'admin:index' %}">{% trans "Admin" %}</a>#}
+{#          </li>#}
+{#        {% endif %}#}
         {% if request.user|has_group:"CLM" %}
         <li class="nav-item">
             <a class="nav-link" href="{% url 'clm:index' %}">{% trans "CLM tools" %}</a>
