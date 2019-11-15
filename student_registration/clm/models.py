@@ -187,6 +187,12 @@ class CLM(TimeStampedModel):
         # ('dropout', _('Dropout from school'))
     )
 
+    first_attendance_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('First attendance date')
+    )
+
     round = models.ForeignKey(
         CLMRound,
         blank=True, null=True,
