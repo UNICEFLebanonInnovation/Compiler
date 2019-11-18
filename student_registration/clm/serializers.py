@@ -114,6 +114,7 @@ class CLMSerializer(serializers.ModelSerializer):
             # 'round_name',
             'enrollment_id',
             'student_id',
+            'first_attendance_date',
             'round',
             'partner',
             'partner_name',
