@@ -1281,6 +1281,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
         headers = {
             'partner__name': 'Partner',
             'source_of_identification': 'Source of Identification',
+            'first_attendance_date': 'first attendance date',
             'round__name': 'CLM Round',
             'governorate__name': 'Governorate',
             'district__name': 'District',
@@ -1397,6 +1398,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
         header_list = (
             'Partner',
             'Source of Identification',
+            'first attendance date',
             'CLM Round',
             'Governorate',
             'District',
@@ -1513,6 +1515,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
         field_list = (
             'partner__name',
             'source_of_identification',
+            'first_attendance_date',
             'round__name',
             'governorate__name',
             'district__name',
@@ -1649,6 +1652,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_artistic': "post_test->>'BLN_ASSESSMENT/artistic'",
         }).values(
             'partner__name',
+            'first_attendance_date',
             'round__name',
             'governorate__name',
             'district__name',
@@ -1776,6 +1780,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
         headers = {
             'partner__name': 'Partner',
             'source_of_identification': 'Source of Identification',
+            'first_attendance_date': 'first attendance date',
             'round__name': 'CLM Round',
             'governorate__name': 'Governorate',
             'district__name': 'District',
@@ -1890,6 +1895,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
         header_list = (
             'Partner',
             'Source of Identification',
+            'first attendance date',
             'CLM Round',
             'Governorate',
             'District',
@@ -2006,6 +2012,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
         field_list = (
             'partner__name',
             'source_of_identification',
+            'first_attendance_date',
             'round__name',
             'governorate__name',
             'district__name',
@@ -2138,6 +2145,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_artistic': "post_test->>'ABLN_ASSESSMENT/artistic'",
         }).values(
             'partner__name',
+            'first_attendance_date',
             'round__name',
             'governorate__name',
             'district__name',

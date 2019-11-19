@@ -303,6 +303,7 @@ class CommonForm(forms.ModelForm):
     class Meta:
         model = CLM
         fields = (
+            'first_attendance_date',
             'round',
             'new_registry',
             'student_outreached',
@@ -368,8 +369,15 @@ class BLNForm(CommonForm):
     #         ),
     #     initial=''
     # )
+
+    first_attendance_date = forms.DateField(
+        label=_("First attendance date"),
+        required=True
+    )
+
     round = forms.ModelChoiceField(
-        queryset=CLMRound.objects.filter(current_round_bln=True), widget=forms.Select,
+        # queryset=CLMRound.objects.filter(current_round_bln=True), widget=forms.Select,
+        queryset=CLMRound.objects.filter(name__contains=Person.CURRENT_YEAR), widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
@@ -693,22 +701,27 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('round', css_class='col-md-3'),
+                    Div('first_attendance_date', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
+                    Div('round', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
+                    Div('governorate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('district', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
+                    Div('location', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1117,6 +1130,7 @@ class BLNForm(CommonForm):
         fields = CommonForm.Meta.fields + (
             # 'cycle',
             # 'referral',
+            'first_attendance_date',
             'student_birthday_year',
             'student_family_status',
             'student_have_children',
@@ -2155,6 +2169,11 @@ class ABLNForm(CommonForm):
     #         ),
     #     initial=''
     # )
+    first_attendance_date = forms.DateField(
+        label=_("First attendance date"),
+        required=True
+    )
+
     round = forms.ModelChoiceField(
         queryset=CLMRound.objects.filter(current_round_abln=True), widget=forms.Select,
         label=_('Round'),
@@ -2480,22 +2499,27 @@ class ABLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('round', css_class='col-md-3'),
+                    Div('first_attendance_date', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">2</span>'),
+                    Div('round', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
+                    Div('governorate', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('district', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">6</span>'),
+                    Div('location', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -2904,6 +2928,7 @@ class ABLNForm(CommonForm):
         fields = CommonForm.Meta.fields + (
             # 'cycle',
             # 'referral',
+            'first_attendance_date',
             'student_birthday_year',
             'student_family_status',
             'student_have_children',
