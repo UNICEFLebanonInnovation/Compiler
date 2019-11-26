@@ -77,15 +77,15 @@
                 <a class="nav-link" href="{% url 'enrollments:list' %}">{% trans "2nd shift Registration" %}</a>
 
               </li>
-      <!--
+
               <li class="nav-item">
 
-                <a class="nav-link" href="{% url 'staffs:stafflist' %}"> <img src = '/static/images/staff.png' height="40" width="40">{% trans "Staff" %}</a>
-              </li> -->
+          <!--      <a class="nav-link" href="{% url 'staffs:stafflist' %}"> <img src = '/static/images/staff.png' height="40" width="40">{% trans "Staff" %}</a>
+              </li>
             {% if request.user|has_group:"ENROL_EDIT_OLD" %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'enrollments:list_old_data' %}">{% trans "2nd shift old data" %}</a>
-              </li>
+              </li> -->
             {% endif %}
         {% endif %}
         {% if request.user|has_group:"TEST_MANAGER" %}

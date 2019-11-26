@@ -594,6 +594,21 @@ class StudentResource(resources.ModelResource):
             'phone_prefix',
             'std_image',
             'recordnumber',
+            'unhcr_family',
+            'unhcr_personal',
+            'is_specialneeds',
+            'specialneeds',
+            'specialneedsdt',
+            'unhcr_family',
+            'unhcr_personal',
+            'is_financialsupport',
+            'Financialsupport_number',
+            'financialsupport',
+            'id_image',
+            'unhcr_image',
+            'birthdoc_image',
+            'std_image',
+
         )
         export_order = (
             'enrollment_school',

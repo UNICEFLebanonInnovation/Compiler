@@ -490,3 +490,7 @@ class PublicDocument(TimeStampedModel):
 
     def __unicode__(self):
         return self.name
+
+class Setup(models.Model):
+    staff_seq = models.IntegerField(
+        blank=True, null=True)

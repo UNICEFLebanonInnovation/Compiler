@@ -6,9 +6,8 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from student_registration.schools.models import PartnerOrganization, School
+from student_registration.schools.models import PartnerOrganization,EducationYear, School
 from student_registration.locations.models import Location
-
 
 @python_2_unicode_compatible
 class User(AbstractUser):
@@ -48,3 +47,28 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse('users:detail', kwargs={'username': self.username})
+
+
+class Login(models.Model):
+    user = models.ForeignKey(
+        User,
+        blank=True, null=True,
+        verbose_name=_('User')
+    )
+    education_year = models.ForeignKey(
+        EducationYear,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Education year')
+    )
+    active = models.BooleanField(default=True)
+
+    def __unicode__(self):
+
+        return u'{} {}'.format(
+            self.user,
+            self.education_year,
+        )
+
+    class Meta:
+        verbose_name_plural = "Login"
