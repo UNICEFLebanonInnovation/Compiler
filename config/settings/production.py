@@ -244,8 +244,10 @@ AUTO_LOGOUT_DELAY = 20  # equivalent to 20 minutes
 CSRF_USE_SESSIONS = True
 
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
-ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 900
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 600
 CSRF_COOKIE_AGE = None
 
 # Your production stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
