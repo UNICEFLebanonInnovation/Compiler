@@ -7,7 +7,6 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from model_utils import Choices
-from student_registration.staffs.models import Staffs
 from student_registration.schools.models import (
     School,
     ClassRoom,
@@ -56,8 +55,8 @@ class StaffEnroll(TimeStampedModel):
     YEARS = ((str(x), x) for x in range(2016, CURRENT_YEAR))
     EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2050))
     EDUCATION_YEARS.append(('na', 'N/A'))
-    staff = models.ForeignKey(
-        Staffs,
+    student = models.ForeignKey(
+        Student,
         blank=False, null=True,
         related_name='staff_enrollment',
     )

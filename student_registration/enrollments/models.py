@@ -988,10 +988,11 @@ class DuplicateStd(TimeStampedModel):
         verbose_name=_('Current Class')
     )
 
-
     @property
     def student_fullname(self):
-        return self.enrollment.student.full_name
+        if self.enrollment.student:
+            return self.enrollment.student.full_name
+        return ''
 
     @property
     def student_birthday(self):

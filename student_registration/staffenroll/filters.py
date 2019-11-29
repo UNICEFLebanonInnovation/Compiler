@@ -18,12 +18,12 @@ class StaffEnrollFilter(CommonFilter):
         fields = {
             'classroom': ['exact'],
             'section': ['exact'],
-           # 'student__first_name': ['contains'],
-            #'student__father_name': ['contains'],
-            #'student__last_name': ['contains'],
-            #'student__mother_fullname': ['contains'],
-            #'student__id_number': ['contains'],
-            #'student__nationality': ['exact'],
+            'student__first_name': ['contains'],
+            'student__father_name': ['contains'],
+            'student__last_name': ['contains'],
+            'student__mother_fullname': ['contains'],
+            'student__id_number': ['contains'],
+            'student__nationality': ['exact'],
         }
 
 
