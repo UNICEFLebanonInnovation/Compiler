@@ -28,24 +28,30 @@ from student_registration.locations.models import Location
 
 
 class DuplicateStdResource(resources.ModelResource):
+
     class Meta:
         model = DuplicateStd
         form = DuplicateStdAdminForm
-        fields =(
+        fields = (
             'is_solved',
             'remark',
-            'student_fullname',
-            'student_birthday',
-            'student_mother_fullname',
-            'school_name',
-            'student_id_number',
-            'student_number',
-            'student_sex',
-            'school_location',
-            'school_number',
-            'classroom_name',
-            'section_name',
-            'coordinator_name',
+            'enrollment__student__first_name',
+            'enrollment__student__father_name',
+            'enrollment__student__last_name',
+            'enrollment__student__birthday_day',
+            'enrollment__student__birthday_month',
+            'enrollment__student__birthday_year',
+            'enrollment__student__mother_fullname',
+            'classroom__name',
+            'enrollment__student__id_number',
+            'enrollment__student__number',
+            'enrollment__student__sex',
+            'enrollment__school__location',
+            'enrollment__school__number',
+            'governorate',
+            'district',
+            'enrollment__section__name',
+            'coordinator__name',
             'is_deleted',
         )
 
@@ -810,10 +816,42 @@ class GradingAdmin(ImportExportModelAdmin):
 class DuplicateStdAdmin(ImportExportModelAdmin):
     resource_class = DuplicateStdResource
     form = DuplicateStdAdminForm
-    fields = (
-        'is_solved',
-        'remark',
-        'is_deleted',
+    readonly_fields = (
+        'student_fullname',
+        'student_birthday',
+        'student_sex',
+        'student_id_number',
+        'student_number',
+        'student_mother_fullname',
+        'school_number',
+        'classroom_name',
+        'section_name',
+        'school_name',
+        'school_location',
+        'coordinator_name',
+        'owner',
+    )
+    fieldsets = (
+        ('Enrollment Info', {
+            'fields': (
+                'student_fullname',
+                'student_birthday',
+                'student_sex',
+                'student_id_number',
+                'student_number',
+                'student_mother_fullname',
+                'school_number',
+                'classroom_name',
+                'section_name',
+                'school_name',
+                'school_location',
+                'coordinator_name',
+                'remark',
+                'owner',
+                'is_solved',
+                'is_deleted',
+            )
+        }),
     )
     list_display = (
         'student_fullname',
