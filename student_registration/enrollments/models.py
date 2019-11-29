@@ -991,7 +991,9 @@ class DuplicateStd(TimeStampedModel):
 
     @property
     def student_fullname(self):
-        return self.enrollment.student.full_name
+        if self.enrollment.student:
+            return self.enrollment.student.full_name
+        return ''
 
     @property
     def student_birthday(self):
