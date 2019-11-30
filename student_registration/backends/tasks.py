@@ -16,7 +16,7 @@ def export_2ndshift(params=None, return_data=False):
 
     title = '2nd-shit-all'
     #queryset = Enrollment.objects.all()
-    queryset = Enrollment.objects.filter(moved=False)
+    queryset = Enrollment.objects.filter(moved=False, dropout_status=False)
 
     if 'current' in params:
         title = '2nd-shit-current'
