@@ -97,4 +97,15 @@ urlpatterns = [
         view=secondshift.SchoolNationalityView.as_view(),
         name='2ndshift_school_nationality'
     ),
+    url(
+        regex=r'^update_duplicatestd/$',
+        view=views.update_duplicatestd,
+        name='update_duplicatestd'
+    ),
+    url(
+        regex=r'^fix_dupstd/$',
+        view=views.fix_dupstd,
+        name='fix_dupstd'
+    ),
+
 ]

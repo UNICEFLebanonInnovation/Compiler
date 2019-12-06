@@ -877,11 +877,9 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
     )
 
     def save_model(self, request, obj, form, change):
-        try:
-            Enrollment.objects.filter(id=obj.enrollment_id).update(disabled=obj.is_deleted)
-            Enrollment.save()
-        except:
-            Enrollment.DoesNotExist
+        enr = Enrollment.objects.get(id=obj.enrollment_id)
+        enr.disabled = obj.is_deleted
+        enr.save()
         obj.save()
 
 

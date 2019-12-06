@@ -721,6 +721,7 @@ class EnrollmentForm(forms.ModelForm):
                         Level_id=instance.last_education_level_id,
                         section_id=instance.section_id,
                         classroom_id=instance.classroom_id,
+                        education_year=EducationYear.objects.get(current_year=True),
                     )
                     model_duplicatestd.save()
                     # SAVING THE SAME AS IT
@@ -740,6 +741,7 @@ class EnrollmentForm(forms.ModelForm):
                                 Level_id=enr.last_education_level_id,
                                 section_id=enr.section_id,
                                 classroom_id=enr.classroom_id,
+                                education_year=EducationYear.objects.get(current_year=True),
                             )
                             model_duplicatestd.save()
 
