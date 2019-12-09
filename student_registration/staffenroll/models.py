@@ -25,6 +25,7 @@ class Jobs(models.Model):
         null=True,
         verbose_name=_('Hour Rate')
     )
+    maxhoursperweek = models.IntegerField(blank=True, null=True, verbose_name=_('Max.Hours per week'), )
 
     class Meta:
         ordering = ['id']
