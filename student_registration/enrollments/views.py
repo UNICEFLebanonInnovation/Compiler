@@ -546,7 +546,6 @@ class ExportViewSet(LoginRequiredMixin, ListView):
             '',
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         )
-
         if self.request.user.school_id:
             school = self.request.user.school_id
         if school:

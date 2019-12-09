@@ -63,6 +63,41 @@ class RunExporterViewSet(LoginRequiredMixin,
         return export_full_data(self.request.GET)
 
 
+def fix_dupstd(request, *args):
+    from student_registration.enrollments.models import DuplicateStd
+    education_year = EducationYear.objects.get(current_year=True)
+
+    Q_duplicatestd = DuplicateStd.objects.all()
+    for q_duplicatestd in Q_duplicatestd:
+        q_duplicatestd.education_year = education_year
+        q_duplicatestd.save()
+
+    context = {}
+    return render(request, "dashboard/exporter.html", context)
+
+
+def update_duplicatestd(request):
+    from student_registration.enrollments.models import DuplicateStd, Enrollment
+    from student_registration.students.models import Student
+
+    education_year = EducationYear.objects.get(current_year=True)
+    Q_duplicatestd = DuplicateStd.objects.filter(is_solved=False, education_year=education_year)
+    for q_duplicatestd in Q_duplicatestd:
+        Q_student = Student.objects.filter(number=q_duplicatestd.enrollment.student.number)
+        str = []
+        for q_student in Q_student:
+            str.append(q_student.id)
+
+        v_exist = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                            school__is_2nd_shift=True, student_id__in=str, disabled=False).count()
+        if v_exist < 2:
+            q_duplicatestd.is_solved = True
+            q_duplicatestd.save()
+
+    context = {}
+    return render(request, "dashboard/exporter.html", context)
+
+
 def fill_data(request, *args):
     from student_registration.enrollments.models import Enrollment
     from student_registration.schools.models import ClassRoom

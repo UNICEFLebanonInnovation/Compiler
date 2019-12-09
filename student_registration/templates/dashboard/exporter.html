@@ -58,7 +58,8 @@
                     <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift_gradings&current=true&term=1" target="_blank">Export term 1</a>
                     <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift_gradings&current=true&term=2" target="_blank">Export term 2</a>
                     <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift_gradings&current=true&term=3" target="_blank">Export term 3</a>
-                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift_gradings&current=true&term=4" target="_blank">Export term 4</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift_gradings&current=true&term=4" target="_blank">Export term 4-[current year]</a>
+                    <a class="dropdown-item" href="{% url 'dashboard:run-exporter' %}?report=export_2ndshift_gradings&current=false&term=4" target="_blank">Export term 4-[last year]</a>
                   </div>
                 </div>
 
@@ -248,17 +249,17 @@
             </form>
           </div>
 
-
-
-         <!-- <div class="col-sm-4">
+         <div class="col-sm-4">
             <div class="card m-3">
               <div class="card-block">
-                <h3 class="card-title">Filling Educational Year and School ID</h3>
-                <a href="{% url 'dashboard:run-filling_data' %}" class="btn btn-primary">Generate</a>
+                <h3 class="card-title">Update duplicate students</h3>
+                <p class="card-text">Update duplicate students</p>
+                <a href="{% url 'dashboard:fix_dupstd' %}" class="btn btn-primary">fill education year</a>
+                <a href="{% url 'dashboard:update_duplicatestd' %}" class="btn btn-primary">update</a>
               </div>
             </div>
           </div>
-         -->
+
         </div>
     </section>
 </section>

@@ -16,12 +16,14 @@ def export_2ndshift(params=None, return_data=False):
 
     title = '2nd-shit-all'
     #queryset = Enrollment.objects.all()
-    queryset = Enrollment.objects.filter(moved=False)
+    queryset = Enrollment.objects.filter(moved=False, dropout_status=False)
+
     if 'current' in params:
         title = '2nd-shit-current'
         queryset = queryset.filter(education_year__current_year=True)
     if 'year' in params:
         queryset = queryset.filter(education_year_id=params['year'])
+
     if 'classroom' in params and params['classroom']:
         queryset = queryset.filter(classroom_id=params['classroom'])
     if 'school' in params:
@@ -177,9 +179,15 @@ def export_2ndshift_gradings(params=None, return_data=False):
     from student_registration.enrollments.models import EnrollmentGrading
     from student_registration.schools.models import EducationYear
     current = EducationYear.objects.get(current_year=True)
-
     title = '2nd-shift-grading-current'
-    queryset = EnrollmentGrading.objects.exclude(enrollment__isnull=True).filter(enrollment__education_year=current)
+    if 'current' in params and params['current']:
+        if params['current'] == 'true':
+            queryset = EnrollmentGrading.objects.exclude(enrollment__isnull=True).filter(enrollment__education_year=current)
+        if params['current'] == 'false':
+            current = EducationYear.objects.filter(current_year=False).order_by('-id')[0]
+            queryset = EnrollmentGrading.objects.exclude(enrollment__isnull=True).filter(enrollment__education_year=current)
+    else:
+        queryset = EnrollmentGrading.objects.exclude(enrollment__isnull=True).filter(enrollment__education_year=current)
     if 'school' in params:
         queryset = queryset.filter(enrollment__school_id=params['school'])
     if 'classroom' in params and params['classroom']:

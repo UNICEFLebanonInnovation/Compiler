@@ -77,11 +77,11 @@
                 <a class="nav-link" href="{% url 'enrollments:list' %}">{% trans "2nd shift Registration" %}</a>
 
               </li>
-      <!--
-              <li class="nav-item">
+
+            <!--  <li class="nav-item">
 
                 <a class="nav-link" href="{% url 'staffs:stafflist' %}"> <img src = '/static/images/staff.png' height="40" width="40">{% trans "Staff" %}</a>
-              </li> -->
+              </li>-->
             {% if request.user|has_group:"ENROL_EDIT_OLD" %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'enrollments:list_old_data' %}">{% trans "2nd shift old data" %}</a>

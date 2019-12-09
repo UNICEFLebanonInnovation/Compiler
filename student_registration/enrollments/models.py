@@ -987,6 +987,12 @@ class DuplicateStd(TimeStampedModel):
         related_name='+',
         verbose_name=_('Current Class')
     )
+    education_year = models.ForeignKey(
+        EducationYear,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Education year')
+    )
 
     @property
     def student_fullname(self):

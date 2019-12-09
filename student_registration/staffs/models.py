@@ -114,7 +114,7 @@ class Staffs(models.Model):
         verbose_name=_('Father name')
     )
     id_number = models.CharField(max_length=30, blank=False, unique=True)
-    MinisterApproval = models.CharField(
+    ministerapproval = models.CharField(
         max_length=150,
         blank=True,
         null=True,
@@ -233,12 +233,12 @@ class Staffs(models.Model):
         null=True,
         verbose_name=_('University Name')
     )
-    Automated_Nb = models.CharField(
+    automated_nb = models.CharField(
         max_length=15,
         blank=True, null=True,
         verbose_name=_('Automated Nb')
     )
-    Financial_Nb = models.CharField(
+    financial_nb = models.CharField(
         max_length=20,
         blank=True, null=True,
         verbose_name=_('Financial Nb')
@@ -257,6 +257,7 @@ class Staffs(models.Model):
         verbose_name=_('Caza'),
         related_name='staff_caza'
     )
+    staff_seq = models.IntegerField(blank=True, null=True)
 
     def __unicode__(self):
         if not self.first_name:
