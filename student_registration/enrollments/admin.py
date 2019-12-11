@@ -48,11 +48,14 @@ class DuplicateStdResource(resources.ModelResource):
             'enrollment__student__sex',
             'enrollment__school__location',
             'enrollment__school__number',
+            'enrollment__school__name',
             'governorate',
             'district',
             'enrollment__section__name',
             'coordinator__name',
             'is_deleted',
+            'enrollment__moved',
+
         )
 
 
@@ -850,6 +853,7 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
                 'owner',
                 'is_solved',
                 'is_deleted',
+
             )
         }),
     )
@@ -874,6 +878,14 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
     )
     list_filter =(
         'is_solved',
+        'enrollment__school__number',
+        'enrollment__school__name',
+
+    )
+    search_fields = (
+        'enrollment__student__first_name',
+        'enrollment__student__father_name',
+        'enrollment__student__last_name',
     )
 
     def save_model(self, request, obj, form, change):
