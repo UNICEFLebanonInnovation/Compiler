@@ -3000,7 +3000,7 @@ class ABLNAssessmentForm(forms.ModelForm):
             ('graduated_to_abln_next_round_higher_level', _('Graduated to the next round, higher level')),
             ('referred_to_bln', _('Referred to BLN')),
             ('referred_to_ybln', _('Referred to YBLN')),
-            ('referred_to_alp', _('Referred to ALP')),
+            # ('referred_to_alp', _('Referred to ALP')),
             ('referred_to_cbt', _('Referred to CBT')),
             ('dropout', _('Dropout, referral not possible')),
         ),
@@ -3485,6 +3485,215 @@ class CBECEAdminForm(forms.ModelForm):
     class Meta:
         model = CBECE
         fields = '__all__'
+
+
+class BLNReferralForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(BLNReferralForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance']
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = reverse('clm:bln_referral', kwargs={'pk': instance.id})
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Referral 1') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('referral_programme_type_1', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('referral_partner_1', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('referral_date_1', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('confirmation_date_1', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Referral 2') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('referral_programme_type_2', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('referral_partner_2', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('referral_date_2', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('confirmation_date_2', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Referral 3') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('referral_programme_type_3', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('referral_partner_3', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('referral_date_3', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('confirmation_date_3', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+                HTML('<a class="btn btn-info" href="/clm/bln-list/">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def save(self, instance=None, request=None):
+        instance = super(BLNReferralForm, self).save()
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = BLN
+        fields = (
+            'referral_programme_type_1',
+            'referral_partner_1',
+            'referral_date_1',
+            'confirmation_date_1',
+            'referral_programme_type_2',
+            'referral_partner_2',
+            'referral_date_2',
+            'confirmation_date_2',
+            'referral_programme_type_3',
+            'referral_partner_3',
+            'referral_date_3',
+            'confirmation_date_3',
+        )
+
+    class Media:
+        js = (
+            # 'js/validator.js',
+        )
+
+
+class BLNFollowupForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(BLNFollowupForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance']
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        self.helper.form_action = reverse('clm:bln_followup', kwargs={'pk': instance.id})
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Follow-up first call') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('followup_call_date_1', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('followup_call_reason_1', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('followup_call_result_1', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Follow-up second call') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('followup_call_date_2', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('followup_call_reason_2', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('followup_call_result_2', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Follow-up Household visit') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('followup_visit_date_1', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('followup_visit_reason_1', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('followup_visit_result_1', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+                HTML('<a class="btn btn-info" href="/clm/bln-list/">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def save(self, instance=None, request=None):
+        instance = super(BLNFollowupForm, self).save()
+        instance.modified_by = request.user
+        instance.save()
+        messages.success(request, _('Your data has been sent successfully to the server'))
+
+    class Meta:
+        model = BLN
+        fields = (
+            'followup_call_date_1',
+            'followup_call_reason_1',
+            'followup_call_result_1',
+            'followup_call_date_2',
+            'followup_call_reason_2',
+            'followup_call_result_2',
+            'followup_visit_date_1',
+            'followup_visit_reason_1',
+            'followup_visit_result_1',
+        )
+
+    class Media:
+        js = (
+            # 'js/validator.js',
+        )
 
 
 class ABLNReferralForm(forms.ModelForm):
