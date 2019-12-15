@@ -63,6 +63,101 @@ class RunExporterViewSet(LoginRequiredMixin,
         return export_full_data(self.request.GET)
 
 
+def dup_id_enr(request, *args):
+    from student_registration.enrollments.models import Enrollment, DuplicateStd
+
+    education_year = EducationYear.objects.get(current_year=True)
+    Q_Enr = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                      school__is_2nd_shift=True, disabled=False, moved=False)
+    for q_enr in Q_Enr:
+        Q_If_Exist_Enr = Enrollment.objects.filter(education_year_id=education_year, student_id=q_enr.student_id,
+                                                   school_id__isnull=False, moved=False, disabled=False,
+                                                   school__is_2nd_shift=True).exclude(id=q_enr.id)
+        for q_if_exist_enr in Q_If_Exist_Enr:
+            Q_duplicatestd = DuplicateStd.objects.filter(enrollment_id=q_if_exist_enr.id, is_solved=False).count()
+            if Q_duplicatestd == 0:
+                model_duplicatestd = DuplicateStd.objects.create(
+                    enrollment_id=q_if_exist_enr.id,
+                    is_solved=False,
+                    school_type='2ndshift',
+                    owner=q_if_exist_enr.owner,
+                    coordinator_id=q_if_exist_enr.school.coordinator_id,
+                    Level_id=q_if_exist_enr.last_education_level_id,
+                    section_id=q_if_exist_enr.section_id,
+                    classroom_id=q_if_exist_enr.classroom_id,
+                    education_year=education_year,
+                    remark='SAME STUDENT ID',
+                )
+                model_duplicatestd.save()
+                model_duplicatestd = DuplicateStd.objects.create(
+                    enrollment_id=q_enr.id,
+                    is_solved=False,
+                    school_type='2ndshift',
+                    owner=q_enr.owner,
+                    coordinator_id=q_enr.school.coordinator_id,
+                    Level_id=q_enr.last_education_level_id,
+                    section_id=q_enr.section_id,
+                    classroom_id=q_enr.classroom_id,
+                    education_year=education_year,
+                    remark='SAME STUDENT ID',
+                )
+                model_duplicatestd.save()
+    context = {}
+    return render(request, "dashboard/exporter.html", context)
+
+
+def dup_nb_enr(request, *args):
+    from student_registration.enrollments.models import Enrollment, DuplicateStd
+    from student_registration.students.models import Student
+
+    education_year = EducationYear.objects.get(current_year=True)
+    Q_Enr = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                      school__is_2nd_shift=True, disabled=False, moved=False)
+    for q_enr in Q_Enr:
+        Q_Std = Student.objects.get(id=q_enr.student_id)
+        v_count = 0
+        Q_same_nb_Exist = Student.objects.filter(number=Q_Std.number)
+        std_list = []
+        for q_same_nb_exist in Q_same_nb_Exist:
+            std_list.append(q_same_nb_exist.id)
+            v_count += 1
+        if v_count > 1:
+            Q_If_Exist_Enr = Enrollment.objects.filter(education_year_id=education_year, student_id__in=std_list,
+                                                       school_id__isnull=False, moved=False, disabled=False,
+                                                       school__is_2nd_shift=True).exclude(id=q_enr.id)
+            for q_if_exist_enr in Q_If_Exist_Enr:
+                Q_duplicatestd = DuplicateStd.objects.filter(enrollment_id=q_if_exist_enr.id, is_solved=False).count()
+                if Q_duplicatestd == 0:
+                    model_duplicatestd = DuplicateStd.objects.create(
+                        enrollment_id=q_if_exist_enr.id,
+                        is_solved=False,
+                        school_type='2ndshift',
+                        owner=q_if_exist_enr.owner,
+                        coordinator_id=q_if_exist_enr.school.coordinator_id,
+                        Level_id=q_if_exist_enr.last_education_level_id,
+                        section_id=q_if_exist_enr.section_id,
+                        classroom_id=q_if_exist_enr.classroom_id,
+                        education_year=education_year,
+                        remark='SAME STUDENT NUMBER',
+                    )
+                    model_duplicatestd.save()
+                    model_duplicatestd = DuplicateStd.objects.create(
+                        enrollment_id=q_enr.id,
+                        is_solved=False,
+                        school_type='2ndshift',
+                        owner=q_enr.owner,
+                        coordinator_id=q_enr.school.coordinator_id,
+                        Level_id=q_enr.last_education_level_id,
+                        section_id=q_enr.section_id,
+                        classroom_id=q_enr.classroom_id,
+                        education_year=education_year,
+                        remark='SAME STUDENT NUMBER',
+                    )
+                    model_duplicatestd.save()
+    context = {}
+    return render(request, "dashboard/exporter.html", context)
+
+
 def fix_dupstd(request, *args):
     from student_registration.enrollments.models import DuplicateStd
     education_year = EducationYear.objects.get(current_year=True)
