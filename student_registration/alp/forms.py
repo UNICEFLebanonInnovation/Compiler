@@ -332,8 +332,8 @@ class PreTestForm(forms.ModelForm):
 
     school = forms.ModelChoiceField(
         label=_('School'),
-        queryset=School.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
+        queryset=School.objects.all(), widget=forms.HiddenInput,
+        required=False, to_field_name='id',
     )
     student_first_name = forms.CharField(
         label=_("First name"),
@@ -406,11 +406,11 @@ class PreTestForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Entrance test') + '</h4>')
                 ),
                 Div(
+                   # HTML('<span class="badge badge-default">1</span>'),
+                    #Div('school', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('school', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">2</span>'),
                     Div('level', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('pre_test_room', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -483,6 +483,7 @@ class PreTestForm(forms.ModelForm):
             serializer = OutreachSmallSerializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
+                instance.school = request.user.school
                 instance.owner = request.user
                 instance.alp_round = ALPRound.objects.get(current_pre_test=True)
                 instance.calculate_pre_result()
