@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-
 from django.db import models
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 # from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 from django.utils.translation import ugettext as _
-
+from student_registration.attendances.forms import AttendanceDtdAdminForm
 from import_export.admin import ExportMixin
 from import_export import resources
 from django.contrib.postgres.fields import JSONField
@@ -25,6 +24,8 @@ from .models import (
     BySchoolByDay,
     Absentee,
     AttendanceSyncLog,
+    AttendanceDt,
+    Student,
 )
 
 
@@ -358,6 +359,56 @@ class AbsenteeResource(resources.ModelResource):
         )
 
 
+class AttendanceDtResource(resources.ModelResource):
+    class Meta:
+        model = AttendanceDt
+        fields = (
+            'school__location',
+            'school__number',
+            'school__name',
+            'levelname',
+            'classroom_id',
+            'classlevel_name',
+            'section_id',
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__mother_fullname',
+            'student__birthday_day',
+            'student__birthday_month',
+            'student__birthday_year',
+            'student__id_number',
+            'student__number',
+            'student__sex',
+            'attendance_date',
+            'is_present',
+        )
+
+
+class AttendanceDtAdmin(ExportMixin, admin.ModelAdmin):
+    resource_class = AttendanceDtResource
+    list_display = (
+        'school_id',
+        'levelname',
+        'classlevel',
+        'section',
+        'student_id',
+        'attendance_date',
+        'is_present',
+
+    )
+    list_filter = (
+        'is_present',
+        'attendance_date',
+        'school_id',
+        'classroom_id',
+        'section',
+        SchoolTypeFilter,
+        LocationFilter,
+        GovernorateFilter,
+    )
+
+
 class AbsenteeAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = AbsenteeResource
     list_display = (
@@ -605,3 +656,4 @@ admin.site.register(Attendance, AttendanceAdmin)
 admin.site.register(Absentee, AbsenteeAdmin)
 admin.site.register(AttendedDays, AttendedDaysAdmin)
 admin.site.register(AttendanceByStudent, AttendanceByStudentAdmin)
+admin.site.register(AttendanceDt, AttendanceDtAdmin)

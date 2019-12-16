@@ -107,5 +107,14 @@ urlpatterns = [
         view=views.fix_dupstd,
         name='fix_dupstd'
     ),
-
+    url(
+        regex=r'^dup_id_enr/$',
+        view=views.dup_id_enr,
+        name='dup_id_enr'
+    ),
+    url(
+        regex=r'^dup_nb_enr/$',
+        view=views.dup_nb_enr,
+        name='dup_nb_enr'
+    ),
 ]

@@ -880,6 +880,7 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
         'is_solved',
         'enrollment__school__number',
         'enrollment__school__name',
+        'remark',
 
     )
     search_fields = (
