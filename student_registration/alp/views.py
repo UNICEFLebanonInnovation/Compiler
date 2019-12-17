@@ -242,7 +242,7 @@ class PreTestView(LoginRequiredMixin,
     def get_queryset(self):
         force_default_language(self.request)
         alp_round = ALPRound.objects.get(current_pre_test=True)
-        return Outreach.objects.filter(alp_round=alp_round)
+        return Outreach.objects.filter(alp_round=alp_round, school_id=self.request.user.school)
 
 
 class PreTestAddView(LoginRequiredMixin,
