@@ -388,14 +388,13 @@ class AttendanceDtResource(resources.ModelResource):
 class AttendanceDtAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = AttendanceDtResource
     list_display = (
-        'school_id',
+        'school',
         'levelname',
         'classlevel',
         'section',
-        'student_id',
+        'student',
         'attendance_date',
         'is_present',
-
     )
     list_filter = (
         'is_present',

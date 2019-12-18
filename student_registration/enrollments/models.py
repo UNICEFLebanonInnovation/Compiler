@@ -940,7 +940,7 @@ class LoggingProgramMove(TimeStampedModel):
 class DuplicateStd(TimeStampedModel):
     enrollment = models.ForeignKey(
         Enrollment,
-        blank=False, null=False,
+        blank=True, null=True,
         related_name='enrollment_id'
     )
     #sysdate = models.DateTimeField(default=django.utils.timezone.now)
@@ -993,58 +993,113 @@ class DuplicateStd(TimeStampedModel):
         related_name='+',
         verbose_name=_('Education year')
     )
+    alp_round = models.ForeignKey(
+        ALPRound,
+        blank=True, null=True,
+        related_name='+',
+    )
+    outreach = models.ForeignKey(
+        Outreach,
+        blank=True, null=True,
+        related_name='outreach_id'
+    )
 
     @property
     def student_fullname(self):
-        if self.enrollment.student:
-            return self.enrollment.student.full_name
+        if self.enrollment:
+            if self.enrollment.student:
+                return self.enrollment.student.full_name
+        else:
+            if self.outreach:
+                if self.outreach.student:
+                    return self.outreach.student.full_name
         return ''
 
     @property
     def student_birthday(self):
-        return self.enrollment.student.birthday
+        if self.enrollment:
+            return self.enrollment.student.birthday
+        else:
+            if self.outreach:
+                return self.outreach.student.birthday
 
     @property
     def student_mother_fullname(self):
-        if self.enrollment.student:
-            return self.enrollment.student.mother_fullname
+        if self.enrollment:
+            if self.enrollment.student:
+                return self.enrollment.student.mother_fullname
+        else:
+            if self.outreach:
+                if self.outreach.student:
+                    return self.outreach.student.mother_fullname
         return ''
 
     @property
     def school_name(self):
-        if self.enrollment.school:
-            return self.enrollment.school.name
+        if self.enrollment:
+            if self.enrollment.school:
+                return self.enrollment.school.name
+        else:
+            if self.outreach:
+                if self.outreach.school:
+                    return self.outreach.school.name
         return ''
 
     @property
     def student_id_number(self):
-        if self.enrollment.student:
-            return self.enrollment.student.id_number
+        if self.enrollment:
+            if self.enrollment.student:
+                return self.enrollment.student.id_number
+        else:
+            if self.outreach:
+                if self.outreach.student:
+                    return self.outreach.student.id_number
         return ''
 
     @property
     def student_number(self):
-        if self.enrollment.student:
-            return self.enrollment.student.number
+        if self.enrollment:
+            if self.enrollment.student:
+                return self.enrollment.student.number
+        else:
+            if self.outreach:
+                if self.outreach.student:
+                    return self.outreach.student.number
         return ''
 
     @property
     def student_sex(self):
-        if self.enrollment.student:
-            return self.enrollment.student.sex
+        if self.enrollment:
+            if self.enrollment.student:
+                return self.enrollment.student.sex
+        else:
+            if self.outreach:
+                if self.outreach.student:
+                    return self.outreach.student.sex
         return ''
 
     @property
     def school_location(self):
-        if self.enrollment.school:
-            if self.enrollment.school.location:
-                return self.enrollment.school.location.name
-            return ''
+        if self.enrollment:
+            if self.enrollment.school:
+                if self.enrollment.school.location:
+                    return self.enrollment.school.location.name
+        else:
+            if self.outreach:
+                if self.outreach.school:
+                    if self.outreach.school.location:
+                        return self.outreach.school.location.name
+        return ''
 
     @property
     def school_number(self):
-        if self.enrollment.school:
-            return self.enrollment.school.number
+        if self.enrollment:
+            if self.enrollment.school:
+                return self.enrollment.school.number
+        else:
+            if self.outreach:
+                if self.outreach.school:
+                    return self.outreach.school.number
         return ''
 
     @property
