@@ -48,11 +48,14 @@ class DuplicateStdResource(resources.ModelResource):
             'enrollment__student__sex',
             'enrollment__school__location',
             'enrollment__school__number',
+            'enrollment__school__name',
             'governorate',
             'district',
             'enrollment__section__name',
             'coordinator__name',
             'is_deleted',
+            'enrollment__moved',
+
         )
 
 
@@ -817,6 +820,7 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
     resource_class = DuplicateStdResource
     form = DuplicateStdAdminForm
     readonly_fields = (
+        'school_type',
         'student_fullname',
         'student_birthday',
         'student_sex',
@@ -834,6 +838,7 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
     fieldsets = (
         ('Enrollment Info', {
             'fields': (
+                'school_type',
                 'student_fullname',
                 'student_birthday',
                 'student_sex',
@@ -850,6 +855,7 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
                 'owner',
                 'is_solved',
                 'is_deleted',
+
             )
         }),
     )
@@ -860,6 +866,7 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
         'student_id_number',
         'student_number',
         'student_mother_fullname',
+        'school_type',
         'school_number',
         'classroom_name',
         'section_name',
@@ -872,16 +879,24 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
         'is_deleted',
 
     )
-    list_filter =(
+    list_filter = (
+        'school_type',
         'is_solved',
+        'enrollment__school__number',
+        'enrollment__school__name',
+        'remark',
+
+    )
+    search_fields = (
+        'enrollment__student__first_name',
+        'enrollment__student__father_name',
+        'enrollment__student__last_name',
     )
 
     def save_model(self, request, obj, form, change):
-        try:
-            Enrollment.objects.filter(id=obj.enrollment_id).update(disabled=obj.is_deleted)
-            Enrollment.save()
-        except:
-            Enrollment.DoesNotExist
+        enr = Enrollment.objects.get(id=obj.enrollment_id)
+        enr.disabled = obj.is_deleted
+        enr.save()
         obj.save()
 
 

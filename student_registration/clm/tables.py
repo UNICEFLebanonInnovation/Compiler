@@ -42,6 +42,12 @@ class BLNTable(CommonTable):
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/clm_delete_column.html',
                                           attrs={'url': '/api/clm-bln/', 'programme': 'BLN'})
+    referral_column = tables.TemplateColumn(verbose_name=_('refer'), orderable=False,
+                                            template_name='django_tables2/clm_referral_column.html',
+                                            attrs={'url': '/clm/bln-referral/', 'programme': 'BLN'})
+    followup_column = tables.TemplateColumn(verbose_name=_('Follow-up'), orderable=False,
+                                            template_name='django_tables2/clm_followup_column.html',
+                                            attrs={'url': '/clm/bln-followup/', 'programme': 'BLN'})
     re_enroll_column = tables.TemplateColumn(verbose_name=_('Re-enroll'), orderable=False,
                                              template_name='django_tables2/clm_re_enroll_column.html',
                                              attrs={'url': '/clm/bln-add/', 'programme': 'BLN'})
@@ -70,6 +76,8 @@ class BLNTable(CommonTable):
             'edit_column',
             'post_assessment_column',
             'delete_column',
+            'referral_column',
+            'followup_column',
             're_enroll_column',
             'first_attendance_date',
             'round',

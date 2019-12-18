@@ -9,7 +9,7 @@ from dal import autocomplete
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
-
+from student_registration.enrollments.models import DuplicateStd
 from .models import Outreach, ALPRound
 from .serializers import OutreachSerializer, OutreachSmallSerializer
 from student_registration.students.models import (
@@ -23,7 +23,8 @@ from student_registration.schools.models import (
     EducationLevel,
     ClassLevel,
     Section,
-    ClassRoom
+    ClassRoom,
+    EducationYear,
 )
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
@@ -332,8 +333,8 @@ class PreTestForm(forms.ModelForm):
 
     school = forms.ModelChoiceField(
         label=_('School'),
-        queryset=School.objects.all(), widget=forms.Select,
-        required=True, to_field_name='id',
+        queryset=School.objects.all(), widget=forms.HiddenInput,
+        required=False, to_field_name='id',
     )
     student_first_name = forms.CharField(
         label=_("First name"),
@@ -406,11 +407,11 @@ class PreTestForm(forms.ModelForm):
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Entrance test') + '</h4>')
                 ),
                 Div(
+                   # HTML('<span class="badge badge-default">1</span>'),
+                    #Div('school', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('school', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">2</span>'),
                     Div('level', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
+                    HTML('<span class="badge badge-default">2</span>'),
                     Div('pre_test_room', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -483,6 +484,7 @@ class PreTestForm(forms.ModelForm):
             serializer = OutreachSmallSerializer(data=request.POST)
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
+                instance.school = request.user.school
                 instance.owner = request.user
                 instance.alp_round = ALPRound.objects.get(current_pre_test=True)
                 instance.calculate_pre_result()
@@ -873,49 +875,6 @@ class RegistrationForm(forms.ModelForm):
             )
         )
 
-   # def clean(self):
-    #    from django.db.models import Q
-     #   cleaned_data = super(RegistrationForm, self).clean()
-      #  student_first_name = cleaned_data.get('student_first_name')
-       # student_father_name = cleaned_data.get('student_father_name')
-        #student_last_name = cleaned_data.get('student_last_name')
-        #student_mother_fullname = cleaned_data.get('student_mother_fullname')
- #       student_id_number = cleaned_data.get('student_id_number')
-  #      student_birthday_year = cleaned_data.get('student_birthday_year')
-   #     student_birthday_day = cleaned_data.get('student_birthday_day')
-    #    student_birthday_month = cleaned_data.get('student_birthday_month')
-     #   edit = cleaned_data.get('student_id')
-
-      #  if not edit:
-       #     if (Student.objects.filter(
-        #        Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-         #         mother_fullname=student_mother_fullname, birthday_year=student_birthday_year, birthday_month=
-          #        student_birthday_month, birthday_day=student_birthday_day)
-           #     | Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-            #        mother_fullname=student_mother_fullname, id_number=student_id_number)
-             #   | Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-              #      id_number=student_id_number, birthday_year=student_birthday_year,
-               #     birthday_month=student_birthday_month,
-                #    birthday_day=student_birthday_day)
-                #| Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-                 #   id_number=student_id_number, birthday_year=student_birthday_year)).count()):
-                #raise forms.ValidationError(_('Student name, already entered  '))
-      #  else:
-       #     if (Student.objects.filter(
-        #        Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-         #         mother_fullname=student_mother_fullname, birthday_year=student_birthday_year, birthday_month=
-          #        student_birthday_month, birthday_day=student_birthday_day)
-           #     | Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-            #        mother_fullname=student_mother_fullname, id_number=student_id_number)
-             #   | Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-              #      id_number=student_id_number, birthday_year=student_birthday_year,
-               #     birthday_month=student_birthday_month,
-                #    birthday_day=student_birthday_day)
-                #| Q(first_name=student_first_name, father_name=student_father_name, last_name=student_last_name,
-                 #   id_number=student_id_number, birthday_year=student_birthday_year)
-          #  ).exclude(id=edit).count()):
-           #     raise forms.ValidationError(_('Student name, already entered  '))
-
     def save(self, instance=None, request=None):
         if instance:
             serializer = OutreachSerializer(instance, data=request.POST)
@@ -937,6 +896,63 @@ class RegistrationForm(forms.ModelForm):
                 messages.success(request, _('Your data has been sent successfully to the server'))
             else:
                 messages.warning(request, serializer.errors)
+
+        if instance.id:
+            from django.db.models import Q
+            st = Student.objects.get(id=instance.student_id)
+            if st.id:
+                q_students = Student.objects.filter(
+                    Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                      mother_fullname=st.mother_fullname, birthday_year=st.birthday_year, birthday_month=
+                        st.birthday_month, birthday_day=st.birthday_day)
+                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                        mother_fullname=st.mother_fullname, id_number=st.id_number)
+                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                        id_number=st.id_number, birthday_year=st.birthday_year,
+                        birthday_month=st.birthday_month,
+                        birthday_day=st.birthday_day)
+                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                        id_number=st.id_number, birthday_year=st.birthday_year)).exclude(id=st.id)
+            Q_ALP = Outreach.objects.filter(alp_round=ALPRound.objects.get(current_round=True), student__in=q_students)
+            if Q_ALP:
+                try:
+                    DuplicateStd.objects.get(outreach_id=instance.id, is_solved=False)
+                except DuplicateStd.DoesNotExist:
+                    # SAVING THE CURRENT ROW
+                    q_coordinator = School.objects.get(id=instance.school_id)
+                    model_duplicatestd = DuplicateStd.objects.create(
+                        outreach_id=instance.id,
+                        is_solved=False,
+                        school_type='ALP',
+                        owner=request.user,
+                        coordinator_id=q_coordinator.coordinator_id,
+                        Level_id=instance.level_id,
+                        section_id=instance.section_id,
+                        classroom_id=instance.classroom_id,
+                        education_year=EducationYear.objects.get(current_year=True),
+                        alp_round=ALPRound.objects.get(current_round=True),
+                    )
+                    model_duplicatestd.save()
+                    # SAVING THE SAME AS IT
+                    for q_alp in Q_ALP:
+                        try:
+                            DuplicateStd.objects.get(outreach_id=q_alp.id, is_solved=False)
+                        except DuplicateStd.DoesNotExist:
+                            # SAVING THE CURRENT ROW
+                            q_coordinator = School.objects.get(id=q_alp.school_id)
+                            model_duplicatestd = DuplicateStd.objects.create(
+                                outreach_id=q_alp.id,
+                                is_solved=False,
+                                school_type='ALP',
+                                owner=q_alp.owner,
+                                coordinator_id=q_coordinator.coordinator_id,
+                                Level_id=q_alp.last_education_level_id,
+                                section_id=q_alp.section_id,
+                                classroom_id=q_alp.classroom_id,
+                                education_year=EducationYear.objects.get(current_year=True),
+                                alp_round=ALPRound.objects.get(current_round=True),
+                            )
+                            model_duplicatestd.save()
 
     class Meta:
         model = Outreach

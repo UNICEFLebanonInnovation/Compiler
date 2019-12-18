@@ -56,7 +56,16 @@ urlpatterns = [
         view=views.BLNListView.as_view(),
         name='bln_list'
     ),
-
+    url(
+        regex=r'^bln-referral/(?P<pk>[\w.@+-]+)/$',
+        view=views.BLNReferralView.as_view(),
+        name='bln_referral'
+    ),
+    url(
+        regex=r'^bln-followup/(?P<pk>[\w.@+-]+)/$',
+        view=views.BLNFollowupView.as_view(),
+        name='bln_followup'
+    ),
     url(
         regex=r'^rs-add/$',
         view=views.RSAddView.as_view(),

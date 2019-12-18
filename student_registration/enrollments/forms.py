@@ -721,6 +721,7 @@ class EnrollmentForm(forms.ModelForm):
                         Level_id=instance.last_education_level_id,
                         section_id=instance.section_id,
                         classroom_id=instance.classroom_id,
+                        education_year=EducationYear.objects.get(current_year=True),
                     )
                     model_duplicatestd.save()
                     # SAVING THE SAME AS IT
@@ -729,7 +730,6 @@ class EnrollmentForm(forms.ModelForm):
                             DuplicateStd.objects.get(enrollment_id=enr.id, is_solved=False)
                         except DuplicateStd.DoesNotExist:
                             # SAVING THE CURRENT ROW
-                            print (enr.school_id)
                             q_coordinator = School.objects.get(id=enr.last_school_id)
                             model_duplicatestd = DuplicateStd.objects.create(
                                 enrollment_id=enr.id,
@@ -740,6 +740,7 @@ class EnrollmentForm(forms.ModelForm):
                                 Level_id=enr.last_education_level_id,
                                 section_id=enr.section_id,
                                 classroom_id=enr.classroom_id,
+                                education_year=EducationYear.objects.get(current_year=True),
                             )
                             model_duplicatestd.save()
 
