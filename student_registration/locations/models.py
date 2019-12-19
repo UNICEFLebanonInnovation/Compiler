@@ -9,6 +9,7 @@ from django.utils.translation import ugettext as _
 
 class LocationType(models.Model):
     name = models.CharField(max_length=64, unique=True)
+    name_en = models.CharField(max_length=145, blank=True, null=True)
 
     class Meta:
         ordering = ['name']
@@ -21,6 +22,7 @@ class LocationType(models.Model):
 class Location(MPTTModel):
 
     name = models.CharField(max_length=254)
+    name_en = models.CharField(max_length=254, blank=True, null=True)
     type = models.ForeignKey(LocationType, verbose_name='Location Type')
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
