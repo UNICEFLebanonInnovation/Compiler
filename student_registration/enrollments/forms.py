@@ -730,7 +730,6 @@ class EnrollmentForm(forms.ModelForm):
                             DuplicateStd.objects.get(enrollment_id=enr.id, is_solved=False)
                         except DuplicateStd.DoesNotExist:
                             # SAVING THE CURRENT ROW
-                            print (enr.school_id)
                             q_coordinator = School.objects.get(id=enr.last_school_id)
                             model_duplicatestd = DuplicateStd.objects.create(
                                 enrollment_id=enr.id,

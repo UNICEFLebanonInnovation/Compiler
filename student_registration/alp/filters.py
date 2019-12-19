@@ -21,12 +21,12 @@ class OutreachFilter(FilterSet):
 
 class PreTestFilter(FilterSet):
     level = ModelChoiceFilter(queryset=EducationLevel.objects.all(), empty_label=_('Entrance test'))
-    school = ModelChoiceFilter(queryset=School.objects.all(), empty_label=_('School'))
+    #school = ModelChoiceFilter(queryset=School.objects.all(), empty_label=_('School'))
 
     class Meta:
         model = Outreach
         fields = {
-            'school': ['exact'],
+            #'school': ['exact'],
             'level': ['exact'],
             'pre_test_room': ['exact'],
             'student__first_name': ['contains'],

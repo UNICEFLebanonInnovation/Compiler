@@ -163,11 +163,11 @@
                   <th></th>
                   <th></th>
                   <tr><td>
-			          <div class="col-sm-4 pull-right">
+			          <div class="col-sm-4 pull-left">
                   <label class="control-label  pull-left" for="txtfromschool" ><b>From School Number</b></label>
 				          <input type="text" class="form-control " id="txtfromschool" name="txtfromschool"  maxlength="80"/>
 			          </div>
-                <div class="col-sm-4 pull-right">
+                <div class="col-sm-4 pull-left">
                   <label class="control-label  pull-left" for="txttoschool"><b>To School Number</b></label>
 				          <input type="text" class="form-control" id="txttoschool" name="txttoschool"  maxlength="80"/>
 			           </div>
@@ -177,11 +177,11 @@
                     <hr>
                     <td>
                    <hr>
-                  <div class="col-sm-4 pull-right">
+                  <div class="col-sm-4 pull-left">
                     <label class="control-label  pull-left" for="txtfromdate"><b>From Date</b></label>
 				            <input type="date" name="txtfromdate">
 			           </div>
-                      <div class="col-sm-4 pull-right">
+                      <div class="col-sm-4 pull-left">
                     <label class="control-label  pull-left" for="txttodate"><b>To Date</b></label>
 				             <input type="date" name="txttodate">
 			           </div>
@@ -208,11 +208,11 @@
                   <th></th>
                   <th></th>
                   <tr><td>
-			          <div class="col-sm-4 pull-right">
+			          <div class="col-sm-4 pull-left">
                   <label class="control-label  pull-left" for="txt_from_school" ><b>From School </b></label>
 				          <input type="text" class="form-control " id="txt_from_school" name="txt_from_school"  maxlength="80"/>
 			          </div>
-                <div class="col-sm-4 pull-right">
+                <div class="col-sm-4 pull-left">
                   <label class="control-label  pull-left" for="txt_to_school"><b>To School </b></label>
 				          <input type="text" class="form-control" id="txt_to_school" name="txt_to_school"  maxlength="80"/>
 			           </div>
@@ -220,11 +220,11 @@
                 </tr>
                 <tr><td>
 
-                  <div class="col-sm-4 pull-right">
+                  <div class="col-sm-4 pull-left">
                     <label class="control-label  pull-left" for="txt_from_date"><b>From Date</b></label>
 				            <input type="date" name="txt_from_date">
 			           </div>
-                      <div class="col-sm-4 pull-right">
+                      <div class="col-sm-4 pull-left">
                     <label class="control-label  pull-left" for="txt_to_date"><b>To Date</b></label>
 				             <input type="date" name="txt_to_date">
 			           </div>
@@ -232,7 +232,7 @@
                   </tr>
                 <tr><td>
 
-                  <div class="col-sm-4 pull-right">
+                  <div class="col-sm-4 pull-from">
                     <label class="control-label  pull-left" for="txt_student"><b>Student Nb</b></label>
 				            <input type="text" name="txt_student">
 			           </div>
@@ -244,6 +244,7 @@
                 <br>
                <input class="btn btn-primary" type="submit" value="Generate" name="btntype" id="btntype1"/>
                <input class="btn btn-primary" type="submit" value="Excel" name="btntype" id="btntype2"  style="background-color: green;" />
+               <input class="btn btn-info" type="submit" value="Attendance" name="btntype" id="btntype3"/>
               </div>
             </div>
             </form>
@@ -254,8 +255,10 @@
               <div class="card-block">
                 <h3 class="card-title">Update duplicate students</h3>
                 <p class="card-text">Update duplicate students</p>
-                <a href="{% url 'dashboard:fix_dupstd' %}" class="btn btn-primary">fill education year</a>
+                <!--<a href="{% url 'dashboard:fix_dupstd' %}" class="btn btn-primary">fill education year</a> -->
                 <a href="{% url 'dashboard:update_duplicatestd' %}" class="btn btn-primary">update</a>
+                <a href="{% url 'dashboard:dup_id_enr' %}" class="btn btn-primary">duplicate ID of students in enrollments</a>
+                <a href="{% url 'dashboard:dup_nb_enr' %}" class="btn btn-primary">duplicate Number of students in enrollments</a>
               </div>
             </div>
           </div>

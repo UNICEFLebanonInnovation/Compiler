@@ -820,6 +820,7 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
     resource_class = DuplicateStdResource
     form = DuplicateStdAdminForm
     readonly_fields = (
+        'school_type',
         'student_fullname',
         'student_birthday',
         'student_sex',
@@ -837,6 +838,7 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
     fieldsets = (
         ('Enrollment Info', {
             'fields': (
+                'school_type',
                 'student_fullname',
                 'student_birthday',
                 'student_sex',
@@ -864,6 +866,7 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
         'student_id_number',
         'student_number',
         'student_mother_fullname',
+        'school_type',
         'school_number',
         'classroom_name',
         'section_name',
@@ -876,10 +879,12 @@ class DuplicateStdAdmin(ImportExportModelAdmin):
         'is_deleted',
 
     )
-    list_filter =(
+    list_filter = (
+        'school_type',
         'is_solved',
         'enrollment__school__number',
         'enrollment__school__name',
+        'remark',
 
     )
     search_fields = (
