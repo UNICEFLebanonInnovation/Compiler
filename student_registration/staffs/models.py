@@ -258,6 +258,7 @@ class Staffs(models.Model):
         related_name='staff_caza'
     )
     staff_seq = models.IntegerField(blank=True, null=True)
+    email = models.EmailField(blank=True, max_length=254, verbose_name='email address')
 
     def __unicode__(self):
         if not self.first_name:
