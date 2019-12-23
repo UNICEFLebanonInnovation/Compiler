@@ -98,9 +98,9 @@ def fill_attendancedt(attendance, students):
     from .models import AttendanceDt, EducationYear
     from student_registration.enrollments.models import Enrollment
     for student in students:
-        try:
-            attendance_dt = AttendanceDt.objects.get(attendance_date=attendance.attendance_date, student_id=student['student_id'])
-        except AttendanceDt.DoesNotExist:
+        attendance_dt = AttendanceDt.objects.filter(attendance_date=attendance.attendance_date,
+                                                    student_id=student['student_id']).count()
+        if attendance_dt == 0:
             attendance_dt = AttendanceDt.objects.create(
                 student_id=student['student_id'],
                 attendance_date=attendance.attendance_date,
