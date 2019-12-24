@@ -388,6 +388,18 @@ class PreTestForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=True
     )
+    student_mother_fullname = forms.CharField(
+        label=_("Mother fullname"),
+        widget=forms.TextInput, required=False
+    )
+    student_phone_prefix = forms.CharField(
+        label=_("Phone prefix"),
+        widget=forms.TextInput(attrs=({'maxlength': 2})), required=False
+    )
+    student_phone = forms.CharField(
+        label=_("Phone number"),
+        widget=forms.TextInput(attrs=({'maxlength': 6})), required=False
+    )
 
     def __init__(self, *args, **kwargs):
         super(PreTestForm, self).__init__(*args, **kwargs)
@@ -434,6 +446,14 @@ class PreTestForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('student_sex', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('student_phone_prefix', css_class='col-md-3'),
+                    Div('student_phone', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('student_mother_fullname', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
