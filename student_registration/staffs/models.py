@@ -55,6 +55,8 @@ class University(models.Model):
 
 
 class Staffs(models.Model):
+    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2050))
+    EDUCATION_YEARS.append(('na', 'N/A'))
     TYPEOFEMP = Choices(
         ('Cadre', _('Cadre')),
         ('Contractual', _('Contractual')),
@@ -259,7 +261,13 @@ class Staffs(models.Model):
     )
     staff_seq = models.IntegerField(blank=True, null=True)
     email = models.EmailField(blank=True, max_length=254, verbose_name='email address')
-
+    first_education_year = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=EDUCATION_YEARS,
+        verbose_name=_('Last Education year')
+    )
     def __unicode__(self):
         if not self.first_name:
             return 'No name'
