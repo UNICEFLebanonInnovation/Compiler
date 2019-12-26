@@ -400,6 +400,25 @@ class PreTestForm(forms.ModelForm):
         label=_("Phone number"),
         widget=forms.TextInput(attrs=({'maxlength': 6})), required=False
     )
+    student_nationality = forms.ModelChoiceField(
+        label=_("Nationality"),
+        queryset=Nationality.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    student_mother_nationality = forms.ModelChoiceField(
+        label=_("Mother nationality"),
+        queryset=Nationality.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    student_id_type = forms.ModelChoiceField(
+        label=_("ID type"),
+        queryset=IDType.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id'
+    )
+    student_id_number = forms.CharField(
+        label=_("ID number - Cell 14"),
+        widget=forms.TextInput, required=True
+    )
 
     def __init__(self, *args, **kwargs):
         super(PreTestForm, self).__init__(*args, **kwargs)
@@ -447,13 +466,27 @@ class PreTestForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('student_sex', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
+                    Div('student_nationality', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('student_phone_prefix', css_class='col-md-3'),
                     Div('student_phone', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('student_id_type', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('student_id_number', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('student_mother_fullname', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('student_mother_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
