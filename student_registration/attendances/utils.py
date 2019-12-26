@@ -111,8 +111,8 @@ def fill_attendancedt(attendance, students):
                 attendance_id=attendance.id,
                 levelname=student['level_name']
             )
-        if student['status'] == 'True':
-            attendance_dt.is_present = 'True'
+        if student['status'] == 'true':
+            attendance_dt.is_present = 'true'
             current_year = EducationYear.objects.get(current_year=True)
             try:
                 enr = Enrollment.objects.get(education_year=current_year, school_id=attendance.school_id, student_id=student['student_id'], section_id=student['section'], classroom_id=student['level'])
@@ -128,7 +128,7 @@ def fill_attendancedt(attendance, students):
             except Enrollment.DoesNotExist:
                 enr = ''
         else:
-            attendance_dt.is_present = 'False'
+            attendance_dt.is_present = 'false'
             current_year = EducationYear.objects.get(current_year=True)
             try:
                 enr = Enrollment.objects.get(education_year=current_year, school_id=attendance.school_id, student_id=student['student_id'], section_id=student['section'], classroom_id=student['level'])

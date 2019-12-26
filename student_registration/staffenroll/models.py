@@ -139,6 +139,10 @@ class StaffEnroll(TimeStampedModel):
     work = models.CharField(
         blank=True, max_length=150, verbose_name=_('main work')
     )
+    school_ismain = models.BooleanField(
+        blank=True, default=True,
+        verbose_name=_('is public')
+    )
     @property
     def cycle(self):
         if self.classroom_id in [2, 3, 4]:
