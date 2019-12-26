@@ -99,8 +99,11 @@ def fill_attendancedt(attendance, students):
     from student_registration.enrollments.models import Enrollment
     for student in students:
         attendance_dt = AttendanceDt.objects.filter(attendance_date=attendance.attendance_date,
-                                                    student_id=student['student_id']).count()
-        if attendance_dt == 0:
+                                                    student_id=student['student_id'])
+        v_count_attendancedt = AttendanceDt.objects.filter(attendance_date=attendance.attendance_date,
+                                                           student_id=student['student_id']).count()
+
+        if v_count_attendancedt == 0:
             attendance_dt = AttendanceDt.objects.create(
                 student_id=student['student_id'],
                 attendance_date=attendance.attendance_date,
@@ -111,7 +114,7 @@ def fill_attendancedt(attendance, students):
                 attendance_id=attendance.id,
                 levelname=student['level_name']
             )
-        if student['status'] == 'true':
+        if student['status'] == 'True':
             attendance_dt.is_present = 'true'
             current_year = EducationYear.objects.get(current_year=True)
             try:
@@ -128,7 +131,7 @@ def fill_attendancedt(attendance, students):
             except Enrollment.DoesNotExist:
                 enr = ''
         else:
-            attendance_dt.is_present = 'false'
+            attendance_dt.is_present = 'False'
             current_year = EducationYear.objects.get(current_year=True)
             try:
                 enr = Enrollment.objects.get(education_year=current_year, school_id=attendance.school_id, student_id=student['student_id'], section_id=student['section'], classroom_id=student['level'])
