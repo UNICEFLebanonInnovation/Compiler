@@ -188,9 +188,12 @@ class EditView(LoginRequiredMixin,
             return RegistrationForm(self.request.POST, instance=instance)
         else:
             data = OutreachSerializer(instance).data
-            data['student_nationality'] = data['student_nationality_id']
-            data['student_mother_nationality'] = data['student_mother_nationality_id']
-            data['student_id_type'] = data['student_id_type_id']
+            if data['student_nationality_id']:
+                data['student_nationality'] = data['student_nationality_id']
+            if data['student_mother_nationality_id']:
+                data['student_mother_nationality'] = data['student_mother_nationality_id']
+            if data['student_id_type_id']:
+                data['student_id_type'] = data['student_id_type_id']
             if instance.owner != self.request.user:
                 data['new_registry'] = 'yes'
                 data['student_outreached'] = 'no'
