@@ -268,6 +268,16 @@ class Staffs(models.Model):
         choices=EDUCATION_YEARS,
         verbose_name=_('Last Education year')
     )
+    speciality = models.CharField(
+        max_length=70,
+        blank=True, null=True,
+        verbose_name=_('Speciality')
+    )
+    cert_origin = models.CharField(
+        max_length=70,
+        blank=True, null=True,
+        verbose_name=_('Speciality')
+    )
     def __unicode__(self):
         if not self.first_name:
             return 'No name'

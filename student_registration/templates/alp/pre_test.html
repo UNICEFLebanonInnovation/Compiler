@@ -17,10 +17,18 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><h5>{% trans "ALP Pre-Test" %}</h5></li>
             <li class="breadcrumb-item">
+                {% if request.user|has_group:"ALP_PRE_SCHL_ALL" %}
+                <a href="{% url "alp:pre_test_add_all" %}" class="btn btn-success">
+                    <i class="icon-plus-sign icon-white"></i>
+                    {% trans "Add new Student" %}
+                </a>
+              {% endif %}
+              {% if not request.user|has_group:"ALP_PRE_SCHL_ALL" %}
                 <a href="{% url "alp:pre_test_add" %}" class="btn btn-success">
                     <i class="icon-plus-sign icon-white"></i>
                     {% trans "Add new Student" %}
                 </a>
+              {% endif %}
             </li>
             <li class="breadcrumb-item"><span class="badge badge-primary">{{ table.rows|length }}</span></li>
         </ol>

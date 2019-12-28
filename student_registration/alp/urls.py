@@ -32,6 +32,11 @@ urlpatterns = [
         name='pre_test_add'
     ),
     url(
+        regex=r'^pre-test-add-all/$',
+        view=views.PreTestAdd_allView.as_view(),
+        name='pre_test_add_all'
+    ),
+    url(
         regex=r'^pre-test-edit/(?P<pk>[\w.@+-]+)/$',
         view=views.PreTestEditView.as_view(),
         name='pre_test_edit'
