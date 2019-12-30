@@ -134,7 +134,6 @@ class AttendanceView(LoginRequiredMixin,
     model = Attendance
     template_name = 'attendances/school_day.html'
     group_required = [u"ATTENDANCE"]
-
     def get_context_data(self, **kwargs):
         force_default_language(self.request)
         level = 0
