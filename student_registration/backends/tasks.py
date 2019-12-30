@@ -367,9 +367,9 @@ def export_alp(params=None, return_data=False):
         'student__birthday_year': _('year'),
         'student__birthday_month': _('month'),
         'student__birthday_day': _('day'),
-        'student_phone' : _('Phone number'),
-       # 'student__phone': _('Phone number'),
-        #'student__phone_prefix': _('Phone prefix'),
+       # 'student_phone' : _('Phone number'),
+        'student__phone': _('Phone number'),
+        'student__phone_prefix': _('Phone prefix'),
         'student__registered_in_unhcr': _('Registered in UNHCR'),
         'student__id_type__name': _('Student ID Type'),
         'student__id_number': _('Student ID Number'),
@@ -422,9 +422,10 @@ def export_alp(params=None, return_data=False):
         'student__number': _('student number'),
     }
 
-    queryset = queryset.extra(select={
-        'student_phone': "CONCAT(student__phone, student__phone_prefix)"
-    }).values(
+    queryset = queryset.values(
+        #.extra(select={
+        #'student_phone': "CONCAT(student__phone, student__phone_prefix)"
+    #}).values(
         'school__number',
         'school__name',
         'school__location__name',
@@ -439,9 +440,9 @@ def export_alp(params=None, return_data=False):
         'student__birthday_year',
         'student__birthday_month',
         'student__birthday_day',
-        'student_phone',
-        #'student__phone',
-        #'student__phone_prefix',
+        #'student_phone',
+        'student__phone',
+        'student__phone_prefix',
         'student__registered_in_unhcr',
         'student__id_type__name',
         'student__id_number',

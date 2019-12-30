@@ -98,9 +98,11 @@ def fill_attendancedt(attendance, students):
     from .models import AttendanceDt, EducationYear
     from student_registration.enrollments.models import Enrollment
     for student in students:
-        try:
-            attendance_dt = AttendanceDt.objects.get(attendance_date=attendance.attendance_date, student_id=student['student_id'])
-        except AttendanceDt.DoesNotExist:
+        attendance_dt = AttendanceDt.objects.filter(attendance_date=attendance.attendance_date,
+                                                    student_id=student['student_id'])
+        v_count_attendancedt = AttendanceDt.objects.filter(attendance_date=attendance.attendance_date,
+                                                           student_id=student['student_id']).count()
+        if v_count_attendancedt == 0:
             attendance_dt = AttendanceDt.objects.create(
                 student_id=student['student_id'],
                 attendance_date=attendance.attendance_date,
@@ -112,7 +114,8 @@ def fill_attendancedt(attendance, students):
                 levelname=student['level_name']
             )
         if student['status'] == 'True':
-            attendance_dt.is_present = 'True'
+            attendance_dt.is_present = 'true'
+            attendance_dt.save()
             current_year = EducationYear.objects.get(current_year=True)
             try:
                 enr = Enrollment.objects.get(education_year=current_year, school_id=attendance.school_id, student_id=student['student_id'], section_id=student['section'], classroom_id=student['level'])
@@ -129,6 +132,7 @@ def fill_attendancedt(attendance, students):
                 enr = ''
         else:
             attendance_dt.is_present = 'False'
+            attendance_dt.save()
             current_year = EducationYear.objects.get(current_year=True)
             try:
                 enr = Enrollment.objects.get(education_year=current_year, school_id=attendance.school_id, student_id=student['student_id'], section_id=student['section'], classroom_id=student['level'])
@@ -145,7 +149,6 @@ def fill_attendancedt(attendance, students):
                         enr.save()
             except Enrollment.DoesNotExist:
                 enr = ''
-        attendance_dt.save()
 
 
 def add_attendance(attendance, students, std_id):

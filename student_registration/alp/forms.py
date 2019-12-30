@@ -12,6 +12,7 @@ from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HT
 from student_registration.enrollments.models import DuplicateStd
 from .models import Outreach, ALPRound
 from .serializers import OutreachSerializer, OutreachSmallSerializer
+from student_registration.alp.templatetags.util_tags import has_group
 from student_registration.students.models import (
     Person,
     Student,
@@ -388,6 +389,37 @@ class PreTestForm(forms.ModelForm):
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=True
     )
+    student_mother_fullname = forms.CharField(
+        label=_("Mother fullname"),
+        widget=forms.TextInput, required=False
+    )
+    student_phone_prefix = forms.CharField(
+        label=_("Phone prefix"),
+        widget=forms.TextInput(attrs=({'maxlength': 2})), required=False
+    )
+    student_phone = forms.CharField(
+        label=_("Phone number"),
+        widget=forms.TextInput(attrs=({'maxlength': 6})), required=False
+    )
+    student_nationality = forms.ModelChoiceField(
+        label=_("Nationality"),
+        queryset=Nationality.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    student_mother_nationality = forms.ModelChoiceField(
+        label=_("Mother nationality"),
+        queryset=Nationality.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    student_id_type = forms.ModelChoiceField(
+        label=_("ID type"),
+        queryset=IDType.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id'
+    )
+    student_id_number = forms.CharField(
+        label=_("ID number - Cell 14"),
+        widget=forms.TextInput, required=True
+    )
 
     def __init__(self, *args, **kwargs):
         super(PreTestForm, self).__init__(*args, **kwargs)
@@ -400,14 +432,16 @@ class PreTestForm(forms.ModelForm):
             self.helper.form_action = reverse('alp:pre_test_edit', kwargs={'pk': instance.id})
         else:
             self.helper.form_action = reverse('alp:pre_test_add')
+
         self.helper.layout = Layout(
+
             Fieldset(
                 None,
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Entrance test') + '</h4>')
                 ),
                 Div(
-                   # HTML('<span class="badge badge-default">1</span>'),
+                    #HTML('<span class="badge badge-default">1</span>'),
                     #Div('school', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('level', css_class='col-md-3'),
@@ -434,6 +468,28 @@ class PreTestForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('student_sex', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('student_nationality', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('student_phone_prefix', css_class='col-md-3'),
+                    Div('student_phone', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('student_id_type', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('student_id_number', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('student_mother_fullname', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('student_mother_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'
@@ -485,6 +541,250 @@ class PreTestForm(forms.ModelForm):
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 instance.school = request.user.school
+                instance.owner = request.user
+                instance.alp_round = ALPRound.objects.get(current_pre_test=True)
+                instance.calculate_pre_result()
+                instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+
+    class Meta:
+        model = Outreach
+        fields = (
+            'student_first_name',
+            'student_father_name',
+            'student_last_name',
+            'student_sex',
+            'exam_result_arabic',
+            'exam_language',
+            'exam_result_language',
+            'exam_result_math',
+            'exam_result_science',
+            'level',
+            'school',
+            'pre_test_room',
+            'pre_comment'
+        )
+        initial_fields = fields
+
+    class Media:
+        js = (
+            'js/jquery-3.3.1.min.js',
+            'js/jquery-ui-1.12.1.js',
+            'js/validator.js',
+            'js/registrations.js',
+        )
+
+
+class PreTest_allForm(forms.ModelForm):
+
+    school = forms.ModelChoiceField(
+        label=_('School'),
+        queryset=School.objects.all(), widget=forms.Select,
+        required=False, to_field_name='id',
+    )
+    student_first_name = forms.CharField(
+        label=_("First name"),
+        widget=forms.TextInput, required=True
+    )
+    student_father_name = forms.CharField(
+        label=_("Father name"),
+        widget=forms.TextInput, required=True
+    )
+    student_last_name = forms.CharField(
+        label=_("Last name"),
+        widget=forms.TextInput, required=True
+    )
+    student_sex = forms.ChoiceField(
+        label=_("Sex"),
+        widget=forms.Select, required=True,
+        choices=GENDER
+    )
+    level = forms.ModelChoiceField(
+        label=_('Entrance test'),
+        queryset=EducationLevel.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    pre_test_room = forms.ChoiceField(
+        label=_('Pre-test room'),
+        widget=forms.Select, required=True,
+        choices=ROOMS
+    )
+    exam_result_arabic = forms.FloatField(
+        label=_('Arabic'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=True
+    )
+    exam_language = forms.ChoiceField(
+        label=_('Exam language'),
+        widget=forms.Select, required=True,
+        choices=EXAM_LANGUAGES
+    )
+    exam_result_language = forms.FloatField(
+        label=_('Foreign Language'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=True
+    )
+    exam_result_math = forms.FloatField(
+        label=_('Math'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=True
+    )
+    exam_result_science = forms.FloatField(
+        label=_('Science'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=True
+    )
+    student_mother_fullname = forms.CharField(
+        label=_("Mother fullname"),
+        widget=forms.TextInput, required=False
+    )
+    student_phone_prefix = forms.CharField(
+        label=_("Phone prefix"),
+        widget=forms.TextInput(attrs=({'maxlength': 2})), required=False
+    )
+    student_phone = forms.CharField(
+        label=_("Phone number"),
+        widget=forms.TextInput(attrs=({'maxlength': 6})), required=False
+    )
+    student_nationality = forms.ModelChoiceField(
+        label=_("Nationality"),
+        queryset=Nationality.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    student_mother_nationality = forms.ModelChoiceField(
+        label=_("Mother nationality"),
+        queryset=Nationality.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    student_id_type = forms.ModelChoiceField(
+        label=_("ID type"),
+        queryset=IDType.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id'
+    )
+    student_id_number = forms.CharField(
+        label=_("ID number - Cell 14"),
+        widget=forms.TextInput, required=True
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(PreTest_allForm, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        if instance:
+            self.helper.form_action = reverse('alp:pre_test_edit', kwargs={'pk': instance.id})
+        else:
+            self.helper.form_action = reverse('alp:pre_test_add_all')
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Entrance test') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('school', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('level', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('pre_test_room', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Basic Data') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_first_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('student_father_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('student_last_name', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('student_sex', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('student_nationality', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('student_phone_prefix', css_class='col-md-3'),
+                    Div('student_phone', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('student_id_type', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('student_id_number', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('student_mother_fullname', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('student_mother_nationality', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Grades') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('exam_result_arabic', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('exam_language', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('exam_result_language', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('exam_result_math', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('exam_result_science', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('pre_comment', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            FormActions(
+                Submit('save', _('Save')),
+                HTML('<a class="btn btn-info cancel-button" href="/alp/pre-test/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+            )
+        )
+
+    def save(self, instance=None, request=None):
+        if instance:
+            serializer = OutreachSmallSerializer(instance, data=request.POST)
+            if serializer.is_valid():
+                serializer.update(validated_data=serializer.validated_data, instance=instance)
+                instance.modified_by = request.user
+                instance.calculate_pre_result()
+                instance.save()
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+        else:
+            serializer = OutreachSmallSerializer(data=request.POST)
+            if serializer.is_valid():
+                instance = serializer.create(validated_data=serializer.validated_data)
                 instance.owner = request.user
                 instance.alp_round = ALPRound.objects.get(current_pre_test=True)
                 instance.calculate_pre_result()
