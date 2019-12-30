@@ -154,6 +154,16 @@ urlpatterns = [
         name='cbece_post_assessment'
     ),
     url(
+        regex=r'^cbece-referral/(?P<pk>[\w.@+-]+)/$',
+        view=views.CBECEReferralView.as_view(),
+        name='cbece_referral'
+    ),
+    url(
+        regex=r'^cbece-followup/(?P<pk>[\w.@+-]+)/$',
+        view=views.CBECEFollowupView.as_view(),
+        name='cbece_followup'
+    ),
+    url(
         'load-districts/$',
         views.load_districts,
         name='load_districts'

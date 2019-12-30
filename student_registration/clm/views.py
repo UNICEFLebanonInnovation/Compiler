@@ -42,6 +42,8 @@ from .forms import (
     BLNAssessmentForm,
     ABLNAssessmentForm,
     CBECEAssessmentForm,
+    CBECEFollowupForm,
+    CBECEReferralForm,
 )
 from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 from .utils import is_allowed_create, is_allowed_edit
@@ -1177,6 +1179,65 @@ class CBECEListView(LoginRequiredMixin,
         force_default_language(self.request)
         return CBECE.objects.filter(partner=self.request.user.partner_id)
 
+
+class CBECEReferralView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       FormView):
+
+    template_name = 'clm/cbece_referral.html'
+    form_class = CBECEReferralForm
+    success_url = '/clm/cbece-list/'
+    group_required = [u"CLM_CBECE"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(CBECEReferralView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(CBECEReferralView, self).form_valid(form)
+
+
+class CBECEFollowupView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       FormView):
+
+    template_name = 'clm/cbece_followup.html'
+    form_class = CBECEFollowupForm
+    success_url = '/clm/cbece-list/'
+    group_required = [u"CLM_CBECE"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(CBECEFollowupView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(CBECEFollowupView, self).form_valid(form)
 
 ####################### API VIEWS #############################
 
@@ -2713,6 +2774,34 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
+
+            'referral_programme_type_1': 'Referral programme type 1',
+            'referral_partner_1': 'Referral partner 1',
+            'referral_date_1': 'Referral date 1',
+            'confirmation_date_1': 'Referral confirmation date 1',
+
+            'referral_programme_type_2': 'Referral programme type 2',
+            'referral_partner_2': 'Referral partner 2',
+            'referral_date_2': 'Referral date 2',
+            'confirmation_date_2': 'Referral confirmation date 2',
+
+            'referral_programme_type_3': 'Referral programme type 3',
+            'referral_partner_3': 'Referral partner 3',
+            'referral_date_3': 'Referral date 3',
+            'confirmation_date_3': 'Referral confirmation date 3',
+
+            'followup_call_date_1': 'Follow-up call 1 date',
+            'followup_call_reason_1': 'Follow-up call 1 reason',
+            'followup_call_result_1': 'Follow-up call 1 result',
+
+            'followup_call_date_2': 'Follow-up call 2 date',
+            'followup_call_reason_2': 'Follow-up call 2 reason',
+            'followup_call_result_2': 'Follow-up call 2 result',
+
+            'followup_visit_date_1': 'Follow-up visit 1 date',
+            'followup_visit_reason_1': 'Follow-up visit 1 reason',
+            'followup_visit_result_1': 'Follow-up visit 1 result',
+
             'new_registry': 'First time registered?',
             'student_outreached': 'Student outreached?',
             'have_barcode': 'Have barcode with him?',
@@ -2969,6 +3058,34 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'participation',
             'barriers',
             'learning_result',
+
+            'referral_programme_type_1',
+            'referral_partner_1',
+            'referral_date_1',
+            'confirmation_date_1',
+
+            'referral_programme_type_2',
+            'referral_partner_2',
+            'referral_date_2',
+            'confirmation_date_2',
+
+            'referral_programme_type_3',
+            'referral_partner_3',
+            'referral_date_3',
+            'confirmation_date_3',
+
+            'followup_call_date_1',
+            'followup_call_reason_1',
+            'followup_call_result_1',
+
+            'followup_call_date_2',
+            'followup_call_reason_2',
+            'followup_call_result_2',
+
+            'followup_visit_date_1',
+            'followup_visit_reason_1',
+            'followup_visit_result_1',
+
             'new_registry',
             'student_outreached',
             'have_barcode',
