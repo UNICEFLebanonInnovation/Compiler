@@ -27,6 +27,11 @@ urlpatterns = [
         name='pre_test'
     ),
     url(
+        regex=r'^pre-test-all/$',
+        view=views.PreTest_allView.as_view(),
+        name='pre_test_all'
+    ),
+    url(
         regex=r'^pre-test-add/$',
         view=views.PreTestAddView.as_view(),
         name='pre_test_add'
