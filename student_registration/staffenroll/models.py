@@ -47,16 +47,20 @@ class Subjects(models.Model):
 
 
 class StaffEnroll(TimeStampedModel):
+    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2050))
+    EDUCATION_YEARS.append(('na', 'N/A'))
     SCHOOL_SHIFT = Choices(
         ('na', 'n/a'),
         ('first', _('First shift')),
         ('second', _('Second shift')),
         ('alp', _('ALP')),
     )
+    SHIFT = Choices(
+        ('D', _('Day')),
+        ('N', _('Night')),
+    )
     CURRENT_YEAR = datetime.datetime.now().year
     YEARS = ((str(x), x) for x in range(2016, CURRENT_YEAR))
-    EDUCATION_YEARS = list((str(x - 1) + '/' + str(x), str(x - 1) + '/' + str(x)) for x in range(2001, 2050))
-    EDUCATION_YEARS.append(('na', 'N/A'))
     staff = models.ForeignKey(
         Staffs,
         blank=False, null=True,
@@ -109,13 +113,6 @@ class StaffEnroll(TimeStampedModel):
         related_name='+',
         verbose_name=_('Created by')
     )
-    first_education_year = models.CharField(
-         max_length=10,
-         blank=True,
-         null=True,
-         choices=EDUCATION_YEARS,
-         verbose_name=_('Last Education year')
-    )
     deleted = models.BooleanField(
          blank=True, default=False,
          verbose_name=_('deleted')
@@ -128,6 +125,23 @@ class StaffEnroll(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Hour Rate')
+    )
+    shift = models.CharField(
+        max_length=1,
+        blank=True,
+        null=True,
+        choices=SHIFT
+    )
+    school_ispublic = models.BooleanField(
+        blank=True, default=False,
+        verbose_name=_('is public')
+    )
+    work = models.CharField(
+        blank=True, max_length=150, verbose_name=_('main work')
+    )
+    school_ismain = models.BooleanField(
+        blank=True, default=True,
+        verbose_name=_('is public')
     )
     @property
     def cycle(self):

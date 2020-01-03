@@ -491,6 +491,49 @@ class PublicDocument(TimeStampedModel):
     def __unicode__(self):
         return self.name
 
+
 class Setup(models.Model):
     staff_seq = models.IntegerField(
         blank=True, null=True)
+
+
+class class_section(TimeStampedModel):
+
+    school = models.ForeignKey(
+        School,
+        verbose_name=_('school'),
+        related_name='+',
+    )
+    classroom = models.ForeignKey(
+        ClassRoom,
+        blank=True, null=True,
+        verbose_name=_('class'),
+        related_name='+',
+    )
+    section = models.ForeignKey(
+        Section,
+        blank=True, null=True,
+        verbose_name=_('section'),
+        related_name='+',
+    )
+    closed_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Closed Date')
+    )
+    is_closed = models.BooleanField(
+        blank=True,
+        default=False,
+        verbose_name=_('is closed')
+    )
+    school_type = models.CharField(
+        max_length=15,
+        blank=True, null=True,
+        verbose_name=_('school type')
+    )
+    education_year = models.ForeignKey(
+        EducationYear,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Education year')
+    )

@@ -42,6 +42,8 @@ from .forms import (
     BLNAssessmentForm,
     ABLNAssessmentForm,
     CBECEAssessmentForm,
+    CBECEFollowupForm,
+    CBECEReferralForm,
 )
 from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 from .utils import is_allowed_create, is_allowed_edit
@@ -1177,6 +1179,65 @@ class CBECEListView(LoginRequiredMixin,
         force_default_language(self.request)
         return CBECE.objects.filter(partner=self.request.user.partner_id)
 
+
+class CBECEReferralView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       FormView):
+
+    template_name = 'clm/cbece_referral.html'
+    form_class = CBECEReferralForm
+    success_url = '/clm/cbece-list/'
+    group_required = [u"CLM_CBECE"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(CBECEReferralView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(CBECEReferralView, self).form_valid(form)
+
+
+class CBECEFollowupView(LoginRequiredMixin,
+                       GroupRequiredMixin,
+                       FormView):
+
+    template_name = 'clm/cbece_followup.html'
+    form_class = CBECEFollowupForm
+    success_url = '/clm/cbece-list/'
+    group_required = [u"CLM_CBECE"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(CBECEFollowupView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        if self.request.method == "POST":
+            return form_class(self.request.POST, instance=instance)
+        else:
+            return form_class(instance=instance)
+
+    def form_valid(self, form):
+        instance = CBECE.objects.get(id=self.kwargs['pk'], partner=self.request.user.partner_id)
+        form.save(request=self.request, instance=instance)
+        return super(CBECEFollowupView, self).form_valid(form)
 
 ####################### API VIEWS #############################
 
@@ -2672,50 +2733,75 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'post_test_score': 'Academic Result - Post',
 
             'pre_test_LanguageArtDomain1': 'Language Development - Pre - Level 1',
-            'pre_test_CognitiveDomian1': 'Cognitive Development - Mathematics - Pre - Level 1',
-            'pre_test_ScienceDomain1': 'Science Development - Science - Pre - Level 1',
-            'pre_test_SocialEmotionalDomain1': 'Social-Emotional Development - Pre - Level 1',
-            'pre_test_PsychomotorDomain1': 'Psychomotor Development - Pre - Level 1',
-            'pre_test_ArtisticDomain1': 'Artistic Development - Pre - Level 1',
-
             'post_test_LanguageArtDomain1': 'Language Development - Post - Level 1',
+            'pre_test_CognitiveDomian1': 'Cognitive Development - Mathematics - Pre - Level 1',
             'post_test_CognitiveDomian1': 'Cognitive Development - Mathematics - Post - Level 1',
+            'pre_test_ScienceDomain1': 'Science Development - Science - Pre - Level 1',
             'post_test_ScienceDomain1': 'Science Development - Science - Post - Level 1',
+            'pre_test_SocialEmotionalDomain1': 'Social-Emotional Development - Pre - Level 1',
             'post_test_SocialEmotionalDomain1': 'Social-Emotional Development - Post - Level 1',
+            'pre_test_PsychomotorDomain1': 'Psychomotor Development - Pre - Level 1',
             'post_test_PsychomotorDomain1': 'Psychomotor Development - Post - Level 1',
+            'pre_test_ArtisticDomain1': 'Artistic Development - Pre - Level 1',
             'post_test_ArtisticDomain1': 'Artistic Development - Post - Level 1',
 
             'pre_test_LanguageArtDomain2': 'Language Development - Pre - Level 2',
-            'pre_test_CognitiveDomian2': 'Cognitive Development - Mathematics - Pre - Level 2',
-            'pre_test_ScienceDomain2': 'Science Development - Science - Pre - Level 2',
-            'pre_test_SocialEmotionalDomain2': 'Social-Emotional Development - Pre - Level 2',
-            'pre_test_PsychomotorDomain2': 'Psychomotor Development - Pre - Level 2',
-            'pre_test_ArtisticDomain2': 'Artistic Development - Pre - Level 2',
-
             'post_test_LanguageArtDomain2': 'Language Development - Post - Level 2',
+            'pre_test_CognitiveDomian2': 'Cognitive Development - Mathematics - Pre - Level 2',
             'post_test_CognitiveDomian2': 'Cognitive Development - Mathematics - Post - Level 2',
+            'pre_test_ScienceDomain2': 'Science Development - Science - Pre - Level 2',
             'post_test_ScienceDomain2': 'Science Development - Science - Post - Level 2',
+            'pre_test_SocialEmotionalDomain2': 'Social-Emotional Development - Pre - Level 2',
             'post_test_SocialEmotionalDomain2': 'Social-Emotional Development - Post - Level 2',
+            'pre_test_PsychomotorDomain2': 'Psychomotor Development - Pre - Level 2',
             'post_test_PsychomotorDomain2': 'Psychomotor Development - Post - Level 2',
+            'pre_test_ArtisticDomain2': 'Artistic Development - Pre - Level 2',
             'post_test_ArtisticDomain2': 'Artistic Development - Post - Level 2',
 
             'pre_test_LanguageArtDomain3': 'Language Development - Pre - Level 3',
-            'pre_test_CognitiveDomian3': 'Cognitive Development - Mathematics - Pre - Level 3',
-            'pre_test_ScienceDomain3': 'Science Development - Science - Pre - Level 3',
-            'pre_test_SocialEmotionalDomain3': 'Social-Emotional Development - Pre - Level 3',
-            'pre_test_PsychomotorDomain3': 'Psychomotor Development - Pre - Level 3',
-            'pre_test_ArtisticDomain3': 'Artistic Development - Pre - Level 3',
-
             'post_test_LanguageArtDomain3': 'Language Development - Post - Level 3',
+            'pre_test_CognitiveDomian3': 'Cognitive Development - Mathematics - Pre - Level 3',
             'post_test_CognitiveDomian3': 'Cognitive Development - Mathematics - Post - Level 3',
+            'pre_test_ScienceDomain3': 'Science Development - Science - Pre - Level 3',
             'post_test_ScienceDomain3': 'Science Development - Science - Post - Level 3',
+            'pre_test_SocialEmotionalDomain3': 'Social-Emotional Development - Pre - Level 3',
             'post_test_SocialEmotionalDomain3': 'Social-Emotional Development - Post - Level 3',
+            'pre_test_PsychomotorDomain3': 'Psychomotor Development - Pre - Level 3',
             'post_test_PsychomotorDomain3': 'Psychomotor Development - Post - Level 3',
+            'pre_test_ArtisticDomain3': 'Artistic Development - Pre - Level 3',
             'post_test_ArtisticDomain3': 'Artistic Development - Post - Level 3',
 
             'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
+
+            'referral_programme_type_1': 'Referral programme type 1',
+            'referral_partner_1': 'Referral partner 1',
+            'referral_date_1': 'Referral date 1',
+            'confirmation_date_1': 'Referral confirmation date 1',
+
+            'referral_programme_type_2': 'Referral programme type 2',
+            'referral_partner_2': 'Referral partner 2',
+            'referral_date_2': 'Referral date 2',
+            'confirmation_date_2': 'Referral confirmation date 2',
+
+            'referral_programme_type_3': 'Referral programme type 3',
+            'referral_partner_3': 'Referral partner 3',
+            'referral_date_3': 'Referral date 3',
+            'confirmation_date_3': 'Referral confirmation date 3',
+
+            'followup_call_date_1': 'Follow-up call 1 date',
+            'followup_call_reason_1': 'Follow-up call 1 reason',
+            'followup_call_result_1': 'Follow-up call 1 result',
+
+            'followup_call_date_2': 'Follow-up call 2 date',
+            'followup_call_reason_2': 'Follow-up call 2 reason',
+            'followup_call_result_2': 'Follow-up call 2 result',
+
+            'followup_visit_date_1': 'Follow-up visit 1 date',
+            'followup_visit_reason_1': 'Follow-up visit 1 reason',
+            'followup_visit_result_1': 'Follow-up visit 1 result',
+
             'new_registry': 'First time registered?',
             'student_outreached': 'Student outreached?',
             'have_barcode': 'Have barcode with him?',
@@ -2724,6 +2810,124 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'created': 'created',
             'modified': 'modified',
         }
+
+        field_list = (
+            'partner__name',
+            'round__name',
+            'cycle__name',
+            'site',
+            'school__name',
+            'governorate__name_en',
+            'district__name_en',
+            'location',
+            'language',
+            'referral',
+
+            'student__first_name',
+            'student__father_name',
+            'student__last_name',
+            'student__sex',
+            'student__birthday_day',
+            'student__birthday_month',
+            'student__birthday_year',
+            'student__nationality__name',
+            'student__mother_fullname',
+            'student__p_code',
+            'student__id_number',
+            'student__number',
+            'student__family_status',
+            'student__have_children',
+            'disability__name_en',
+            'internal_number',
+            'comments',
+            'child_muac',
+
+            'hh_educational_level__name',
+            'have_labour',
+            'labours',
+            'labour_hours',
+
+            'pre_test_score',
+            'post_test_score',
+
+            'pre_test_LanguageArtDomain1',
+            'post_test_LanguageArtDomain1',
+            'pre_test_CognitiveDomian1',
+            'post_test_CognitiveDomian1',
+            'pre_test_ScienceDomain1',
+            'post_test_ScienceDomain1',
+            'pre_test_SocialEmotionalDomain1',
+            'post_test_SocialEmotionalDomain1',
+            'pre_test_PsychomotorDomain1',
+            'post_test_PsychomotorDomain1',
+            'pre_test_ArtisticDomain1',
+            'post_test_ArtisticDomain1',
+
+            'pre_test_LanguageArtDomain2',
+            'post_test_LanguageArtDomain2',
+            'pre_test_CognitiveDomian2',
+            'post_test_CognitiveDomian2',
+            'pre_test_ScienceDomain2',
+            'post_test_ScienceDomain2',
+            'pre_test_SocialEmotionalDomain2',
+            'post_test_SocialEmotionalDomain2',
+            'pre_test_PsychomotorDomain2',
+            'post_test_PsychomotorDomain2',
+            'pre_test_ArtisticDomain2',
+            'post_test_ArtisticDomain2',
+
+            'pre_test_LanguageArtDomain3',
+            'post_test_LanguageArtDomain3',
+            'pre_test_CognitiveDomian3',
+            'post_test_CognitiveDomian3',
+            'pre_test_ScienceDomain3',
+            'post_test_ScienceDomain3',
+            'pre_test_SocialEmotionalDomain3',
+            'post_test_SocialEmotionalDomain3',
+            'pre_test_PsychomotorDomain3',
+            'post_test_PsychomotorDomain3',
+            'pre_test_ArtisticDomain3',
+            'post_test_ArtisticDomain3',
+
+            'participation',
+            'barriers',
+            'learning_result',
+
+            'referral_programme_type_1',
+            'referral_partner_1',
+            'referral_date_1',
+            'confirmation_date_1',
+
+            'referral_programme_type_2',
+            'referral_partner_2',
+            'referral_date_2',
+            'confirmation_date_2',
+
+            'referral_programme_type_3',
+            'referral_partner_3',
+            'referral_date_3',
+            'confirmation_date_3',
+
+            'followup_call_date_1',
+            'followup_call_reason_1',
+            'followup_call_result_1',
+
+            'followup_call_date_2',
+            'followup_call_reason_2',
+            'followup_call_result_2',
+
+            'followup_visit_date_1',
+            'followup_visit_reason_1',
+            'followup_visit_result_1',
+
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
+            'owner__username',
+            'modified_by__username',
+            'created',
+            'modified',
+        )
 
         qs = self.get_queryset().extra(select={
             # 'participation': "CONCAT(participation, '_absence')",
@@ -2854,6 +3058,34 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'participation',
             'barriers',
             'learning_result',
+
+            'referral_programme_type_1',
+            'referral_partner_1',
+            'referral_date_1',
+            'confirmation_date_1',
+
+            'referral_programme_type_2',
+            'referral_partner_2',
+            'referral_date_2',
+            'confirmation_date_2',
+
+            'referral_programme_type_3',
+            'referral_partner_3',
+            'referral_date_3',
+            'confirmation_date_3',
+
+            'followup_call_date_1',
+            'followup_call_reason_1',
+            'followup_call_result_1',
+
+            'followup_call_date_2',
+            'followup_call_reason_2',
+            'followup_call_result_2',
+
+            'followup_visit_date_1',
+            'followup_visit_reason_1',
+            'followup_visit_result_1',
+
             'new_registry',
             'student_outreached',
             'have_barcode',
@@ -2863,7 +3095,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'modified',
         )
 
-        return render_to_csv_response(qs, field_header_map=headers)
+        return render_to_csv_response(qs, field_header_map=headers, field_order=field_list)
 
 
 def load_districts(request):
@@ -2901,3 +3133,17 @@ def search_clm_child(request):
                      'student__birthday_year', 'internal_number').distinct()
 
         return JsonResponse({'result': json.dumps(list(qs))})
+
+
+class ExecABLNUpdateView(LoginRequiredMixin, TemplateView):
+
+    template_name = 'clm/execs.html'
+
+    def get_context_data(self, **kwargs):
+
+        instances = ABLN.objects.filter(round_id=8)
+        instances.update(round_id=9)
+
+        return {
+            'result': instances.count(),
+        }

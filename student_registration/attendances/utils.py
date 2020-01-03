@@ -98,9 +98,11 @@ def fill_attendancedt(attendance, students):
     from .models import AttendanceDt, EducationYear
     from student_registration.enrollments.models import Enrollment
     for student in students:
-        try:
-            attendance_dt = AttendanceDt.objects.get(attendance_date=attendance.attendance_date, student_id=student['student_id'])
-        except AttendanceDt.DoesNotExist:
+        attendance_dt = AttendanceDt.objects.filter(attendance_date=attendance.attendance_date,
+                                                    student_id=student['student_id'])
+        v_count_attendancedt = AttendanceDt.objects.filter(attendance_date=attendance.attendance_date,
+                                                           student_id=student['student_id']).count()
+        if v_count_attendancedt == 0:
             attendance_dt = AttendanceDt.objects.create(
                 student_id=student['student_id'],
                 attendance_date=attendance.attendance_date,
@@ -111,41 +113,46 @@ def fill_attendancedt(attendance, students):
                 attendance_id=attendance.id,
                 levelname=student['level_name']
             )
-        if student['status'] == 'True':
-            attendance_dt.is_present = 'True'
-            current_year = EducationYear.objects.get(current_year=True)
-            try:
-                enr = Enrollment.objects.get(education_year=current_year, school_id=attendance.school_id, student_id=student['student_id'], section_id=student['section'], classroom_id=student['level'])
-                if not enr.last_attendance_date:
-                    enr.last_attendance_date = attendance.attendance_date
-                    enr.nb_consecutiveabsences = 0
-                    enr.save()
-                else:
-                    if attendance.attendance_date > enr.last_attendance_date:
-                        enr.last_attendance_date = attendance.attendance_date
-                        enr.nb_consecutiveabsences = 0
-                        enr.save()
-            except Enrollment.DoesNotExist:
-                enr = ''
+            attendance_dt.save()
         else:
-            attendance_dt.is_present = 'False'
+            attendance_dt.update(is_present=student['status'])
             current_year = EducationYear.objects.get(current_year=True)
-            try:
-                enr = Enrollment.objects.get(education_year=current_year, school_id=attendance.school_id, student_id=student['student_id'], section_id=student['section'], classroom_id=student['level'])
-                if not enr.last_absent_date:
-                    enr.last_absent_date = attendance.attendance_date
-                    enr.save()
-                else:
-                    if attendance.attendance_date > enr.last_absent_date:
-                        enr.last_absent_date = attendance.attendance_date
-                        if enr.nb_consecutiveabsences:
-                            enr.nb_consecutiveabsences += 1
+            if student['status'] == 'True':
+                try:
+                    Enr = Enrollment.objects.filter(education_year=current_year, school_id=attendance.school_id,
+                                                    student_id=student['student_id'], section_id=student['section'],
+                                                    classroom_id=student['level'])
+                    for enr in Enr:
+                        if not enr.last_attendance_date:
+                            enr.last_attendance_date = attendance.attendance_date
+                            enr.nb_consecutiveabsences = 0
+                            enr.save()
                         else:
-                            enr.nb_consecutiveabsences = 1
-                        enr.save()
-            except Enrollment.DoesNotExist:
-                enr = ''
-        attendance_dt.save()
+                            if attendance.attendance_date > enr.last_attendance_date:
+                                enr.last_attendance_date = attendance.attendance_date
+                                enr.nb_consecutiveabsences = 0
+                                enr.save()
+                except Enrollment.DoesNotExist:
+                    enr = ''
+            else:
+                try:
+                    Enr = Enrollment.objects.filter(education_year=current_year, school_id=attendance.school_id,
+                                                    student_id=student['student_id'], section_id=student['section'],
+                                                    classroom_id=student['level'])
+                    for enr in Enr:
+                        if not enr.last_absent_date:
+                            enr.last_absent_date = attendance.attendance_date
+                            enr.save()
+                        else:
+                            if attendance.attendance_date > enr.last_absent_date:
+                                enr.last_absent_date = attendance.attendance_date
+                                if enr.nb_consecutiveabsences:
+                                    enr.nb_consecutiveabsences += 1
+                                else:
+                                    enr.nb_consecutiveabsences = 1
+                                enr.save()
+                except Enrollment.DoesNotExist:
+                    enr = ''
 
 
 def add_attendance(attendance, students, std_id):

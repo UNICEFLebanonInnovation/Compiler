@@ -17,10 +17,10 @@ from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
 from .models import Outreach, ALPRound
-from .forms import RegistrationForm, PreTestGradingForm, PostTestGradingForm, OutreachForm, PreTestForm
+from .forms import RegistrationForm, PreTestGradingForm, PostTestGradingForm, OutreachForm, PreTestForm, PreTest_allForm
 from .serializers import OutreachSerializer, GeneralSerializer, OutreachSmallSerializer, GradingSerializer
 from .tables import BootstrapTable, OutreachTable, PreTestTable, PostTestTable, SchoolTable
-from .filters import OutreachFilter, PreTestFilter, PostTestFilter, SchoolFilter
+from .filters import OutreachFilter, PreTestFilter, PostTestFilter, SchoolFilter, PreTest_allFilter
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.users.utils import force_default_language
@@ -224,7 +224,7 @@ class SchoolView(LoginRequiredMixin,
         return Outreach.objects.filter(alp_round=alp_round, school=self.request.user.school_id)
 
 
-class PreTestView(LoginRequiredMixin,
+class PreTest_allView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FilterView,
                   ExportMixin,
@@ -237,6 +237,26 @@ class PreTestView(LoginRequiredMixin,
     template_name = 'alp/pre_test.html'
     table = BootstrapTable(Outreach.objects.all(), order_by='id')
 
+    filterset_class = PreTest_allFilter
+
+    def get_queryset(self):
+        force_default_language(self.request)
+        alp_round = ALPRound.objects.get(current_pre_test=True)
+        return Outreach.objects.filter(alp_round=alp_round)
+
+
+class PreTestView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FilterView,
+                  ExportMixin,
+                  SingleTableView,
+                  RequestConfig):
+
+    group_required = [u"TEST_MANAGER", u"CERD"]
+    table_class = PreTestTable
+    model = Outreach
+    template_name = 'alp/pre_test.html'
+    table = BootstrapTable(Outreach.objects.all(), order_by='id')
     filterset_class = PreTestFilter
 
     def get_queryset(self):
@@ -271,6 +291,32 @@ class PreTestAddView(LoginRequiredMixin,
         return super(PreTestAddView, self).form_valid(form)
 
 
+class PreTestAdd_allView(LoginRequiredMixin,
+                     GroupRequiredMixin,
+                     FormView):
+
+    template_name = 'bootstrap4/common_form.html'
+    form_class = PreTest_allForm
+    success_url = '/alp/pre-test/'
+    group_required = [u"TEST_MANAGER", u"CERD"]
+
+    def get_success_url(self):
+        if self.request.POST.get('save_add_another', None):
+            return '/alp/pre-test-add-all/'
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(PreTestAdd_allView, self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        form.save(request=self.request)
+        return super(PreTestAdd_allView, self).form_valid(form)
+
+
 class PreTestEditView(LoginRequiredMixin,
                       GroupRequiredMixin,
                       FormView):
@@ -290,10 +336,20 @@ class PreTestEditView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         instance = Outreach.objects.get(id=self.kwargs['pk'])
         if self.request.method == "POST":
-            return PreTestForm(self.request.POST, instance=instance)
+
+            if has_group(self.request.user, 'ALP_PRE_SCHL_ALL'):
+                return PreTest_allForm(self.request.POST, instance=instance)
+            else:
+                return PreTestForm(self.request.POST, instance=instance)
         else:
             data = OutreachSmallSerializer(instance).data
-            return PreTestForm(data, instance=instance)
+            data['student_nationality'] = data['student_nationality_id']
+            data['student_mother_nationality'] = data['student_mother_nationality_id']
+            data['student_id_type'] = data['student_id_type_id']
+            if has_group(self.request.user, 'ALP_PRE_SCHL_ALL'):
+                return PreTest_allForm(data, instance=instance)
+            else:
+                return PreTestForm(data, instance=instance)
 
     def form_valid(self, form):
         instance = Outreach.objects.get(id=self.kwargs['pk'])
