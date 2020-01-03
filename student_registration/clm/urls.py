@@ -173,4 +173,9 @@ urlpatterns = [
         views.search_clm_child,
         name='search_clm_child'
     ),
+    url(
+        regex=r'^exec-abln-update/$',
+        view=views.ExecABLNUpdateView.as_view(),
+        name='exec_abln_update'
+    ),
 ]

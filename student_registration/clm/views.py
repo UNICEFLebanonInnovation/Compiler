@@ -3133,3 +3133,17 @@ def search_clm_child(request):
                      'student__birthday_year', 'internal_number').distinct()
 
         return JsonResponse({'result': json.dumps(list(qs))})
+
+
+class ExecABLNUpdateView(LoginRequiredMixin, TemplateView):
+
+    template_name = 'clm/execs.html'
+
+    def get_context_data(self, **kwargs):
+
+        instances = ABLN.objects.filter(round_id=8)
+        instances.update(round_id=9)
+
+        return {
+            'result': instances.count(),
+        }
