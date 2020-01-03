@@ -20,7 +20,7 @@ from .models import Outreach, ALPRound
 from .forms import RegistrationForm, PreTestGradingForm, PostTestGradingForm, OutreachForm, PreTestForm, PreTest_allForm
 from .serializers import OutreachSerializer, GeneralSerializer, OutreachSmallSerializer, GradingSerializer
 from .tables import BootstrapTable, OutreachTable, PreTestTable, PostTestTable, SchoolTable
-from .filters import OutreachFilter, PreTestFilter, PostTestFilter, SchoolFilter
+from .filters import OutreachFilter, PreTestFilter, PostTestFilter, SchoolFilter, PreTest_allFilter
 from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.users.utils import force_default_language
@@ -224,7 +224,7 @@ class SchoolView(LoginRequiredMixin,
         return Outreach.objects.filter(alp_round=alp_round, school=self.request.user.school_id)
 
 
-class PreTestView(LoginRequiredMixin,
+class PreTest_allView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FilterView,
                   ExportMixin,
@@ -237,15 +237,32 @@ class PreTestView(LoginRequiredMixin,
     template_name = 'alp/pre_test.html'
     table = BootstrapTable(Outreach.objects.all(), order_by='id')
 
+    filterset_class = PreTest_allFilter
+
+    def get_queryset(self):
+        force_default_language(self.request)
+        alp_round = ALPRound.objects.get(current_pre_test=True)
+        return Outreach.objects.filter(alp_round=alp_round)
+
+
+class PreTestView(LoginRequiredMixin,
+                  GroupRequiredMixin,
+                  FilterView,
+                  ExportMixin,
+                  SingleTableView,
+                  RequestConfig):
+
+    group_required = [u"TEST_MANAGER", u"CERD"]
+    table_class = PreTestTable
+    model = Outreach
+    template_name = 'alp/pre_test.html'
+    table = BootstrapTable(Outreach.objects.all(), order_by='id')
     filterset_class = PreTestFilter
 
     def get_queryset(self):
         force_default_language(self.request)
         alp_round = ALPRound.objects.get(current_pre_test=True)
-        if has_group(self.request.user, 'ALP_PRE_SCHL_ALL'):
-           return Outreach.objects.filter(alp_round=alp_round)
-        else:
-            return Outreach.objects.filter(alp_round=alp_round, school_id=self.request.user.school)
+        return Outreach.objects.filter(alp_round=alp_round, school_id=self.request.user.school)
 
 
 class PreTestAddView(LoginRequiredMixin,

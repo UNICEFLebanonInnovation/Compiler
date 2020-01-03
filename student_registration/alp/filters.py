@@ -19,6 +19,22 @@ class OutreachFilter(FilterSet):
         }
 
 
+class PreTest_allFilter(FilterSet):
+    level = ModelChoiceFilter(queryset=EducationLevel.objects.all(), empty_label=_('Entrance test'))
+    school = ModelChoiceFilter(queryset=School.objects.all(), empty_label=_('School'))
+
+    class Meta:
+        model = Outreach
+        fields = {
+            'school': ['exact'],
+            'level': ['exact'],
+            'pre_test_room': ['exact'],
+            'student__first_name': ['contains'],
+            'student__father_name': ['contains'],
+            'student__last_name': ['contains'],
+        }
+
+
 class PreTestFilter(FilterSet):
     level = ModelChoiceFilter(queryset=EducationLevel.objects.all(), empty_label=_('Entrance test'))
     #school = ModelChoiceFilter(queryset=School.objects.all(), empty_label=_('School'))
@@ -26,7 +42,7 @@ class PreTestFilter(FilterSet):
     class Meta:
         model = Outreach
         fields = {
-            #'school': ['exact'],
+           # 'school': ['exact'],
             'level': ['exact'],
             'pre_test_room': ['exact'],
             'student__first_name': ['contains'],
