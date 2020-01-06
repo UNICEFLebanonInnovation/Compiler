@@ -18,6 +18,7 @@ class LocationResource(resources.ModelResource):
         fields = (
             'id',
             'name',
+            'name_en',
             'type',
             'parent',
             'latitude',
