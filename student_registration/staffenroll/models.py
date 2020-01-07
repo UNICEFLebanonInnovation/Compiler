@@ -14,11 +14,15 @@ from student_registration.schools.models import (
     Section,
     EducationYear,
 )
-from student_registration.students.models import Student
+
 # Create your models here.
 
 
 class Jobs(models.Model):
+    SALARYTYPE = Choices(
+        ('H', _('Hourly')),
+        ('D', _('Daily')),
+    )
     name = models.CharField(max_length=45, unique=True, verbose_name=_('Job description'), null=False, default=' ')
     hourrate = models.IntegerField(
         blank=True,
@@ -26,6 +30,15 @@ class Jobs(models.Model):
         verbose_name=_('Hour Rate')
     )
     maxhoursperweek = models.IntegerField(blank=True, null=True, verbose_name=_('Max.Hours per week'), )
+    salarytype = models.CharField(
+        max_length=1,
+        blank=True,
+        null=True,
+        choices=SALARYTYPE
+    )
+    with_date_interval = models.BooleanField(blank=True, default=False)
+    is_teacher = models.BooleanField(blank=True, default=False)
+    with_additionalhour = models.BooleanField(blank=True, default=False, verbose_name='with Hours no class')
 
     class Meta:
         ordering = ['id']
@@ -143,6 +156,13 @@ class StaffEnroll(TimeStampedModel):
         blank=True, default=True,
         verbose_name=_('is public')
     )
+    starting_work = models.DateField(blank=True, null=True)
+    ending_work = models.DateField(blank=True, null=True)
+    weeklyhours_noclass = models.IntegerField(
+        default=0,
+        verbose_name=_('Weekly Nb of hours no class'),
+    )
+
     @property
     def cycle(self):
         if self.classroom_id in [2, 3, 4]:
@@ -162,3 +182,34 @@ class StaffEnroll(TimeStampedModel):
         if self.student:
             return self.student.__unicode__()
         return str(self.id)
+
+
+class staffattend(TimeStampedModel):
+    school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('School')
+    )
+    education_year = models.ForeignKey(
+        EducationYear,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Education year')
+    )
+    job = models.ForeignKey(
+        Jobs,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Job Type')
+    )
+    staff = models.ForeignKey(
+        Staffs,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Staff')
+    )
+    attenddate = models.DateField(null=False)
+    attendhours = models.IntegerField(default=0)
+    isattend = models.NullBooleanField(blank=True, default=False, null=True)
+    attendremarks = models.CharField(blank=True, null=True, max_length=200)

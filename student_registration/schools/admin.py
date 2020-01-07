@@ -441,11 +441,13 @@ class ALPAssignmentMatrixAdmin(ImportExportModelAdmin):
         'range_start',
         'range_end',
         'refer_to',
+        'matrix_type',
     )
     list_display = (
         'level',
         'range',
         'refer_to',
+        'matrix_type',
     )
 
     def get_export_formats(self):

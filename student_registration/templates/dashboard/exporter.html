@@ -253,12 +253,15 @@
          <div class="col-sm-4">
             <div class="card m-3">
               <div class="card-block">
-                <h3 class="card-title">Update duplicate students</h3>
+                <h3 class="card-title">Common Tasks</h3>
                 <p class="card-text">Update duplicate students</p>
-                <!--<a href="{% url 'dashboard:fix_dupstd' %}" class="btn btn-primary">fill education year</a> -->
-                <a href="{% url 'dashboard:update_duplicatestd' %}" class="btn btn-primary">update</a>
-                <a href="{% url 'dashboard:dup_id_enr' %}" class="btn btn-primary">duplicate ID of students in enrollments</a>
+                <a href="{% url 'dashboard:update_duplicatestd' %}" class="btn btn-primary">update Duplicated students</a>
+                <br>
+                <a href="{% url 'dashboard:dup_id_enr' %}" class="btn btn-info">duplicate ID of students in enrollments</a>
+                <br>
                 <a href="{% url 'dashboard:dup_nb_enr' %}" class="btn btn-primary">duplicate Number of students in enrollments</a>
+                <br>
+                <a href="{% url 'dashboard:generate_pretest_result' %}" class="btn btn-info">Generate ALP-PreTest Results</a>
               </div>
             </div>
           </div>

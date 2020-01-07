@@ -7,6 +7,7 @@ from model_utils.models import TimeStampedModel
 from django.utils.translation import ugettext as _
 # from django.contrib.gis.db import models
 from student_registration.locations.models import Location
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Coordinator(models.Model):
@@ -287,6 +288,25 @@ class School(models.Model):
 class EducationLevel(models.Model):
     name = models.CharField(max_length=45, unique=True)
     note = models.IntegerField(blank=True, null=True)
+    with_math = models.BooleanField(blank=True, default=False)
+    with_science = models.BooleanField(blank=True, default=False)
+    with_arabic = models.BooleanField(blank=True, default=False)
+    with_language = models.BooleanField(blank=True, default=False)
+    coefficient_score = models.FloatField(blank=True, null=True)
+    new_calculation = models.BooleanField(blank=True, default=False)
+
+    @property
+    def sum_subjects(self):
+        sum_subject = 0
+        if self.with_math:
+            sum_subject += 1
+        if self.with_science:
+            sum_subject += 1
+        if self.with_arabic:
+            sum_subject += 1
+        if self.with_language:
+            sum_subject += 1
+        return sum_subject
 
     class Meta:
         ordering = ['id']
@@ -431,6 +451,10 @@ class EducationYear(models.Model):
 
 
 class ALPAssignmentMatrix(models.Model):
+    MATRIX_TYPE =(
+        ('O', _('Old')),
+        ('N', _('New')),
+    )
     level = models.ForeignKey(
         EducationLevel,
         blank=True, null=True,
@@ -444,6 +468,7 @@ class ALPAssignmentMatrix(models.Model):
 
     range_start = models.FloatField(blank=True, null=True)
     range_end = models.FloatField(blank=True, null=True)
+    matrix_type = models.CharField(blank=True, null=True, max_length=1, choices=MATRIX_TYPE)
 
     @property
     def range(self):
