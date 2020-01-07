@@ -457,15 +457,34 @@ class Outreach(TimeStampedModel):
     @property
     def exam_total(self):
         total = 0
-        # if self.exam_result_arabic:
-        #     total += self.exam_result_arabic
-        if self.exam_result_language:
-            total += self.exam_result_language
-        if self.exam_result_math:
-            total += self.exam_result_math
-        if self.exam_result_science:
-            total += self.exam_result_science
-        return total
+        if self.level:
+            Education_Level = EducationLevel.objects.filter(name=self.level)
+            for education_level in Education_Level:
+                if education_level.new_calculation:
+                    if education_level.with_arabic:
+                        if self.exam_result_arabic:
+                            total += self.exam_result_arabic
+                    if education_level.with_science:
+                        if self.exam_result_science:
+                            total += self.exam_result_science
+                    if education_level.with_language:
+                        if self.exam_result_language:
+                            total += self.exam_result_language
+                    if education_level.with_math:
+                        if self.exam_result_math:
+                            total += self.exam_result_math
+                    return total
+            else:
+                # if self.exam_result_arabic:
+                #     total += self.exam_result_arabic
+                if self.exam_result_language:
+                    total += self.exam_result_language
+                if self.exam_result_math:
+                    total += self.exam_result_math
+                if self.exam_result_science:
+                    total += self.exam_result_science
+                return total
+
 
     @property
     def pretest_total(self):
