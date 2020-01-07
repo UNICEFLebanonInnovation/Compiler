@@ -655,3 +655,20 @@ class RegistrationsALPPostTestView(LoginRequiredMixin,
                 'governorates': governorates,
                 'education_levels': ClassLevel.objects.all()
         }
+
+
+def generate_pretest_result(request):
+    from student_registration.alp.utils import assign_to_level
+    from student_registration.alp.models import Outreach, ALPRound
+    alp_round = ALPRound.objects.get(current_pre_test=True)
+
+    registrations = Outreach.objects.filter(alp_round=alp_round, level__isnull=False)
+
+    for registry in registrations:
+        try:
+            registry.assigned_to_level = assign_to_level(registry.level, registry.exam_total)
+            registry.save()
+        except Exception as ex:
+            continue
+    context = {}
+    return render(request, "dashboard/exporter.html", context)

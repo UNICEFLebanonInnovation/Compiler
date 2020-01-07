@@ -117,4 +117,10 @@ urlpatterns = [
         view=views.dup_nb_enr,
         name='dup_nb_enr'
     ),
+    url(
+        regex=r'^generate_pretest_result/$',
+        view=views.generate_pretest_result,
+        name='generate_pretest_result'
+    ),
+
 ]
