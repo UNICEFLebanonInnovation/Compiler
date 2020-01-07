@@ -154,6 +154,16 @@ urlpatterns = [
         name='cbece_post_assessment'
     ),
     url(
+        regex=r'^cbece-referral/(?P<pk>[\w.@+-]+)/$',
+        view=views.CBECEReferralView.as_view(),
+        name='cbece_referral'
+    ),
+    url(
+        regex=r'^cbece-followup/(?P<pk>[\w.@+-]+)/$',
+        view=views.CBECEFollowupView.as_view(),
+        name='cbece_followup'
+    ),
+    url(
         'load-districts/$',
         views.load_districts,
         name='load_districts'
@@ -162,5 +172,10 @@ urlpatterns = [
         'search-clm-child/$',
         views.search_clm_child,
         name='search_clm_child'
+    ),
+    url(
+        regex=r'^exec-abln-update/$',
+        view=views.ExecABLNUpdateView.as_view(),
+        name='exec_abln_update'
     ),
 ]

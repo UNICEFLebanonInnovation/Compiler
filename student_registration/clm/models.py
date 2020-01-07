@@ -105,6 +105,7 @@ class Referral(models.Model):
 class Disability(models.Model):
 
     name = models.CharField(max_length=100)
+    name_en = models.CharField(max_length=145, blank=True, null=True)
     active = models.BooleanField(default=True)
 
     class Meta:

@@ -730,6 +730,7 @@ class DisabilityResource(resources.ModelResource):
         fields = (
             'id',
             'name',
+            'name_en',
         )
         export_order = fields
 
