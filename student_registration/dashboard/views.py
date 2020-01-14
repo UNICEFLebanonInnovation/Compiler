@@ -685,10 +685,10 @@ def generate_pretest_result(request):
 
 class List_Justification(TemplateView):
     from student_registration.enrollments.models import Enrollment
-    education_year = EducationYear.objects.get(current_year=True)
+  #  education_year = EducationYear.objects.get(current_year=True)
 
-    model = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
-                                      school__is_2nd_shift=True, disabled=False, moved=False,
-                                      )
+  #  model = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+   #                                   school__is_2nd_shift=True, disabled=False, moved=False,
+    #                                  )
     template_name = 'dashboard/list_justification.html'
 
