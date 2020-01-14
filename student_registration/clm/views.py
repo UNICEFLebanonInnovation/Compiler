@@ -1402,6 +1402,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
 
         headers = {
+            'id': 'enropllment_id',
             'partner__name': 'Partner',
             'source_of_identification': 'Source of Identification',
             'first_attendance_date': 'first attendance date',
@@ -1519,6 +1520,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'followup_visit_result_1': 'Follow-up visit 1 result',
         }
         header_list = (
+            'enropllment_id',
             'Partner',
             'Source of Identification',
             'first attendance date',
@@ -1636,6 +1638,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'modified'
         )
         field_list = (
+            'id',
             'partner__name',
             'source_of_identification',
             'first_attendance_date',
@@ -1774,6 +1777,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_psychomotor': "post_test->>'BLN_ASSESSMENT/psychomotor'",
             'post_test_artistic': "post_test->>'BLN_ASSESSMENT/artistic'",
         }).values(
+            'id',
             'partner__name',
             'first_attendance_date',
             'round__name',
@@ -1901,6 +1905,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
 
         headers = {
+            'id': 'enropllment_id',
             'partner__name': 'Partner',
             'source_of_identification': 'Source of Identification',
             'first_attendance_date': 'first attendance date',
@@ -2016,6 +2021,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'followup_visit_result_1': 'Follow-up visit 1 result',
         }
         header_list = (
+            'enropllment_id',
             'Partner',
             'Source of Identification',
             'first attendance date',
@@ -2133,6 +2139,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'modified'
         )
         field_list = (
+            'id',
             'partner__name',
             'source_of_identification',
             'first_attendance_date',
@@ -2267,6 +2274,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'post_test_psychomotor': "post_test->>'ABLN_ASSESSMENT/psychomotor'",
             'post_test_artistic': "post_test->>'ABLN_ASSESSMENT/artistic'",
         }).values(
+            'id',
             'partner__name',
             'first_attendance_date',
             'round__name',
