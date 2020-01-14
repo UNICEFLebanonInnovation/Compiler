@@ -115,6 +115,34 @@ class ProfileForm(forms.ModelForm):
                 None,
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' +
+                         _('Bank Accounts Information') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('iban_base1', css_class='col-md-5'),
+
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('bank_Base1', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('branch_base1', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('iban_base2', css_class='col-md-5'),
+
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('bank_Base2', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('branch_base2', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' +
                          _('Current academic year') + ' ' + current_education_year.name + '</h4>')
                 ),
                 Div(
@@ -159,6 +187,12 @@ class ProfileForm(forms.ModelForm):
             'is_alp',
             'number_students_2nd_shift',
             'number_students_alp',
+            'bank_Base1',
+            'branch_base1',
+            'iban_base1',
+            'bank_Base2',
+            'branch_base2',
+            'iban_base2',
         )
         initial_fields = fields
         widgets = {}

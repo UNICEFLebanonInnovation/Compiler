@@ -7,6 +7,7 @@ from model_utils.models import TimeStampedModel
 from django.utils.translation import ugettext as _
 # from django.contrib.gis.db import models
 from student_registration.locations.models import Location
+from student_registration.staffs.models import Bank
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
@@ -155,7 +156,42 @@ class School(models.Model):
         blank=True,
         verbose_name=_('is closed')
     )
-
+    bank_Base1 = models.ForeignKey(
+        Bank,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Bank'),
+    )
+    branch_base1 = models.CharField(
+        max_length=60,
+        blank=True,
+        null=True,
+        verbose_name=_('Branch')
+    )
+    iban_base1 = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('IBAN LL')
+    )
+    bank_Base2 = models.ForeignKey(
+        Bank,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Bank'),
+    )
+    branch_base2 = models.CharField(
+        max_length=60,
+        blank=True,
+        null=True,
+        verbose_name=_('Branch')
+    )
+    iban_base2 = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('IBAN $')
+    )
     class Meta:
         ordering = ['number']
 

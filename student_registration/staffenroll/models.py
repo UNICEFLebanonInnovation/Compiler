@@ -162,6 +162,12 @@ class StaffEnroll(TimeStampedModel):
         default=0,
         verbose_name=_('Weekly Nb of hours no class'),
     )
+    school_am = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('School')
+    )
 
     @property
     def cycle(self):

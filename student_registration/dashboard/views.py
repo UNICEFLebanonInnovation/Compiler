@@ -11,7 +11,7 @@ from django.shortcuts import render
 import datetime
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseForbidden
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from django.shortcuts import render
@@ -621,6 +621,15 @@ class RegistrationsALPPreTestView(LoginRequiredMixin,
         }
 
 
+class View_Utilities(TemplateView):
+    template_name = 'dashboard/utilities.html'
+
+    group_required = [u"MEHE"]
+
+    def handle_no_permission(self, request):
+        return HttpResponseForbidden()
+
+
 class RegistrationsALPPostTestView(LoginRequiredMixin,
                                    GroupRequiredMixin,
                                    TemplateView):
@@ -672,3 +681,14 @@ def generate_pretest_result(request):
             continue
     context = {}
     return render(request, "dashboard/exporter.html", context)
+
+
+class List_Justification(TemplateView):
+    from student_registration.enrollments.models import Enrollment
+    education_year = EducationYear.objects.get(current_year=True)
+
+    model = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                      school__is_2nd_shift=True, disabled=False, moved=False,
+                                      )
+    template_name = 'dashboard/list_justification.html'
+

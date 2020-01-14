@@ -127,6 +127,11 @@
                   <a class="nav-link" href="/helpdesk/tickets/submit/">{% trans "Helpdesk" %}</a>
               </li>
         {% endif %}
+        {% if request.user|has_group:"SCHOOL" and request.user|has_group:"UTILITIES" %}
+           <li class="nav-item">
+               <a class="nav-link" href="{% url 'dashboard:utilities' %}">{% trans "Utilities" %}</a>
+           </li>
+        {% endif %}
     </ul>
   {% endif %}
 

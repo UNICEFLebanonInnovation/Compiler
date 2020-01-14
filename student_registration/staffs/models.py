@@ -199,22 +199,41 @@ class Staffs(models.Model):
         related_name='+',
     )
     created = models.DateTimeField(default=django.utils.timezone.now)
-    bank = models.ForeignKey(
+    bank_Base1 = models.ForeignKey(
         Bank,
         blank=True, null=True,
+        related_name='+',
         verbose_name=_('Bank'),
     )
-    branch = models.CharField(
-        max_length=20,
+    branch_base1 = models.CharField(
+        max_length=60,
         blank=True,
         null=True,
         verbose_name=_('Branch')
     )
-    iban = models.CharField(
+    iban_base1 = models.CharField(
         max_length=100,
         blank=True,
         null=True,
-        verbose_name=_('IBAN')
+        verbose_name=_('IBAN LL')
+    )
+    bank_Base2 = models.ForeignKey(
+        Bank,
+        related_name='+',
+        blank=True, null=True,
+        verbose_name=_('Bank'),
+    )
+    branch_base2 = models.CharField(
+        max_length=60,
+        blank=True,
+        null=True,
+        verbose_name=_('Branch')
+    )
+    iban_base2 = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_('IBAN $')
     )
     type_of_employment = models.CharField(
         max_length=80,
