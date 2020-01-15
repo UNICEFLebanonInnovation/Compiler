@@ -122,5 +122,14 @@ urlpatterns = [
         view=views.generate_pretest_result,
         name='generate_pretest_result'
     ),
-
+    url(
+        regex=r'^utilities/$',
+        view=views.View_Utilities.as_view(),
+        name='utilities'
+    ),
+    url(
+        regex=r'^run-list-justification/$',
+        view=views.List_Justification.as_view(),
+        name='run-list-justification'
+    ),
 ]

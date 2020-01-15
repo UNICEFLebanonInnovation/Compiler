@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{#{% load util_tags %}#}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+{% endblock %}
+
+{% block content-full-page %}
+
+{% load util_tags %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Utilities</title>
+</head>
+<body>
+
+<section class="main-content-wrapper">
+    <section id="main-content">
+      <form id="attendance-form" action="{% url 'dashboard:run-list-justification' %}" method="GET">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">Generate List Number</h3>
+                <p class="card-text">Generate the justification number for the school  and lock the data</p>
+
+                <div class="btn-group">
+                   <input class="btn btn-primary" type="submit" value="Generate" name="btn_justification" id="btn_justification_generate"/>
+                </div>
+                <hr>
+                <div class="btn-group">
+                   <input class="btn btn-info" type="submit" value="Preview" name="btn_justification" id="btn_justification_preview"/>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </section>
+</section>
+
+</body>
+</html>
+{% endblock %}
