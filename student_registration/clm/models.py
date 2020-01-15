@@ -160,7 +160,7 @@ class CLM(TimeStampedModel):
         ('marriage engagement pregnancy', _('Marriage/Engagement/Pregnancy')),
         ('violence bullying', _('Violence/Bullying')),
         ('No interest in pursuing the programme/No value', _('No interest in pursuing the programme/No value')),
-        # ('other', _('Other'))
+        ('No barriers', _('No barriers'))
     )
     HAVE_LABOUR = Choices(
         ('no', _('No')),
