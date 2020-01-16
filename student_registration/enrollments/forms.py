@@ -31,7 +31,7 @@ from student_registration.alp.models import ALPRound
 from .models import Enrollment, LoggingStudentMove, EducationYear
 from .serializers import EnrollmentSerializer
 from .utils import initiate_grading
-from student_registration.enrollments.models import DuplicateStd
+from student_registration.enrollments.models import DuplicateStd, DocumentType
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
@@ -369,6 +369,21 @@ class EnrollmentForm(forms.ModelForm):
     student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
     age_min_restricted = forms.BooleanField(widget=forms.HiddenInput, required=False)
     age_max_restricted = forms.BooleanField(widget=forms.HiddenInput, required=False)
+    documenttype = forms.ModelChoiceField(
+        label=_("Document Type"),
+        queryset=DocumentType.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    documentyear = forms.ModelChoiceField(
+        label=_("Document Year"),
+        queryset=EducationYear.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    documentnumber = forms.CharField(
+        label=_('Document Number'),
+        required=False,
+        widget=forms.TextInput,
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -644,6 +659,25 @@ class EnrollmentForm(forms.ModelForm):
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">'
+                         + _('Details of the documents justifying the most recent school year (regular or informal)')
+                         + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('documenttype', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('documentyear', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('documentnumber', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+
             FormActions(
                 Submit('save', _('Save'), css_class='child_data'),
                 Submit('save_add_another', _('Save and add another'), css_class='child_data'),
@@ -651,13 +685,13 @@ class EnrollmentForm(forms.ModelForm):
                 HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             ),
-        Fieldset(
-            None,
-            Div(
-                HTML('<a class="btn btn-success" href={% url "enrollments:saveimage" pk=' + str_id + ' %}>' + _('Upload Pictures') + '  </a>')
+            Fieldset(
+                None,
+                Div(
+                    HTML('<a class="btn btn-success" href={% url "enrollments:saveimage" pk=' + str_id + ' %}>' + _('Upload Pictures') + '  </a>')
 
+                )
             )
-        )
 
         )
 

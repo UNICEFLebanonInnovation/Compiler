@@ -262,6 +262,9 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'student_financialsupport_id',
             'student_unhcr_personal',
             'student_unhcr_family',
+            'documenttype',
+            'documentyear',
+            'documentnumber',
         )
 
 

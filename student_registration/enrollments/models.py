@@ -40,6 +40,19 @@ class EnrollmentDisabledManager(models.Manager):
             .filter(disabled=True, dropout_status=False)
 
 
+class DocumentType(models.Model):
+    name = models.CharField(blank=True, null=True, max_length=70)
+    description = models.CharField(blank=True, null=True, max_length=500)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Document Type"
+        verbose_name_plural = "Documents Type"
+
+    def __unicode__(self):
+        return self.name
+
+
 class Enrollment(TimeStampedModel):
     """
     Captures the details of the child in the cash pilot
@@ -498,6 +511,23 @@ class Enrollment(TimeStampedModel):
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
     disabled_objects = EnrollmentDisabledManager()
+    documenttype = models.ForeignKey(
+        DocumentType,
+        blank=True, null=True,
+        verbose_name=_('Document Type'),
+        related_name='+',
+    )
+    documentnumber = models.CharField(
+        blank=True, null=True,
+        max_length=20,
+        verbose_name=_('Document Nunber'),
+    )
+    documentyear = models.ForeignKey(
+        EducationYear,
+        blank=True, null=True,
+        verbose_name=_('Document Year'),
+        related_name='+',
+    )
 
     @property
     def student_fullname(self):
