@@ -16,6 +16,7 @@ from .models import (
     FinancialSupport,
     SpecialNeeds,
     SpecialNeedsDt,
+    Birth_DocumentType,
 )
 from .forms import StudentEnrollmentForm
 from student_registration.schools.models import (
@@ -733,3 +734,4 @@ admin.site.register(Labour)
 admin.site.register(SpecialNeeds)
 admin.site.register(SpecialNeedsDt)
 admin.site.register(FinancialSupport)
+admin.site.register(Birth_DocumentType)

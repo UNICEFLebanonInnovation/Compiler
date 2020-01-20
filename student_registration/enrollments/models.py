@@ -8,7 +8,6 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-
 from student_registration.students.models import Student
 from student_registration.schools.models import (
     School,
@@ -21,6 +20,7 @@ from student_registration.schools.models import (
 )
 from student_registration.locations.models import Location
 from student_registration.alp.models import ALPRound, Outreach
+from django.core.exceptions import ValidationError
 
 
 class EnrollmentManager(models.Manager):
@@ -51,6 +51,14 @@ class DocumentType(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+def validate_file_size(value):
+    filesize = value.size
+    if filesize > 250000:
+        raise ValidationError("The maximum file size that can be uploaded is 250K")
+    else:
+        return value
 
 
 class Enrollment(TimeStampedModel):
@@ -527,6 +535,13 @@ class Enrollment(TimeStampedModel):
         blank=True, null=True,
         verbose_name=_('Document Year'),
         related_name='+',
+    )
+    document_lastyear = models.ImageField(
+        upload_to='enr/doc',
+        blank=True,
+        null=True,
+        help_text=_('picture of previous education'),
+        validators=[validate_file_size]
     )
 
     @property

@@ -161,7 +161,7 @@ class EditView(LoginRequiredMixin,
     def get_form(self, form_class=None):
         instance = Enrollment.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
         if self.request.method == "POST":
-            return EnrollmentForm(self.request.POST, instance=instance)
+            return EnrollmentForm(self.request.POST, self.request.FILES, instance=instance)
         else:
             data = EnrollmentSerializer(instance).data
             data['student_nationality'] = data['student_nationality_id']
@@ -171,6 +171,16 @@ class EditView(LoginRequiredMixin,
 
     def form_valid(self, form):
         instance = Enrollment.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
+
+        if self.request.FILES:
+            if self.request.FILES['document_lastyear']:
+                instance.document_lastyear = self.request.FILES['document_lastyear']
+                instance.save()
+        else:
+            if instance.document_lastyear:
+                v = instance.document_lastyear
+                instance.document_lastyear = v
+                instance.save()
         form.save(request=self.request, instance=instance)
         return super(EditView, self).form_valid(form)
 
@@ -713,16 +723,22 @@ class Update_Image(UpdateView):
 
         if self.request.method == "POST":
             instance = Student.objects.get(id=self.kwargs['pk'])
+            if self.request.POST.get('birth_documenttype'):
+                instance.birth_documenttype_id = self.request.POST.get('birth_documenttype')
+            else:
+                instance.birth_documenttype_id = ''
+
             if self.request.FILES:
                 if self.request.FILES.get('picture', False):
                     instance.std_image = self.request.FILES['picture']
                 if self.request.FILES.get('id_picture', False):
+
                     instance.id_image = self.request.FILES['id_picture']
                 if self.request.FILES.get('unhcr_picture', False):
                     instance.unhcr_image = self.request.FILES['unhcr_picture']
                 if self.request.FILES.get('birthdoc_picture', False):
                     instance.birthdoc_image = self.request.FILES['birthdoc_picture']
-                instance.save()
+            instance.save()
             #return ImageStudentForm(self.request.POST, instance=instance)
             #else:
             return ImageStudentForm(instance=instance)

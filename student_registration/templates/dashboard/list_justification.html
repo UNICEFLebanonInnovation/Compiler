@@ -18,6 +18,11 @@
     content: counter(tableCount);
     counter-increment: tableCount;
    }
+   .square {
+    height: 200px;
+    width: 200px;
+    background-color: #f0f0f5;
+  }
 </style>
 <script type='text/javascript'>
 		function PrintReport()
@@ -291,14 +296,120 @@
           </td>
           <td width="150">{{ enr.documenttype }}</td>
           <td width="100">{{ enr.documentnumber }}</td>
-          <td width="100">{{ enr.documentyear }}</td>
+          <td width="100">{{enr.documentyear}}</td>
         </tr>
        {% endfor %}
 
   </table>
-
-
 {% endfor %}
+
+  <br><br><br><br><br><br>
+  {% for schl in school %}
+  <table width="100%" border="1">
+    <th>
+
+  <table width="100%" border="0">
+    <th width="70%">
+
+
+  <table width="100%" border="0">
+    <tr>
+      <td width="10%">
+
+     </td>
+      <td colspan="6" align="right">
+
+      </td>
+    </tr>
+    <tr>
+
+     <td width="10%" align="left">
+       <font size="4"><b>
+       أنا الموقع أدناه&nbsp;&nbsp;&nbsp;
+       </font></b>
+     </td>
+      <td width="20%" align="right">
+        <font size="4" color="navy"><b>
+            {{ schl.director_name }}
+        </font></b>
+       </td>
+    <td width="10%" align="left">
+      <font size="4"><b>
+         مدير مدرسة&nbsp;&nbsp;&nbsp;
+      </font></b>
+    </td>
+    <td width="30%" align="right">
+      <font size="4" color="navy"><b>
+       {{ schl.name}}
+      </font></b>
+    </td>
+
+    </tr>
+    <tr>
+     <td width="10%">
+
+     </td>
+     <td width="10%" colspan="5" align="right">
+         <br>
+         <font size="4"><b>
+         أشهد ان التلاميذ المدونة أسماؤهم في هذه اللائحة و عددهم
+         </font></b>
+         <font size="5" color="navy"><b>
+          &nbsp;&nbsp;&nbsp;***&nbsp;{{ schl.total_registered_2ndshift }}&nbsp;***
+         </font></b>
+         <font size="4"><b>
+          &nbsp;&nbsp;&nbsp;  يتابعون في مدرستي
+          وأصرّح على مسؤوليتي أن المعلومات الواردة في هذه اللائحة مطابقة للواقع
+         </font></b>
+    </td>
+
+    </tr>
+    </table>
+   </th>
+    <th width="30%" >
+      <table border="0" width="100%">
+        <th><tr>
+          <font size="4"><b>
+           إن مندرجات هذه اللائحة صحيحة و قد دققت على مسؤوليتي
+          </b></font>
+          <br>
+          </tr>
+
+        </th>
+        <tr>
+          <td>
+            <table width="100%">
+              <th width="30%">
+                ختم المدرسة
+              </th>
+              <th width="35%"><div class="square" ></div></th>
+              <th width="35%"></th>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            <br><br>
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; توقيع المدير
+          </td>
+        </tr>
+        <tr>
+          <td>
+          في
+            {{ current_date|date:"d/m/Y"  }}
+          </td>
+        </tr>
+      </table>
+    </th>
+  </table>
+  <br><br>
+
+    </th>
+  </table>
+{% endfor %}
+
+
 
 </ul>
 </body>

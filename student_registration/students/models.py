@@ -19,6 +19,18 @@ def validate_file_size(value):
         return value
 
 
+class Birth_DocumentType(models.Model):
+    name = models.CharField(blank=True, null=True, max_length=70)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Document Type"
+        verbose_name_plural = "Documents Type"
+
+    def __unicode__(self):
+        return self.name
+
+
 class StudentManager(models.Manager):
     def get_queryset(self):
         return super(StudentManager, self).get_queryset()
@@ -363,6 +375,13 @@ class Student(Person):
     alp = StudentALPManager()
     is_justified = models.BooleanField(default=True)
     is_specialneeds = models.BooleanField(default=False)
+    birth_documenttype = models.ForeignKey(
+        Birth_DocumentType,
+        blank=True,
+        null=True,
+        verbose_name=_('Document Type'),
+        related_name='documenttype'
+    )
     specialneeds = models.ForeignKey(
         SpecialNeeds,
         blank=True,
