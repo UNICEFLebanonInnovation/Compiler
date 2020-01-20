@@ -7,8 +7,7 @@ from student_registration.backends.djqscsv import render_to_csv_response
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.shortcuts import render
-
-import datetime
+from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseForbidden
 from django.views.generic import ListView, TemplateView, View
@@ -697,10 +696,11 @@ class List_Justification(TemplateView):
         education_year = EducationYear.objects.get(current_year=True)
         return {
             'enrollment': Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
-                                                    school__is_2nd_shift=True, disabled=False, moved=False,
+                                                    school__is_2nd_shift=True, moved=False, dropout_status=False, #disabled=False,
                                                     school_id=self.request.user.school_id).order_by('classroom_id'),
             'school': School.objects.filter(id=self.request.user.school_id),
-            'education_year': education_year
+            'education_year': education_year,
+            'current_date': datetime.now(),
         }
 
 
