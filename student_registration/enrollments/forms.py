@@ -10,6 +10,7 @@ from dal import autocomplete
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Fieldset, Button, Submit, Div, Field, HTML
+from student_registration.students.models import Birth_DocumentType
 
 from student_registration.students.models import (
     Person,
@@ -31,7 +32,7 @@ from student_registration.alp.models import ALPRound
 from .models import Enrollment, LoggingStudentMove, EducationYear
 from .serializers import EnrollmentSerializer
 from .utils import initiate_grading
-from student_registration.enrollments.models import DuplicateStd
+from student_registration.enrollments.models import DuplicateStd, DocumentType
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
@@ -369,6 +370,25 @@ class EnrollmentForm(forms.ModelForm):
     student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
     age_min_restricted = forms.BooleanField(widget=forms.HiddenInput, required=False)
     age_max_restricted = forms.BooleanField(widget=forms.HiddenInput, required=False)
+    documenttype = forms.ModelChoiceField(
+        label=_("Private Document Type"),
+        queryset=DocumentType.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    documentyear = forms.ModelChoiceField(
+        label=_("Document Year"),
+        queryset=EducationYear.objects.all(), widget=forms.Select,
+        required=False, to_field_name='id',
+    )
+    documentnumber = forms.CharField(
+        label=_('Document Number'),
+        required=False,
+        widget=forms.TextInput,
+    )
+    document_lastyear = forms.ImageField(
+        label=_('picture of previous education'),
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -644,6 +664,30 @@ class EnrollmentForm(forms.ModelForm):
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">'
+                         + _('Details of the documents justifying the most recent school year (regular or informal)')
+                         + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('documenttype', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('documentyear', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('documentnumber', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('document_lastyear', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+
             FormActions(
                 Submit('save', _('Save'), css_class='child_data'),
                 Submit('save_add_another', _('Save and add another'), css_class='child_data'),
@@ -651,13 +695,13 @@ class EnrollmentForm(forms.ModelForm):
                 HTML('<a class="btn btn-info cancel-button" href="/enrollments/list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             ),
-        Fieldset(
-            None,
-            Div(
-                HTML('<a class="btn btn-success" href={% url "enrollments:saveimage" pk=' + str_id + ' %}>' + _('Upload Pictures') + '  </a>')
+            Fieldset(
+                None,
+                Div(
+                    HTML('<a class="btn btn-success" href={% url "enrollments:saveimage" pk=' + str_id + ' %}>' + _('Upload Pictures') + '  </a>')
 
+                )
             )
-        )
 
         )
 
@@ -675,9 +719,10 @@ class EnrollmentForm(forms.ModelForm):
             else:
                 messages.warning(request, serializer.errors)
         else:
-            serializer = EnrollmentSerializer(data=request.POST)
+            serializer = EnrollmentSerializer(data=request.POST )
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
+                instance.document_lastyear = request.FILES['document_lastyear']
                 instance.school_id = request.user.school_id
                 instance.owner = request.user
                 instance.education_year = EducationYear.objects.get(current_year=True)
@@ -744,7 +789,6 @@ class EnrollmentForm(forms.ModelForm):
                             )
                             model_duplicatestd.save()
 
-
     class Meta:
         model = Enrollment
         fields = (
@@ -796,6 +840,7 @@ class EnrollmentForm(forms.ModelForm):
             'student_financialsupport',
             'student_unhcr_family',
             'student_unhcr_personal',
+            'document_lastyear',
 
         )
         initial_fields = fields
@@ -1609,6 +1654,14 @@ class EditOldDataForm(forms.ModelForm):
 
 
 class ImageStudentForm(forms.ModelForm):
+    document_type = forms.ModelChoiceField(
+        label=_("Document Type"),
+        queryset=Birth_DocumentType.objects.all(), widget=forms.Select,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(ImageStudentForm, self).__init__(*args, **kwargs)
+
     class Meta:
         model = Student
         fields = [
@@ -1617,4 +1670,5 @@ class ImageStudentForm(forms.ModelForm):
             # 'unhcr_image',
             # 'birthdoc_image',
             'id',
+            'birth_documenttype',
         ]

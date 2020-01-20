@@ -80,11 +80,11 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     last_school_id = serializers.CharField(source='last_school.id', read_only=True)
     # last_informal_edu_level_id = serializers.CharField(source='last_informal_edu_level.id', read_only=True)
     last_informal_edu_round_id = serializers.CharField(source='last_informal_edu_round.id', read_only=True)
-    last_informal_edu_final_result_id = serializers.CharField(source='last_informal_edu_final_result.id', read_only=True)
-
+    last_informal_edu_final_result_id = serializers.CharField(source='last_informal_edu_final_result.id',
+                                                              read_only=True)
     moved = serializers.CharField(read_only=True)
     dropout_status = serializers.CharField(read_only=True)
-
+    document_lastyear = serializers.ImageField(read_only=True, source='get_absolute_url')
     student_outreach_child = serializers.IntegerField(source='student.outreach_child', required=False)
     student_outreach_child_id = serializers.IntegerField(source='student.outreach_child.id', read_only=True)
     csrfmiddlewaretoken = serializers.IntegerField(source='owner.id', read_only=True)
@@ -137,16 +137,13 @@ class EnrollmentSerializer(serializers.ModelSerializer):
 
         if student_data:
             from student_registration.students.serializers import StudentSerializer
-
             student_serializer = StudentSerializer(instance.student, data=student_data)
             student_serializer.is_valid(raise_exception=True)
             student_serializer.instance = student_serializer.save()
         try:
-
             for key in validated_data:
                 if hasattr(instance, key):
                     setattr(instance, key, validated_data[key])
-
             instance.save()
 
         except Exception as ex:
@@ -262,6 +259,10 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'student_financialsupport_id',
             'student_unhcr_personal',
             'student_unhcr_family',
+            'documenttype',
+            'documentyear',
+            'documentnumber',
+            'document_lastyear',
         )
 
 
@@ -438,6 +439,7 @@ class EnrollmentImportSerializer(serializers.ModelSerializer):
             'moved',
             'dropout_status',
             'disabled',
+            'document_lastyear'
         )
 
 

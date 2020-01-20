@@ -1,41 +1,416 @@
+
 <!DOCTYPE html>
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+
 <html dir="rtl" lang="ar">
 <head>
     <meta charset="UTF-8">
     <title>Justification List</title>
 </head>
+<style>
+    body {
+    counter-reset: tableCount;
+    }
+    .counterCell:before {
+    content: counter(tableCount);
+    counter-increment: tableCount;
+   }
+   .square {
+    height: 200px;
+    width: 200px;
+    background-color: #f0f0f5;
+  }
+</style>
+<script type='text/javascript'>
+		function PrintReport()
+		{
+			window.print();
+		}
+
+	</script>
 <body>
- <table width="100%">
-   <th>
+     <button class="btn btn-info" id="preview" onclick="PrintReport();">
+        preview
+     </button>
+ {%for v_school in school %}
+ <table width="100%" border="0">
+   <th width="11%" height="190">
+     <div>
+        <img src="{% static 'images/mehe.png' %}" style="float: center; width: 90px; height: 90px;" />
+     </div>
+
+     <div>
+     الجمهورية اللبنانية
+     <br>
+     وزارة التربية والتعليم العالي
+     <br>
+     وحدة إدارة متابعة تنفيذ برنامج التعليم الشامل
+       <br>
+       <u>PMU</u>
+       </div>
+   </th>
+   <th width="20%">
 
    </th>
-   <th>
+   <th width="35%">
+     <table width="100%" border="1">
+       <tr>
+         <th colspan="2">
+           <font color="navy">
+              <h2>            لائحة أسماء التلاميذ بحسب الصفوف         </h2>
+           </font>
+         </th>
+       </tr>
+
+         <tr>
+
+             <td width="35%">
+                <font size="4">
+               السنة الدراسية
+              </font>
+           </td>
+           <td width="65%" align="right">
+             {{ education_year }}
+           </td>
+
+         </tr>
+         <tr>
+           <td width="35%">
+             <font size="4">
+                رقم المدرسة في المركز التربوي
+             </font>
+           </td>
+           <td width="65%" align="right">
+             {{ v_school.number }}
+           </td>
+         </tr>
+         <tr>
+           <td width="35%">
+             <font size="4">
+               إسم المدرسة
+             </font>
+           </td>
+           <td width="65%" align="right">
+             {{ v_school.name }}
+           </td>
+         </tr>
+         <tr>
+           <td width="35%">
+             <font size="4">
+               اللغة الأجنبية
+             </font>
+           </td>
+           <td width="65%" align="right">
+             {{ v_school.certified_foreign_language }}
+           </td>
+         </tr>
+          <tr>
+           <td width="35%">
+             <font size="4">
+               الملف
+             </font>
+           </td>
+           <td width="65%" align="right">
+
+           </td>
+          </tr>
+
+     </table>
+
+
 
    </th>
-   <th>
+   <th width="10%">
 
    </th>
-   <th>
+   <th width="24%">
+     <table width="100%" border="1">
+       <th width="35">
+
+       </th>
+       <th width="65%">
+
+       </th>
+       <tr>
+         <td>
+           المحافظة
+         </td>
+         <td align="right">
+           {{ v_school.location.parent }}
+         </td>
+       </tr>
+       <tr>
+         <td>
+           القضاء
+         </td>
+         <td align="right">
+           {{ v_school.location }}
+         </td>
+       </tr>
+       <tr>
+         <td>
+           البلدة
+         </td>
+         <td align="right">
+
+         </td>
+       </tr>
+       <tr>
+         <td>
+           رقم الهاتف
+         </td>
+         <td align="right">
+           {{ v_school.land_phone_number }}
+         </td>
+       </tr>
+       <tr>
+         <td>
+           الدوام
+         </td>
+         <td align="right">
+           {% if v_school.is_2nd_shift %}
+              بعد الظهر
+           {% endif %}
+           {% if v_school.is_alp %}
+              - ALP
+           {% endif %}
+
+         </td>
+       </tr>
+     </table>
 
    </th>
-   <tr>
-     <td>
-       1
-     </td>
-     <td>
-       2
-     </td>
-     <td>
-       3
-     </td>
-     <td>
-       4
-     </td>
-     <td>
-       5
-     </td>
-   </tr>
-
  </table>
+{% endfor %}
+
+
+     {% regroup cities by country as country_list %}
+
+<ul>
+{% for country in country_list %}
+    <li>{{ country.grouper }}
+    <ul>
+        {% for city in country.list %}
+          <li>{{ city.name }}: {{ city.population }}</li>
+        {% endfor %}
+    </ul>
+    </li>
+{% endfor %}
+</ul>
+
+
+{% regroup enrollment by classroom as v_enrollment %}
+
+<ul>
+{% for classroom in v_enrollment %}
+    <br>
+    <font color="green" size="5">
+      <li>الصف : {{ classroom.grouper }} </li>
+
+    </font>
+    <table width="100%" border="1">
+     <th width="5%">      مبرر(نعم أو لا)    </th>
+     <th width="10">الرقم         </th>
+     <th width="100">الإسم</th>
+     <th width="100">إسم الأب</th>
+     <th width="100">الشهرة</th>
+     <th width="60">الجنس</th>
+     <th width="170">محل الولادة</th>
+     <th width="130"><table border="1" width="100%">
+       <th colspan="3">
+         تاريخ الولادة
+       </th>
+       <tr>
+         <td>اليوم</td>
+         <td>الشهر</td>
+         <td>السنة</td>
+       </tr>
+       </table>
+     </th>
+     <th width="100">رقم compiler الموحد</th>
+     <th width="550">
+       <table width="100%" border="1">
+         <th colspan="4">
+          نظامي
+         </th>
+         <tr>
+           <td width="75">السنة</td>
+           <td width="75"> رقم المدرسة</td>
+           <td width="275"> إسم المدرسة</td>
+           <td width="125"> أعلى مستوى</td>
+         </tr>
+       </table>
+     </th>
+     <th width="250">
+       <table width="100%" border="1">
+         <th colspan="2">
+          غير نظامي
+         </th>
+         <tr>
+           <td width="75">آخر دورة</td>
+           <td width="125">أعلى مستوى</td>
+         </tr>
+       </table>
+     </th>
+     <th width="150">نوع المستند</th>
+     <th width="100"> رقم المستند</th>
+      <th width="100">سنة التصديق</th>
+
+     {% for enr in classroom.list %}
+        <tr>
+          <td></td>
+          <td class="counterCell"></td>
+          <td>{{ enr.student.first_name}}</td>
+          <td>{{ enr.student.father_name}}</td>
+          <td>{{ enr.student.last_name}}</td>
+          <td>{{ enr.student.sex }}</td>
+          <td>{{ enr.student.place_of_birth }}</td>
+          <td width="130">
+            <table width="100%" w>
+              <th colspan="3"></th>
+              <td width="40">{{ enr.student.birthday_day }}</td>
+              <td width="40">{{ enr.student.birthday_month }}</td>
+              <td width="40">{{ enr.student.birthday_year }}</td>
+            </table>
+          </td>
+          <td>{{ enr.student.id }}</td>
+          <td width="550">
+            <table width="100%" >
+              <th colspan="4"></th>
+              <td width="75">{{ enr.last_education_year }}</td>
+              <td width="75">{{ enr.last_school.number }}</td>
+              <td width="275">{{ enr.last_school }}</td>
+              <td width="125">{{ enr.last_education_level }}</td>
+            </table>
+          </td>
+          <td width="250">
+           <table width="100%" border="1">
+
+            <td width="75">{{ enr.last_informal_edu_round }}</td>
+            <td width="125">{{ enr.last_informal_edu_final_result }}</td>
+            </tr>
+           </table>
+          </td>
+          <td width="150">{{ enr.documenttype }}</td>
+          <td width="100">{{ enr.documentnumber }}</td>
+          <td width="100">{{enr.documentyear}}</td>
+        </tr>
+       {% endfor %}
+
+  </table>
+{% endfor %}
+
+  <br><br><br><br><br><br>
+  {% for schl in school %}
+  <table width="100%" border="1">
+    <th>
+
+  <table width="100%" border="0">
+    <th width="70%">
+
+
+  <table width="100%" border="0">
+    <tr>
+      <td width="10%">
+
+     </td>
+      <td colspan="6" align="right">
+
+      </td>
+    </tr>
+    <tr>
+
+     <td width="10%" align="left">
+       <font size="4"><b>
+       أنا الموقع أدناه&nbsp;&nbsp;&nbsp;
+       </font></b>
+     </td>
+      <td width="20%" align="right">
+        <font size="4" color="navy"><b>
+            {{ schl.director_name }}
+        </font></b>
+       </td>
+    <td width="10%" align="left">
+      <font size="4"><b>
+         مدير مدرسة&nbsp;&nbsp;&nbsp;
+      </font></b>
+    </td>
+    <td width="30%" align="right">
+      <font size="4" color="navy"><b>
+       {{ schl.name}}
+      </font></b>
+    </td>
+
+    </tr>
+    <tr>
+     <td width="10%">
+
+     </td>
+     <td width="10%" colspan="5" align="right">
+         <br>
+         <font size="4"><b>
+         أشهد ان التلاميذ المدونة أسماؤهم في هذه اللائحة و عددهم
+         </font></b>
+         <font size="5" color="navy"><b>
+          &nbsp;&nbsp;&nbsp;***&nbsp;{{ schl.total_registered_2ndshift }}&nbsp;***
+         </font></b>
+         <font size="4"><b>
+          &nbsp;&nbsp;&nbsp;  يتابعون في مدرستي
+          وأصرّح على مسؤوليتي أن المعلومات الواردة في هذه اللائحة مطابقة للواقع
+         </font></b>
+    </td>
+
+    </tr>
+    </table>
+   </th>
+    <th width="30%" >
+      <table border="0" width="100%">
+        <th><tr>
+          <font size="4"><b>
+           إن مندرجات هذه اللائحة صحيحة و قد دققت على مسؤوليتي
+          </b></font>
+          <br>
+          </tr>
+
+        </th>
+        <tr>
+          <td>
+            <table width="100%">
+              <th width="30%">
+                ختم المدرسة
+              </th>
+              <th width="35%"><div class="square" ></div></th>
+              <th width="35%"></th>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            <br><br>
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; توقيع المدير
+          </td>
+        </tr>
+        <tr>
+          <td>
+          في
+            {{ current_date|date:"d/m/Y"  }}
+          </td>
+        </tr>
+      </table>
+    </th>
+  </table>
+  <br><br>
+
+    </th>
+  </table>
+{% endfor %}
+
+
+
+</ul>
 </body>
 </html>

@@ -8,7 +8,6 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-
 from student_registration.students.models import Student
 from student_registration.schools.models import (
     School,
@@ -21,6 +20,7 @@ from student_registration.schools.models import (
 )
 from student_registration.locations.models import Location
 from student_registration.alp.models import ALPRound, Outreach
+from django.core.exceptions import ValidationError
 
 
 class EnrollmentManager(models.Manager):
@@ -38,6 +38,27 @@ class EnrollmentDisabledManager(models.Manager):
         return super(EnrollmentDisabledManager, self).get_queryset()\
             .exclude(deleted=True)\
             .filter(disabled=True, dropout_status=False)
+
+
+class DocumentType(models.Model):
+    name = models.CharField(blank=True, null=True, max_length=70)
+    description = models.CharField(blank=True, null=True, max_length=500)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Document Type"
+        verbose_name_plural = "Documents Type"
+
+    def __unicode__(self):
+        return self.name
+
+
+def validate_file_size(value):
+    filesize = value.size
+    if filesize > 250000:
+        raise ValidationError("The maximum file size that can be uploaded is 250K")
+    else:
+        return value
 
 
 class Enrollment(TimeStampedModel):
@@ -498,6 +519,30 @@ class Enrollment(TimeStampedModel):
     objects = EnrollmentManager()
     drop_objects = EnrollmentDropoutManager()
     disabled_objects = EnrollmentDisabledManager()
+    documenttype = models.ForeignKey(
+        DocumentType,
+        blank=True, null=True,
+        verbose_name=_('Document Type'),
+        related_name='+',
+    )
+    documentnumber = models.CharField(
+        blank=True, null=True,
+        max_length=20,
+        verbose_name=_('Document Nunber'),
+    )
+    documentyear = models.ForeignKey(
+        EducationYear,
+        blank=True, null=True,
+        verbose_name=_('Document Year'),
+        related_name='+',
+    )
+    document_lastyear = models.ImageField(
+        upload_to='enr/doc',
+        blank=True,
+        null=True,
+        help_text=_('picture of previous education'),
+        validators=[validate_file_size]
+    )
 
     @property
     def student_fullname(self):

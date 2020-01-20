@@ -7,8 +7,7 @@ from student_registration.backends.djqscsv import render_to_csv_response
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.shortcuts import render
-
-import datetime
+from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseForbidden
 from django.views.generic import ListView, TemplateView, View
@@ -684,11 +683,24 @@ def generate_pretest_result(request):
 
 
 class List_Justification(TemplateView):
-    from student_registration.enrollments.models import Enrollment
-  #  education_year = EducationYear.objects.get(current_year=True)
-
-  #  model = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
-   #                                   school__is_2nd_shift=True, disabled=False, moved=False,
-    #                                  )
     template_name = 'dashboard/list_justification.html'
+
+    group_required = [u"MEHE"]
+
+    def handle_no_permission(self, request):
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+        from student_registration.enrollments.models import Enrollment
+        from student_registration.schools.models import EducationYear
+        education_year = EducationYear.objects.get(current_year=True)
+        return {
+            'enrollment': Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                                    school__is_2nd_shift=True, moved=False, dropout_status=False, #disabled=False,
+                                                    school_id=self.request.user.school_id).order_by('classroom_id'),
+            'school': School.objects.filter(id=self.request.user.school_id),
+            'education_year': education_year,
+            'current_date': datetime.now(),
+        }
+
 

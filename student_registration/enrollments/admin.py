@@ -18,6 +18,7 @@ from .models import (
     LoggingStudentMove,
     LoggingProgramMove,
     DuplicateStd,
+    DocumentType,
 )
 from .forms import EnrollmentAdminForm, LoggingStudentMoveForm, DuplicateStdAdminForm
 from .utils import initiate_grading
@@ -908,4 +909,4 @@ admin.site.register(StudentMove, StudentMoveAdmin)
 admin.site.register(LoggingStudentMove, LoggingStudentMoveAdmin)
 admin.site.register(LoggingProgramMove, LoggingProgramMoveAdmin)
 admin.site.register(EnrollmentGrading, GradingAdmin)
-
+admin.site.register(DocumentType)
