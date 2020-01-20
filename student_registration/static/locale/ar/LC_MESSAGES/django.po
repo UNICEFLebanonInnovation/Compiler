@@ -4969,6 +4969,15 @@ msgstr "التواريخ المهمة"
 msgid "User"
 msgstr ""
 
+msgid "School / Center"
+msgstr "مدرسة / مركز"
+
+msgid "No Absence"
+msgstr "لا غياب"
+
+msgid "No barriers"
+msgstr "لا يوجد"
+
 #, fuzzy
 #~| msgid "Personal info"
 #~ msgid "Personal"
