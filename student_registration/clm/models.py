@@ -145,7 +145,8 @@ class CLM(TimeStampedModel):
         ('less_than_5days', _('Less than 5 absence days')),
         ('5_10_days', _('5 to 10 absence days')),
         ('10_15_days', _('10 to 15 absence days')),
-        ('more_than_15days', _('More than 15 absence days'))
+        ('more_than_15days', _('More than 15 absence days')),
+        ('no_absence', _('No Absence'))
     )
     BARRIERS = Choices(
         ('Full time job to support family financially', _('Full time job to support family financially')),
@@ -648,7 +649,7 @@ class CLM(TimeStampedModel):
         max_length=500,
         blank=True,
         null=True,
-        verbose_name=_('Partner')
+        verbose_name=_('School / Center')
     )
     referral_date_1 = models.DateField(
         blank=True,
@@ -682,7 +683,7 @@ class CLM(TimeStampedModel):
         max_length=500,
         blank=True,
         null=True,
-        verbose_name=_('Partner')
+        verbose_name=_('School / Center')
     )
     referral_date_2 = models.DateField(
         blank=True,
@@ -716,7 +717,7 @@ class CLM(TimeStampedModel):
         max_length=500,
         blank=True,
         null=True,
-        verbose_name=_('Partner')
+        verbose_name=_('School / Center')
     )
     referral_date_3 = models.DateField(
         blank=True,
@@ -901,7 +902,8 @@ class BLN(CLM):
             ('less_than_10days', _('Less than 10 absence days')),
             ('10_15_days', _('10 to 15 absence days')),
             ('15_20_days', _('15 to 20 absence days')),
-            ('more_than_20days', _('More than 20 absence days'))
+            ('more_than_20days', _('More than 20 absence days')),
+            ('no_absence', _('No Absence'))
         ),
         verbose_name=_('Participation')
     )
@@ -1667,7 +1669,8 @@ class ABLN(CLM):
             ('less_than_3days', _('Less than 3 absence days')),
             ('3_7_days', _('3 to 7 absence days')),
             ('7_12_days', _('7 to 12 absence days')),
-            ('more_than_12days', _('More than 12 absence days'))
+            ('more_than_12days', _('More than 12 absence days')),
+            ('no_absence', _('No Absence'))
         ),
         verbose_name=_('Participation')
     )
