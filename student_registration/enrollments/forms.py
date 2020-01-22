@@ -722,7 +722,8 @@ class EnrollmentForm(forms.ModelForm):
             serializer = EnrollmentSerializer(data=request.POST )
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
-                instance.document_lastyear = request.FILES['document_lastyear']
+                if request.FILES:
+                   instance.document_lastyear = request.FILES['document_lastyear']
                 instance.school_id = request.user.school_id
                 instance.owner = request.user
                 instance.education_year = EducationYear.objects.get(current_year=True)
