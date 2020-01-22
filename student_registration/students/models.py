@@ -56,6 +56,7 @@ class StudentALPManager(models.Manager):
 
 class Nationality(models.Model):
     name = models.CharField(max_length=45, unique=True)
+    name_en = models.CharField(max_length=45)
     code = models.CharField(max_length=5, null=True)
 
     class Meta:

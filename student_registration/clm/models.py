@@ -649,7 +649,7 @@ class CLM(TimeStampedModel):
         max_length=500,
         blank=True,
         null=True,
-        verbose_name=_('School / Center')
+        verbose_name=_('School / Partner')
     )
     referral_date_1 = models.DateField(
         blank=True,
@@ -683,7 +683,7 @@ class CLM(TimeStampedModel):
         max_length=500,
         blank=True,
         null=True,
-        verbose_name=_('School / Center')
+        verbose_name=_('School / Partner')
     )
     referral_date_2 = models.DateField(
         blank=True,
@@ -717,7 +717,7 @@ class CLM(TimeStampedModel):
         max_length=500,
         blank=True,
         null=True,
-        verbose_name=_('School / Center')
+        verbose_name=_('School / Partner')
     )
     referral_date_3 = models.DateField(
         blank=True,
