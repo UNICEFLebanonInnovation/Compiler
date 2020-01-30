@@ -21,7 +21,7 @@
 
 <section class="main-content-wrapper">
     <section id="main-content">
-      <form id="attendance-form" action="{% url 'dashboard:run-list-justification' %}" method="GET">
+      <form id="attendance-form" action="#" method="GET">
         <div class="row">
           <div class="col-sm-4">
             <div class="card m-3">
@@ -30,11 +30,12 @@
                 <p class="card-text">Generate the justification number for the school  and lock the data</p>
 
                 <div class="btn-group">
-                   <input class="btn btn-primary" type="submit" value="Generate" name="btn_justification" id="btn_justification_generate"/>
+
+                    <a href="{% url 'dashboard:run-list-justification' %}" class="btn btn-info">Preview</a>
                 </div>
                 <hr>
-                <div class="btn-group">
-                   <input class="btn btn-info" type="submit" value="Preview" name="btn_justification" id="btn_justification_preview"/>
+                <div class="btn-group" hidden>
+                   <a href="{% url 'dashboard:run-generate-justification' %}" class="btn btn-info">Generate</a>
                 </div>
 
               </div>
