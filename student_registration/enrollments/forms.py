@@ -324,7 +324,7 @@ class EnrollmentForm(forms.ModelForm):
         required=True, to_field_name='id',
         initial=27
     )
-    student_is_justified = forms.BooleanField(required=False, label=_('Justified'))
+   # student_is_justified = forms.BooleanField(required=False, label=_('Justified'))
     student_is_specialneeds = forms.BooleanField(required=False, label=_('Special Needs'))
     student_specialneeds = forms.ModelChoiceField(
         label=_('Special needs program'),
@@ -567,23 +567,23 @@ class EnrollmentForm(forms.ModelForm):
                     Div(
                         HTML('<h4 id="alternatives-to-hidden-labels">' + _('Special needs') + '</h4>')
                         ),
+                    #Div(
+                     #   HTML('<font color="red"><b>'),
+                      #  Div('student_is_justified', css_class='col-md-3'),
+                       # HTML('</b></font>'),
+                    # ),
                     Div(
-                        HTML('<font color="red"><b>'),
-                        Div('student_is_justified', css_class='col-md-3'),
-                        HTML('</b></font>'),
-                        ),
-                        Div(
                         HTML('<font color="green"><b>'),
                         Div('student_is_specialneeds', css_class='col-md-3'),
                         HTML('</b></font>'),
-                        ),
-                        Div(
+                    ),
+                    Div(
                         Div('student_specialneeds', css_class='col-md-3'),
                         Div('student_specialneedsdt', css_class='col-md-3'),
                         css_class='row',
-                        ),
-                     ),
-                     css_class='bd-callout bd-callout-warning child_data'
+                    ),
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
                # HTML('</div>'),
             ),
             Fieldset(
@@ -676,8 +676,8 @@ class EnrollmentForm(forms.ModelForm):
                     Div('documenttype', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('documentyear', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('documentnumber', css_class='col-md-3'),
+                    #HTML('<span class="badge badge-default">3</span>'),
+                    #Div('documentnumber', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -723,7 +723,8 @@ class EnrollmentForm(forms.ModelForm):
             if serializer.is_valid():
                 instance = serializer.create(validated_data=serializer.validated_data)
                 if request.FILES:
-                   instance.document_lastyear = request.FILES['document_lastyear']
+                    if request.FILES['document_lastyear']:
+                        instance.document_lastyear = request.FILES['document_lastyear']
                 instance.school_id = request.user.school_id
                 instance.owner = request.user
                 instance.education_year = EducationYear.objects.get(current_year=True)
@@ -832,7 +833,7 @@ class EnrollmentForm(forms.ModelForm):
             'have_barcode',
             'age_min_restricted',
             'age_max_restricted',
-            'student_is_justified',
+            #'student_is_justified',
             'student_is_specialneeds',
             'student_specialneeds',
             'student_specialneedsdt',
@@ -842,7 +843,6 @@ class EnrollmentForm(forms.ModelForm):
             'student_unhcr_family',
             'student_unhcr_personal',
             'document_lastyear',
-
         )
         initial_fields = fields
         widgets = {}
@@ -1666,10 +1666,6 @@ class ImageStudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = [
-            # 'std_image',
-            # 'std_image',
-            # 'unhcr_image',
-            # 'birthdoc_image',
             'id',
             'birth_documenttype',
         ]

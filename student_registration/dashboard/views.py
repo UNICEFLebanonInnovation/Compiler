@@ -704,3 +704,21 @@ class List_Justification(TemplateView):
         }
 
 
+def Generate_Justification_number(request):
+    from student_registration.enrollments.models import Enrollment
+    from student_registration.schools.models import EducationYear
+    education_year = EducationYear.objects.get(current_year=True)
+    Q_Enr = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                      school__is_2nd_shift=True, moved=False, dropout_status=False,
+                                      school_id=request.user.school_id, justificationnumber__isnull=True)\
+                .order_by('classroom_id'),
+    q_count = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                        school__is_2nd_shift=True, moved=False, dropout_status=False,
+                                        school_id=request.user.school_id,
+                                        justificationnumber__isnull=False).\
+                  values_list('justificationnumber').distinct().count(),
+
+    for q_enr in Q_Enr:
+        q_enr.update(justificationnumber=str(education_year) + '-' + str(int(q_count[0])+1))
+    context = {}
+    return render(request, "dashboard/utilities.html", context)

@@ -43,6 +43,7 @@ class EnrollmentDisabledManager(models.Manager):
 class DocumentType(models.Model):
     name = models.CharField(blank=True, null=True, max_length=70)
     description = models.CharField(blank=True, null=True, max_length=500)
+    description2 = models.CharField(blank=True, null=True, max_length=200)
 
     class Meta:
         ordering = ['id']
@@ -50,7 +51,7 @@ class DocumentType(models.Model):
         verbose_name_plural = "Documents Type"
 
     def __unicode__(self):
-        return self.name
+        return self.description
 
 
 def validate_file_size(value):
@@ -542,6 +543,11 @@ class Enrollment(TimeStampedModel):
         null=True,
         help_text=_('picture of previous education'),
         validators=[validate_file_size]
+    )
+    justificationnumber = models.CharField(
+        blank=True, null=True,
+        verbose_name=_('Justification Number'),
+        max_length=25,
     )
 
     @property

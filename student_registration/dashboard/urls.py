@@ -132,4 +132,9 @@ urlpatterns = [
         view=views.List_Justification.as_view(),
         name='run-list-justification'
     ),
+    url(
+        regex=r'^run-generate-justification/$',
+        view=views.Generate_Justification_number,
+        name='run-generate-justification'
+    ),
 ]
