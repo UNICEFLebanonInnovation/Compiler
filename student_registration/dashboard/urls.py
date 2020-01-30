@@ -137,4 +137,10 @@ urlpatterns = [
         view=views.Generate_Justification_number,
         name='run-generate-justification'
     ),
+    url(
+        regex=r'^run-available-documents/$',
+        view=views.List_of_available_documents.as_view(),
+        name='run-available-documents'
+    ),
+
 ]

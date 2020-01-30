@@ -704,6 +704,25 @@ class List_Justification(TemplateView):
         }
 
 
+class List_of_available_documents(TemplateView):
+    template_name = 'dashboard/available_documents.html'
+
+    def handle_no_permission(self, request):
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+        from student_registration.enrollments.models import Enrollment
+        from student_registration.schools.models import EducationYear
+        education_year = EducationYear.objects.get(current_year=True)
+        return {
+            'enrollment': Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                                    school__is_2nd_shift=True, moved=False, dropout_status=False, #disabled=False,
+                                                    school_id=self.request.user.school_id).order_by('classroom_id', 'section_id'),
+            'education_year': education_year,
+            'current_date': datetime.now(),
+        }
+
+
 def Generate_Justification_number(request):
     from student_registration.enrollments.models import Enrollment
     from student_registration.schools.models import EducationYear

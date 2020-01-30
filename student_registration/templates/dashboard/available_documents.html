@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% load util_tags %}
+
+
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>Available Documents</title>
+</head>
+<style>
+    body {
+    counter-reset: tableCount;
+    }
+    .counterCell:before {
+    content: counter(tableCount);
+    counter-increment: tableCount;
+   }
+   .square {
+    height: 200px;
+    width: 200px;
+    background-color: #f0f0f5;
+  }
+  body {
+  background: rgb(204,204,204);
+}
+page {
+  background: white;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 1cm;
+  margin-top: 1cm;
+  margin-left: 0.5cm;
+  margin-right: 0.5cm;
+  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+}
+page[size="A4"] {
+  width: 21cm;
+  height: 29.7cm;
+}
+page[size="A4"][layout="landscape"] {
+  width: 29.7cm;
+  height: 21cm;
+}
+page[size="A3"] {
+  width: 29.7cm;
+  height: 42cm;
+}
+page[size="A3"][layout="landscape"] {
+  width: 42cm;
+  height: 29.7cm;
+}
+page[size="A5"] {
+  width: 14.8cm;
+  height: 21cm;
+}
+page[size="A5"][layout="landscape"] {
+  width: 21cm;
+  height: 14.8cm;
+}
+@media print {
+  body, page {
+    margin: 0;
+    box-shadow: 0;
+  }
+}
+
+#customers {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#customers td, #customers th {
+  border: 1px solid #ddd;
+  padding: 5px;
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+table, td1, th1 {
+  border: 0px solid black;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td {
+  height: 15px;
+  vertical-align: bottom;
+}
+table.fixed { table-layout:fixed; }
+table.fixed td { overflow: hidden; }
+</style>
+<script type='text/javascript'>
+		function PrintReport()
+		{
+			window.print();
+		}
+
+	</script>
+<body>
+
+<page size="A4" layout="portrait">
+
+
+<table width="100%" border="0">
+   <th width="15%" height="190">
+     <div>
+        <img src="{% static 'images/mehe.png' %}" style="float: center; width: 90px; height: 90px;" />
+     </div>
+
+     <div>
+     الجمهورية اللبنانية
+     <br>
+     وزارة التربية والتعليم العالي
+     <br>
+     وحدة إدارة متابعة تنفيذ برنامج التعليم الشامل
+       <br>
+       <u>PMU</u>
+       </div>
+   </th>
+
+  <th width="10%">
+
+  </th>
+  <th width="40%">
+
+           <font color="navy">
+              <h2 align="center">        لوائح بالمستندات الموجودة و الغير موجودة لكل طالب  </h2>
+   </th>
+   <th width="10%">
+
+   </th>
+
+         </tr>
+     </table>
+<br>
+
+ <table width="100%" border="1" class="fixed">
+
+     <th width="4%">
+         <font size="2" color="black">الرقم </font>
+         <font size="1" color="black">
+          المتسلسل
+         </font>
+     </th>
+      <th width="7%">الصف</th>
+      <th width="4%"> الشعبة</th>
+      <th width="7%"> الإسم</th>
+      <th width="7%">إسم الأب</th>
+      <th width="7%">الشهرة</th>
+     <th width="5%">الجنس</th>
+     <th width="5%" align="right">رقم compiler الموحد</th>
+     <th width="5%" ><font size="1" color="black">صورة عن التعليم السابق</font></th>
+     <th width="5%" ><font size="1" color="black">صورة شمسية</font></th>
+      <th width="5%" ><font size="1" color="black">صورة عن وثيقة الولادة</font></th>
+      <th width="5%" ><font size="1" color="black">صورة عن بطاقة العائلة UNHCR </font></th>
+
+    {% for enr in enrollment %}
+        <tr>
+          <div>
+            <td width="4%" class="counterCell"  ></td>
+            <td width="7%" ><font size="1"> {{ enr.classroom}}</font></div></td>
+            <td width="4%" align="center"><font size="2"> {{ enr.section}}</font></div></td>
+            <td width="7%" ><font size="1"> {{ enr.student.first_name}}</font></div></td>
+            <td width="7%" ><font size="1">{{ enr.student.father_name}}</font></td>
+            <td width="7%" ><font size="1">{{ enr.student.last_name}}</font></td>
+
+            <td width="5%"><font size="1"> {{ enr.student.sex }}</font></td>
+            <td width="5%">{{ enr.student.id }}</td>
+
+            {% if enr.document_lastyear %}
+                <td width="5%" align="center"><font size="1"> <b> X</b> </font></td>
+             {% else %}
+                <td width="5%" ><font size="1"> </font></td>
+             {% endif %}
+
+            {% if enr.student.std_image %}
+              <td width="5%" align="center"><font size="1"> <b> X</b> </font></td>
+            {% else %}
+            <td width="5%" ><font size="1">  </font></td>
+            {% endif %}
+            {%if enr.student.birthdoc_image %}
+            <td width="5%" align="center"><font size="1"> <b> X</b> </font></td>
+            {% else %}
+            <td width="5%" ><font size="1">  </font></td>
+            {% endif %}
+            {% if enr.student.unhcr_image %}
+               <td width="5%" align="center"><font size="1"><b> X</b></font></td>
+            {% else %}
+            <td width="5%" ><font size="1">  </font></td>
+            {% endif %}
+
+          </div>
+        </tr>
+       {% endfor %}
+
+  </table>
+
+
+  </page>
+</body>
+
+</html>
