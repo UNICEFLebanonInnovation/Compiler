@@ -382,7 +382,7 @@ class EnrollmentForm(forms.ModelForm):
     )
     signature_cert_date = forms.DateField(
         label=_("Signature Date"),
-        required=True
+        required=False
     )
     documentnumber = forms.CharField(
         label=_('Document Number'),
