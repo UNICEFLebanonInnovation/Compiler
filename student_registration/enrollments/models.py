@@ -549,7 +549,11 @@ class Enrollment(TimeStampedModel):
         verbose_name=_('Justification Number'),
         max_length=25,
     )
-
+    signature_cert_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Signature Date')
+        )
     @property
     def student_fullname(self):
         if self.student:

@@ -263,6 +263,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'documentyear',
             'documentnumber',
             'document_lastyear',
+            'signature_cert_date',
         )
 
 

@@ -17,6 +17,9 @@ $(document).ready(function(){
     if($(document).find('#id_registration_date').length == 1) {
         $('#id_registration_date').datepicker({dateFormat: "yy-mm-dd"});
     }
+    if($(document).find('#id_signature_cert_date').length == 1) {
+        $('#id_signature_cert_date').datepicker({dateFormat: "yy-mm-dd"});
+    }
     if($(document).find('#id_first_attendance_date').length == 1) {
         $('#id_first_attendance_date').datepicker({dateFormat: "yy-mm-dd"});
     }
