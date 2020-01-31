@@ -40,7 +40,7 @@ class StudentEnrollmentForm(forms.ModelForm):
             'is_financialsupport',
             'Financialsupport_number',
             'financialsupport',
-            'id_image',
+           # 'id_image',
             'unhcr_image',
             'birthdoc_image',
             'std_image',
