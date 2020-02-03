@@ -26,24 +26,24 @@
           <div class="col-sm-4">
             <div class="card m-3">
               <div class="card-block">
-                <h3 class="card-title">Generate List Number</h3>
+                <h3 class="card-title">Students list</h3>
                 <p class="card-text">Generate the justification number for the school  and lock the data</p>
 
                 <div class="btn-group">
 
-                    <a href="{% url 'dashboard:run-list-justification' %}" class="btn btn-info">List of Students by Class</a>
+                    <a href="{% url 'dashboard:run-list-justification' %}" class="btn btn-info">{% trans 'Draft of student list' %}</a>
+                </div>
+
+                <hr>
+
+
+                <div class="btn-group" >
+                   <a href="{% url 'dashboard:run-generate-justification' %}" class="btn btn-info">{% trans 'Last copy' %}</a>
                 </div>
                 <hr>
                 <div class="btn-group">
-                    <a href="{% url 'dashboard:run-available-documents' %}" class="btn btn-info">List of Available Documents</a>
+                    <a href="{% url 'dashboard:run-available-documents' %}" class="btn btn-info">{% trans 'List of available documents' %}</a>
                 </div>
-                <hr>
-
-
-                <div class="btn-group" hidden>
-                   <a href="{% url 'dashboard:run-generate-justification' %}" class="btn btn-info">Generate</a>
-                </div>
-
               </div>
             </div>
           </div>

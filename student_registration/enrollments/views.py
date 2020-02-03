@@ -745,3 +745,4 @@ class Update_Image(UpdateView):
         else:
             return ImageStudentForm(instance=instance)
 
+

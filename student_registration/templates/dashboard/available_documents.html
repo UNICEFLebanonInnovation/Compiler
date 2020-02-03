@@ -184,23 +184,23 @@ table.fixed td { overflow: hidden; }
             <td width="5%">{{ enr.student.id }}</td>
 
             {% if enr.document_lastyear %}
-                <td width="5%" align="center"><font size="1"> <b> X</b> </font></td>
+                <td width="5%" align="center"><font size="1"> <b> <a href=" {{ enr.document_lastyear.url }}">click here</a></b> </font></td>
              {% else %}
                 <td width="5%" ><font size="1"> </font></td>
              {% endif %}
 
             {% if enr.student.std_image %}
-              <td width="5%" align="center"><font size="1"> <b> X</b> </font></td>
+          <td width="5%" align="center"><font size="1"> <b> <a href=" {{ enr.student.std_image.url }}">click here</a></b> </font></td>
             {% else %}
             <td width="5%" ><font size="1">  </font></td>
             {% endif %}
             {%if enr.student.birthdoc_image %}
-            <td width="5%" align="center"><font size="1"> <b> X</b> </font></td>
+            <td width="5%" align="center"><font size="1"> <b> <a href=" {{ enr.student.birthdoc_image.url }}">click here</a></b> </font></td>
             {% else %}
             <td width="5%" ><font size="1">  </font></td>
             {% endif %}
             {% if enr.student.unhcr_image %}
-               <td width="5%" align="center"><font size="1"><b> X</b></font></td>
+               <td width="5%" align="center"><font size="1"><b> <a href=" {{ enr.student.unhcr_image.url }}">click here</a></b></font></td>
             {% else %}
             <td width="5%" ><font size="1">  </font></td>
             {% endif %}
