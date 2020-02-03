@@ -66,5 +66,4 @@ urlpatterns = [
         view=views.ExportByCycleView.as_view(),
         name='enrollment_export_by_cycle'
     ),
-
 ]

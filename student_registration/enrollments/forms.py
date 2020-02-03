@@ -689,6 +689,9 @@ class EnrollmentForm(forms.ModelForm):
                     Div('document_lastyear', css_class='col-md-3'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<font size="2px" color="red">'+_('The name of file should not be in arabic')+'</font>'),
+                ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
 
