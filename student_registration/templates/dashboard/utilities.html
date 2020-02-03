@@ -16,6 +16,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Utilities</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
 
@@ -30,15 +33,14 @@
                 <p class="card-text">Generate the justification number for the school  and lock the data</p>
 
                 <div class="btn-group">
-
                     <a href="{% url 'dashboard:run-list-justification' %}" class="btn btn-info">{% trans 'Draft of student list' %}</a>
                 </div>
 
                 <hr>
 
-
                 <div class="btn-group" >
-                   <a href="{% url 'dashboard:run-generate-justification' %}" class="btn btn-info">{% trans 'Last copy' %}</a>
+
+                   <a href="#mymodal"   role="button"   class="btn btn-large btn-primary" data-toggle="modal"  ><font color ="lime" size="4">{% trans 'Last copy' %}</font></a>
                 </div>
                 <hr>
                 <div class="btn-group">
@@ -48,9 +50,34 @@
             </div>
           </div>
         </div>
+
+
+<div id="mymodal" class="modal fade" dir="rtl">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">هل أنت متأكد من تثبيت المعلومات؟</h4>
+            </div>
+
+
+            <div class="modal-footer" dir="ltr">
+                <button type="button" class="btn btn-default" data-dismiss="modal">كلا</button>
+			        	 <a href="{% url 'dashboard:run-generate-justification' %}" class="btn btn-info">{% trans 'Confirmed' %}</a>
+				      <br>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
       </form>
     </section>
 </section>
+
 
 </body>
 </html>

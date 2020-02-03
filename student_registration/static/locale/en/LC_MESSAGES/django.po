@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 13:06+0200\n"
+"POT-Creation-Date: 2020-02-03 14:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4633,16 +4633,20 @@ msgstr ""
 msgid "Schools By Governorate"
 msgstr ""
 
-#: .\student_registration\templates\dashboard\utilities.html:34
+#: .\student_registration\templates\dashboard\utilities.html:36
 msgid "Draft of student list"
 msgstr ""
 
-#: .\student_registration\templates\dashboard\utilities.html:41
+#: .\student_registration\templates\dashboard\utilities.html:43
 msgid "Last copy"
 msgstr ""
 
-#: .\student_registration\templates\dashboard\utilities.html:45
+#: .\student_registration\templates\dashboard\utilities.html:47
 msgid "List of available documents"
+msgstr ""
+
+#: .\student_registration\templates\dashboard\utilities.html:67
+msgid "Confirmed"
 msgstr ""
 
 #: .\student_registration\templates\django_tables2\clm_delete_column.html:4
