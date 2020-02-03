@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 14:54+0200\n"
+"POT-Creation-Date: 2020-02-03 22:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4658,7 +4658,6 @@ msgid "List of available documents"
 msgstr "لائحة بمستندات التلاميذ"
 
 #: .\student_registration\templates\dashboard\utilities.html:67
-
 msgid "Confirmed"
 msgstr "تأكيد"
 
@@ -4719,8 +4718,8 @@ msgstr ""
 #: .\student_registration\templates\django_tables2\dropout_column.html:2
 msgid "Are you sure you want to tag this student as dropout?"
 msgstr ""
-"هل انت متاكد ان هذا التلميذ انتقل الى مدرسة اخرى؟ اضغط على OK لادخال تاريخ "
-"الانتقال"
+"هل انت متأكد ان هذا التلميذ ترك المدرسة ؟ اضغط على OK لادخال تاريخ "
+"الترك"
 
 #: .\student_registration\templates\django_tables2\dropout_column.html:6
 msgid "Enter dropout date"
