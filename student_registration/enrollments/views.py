@@ -724,7 +724,8 @@ class Update_Image(UpdateView):
         if self.request.method == "POST":
             instance = Student.objects.get(id=self.kwargs['pk'])
             if self.request.POST.get('birth_documenttype'):
-                instance.birth_documenttype_id = self.request.POST.get('birth_documenttype')
+                if arabic.test(self.request.POST.get('birth_documenttype')):
+                    instance.birth_documenttype_id = self.request.POST.get('birth_documenttype')
             else:
                 instance.birth_documenttype_id = ''
 

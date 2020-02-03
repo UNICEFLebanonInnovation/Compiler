@@ -744,7 +744,7 @@ def Generate_Justification_number(request):
     education_year = EducationYear.objects.get(current_year=True)
     Q_Enr = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
                                       school__is_2nd_shift=True, moved=False, dropout_status=False,
-                                      school_id=request.user.school_id, justificationnumber='')\
+                                      school_id=request.user.school_id, justificationnumber__isnull=True)\
                 .order_by('classroom_id'),
     q_count = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
                                         school__is_2nd_shift=True, moved=False, dropout_status=False,
@@ -752,8 +752,10 @@ def Generate_Justification_number(request):
                                         justificationnumber__isnull=False).\
         exclude(justificationnumber='').distinct('justificationnumber').order_by('justificationnumber').count(),
     for q_enr in Q_Enr:
-        q_enr.update(justificationnumber=str(request.user.school.number)+
-                                         '-'+str(education_year) + '-' + str(int(q_count[0])+1))
+        print (str(request.user.school.number)+'-'+str(education_year)+'-'+str(int(q_count[0])+1))
+        q_enr.update(justificationnumber=
+                     str(request.user.school.number)+'-'+str(education_year)+'-'+str(int(q_count[0])+1))
+
     Q_Users = User.objects.filter(school=request.user.school, is_active=True)
     group = Group.objects.get(name='ENROL_CREATE')
     for q_users in Q_Users:
