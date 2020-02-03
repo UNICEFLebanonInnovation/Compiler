@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 13:06+0200\n"
+"POT-Creation-Date: 2020-02-03 14:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4097,7 +4097,8 @@ msgstr "المعلومات الشخصية للطفل"
 #: .\student_registration\students\models.py:409
 #: .\student_registration\templates\students\imagestd.html:99
 msgid "UNHCR picture"
-msgstr "صورة عن بطاقة العائلة لدى المفوضية السامية للأمم المتحدة لشؤون اللاجئين "
+msgstr ""
+"صورة عن بطاقة العائلة لدى المفوضية السامية للأمم المتحدة لشؤون اللاجئين "
 "UNHCR File"
 
 #: .\student_registration\students\models.py:416
@@ -4644,17 +4645,22 @@ msgstr ""
 msgid "Schools By Governorate"
 msgstr ""
 
-#: .\student_registration\templates\dashboard\utilities.html:34
+#: .\student_registration\templates\dashboard\utilities.html:36
 msgid "Draft of student list"
 msgstr " مسودة اللوائح الإسمية"
 
-#: .\student_registration\templates\dashboard\utilities.html:41
+#: .\student_registration\templates\dashboard\utilities.html:43
 msgid "Last copy"
 msgstr "النسخة النهائية"
 
-#: .\student_registration\templates\dashboard\utilities.html:45
+#: .\student_registration\templates\dashboard\utilities.html:47
 msgid "List of available documents"
 msgstr "لائحة بمستندات التلاميذ"
+
+#: .\student_registration\templates\dashboard\utilities.html:67
+
+msgid "Confirmed"
+msgstr "تأكيد"
 
 #: .\student_registration\templates\django_tables2\clm_delete_column.html:4
 #: .\student_registration\templates\django_tables2\delete_column.html:3
