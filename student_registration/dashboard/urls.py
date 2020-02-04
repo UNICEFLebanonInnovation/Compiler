@@ -142,9 +142,5 @@ urlpatterns = [
         view=views.List_of_available_documents.as_view(),
         name='run-available-documents'
     ),
-    url(
-       regex=r'^clear-profile/$',
-       view=views.clear_profile,
-       name='clear-profile'
-    )
+
 ]

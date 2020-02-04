@@ -684,13 +684,6 @@ def generate_pretest_result(request):
     return render(request, "dashboard/exporter.html", context)
 
 
-def clear_profile(request):
-    #print (request.GET.get('std_id'))
-    context = {}
-    #return render(request, "enrollments/list.html", context)
-    return redirect('/')
-
-
 class List_Justification(TemplateView):
     template_name = 'dashboard/list_justification.html'
 

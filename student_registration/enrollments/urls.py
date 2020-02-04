@@ -66,4 +66,9 @@ urlpatterns = [
         view=views.ExportByCycleView.as_view(),
         name='enrollment_export_by_cycle'
     ),
+    url(
+        regex=r'^saveimage/(?P<pk>[\w.@+-]+)/$',
+        view=views.Clear_Profile.as_view(),
+        name='clear-profile'
+    )
 ]
