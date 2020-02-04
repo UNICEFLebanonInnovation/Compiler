@@ -1,15 +1,15 @@
-{% extends "base.html" %}
+{% extends "youth/base.html" %}
 {% load static %}
 
 {% block title %}User: {{ object.username }}{% endblock %}
 
-{% block content %}
+{% block main_content %}
 <div class="container">
 
   <div class="row">
     <div class="col-sm-12">
 
-      <h2>{{ object.username }}</h2>
+      <h2>{{ object.email }}</h2>
       {% if object.name %}
         <p>{{ object.name }}</p>
       {% endif %}
@@ -20,9 +20,9 @@
 <!-- Action buttons -->
 <div class="row">
 
-  <div class="col-sm-12">
-    <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
-    <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
+  <div class="col-sm-12 ">
+    <a class="btn btn-primary" href="{% url 'users:update' %}">My Info</a>
+    <a class="btn btn-primary" href="{% url 'account_email' %}">E-Mail</a>
     <!-- Your Stuff: Custom user template urls -->
   </div>
 
@@ -32,5 +32,5 @@
 
 
 </div>
-{% endblock content %}
+{% endblock main_content %}
 

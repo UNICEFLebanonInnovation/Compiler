@@ -39,4 +39,9 @@ urlpatterns = [
         view=views.UserChangeLanguageRedirectView.as_view(),
         name='set_language'
     ),
+    url(
+        regex=r'^partner',
+        view=views.user_overview,
+        name='profile'
+    ),
 ]

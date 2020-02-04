@@ -1,7 +1,7 @@
 {
-	"name": "Compiler",
-	"icons": [
-	],
-	"theme_color": "#ffffff",
-	"display": "standalone"
+  "name": "Compiler",
+  "icons": [
+  ],
+  "theme_color": "#ffffff",
+  "display": "standalone"
 }

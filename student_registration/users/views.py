@@ -8,7 +8,8 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView,
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import translation
 from student_registration.alp.templatetags.util_tags import has_group
-
+from student_registration.users.utils import force_default_language
+from django.shortcuts import render
 from .models import User
 
 
@@ -75,3 +76,11 @@ class LoginRedirectView(LoginRequiredMixin, RedirectView):
         if has_group(self.request.user, 'HELPDESK'):
             return reverse('helpdesk_dashboard', kwargs={})
         return reverse('home')
+
+
+def user_overview(request):
+
+    args = {
+        'user': request.user,
+               }
+    return render(request, 'users/profile.html', args)
