@@ -11,99 +11,29 @@
     <title>Justification List</title>
 </head>
 <style>
-    body {
-    counter-reset: tableCount;
-    }
-    .counterCell:before {
+   body{
+        width: 29.7cm;
+        height: 21cm;
+        margin: 5mm 5mm 5mm 5mm;
+        /* change the margins as you want them to be. */
+        counter-reset: tableCount;
+   }
+   .counterCell:before {
     content: counter(tableCount);
     counter-increment: tableCount;
    }
-   .square {
-    height: 200px;
-    width: 200px;
-    background-color: #f0f0f5;
-  }
-  body {
-  background: rgb(204,204,204);
-}
-page {
-  background: white;
-  display: block;
-  margin: 0 auto;
-  margin-bottom: 1cm;
-  margin-top: 1cm;
-  margin-left: 0.2cm;
-  margin-right: 0.2cm;
-  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
-}
-page[size="A4"] {
-  width: 21cm;
-  height: 29.7cm;
-}
-page[size="A4"][layout="landscape"] {
-  width: 29.7cm;
-  height: 21cm;
-}
-page[size="A3"] {
-  width: 29.7cm;
-  height: 42cm;
-}
-page[size="A3"][layout="landscape"] {
-  width: 42cm;
-  height: 29.7cm;
-}
-page[size="A5"] {
-  width: 14.8cm;
-  height: 21cm;
-}
-page[size="A5"][layout="landscape"] {
-  width: 21cm;
-  height: 14.8cm;
-}
-@media print {
-  body, page {
-    margin: 0;
-    box-shadow: 0;
-  }
+#content {
+    display: table;
 }
 
-#customers {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
+#pageFooter {
+    display: table-footer-group;
 }
 
-#customers td, #customers th {
-  border: 1px solid #ddd;
-  padding: 5px;
+#pageFooter:after {
+    counter-increment: page;
+    content: counter(page);
 }
-
-#customers tr:nth-child(even){background-color: #f2f2f2;}
-
-#customers tr:hover {background-color: #ddd;}
-
-#customers th {
-  padding-top: 5px;
-  padding-bottom: 5px;
-  text-align: left;
-  background-color: #4CAF50;
-  color: white;
-}
-table, td1, th1 {
-  border: 0px solid black;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td {
-  height: 15px;
-  vertical-align: bottom;
-}
-table.fixed { table-layout:fixed; }
-table.fixed td { overflow: hidden; }
 </style>
 <script type='text/javascript'>
 		function PrintReport()
@@ -113,13 +43,14 @@ table.fixed td { overflow: hidden; }
 
 	</script>
 <body>
+<div  >
      <button class="btn btn-info" id="preview" onclick="PrintReport();" hidden>
         Print
      </button>
-<page size="A4" layout="landscape">
+
 
  {%for v_school in school %}
- <table width="100%" border="0">
+ <table width="100%" border="0" cellspacing="0" cellpadding="4">
    <th width="15%" height="190">
      <div>
         <img src="{% static 'images/mehe.png' %}" style="float: center; width: 90px; height: 90px;" />
@@ -130,7 +61,7 @@ table.fixed td { overflow: hidden; }
      <br>
      وزارة التربية والتعليم العالي
      <br>
-     وحدة إدارة متابعة تنفيذ برنامج التعليم الشامل
+     وحدة برنامج التعليم الشامل
        <br>
        <u>PMU</u>
        </div>
@@ -139,17 +70,15 @@ table.fixed td { overflow: hidden; }
 
    </th>
    <th width="40%">
-     <table width="100%" border="1" id="customers">
+     <table width="100%" border="1" cellspacing="0" cellpadding="4">
        <tr>
          <th colspan="2">
            <font color="navy">
-              <h2 align="center">            لائحة بأسماء التلاميذ الغير لبنانيين بحسب الصفوف   </h2>
+              <h2 align="center">            لائحة بأسماء التلاميذ غير اللبنانيين بحسب الصفوف   </h2>
            </font>
          </th>
        </tr>
-
          <tr>
-
              <td width="35%" bgcolor="#F5F5F4">
                 <font size="4">
                السنة الدراسية
@@ -197,7 +126,7 @@ table.fixed td { overflow: hidden; }
              </font>
            </td>
            <td width="65%" align="right">
-
+              {{ last_justificationnumber.justificationnumber }}
            </td>
           </tr>
 
@@ -209,7 +138,7 @@ table.fixed td { overflow: hidden; }
 
    </th>
    <th width="29%">
-     <table width="100%" border="1" id="customers">
+     <table width="100%" border="1" cellspacing="0" cellpadding="4">
 
        <tr>
          <td bgcolor="#F5F5F4">
@@ -273,37 +202,31 @@ table.fixed td { overflow: hidden; }
       <li>السنة المنهجية : {{ classroom.grouper }} </li>
     </font>
 
- <table width="100%" border="1" >
-   <th width="58%"></th>
-   <th width="52%"  bgcolor="#F5F5F4">معلومات عن اّخر سنة دراسية</th>
- </table>
+
  <font size="2" face="Courier New" >
-    <table width="100%" border="1" class="fixed">
+    <table width="100%" border="1" cellspacing="0" cellpadding="4" >
      <th width="3%">
-       <table width="100%" class="fixed">
-         <th>
-           مبرر
+       <table width="100%" >
+         <tr><td> <font size="1" color="red"> خاص بالمنطقة التربوية</font>           </td></tr>
+         <th> <font size="2">           مبرر</font>
          </th>
          <tr>
-         <td>
-          نعم / لا
-         </td>
+         <td><font size="1">          نعم / لا         </font></td>
+
          </tr>
+
        </table>
      </th>
-     <th width="5%">
-         <font size="2" color="black">الرقم </font>
-         <font size="1" color="black">
-          المتسلسل
-         </font>
+     <th width="4%">
+         <font size="2" color="black" ># </font>
      </th>
-      <th><div style="width: 28px; overflow:hidden;">الإسم</div></th>
-      <th><div style="width: 28px; overflow:hidden;">إسم الأب</div></th>
-      <th><div style="width: 28px; overflow:hidden;">الشهرة</div></th>
-     <th width="4%">الجنس</th>
+      <th><div style="width: 90px; overflow:hidden;">الإسم</div></th>
+      <th><div style="width: 90px; overflow:hidden;">إسم الأب</div></th>
+      <th><div style="width: 90px; overflow:hidden;">الشهرة</div></th>
+     <th width="2%">الجنس</th>
      <th width="8%">مكان الولادة</th>
      <th width="9%">
-       <table border="0" width="100%" class="fixed">
+       <table border="0" width="100%" >
        <th colspan="3">
          <u>
          تاريخ الولادة
@@ -314,80 +237,81 @@ table.fixed td { overflow: hidden; }
            <td><font size="1" color="black">اليوم</font></td>
            <td><font size="1" color="black"> الشهر</font></td>
            <td><font size="1" color="black">السنة</font></td>
-
        </tr>
        </table>
      </th>
      <th width="6%" align="right">رقم compiler الموحد</th>
-     <th width="20%">
-       <table width="100%" border="0" class="fixed">
-         <th colspan="4">
-          نظامي
-         </th>
+     <th width="34%">
+       <table width="100%" border="0" >
+
+         <th colspan="4"> معلومات عن اّخر سنة دراسية         </th>
          <tr>
-             <td width="15%" style="border:1px solid black"><font size="1" color="black">العام</font></td>
-             <td width="45%" style="border:1px solid black" align="right"><font size="1" color="black"> إسم المدرسة</font></td>
-             <td width="20%" style="border:1px solid black" align="right"><font size="1" color="black"> السنة المنهجية</font></td>
-             <td width="20%" style="border:1px solid black" align="right"><font size="1" color="black">النتيجة</font></td>
+         <td width="70%%" style="border:1px solid black"><font size="1" color="black">اّخر سنة منهجية / اّخر دورة</font></td>
+         <td width="20%" style="border:1px solid black" align="right"><font size="1" color="black">النتيجة</font></td>
+         <td width="4%" style="border:1px solid black"><font size="1" color="black">الإفادة المبرزة</font></td>
+         <td width="6%" style="border:1px solid black"><font size="1" color="black">تاريخ التصديق</font></td>
          </tr>
-       </table>
+         </table>
      </th>
-     <th width="14%">
-       <table width="100%" border="0" class="fixed">
-         <th colspan="2">
-          غير نظامي
-         </th>
-         <tr >
-           <td   width="50%" style="border:1px solid black" align="right"><font size="1" color="black">&nbsp;&nbsp;&nbsp;
-             آخر دورة
-          </font></td>
-           <td width="50%" style="border:1px solid black" align="right"><font size="1" color="black">
-             النتيجة
-           </font></td>
 
-         </tr>
-       </table>
-
-     </th>
-     <th width="4%" ><font size="1" color="black">الإفادة المبرزة</font></th>
-     <th width="3%" ><font size="1" color="black">تاريخ التصديق</font></th>
 
      {% for enr in classroom.list %}
         <tr>
           <div>
           <td width="3%"></td>
-          <td width="5%" class="counterCell"  ></td>
-            <td style="padding-left:5px;"><div style="width: 28px; overflow:hidden;"><font size="1"> {{ enr.student.first_name}}</font></div></td>
-            <td style="padding-left:5px;"><div style="width: 28px; overflow:hidden;"><font size="1">{{ enr.student.father_name}}</font></div></td>
-            <td style="padding-left:5px;"><div style="width: 28px; overflow:hidden;"><font size="1">{{ enr.student.last_name}}</font></div></td>
-            <td><font size="1"> {{ enr.student.sex }}</font></td>
+          <td width="3%" class="counterCell"  ></td>
+            <td style="padding-left:5px; "><div style="width: 90px; overflow:hidden;"><font size="1"> {{ enr.student.first_name}}</font></div></td>
+            <td style="padding-left:5px;"><div style="width: 90px; overflow:hidden;"><font size="1">{{ enr.student.father_name}}</font></div></td>
+            <td style="padding-left:5px;"><div style="width: 90px; overflow:hidden;"><font size="1">{{ enr.student.last_name}}</font></div></td>
+
+            {% ifequal enr.student.sex 'Male' %}
+              <td width="3%"><font size="1"> ذ</font></td>
+            {% endifequal %}
+            {% ifequal enr.student.sex 'Female' %}
+              <td width="2%"><font size="1"> أ</font></td>
+            {% endifequal %}
+
             <td><font size="1"> {{ enr.student.place_of_birth }}</font></td>
           <td>
-            <table width="100%" class="fixed">
+            <table width="100%" >
               <td width="20"><font size="1"> {{ enr.student.birthday_day }}</font></td>
               <td width="20"><font size="1"> {{ enr.student.birthday_month }}</font></td>
               <td width="40"><font size="1"> {{ enr.student.birthday_year }}</font></td>
             </table>
           </td>
           <td>{{ enr.student.id }}</td>
-          <td>
-            <table width="100%" class="fixed" >
-              <td width="15%" align="rigth"><font size="1"> {{ enr.last_education_year }}</font></td>
-              <td width="45%" align="rigth"><font size="1"> {{ enr.last_school.name }}</font></td>
-              <td width="20%" align="rigth"><font size="1"> {{ enr.last_education_level }}</font></td>
-              <td width="20%" align="rigth"><font size="1"> {{ enr.last_year_result }}</font></td>
-            </table>
-          </td>
-          <td>
-           <table width="100%" border="0" class="fixed">
-             <td ><font size="1" width="50%"> {{ enr.last_informal_edu_round }}</font></td>
-             <td ><font size="1" width="50%"> {{ enr.last_informal_edu_final_result }}</font></td>
-            </tr>
-           </table>
-          </td>
-          <td ><font size="1"> {{ enr.documenttype.description2 }}</font></td>
-          <td ><font size="1"> {{enr.documentyear}}</font></td>
-           </div>
+
+          {% ifnotequal enr.last_education_year 'na' %}
+             <td width="34%">
+               <table width="100%" >
+                  <td width="15%" align="rigth"><font size="1"> {{ enr.last_education_year }}</font></td>
+                  <td width="45%" align="rigth"><font size="1"> {{ enr.last_school.name }}</font></td>
+                  <td width="20%" align="rigth"><font size="1"> {{ enr.last_education_level }}</font></td>
+                  {% ifequal enr.last_year_result 'graduated'%}
+                    <td width="10%" align="rigth"><font size="1"> ناجح/ة  </font></td>
+                  {% endifequal %}
+                  {% ifequal enr.last_year_result 'failed'%}
+                    <td width="10%" align="rigth"><font size="1">معيد/ة  </font></td>
+                  {% endifequal %}
+                  <td width="6%" align="right"><font size="1"> {{ enr.documenttype.description2 }}</font></td>
+                  <td width="4%" align="right"><font size="1"> {{enr.signature_cert_date}}</font></td>
+               </table>
+             </td>
+          {% else %}
+             <td width="34%">
+              <table width="100%" border="0" >
+                <td width="60%" align="right"><font size="1" > {{ enr.last_informal_edu_round }}</font></td>
+                <td width="30%" align="right"><font size="1" > {{ enr.last_informal_edu_final_result }}</font></td>
+                <td width="6%" align="right"><font size="1"> {{ enr.documenttype.description2 }}</font></td>
+                <td width="4%" align="right"><font size="1"> {{enr.signature_cert_date}}</font></td>
+
+              </table>
+             </td>
+          {% endifnotequal %}
+
+
+
+
         </tr>
        {% endfor %}
 
@@ -398,16 +322,16 @@ table.fixed td { overflow: hidden; }
 
 
 
-  <br><br><br><br><br><br>
+  <br><br><br><br>
   {% for schl in school %}
-  <table width="100%" border="1" class="fixed">
+  <table width="100%" border="0" >
     <th>
 
-  <table width="100%" border="0" class="fixed">
+  <table width="100%" border="1" cellspacing="0" cellpadding="4" >
     <th width="70%">
 
 
-  <table width="100%" border="0" class="fixed">
+  <table width="100%" border="0" cellspacing="0" cellpadding="4" >
     <tr>
 
       <td colspan="6" align="right">
@@ -419,7 +343,7 @@ table.fixed td { overflow: hidden; }
      <td width="15%" align="left">
        <font size="4"><b>
              أنا الموقع (ة) أدناه
-       </font></b>
+       </b></font>
      </td>
       <td width="15%" align="right">
         <font size="4" color="navy"><b>
@@ -459,7 +383,7 @@ table.fixed td { overflow: hidden; }
           &nbsp;&nbsp;&nbsp;***&nbsp;{{ schl.total_registered_2ndshift }}&nbsp;***
          </font></b>
          <font size="4"><b>
-          &nbsp;&nbsp;&nbsp;  يتابعون في مدرستي
+            يتابعون في مدرستي
            <br><br>
           وأصرّح على مسؤوليتي أن المعلومات الواردة في هذه اللائحة مطابقة للواقع
          </font></b>
@@ -468,10 +392,10 @@ table.fixed td { overflow: hidden; }
     </tr>
     </table>
    </th>
-    <th width="30%" >
-      <table border="0" width="100%" class="fixed">
+    <th width="33%" >
+      <table border="0" width="100%" >
         <th><tr>
-          <font size="4"><b>
+          <font size="3"><b>
            إن مندرجات هذه اللائحة صحيحة و قد دققت على مسؤوليتي
           </b></font>
           <br>
@@ -480,7 +404,7 @@ table.fixed td { overflow: hidden; }
         </th>
         <tr>
           <td>
-            <table width="100%" class="fixed">
+            <table width="100%" >
               <th width="30%">
                 ختم المدرسة
               </th>
@@ -510,8 +434,8 @@ table.fixed td { overflow: hidden; }
     {% endfor %}
   </table>
 
+</div>
 
-  </page>
 </body>
 
 </html>

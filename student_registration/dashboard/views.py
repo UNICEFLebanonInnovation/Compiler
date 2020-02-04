@@ -14,6 +14,7 @@ from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from django.shortcuts import render
+from django.contrib.auth.models import Group
 from student_registration.locations.models import (
     Location,
 )
@@ -24,6 +25,7 @@ from student_registration.schools.models import (
     ClassLevel,
     ClassRoom,
 )
+from django.shortcuts import redirect
 
 from student_registration.alp.models import Outreach, ALPRound
 from student_registration.users.models import User
@@ -701,6 +703,31 @@ class List_Justification(TemplateView):
             'school': School.objects.filter(id=self.request.user.school_id),
             'education_year': education_year,
             'current_date': datetime.now(),
+            'last_justificationnumber': Enrollment.objects.filter(education_year_id=education_year
+                                                                 , school_id__isnull=False,school__is_2nd_shift=True, moved=False,
+                                                                 dropout_status=False, school_id=self.request.user.school_id).
+            exclude(justificationnumber='').order_by('-justificationnumber')[0]
+        }
+
+
+class List_of_available_documents(TemplateView):
+    template_name = 'dashboard/available_documents.html'
+
+    def handle_no_permission(self, request):
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+        from student_registration.enrollments.models import Enrollment
+        from student_registration.schools.models import EducationYear
+        education_year = EducationYear.objects.get(current_year=True)
+
+        return {
+            'enrollment': Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                                    school__is_2nd_shift=True, moved=False, dropout_status=False, #disabled=False,
+                                                    school_id=self.request.user.school_id).order_by('classroom_id', 'section_id'),
+            'education_year': education_year,
+            'current_date': datetime.now(),
+
         }
 
 
@@ -716,9 +743,22 @@ def Generate_Justification_number(request):
                                         school__is_2nd_shift=True, moved=False, dropout_status=False,
                                         school_id=request.user.school_id,
                                         justificationnumber__isnull=False).\
-                  values_list('justificationnumber').distinct().count(),
-
+        exclude(justificationnumber='').distinct('justificationnumber').order_by('justificationnumber').count(),
     for q_enr in Q_Enr:
-        q_enr.update(justificationnumber=str(education_year) + '-' + str(int(q_count[0])+1))
+        print (str(request.user.school.number)+'-'+str(education_year)+'-'+str(int(q_count[0])+1))
+        q_enr.update(justificationnumber=
+                     str(request.user.school.number)+'-'+str(education_year)+'-'+str(int(q_count[0])+1))
+
+    Q_Users = User.objects.filter(school=request.user.school, is_active=True)
+    group = Group.objects.get(name='ENROL_CREATE')
+    for q_users in Q_Users:
+        q_users.groups.remove(group)
+    group = Group.objects.get(name='ENROL_EDIT')
+    for q_users in Q_Users:
+        q_users.groups.remove(group)
+    group = Group.objects.get(name='ENROL_DELETE')
+    for q_users in Q_Users:
+        q_users.groups.remove(group)
+
     context = {}
     return render(request, "dashboard/utilities.html", context)

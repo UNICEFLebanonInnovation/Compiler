@@ -380,6 +380,10 @@ class EnrollmentForm(forms.ModelForm):
         queryset=EducationYear.objects.all(), widget=forms.Select,
         required=False, to_field_name='id',
     )
+    signature_cert_date = forms.DateField(
+        label=_("Signature Date"),
+        required=False
+    )
     documentnumber = forms.CharField(
         label=_('Document Number'),
         required=False,
@@ -676,14 +680,17 @@ class EnrollmentForm(forms.ModelForm):
                     Div('documenttype', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('documentyear', css_class='col-md-3'),
-                    #HTML('<span class="badge badge-default">3</span>'),
-                    #Div('documentnumber', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('signature_cert_date', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('document_lastyear', css_class='col-md-3'),
                     css_class='row',
+                ),
+                Div(
+                    HTML('<font size="2px" color="red">'+_('The name of file should not be in arabic')+'</font>'),
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),

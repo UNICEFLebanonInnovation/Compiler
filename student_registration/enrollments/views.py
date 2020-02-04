@@ -708,7 +708,7 @@ class Update_Image(UpdateView):
     form_class = ImageStudentForm
 
     template_name = 'students/imagestd.html'
-    success_url = '/enrollments/list'
+    success_url = '/enrollments/list/'
     context_object_name = 'student_detail'
 
     def get_context_data(self, **kwargs):
@@ -745,3 +745,33 @@ class Update_Image(UpdateView):
         else:
             return ImageStudentForm(instance=instance)
 
+
+class Clear_Profile(UpdateView):
+    model = Student
+    form_class = ImageStudentForm
+
+    template_name = 'students/imagestd.html'
+    success_url = '/enrollments/list/'
+    context_object_name = 'student_detail'
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(Update_Image, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Student.objects.get(id=self.kwargs['pk'])
+
+        if self.request.method == "POST":
+            instance = Student.objects.get(id=self.kwargs['pk'])
+            instance.save()
+            return ImageStudentForm(instance=instance)
+        else:
+            return ImageStudentForm(instance=instance)
+    # #print (request.GET.get('std_id'))
+    # print('888888888888888888888888888888888888888888888')
+    # context = {}
+    # return render(request, "enrollments/list.html", context)
+    # #return redirect('/')
