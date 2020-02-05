@@ -267,6 +267,21 @@
           </div>
 
         </div>
+
+      <div class="col-sm-4">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">De-Generate</h3>
+              <form id="de-generate" action="{% url 'dashboard:degenerate-list-justification' %}" method="GET" >
+                     <label class="control-label  pull-left" for="txt_school" ><b>&nbsp;{% trans 'School number' %}&nbsp; </b></label>
+                            <input type="text" class="form-control " id="txt_school" name="txt_school"  maxlength="80"/>
+                            <input class="btn btn-primary" type="submit" value=" {% trans 'De-Generate List' %} " name="btntype" id="btntype1"/>
+                       </form>
+                </div>
+          </div>
+
+        </div>
+
     </section>
 </section>
 {% endblock %}
