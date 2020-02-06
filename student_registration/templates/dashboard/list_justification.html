@@ -236,12 +236,10 @@ td {
      <th width="4%" style="max-height:20px">
        <font size="3" color="black" ><b># </b></font>
      </th>
-     <th  width="7%">
-        <div style="width: 40px align:center" >الصورة الشمسية</div>
-     </th>
-     <th width="9%">الإسم</div></th>
-     <th width="9%">إسم الأب</div></th>
-     <th width="9%">الشهرة</div></th>
+
+     <th width="10%">الإسم</div></th>
+     <th width="10%">إسم الأب</div></th>
+     <th width="10%">الشهرة</div></th>
      <th width="4%" ><font size="2"><small>الجنس</small></font></th>
      <th width="10%" style="max-height:20px">مكان الولادة</th>
      <th width="9%" style="max-height:20px">
@@ -260,7 +258,7 @@ td {
        </table>
      </th>
      <th width="7%" align="right">رقم compiler الموحد</th>
-     <th width="25%">
+     <th width="29%">
         معلومات عن اّخر سنة دراسية
        <table width="100%" border="1" >
 
@@ -282,16 +280,19 @@ td {
 
           <td width="7%" style="max-height:20px"></td>
           <td width="4%" class="counterCell" style="max-height:20px" ></td>
-          <td width="7%" style="max-height:20px; ">
-              <div style="width: 40px">
-              {% if enr.student.std_image %}
-              <img width ="50" height="50" src="{{ enr.student.std_image.url }}">
-              {% endif %}
-                </div>
-          </td>
-          <td width="9%"><div><font size="1"> {{ enr.student.first_name}}</font></div></td>
-          <td width="9%"><div><font size="1">{{ enr.student.father_name}}</font></div></td>
-          <td width="9%"><div><font size="1">{{ enr.student.last_name}}</font></div></td>
+          <td width="10%"><div>
+            {% if enr.moved %}
+               <fornt size="2" color="red"><b>(-)</b></fornt>
+            {% endif %}
+            {% if enr.dropout_status %}
+               <fornt size="2" color="red"><b>(*)</b></fornt>
+            {% endif %}
+
+            <font size="1">
+              {{ enr.student.first_name}}
+          </font></div></td>
+          <td width="10%"><div><font size="1">{{ enr.student.father_name}}</font></div></td>
+          <td width="10%"><div><font size="1">{{ enr.student.last_name}}</font></div></td>
 
             {% ifequal enr.student.sex 'Male' %}
           <td width="4%" style="max-height:20px" align="center"><font size="2"> ذ</font></td>
@@ -311,7 +312,7 @@ td {
           <td width="7%">{{ enr.student.id }}</td>
 
           {% ifnotequal enr.last_education_year 'na' %}
-             <td width="25%" >
+             <td width="29%" >
                <table width="100%" >
                   <td width="20%" align="rigth"><font size="1"> {{ enr.last_education_year }}</font></td>
                   <td width="20%" align="rigth"><font size="1"> {{ enr.last_school.name }}</font></td>
@@ -346,9 +347,14 @@ td {
   {% endfor %}
 </ul>
 
+<hr>
+<div>
+  <font color="red" size="2"><b>N.B.:</b></font>  (*) : {% trans 'Dropout Students' %} &nbsp;&nbsp;&nbsp;(-) : {% trans 'Moved Students' %}
 
 
-  <br><br><br><br>
+</div>
+
+  <br><br>
   {% for schl in school %}
   <table width="100%" border="0" >
     <th>
@@ -406,7 +412,7 @@ td {
          أفيد ان التلاميذ المدونة أسماؤهم في هذه اللائحة و عددهم
          </font></b>
          <font size="5" color="navy"><b>
-          &nbsp;&nbsp;&nbsp;***&nbsp;{{ schl.total_registered_2ndshift }}&nbsp;***
+          &nbsp;&nbsp;&nbsp;***&nbsp;{{ schl.total_registered }}&nbsp;***
          </font></b>
          <font size="4"><b>
             يتابعون في مدرستي
