@@ -142,5 +142,10 @@ urlpatterns = [
         view=views.List_of_available_documents.as_view(),
         name='run-available-documents'
     ),
+    url(
+        regex=r'^degenerate-list-justification/$',
+        view=views.degenerate_list_justification,
+        name='degenerate-list-justification'
+    ),
 
 ]

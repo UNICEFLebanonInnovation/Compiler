@@ -6,6 +6,8 @@
 {% bootstrap_css %}
 {% load render_table from django_tables2 %}
 
+{% get_current_language as LANGUAGE_CODE %}
+
 
 {% block extra_head %}
 
@@ -43,7 +45,7 @@
                   <input type = "file" style = "margin-left:10%;"
                          placeholder = "Picture" name = "picture" />
                 </center>
-                <font size="1px" color="red">The name of file should not be in arabic</font>
+                <font size="1px" color="red">{% trans 'The name of file should not be in arabic' %}</font>
               </div>
             </td>
             <td>
@@ -55,7 +57,7 @@
             <td hidden>
               {% block bl_clearprofile %}
               <button class="btn"><i class="fa fa-trash"></i>
-              
+
 
               </button>
               {% endblock %}
@@ -83,7 +85,7 @@
                   <input type = "file" style = "margin-left:10%;"
                          placeholder = "birthdoc_picture" name = "birthdoc_picture" />
                 </center>
-                <font size="1px" color="red">The name of file should not be in arabic</font>
+                <font size="1px" color="red">{% trans 'The name of file should not be in arabic' %}</font>
               </div>
             </td>
             <td>
@@ -106,7 +108,7 @@
                   <input type = "file" style = "margin-left:10%;"
                          placeholder = "unhcr_picture" name = "unhcr_picture" />
                 </center>
-                <font size="1px" color="red">The name of file should not be in arabic</font>
+                <font size="1px" color="red">{% trans 'The name of file should not be in arabic' %}</font>
               </div>
             </td>
             <td>
@@ -130,7 +132,5 @@
           </center>
          </div>
       </form>
-
-
 
 {% endblock %}
