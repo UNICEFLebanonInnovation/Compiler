@@ -94,7 +94,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     search_school = serializers.CharField(source='school.id', read_only=True)
     school_type = serializers.CharField(source='school.name', read_only=True)
     search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
-    student_is_justified = serializers.BooleanField(source='student.is_justified', required=False)
+    #student_is_justified = serializers.BooleanField(source='student.is_justified', required=False)
     student_is_specialneeds = serializers.BooleanField(source='student.is_specialneeds', required=False)
     student_specialneeds = serializers.CharField(source='student.specialneeds', required=False)
     student_specialneeds_id = serializers.CharField(source='student.specialneeds.id', read_only=True)
@@ -247,7 +247,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             'school_type',
             'age_min_restricted',
             'age_max_restricted',
-            'student_is_justified',
+           # 'student_is_justified',
             'student_is_specialneeds',
             'student_specialneeds',
             'student_specialneedsdt',
