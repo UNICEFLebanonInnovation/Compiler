@@ -4970,7 +4970,6 @@ msgstr "التواريخ المهمة"
 msgid "User"
 msgstr ""
 
-<<<<<<< HEAD
 msgid "School / Partner"
 msgstr "اسم المدرسة / اسم الجمعية"
 
@@ -4978,7 +4977,7 @@ msgid "No Absence"
 msgstr "لا غياب"
 
 msgid "No barriers"
-msgstr "لا يوجد"
+msgstr "لا يوجد عوائق "
 
 #, fuzzy
 #~| msgid "Personal info"
@@ -4990,8 +4989,6 @@ msgstr "لا يوجد"
 #~ msgid "Educational"
 #~ msgstr "تربية"
 
-=======
->>>>>>> develop
 #~ msgid "Parent no ID confirmation popup message"
 #~ msgstr "هل انت متأكد ان الاب لا يملك اي نوع من البطاقات المدرجه اعلاه؟ "
 
