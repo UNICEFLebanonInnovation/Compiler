@@ -2,7 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import tablib
-
+from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.views.generic import ListView, FormView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
@@ -22,7 +22,7 @@ from django_tables2.export.views import ExportMixin
 
 from .filters import EnrollmentFilter, EnrollmentOldDataFilter
 from .tables import BootstrapTable, EnrollmentTable, EnrollmentOldDataTable
-
+from django.shortcuts import redirect
 from student_registration.alp.models import Outreach
 from student_registration.alp.serializers import OutreachSerializer
 from student_registration.outreach.models import Child
@@ -43,6 +43,7 @@ from .forms import (
     StudentMovedForm,
     EditOldDataForm,
     ImageStudentForm,
+    Modify_Images_Form,
 )
 from .serializers import (
     EnrollmentSerializer,
@@ -770,8 +771,107 @@ class Clear_Profile(UpdateView):
             return ImageStudentForm(instance=instance)
         else:
             return ImageStudentForm(instance=instance)
-    # #print (request.GET.get('std_id'))
-    # print('888888888888888888888888888888888888888888888')
-    # context = {}
-    # return render(request, "enrollments/list.html", context)
-    # #return redirect('/')
+
+
+class Modify_Images_View(UpdateView):
+    template_name = 'enrollments/modifying_images.html'
+    success_url = '/enrollments/list/'
+    context_object_name = 'student_images'
+    model = Enrollment
+
+    def get_success_url(self):
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(Modify_Images_View, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Enrollment.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
+        if self.request.method == "POST":
+            return Modify_Images_View(self.request.POST, self.request.FILES, instance=instance)
+        else:
+            return Modify_Images_View(instance=instance)
+
+
+def empty_profile(request, *args):
+    from student_registration.students.models import Student
+
+    std = Student.objects.get(id=request.POST['txt_id_del'])
+    std.std_image = None
+    std.save()
+    return HttpResponse('Profile picture has been successfully cleaned ')
+
+
+def changing_profile(request, *args):
+    from student_registration.students.models import Student
+    if request.method == 'POST':
+        form = Modify_Images_Form(request.POST, request.FILES)
+        if request.FILES:
+            std = Student.objects.get(pk=request.POST['txt_id_img'])
+            std.std_image = request.FILES['image_profile']
+            std.save()
+    return HttpResponseForbidden('Profile picture has been successfully changed')
+
+
+def empty_birthdoc(request, *args):
+    from student_registration.students.models import Student
+
+    std = Student.objects.get(id=request.POST['txt_id_del_birthdoc'])
+    std.birthdoc_image = None
+    std.save()
+    return HttpResponse('Document type picture has been successfully cleaned ')
+
+
+def changing_birthdoc(request, *args):
+    from student_registration.students.models import Student
+    if request.method == 'POST':
+        form = Modify_Images_Form(request.POST, request.FILES)
+        if request.FILES:
+            std = Student.objects.get(pk=request.POST['txt_id_img_birthdoc'])
+            std.birthdoc_image = request.FILES['image_birthdoc']
+            std.save()
+    return HttpResponseForbidden('Document type picture has been successfully changed')
+
+
+def empty_unhcr(request, *args):
+    from student_registration.students.models import Student
+
+    std = Student.objects.get(id=request.POST['txt_id_del_unhcr'])
+    std.unhcr_image = None
+    std.save()
+    return HttpResponse('UNHCR picture has been successfully cleaned ')
+
+
+def changing_unhcr(request, *args):
+    from student_registration.students.models import Student
+    if request.method == 'POST':
+        form = Modify_Images_Form(request.POST, request.FILES)
+        if request.FILES:
+            std = Student.objects.get(pk=request.POST['txt_id_img_unhcr'])
+            std.unhcr_image = request.FILES['image_unhcr']
+            std.save()
+    return HttpResponseForbidden('UNHCR picture has been successfully changed')
+
+
+def empty_doclastyear(request, *args):
+    from student_registration.enrollments.models import Enrollment
+
+    enr = Enrollment.objects.get(id=request.POST['txt_id_del_doclastyear'])
+    enr.document_lastyear = None
+    enr.save()
+    return HttpResponse('Document of the last year picture has been successfully cleaned ')
+
+
+def changing_doclastyear(request, *args):
+    from student_registration.enrollments.models import Enrollment
+    if request.method == 'POST':
+        form = Modify_Images_Form(request.POST, request.FILES)
+        if request.FILES:
+            enr = Enrollment.objects.get(pk=request.POST['txt_id_img_doclastyear'])
+            enr.document_lastyear = request.FILES['image_doclastyear']
+            enr.save()
+    return HttpResponseForbidden('Document of the last year picture has been successfully changed')

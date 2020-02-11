@@ -36,13 +36,18 @@ def assign_to_level(level, exam_total):
             if education_level.new_calculation:
                 alp_matrix = ALPAssignmentMatrix.objects.filter(level=level, matrix_type='N')
                 for matrix in alp_matrix:
-                    if ((exam_total > matrix.range_start*education_level.coefficient_score*education_level.note
-                         * education_level.sum_subjects/100)and (exam_total <= matrix.range_end
-                                                                 * education_level.coefficient_score
-                                                                 * education_level.note
-                                                                 * education_level.sum_subjects/100)):
-                        return matrix.refer_to
-                        break
+                    if exam_total == 0:
+                        if matrix.range_start == 0:
+                            return matrix.refer_to
+                            break
+                    else:
+                        if ((exam_total > matrix.range_start*education_level.coefficient_score
+                             * education_level.note* education_level.sum_subjects/100)
+                            and (exam_total <= matrix.range_end *
+                                 education_level.coefficient_score *
+                                 education_level.note * education_level.sum_subjects/100)):
+                            return matrix.refer_to
+                            break
 
             else:
                 result = ALPAssignmentMatrix.objects.get(level=level, range_start__gt=exam_total,
