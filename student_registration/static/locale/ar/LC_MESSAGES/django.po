@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 22:46+0200\n"
+"POT-Creation-Date: 2020-02-04 14:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1779,7 +1779,7 @@ msgstr "أكثر من 15 أيام غياب"
 #: .\student_registration\clm\models.py:906
 #: .\student_registration\clm\models.py:1673
 msgid "No Absence"
-msgstr "غياب"
+msgstr "لا غياب"
 
 #: .\student_registration\clm\forms.py:83
 #: .\student_registration\clm\forms.py:1324
@@ -2574,7 +2574,7 @@ msgstr "عدم الرغبة في التعلم/ لا قيمة"
 
 #: .\student_registration\clm\models.py:164
 msgid "No barriers"
-msgstr "الحواجز"
+msgstr "لا يوجد"
 
 #: .\student_registration\clm\models.py:168
 msgid "Yes - Morning"
@@ -3325,7 +3325,7 @@ msgstr "مجموع العلامات"
 #: .\student_registration\enrollments\forms.py:1666
 #: .\student_registration\enrollments\models.py:526
 #: .\student_registration\students\models.py:382
-#: .\student_registration\templates\students\imagestd.html:71
+#: .\student_registration\templates\students\imagestd.html:72
 msgid "Document Type"
 msgstr "نوع البطاقة الخاصة بالتلميذ"
 
@@ -4095,7 +4095,7 @@ msgid "Identification picture"
 msgstr "المعلومات الشخصية للطفل"
 
 #: .\student_registration\students\models.py:409
-#: .\student_registration\templates\students\imagestd.html:99
+#: .\student_registration\templates\students\imagestd.html:100
 msgid "UNHCR picture"
 msgstr ""
 "صورة عن بطاقة العائلة لدى المفوضية السامية للأمم المتحدة لشؤون اللاجئين "
@@ -4718,8 +4718,7 @@ msgstr ""
 #: .\student_registration\templates\django_tables2\dropout_column.html:2
 msgid "Are you sure you want to tag this student as dropout?"
 msgstr ""
-"هل انت متأكد ان هذا التلميذ ترك المدرسة ؟ اضغط على OK لادخال تاريخ "
-"الترك"
+"هل انت متأكد ان هذا التلميذ ترك المدرسة ؟ اضغط على OK لادخال تاريخ الترك"
 
 #: .\student_registration\templates\django_tables2\dropout_column.html:6
 msgid "Enter dropout date"
@@ -4984,11 +4983,11 @@ msgstr "هل انت متأكد انك تريد حذف هذا التلميذ؟"
 msgid "Add New"
 msgstr "أضف طفل"
 
-#: .\student_registration\templates\students\imagestd.html:69
+#: .\student_registration\templates\students\imagestd.html:70
 msgid "ID Picture"
 msgstr "صورة عن وثيقة الولادة"
 
-#: .\student_registration\templates\students\imagestd.html:126
+#: .\student_registration\templates\students\imagestd.html:127
 msgid "upload"
 msgstr "تحميل ملف"
 

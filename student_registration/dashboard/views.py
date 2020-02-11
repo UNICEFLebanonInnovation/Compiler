@@ -10,7 +10,7 @@ from django.shortcuts import render
 from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseForbidden
-from django.views.generic import ListView, TemplateView, View
+from django.views.generic import ListView, TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from django.shortcuts import render
@@ -25,6 +25,7 @@ from student_registration.schools.models import (
     ClassLevel,
     ClassRoom,
 )
+from student_registration.users.utils import force_default_language
 from django.shortcuts import redirect
 
 from student_registration.alp.models import Outreach, ALPRound
@@ -686,7 +687,6 @@ def generate_pretest_result(request):
 
 class List_Justification(TemplateView):
     template_name = 'dashboard/list_justification.html'
-
     group_required = [u"MEHE"]
 
     def handle_no_permission(self, request):
@@ -696,17 +696,27 @@ class List_Justification(TemplateView):
         from student_registration.enrollments.models import Enrollment
         from student_registration.schools.models import EducationYear
         education_year = EducationYear.objects.get(current_year=True)
+        v_exist = Enrollment.objects.filter(education_year_id=education_year,
+                                            school_id__isnull=False, school__is_2nd_shift=True,
+                                            moved=False, school_id=self.request.user.school_id,
+                                            justificationnumber__isnull=False).count()
+        if v_exist:
+            v_last_nb = Enrollment.objects.filter(education_year_id=education_year,
+                                                  school_id__isnull=False, school__is_2nd_shift=True, moved=False,
+                                                  school_id=self.request.user.school_id,
+                                                  justificationnumber__isnull=False).values_list('justificationnumber',
+                                                                                                 flat=True).order_by('-justificationnumber')[0]
+        else:
+            v_last_nb = ''
         return {
             'enrollment': Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
-                                                    school__is_2nd_shift=True, moved=False, dropout_status=False, #disabled=False,
-                                                    school_id=self.request.user.school_id).order_by('classroom_id'),
+                                                    school__is_2nd_shift=True, moved=False,  #disabled=False,dropout_status=False,
+                                                    school_id=self.request.user.school_id).
+                order_by('classroom_id', 'student'), #'section_id',
             'school': School.objects.filter(id=self.request.user.school_id),
             'education_year': education_year,
             'current_date': datetime.now(),
-            'last_justificationnumber': Enrollment.objects.filter(education_year_id=education_year
-                                                                 , school_id__isnull=False,school__is_2nd_shift=True, moved=False,
-                                                                 dropout_status=False, school_id=self.request.user.school_id).
-            exclude(justificationnumber='').order_by('-justificationnumber')[0]
+            'last_justificationnumber': v_last_nb
         }
 
 
@@ -723,8 +733,8 @@ class List_of_available_documents(TemplateView):
 
         return {
             'enrollment': Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
-                                                    school__is_2nd_shift=True, moved=False, dropout_status=False, #disabled=False,
-                                                    school_id=self.request.user.school_id).order_by('classroom_id', 'section_id'),
+                                                    school__is_2nd_shift=True,  #disabled=False,dropout_status=False, moved=False,
+                                                    school_id=self.request.user.school_id).order_by('classroom_id', 'section_id','student'),
             'education_year': education_year,
             'current_date': datetime.now(),
 
@@ -736,16 +746,15 @@ def Generate_Justification_number(request):
     from student_registration.schools.models import EducationYear
     education_year = EducationYear.objects.get(current_year=True)
     Q_Enr = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
-                                      school__is_2nd_shift=True, moved=False, dropout_status=False,
+                                      school__is_2nd_shift=True,  #dropout_status=False, moved=False,
                                       school_id=request.user.school_id, justificationnumber__isnull=True)\
                 .order_by('classroom_id'),
     q_count = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
-                                        school__is_2nd_shift=True, moved=False, dropout_status=False,
+                                        school__is_2nd_shift=True,# dropout_status=False,  moved=False,
                                         school_id=request.user.school_id,
                                         justificationnumber__isnull=False).\
         exclude(justificationnumber='').distinct('justificationnumber').order_by('justificationnumber').count(),
     for q_enr in Q_Enr:
-        print (str(request.user.school.number)+'-'+str(education_year)+'-'+str(int(q_count[0])+1))
         q_enr.update(justificationnumber=
                      str(request.user.school.number)+'-'+str(education_year)+'-'+str(int(q_count[0])+1))
 
@@ -762,3 +771,31 @@ def Generate_Justification_number(request):
 
     context = {}
     return render(request, "dashboard/utilities.html", context)
+
+
+def degenerate_list_justification(request):
+    from student_registration.enrollments.models import Enrollment
+    from student_registration.schools.models import EducationYear
+    education_year = EducationYear.objects.get(current_year=True)
+
+    if request.method == 'GET':
+        if request.GET['txt_school']:
+            Q_Enr = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                              school__is_2nd_shift=True, # dropout_status=False,  moved=False,
+                                              school__number=request.GET['txt_school']).exclude(justificationnumber=''),
+
+            for q_enr in Q_Enr:
+                q_enr.update(justificationnumber=None)
+            Q_Users = User.objects.filter(school__number=request.GET['txt_school'], is_active=True)
+            group = Group.objects.get(name='ENROL_CREATE')
+            for q_users in Q_Users:
+                q_users.groups.add(group)
+            group = Group.objects.get(name='ENROL_EDIT')
+            for q_users in Q_Users:
+                q_users.groups.add(group)
+            group = Group.objects.get(name='ENROL_DELETE')
+            for q_users in Q_Users:
+                q_users.groups.add(group)
+
+    context = {}
+    return render(request, "dashboard/exporter.html", context)
