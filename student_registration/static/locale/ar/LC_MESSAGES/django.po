@@ -1784,7 +1784,7 @@ msgstr "أكثر من 15 أيام غياب"
 #: .\student_registration\clm\models.py:906
 #: .\student_registration\clm\models.py:1673
 msgid "No Absence"
-msgstr "غياب"
+msgstr "لا غياب"
 
 #: .\student_registration\clm\forms.py:83
 #: .\student_registration\clm\forms.py:1324
@@ -2579,7 +2579,7 @@ msgstr "عدم الرغبة في التعلم/ لا قيمة"
 
 #: .\student_registration\clm\models.py:164
 msgid "No barriers"
-msgstr "الحواجز"
+msgstr "لا يوجد"
 
 #: .\student_registration\clm\models.py:168
 msgid "Yes - Morning"
