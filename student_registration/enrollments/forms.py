@@ -1676,3 +1676,13 @@ class ImageStudentForm(forms.ModelForm):
             'id',
             'birth_documenttype',
         ]
+
+
+class Modify_Images_Form(forms.ModelForm):
+    image = forms.ImageField()
+
+    class Meta:
+        model = Student
+        fields = (
+            'std_image',
+        )

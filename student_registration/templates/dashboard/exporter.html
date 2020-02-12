@@ -252,14 +252,14 @@
 
          <div class="col-sm-4">
             <div class="card m-3">
-              <div class="card-block">
+              <div class="card-block" >
                 <h3 class="card-title">Common Tasks</h3>
                 <p class="card-text">Update duplicate students</p>
-                <a href="{% url 'dashboard:update_duplicatestd' %}" class="btn btn-primary">update Duplicated students</a>
+                <a href="{% url 'dashboard:update_duplicatestd' %}" class="btn btn-primary" >update Duplicated students</a>
                 <br>
-                <a href="{% url 'dashboard:dup_id_enr' %}" class="btn btn-info">duplicate ID of students in enrollments</a>
+                <a href="{% url 'dashboard:dup_id_enr' %}" class="btn btn-info">Duplicate ID of students in enrollments</a>
                 <br>
-                <a href="{% url 'dashboard:dup_nb_enr' %}" class="btn btn-primary">duplicate Number of students in enrollments</a>
+                <a href="{% url 'dashboard:dup_nb_enr' %}" class="btn btn-primary">Duplicate Number of students in enrollments</a>
                 <br>
                 <a href="{% url 'dashboard:generate_pretest_result' %}" class="btn btn-info">Generate ALP-PreTest Results</a>
               </div>
@@ -272,11 +272,11 @@
             <div class="card m-3">
               <div class="card-block">
                 <h3 class="card-title">De-Generate</h3>
-              <form id="de-generate" action="{% url 'dashboard:degenerate-list-justification' %}" method="GET" >
+                <form id="de-generate" action="{% url 'dashboard:degenerate-list-justification' %}" method="GET" >
                      <label class="control-label  pull-left" for="txt_school" ><b>&nbsp;{% trans 'School number' %}&nbsp; </b></label>
                             <input type="text" class="form-control " id="txt_school" name="txt_school"  maxlength="80"/>
                             <input class="btn btn-primary" type="submit" value=" {% trans 'De-Generate List' %} " name="btntype" id="btntype1"/>
-                       </form>
+                </form>
                 </div>
           </div>
 

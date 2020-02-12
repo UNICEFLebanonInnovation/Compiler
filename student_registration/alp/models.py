@@ -474,15 +474,13 @@ class Outreach(TimeStampedModel):
                         if self.exam_result_math:
                             total += self.exam_result_math
                     return total
-            else:
-                # if self.exam_result_arabic:
-                #     total += self.exam_result_arabic
-                if self.exam_result_language:
-                    total += self.exam_result_language
-                if self.exam_result_math:
-                    total += self.exam_result_math
-                if self.exam_result_science:
-                    total += self.exam_result_science
+                else:
+                    if self.exam_result_language:
+                        total += self.exam_result_language
+                    if self.exam_result_math:
+                        total += self.exam_result_math
+                    if self.exam_result_science:
+                        total += self.exam_result_science
                 return total
 
 
