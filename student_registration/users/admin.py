@@ -55,6 +55,8 @@ class UserAdmin(AuthUserAdmin):
         'deny_utilities',
         'allow_showpic',
         'deny_showpic',
+        'allow_clearpic',
+        'deny_clearpic',
     )
 
     fieldsets = (
@@ -117,6 +119,11 @@ class UserAdmin(AuthUserAdmin):
         for user in queryset:
             user.groups.add(group)
 
+    def allow_clearpic(self, request, queryset):
+        group = Group.objects.get(name='ENROL_CLEARPIC')
+        for user in queryset:
+            user.groups.add(group)
+
     def allow_attendance(self, request, queryset):
         group = Group.objects.get(name='ATTENDANCE')
         for user in queryset:
@@ -144,6 +151,11 @@ class UserAdmin(AuthUserAdmin):
 
     def deny_enroll_grading(self, request, queryset):
         group = Group.objects.get(name='ENROL_GRADING')
+        for user in queryset:
+            user.groups.remove(group)
+
+    def deny_clearpic(self, request, queryset):
+        group = Group.objects.get(name='ENROL_CLEARPIC')
         for user in queryset:
             user.groups.remove(group)
 

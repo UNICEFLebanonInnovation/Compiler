@@ -36,19 +36,21 @@
   background-color: RoyalBlue;
 }
 </script>
+{% for std in student_images %}
       <h1 align="center">{% trans 'Modifying Images' %}</h1>
-      <h3><font color="navy">{{ student_images.student }}</font></h3>
+      <h3><font color="navy">{{ std.student }}</font></h3>
       <br>
 
       <table border="0" width="500px">
         <form action="{% url 'enrollments:empty_profile' %}" name = "form" enctype = "multipart/form-data"  method = "POST" >{% csrf_token %}
-        <input  hidden id="txt_id_del" name="txt_id_del" value="{{ student_images.student.id }}"></input>
-         <tr>
+
+        <input  hidden id="txt_id_del" name="txt_id_del" value="{{ std.student.id }}"></input>
+         <tr bgcolor=#F6FAFD>
             <th colspan="3">
               <label size="2">{% trans 'Profile' %}</label>
               <br>
-              {% if student_images.student.std_image %}
-                <img src="{{ student_images.student.std_image.url }} " width="100" height="100" >
+              {% if std.student.std_image %}
+                <img src="{{ std.student.std_image.url }} " width="100" height="100" >
               {% endif %}
               <br><br>
             </th>
@@ -58,9 +60,9 @@
               <button type="submit" value="Submit" class="glyphicon glyphicon-trash">&nbsp;{% trans 'Delete' %}</button>
             </td>
       </form>
-            <td width="40%">
+            <td width="40%" >
               <form action="{% url 'enrollments:changing_profile' %}" name = "form" enctype = "multipart/form-data"  method = "POST" >{% csrf_token %}
-              <input hidden id="txt_id_img" name="txt_id_img" value="{{ student_images.student.id }}"></input>
+              <input hidden id="txt_id_img" name="txt_id_img" value="{{ std.student.id }}"></input>
               <input type="file" name="image_profile" id="image_profile" class="glyphicon glyphicon-folder-open"/>
             </td>
             <td width="30%">
@@ -75,13 +77,13 @@
 
     <table border="0" width="500px">
         <form action="{% url 'enrollments:empty_birthdoc' %}" name = "form" enctype = "multipart/form-data"  method = "POST" >{% csrf_token %}
-        <input  hidden id="txt_id_del_birthdoc" name="txt_id_del_birthdoc" value="{{ student_images.student.id }}"></input>
+        <input  hidden id="txt_id_del_birthdoc" name="txt_id_del_birthdoc" value="{{ std.student.id }}"></input>
          <tr>
             <th colspan="3">
               <label size="2">{% trans 'Document Type' %}</label>
               <br>
-              {% if student_images.student.birthdoc_image %}
-                <img src="{{ student_images.student.birthdoc_image.url }} " width="100" height="100" >
+              {% if std.student.birthdoc_image %}
+                <img src="{{ std.student.birthdoc_image.url }} " width="100" height="100" >
               {% endif %}
               <br><br>
             </th>
@@ -93,7 +95,7 @@
       </form>
             <td width="40%">
               <form action="{% url 'enrollments:changing_birthdoc' %}" name = "form" enctype = "multipart/form-data"  method = "POST" >{% csrf_token %}
-              <input hidden id="txt_id_img_birthdoc" name="txt_id_img_birthdoc" value="{{ student_images.student.id }}"></input>
+              <input hidden id="txt_id_img_birthdoc" name="txt_id_img_birthdoc" value="{{ std.student.id }}"></input>
               <input type="file" name="image_birthdoc" id="image_birthdoc" class="glyphicon glyphicon-folder-open"/>
             </td>
             <td width="30%">
@@ -106,13 +108,13 @@
  <hr>
      <table border="0" width="500px">
         <form action="{% url 'enrollments:empty_unhcr' %}" name = "form" enctype = "multipart/form-data"  method = "POST" >{% csrf_token %}
-        <input  hidden id="txt_id_del_unhcr" name="txt_id_del_unhcr" value="{{ student_images.student.id }}"></input>
-         <tr>
+        <input  hidden id="txt_id_del_unhcr" name="txt_id_del_unhcr" value="{{ std.student.id }}"></input>
+         <tr bgcolor=#F6FAFD>
             <th colspan="3">
               <label size="2">{% trans 'UNHCR picture' %}</label>
               <br>
-              {% if student_images.student.unhcr_image %}
-                <img src="{{ student_images.student.unhcr_image.url }} " width="100" height="100" >
+              {% if std.student.unhcr_image %}
+                <img src="{{ std.student.unhcr_image.url }} " width="100" height="100" >
               {% endif %}
               <br><br>
             </th>
@@ -124,7 +126,7 @@
       </form>
             <td width="40%">
               <form action="{% url 'enrollments:changing_unhcr' %}" name = "form" enctype = "multipart/form-data"  method = "POST" >{% csrf_token %}
-              <input hidden id="txt_id_img_unhcr" name="txt_id_img_unhcr" value="{{ student_images.student.id }}"></input>
+              <input hidden id="txt_id_img_unhcr" name="txt_id_img_unhcr" value="{{ std.student.id }}"></input>
               <input type="file" name="image_unhcr" id="image_unhcr" class="glyphicon glyphicon-folder-open"/>
             </td>
             <td width="30%">
@@ -135,36 +137,71 @@
         </table>
  <hr>
 
+
      <table border="0" width="500px">
         <form action="{% url 'enrollments:empty_doclastyear' %}" name = "form" enctype = "multipart/form-data"  method = "POST" >{% csrf_token %}
-        <input  hidden id="txt_id_del_doclastyear" name="txt_id_del_doclastyear" value="{{ student_images.id }}"></input>
+        <input  hidden id="txt_id_del_doclastyear" name="txt_id_del_doclastyear" value="{{ std.id }}"></input>
          <tr>
             <th colspan="3">
+              <div>
               <label size="2">{% trans 'picture of previous education' %}</label>
               <br>
-              {% if student_images.document_lastyear %}
-                <img src="{{ student_images.document_lastyear.url }} " width="100" height="100" >
+              {% if std.document_lastyear %}
+                <img src="{{ std.document_lastyear.url }} " width="100" height="100" >
               {% endif %}
-              <br><br>
+              </div>
+
+              <br>
             </th>
           </tr>
           <tr>
             <td width="30%">
+
               <button type="submit" value="Submit" class="glyphicon glyphicon-trash">&nbsp;{% trans 'Delete' %}</button>
             </td>
       </form>
             <td width="40%">
               <form action="{% url 'enrollments:changing_doclastyear' %}" name = "form" enctype = "multipart/form-data"  method = "POST" >{% csrf_token %}
-              <input hidden id="txt_id_img_doclastyear" name="txt_id_img_doclastyear" value="{{ student_images.id }}"></input>
-              <input type="file" name="image_doclastyear" id="image_doclastyear" class="glyphicon glyphicon-folder-open"/>
-            </td>
-            <td width="30%">
-              <button class="	glyphicon glyphicon-saved" type="submit" value="Submit">&nbsp;{% trans 'Save' %}</button>
-            </td>
+                 <input hidden id="txt_id_img_doclastyear" name="txt_id_img_doclastyear" value="{{ std.id }}"></input>
+                 <input type="file" name="image_doclastyear" id="image_doclastyear" class="glyphicon glyphicon-folder-open"/>
+             </td>
+                 <td width="30%">
+                   <button class="	glyphicon glyphicon-saved" type="submit" value="Submit">&nbsp;{% trans 'Save' %}</button>
+                 </td>
+
+                 <br><br>
+              <div>
+
+                <select name="cb_documenttype" style="background-color :#EAF5E1 ; height:1.8em; width: 300px;">
+
+                {% for doc in documenttype %}
+                  {% if  doc.id  == std.documenttype.id  %}
+                      <option value="{{ doc.id }}" selected>{{ doc.description2 }}</option>
+                  {% else %}
+                         <option value="{{ doc.id }}">{{ doc.description2 }}</option>
+                  {% endif %}
+                {% endfor %}
+                  </select>
+              </div>
+              <br>
+              <div >
+
+                  {% trans 'Signature Date' %}
+                  <div><font color="navy">
+                   {{ std.signature_cert_date }}
+                    </font>
+                  </div>
+
+                     <input type="date"   id="txt_signaturedate" name="txt_signaturedate"  />
+
+
+
+			        </div>
+
               </form>
           </tr>
         </table>
 
-
+{% endfor %}
 
 {% endblock %}

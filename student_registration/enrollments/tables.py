@@ -16,7 +16,7 @@ class BootstrapTable(tables.Table):
 class EnrollmentTable(tables.Table):
     std_image = tables.TemplateColumn(verbose_name=_('Images'), orderable=False,
                                       template_name='enrollments/student_profile.html',
-                                      attrs={'url': '/enrollments/modify-images/'})
+                                      attrs={'url': '/enrollments/modify-images/', 'url2': '/enrollments/clear-images/'})
     edit_column = tables.TemplateColumn(verbose_name=_('Edit student'), orderable=False,
                                         template_name='enrollments/edit_column.html',
                                         attrs={'url': '/enrollments/edit/'})

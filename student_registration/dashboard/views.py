@@ -696,23 +696,23 @@ class List_Justification(TemplateView):
         from student_registration.enrollments.models import Enrollment
         from student_registration.schools.models import EducationYear
         education_year = EducationYear.objects.get(current_year=True)
-        v_exist = Enrollment.objects.filter(education_year_id=education_year,
+        v_exist = Enrollment.objects.filter(education_year_id=education_year, disabled=False,
                                             school_id__isnull=False, school__is_2nd_shift=True,
-                                            moved=False, school_id=self.request.user.school_id,
+                                            school_id=self.request.user.school_id, # moved=False,
                                             justificationnumber__isnull=False).count()
         if v_exist:
             v_last_nb = Enrollment.objects.filter(education_year_id=education_year,
-                                                  school_id__isnull=False, school__is_2nd_shift=True, moved=False,
-                                                  school_id=self.request.user.school_id,
+                                                  school_id__isnull=False, school__is_2nd_shift=True,# moved=False,
+                                                  school_id=self.request.user.school_id, disabled=False,
                                                   justificationnumber__isnull=False).values_list('justificationnumber',
                                                                                                  flat=True).order_by('-justificationnumber')[0]
         else:
             v_last_nb = ''
         return {
             'enrollment': Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
-                                                    school__is_2nd_shift=True, moved=False,  #disabled=False,dropout_status=False,
+                                                    school__is_2nd_shift=True, disabled=False,# moved=False,  #dropout_status=False,
                                                     school_id=self.request.user.school_id).
-                order_by('classroom_id', 'student'), #'section_id',
+                order_by('classroom_id', 'section_id', 'student__first_name', 'student__father_name', 'student__last_name'),
             'school': School.objects.filter(id=self.request.user.school_id),
             'education_year': education_year,
             'current_date': datetime.now(),
@@ -733,7 +733,7 @@ class List_of_available_documents(TemplateView):
 
         return {
             'enrollment': Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
-                                                    school__is_2nd_shift=True,  #disabled=False,dropout_status=False, moved=False,
+                                                    school__is_2nd_shift=True, disabled=False, #dropout_status=False, moved=False,
                                                     school_id=self.request.user.school_id).order_by('classroom_id', 'section_id','student'),
             'education_year': education_year,
             'current_date': datetime.now(),

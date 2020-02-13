@@ -206,13 +206,14 @@ td {
 {% endfor %}
 
 
-{% regroup enrollment by classroom as v_enrollment %}
+
+{% regroup enrollment by class_section as v_enrollment %}
 
 <ul>
-{% for classroom in v_enrollment %}
+{% for class_section in v_enrollment %}
   <br>
     <font color="green" size="5">
-      <li>السنة المنهجية : {{ classroom.grouper }} </li>
+      <li>السنة المنهجية : {{ class_section.grouper }} </li>
     </font>
 
 
@@ -275,7 +276,7 @@ td {
      </th>
 </tr>
 
-     {% for enr in classroom.list %}
+     {% for enr in class_section.list %}
         <tr>
 
           <td width="7%" style="max-height:20px"></td>

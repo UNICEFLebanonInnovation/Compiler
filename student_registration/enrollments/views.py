@@ -782,12 +782,23 @@ class Modify_Images_View(UpdateView):
     def get_success_url(self):
         return self.success_url
 
+    # def get_context_data(self, **kwargs):
+    #     from student_registration.enrollments.models import DocumentType
+    #     force_default_language(self.request)
+    #     """Insert the form into the context dict."""
+    #     if 'form' not in kwargs:
+    #         kwargs['form'] = self.get_form()
+    #         kwargs['documenttpye'] =
+    #     return super(Modify_Images_View, self).get_context_data(**kwargs)
+
     def get_context_data(self, **kwargs):
-        force_default_language(self.request)
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-        return super(Modify_Images_View, self).get_context_data(**kwargs)
+        from student_registration.enrollments.models import DocumentType
+
+        return {
+            'documenttype': DocumentType.objects.all(),
+            'student_images': Enrollment.objects.filter(id=self.kwargs['pk'])
+        }
+
 
     def get_form(self, form_class=None):
         instance = Enrollment.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
@@ -795,6 +806,30 @@ class Modify_Images_View(UpdateView):
             return Modify_Images_View(self.request.POST, self.request.FILES, instance=instance)
         else:
             return Modify_Images_View(instance=instance)
+
+
+class Clear_Images_View(UpdateView):
+    template_name = 'enrollments/clear_images.html'
+    success_url = '/enrollments/list/'
+    context_object_name = 'student_images'
+    model = Enrollment
+
+    def get_success_url(self):
+        return self.success_url
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(Clear_Images_View, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Enrollment.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
+        if self.request.method == "POST":
+            return Clear_Images_View(self.request.POST, self.request.FILES, instance=instance)
+        else:
+            return Clear_Images_View(instance=instance)
 
 
 def empty_profile(request, *args):
@@ -867,11 +902,37 @@ def empty_doclastyear(request, *args):
 
 
 def changing_doclastyear(request, *args):
-    from student_registration.enrollments.models import Enrollment
+    from student_registration.enrollments.models import Enrollment, DocumentType
     if request.method == 'POST':
         form = Modify_Images_Form(request.POST, request.FILES)
+        enr = Enrollment.objects.get(pk=request.POST['txt_id_img_doclastyear'])
         if request.FILES:
-            enr = Enrollment.objects.get(pk=request.POST['txt_id_img_doclastyear'])
             enr.document_lastyear = request.FILES['image_doclastyear']
-            enr.save()
+        if request.POST.get('cb_documenttype', False):
+            enr.documenttype = DocumentType.objects.get(id=request.POST['cb_documenttype'])
+        if request.POST.get('txt_signaturedate', False):
+            enr.signature_cert_date = request.POST['txt_signaturedate']
+        enr.save()
     return HttpResponseForbidden('Document of the last year picture has been successfully changed')
+
+
+def clear_pic(request, *args):
+    from student_registration.enrollments.models import Enrollment
+    if request.POST.get('chk_doclastyear', False):
+        enr = Enrollment.objects.get(id=request.POST['txt_id'])
+        enr.document_lastyear = None
+        enr.signature_cert_date = None
+        enr.save()
+
+    if request.POST.get('chk_profile', False) or request.POST.get('chk_document', False) or request.POST.get('chk_unhcr', False):
+        std = Student.objects.get(id=request.POST['txt_studentid'])
+        if request.POST.get('chk_profile', False):
+            std.std_image = None
+            std.save()
+        if request.POST.get('chk_document', False):
+            std.birthdoc_image = None
+            std.save()
+        if request.POST.get('chk_unhcr', False):
+            std.unhcr_image = None
+            std.save()
+    return HttpResponse('Picture has been successfully cleaned ')
