@@ -14,6 +14,16 @@
 
 {% endif %}
 
+{% if request.user|has_group:"ENROL_CLEARPIC" %}
+
+<a href="{{ column.attrs.url2 }}{{ record.id }}" class="btn btn-link">
+
+      <i class="icon-delete-sign icon-green"></i>
+      {% trans "Clear Pic" %}
+</a>
+
+{% endif %}
+
 
 
 

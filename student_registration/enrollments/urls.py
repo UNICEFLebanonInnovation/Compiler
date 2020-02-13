@@ -77,6 +77,11 @@ urlpatterns = [
         name='modify_images'
     ),
     url(
+        regex=r'^clear-images/(?P<pk>[\w.@+-]+)/$',
+        view=views.Clear_Images_View.as_view(),
+        name='clear_images'
+    ),
+    url(
         regex=r'^empty_profile/$',
         view=views.empty_profile,
         name='empty_profile'
@@ -115,5 +120,10 @@ urlpatterns = [
         regex=r'^changing_doclastyear/$',
         view=views.changing_doclastyear,
         name='changing_doclastyear'
+    ),
+    url(
+        regex=r'^clear_pic/$',
+        view=views.clear_pic,
+        name='clear_pic'
     ),
 ]

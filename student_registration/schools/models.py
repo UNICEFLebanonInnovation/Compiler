@@ -247,7 +247,7 @@ class School(models.Model):
     def total_registered(self):
         from student_registration.enrollments.models import Enrollment
         return Enrollment.objects.filter(
-            education_year__current_year=True,
+            education_year__current_year=True, disabled=False,
             school_id=self.id
         ).count()
 
