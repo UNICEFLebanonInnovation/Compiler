@@ -147,5 +147,10 @@ urlpatterns = [
         view=views.degenerate_list_justification,
         name='degenerate-list-justification'
     ),
+    url(
+        regex=r'^list-of-attendance/$',
+        view=views.List_of_Attendance.as_view(),
+        name='list_of_attendance'
+    ),
 
 ]

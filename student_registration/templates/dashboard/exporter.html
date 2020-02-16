@@ -157,24 +157,23 @@
             <form id="attendance-form" action="{% url 'dashboard:run-exporter-attendance' %}" method="GET">
             <div class="card m-3">
               <div class="card-block">
-                <h3 class="card-title">Last Attendances & Absences </h3>
-                <p class="card-text">Generate Last Attendance/Absence for all students.</p>
+                <h3 class="card-title">Attendances & Absences </h3>
                 <table border="0">
                   <th></th>
                   <th></th>
                   <tr><td>
-			          <div class="col-sm-4 pull-left">
+			          <div class="col-sm-5 pull-left">
                   <label class="control-label  pull-left" for="txtfromschool" ><b>From School Number</b></label>
 				          <input type="text" class="form-control " id="txtfromschool" name="txtfromschool"  maxlength="80"/>
 			          </div>
-                <div class="col-sm-4 pull-left">
+                <div class="col-sm-5 pull-left">
                   <label class="control-label  pull-left" for="txttoschool"><b>To School Number</b></label>
 				          <input type="text" class="form-control" id="txttoschool" name="txttoschool"  maxlength="80"/>
 			           </div>
                     </td>
                 </tr>
                   <tr>
-                    <hr>
+
                     <td>
                    <hr>
                   <div class="col-sm-4 pull-left">
@@ -189,10 +188,64 @@
                   </tr>
                   </table>
                  <br>
-                <input class="btn btn-primary" type="submit" value="Generate" name="btn_lastattendance" id="btn_lastattendance"/>
+                <div style="background-color:#E8E9E9">
+                    <p class="card-text">Student's Last  Attendance and Absences</p>
+                    <input class="btn btn-primary" type="submit" value="Generate" name="btn_lastattendance" id="btn_lastattendance"/>
+                    <input class="btn btn-primary" type="submit" value="Excel" name="btn_lastattendance" id="btn_lastattendanceex"  style="background-color: green;" />
+                </div>
+              </div>
+            </div>
+            </form>
+          </div>
 
-                <input class="btn btn-primary" type="submit" value="Excel" name="btn_lastattendance" id="btn_lastattendanceex"  style="background-color: green;" />
-
+          <div class="col-sm-4">
+            <form id="attendance-form" action="{% url 'dashboard:list_of_attendance' %}" method="GET">
+            <div class="card m-3">
+              <div class="card-block">
+                <h3 class="card-title">Total of attend and absent days per students</h3>
+                <table border="0">
+                  <th></th>
+                  <th></th>
+                  <tr>
+                    <td>
+                      <div class="col-sm-5 pull-left">
+                         <label class="control-label  pull-left" for="att_fromschool" ><b>From School Number</b></label>
+				                 <input type="text" class="form-control " id="att_fromschool" name="att_fromschool"  maxlength="80"/>
+			                </div>
+                      <div class="col-sm-5 pull-left">
+                         <label class="control-label  pull-left" for="att_toschool"><b>To School Number</b></label>
+				                 <input type="text" class="form-control" id="att_toschool" name="att_toschool"  maxlength="80"/>
+			                </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                     <hr>
+                       <div class="col-sm-4 pull-left">
+                         <label class="control-label  pull-left" for="att_fromdate"><b>From Date</b></label>
+				                 <input type="date" name="att_fromdate">
+			                </div>
+                          <div class="col-sm-4 pull-left">
+                          <label class="control-label  pull-left" for="att_todate"><b>To Date</b></label>
+				                  <input type="date" name="att_todate">
+			                </div>
+                      <br><br><br>
+                      <div>
+                         <input type="radio" id="rb_all" name="rb_option" value="rb_all" >
+                         <label for="male">ALL</label><br>
+                         <input type="radio" id="rb_nozero_attend" name="rb_option" value="rb_nozero_attend">
+                         <label for="rb_nozero_attend">No Zero Attend</label><br>
+                         <input type="radio" id="rb_zero_attend" name="rb_option" value="rb_zero_attend">
+                         <label for="rb_zero_attend">Zero Attend only</label><br>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+                 <br>
+                <div style="background-color:#D1D3D4">
+                    <p class="card-text">Total of attend and absent days per students</p>
+                    <input class="btn btn-primary" type="submit" value="Preview" name="btn_lastattendance" id="btn_totalattendances"/>
+                </div>
               </div>
             </div>
             </form>
@@ -202,7 +255,7 @@
             <form id="attendance-per-day" action="{% url 'dashboard:run-to-excel-per-day' %}" method="GET" >
             <div class="card m-3">
               <div class="card-block">
-                <h3 class="card-title">  Attendances & Absences per day </h3>
+                <h3 class="card-title">  Daily : Attendances & Absences  </h3>
                 <p class="card-text">Export to Excel : Attendances & Absences per day</p>
                 <table border="0">
                   <th></th>

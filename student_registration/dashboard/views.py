@@ -1,6 +1,7 @@
 # from django.http import HttpResponse
 # from django.template import loader
 # -*- coding: utf-8 -*-
+
 from __future__ import absolute_import, unicode_literals
 from django.contrib.auth.models import User
 from student_registration.backends.djqscsv import render_to_csv_response
@@ -31,7 +32,7 @@ from django.shortcuts import redirect
 from student_registration.alp.models import Outreach, ALPRound
 from student_registration.users.models import User
 from student_registration.backends.exporter import export_full_data
-
+import tablib
 
 class ExporterView(LoginRequiredMixin,
                    GroupRequiredMixin,
@@ -229,13 +230,14 @@ def run_attendance(request):
     to_school = request.GET['txttoschool']
     from_date = request.GET['txtfromdate']
     to_date = request.GET['txttodate']
+
     if request.GET.get('btn_lastattendance') == 'Generate':
         geo_calculate_attendances_by_student(from_school, to_school, from_date, to_date)
         geo_calculate_last_attendance_date(from_school, to_school)
         messages.add_message(request, messages.INFO, 'Finished !')
         context = {}
         return render(request, "dashboard/exporter.html", context)
-    else:
+    if request.GET.get('btn_lastattendance') == 'Excel':
         from student_registration.enrollments.models import Enrollment
         queryset = Enrollment.objects.filter(education_year__current_year=True).order_by('school__number')
         queryset = queryset.filter(school__number__gte=from_school, school__number__lte=to_school)
@@ -799,3 +801,53 @@ def degenerate_list_justification(request):
 
     context = {}
     return render(request, "dashboard/exporter.html", context)
+
+
+class List_of_Attendance(TemplateView):
+    template_name = 'dashboard/attendance_list.html'
+
+    def handle_no_permission(self, request):
+        return HttpResponseForbidden()
+
+    def get_context_data(self, **kwargs):
+        from student_registration.attendances.models import AttendanceDt
+        from student_registration.enrollments.models import Enrollment
+        from student_registration.schools.models import EducationYear
+        from_school = self.request.GET['att_fromschool']
+        to_school = self.request.GET['att_toschool']
+        from_date = self.request.GET['att_fromdate']
+        to_date = self.request.GET['att_todate']
+        education_year = EducationYear.objects.get(current_year=True)
+
+        ENR = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                        # moved=False,  dropout_status=False,
+                                        school__is_2nd_shift=True, disabled=False, school__number__gte=from_school,
+                                        school__number__lte=to_school).order_by('school_id', 'classroom_id',
+                                                                                'section_id', 'student__first_name',
+                                                                                'student__father_name',
+                                                                                'student__last_name')
+        list_data = []
+        for enr in ENR:
+            ATTEND = AttendanceDt.objects.filter(attendance_date__gte=from_date, attendance_date__lte=to_date,
+                                                 is_present=True, student_id=enr.student_id, school_id=enr.school_id,
+                                                 classlevel_id=enr.classroom_id, section_id=enr.section_id).count()
+            ABSENCES = AttendanceDt.objects.filter(attendance_date__gte=from_date, attendance_date__lte=to_date,
+                                                   is_present=False, student_id=enr.student_id, school_id=enr.school_id,
+                                                   classlevel_id=enr.classroom_id, section_id=enr.section_id).count()
+            if (((self.request.GET['rb_option'] == 'rb_nozero_attend')and(ATTEND != 0))
+                or(self.request.GET['rb_option'] == 'rb_all')
+                or((self.request.GET['rb_option'] == 'rb_zero_attend')and(ATTEND == 0))):
+                list_data.append({
+                    'groupby': u'{} - {} - {}'.format(enr.school, enr.classroom, enr.section),
+                    'school_id': enr.school,
+                    'class_id': enr.classroom,
+                    'section_id': enr.section,
+                    'student_id': enr.student_id,
+                    'first_name': enr.student.first_name,
+                    'father_name': enr.student.father_name,
+                    'last_name': enr.student.last_name,
+                    'sex': enr.student.sex,
+                    'total_attend': ATTEND,
+                    'total_absent': ABSENCES})
+        return {'v_data': list_data}
+
