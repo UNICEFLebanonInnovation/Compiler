@@ -609,6 +609,10 @@ class Enrollment(TimeStampedModel):
         return self.student.address
 
     @property
+    def class_section(self):
+        return "%s, %s" % (self.classroom, self.section)
+
+    @property
     def cycle(self):
         if self.classroom_id in [2, 3, 4]:
             return 'Cycle 1'

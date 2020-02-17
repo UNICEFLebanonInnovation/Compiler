@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load staticfiles i18n %}
+{% load util_tags %}
+{% load static %}
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% load render_table from django_tables2 %}
+
+{% get_current_language as LANGUAGE_CODE %}
+
+
+{% block extra_head %}
+
+
+{% endblock %}
+{% block content-full-page %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script>
+  <style>
+.btn {
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  padding: 12px 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Darker background on mouse-over */
+.btn:hover {
+  background-color: RoyalBlue;
+}
+</script>
+      <h1 align="center">{% trans 'Modifying Images' %}</h1>
+      <h3><font color="navy">{{ student_images.student }}</font></h3>
+      <br>
+      <form action="{% url 'enrollments:clear_pic' %}" name = "form" enctype = "multipart/form-data"  method = "POST" >{% csrf_token %}
+        <table border="0" width="900px">
+
+         <input  hidden id="txt_id" name="txt_id" value="{{ student_images.id }}"></input>
+          <input  hidden id="txt_studentid" name="txt_studentid" value="{{ student_images.student.id }}"></input>
+          <tr>
+          <td bgcolor="#e0ebeb">
+           <label class="control-label   pull-right" ><font color="black" size=4>{% trans 'Profile' %}</font>
+       		  	<input type="checkbox" name="chk_profile" id="chk_profile" value="1" >
+		       </label>
+           </td>
+            </tr>
+          <tr>
+          <td>
+           <label class="control-label   pull-right" ><font color="black" size=4>{% trans 'Document Type' %}</font>
+       		  	<input type="checkbox" name="chk_document" id="chk_document" value="1" >
+		       </label>
+           </td>
+            </tr>
+
+          <tr>
+          <td bgcolor="#e0ebeb">
+           <label class="control-label   pull-right" ><font color="black" size=4>{% trans 'UNHCR picture' %}</font>
+       		  	<input type="checkbox" name="chk_unhcr" id="chk_unhcr" value="1" >
+		       </label>
+          </td>
+            </tr>
+
+          <tr>
+          <td>
+           <label class="control-label pull-right" ><font color="black" size=4>{% trans 'picture of previous education' %}</font>
+       		  	<input type="checkbox" name="chk_doclastyear" id="chk_doclastyear" value="1" >
+		       </label>
+          </td>
+          </tr>
+          <tr>
+            <td align="center">
+              <button class="	glyphicon glyphicon-saved" type="submit" value="Submit">&nbsp;{% trans 'Save' %}</button>
+            </td>
+          </tr>
+          </table>
+
+      </form>
+
+
+
+{% endblock %}

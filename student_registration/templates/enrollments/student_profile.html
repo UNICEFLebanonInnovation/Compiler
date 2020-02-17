@@ -1,0 +1,29 @@
+{% load staticfiles i18n %}
+{% load util_tags %}
+
+{% if request.user|has_group:"ENROL_SHOWPIC" %}
+
+<a href="{{ column.attrs.url }}{{ record.id }}" class="btn btn-link">
+    {% if record.student.std_image %}
+       <img src="{{ record.student.std_image.url }}" height="45px" width="50px">
+    {% else %}
+      <i class="icon-edit-sign icon-green"></i>
+      {% trans "Images" %}
+    {% endif %}
+</a>
+
+{% endif %}
+
+{% if request.user|has_group:"ENROL_CLEARPIC" %}
+
+<a href="{{ column.attrs.url2 }}{{ record.id }}" class="btn btn-link">
+
+      <i class="icon-delete-sign icon-green"></i>
+      {% trans "Clear Pic" %}
+</a>
+
+{% endif %}
+
+
+
+

@@ -15,7 +15,9 @@
 {% endblock %}
 {% block content-full-page %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
   <style>
 .btn {
@@ -33,6 +35,9 @@
 }
 </script>
       <form name = "form" enctype = "multipart/form-data"  method = "POST" >{% csrf_token %}
+        <h2 align="center"><font color ="navy">{{ student_detail }} </font></h2>
+        <br>
+        <br>
         <table border="0" width="40%">
           <tr style="height:100px;">
             <th  bgcolor=#BEE7FD> <font color ="navy">
@@ -69,7 +74,7 @@
 
 
               <font color ="navy">
-              {% trans  'ID Picture' %}&nbsp;&nbsp;&nbsp;&nbsp;
+
               <br><br>
               <label for="birth_documenttype"> {% trans 'Document Type' %} </label>
                  {{ form.birth_documenttype }}
@@ -124,13 +129,15 @@
 
         <div style = "max-width:470px;">
           <center>
-            <button style = "border:0px;background-color:#25AB0D; margin-top:8%;
-                  height:35px; width:50%; margin-left:19%;" type = "submit" value = "upload" >
-              <strong>{% trans  'upload' %}&nbsp;&nbsp;&nbsp;&nbsp;</strong>...
+            <button class="	glyphicon glyphicon-saved" style = "border:0px;background-color:#C4E1FE; margin-top:8%;
+                  height:35px; width:35%; margin-left:19%;" type = "submit" value = "upload" >
+              <strong>{% trans  'upload' %}&nbsp;&nbsp;&nbsp;&nbsp;</strong>
             </button>
 
           </center>
          </div>
+
+
       </form>
 
 {% endblock %}
