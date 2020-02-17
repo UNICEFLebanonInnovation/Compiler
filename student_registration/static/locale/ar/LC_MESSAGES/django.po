@@ -5055,16 +5055,3 @@ msgstr "التواريخ المهمة"
 #: .\student_registration\users\models.py:56
 msgid "User"
 msgstr ""
-
-#~ msgid "Justified"
-#~ msgstr "مبرر"
-
-#~ msgid "Parent no ID confirmation popup message"
-#~ msgstr "هل انت متأكد ان الاب لا يملك اي نوع من البطاقات المدرجه اعلاه؟ "
-
-#~ msgid "Enrolled in formal educarioh but did not continue"
-#~ msgstr "كان مسجلا في المدرسة ولم يكمل"
-
-#~ msgid ""
-#~ "What is the educational level of a person who is valuable to the child?"
-#~ msgstr "ما هو المستوى التعليمي لالشخص القيم على الطفل؟"
