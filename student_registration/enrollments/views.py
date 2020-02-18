@@ -782,23 +782,13 @@ class Modify_Images_View(UpdateView):
     def get_success_url(self):
         return self.success_url
 
-    # def get_context_data(self, **kwargs):
-    #     from student_registration.enrollments.models import DocumentType
-    #     force_default_language(self.request)
-    #     """Insert the form into the context dict."""
-    #     if 'form' not in kwargs:
-    #         kwargs['form'] = self.get_form()
-    #         kwargs['documenttpye'] =
-    #     return super(Modify_Images_View, self).get_context_data(**kwargs)
-
     def get_context_data(self, **kwargs):
-        from student_registration.enrollments.models import DocumentType
+        from student_registration.students.models import Birth_DocumentType
 
         return {
-            'documenttype': DocumentType.objects.all(),
+            'documenttype': Birth_DocumentType.objects.all(),
             'student_images': Enrollment.objects.filter(id=self.kwargs['pk'])
         }
-
 
     def get_form(self, form_class=None):
         instance = Enrollment.objects.get(id=self.kwargs['pk'], school=self.request.user.school)
@@ -862,13 +852,15 @@ def empty_birthdoc(request, *args):
 
 
 def changing_birthdoc(request, *args):
-    from student_registration.students.models import Student
+    from student_registration.students.models import Student, Birth_DocumentType
     if request.method == 'POST':
         form = Modify_Images_Form(request.POST, request.FILES)
+        std = Student.objects.get(pk=request.POST['txt_id_img_birthdoc'])
         if request.FILES:
-            std = Student.objects.get(pk=request.POST['txt_id_img_birthdoc'])
             std.birthdoc_image = request.FILES['image_birthdoc']
-            std.save()
+        if request.POST.get('cb_documenttype', False):
+            std.birth_documenttype = Birth_DocumentType.objects.get(id=request.POST['cb_documenttype'])
+        std.save()
     return HttpResponseForbidden('Document type picture has been successfully changed')
 
 
@@ -908,10 +900,6 @@ def changing_doclastyear(request, *args):
         enr = Enrollment.objects.get(pk=request.POST['txt_id_img_doclastyear'])
         if request.FILES:
             enr.document_lastyear = request.FILES['image_doclastyear']
-        if request.POST.get('cb_documenttype', False):
-            enr.documenttype = DocumentType.objects.get(id=request.POST['cb_documenttype'])
-        if request.POST.get('txt_signaturedate', False):
-            enr.signature_cert_date = request.POST['txt_signaturedate']
         enr.save()
     return HttpResponseForbidden('Document of the last year picture has been successfully changed')
 
