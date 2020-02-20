@@ -91,31 +91,8 @@ LEARNING_RESULT = (
 
 class CommonForm(forms.ModelForm):
 
-    new_registry = forms.ChoiceField(
-        label=_("First time registered?"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    student_outreached = forms.ChoiceField(
-        label=_("Student outreached?"),
-        widget=forms.Select, required=True,
-        choices=(('no', _("No")), ('yes', _("Yes"))),
-        initial='no'
-    )
-    have_barcode = forms.ChoiceField(
-        label=_("Have barcode with him?"),
-        widget=forms.Select, required=True,
-        choices=(('no', _("No")), ('yes', _("Yes"))),
-        initial='no'
-    )
     search_clm_student = forms.CharField(
         label=_("Search a student"),
-        widget=forms.TextInput,
-        required=False
-    )
-    search_barcode = forms.CharField(
-        label=_("Search a barcode"),
         widget=forms.TextInput,
         required=False
     )
@@ -230,7 +207,6 @@ class CommonForm(forms.ModelForm):
 
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
-    student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     # participation = forms.ChoiceField(
@@ -306,9 +282,6 @@ class CommonForm(forms.ModelForm):
         fields = (
             'first_attendance_date',
             'round',
-            'new_registry',
-            'student_outreached',
-            'have_barcode',
             'governorate',
             'district',
             'location',
@@ -336,7 +309,6 @@ class CommonForm(forms.ModelForm):
             # 'learning_result',
             'student_id',
             'enrollment_id',
-            'student_outreach_child',
             'comments',
             'unsuccessful_pretest_reason',
             # 'unsuccessful_posttest_reason',
@@ -660,14 +632,6 @@ class BLNForm(CommonForm):
                     'clm_type',
                     'student_id',
                     'enrollment_id',
-                    'student_outreach_child',
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('new_registry', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('student_outreached', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('have_barcode', css_class='col-md-3', css_id='have_barcode_option'),
-                    css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'+display_registry, css_id='registry_block'
             ),
@@ -1444,10 +1408,6 @@ class RSForm(CommonForm):
                     'clm_type',
                     'student_id',
                     'enrollment_id',
-                    'student_outreach_child',
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('new_registry', css_class='col-md-3'),
-                    css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'+display_registry, css_id='registry_block'
             ),
@@ -1932,14 +1892,6 @@ class CBECEForm(CommonForm):
                     'clm_type',
                     'student_id',
                     'enrollment_id',
-                    'student_outreach_child',
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('new_registry', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('student_outreached', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('have_barcode', css_class='col-md-3', css_id='have_barcode_option'),
-                    css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning'+display_registry, css_id='registry_block'
             ),
@@ -2165,18 +2117,6 @@ class ABLNForm(CommonForm):
     YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 16, Person.CURRENT_YEAR)))
     YEARS_BLN.insert(0, ('', '---------'))
 
-    # participation = forms.ChoiceField(
-    #     label=_('How was the level of child participation in the program?'),
-    #     widget=forms.Select, required=False,
-    #     choices=(
-    #             ('', '----------'),
-    #             ('less_than_3days', _('Less than 3 absence days')),
-    #             ('3_7_days', _('3 to 7 absence days')),
-    #             ('7_12_days', _('7 to 12 absence days')),
-    #             ('more_than_12days', _('More than 12 absence days'))
-    #         ),
-    #     initial=''
-    # )
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
         required=True
@@ -2224,21 +2164,6 @@ class ABLNForm(CommonForm):
         label=_('How many hours does this child work in a day?'),
         widget=forms.TextInput, required=False
     )
-    # learning_result = forms.ChoiceField(
-    #     label=_('Based on the overall score, what is the recommended learning path?'),
-    #     widget=forms.Select, required=False,
-    #     choices=(
-    #         ('', '----------'),
-    #         ('graduated_to_abln_next_round_same_level', _('Graduated to the next round, same level')),
-    #         ('graduated_to_abln_next_round_higher_level', _('Graduated to the next round, higher level')),
-    #         ('referred_to_bln', _('Referred to BLN')),
-    #         ('referred_to_ybln', _('Referred to YBLN')),
-    #         ('referred_to_alp', _('Referred to ALP')),
-    #         ('referred_to_cbt', _('Referred to CBT')),
-    #         ('dropout', _('Dropout, referral not possible')),
-    #     ),
-    #     initial=''
-    # )
 
     education_status = forms.ChoiceField(
         label=_('Education status'),
@@ -2422,9 +2347,7 @@ class ABLNForm(CommonForm):
         super(ABLNForm, self).__init__(*args, **kwargs)
 
         pre_test = ''
-        # post_test = ''
         pre_test_button = ' btn-outline-success '
-        # post_test_button = ' btn-outline-secondary disabled'
         display_assessment = ' d-none'
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
@@ -2443,14 +2366,6 @@ class ABLNForm(CommonForm):
              )
             if instance.pre_test:
                 pre_test_button = ' btn-success '
-            #     post_test_button = ' btn-outline-success '
-            #     post_test = instance.assessment_form(
-            #         stage='post_test',
-            #         assessment_slug='abln_post_test',
-            #         callback=self.request.build_absolute_uri(reverse('clm:abln_edit', kwargs={'pk': instance.id}))
-            #      )
-            # if instance.post_test:
-            #     post_test_button = ' btn-success '
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -2459,33 +2374,10 @@ class ABLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Registry') + '</h4>')
-                ),
-                Div(
                     'clm_type',
                     'student_id',
                     'enrollment_id',
-                    'student_outreach_child',
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('new_registry', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('student_outreached', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('have_barcode', css_class='col-md-3', css_id='have_barcode_option'),
-                    css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning'+display_registry, css_id='registry_block'
-            ),
-            Fieldset(
-                None,
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
-                ),
-                Div(
-                    Div('search_barcode', css_class='col-md-4'),
-                    css_class='row',
-                ),
-                css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
             ),
             Fieldset(
                 None,
@@ -2503,7 +2395,7 @@ class ABLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Program Information') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Round Information') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
