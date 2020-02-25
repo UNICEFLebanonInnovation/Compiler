@@ -188,6 +188,11 @@ class CLM(TimeStampedModel):
         ('referred_to_another_program', _('Referred to another program')),
         # ('dropout', _('Dropout from school'))
     )
+    REGISTRATION_LEVEL = Choices(
+        ('', _('Registration level')),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+    )
 
     first_attendance_date = models.DateField(
         blank=True,
@@ -320,6 +325,13 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=LEARNING_RESULT,
+        verbose_name=_('Learning result')
+    )
+    registration_level = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=REGISTRATION_LEVEL,
         verbose_name=_('Learning result')
     )
 
@@ -536,13 +548,13 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=Choices(
+            ('Direct outreach', _('Direct outreach')),
+            ('List database', _('List database')),
+            ('Referral from another NGO', _('Referral from another NGO')),
             ('Referred by CP partner', _('Referred by CP partner')),
             ('Referred by youth partner', _('Referred by youth partner')),
-            ('Family walked in to NGO', _('Family walked in to NGO')),
-            ('Referral from another NGO', _('Referral from another NGO')),
             ('Referral from another Municipality', _('Referral from Municipality')),
-            ('Direct outreach', _('Direct outreach')),
-            ('List database', _('List database'))
+            ('Family walked in to NGO', _('Family walked in to NGO'))
         ),
         verbose_name=_('Source of identification of the child')
     )

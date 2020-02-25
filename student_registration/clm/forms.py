@@ -88,6 +88,12 @@ LEARNING_RESULT = (
     ('dropout', _('Dropout, referral not possible'))
 )
 
+REGISTRATION_LEVEL = (
+    ('', '----------'),
+    ('level_one', _('Level one')),
+    ('level_two', _('Level two')),
+)
+
 
 class CommonForm(forms.ModelForm):
 
@@ -118,11 +124,20 @@ class CommonForm(forms.ModelForm):
         required=True, to_field_name='id',
         initial=0
     )
-    # location = forms.CharField(
-    #     label=_('Location'),
-    #     widget=forms.TextInput,
-    #     required=True
-    # )
+    round_start_date = forms.DateField(
+        label=_("Round start date"),
+        required=True
+    ),
+    cadaster = forms.CharField(
+        label=_('Cadaster'),
+        widget=forms.TextInput,
+        required=True
+    )
+    registration_level = forms.CharField(
+        label=_('Registration level'),
+        widget=forms.TextInput,
+        required=True
+    )
     language = forms.ChoiceField(
         label=_('The language supported in the program'),
         widget=forms.Select,
@@ -2122,12 +2137,32 @@ class ABLNForm(CommonForm):
         required=True
     )
 
+    new_registry = forms.ChoiceField(
+        label=_("First time registered?"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
     round = forms.ModelChoiceField(
         queryset=CLMRound.objects.filter(current_round_abln=True), widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
         # initial=8
+    )
+    round_start_date = forms.DateField(
+        label=_("Round start date"),
+        required=True
+    )
+    cadaster = forms.CharField(
+        label=_('Cadaster'),
+        widget=forms.TextInput,
+        required=True
+    )
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=True,
+        choices=REGISTRATION_LEVEL
     )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
@@ -2395,18 +2430,15 @@ class ABLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Round Information') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('General Information') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('first_attendance_date', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
+                    Div('new_registry', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('round', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('source_of_identification', css_class='col-md-3'),
+                    Div('round_start_date', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -2418,9 +2450,19 @@ class ABLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
-                    Div('location', css_class='col-md-3'),
+                    Div('cadaster', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">7</span>'),
+                    Div('location', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('language', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('registration_level', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
@@ -2479,8 +2521,14 @@ class ABLNForm(CommonForm):
                     Div('student_id_number', css_class='col-md-3 d-none'),
                     HTML('<span class="badge badge-default">15</span>'),
                     Div('internal_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">16</span>'),
-                    Div('comments', css_class='col-md-3'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('first_attendance_date', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('source_of_identification', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
@@ -2832,6 +2880,9 @@ class ABLNForm(CommonForm):
             'student_birthday_year',
             'student_family_status',
             'student_have_children',
+            'round_start_date',
+            'cadaster',
+            'registration_level',
             'have_labour',
             'labours',
             'labour_hours',
