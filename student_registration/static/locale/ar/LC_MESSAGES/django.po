@@ -298,7 +298,7 @@ msgstr "الفرنسية"
 #: student_registration/staffs/models.py:104
 #: student_registration/students/models.py:161
 msgid "First name"
-msgstr "الاسم الاول"
+msgstr "إسم الطفل"
 
 #: student_registration/alp/forms.py:131 student_registration/alp/forms.py:345
 #: student_registration/alp/forms.py:592 student_registration/alp/forms.py:871
@@ -318,7 +318,7 @@ msgstr "اسم الاب"
 #: student_registration/staffs/models.py:110
 #: student_registration/students/models.py:167
 msgid "Last name"
-msgstr "الشهرة"
+msgstr "شهرة الطفل"
 
 #: student_registration/alp/forms.py:139 student_registration/alp/forms.py:353
 #: student_registration/alp/forms.py:600 student_registration/alp/forms.py:879
@@ -385,7 +385,7 @@ msgstr "تاريخ الولادة - اليوم"
 #: student_registration/staffs/models.py:138
 #: student_registration/students/models.py:179
 msgid "Mother fullname"
-msgstr "اسم الأم وشهرتها "
+msgstr "اسم الأم"
 
 #: student_registration/alp/forms.py:168 student_registration/alp/forms.py:410
 #: student_registration/alp/forms.py:657 student_registration/alp/forms.py:910
@@ -1177,7 +1177,7 @@ msgstr "تاريخ التسجيل"
 #: student_registration/dashboard/views.py:248
 #: student_registration/dashboard/views.py:336
 msgid "Student first name"
-msgstr "إسم التلميذ "
+msgstr "إسم الطفل"
 
 #: student_registration/backends/tasks.py:43
 #: student_registration/backends/tasks.py:212
@@ -1186,7 +1186,7 @@ msgstr "إسم التلميذ "
 #: student_registration/dashboard/views.py:249
 #: student_registration/dashboard/views.py:337
 msgid "Student father name"
-msgstr "إسم الاب "
+msgstr "إسم الاب"
 
 #: student_registration/backends/tasks.py:44
 #: student_registration/backends/tasks.py:213
@@ -1195,7 +1195,7 @@ msgstr "إسم الاب "
 #: student_registration/dashboard/views.py:250
 #: student_registration/dashboard/views.py:338
 msgid "Student last name"
-msgstr " الشهرة "
+msgstr " الشهرة الطفل"
 
 #: student_registration/backends/tasks.py:47
 #: student_registration/backends/tasks.py:216
@@ -1775,16 +1775,16 @@ msgstr "الوضع الدراسي للطفل عند التسجيل في الدو
 #: student_registration/clm/forms.py:430 student_registration/clm/forms.py:2208
 #: student_registration/clm/models.py:441
 msgid "Out of school"
-msgstr "لم يتم التسجيل ابدا في المدرسة من قبل"
+msgstr "لم يسجل ابدا في المدرسة من قبل"
 
 #: student_registration/clm/forms.py:431 student_registration/clm/forms.py:2209
 #: student_registration/clm/models.py:442
 msgid "Enrolled in formal education but did not continue"
-msgstr "كان مسجلا في المدرسة ولم يكمل"
+msgstr "كان مسجلا مدرسة نضاميه ولم يكمل"
 
 #: student_registration/clm/forms.py:432
 msgid "Enrolled in BLN"
-msgstr " كان مسجلا في برنامج BLN"
+msgstr "كان مسجلاً في مدرسة غير نظامية ولم يكمل"
 
 #: student_registration/clm/forms.py:438 student_registration/clm/forms.py:2216
 #: student_registration/clm/models.py:506
@@ -2153,7 +2153,7 @@ msgstr "التقييم"
 #: student_registration/clm/forms.py:2210
 #: student_registration/clm/models.py:443
 msgid "Enrolled in ABLN"
-msgstr " كان مسجلا في برنامج ABLN"
+msgstr "كان مسجلاً في مدرسة غير نظامية ولم يكمل"
 
 #: student_registration/clm/forms.py:2364
 #: student_registration/clm/models.py:559
@@ -3808,7 +3808,7 @@ msgstr "حذف"
 
 #: student_registration/staffs/forms.py:24
 msgid "First Name"
-msgstr "الاسم الاول"
+msgstr "إسم الطفل"
 
 #: student_registration/staffs/forms.py:25
 msgid "Father Name"

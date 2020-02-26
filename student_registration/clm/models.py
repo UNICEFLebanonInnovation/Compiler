@@ -188,11 +188,11 @@ class CLM(TimeStampedModel):
         ('referred_to_another_program', _('Referred to another program')),
         # ('dropout', _('Dropout from school'))
     )
-    REGISTRATION_LEVEL = Choices(
-        ('', _('Registration level')),
-        ('level_one', _('Level one')),
-        ('level_two', _('Level two')),
-    )
+    # REGISTRATION_LEVEL = Choices(
+    #     ('', _('Registration level')),
+    #     ('level_one', _('Level one')),
+    #     ('level_two', _('Level two')),
+    # )
 
     first_attendance_date = models.DateField(
         blank=True,
@@ -327,13 +327,13 @@ class CLM(TimeStampedModel):
         choices=LEARNING_RESULT,
         verbose_name=_('Learning result')
     )
-    registration_level = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        choices=REGISTRATION_LEVEL,
-        verbose_name=_('Learning result')
-    )
+    # registration_level = models.CharField(
+    #     max_length=100,
+    #     blank=True,
+    #     null=True,
+    #     choices=REGISTRATION_LEVEL,
+    #     verbose_name=_('Learning result')
+    # )
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
