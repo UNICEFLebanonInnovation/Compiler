@@ -525,7 +525,6 @@ class Student(Person):
             return last_enrollment.education_year.name
         return ''
 
-
 class StudentMatching(models.Model):
 
     registry = models.ForeignKey(

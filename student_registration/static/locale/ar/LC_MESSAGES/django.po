@@ -8,7 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2020-02-27 15:41+0200\n"
+=======
+"POT-Creation-Date: 2020-02-18 23:28+0200\n"
+>>>>>>> develop
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,6 +31,7 @@ msgstr ""
 msgid "Entrance test"
 msgstr "امتحان الدخول"
 
+<<<<<<< HEAD
 #: student_registration/alp/filters.py:24
 #: student_registration/alp/filters.py:56 student_registration/alp/forms.py:336
 #: student_registration/alp/forms.py:583 student_registration/alp/models.py:108
@@ -46,6 +51,29 @@ msgstr "امتحان الدخول"
 #: student_registration/staffenroll/models.py:198
 #: student_registration/templates/alp/test_grading.html:21
 #: student_registration/templates/schools/profile.html:59
+=======
+#: .\student_registration\alp\filters.py:24
+#: .\student_registration\alp\filters.py:56
+#: .\student_registration\alp\forms.py:336
+#: .\student_registration\alp\forms.py:583
+#: .\student_registration\alp\models.py:108
+#: .\student_registration\backends\tasks.py:36
+#: .\student_registration\backends\tasks.py:205
+#: .\student_registration\backends\tasks.py:357
+#: .\student_registration\backends\tasks.py:536
+#: .\student_registration\backends\tasks.py:909
+#: .\student_registration\clm\filters.py:73
+#: .\student_registration\clm\filters.py:106
+#: .\student_registration\dashboard\views.py:246
+#: .\student_registration\dashboard\views.py:334
+#: .\student_registration\enrollments\admin.py:453
+#: .\student_registration\enrollments\models.py:144
+#: .\student_registration\staffenroll\models.py:97
+#: .\student_registration\staffenroll\models.py:169
+#: .\student_registration\staffenroll\models.py:198
+#: .\student_registration\templates\alp\test_grading.html:21
+#: .\student_registration\templates\schools\profile.html:59
+>>>>>>> develop
 msgid "School"
 msgstr "المدرسة"
 
@@ -318,6 +346,7 @@ msgstr "اسم الاب"
 #: student_registration/staffs/models.py:110
 #: student_registration/students/models.py:167
 msgid "Last name"
+<<<<<<< HEAD
 msgstr "شهرة الطفل"
 
 #: student_registration/alp/forms.py:139 student_registration/alp/forms.py:353
@@ -335,6 +364,27 @@ msgstr "شهرة الطفل"
 #: student_registration/staffs/forms.py:31
 #: student_registration/staffs/models.py:145
 #: student_registration/students/models.py:188
+=======
+msgstr "الشهرة"
+
+#: .\student_registration\alp\forms.py:139
+#: .\student_registration\alp\forms.py:353
+#: .\student_registration\alp\forms.py:600
+#: .\student_registration\alp\forms.py:879
+#: .\student_registration\backends\tasks.py:46
+#: .\student_registration\backends\tasks.py:215
+#: .\student_registration\backends\tasks.py:366
+#: .\student_registration\backends\tasks.py:553
+#: .\student_registration\backends\tasks.py:917
+#: .\student_registration\clm\forms.py:169
+#: .\student_registration\dashboard\views.py:254
+#: .\student_registration\dashboard\views.py:342
+#: .\student_registration\enrollments\forms.py:151
+#: .\student_registration\enrollments\forms.py:1512
+#: .\student_registration\staffs\forms.py:31
+#: .\student_registration\staffs\models.py:145
+#: .\student_registration\students\models.py:188
+>>>>>>> develop
 msgid "Sex"
 msgstr "الجنس"
 
@@ -370,6 +420,7 @@ msgstr "تاريخ الولادة - الشهر"
 msgid "Birthday day"
 msgstr "تاريخ الولادة - اليوم"
 
+<<<<<<< HEAD
 #: student_registration/alp/forms.py:164 student_registration/alp/forms.py:393
 #: student_registration/alp/forms.py:640 student_registration/alp/forms.py:906
 #: student_registration/backends/tasks.py:45
@@ -384,6 +435,24 @@ msgstr "تاريخ الولادة - اليوم"
 #: student_registration/staffs/forms.py:29
 #: student_registration/staffs/models.py:138
 #: student_registration/students/models.py:179
+=======
+#: .\student_registration\alp\forms.py:164
+#: .\student_registration\alp\forms.py:393
+#: .\student_registration\alp\forms.py:640
+#: .\student_registration\alp\forms.py:906
+#: .\student_registration\backends\tasks.py:45
+#: .\student_registration\backends\tasks.py:214
+#: .\student_registration\backends\tasks.py:365
+#: .\student_registration\backends\tasks.py:916
+#: .\student_registration\clm\forms.py:198
+#: .\student_registration\dashboard\views.py:253
+#: .\student_registration\dashboard\views.py:341
+#: .\student_registration\enrollments\forms.py:196
+#: .\student_registration\enrollments\forms.py:1550
+#: .\student_registration\staffs\forms.py:29
+#: .\student_registration\staffs\models.py:138
+#: .\student_registration\students\models.py:179
+>>>>>>> develop
 msgid "Mother fullname"
 msgstr "اسم الأم"
 
@@ -421,6 +490,7 @@ msgstr "نوع البطاقة"
 msgid "ID number"
 msgstr "رقم البطاقة"
 
+<<<<<<< HEAD
 #: student_registration/alp/forms.py:188 student_registration/alp/forms.py:397
 #: student_registration/alp/forms.py:644 student_registration/alp/forms.py:929
 #: student_registration/backends/tasks.py:52
@@ -449,6 +519,40 @@ msgstr "رمز رقم الهاتف "
 #: student_registration/staffs/models.py:184
 #: student_registration/students/models.py:234
 #: student_registration/users/models.py:24
+=======
+#: .\student_registration\alp\forms.py:188
+#: .\student_registration\alp\forms.py:397
+#: .\student_registration\alp\forms.py:644
+#: .\student_registration\alp\forms.py:929
+#: .\student_registration\backends\tasks.py:52
+#: .\student_registration\backends\tasks.py:372
+#: .\student_registration\backends\tasks.py:923
+#: .\student_registration\dashboard\views.py:260
+#: .\student_registration\dashboard\views.py:348
+#: .\student_registration\enrollments\forms.py:223
+#: .\student_registration\students\models.py:235
+msgid "Phone prefix"
+msgstr "رمز رقم الهاتف "
+
+#: .\student_registration\alp\forms.py:192
+#: .\student_registration\alp\forms.py:401
+#: .\student_registration\alp\forms.py:648
+#: .\student_registration\alp\forms.py:933
+#: .\student_registration\alp\tables.py:177
+#: .\student_registration\backends\tasks.py:51
+#: .\student_registration\backends\tasks.py:371
+#: .\student_registration\backends\tasks.py:922
+#: .\student_registration\clm\models.py:415
+#: .\student_registration\dashboard\views.py:259
+#: .\student_registration\dashboard\views.py:347
+#: .\student_registration\enrollments\forms.py:227
+#: .\student_registration\enrollments\tables.py:41
+#: .\student_registration\enrollments\tables.py:105
+#: .\student_registration\staffs\forms.py:84
+#: .\student_registration\staffs\models.py:184
+#: .\student_registration\students\models.py:234
+#: .\student_registration\users\models.py:24
+>>>>>>> develop
 msgid "Phone number"
 msgstr "الهاتف"
 
@@ -467,6 +571,7 @@ msgstr "العنوان"
 msgid "Basic Data"
 msgstr "البيانات الأساسية"
 
+<<<<<<< HEAD
 #: student_registration/alp/forms.py:275 student_registration/alp/forms.py:523
 #: student_registration/alp/forms.py:768 student_registration/alp/forms.py:1172
 #: student_registration/alp/forms.py:1389
@@ -502,6 +607,46 @@ msgstr "البيانات الأساسية"
 #: student_registration/templates/enrollments/modifying_images.html:102
 #: student_registration/templates/enrollments/modifying_images.html:133
 #: student_registration/templates/enrollments/modifying_images.html:169
+=======
+#: .\student_registration\alp\forms.py:275
+#: .\student_registration\alp\forms.py:523
+#: .\student_registration\alp\forms.py:768
+#: .\student_registration\alp\forms.py:1172
+#: .\student_registration\alp\forms.py:1389
+#: .\student_registration\alp\forms.py:1506
+#: .\student_registration\clm\forms.py:1000
+#: .\student_registration\clm\forms.py:1765
+#: .\student_registration\clm\forms.py:2139
+#: .\student_registration\clm\forms.py:2805
+#: .\student_registration\clm\forms.py:3117
+#: .\student_registration\clm\forms.py:3255
+#: .\student_registration\clm\forms.py:3416
+#: .\student_registration\clm\forms.py:3576
+#: .\student_registration\clm\forms.py:3679
+#: .\student_registration\clm\forms.py:3785
+#: .\student_registration\clm\forms.py:3888
+#: .\student_registration\clm\forms.py:3994
+#: .\student_registration\clm\forms.py:4097
+#: .\student_registration\enrollments\forms.py:699
+#: .\student_registration\enrollments\forms.py:994
+#: .\student_registration\enrollments\forms.py:1088
+#: .\student_registration\enrollments\forms.py:1206
+#: .\student_registration\enrollments\forms.py:1311
+#: .\student_registration\enrollments\forms.py:1396
+#: .\student_registration\enrollments\forms.py:1450
+#: .\student_registration\enrollments\forms.py:1622
+#: .\student_registration\schools\forms.py:160
+#: .\student_registration\schools\forms.py:231
+#: .\student_registration\templates\attendances\level_section.html:68
+#: .\student_registration\templates\attendances\level_section.html:146
+#: .\student_registration\templates\django_tables2\dropout_column.html:8
+#: .\student_registration\templates\django_tables2\moved_column.html:8
+#: .\student_registration\templates\enrollments\clear_images.html:79
+#: .\student_registration\templates\enrollments\modifying_images.html:69
+#: .\student_registration\templates\enrollments\modifying_images.html:106
+#: .\student_registration\templates\enrollments\modifying_images.html:151
+#: .\student_registration\templates\enrollments\modifying_images.html:187
+>>>>>>> develop
 msgid "Save"
 msgstr "حفظ"
 
@@ -596,6 +741,7 @@ msgstr "تم ارسال البيانات بنجاح"
 msgid "Pre-test room"
 msgstr "غرفة امتحان الدخول"
 
+<<<<<<< HEAD
 #: student_registration/alp/forms.py:368 student_registration/alp/forms.py:615
 #: student_registration/alp/forms.py:1315
 #: student_registration/alp/forms.py:1430
@@ -619,6 +765,30 @@ msgstr "غرفة امتحان الدخول"
 #: student_registration/templates/base2.html:189
 #: student_registration/templates/base2.html:202
 #: student_registration/templates/header.html:43
+=======
+#: .\student_registration\alp\forms.py:368
+#: .\student_registration\alp\forms.py:615
+#: .\student_registration\alp\forms.py:1315
+#: .\student_registration\alp\forms.py:1430
+#: .\student_registration\alp\models.py:257
+#: .\student_registration\alp\models.py:343
+#: .\student_registration\backends\tasks.py:245
+#: .\student_registration\backends\tasks.py:383
+#: .\student_registration\backends\tasks.py:394
+#: .\student_registration\clm\forms.py:1271
+#: .\student_registration\clm\forms.py:1292
+#: .\student_registration\clm\models.py:123
+#: .\student_registration\clm\models.py:1086
+#: .\student_registration\clm\models.py:1114
+#: .\student_registration\clm\models.py:1433
+#: .\student_registration\enrollments\forms.py:914
+#: .\student_registration\enrollments\forms.py:1002
+#: .\student_registration\enrollments\forms.py:1096
+#: .\student_registration\enrollments\models.py:284
+#: .\student_registration\enrollments\models.py:425
+#: .\student_registration\enrollments\models.py:719
+#: .\student_registration\templates\header.html:167
+>>>>>>> develop
 msgid "Arabic"
 msgstr "اللغة العربية"
 
@@ -637,6 +807,7 @@ msgstr "اللغة العربية"
 msgid "Foreign Language"
 msgstr " اللغة الأجنبية"
 
+<<<<<<< HEAD
 #: student_registration/alp/forms.py:383 student_registration/alp/forms.py:630
 #: student_registration/alp/forms.py:1330
 #: student_registration/alp/forms.py:1447
@@ -676,6 +847,49 @@ msgstr "الرياضيات"
 #: student_registration/enrollments/forms.py:1032
 #: student_registration/enrollments/models.py:326
 #: student_registration/enrollments/models.py:761
+=======
+#: .\student_registration\alp\forms.py:383
+#: .\student_registration\alp\forms.py:630
+#: .\student_registration\alp\forms.py:1330
+#: .\student_registration\alp\forms.py:1447
+#: .\student_registration\alp\models.py:269
+#: .\student_registration\alp\models.py:355
+#: .\student_registration\backends\tasks.py:240
+#: .\student_registration\backends\tasks.py:387
+#: .\student_registration\backends\tasks.py:398
+#: .\student_registration\clm\forms.py:1281
+#: .\student_registration\clm\forms.py:1302
+#: .\student_registration\clm\models.py:1100
+#: .\student_registration\clm\models.py:1128
+#: .\student_registration\clm\models.py:1445
+#: .\student_registration\enrollments\forms.py:934
+#: .\student_registration\enrollments\forms.py:1026
+#: .\student_registration\enrollments\forms.py:1126
+#: .\student_registration\enrollments\models.py:319
+#: .\student_registration\enrollments\models.py:441
+#: .\student_registration\enrollments\models.py:754
+msgid "Math"
+msgstr "الرياضيات"
+
+#: .\student_registration\alp\forms.py:388
+#: .\student_registration\alp\forms.py:635
+#: .\student_registration\alp\forms.py:1335
+#: .\student_registration\alp\forms.py:1453
+#: .\student_registration\alp\models.py:275
+#: .\student_registration\alp\models.py:361
+#: .\student_registration\backends\tasks.py:239
+#: .\student_registration\backends\tasks.py:388
+#: .\student_registration\backends\tasks.py:399
+#: .\student_registration\clm\forms.py:1286
+#: .\student_registration\clm\forms.py:1307
+#: .\student_registration\clm\models.py:1107
+#: .\student_registration\clm\models.py:1135
+#: .\student_registration\clm\models.py:1451
+#: .\student_registration\enrollments\forms.py:939
+#: .\student_registration\enrollments\forms.py:1032
+#: .\student_registration\enrollments\models.py:326
+#: .\student_registration\enrollments\models.py:761
+>>>>>>> develop
 msgid "Science"
 msgstr "العلوم"
 
@@ -743,6 +957,7 @@ msgstr " ابحث في مدرسة محددة"
 msgid "Outreach barcode"
 msgstr "رقم الباركود"
 
+<<<<<<< HEAD
 #: student_registration/alp/forms.py:947 student_registration/alp/models.py:158
 #: student_registration/alp/tables.py:124
 #: student_registration/alp/tables.py:174
@@ -757,6 +972,23 @@ msgstr "رقم الباركود"
 #: student_registration/enrollments/models.py:150
 #: student_registration/enrollments/models.py:1041
 #: student_registration/staffenroll/models.py:103
+=======
+#: .\student_registration\alp\forms.py:947
+#: .\student_registration\alp\models.py:158
+#: .\student_registration\alp\tables.py:124
+#: .\student_registration\alp\tables.py:174
+#: .\student_registration\backends\tasks.py:60
+#: .\student_registration\backends\tasks.py:221
+#: .\student_registration\backends\tasks.py:392
+#: .\student_registration\backends\tasks.py:928
+#: .\student_registration\dashboard\views.py:263
+#: .\student_registration\dashboard\views.py:353
+#: .\student_registration\enrollments\forms.py:241
+#: .\student_registration\enrollments\forms.py:1559
+#: .\student_registration\enrollments\models.py:150
+#: .\student_registration\enrollments\models.py:1041
+#: .\student_registration\staffenroll\models.py:103
+>>>>>>> develop
 msgid "Current Section"
 msgstr "الشعبة الحالية"
 
@@ -778,11 +1010,20 @@ msgstr " آخر سنة دراسية"
 msgid "Participated in ALP"
 msgstr "انتسب من قبل الى برنامج ALP"
 
+<<<<<<< HEAD
 #: student_registration/alp/forms.py:969 student_registration/alp/models.py:74
 #: student_registration/enrollments/forms.py:293
 #: student_registration/enrollments/forms.py:303
 #: student_registration/enrollments/models.py:84
 #: student_registration/enrollments/models.py:709
+=======
+#: .\student_registration\alp\forms.py:969
+#: .\student_registration\alp\models.py:74
+#: .\student_registration\enrollments\forms.py:293
+#: .\student_registration\enrollments\forms.py:303
+#: .\student_registration\enrollments\models.py:84
+#: .\student_registration\enrollments\models.py:709
+>>>>>>> develop
 msgid "n/a"
 msgstr ""
 
@@ -873,6 +1114,7 @@ msgstr "تاريخ بداية الدورة في المركز"
 msgid "Round end date"
 msgstr ""
 
+<<<<<<< HEAD
 #: student_registration/alp/models.py:64
 #: student_registration/enrollments/forms.py:294
 #: student_registration/enrollments/forms.py:873
@@ -900,6 +1142,36 @@ msgstr "معيد/ة"
 #: student_registration/enrollments/models.py:1010
 #: student_registration/staffenroll/models.py:127
 #: student_registration/staffs/models.py:198
+=======
+#: .\student_registration\alp\models.py:64
+#: .\student_registration\enrollments\forms.py:294
+#: .\student_registration\enrollments\forms.py:873
+#: .\student_registration\enrollments\forms.py:909
+#: .\student_registration\enrollments\forms.py:1358
+#: .\student_registration\enrollments\models.py:79
+#: .\student_registration\enrollments\models.py:85
+#: .\student_registration\enrollments\models.py:710
+msgid "Graduated"
+msgstr "ناجح/ة"
+
+#: .\student_registration\alp\models.py:65
+#: .\student_registration\enrollments\forms.py:295
+#: .\student_registration\enrollments\forms.py:874
+#: .\student_registration\enrollments\forms.py:910
+#: .\student_registration\enrollments\forms.py:1359
+#: .\student_registration\enrollments\models.py:80
+#: .\student_registration\enrollments\models.py:86
+#: .\student_registration\enrollments\models.py:711
+msgid "Failed"
+msgstr "معيد/ة"
+
+#: .\student_registration\alp\models.py:96
+#: .\student_registration\alp\tables.py:126
+#: .\student_registration\enrollments\models.py:168
+#: .\student_registration\enrollments\models.py:1010
+#: .\student_registration\staffenroll\models.py:127
+#: .\student_registration\staffs\models.py:198
+>>>>>>> develop
 msgid "Created by"
 msgstr "انشأ من قبل"
 
@@ -1043,6 +1315,7 @@ msgstr "عدد التلامذة المسجلين في النظام"
 msgid "# Students reported by the Director"
 msgstr "عدد التلامذة المصرح عنهم من قبل المدير"
 
+<<<<<<< HEAD
 #: student_registration/alp/views.py:567
 #: student_registration/backends/tasks.py:37
 #: student_registration/backends/tasks.py:206
@@ -1072,6 +1345,39 @@ msgstr "القضاء"
 #: student_registration/enrollments/views.py:673
 #: student_registration/staffs/forms.py:141
 #: student_registration/staffs/models.py:271
+=======
+#: .\student_registration\alp\views.py:567
+#: .\student_registration\backends\tasks.py:37
+#: .\student_registration\backends\tasks.py:206
+#: .\student_registration\backends\tasks.py:358
+#: .\student_registration\backends\tasks.py:539
+#: .\student_registration\backends\tasks.py:910
+#: .\student_registration\clm\filters.py:20
+#: .\student_registration\clm\forms.py:132
+#: .\student_registration\clm\models.py:215
+#: .\student_registration\dashboard\views.py:247
+#: .\student_registration\dashboard\views.py:335
+#: .\student_registration\enrollments\views.py:625
+#: .\student_registration\enrollments\views.py:672
+msgid "District"
+msgstr "القضاء"
+
+#: .\student_registration\alp\views.py:568
+#: .\student_registration\backends\tasks.py:38
+#: .\student_registration\backends\tasks.py:207
+#: .\student_registration\backends\tasks.py:359
+#: .\student_registration\backends\tasks.py:540
+#: .\student_registration\backends\tasks.py:911
+#: .\student_registration\clm\filters.py:19
+#: .\student_registration\clm\forms.py:125
+#: .\student_registration\clm\models.py:209
+#: .\student_registration\dashboard\views.py:248
+#: .\student_registration\dashboard\views.py:336
+#: .\student_registration\enrollments\views.py:626
+#: .\student_registration\enrollments\views.py:673
+#: .\student_registration\staffs\forms.py:141
+#: .\student_registration\staffs\models.py:271
+>>>>>>> develop
 msgid "Governorate"
 msgstr "المحافظة"
 
@@ -1139,6 +1445,7 @@ msgstr ""
 msgid "Exported by"
 msgstr ""
 
+<<<<<<< HEAD
 #: student_registration/backends/tasks.py:35
 #: student_registration/backends/tasks.py:204
 #: student_registration/backends/tasks.py:356
@@ -1159,6 +1466,28 @@ msgstr "رقم المدرسة"
 #: student_registration/staffenroll/models.py:121
 #: student_registration/staffenroll/models.py:204
 #: student_registration/users/models.py:62
+=======
+#: .\student_registration\backends\tasks.py:35
+#: .\student_registration\backends\tasks.py:204
+#: .\student_registration\backends\tasks.py:356
+#: .\student_registration\backends\tasks.py:535
+#: .\student_registration\backends\tasks.py:908
+#: .\student_registration\dashboard\views.py:245
+#: .\student_registration\dashboard\views.py:333
+#: .\student_registration\templates\dashboard\exporter.html:329
+msgid "School number"
+msgstr "رقم المدرسة"
+
+#: .\student_registration\backends\tasks.py:39
+#: .\student_registration\backends\tasks.py:208
+#: .\student_registration\enrollments\filters.py:34
+#: .\student_registration\enrollments\models.py:162
+#: .\student_registration\enrollments\models.py:1053
+#: .\student_registration\schools\models.py:599
+#: .\student_registration\staffenroll\models.py:121
+#: .\student_registration\staffenroll\models.py:204
+#: .\student_registration\users\models.py:62
+>>>>>>> develop
 msgid "Education year"
 msgstr "السنة الدراسية"
 
@@ -1170,6 +1499,7 @@ msgstr "السنة الدراسية"
 msgid "Registration date"
 msgstr "تاريخ التسجيل"
 
+<<<<<<< HEAD
 #: student_registration/backends/tasks.py:42
 #: student_registration/backends/tasks.py:211
 #: student_registration/backends/tasks.py:362
@@ -1232,6 +1562,70 @@ msgstr "يوم"
 #: student_registration/staffs/forms.py:71
 #: student_registration/staffs/models.py:175
 #: student_registration/students/models.py:218
+=======
+#: .\student_registration\backends\tasks.py:42
+#: .\student_registration\backends\tasks.py:211
+#: .\student_registration\backends\tasks.py:362
+#: .\student_registration\backends\tasks.py:913
+#: .\student_registration\dashboard\views.py:250
+#: .\student_registration\dashboard\views.py:338
+msgid "Student first name"
+msgstr "إسم التلميذ "
+
+#: .\student_registration\backends\tasks.py:43
+#: .\student_registration\backends\tasks.py:212
+#: .\student_registration\backends\tasks.py:363
+#: .\student_registration\backends\tasks.py:914
+#: .\student_registration\dashboard\views.py:251
+#: .\student_registration\dashboard\views.py:339
+msgid "Student father name"
+msgstr "إسم الاب "
+
+#: .\student_registration\backends\tasks.py:44
+#: .\student_registration\backends\tasks.py:213
+#: .\student_registration\backends\tasks.py:364
+#: .\student_registration\backends\tasks.py:915
+#: .\student_registration\dashboard\views.py:252
+#: .\student_registration\dashboard\views.py:340
+msgid "Student last name"
+msgstr " الشهرة "
+
+#: .\student_registration\backends\tasks.py:47
+#: .\student_registration\backends\tasks.py:216
+#: .\student_registration\backends\tasks.py:367
+#: .\student_registration\backends\tasks.py:918
+#: .\student_registration\dashboard\views.py:255
+#: .\student_registration\dashboard\views.py:343
+msgid "year"
+msgstr "سنة"
+
+#: .\student_registration\backends\tasks.py:48
+#: .\student_registration\backends\tasks.py:217
+#: .\student_registration\backends\tasks.py:368
+#: .\student_registration\backends\tasks.py:919
+#: .\student_registration\dashboard\views.py:256
+#: .\student_registration\dashboard\views.py:344
+msgid "month"
+msgstr "شهر"
+
+#: .\student_registration\backends\tasks.py:49
+#: .\student_registration\backends\tasks.py:218
+#: .\student_registration\backends\tasks.py:369
+#: .\student_registration\backends\tasks.py:920
+#: .\student_registration\dashboard\views.py:257
+#: .\student_registration\dashboard\views.py:345
+msgid "day"
+msgstr "يوم"
+
+#: .\student_registration\backends\tasks.py:50
+#: .\student_registration\backends\tasks.py:921
+#: .\student_registration\dashboard\views.py:258
+#: .\student_registration\dashboard\views.py:346
+#: .\student_registration\enrollments\forms.py:248
+#: .\student_registration\staffs\forms.py:71
+#: .\student_registration\staffs\models.py:175
+#: .\student_registration\students\models.py:218
+>>>>>>> develop
 msgid "Place of birth"
 msgstr "مكان الولادة "
 
@@ -1240,6 +1634,7 @@ msgstr "مكان الولادة "
 msgid "Student ID Type"
 msgstr "نوع البطاقة الخاصة بالتلميذ"
 
+<<<<<<< HEAD
 #: student_registration/backends/tasks.py:55
 #: student_registration/backends/tasks.py:375
 #: student_registration/backends/tasks.py:925
@@ -1254,6 +1649,22 @@ msgstr "رقم البطاقة الخاصة بالتلميذ"
 #: student_registration/backends/tasks.py:926
 #: student_registration/dashboard/views.py:260
 #: student_registration/dashboard/views.py:349
+=======
+#: .\student_registration\backends\tasks.py:55
+#: .\student_registration\backends\tasks.py:375
+#: .\student_registration\backends\tasks.py:925
+#: .\student_registration\dashboard\views.py:261
+#: .\student_registration\dashboard\views.py:350
+msgid "Student ID Number"
+msgstr "رقم البطاقة الخاصة بالتلميذ"
+
+#: .\student_registration\backends\tasks.py:56
+#: .\student_registration\backends\tasks.py:219
+#: .\student_registration\backends\tasks.py:376
+#: .\student_registration\backends\tasks.py:926
+#: .\student_registration\dashboard\views.py:262
+#: .\student_registration\dashboard\views.py:351
+>>>>>>> develop
 msgid "Student nationality"
 msgstr "جنسية التلميذ"
 
@@ -1262,6 +1673,7 @@ msgstr "جنسية التلميذ"
 msgid "Student living address"
 msgstr "البلدة مكان السكن "
 
+<<<<<<< HEAD
 #: student_registration/backends/tasks.py:61
 #: student_registration/backends/tasks.py:222
 #: student_registration/backends/tasks.py:929
@@ -1284,6 +1696,30 @@ msgstr ""
 #: student_registration/backends/tasks.py:64
 #: student_registration/backends/tasks.py:932
 #: student_registration/dashboard/views.py:264
+=======
+#: .\student_registration\backends\tasks.py:61
+#: .\student_registration\backends\tasks.py:222
+#: .\student_registration\backends\tasks.py:929
+#: .\student_registration\dashboard\views.py:264
+#: .\student_registration\dashboard\views.py:354
+#: .\student_registration\enrollments\forms.py:236
+#: .\student_registration\enrollments\forms.py:1554
+#: .\student_registration\enrollments\models.py:156
+#: .\student_registration\enrollments\models.py:1047
+#: .\student_registration\staffenroll\models.py:109
+msgid "Current Class"
+msgstr "الصف الحالي"
+
+#: .\student_registration\backends\tasks.py:63
+#: .\student_registration\backends\tasks.py:931
+#: .\student_registration\dashboard\views.py:265
+msgid "Last attendance date"
+msgstr ""
+
+#: .\student_registration\backends\tasks.py:64
+#: .\student_registration\backends\tasks.py:932
+#: .\student_registration\dashboard\views.py:266
+>>>>>>> develop
 msgid "Last absent date"
 msgstr ""
 
@@ -1337,6 +1773,7 @@ msgstr " معلومات سابقة - آخر دورة  تعليم غير نظام
 msgid "Last non formal education - result"
 msgstr "معلومات سابقة - آخر نتيجة في التعليم غير النظامي "
 
+<<<<<<< HEAD
 #: student_registration/backends/tasks.py:91
 #: student_registration/backends/tasks.py:247
 #: student_registration/dashboard/views.py:266
@@ -1354,6 +1791,25 @@ msgstr "اخر تاريخ انتقل فيه"
 #: student_registration/enrollments/forms.py:1354
 #: student_registration/enrollments/models.py:417
 #: student_registration/enrollments/models.py:852
+=======
+#: .\student_registration\backends\tasks.py:91
+#: .\student_registration\backends\tasks.py:247
+#: .\student_registration\dashboard\views.py:268
+#: .\student_registration\enrollments\models.py:518
+msgid "dropout date"
+msgstr " تاريخ التسرب "
+
+#: .\student_registration\backends\tasks.py:94
+#: .\student_registration\dashboard\views.py:270
+msgid "last moved date"
+msgstr "اخر تاريخ انتقل فيه"
+
+#: .\student_registration\backends\tasks.py:224
+#: .\student_registration\enrollments\forms.py:869
+#: .\student_registration\enrollments\forms.py:1354
+#: .\student_registration\enrollments\models.py:417
+#: .\student_registration\enrollments\models.py:852
+>>>>>>> develop
 msgid "Student status"
 msgstr "وضع التلميذ"
 
@@ -1365,6 +1821,7 @@ msgstr "وضع التلميذ"
 msgid "Final Grade"
 msgstr "العلامة النهائية"
 
+<<<<<<< HEAD
 #: student_registration/backends/tasks.py:226
 #: student_registration/enrollments/models.py:859
 msgid "Term"
@@ -1472,6 +1929,115 @@ msgstr "تربية"
 #: student_registration/enrollments/forms.py:1008
 #: student_registration/enrollments/forms.py:1102
 #: student_registration/enrollments/models.py:726
+=======
+#: .\student_registration\backends\tasks.py:226
+#: .\student_registration\enrollments\models.py:859
+msgid "Term"
+msgstr "الفصل "
+
+#: .\student_registration\backends\tasks.py:228
+#: .\student_registration\enrollments\forms.py:1214
+#: .\student_registration\enrollments\models.py:355
+#: .\student_registration\enrollments\models.py:790
+msgid "Linguistic field/Arabic"
+msgstr "المجال اللغوي/عربي"
+
+#: .\student_registration\backends\tasks.py:229
+#: .\student_registration\enrollments\forms.py:1226
+#: .\student_registration\enrollments\models.py:370
+#: .\student_registration\enrollments\models.py:805
+msgid "Sociology field"
+msgstr "المجال الاجتماعي"
+
+#: .\student_registration\backends\tasks.py:230
+#: .\student_registration\enrollments\forms.py:1232
+#: .\student_registration\enrollments\models.py:378
+#: .\student_registration\enrollments\models.py:813
+msgid "Physical field"
+msgstr "مجال الرياضة البدنية والجسدية"
+
+#: .\student_registration\backends\tasks.py:231
+#: .\student_registration\enrollments\forms.py:1238
+#: .\student_registration\enrollments\models.py:386
+#: .\student_registration\enrollments\models.py:821
+msgid "Artistic field"
+msgstr "المجال الفني"
+
+#: .\student_registration\backends\tasks.py:232
+#: .\student_registration\enrollments\forms.py:1220
+#: .\student_registration\enrollments\models.py:362
+#: .\student_registration\enrollments\models.py:797
+msgid "Linguistic field/Foreign language"
+msgstr "المجال الغوي/لغة اجنبية"
+
+#: .\student_registration\backends\tasks.py:233
+#: .\student_registration\enrollments\forms.py:1244
+#: .\student_registration\enrollments\models.py:394
+#: .\student_registration\enrollments\models.py:829
+msgid "Scientific domain/Mathematics"
+msgstr "المجال العلمي/رياضيات"
+
+#: .\student_registration\backends\tasks.py:234
+#: .\student_registration\enrollments\forms.py:1250
+#: .\student_registration\enrollments\models.py:402
+#: .\student_registration\enrollments\models.py:837
+msgid "Scientific domain/Sciences"
+msgstr "المجال العلمي/علوم"
+
+#: .\student_registration\backends\tasks.py:236
+#: .\student_registration\enrollments\forms.py:1144
+#: .\student_registration\enrollments\models.py:347
+#: .\student_registration\enrollments\models.py:782
+msgid "Biology"
+msgstr "علوم الحياة"
+
+#: .\student_registration\backends\tasks.py:237
+#: .\student_registration\enrollments\forms.py:1138
+#: .\student_registration\enrollments\models.py:340
+#: .\student_registration\enrollments\models.py:775
+msgid "Chemistry"
+msgstr "كيمياء"
+
+#: .\student_registration\backends\tasks.py:238
+#: .\student_registration\enrollments\forms.py:1132
+#: .\student_registration\enrollments\models.py:333
+#: .\student_registration\enrollments\models.py:768
+msgid "Physic"
+msgstr "فيزياء"
+
+#: .\student_registration\backends\tasks.py:241
+#: .\student_registration\enrollments\forms.py:1120
+#: .\student_registration\enrollments\models.py:312
+#: .\student_registration\enrollments\models.py:747
+msgid "History"
+msgstr "تاريخ"
+
+#: .\student_registration\backends\tasks.py:242
+#: .\student_registration\enrollments\forms.py:929
+#: .\student_registration\enrollments\forms.py:1020
+#: .\student_registration\enrollments\forms.py:1114
+#: .\student_registration\enrollments\models.py:305
+#: .\student_registration\enrollments\models.py:740
+msgid "Geography"
+msgstr "جغرافيا"
+
+#: .\student_registration\backends\tasks.py:243
+#: .\student_registration\enrollments\forms.py:924
+#: .\student_registration\enrollments\forms.py:1014
+#: .\student_registration\enrollments\forms.py:1108
+#: .\student_registration\enrollments\models.py:298
+#: .\student_registration\enrollments\models.py:733
+msgid "Education"
+msgstr "تربية"
+
+#: .\student_registration\backends\tasks.py:244
+#: .\student_registration\backends\tasks.py:385
+#: .\student_registration\backends\tasks.py:397
+#: .\student_registration\enrollments\forms.py:919
+#: .\student_registration\enrollments\forms.py:1008
+#: .\student_registration\enrollments\forms.py:1102
+#: .\student_registration\enrollments\models.py:726
+>>>>>>> develop
 msgid "Foreign language"
 msgstr "لغة اجنبية"
 
@@ -1516,8 +2082,13 @@ msgstr "نوع المدرسة"
 msgid "Education year/ALP round"
 msgstr "دورة ALP /السنة الدراسية"
 
+<<<<<<< HEAD
 #: student_registration/backends/tasks.py:542
 #: student_registration/dashboard/views.py:354
+=======
+#: .\student_registration\backends\tasks.py:542
+#: .\student_registration\dashboard\views.py:356
+>>>>>>> develop
 msgid "Attendance date"
 msgstr " تاريخ الحضور"
 
@@ -2489,12 +3060,21 @@ msgstr ""
 msgid "Learning result"
 msgstr " نتيجة التعلم"
 
+<<<<<<< HEAD
 #: student_registration/clm/models.py:239
 #: student_registration/enrollments/admin.py:462
 #: student_registration/enrollments/models.py:913
 #: student_registration/templates/alp/test_grading.html:19
 #: student_registration/templates/enrollments/grading.html:18
 #: student_registration/templates/enrollments/moved.html:18
+=======
+#: .\student_registration\clm\models.py:234
+#: .\student_registration\enrollments\admin.py:462
+#: .\student_registration\enrollments\models.py:913
+#: .\student_registration\templates\alp\test_grading.html:19
+#: .\student_registration\templates\enrollments\grading.html:18
+#: .\student_registration\templates\enrollments\moved.html:18
+>>>>>>> develop
 msgid "Student"
 msgstr "التلميذ"
 
@@ -2824,8 +3404,13 @@ msgstr ""
 msgid "Child MUAC"
 msgstr ""
 
+<<<<<<< HEAD
 #: student_registration/clm/models.py:1607
 #: student_registration/enrollments/models.py:920
+=======
+#: .\student_registration\clm\models.py:1595
+#: .\student_registration\enrollments\models.py:920
+>>>>>>> develop
 msgid "Enrollment"
 msgstr "التسجيل"
 
@@ -2974,6 +3559,7 @@ msgstr ""
 msgid "Psychomotor Development - Improvement"
 msgstr ""
 
+<<<<<<< HEAD
 #: student_registration/dashboard/views.py:265
 msgid "dropout status"
 msgstr ""
@@ -3011,6 +3597,45 @@ msgstr "اخر السنة "
 #: student_registration/enrollments/models.py:898
 #: student_registration/templates/enrollments/list.html:49
 #: student_registration/templates/staffs/list.html:49
+=======
+#: .\student_registration\dashboard\views.py:267
+msgid "dropout status"
+msgstr ""
+
+#: .\student_registration\dashboard\views.py:269
+msgid "moved"
+msgstr "انتقل"
+
+#: .\student_registration\dashboard\views.py:357
+msgid "Is Present"
+msgstr "حاضر"
+
+#: .\student_registration\enrollments\admin.py:267
+#: .\student_registration\enrollments\models.py:895
+#: .\student_registration\templates\enrollments\list.html:46
+#: .\student_registration\templates\staffs\list.html:46
+msgid "Term1"
+msgstr " الفصل الاول "
+
+#: .\student_registration\enrollments\admin.py:268
+#: .\student_registration\enrollments\models.py:896
+#: .\student_registration\templates\enrollments\list.html:47
+#: .\student_registration\templates\staffs\list.html:47
+msgid "Term2"
+msgstr " الفصل الثاني "
+
+#: .\student_registration\enrollments\admin.py:269
+#: .\student_registration\enrollments\models.py:897
+#: .\student_registration\templates\enrollments\list.html:48
+#: .\student_registration\templates\staffs\list.html:48
+msgid "Term3"
+msgstr "اخر السنة "
+
+#: .\student_registration\enrollments\admin.py:270
+#: .\student_registration\enrollments\models.py:898
+#: .\student_registration\templates\enrollments\list.html:49
+#: .\student_registration\templates\staffs\list.html:49
+>>>>>>> develop
 msgid "Term4"
 msgstr "  الاكمال "
 
@@ -3090,10 +3715,17 @@ msgstr "تاريخ التصديق"
 msgid "Document Number"
 msgstr "رقم المستند"
 
+<<<<<<< HEAD
 #: student_registration/enrollments/forms.py:393
 #: student_registration/enrollments/models.py:544
 #: student_registration/templates/enrollments/clear_images.html:72
 #: student_registration/templates/enrollments/modifying_images.html:147
+=======
+#: .\student_registration\enrollments\forms.py:393
+#: .\student_registration\enrollments\models.py:544
+#: .\student_registration\templates\enrollments\clear_images.html:72
+#: .\student_registration\templates\enrollments\modifying_images.html:165
+>>>>>>> develop
 msgid "picture of previous education"
 msgstr "صورة عن التعليم السابق"
 
@@ -3111,10 +3743,17 @@ msgid ""
 "informal)"
 msgstr "تفاصيل المستند الذي يثبت اخر سنة دراسية - نظامي أو غير نظامي"
 
+<<<<<<< HEAD
 #: student_registration/enrollments/forms.py:693
 #: student_registration/templates/students/imagestd.html:53
 #: student_registration/templates/students/imagestd.html:93
 #: student_registration/templates/students/imagestd.html:116
+=======
+#: .\student_registration\enrollments\forms.py:693
+#: .\student_registration\templates\students\imagestd.html:53
+#: .\student_registration\templates\students\imagestd.html:93
+#: .\student_registration\templates\students\imagestd.html:116
+>>>>>>> develop
 msgid "The name of file should not be in arabic"
 msgstr "الرجاء, تعبئة إسم الملف باللغة الأجنبية"
 
@@ -3150,9 +3789,15 @@ msgstr "و"
 msgid "G"
 msgstr ""
 
+<<<<<<< HEAD
 #: student_registration/enrollments/forms.py:911
 #: student_registration/enrollments/models.py:87
 #: student_registration/enrollments/models.py:712
+=======
+#: .\student_registration\enrollments\forms.py:911
+#: .\student_registration\enrollments\models.py:87
+#: .\student_registration\enrollments\models.py:712
+>>>>>>> develop
 msgid "Uncompleted"
 msgstr "اكمال"
 
@@ -3166,6 +3811,7 @@ msgstr "اكمال"
 msgid "Cycle 1 max grade"
 msgstr " / (أ...و) "
 
+<<<<<<< HEAD
 #: student_registration/enrollments/forms.py:944
 #: student_registration/enrollments/forms.py:1038
 #: student_registration/enrollments/forms.py:1150
@@ -3180,6 +3826,22 @@ msgstr "مجموع العلامات"
 #: student_registration/templates/enrollments/clear_images.html:56
 #: student_registration/templates/enrollments/modifying_images.html:83
 #: student_registration/templates/students/imagestd.html:79
+=======
+#: .\student_registration\enrollments\forms.py:944
+#: .\student_registration\enrollments\forms.py:1038
+#: .\student_registration\enrollments\forms.py:1150
+#: .\student_registration\enrollments\forms.py:1256
+#: .\student_registration\enrollments\models.py:844
+msgid "Total Grade"
+msgstr "مجموع العلامات"
+
+#: .\student_registration\enrollments\forms.py:1666
+#: .\student_registration\enrollments\models.py:526
+#: .\student_registration\students\models.py:382
+#: .\student_registration\templates\enrollments\clear_images.html:56
+#: .\student_registration\templates\enrollments\modifying_images.html:83
+#: .\student_registration\templates\students\imagestd.html:79
+>>>>>>> develop
 msgid "Document Type"
 msgstr "نوع البطاقة الخاصة بالتلميذ"
 
@@ -3249,6 +3911,7 @@ msgstr "رقم المستند"
 msgid "Justification Number"
 msgstr "المعلومات الشخصية للطفل"
 
+<<<<<<< HEAD
 #: student_registration/enrollments/models.py:927
 msgid "From school"
 msgstr "المدرسة السابقة"
@@ -3271,6 +3934,30 @@ msgstr "المستوى "
 
 #: student_registration/enrollments/tables.py:17
 #: student_registration/templates/enrollments/student_profile.html:11
+=======
+#: .\student_registration\enrollments\models.py:927
+msgid "From school"
+msgstr "المدرسة السابقة"
+
+#: .\student_registration\enrollments\models.py:933
+msgid "To school"
+msgstr "الى مدرسة "
+
+#: .\student_registration\enrollments\models.py:943
+msgid "Moved date"
+msgstr "تاريخ الانتقال"
+
+#: .\student_registration\enrollments\models.py:1024
+msgid "Coordinator"
+msgstr "اسم المنسق الميداني"
+
+#: .\student_registration\enrollments\models.py:1035
+msgid "Class Level"
+msgstr "المستوى "
+
+#: .\student_registration\enrollments\tables.py:17
+#: .\student_registration\templates\enrollments\student_profile.html:11
+>>>>>>> develop
 msgid "Images"
 msgstr "الصور"
 
@@ -3898,11 +4585,19 @@ msgstr "مستعان به"
 msgid "Minister Approved"
 msgstr "موافقة الوزير"
 
+<<<<<<< HEAD
 #: student_registration/staffs/models.py:130
 #: student_registration/staffs/models.py:131
 #: student_registration/students/models.py:368
 #: student_registration/students/models.py:369
 #: student_registration/templates/students/imagestd.html:44
+=======
+#: .\student_registration\staffs\models.py:130
+#: .\student_registration\staffs\models.py:131
+#: .\student_registration\students\models.py:368
+#: .\student_registration\students\models.py:369
+#: .\student_registration\templates\students\imagestd.html:44
+>>>>>>> develop
 msgid "Profile Picture"
 msgstr "الصورة الشمسية"
 
@@ -3952,10 +4647,17 @@ msgstr "تفاصيل الاحتياجات الخاصة"
 msgid "Identification picture"
 msgstr "المعلومات الشخصية للطفل"
 
+<<<<<<< HEAD
 #: student_registration/students/models.py:409
 #: student_registration/templates/enrollments/clear_images.html:64
 #: student_registration/templates/enrollments/modifying_images.html:114
 #: student_registration/templates/students/imagestd.html:107
+=======
+#: .\student_registration\students\models.py:409
+#: .\student_registration\templates\enrollments\clear_images.html:64
+#: .\student_registration\templates\enrollments\modifying_images.html:132
+#: .\student_registration\templates\students\imagestd.html:107
+>>>>>>> develop
 msgid "UNHCR picture"
 msgstr ""
 "صورة عن بطاقة العائلة لدى المفوضية السامية للأمم المتحدة لشؤون اللاجئين "
@@ -4586,7 +5288,11 @@ msgstr "الحضور"
 msgid "Full data export"
 msgstr ""
 
+<<<<<<< HEAD
 #: student_registration/templates/dashboard/exporter.html:278
+=======
+#: .\student_registration\templates\dashboard\exporter.html:331
+>>>>>>> develop
 msgid "De-Generate List"
 msgstr ""
 
@@ -4662,6 +5368,7 @@ msgstr "تأكيد"
 msgid "Are you sure you want to delete this student?"
 msgstr "هل انت متأكد انك تريد حذف هذا التلميذ؟"
 
+<<<<<<< HEAD
 #: student_registration/templates/django_tables2/clm_delete_column.html:6
 #: student_registration/templates/django_tables2/delete_column.html:5
 #: student_registration/templates/enrollments/delete_column.html:6
@@ -4670,6 +5377,16 @@ msgstr "هل انت متأكد انك تريد حذف هذا التلميذ؟"
 #: student_registration/templates/enrollments/modifying_images.html:124
 #: student_registration/templates/enrollments/modifying_images.html:160
 #: student_registration/templates/staffenroll/delete_column.html:6
+=======
+#: .\student_registration\templates\django_tables2\clm_delete_column.html:6
+#: .\student_registration\templates\django_tables2\delete_column.html:5
+#: .\student_registration\templates\enrollments\delete_column.html:6
+#: .\student_registration\templates\enrollments\modifying_images.html:60
+#: .\student_registration\templates\enrollments\modifying_images.html:94
+#: .\student_registration\templates\enrollments\modifying_images.html:142
+#: .\student_registration\templates\enrollments\modifying_images.html:178
+#: .\student_registration\templates\staffenroll\delete_column.html:6
+>>>>>>> develop
 msgid "Delete"
 msgstr "حذف"
 
@@ -4737,12 +5454,28 @@ msgstr ""
 msgid "Enter moved date"
 msgstr " انقر هنا لادخال التاريخ"
 
+<<<<<<< HEAD
 #: student_registration/templates/enrollments/clear_images.html:39
 #: student_registration/templates/enrollments/modifying_images.html:40
 msgid "Modifying Images"
 msgstr ""
 
 #: student_registration/templates/enrollments/grading.html:38
+=======
+#: .\student_registration\templates\enrollments\clear_images.html:39
+#: .\student_registration\templates\enrollments\modifying_images.html:40
+msgid "Modifying Images"
+msgstr ""
+
+#: .\student_registration\templates\enrollments\clear_images.html:49
+#: .\student_registration\templates\enrollments\modifying_images.html:50
+#, fuzzy
+#| msgid "School Profile"
+msgid "Profile"
+msgstr "ملف المدرسة"
+
+#: .\student_registration\templates\enrollments\grading.html:38
+>>>>>>> develop
 msgid "Grading Term 1"
 msgstr "علامات الفصل الاول"
 
@@ -4774,7 +5507,11 @@ msgstr "كل الفصول "
 msgid "Search moved student"
 msgstr "بحث خاص بانتقال تلميذ من مدرسة اخرى خلال العام الدراسي نفسه "
 
+<<<<<<< HEAD
 #: student_registration/templates/enrollments/moved.html:24
+=======
+#: .\student_registration\templates\enrollments\moved.html:24
+>>>>>>> develop
 msgid "Student mother fullname"
 msgstr "إسم الام الثلاثي"
 
@@ -4794,8 +5531,18 @@ msgstr "المدرسة السابقة"
 msgid "Previous situation"
 msgstr "الوضع السابق"
 
+<<<<<<< HEAD
 #: student_registration/templates/enrollments/student_profile.html:22
 msgid "Clear Pic"
+=======
+#: .\student_registration\templates\enrollments\student_profile.html:22
+msgid "Clear Pic"
+msgstr ""
+
+#: .\student_registration\templates\header.html:49
+#: .\student_registration\templates\helpdesk\navigation.html:8
+msgid "Compiler"
+>>>>>>> develop
 msgstr ""
 
 #: student_registration/templates/header.html:13
@@ -4967,6 +5714,7 @@ msgstr "هل انت متأكد انك تريد حذف هذا التلميذ؟"
 msgid "Add New"
 msgstr "أضف طفل"
 
+<<<<<<< HEAD
 #: student_registration/templates/students/imagestd.html:134
 msgid "upload"
 msgstr "تحميل ملف"
@@ -5031,6 +5779,24 @@ msgstr ""
 
 #: student_registration/users/admin.py:67
 #: student_registration/users/admin.py:76
+=======
+#: .\student_registration\templates\students\imagestd.html:134
+msgid "upload"
+msgstr "تحميل ملف"
+
+#: .\student_registration\users\admin.py:64
+#: .\student_registration\users\admin.py:73
+msgid "Personal info"
+msgstr "المعلومات الشخصية"
+
+#: .\student_registration\users\admin.py:65
+#: .\student_registration\users\admin.py:74
+msgid "Permissions"
+msgstr ""
+
+#: .\student_registration\users\admin.py:67
+#: .\student_registration\users\admin.py:76
+>>>>>>> develop
 msgid "Important dates"
 msgstr "التواريخ المهمة"
 
@@ -5038,6 +5804,7 @@ msgstr "التواريخ المهمة"
 msgid "User"
 msgstr ""
 
+<<<<<<< HEAD
 #, fuzzy
 #~| msgid "Child Information"
 #~ msgid "Round Information"
@@ -5052,6 +5819,8 @@ msgstr ""
 #~ msgid "Utilities"
 #~ msgstr "خدمات"
 
+=======
+>>>>>>> develop
 #~ msgid "ID Picture"
 #~ msgstr "صورة عن وثيقة الولادة"
 
