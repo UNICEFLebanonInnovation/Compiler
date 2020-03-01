@@ -199,7 +199,7 @@
           </div>
 
           <div class="col-sm-4">
-            <form id="attendance-form" action="{% url 'dashboard:list_of_attendance' %}" method="GET">
+            <form id="summary-attendance-form" action="{% url 'dashboard:export-summary-attendance' %}" method="GET">
             <div class="card m-3">
               <div class="card-block">
                 <h3 class="card-title">Total of attend and absent days per students</h3>
@@ -229,22 +229,13 @@
                           <label class="control-label  pull-left" for="att_todate"><b>To Date</b></label>
 				                  <input type="date" name="att_todate">
 			                </div>
-                      <br><br><br>
-                      <div>
-                         <input type="radio" id="rb_all" name="rb_option" value="rb_all" >
-                         <label for="male">ALL</label><br>
-                         <input type="radio" id="rb_nozero_attend" name="rb_option" value="rb_nozero_attend">
-                         <label for="rb_nozero_attend">No Zero Attend</label><br>
-                         <input type="radio" id="rb_zero_attend" name="rb_option" value="rb_zero_attend">
-                         <label for="rb_zero_attend">Zero Attend only</label><br>
-                      </div>
                     </td>
                   </tr>
                 </table>
                  <br>
                 <div style="background-color:#D1D3D4">
                     <p class="card-text">Total of attend and absent days per students</p>
-                    <input class="btn btn-primary" type="submit" value="Preview" name="btn_lastattendance" id="btn_totalattendances"/>
+                    <input class="btn btn-primary" type="submit" value="Excel" name="btn_lastattendance" id="btn_lastattendance_excel"/>
                 </div>
               </div>
             </div>

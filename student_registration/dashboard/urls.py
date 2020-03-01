@@ -133,6 +133,11 @@ urlpatterns = [
         name='run-list-justification'
     ),
     url(
+        regex=r'^run-list-justification-sec/$',
+        view=views.List_Justification_BySection.as_view(),
+        name='run-list-justification-sec'
+    ),
+    url(
         regex=r'^run-generate-justification/$',
         view=views.Generate_Justification_number,
         name='run-generate-justification'
@@ -148,9 +153,9 @@ urlpatterns = [
         name='degenerate-list-justification'
     ),
     url(
-        regex=r'^list-of-attendance/$',
-        view=views.List_of_Attendance.as_view(),
-        name='list_of_attendance'
+        regex=r'^export-summary-attendance/$',
+        view=views.export_summary_of_Attendance,
+        name='export-summary-attendance'
     ),
 
 ]
