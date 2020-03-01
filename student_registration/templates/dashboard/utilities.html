@@ -31,15 +31,22 @@
               <div class="card-block">
                 <h3 class="card-title">Students list</h3>
                 <p class="card-text">Generate the justification number for the school  and lock the data</p>
-
                 <div class="btn-group">
-                    <a href="{% url 'dashboard:run-list-justification' %}" class="btn btn-info">{% trans 'Draft of student list' %}</a>
+                    <a href="{% url 'dashboard:run-list-justification' %}" class="btn btn-info">مسودة اللوائح الاسمية النهائية بحسب الصف</a>
                 </div>
-
+                <br><br>
+                <div class="btn-group">
+                    <a href="{% url 'dashboard:run-list-justification-sec' %}" class="btn btn-info">مسودة اللوائح الاسمية النهائية بحسب الشعب</a>
+                </div>
                 <hr>
-
                 <div class="btn-group" >
-                   <a href="#mymodal"   role="button"   class="btn btn-large btn-primary" data-toggle="modal"  ><font color ="lime" size="4">{% trans 'Last copy' %}</font></a>
+                   <a href="#mymodal"   role="button"   class="btn btn-large btn-primary" data-toggle="modal"  ><font color ="lime" size="4">نسخة اللوائح الاسمية النهائية للمنطقة التربوية (للتبرير)</font></a>
+                  <br><br><br>
+                   <div>
+                  <small><font color="red" size="3">
+                    عند الضغط على هذا الزر, يصار الى خلق رقم ملف و من ثمّ عليك إعادة طباعة التقرير حسب الصف لتسليمها للمنطقة التربوية
+                  </font></small>
+                     </div>
                   <br><br>
 
                      <table border="1">
