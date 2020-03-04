@@ -12,15 +12,14 @@
 {% endblock %}
 
 {% block content-full-page-ar %}
-
+      {% if not request.user|has_group:"ADMIN_RE" %}
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><span class="badge badge-primary">{{ table.rows|length }}</span></li>
             <li class="breadcrumb-item">{{ request.user.school }}</li>
             <li class="breadcrumb-item">{{ request.user.school.location }}</li>
             <li class="breadcrumb-item">{{ request.user.school.location.parent }}</li>
         </ol>
-
-        <ol class="breadcrumb">
+         <ol class="breadcrumb">
           {% if request.user|has_group:"ENROL_CREATE" %}
           <li class="breadcrumb-item">
                 <a href="{% url "enrollments:add" %}" class="btn btn-success">
@@ -28,7 +27,7 @@
                     {% trans "Add new Student" %}
                 </a>
           </li>
-        {% endif %}
+          {% endif %}
           <li class="breadcrumb-item">
             <a class="btn btn-info export-info" href="{% url "enrollments:export" %}" target="_blank">
                 <i class="icon-export-sign icon-white"></i>&nbsp;
@@ -41,6 +40,7 @@
                   <i class="icon-export-sign icon-white"></i>&nbsp;
                   {% trans "Export students grading" %}
               </button>
+
               <div class="dropdown-menu">
                 <a class="dropdown-item export-grading" href="{% url "enrollments:export_grading" %}" target="_blank" itemscope="">{% trans 'All Terms' %}</a>
                 <a class="dropdown-item export-grading1" href="{% url "enrollments:export_grading" %}" target="_blank" itemscope="1">{% trans 'Term1' %}</a>
@@ -49,12 +49,12 @@
                 <a class="dropdown-item export-grading4" href="{% url "enrollments:export_grading" %}" target="_blank" itemscope="4">{% trans 'Term4' %}</a>
               </div>
             </div>
-
           </li>
           <li class="breadcrumb-item">
               <input type="text" id="search_moved_student" size="400" style="width: 400px;" placeholder="{% trans "Search moved student" %}" />
           </li>
-        </ol>
+         </ol>
+        {% endif %}
         <div class="pb-5 pr-5 list-filter">
             <form action="" method="get" class="form form-inline">
                     {% bootstrap_form filter.form layout='inline' %}

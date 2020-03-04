@@ -56,7 +56,6 @@ class DuplicateStdResource(resources.ModelResource):
             'coordinator__name',
             'is_deleted',
             'enrollment__moved',
-
         )
 
 
@@ -131,6 +130,9 @@ class EnrollmentResource(resources.ModelResource):
             'dropout_status',
             'dropout_date',
             'disabled',
+            'is_justified',
+            'justified_date',
+            'justified_by',
         )
         export_order = fields
 
@@ -306,6 +308,9 @@ class EnrollmentAdmin(ImportExportModelAdmin):
                 'student_mother_nationality',
                 'student_phone_number',
                 'student_address',
+                'is_justified',
+                'justified_date',
+                'justified_by',
             )
         }),
         ('Current Situation', {
@@ -375,6 +380,9 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'last_absent_date',
         'created',
         'modified',
+        'is_justified',
+        'justified_date',
+        'justified_by',
     )
     list_filter = (
         'education_year',
@@ -413,6 +421,7 @@ class EnrollmentAdmin(ImportExportModelAdmin):
         'new_registry',
         'student_outreached',
         'have_barcode',
+        'is_justified',
     )
     search_fields = (
         'student__first_name',
