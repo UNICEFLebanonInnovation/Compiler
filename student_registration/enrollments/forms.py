@@ -324,7 +324,6 @@ class EnrollmentForm(forms.ModelForm):
         required=True, to_field_name='id',
         initial=27
     )
-   # student_is_justified = forms.BooleanField(required=False, label=_('Justified'))
     student_is_specialneeds = forms.BooleanField(required=False, label=_('Special Needs'))
     student_specialneeds = forms.ModelChoiceField(
         label=_('Special needs program'),
@@ -567,15 +566,9 @@ class EnrollmentForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                   # HTML('<div style="background-color:#e6f7ff"> '),
                     Div(
                         HTML('<h4 id="alternatives-to-hidden-labels">' + _('Special needs') + '</h4>')
                         ),
-                    #Div(
-                     #   HTML('<font color="red"><b>'),
-                      #  Div('student_is_justified', css_class='col-md-3'),
-                       # HTML('</b></font>'),
-                    # ),
                     Div(
                         HTML('<font color="green"><b>'),
                         Div('student_is_specialneeds', css_class='col-md-3'),
@@ -588,7 +581,6 @@ class EnrollmentForm(forms.ModelForm):
                     ),
                 ),
                 css_class='bd-callout bd-callout-warning child_data'
-               # HTML('</div>'),
             ),
             Fieldset(
                 None,
@@ -840,7 +832,6 @@ class EnrollmentForm(forms.ModelForm):
             'have_barcode',
             'age_min_restricted',
             'age_max_restricted',
-            #'student_is_justified',
             'student_is_specialneeds',
             'student_specialneeds',
             'student_specialneedsdt',
@@ -1685,4 +1676,517 @@ class Modify_Images_Form(forms.ModelForm):
         model = Student
         fields = (
             'std_image',
+        )
+
+
+class EnrollmentRegion_Form(forms.ModelForm):
+    new_registry = forms.ChoiceField(
+        label=_("First time registered?"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='no'
+    )
+    student_outreached = forms.ChoiceField(
+        label=_("Student outreached?"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    have_barcode = forms.ChoiceField(
+        label=_("Have barcode with him?"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    search_barcode = forms.CharField(
+        label=_("Search a barcode"),
+        widget=forms.TextInput,
+        required=False
+    )
+    search_student = forms.CharField(
+        label=_("Search a student"),
+        widget=forms.TextInput,
+        required=False
+    )
+    search_school = forms.ModelChoiceField(
+        label=_("Search by School"),
+        queryset=School.objects.all(), widget=forms.Select,
+        required=False, to_field_name='id',
+        initial=0
+    )
+
+    school_type = forms.ChoiceField(
+        label=_("School type"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('alp', _('ALP')),
+            ('2ndshift', _('2nd Shift')),
+        )
+    )
+    outreach_barcode = forms.RegexField(
+        label=_('Outreach barcode'),
+        regex=r'^([A-Z]{2})(\d{8})|(-(\d{1}))$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: AA11111111'}),
+        required=False
+    )
+    registration_date = forms.DateField(
+        label=_("Registration date"),
+        required=True
+    )
+    student_first_name = forms.CharField(
+        label=_("First name"),
+        widget=forms.TextInput, required=True
+    )
+    student_father_name = forms.CharField(
+        label=_("Father name"),
+        widget=forms.TextInput, required=True
+    )
+    student_last_name = forms.CharField(
+        label=_("Last name"),
+        widget=forms.TextInput, required=True
+    )
+    student_sex = forms.ChoiceField(
+        label=_("Sex"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('Male', _('Male')),
+            ('Female', _('Female')),
+        )
+    )
+    student_birthday_year = forms.ChoiceField(
+        label=_("Birthday year"),
+        widget=forms.Select, required=True,
+        choices=YEARS
+    )
+    student_birthday_month = forms.ChoiceField(
+        label=_("Birthday month"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('1', _('January')),
+            ('2', _('February')),
+            ('3', _('March')),
+            ('4', _('April')),
+            ('5', _('May')),
+            ('6', _('June')),
+            ('7', _('July')),
+            ('8', _('August')),
+            ('9', _('September')),
+            ('10', _('October')),
+            ('11', _('November')),
+            ('12', _('December')),
+        )
+    )
+    student_birthday_day = forms.ChoiceField(
+        label=_("Birthday day"),
+        widget=forms.Select, required=True,
+        choices=DAYS
+    )
+
+    student_nationality = forms.ModelChoiceField(
+        label=_("Nationality"),
+        queryset=Nationality.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+
+    student_mother_fullname = forms.CharField(
+        label=_("Mother fullname"),
+        widget=forms.TextInput, required=True
+    )
+    student_mother_nationality = forms.ModelChoiceField(
+        label=_("Mother nationality"),
+        queryset=Nationality.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    student_registered_in_unhcr = forms.ChoiceField(
+        label=_("Registered in UNHCR"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '-----------'),
+            (1, _("Yes")),
+            (0, _("No"))
+        )
+    )
+    student_id_type = forms.ModelChoiceField(
+        label=_("ID type"),
+        queryset=IDType.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id'
+    )
+    student_id_number = forms.CharField(
+        label=_("ID number - Cell 14"),
+        widget=forms.TextInput, required=True
+    )
+    student_phone_prefix = forms.CharField(
+        label=_("Phone prefix"),
+        widget=forms.TextInput(attrs=({'maxlength': 2})), required=True
+    )
+    student_phone = forms.CharField(
+        label=_("Phone number"),
+        widget=forms.TextInput(attrs=({'maxlength': 6})), required=True
+    )
+    student_address = forms.CharField(
+        label=_("Address"),
+        widget=forms.TextInput, required=True
+    )
+    student_place_of_birth = forms.CharField(
+        label=_("Place of birth"),
+        widget=forms.TextInput, required=False
+    )
+    student_recordnumber = forms.CharField(
+        label=_('Identity record number'),
+        widget=forms.TextInput, required=False
+    )
+    number_in_previous_school = forms.CharField(
+        label=_("Serial number in previous school"),
+        widget=forms.TextInput, required=False
+    )
+    student_unhcr_family = forms.RegexField(
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9][0-9][C]\d{5}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXCXXXXX'}),
+        required=False,
+        label=_('UNHCR Family Nb.'),
+    )
+    student_unhcr_personal = forms.RegexField(
+        label=_('UNHCR Personal Nb.'),
+        regex=r'^((245)|(380)|(568)|(705)|(781)|(909)|(947)|(954)|(LEB)|(leb))-[0-9]{8}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXX-XXXXXXXX'}),
+        required=False,
+    )
+    student_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    student_outreach_child = forms.CharField(widget=forms.HiddenInput, required=False)
+    age_min_restricted = forms.BooleanField(widget=forms.HiddenInput, required=False)
+    age_max_restricted = forms.BooleanField(widget=forms.HiddenInput, required=False)
+    documenttype = forms.ModelChoiceField(
+        label=_("Private Document Type"),
+        queryset=DocumentType.objects.all(), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
+    documentyear = forms.ModelChoiceField(
+        label=_("Document Year"),
+        queryset=EducationYear.objects.all(), widget=forms.Select,
+        required=False, to_field_name='id',
+    )
+    signature_cert_date = forms.DateField(
+        label=_("Signature Date"),
+        required=False
+    )
+    documentnumber = forms.CharField(
+        label=_('Document Number'),
+        required=False,
+        widget=forms.TextInput,
+    )
+    document_lastyear = forms.ImageField(
+        label=_('picture of previous education'),
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(EnrollmentRegion_Form, self).__init__(*args, **kwargs)
+
+        instance = kwargs['instance'] if 'instance' in kwargs else ''
+
+        display_registry = ''
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        str_image = ''
+        str_id = '-1'
+        if instance:
+            display_registry = ' d-none'
+            form_action = reverse('enrollments:edit_region', kwargs={'pk': instance.id})
+            if instance.student.std_image:
+                str_image = instance.student.std_image.url
+            if instance.student.id:
+                str_id = str(instance.student.id)
+
+        self.helper.form_action = form_action
+        self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Registry') + '</h4>')
+                ),
+                Div(
+                    'student_id',
+                    'enrollment_id',
+                    'student_outreach_child',
+                    'age_min_restricted',
+                    'age_max_restricted',
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('new_registry', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('student_outreached', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('have_barcode', css_class='col-md-3', css_id='have_barcode_option'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning'+display_registry, css_id='registry_block'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('search_barcode', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Search old student (fullname Or ID number)')+'</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('school_type', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('search_school', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('search_student', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_id='search_options', css_class='bd-callout bd-callout-warning'+display_registry
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Basic Data')+'</h4>')
+                ),
+                Div(
+                    HTML('<img src= '+str_image+' enctype=multipart/form-data  height="100" width="100">'),
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('registration_date', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default '+display_registry+'">2</span>'),
+                    Div('outreach_barcode', css_class='col-md-3'),
+                    HTML('<span style="padding-top: 25px;">' +
+                         _('The barcode is not required, enter a valid one or leave it empty') +
+                         '. <br/><a href="/static/images/barcode_example.png" target="_blank">' +
+                         _('Click to see the barcode') + '</a></span>'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('student_first_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('student_father_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('student_last_name', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('student_birthday_year', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('student_birthday_month', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('student_birthday_day', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('student_sex', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">10</span>'),
+                    Div('student_nationality', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">11</span>'),
+                    Div('student_mother_fullname', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">12</span>'),
+                    Div('student_mother_nationality', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">13</span>'),
+                    Div('student_registered_in_unhcr', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('student_id_type', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('student_id_number', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">15.1</span>'),
+                    Div('student_unhcr_family', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">15.2</span>'),
+                    Div('student_unhcr_personal', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">16</span>'),
+                    Div('student_phone_prefix', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">17</span>'),
+                    Div('student_phone', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">18</span>'),
+                    Div('student_address', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">19</span>'),
+                    Div('student_place_of_birth', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">20</span>'),
+                    Div('student_recordnumber', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">21</span>'),
+                    Div('number_in_previous_school', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">'
+                         + _('Details of the documents justifying the most recent school year (regular or informal)')
+                         + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('documenttype', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('documentyear', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('signature_cert_date', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('document_lastyear', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<font size="2px" color="red">'+_('The name of file should not be in arabic')+'</font>'),
+                ),
+                css_class='bd-callout bd-callout-warning child_data'
+            ),
+
+            FormActions(
+                Submit('save', _('Save'), css_class='child_data'),
+                HTML('<a class="btn btn-info cancel-button" href="/enrollments/student_by_regions/" translation="' +
+                     _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<a class="btn btn-success" href={% url "enrollments:saveimage" pk=' + str_id + ' %}>' + _('Upload Pictures') + '  </a>')
+
+                )
+            )
+
+        )
+
+    def save(self, request=None, instance=None):
+        if instance:
+            serializer = EnrollmentSerializer(instance, data=request.POST)
+            if serializer.is_valid():
+                serializer.update(validated_data=serializer.validated_data, instance=instance)
+                messages.success(request, _('Your data has been sent successfully to the server'))
+            else:
+                messages.warning(request, serializer.errors)
+        if instance.id:
+            from django.db.models import Q
+            std = Student.objects.filter(id=instance.student_id)
+            for st in std:
+                q_students = Student.objects.filter(
+                    Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                      mother_fullname=st.mother_fullname, birthday_year=st.birthday_year, birthday_month=
+                        st.birthday_month, birthday_day=st.birthday_day)
+                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                        mother_fullname=st.mother_fullname, id_number=st.id_number)
+                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                        id_number=st.id_number, birthday_year=st.birthday_year,
+                        birthday_month=st.birthday_month,
+                        birthday_day=st.birthday_day)
+                    | Q(first_name=st.first_name, father_name=st.father_name, last_name=st.last_name,
+                        id_number=st.id_number, birthday_year=st.birthday_year)).exclude(id=st.id)
+            q_enr = Enrollment.objects.filter(education_year=EducationYear.objects.get(current_year=True), student__in=q_students)
+            if q_enr:
+                try:
+                    DuplicateStd.objects.get(enrollment_id=instance.id, is_solved=False)
+                except DuplicateStd.DoesNotExist:
+                    # SAVING THE CURRENT ROW
+                    q_coordinator = School.objects.get(id=instance.last_school_id)
+                    model_duplicatestd = DuplicateStd.objects.create(
+                        enrollment_id=instance.id,
+                        is_solved=False,
+                        school_type='2ndshift',
+                        owner=request.user,
+                        coordinator_id=q_coordinator.coordinator_id,
+                        Level_id=instance.last_education_level_id,
+                        section_id=instance.section_id,
+                        classroom_id=instance.classroom_id,
+                        education_year=EducationYear.objects.get(current_year=True),
+                    )
+                    model_duplicatestd.save()
+                    # SAVING THE SAME AS IT
+                    for enr in q_enr:
+                        try:
+                            DuplicateStd.objects.get(enrollment_id=enr.id, is_solved=False)
+                        except DuplicateStd.DoesNotExist:
+                            # SAVING THE CURRENT ROW
+                            q_coordinator = School.objects.get(id=enr.last_school_id)
+                            model_duplicatestd = DuplicateStd.objects.create(
+                                enrollment_id=enr.id,
+                                is_solved=False,
+                                school_type='2ndshift',
+                                owner=enr.owner,
+                                coordinator_id=q_coordinator.coordinator_id,
+                                Level_id=enr.last_education_level_id,
+                                section_id=enr.section_id,
+                                classroom_id=enr.classroom_id,
+                                education_year=EducationYear.objects.get(current_year=True),
+                            )
+                            model_duplicatestd.save()
+
+    class Meta:
+        model = Enrollment
+        fields = (
+            'student_id',
+            'enrollment_id',
+            'student_first_name',
+            'student_father_name',
+            'student_last_name',
+            'student_mother_fullname',
+            'student_sex',
+            'student_birthday_year',
+            'student_birthday_month',
+            'student_birthday_day',
+            'student_place_of_birth',
+            'student_recordnumber',
+            'student_phone',
+            'student_phone_prefix',
+            'student_id_number',
+            'student_id_type',
+            'student_nationality',
+            'student_mother_nationality',
+            'student_registered_in_unhcr',
+            'number_in_previous_school',
+            'student_address',
+            'outreach_barcode',
+            'new_registry',
+            'student_outreached',
+            'have_barcode',
+            'age_min_restricted',
+            'age_max_restricted',
+            'student_unhcr_family',
+            'student_unhcr_personal',
+            'document_lastyear',
+        )
+        initial_fields = fields
+        widgets = {}
+
+    class Media:
+        js = (
+            # 'js/jquery-3.3.1.min.js',
+            # 'js/jquery-ui-1.12.1.js',
+            # 'js/validator.js',
+            # 'js/registrations.js',
         )

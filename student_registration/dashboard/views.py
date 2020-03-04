@@ -907,7 +907,6 @@ class List_of_Attendance(TemplateView):
 
 
 def export_summary_of_Attendance(request):
-    from student_registration.attendances.models import AttendanceDt
     from student_registration.enrollments.models import Enrollment
     from student_registration.schools.models import EducationYear
     from_school = request.GET['att_fromschool']
@@ -917,18 +916,21 @@ def export_summary_of_Attendance(request):
     education_year = EducationYear.objects.get(current_year=True)
     if (from_school)and(to_date):
         qs_enr = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
-                                           school__is_2nd_shift=True, disabled=False, school__number__gte=from_school,
+                                           school__is_2nd_shift=True, school__number__gte=from_school,
                                            school__number__lte=to_school).extra(
             select={
                 'attend': """ select count(id) from attendances_attendancedt where is_present=True and
-                attendances_attendancedt.student_id=enrollments_enrollment.student_id and
-                attendances_attendancedt.school_id=enrollments_enrollment.school_id
-                and attendances_attendancedt.attendance_date between %s and %s""",
+                   attendances_attendancedt.student_id=enrollments_enrollment.student_id and
+                   attendances_attendancedt.school_id=enrollments_enrollment.school_id
+                   and attendances_attendancedt.attendance_date between %s and %s""",
                 'absent': """ select count(id) from attendances_attendancedt where is_present=False and
-                attendances_attendancedt.student_id=enrollments_enrollment.student_id and
-                attendances_attendancedt.school_id=enrollments_enrollment.school_id
-                and attendances_attendancedt.attendance_date between %s and %s""",
+                   attendances_attendancedt.student_id=enrollments_enrollment.student_id and
+                   attendances_attendancedt.school_id=enrollments_enrollment.school_id
+                   and attendances_attendancedt.attendance_date between %s and %s""",
                 'tel': """ concat(phone_prefix,phone) """,
+                'first_attend': """ select min(attendance_date)  attendance_date from attendances_attendancedt
+                    where attendances_attendancedt.student_id = enrollments_enrollment.student_id 
+                    and is_present=True and attendances_attendancedt.school_id =enrollments_enrollment.school_id """,
             }, select_params=[from_date, to_date, from_date, to_date]).order_by('school_id', 'classroom_id',
                                                                                 'section_id', 'student__first_name',
                                                                                 'student__father_name', 'student__last_name')
@@ -945,6 +947,9 @@ def export_summary_of_Attendance(request):
                         attendances_attendancedt.school_id=enrollments_enrollment.school_id
                         and attendances_attendancedt.attendance_date between %s and %s""",
                 'tel': """ concat(phone_prefix,phone) """,
+                'first_attend': """ select min(attendance_date)  attendance_date from attendances_attendancedt
+                            where attendances_attendancedt.student_id = enrollments_enrollment.student_id 
+                            and is_present=True and attendances_attendancedt.school_id =enrollments_enrollment.school_id """,
             }, select_params=[from_date, to_date, from_date, to_date]).order_by('school_id', 'classroom_id',
                                                                                 'section_id', 'student__first_name',
                                                                                 'student__father_name',
@@ -972,6 +977,10 @@ def export_summary_of_Attendance(request):
         'student__nationality__name': _('Student nationality'),
         'attend': _('attend'),
         'absent': _('absent'),
+        'disabled': _('disabled'),
+        'moved': _('moved'),
+        'dropout_status': _('dropout status'),
+        'first_attend': _('first attend'),
     }
     qs_enr = qs_enr.values(
         'school__number',
@@ -996,6 +1005,9 @@ def export_summary_of_Attendance(request):
         'student__nationality__name',
         'attend',
         'absent',
-
+        'disabled',
+        'moved',
+        'dropout_status',
+        'first_attend',
     )
     return render_to_csv_response(qs_enr, field_header_map=headers)

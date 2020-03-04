@@ -69,7 +69,6 @@ class StudentSerializer(serializers.ModelSerializer):
             'current_alp_registration',
             'current_secondshift_registration',
             'have_children',
-            'is_justified',
             'is_specialneeds',
             'specialneeds',
             'specialneedsdt',

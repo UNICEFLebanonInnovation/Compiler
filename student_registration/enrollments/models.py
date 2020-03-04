@@ -553,7 +553,19 @@ class Enrollment(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('Signature Date')
-        )
+    )
+    is_justified = models.BooleanField(default=False)
+    justified_date = models.DateField(
+        blank=True,
+        null=True,
+        default=django.utils.timezone.now,
+        verbose_name=_('Justified Date')
+    )
+    justified_by = models.CharField(
+        blank=True, null=True,
+        verbose_name=_('Justified by'),
+        max_length=30,
+    )
     @property
     def student_fullname(self):
         if self.student:
@@ -1002,7 +1014,6 @@ class DuplicateStd(TimeStampedModel):
         blank=True, null=True,
         related_name='enrollment_id'
     )
-    #sysdate = models.DateTimeField(default=django.utils.timezone.now)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False, null=True,

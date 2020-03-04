@@ -10,7 +10,7 @@ from .models import User
 
 class UserAdmin(AuthUserAdmin):
 
-    filter_horizontal = ('groups', 'user_permissions', 'locations', 'schools')
+    filter_horizontal = ('groups', 'user_permissions', 'locations', 'schools', 'regions')
     list_display = (
         'username',
         'first_name',
@@ -65,7 +65,7 @@ class UserAdmin(AuthUserAdmin):
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-        (None, {'fields': ('partner', 'location', 'school', 'locations', 'schools')})
+        (None, {'fields': ('partner', 'location', 'school', 'locations', 'schools', 'regions')})
     )
 
     add_fieldsets = (
@@ -74,7 +74,7 @@ class UserAdmin(AuthUserAdmin):
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-        (None, {'fields': ('partner', 'location', 'school', 'locations', 'schools')})
+        (None, {'fields': ('partner', 'location', 'school', 'locations', 'schools', 'regions')})
     )
 
     def activate(self, request, queryset):

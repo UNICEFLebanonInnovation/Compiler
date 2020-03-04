@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-
+from datetime import date
 import tablib
 from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.views.generic import ListView, FormView, UpdateView
@@ -20,8 +20,8 @@ from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
 from django_tables2.export.views import ExportMixin
 
-from .filters import EnrollmentFilter, EnrollmentOldDataFilter
-from .tables import BootstrapTable, EnrollmentTable, EnrollmentOldDataTable
+from .filters import EnrollmentFilter, EnrollmentOldDataFilter, Enrollment_by_region_Filter
+from .tables import BootstrapTable, EnrollmentTable, EnrollmentOldDataTable, Enrollment_By_School_Table
 from django.shortcuts import redirect
 from student_registration.alp.models import Outreach
 from student_registration.alp.serializers import OutreachSerializer
@@ -38,6 +38,7 @@ from .models import (
 )
 from .forms import (
     EnrollmentForm,
+    EnrollmentRegion_Form,
     GradingTermForm,
     GradingIncompleteForm,
     StudentMovedForm,
@@ -184,6 +185,47 @@ class EditView(LoginRequiredMixin,
                 instance.save()
         form.save(request=self.request, instance=instance)
         return super(EditView, self).form_valid(form)
+
+
+class Edit_RegionView(LoginRequiredMixin,
+                      GroupRequiredMixin,
+                      FormView):
+    template_name = 'bootstrap4/common_form.html'
+    form_class = EnrollmentRegion_Form
+    success_url = '/enrollments/student_by_regions/'
+    group_required = [u"ENROL_EDIT"]
+
+    def get_context_data(self, **kwargs):
+        force_default_language(self.request)
+        """Insert the form into the context dict."""
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+        return super(Edit_RegionView, self).get_context_data(**kwargs)
+
+    def get_form(self, form_class=None):
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        if self.request.method == "POST":
+            return EnrollmentRegion_Form(self.request.POST, self.request.FILES, instance=instance)
+        else:
+            data = EnrollmentSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
+            data['student_mother_nationality'] = data['student_mother_nationality_id']
+            data['student_id_type'] = data['student_id_type_id']
+            return EnrollmentRegion_Form(data, instance=instance)
+
+    def form_valid(self, form):
+        instance = Enrollment.objects.get(id=self.kwargs['pk'])
+        if self.request.FILES:
+            if self.request.FILES['document_lastyear']:
+                instance.document_lastyear = self.request.FILES['document_lastyear']
+                instance.save()
+        else:
+            if instance.document_lastyear:
+                v = instance.document_lastyear
+                instance.document_lastyear = v
+                instance.save()
+        form.save(request=self.request, instance=instance)
+        return super(Edit_RegionView, self).form_valid(form)
 
 
 class EditOldDataView(LoginRequiredMixin,
@@ -344,9 +386,8 @@ class LoggingProgramMoveViewSet(mixins.RetrieveModelMixin,
 
 
 class StudentDropoutViewSet(mixins.RetrieveModelMixin,
-                                mixins.ListModelMixin,
-                                viewsets.GenericViewSet):
-
+                            mixins.ListModelMixin,
+                            viewsets.GenericViewSet):
     model = Enrollment
     queryset = Enrollment.objects.all()
 
@@ -360,6 +401,27 @@ class StudentDropoutViewSet(mixins.RetrieveModelMixin,
             dropout_date = request.POST.get('dropout_date', 0)
             enrollment.dropout_status = True
             enrollment.dropout_date = dropout_date
+            enrollment.save()
+        return JsonResponse({'status': status.HTTP_200_OK})
+
+
+class StudentJustifyViewSet(mixins.RetrieveModelMixin,
+                            mixins.ListModelMixin,
+                            viewsets.GenericViewSet):
+    model = Enrollment
+    queryset = Enrollment.objects.all()
+
+    def get_queryset(self):
+        if self.request.method in ["PATCH", "POST", "PUT"]:
+            return self.queryset
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('justify_status', 0):
+            enrollment = Enrollment.objects.get(id=request.POST.get('justify_status', 0))
+            justify_date = request.POST.get('justify_date', 0)
+            enrollment.is_justified = not enrollment.is_justified
+            enrollment.justified_date = date.today()
+            enrollment.justified_by = self.request.user.get_full_name()
             enrollment.save()
         return JsonResponse({'status': status.HTTP_200_OK})
 
@@ -924,3 +986,27 @@ def clear_pic(request, *args):
             std.unhcr_image = None
             std.save()
     return HttpResponse('Picture has been successfully cleaned ')
+
+
+class Student_By_Regions(LoginRequiredMixin,
+                         GroupRequiredMixin,
+                         FilterView,
+                         ExportMixin,
+                         SingleTableView,
+                         RequestConfig):
+
+    table_class = Enrollment_By_School_Table
+    model = Enrollment
+    template_name = 'enrollments/list.html'
+    table = BootstrapTable(Enrollment.objects.all(), order_by='id')
+    filterset_class = Enrollment_by_region_Filter
+    group_required = [u"ADMIN_RE"]
+
+    def get_queryset(self):
+        force_default_language(self.request)
+        education_year = EducationYear.objects.get(current_year=True)
+        return Enrollment.objects.filter(
+            education_year=education_year,
+            school__location__in=self.request.user.regions.all(),
+        ).order_by('school_id', 'classroom_id', 'section_id', 'student')
+

@@ -38,6 +38,7 @@ class User(AbstractUser):
     )
     locations = models.ManyToManyField(Location, blank=True)
     schools = models.ManyToManyField(School, blank=True)
+    regions = models.ManyToManyField(Location, blank=True, related_name='regions')
 
     def __str__(self):
         return self.username
