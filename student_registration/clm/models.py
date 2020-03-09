@@ -151,8 +151,7 @@ class CLM(TimeStampedModel):
     BARRIERS = Choices(
         ('Full time job to support family financially', _('Full time job to support family financially')),
         ('seasonal_work', _('Seasonal work')),
-        ('transportation', _('Transportation')),
-        ('weather', _('Weather')),
+        ('cold_weather', _('Cold Weather')),
         ('sickness', _('Sickness')),
         ('security', _('Security')),
         ('family moved', _('Family moved')),
@@ -161,7 +160,6 @@ class CLM(TimeStampedModel):
         ('marriage engagement pregnancy', _('Marriage/Engagement/Pregnancy')),
         ('violence bullying', _('Violence/Bullying')),
         ('No interest in pursuing the programme/No value', _('No interest in pursuing the programme/No value')),
-        ('No barriers', _('No barriers'))
     )
     HAVE_LABOUR = Choices(
         ('no', _('No')),
@@ -199,7 +197,6 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('First attendance date')
     )
-
     round = models.ForeignKey(
         CLMRound,
         blank=True, null=True,
@@ -255,6 +252,13 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Does the child participate in work?')
     )
+    have_labour_single_selection = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=HAVE_LABOUR,
+        verbose_name=_('Does the child participate in work?')
+    )
     labours = ArrayField(
         models.CharField(
             choices=LABOURS,
@@ -264,6 +268,13 @@ class CLM(TimeStampedModel):
         ),
         blank=True,
         null=True,
+        verbose_name=_('What is the type of work ?')
+    )
+    labours_single_selection = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LABOURS,
         verbose_name=_('What is the type of work ?')
     )
     labour_hours = models.IntegerField(
@@ -558,6 +569,17 @@ class CLM(TimeStampedModel):
         ),
         verbose_name=_('Source of identification of the child')
     )
+    source_of_transportation = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('Transportation provided by partner', _('Transportation provided by partner')),
+            ('Walk', _('Walk')),
+            ('private or parents', _('Private/Parents'))
+        ),
+        verbose_name=_('Source of transportation of the child')
+    )
 
     no_child_id_confirmation = models.CharField(max_length=50, blank=True, null=True,)
     no_parent_id_confirmation = models.CharField(max_length=50, blank=True, null=True,)
@@ -645,15 +667,15 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=Choices(
-            ('Formal Education', _('Formal Education')),
-            ('ALP', _('ALP')),
-            ('BLN', _('BLN')),
             ('CP (PSS and/or Case Management)', _('CP (PSS and/or Case Management)')),
-            ('Youth', _('Youth')),
             ('Health', _('Health')),
             ('WASH', _('WASH')),
             ('Specialized Services', _('Specialized Services')),
+            # ('ALP', _('ALP')),
+            # ('BLN', _('BLN')),
+            # ('Youth', _('Youth')),
             ('Other', _('Other')),
+            ('No need', _('No need')),
         ),
         verbose_name=_('Programme Type')
     )
@@ -679,15 +701,15 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=Choices(
-            ('Formal Education', _('Formal Education')),
-            ('ALP', _('ALP')),
-            ('BLN', _('BLN')),
             ('CP (PSS and/or Case Management)', _('CP (PSS and/or Case Management)')),
-            ('Youth', _('Youth')),
             ('Health', _('Health')),
             ('WASH', _('WASH')),
             ('Specialized Services', _('Specialized Services')),
+            # ('ALP', _('ALP')),
+            # ('BLN', _('BLN')),
+            # ('Youth', _('Youth')),
             ('Other', _('Other')),
+            ('No need', _('No need')),
         ),
         verbose_name=_('Programme Type')
     )
@@ -713,15 +735,15 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=Choices(
-            ('Formal Education', _('Formal Education')),
-            ('ALP', _('ALP')),
-            ('BLN', _('BLN')),
             ('CP (PSS and/or Case Management)', _('CP (PSS and/or Case Management)')),
-            ('Youth', _('Youth')),
             ('Health', _('Health')),
             ('WASH', _('WASH')),
             ('Specialized Services', _('Specialized Services')),
+            # ('ALP', _('ALP')),
+            # ('BLN', _('BLN')),
+            # ('Youth', _('Youth')),
             ('Other', _('Other')),
+            ('No need', _('No need')),
         ),
         verbose_name=_('Programme Type')
     )
@@ -885,6 +907,11 @@ class BLN(CLM):
         blank=True, null=True,
         related_name='+',
         verbose_name=_('Cycle')
+    )
+    miss_school_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('First attendance date')
     )
     referral = ArrayField(
         models.CharField(
@@ -1653,6 +1680,11 @@ class ABLN(CLM):
         related_name='+',
         verbose_name=_('Cycle')
     )
+    miss_school_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('First attendance date')
+    )
     referral = ArrayField(
         models.CharField(
             choices=CLM.REFERRAL,
@@ -1685,6 +1717,11 @@ class ABLN(CLM):
             ('no_absence', _('No Absence'))
         ),
         verbose_name=_('Participation')
+    )
+    first_attendance_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('First attendance date')
     )
 
     def calculate_score(self, stage):
