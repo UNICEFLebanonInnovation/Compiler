@@ -23,6 +23,12 @@ $(document).ready(function(){
     if($(document).find('#id_first_attendance_date').length == 1) {
         $('#id_first_attendance_date').datepicker({dateFormat: "yy-mm-dd"});
     }
+    if($(document).find('#id_miss_school_date').length == 1) {
+        $('#id_miss_school_date').datepicker({dateFormat: "yy-mm-dd"});
+    }
+    if($(document).find('#id_round_start_date').length == 1) {
+        $('#id_round_start_date').datepicker({dateFormat: "yy-mm-dd"});
+    }
 
     if($(document).find('#id_referral_date_1').length == 1) {
         $('#id_referral_date_1').datepicker({dateFormat: "yy-mm-dd"});

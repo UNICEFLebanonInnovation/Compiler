@@ -514,5 +514,15 @@ section.inline-form .btn-actions .btn {
     margin-bottom: 10px;
     color: #ff150f;
 }
-
-
+.red_right_border
+{
+  border-right: 7px solid blue;a
+}
+.red_right_border:hover
+{
+  background: #c5c5c5;
+}
+.orange_right_border
+{
+  border-right: 7px solid orange;
+}

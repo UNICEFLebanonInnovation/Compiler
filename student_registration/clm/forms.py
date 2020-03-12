@@ -2167,9 +2167,16 @@ class ABLNForm(CommonForm):
         label=_("First attendance date"),
         required=True
     )
+    # miss_school_date = forms.DateField(
+    #     label=_("Miss school date"),
+    #     required=True,
+    #     widget=forms.DateField(attrs={'auto-complete': 'False'})
+    # widget = forms.DateField((empty_label = "Nothing")
+    # )
     miss_school_date = forms.DateField(
         label=_("Miss school date"),
-        required=True
+        required=True,
+        # widget=forms.DateField()
     )
 
     new_registry = forms.ChoiceField(
@@ -2485,9 +2492,11 @@ class ABLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
+                    HTML('<h3>A</h3>'),
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('General Information') + '</h4>')
                 ),
                 Div(
+
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('new_registry', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
@@ -2520,7 +2529,7 @@ class ABLNForm(CommonForm):
                     Div('registration_level', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning child_data'
+                css_class='bd-callout bd-callout-warning child_data red_right_border'
             ),
             Fieldset(
                 None,
@@ -2589,7 +2598,7 @@ class ABLNForm(CommonForm):
                     Div('source_of_transportation', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning child_data'
+                css_class='bd-callout bd-callout-warning child_data orange_right_border'
             ),
             Fieldset(
                 None,
@@ -3066,11 +3075,82 @@ class ABLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-
     psychomotor = forms.FloatField(
         label=_('Please enter the result for this subject'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
+    )
+
+    follow_up_type = forms.ChoiceField(
+        label=_('Type of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+                ('Phone', _('Phone Call')),
+                ('House visit', _('House Visit')),
+                ('Family Visit', _('Family Visit')),
+            ),
+        initial=''
+    )
+    phone_call_number = forms.IntegerField(
+        label=_('Please enter the number phone calls'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    house_visit_number = forms.IntegerField(
+        label=_('Please enter the number of house visits'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    family_visit_number = forms.IntegerField(
+        label=_('Please enter the number parent visits'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    follow_up_result = forms.ChoiceField(
+        label=_('Result of follow up'),
+        widget=forms.Select, required=False,
+        choices=(
+                ('child back', _('Phone Call')),
+                ('child transfer to difficulty center', _('Child transfer to difficulty center')),
+                ('child transfer to protection', _('Child transfer to protection')),
+                ('child transfer to medical', _('Child transfer to medical')),
+                ('Intensive followup', _('Intensive followup')),
+                ('dropout', _('Dropout')),
+        ),
+        initial=''
+    )
+    parent_attended_visits = forms.ChoiceField(
+        label=_("Parents attended parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    visits_number = forms.IntegerField(
+        label=_('Please enter the number parent visits'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    parent_attended = forms.ChoiceField(
+        label=_("Parent who attended the parents meeting"),
+        widget=forms.Select, required=False,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
+    child_health_examed = forms.ChoiceField(
+        label=_("Did the child receive health exam"),
+        widget=forms.Select, required=False,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    child_health_concern = forms.ChoiceField(
+        label=_("Anything to worry about"),
+        widget=forms.Select, required=False,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
     )
     # cycle_completed = forms.TypedChoiceField(
     #     label=_("Completed the cycle?"),
@@ -3178,6 +3258,65 @@ class ABLNAssessmentForm(forms.ModelForm):
                         css_class='row',
                     ),
                 ),
+                Fieldset(
+                    None,
+                    Div(
+                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Follow up') + '</h4>')
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('follow_up_type', css_class='col-md-3'),
+                        css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1.1</span>'),
+                        Div('phone_call_number', css_class='col-md-3'),
+                        css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1.1</span>'),
+                        Div('house_visit_number', css_class='col-md-3'),
+                        css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1.1</span>'),
+                        Div('family_visit_number', css_class='col-md-3'),
+                        css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">2</span>'),
+                        Div('follow_up_result', css_class='col-md-3'),
+                        css_class='row',
+                    ),
+                ),
+                Fieldset(
+                    None,
+                    Div(
+                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parents Meeting and Health Exam') + '</h4>')
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">1</span>'),
+                        Div('parent_attended_visits', css_class='col-md-3'),
+                        HTML('<span class="badge badge-default">2</span>'),
+                        Div('visits_number', css_class='col-md-4'),
+                        css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">3</span>'),
+                        Div('parent_attended', css_class='col-md-4'),
+                        css_class='row',
+                    ),
+                    Div(
+                        HTML('<span class="badge badge-default">4</span>'),
+                        Div('child_health_examed', css_class='col-md-4'),
+                        HTML('<span class="badge badge-default">5</span>'),
+                        Div('child_health_concern', css_class='col-md-4'),
+                        css_class='row',
+                    ),
+                ),
+
+
+
                 css_class='bd-callout bd-callout-warning'+ display_assessment
             ),
             FormActions(
@@ -3197,11 +3336,29 @@ class ABLNAssessmentForm(forms.ModelForm):
         model = ABLN
         fields = (
             'participation',
-            'barriers',
             'learning_result',
-            'unsuccessful_posttest_reason',
-            'cycle_completed',
-            'enrolled_at_school',
+            'barriers_single',
+            'test_done',
+            'round_complete',
+            'attended_arabic',
+            'arabic',
+            'attended_math',
+            'math',
+            'attended_social',
+            'social',
+            'attended_psychomotor',
+            'psychomotor',
+            'follow_up_type',
+            'phone_call_number',
+            'house_visit_number',
+            'family_visit_number',
+            'follow_up_result',
+            'parent_attended_visits',
+            'visits_number',
+            'parent_attended',
+            'child_health_examed',
+            'child_health_concern'
+
         )
 
 
