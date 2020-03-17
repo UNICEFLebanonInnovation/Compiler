@@ -2510,9 +2510,6 @@ class ABLNForm(CommonForm):
                     Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('district', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('cadaster', css_class='col-md-3'),
                     css_class='row',
@@ -2522,9 +2519,6 @@ class ABLNForm(CommonForm):
                     Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">8</span>'),
                     Div('language', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
                     HTML('<span class="badge badge-default">9</span>'),
                     Div('registration_level', css_class='col-md-3'),
                     css_class='row',
@@ -2555,8 +2549,12 @@ class ABLNForm(CommonForm):
                     Div('student_mother_fullname', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('student_sex', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('student_nationality', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default"></span>'),
                     Div('other_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -2580,7 +2578,7 @@ class ABLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">12</span>'),
                     Div('education_status', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">12-a</span>'),
+                    HTML('<span class="badge badge-default"></span>'),
                     Div('miss_school_date', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -3229,31 +3227,31 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div(
                         HTML('<span class="badge badge-default">6</span>'),
                         Div('attended_arabic', css_class='col-md-4'),
-                        HTML('<span class="badge badge-default">7</span>'),
+                        HTML('<span class="badge badge-default">6.1</span>'),
                         Div('arabic', css_class='col-md-4'),
                         css_class='row',
                     ),
 
                     Div(
-                        HTML('<span class="badge badge-default">8</span>'),
+                        HTML('<span class="badge badge-default">7</span>'),
                         Div('attended_math', css_class='col-md-4'),
-                        HTML('<span class="badge badge-default">9</span>'),
+                        HTML('<span class="badge badge-default">7.1</span>'),
                         Div('math', css_class='col-md-4'),
                         css_class='row',
                     ),
 
                     Div(
-                        HTML('<span class="badge badge-default">10</span>'),
+                        HTML('<span class="badge badge-default">8</span>'),
                         Div('attended_social', css_class='col-md-4'),
-                        HTML('<span class="badge badge-default">11</span>'),
+                        HTML('<span class="badge badge-default">8.1</span>'),
                         Div('social', css_class='col-md-4'),
                         css_class='row',
                     ),
 
                     Div(
-                        HTML('<span class="badge badge-default">12</span>'),
+                        HTML('<span class="badge badge-default">9</span>'),
                         Div('attended_psychomotor', css_class='col-md-4'),
-                        HTML('<span class="badge badge-default">13</span>'),
+                        HTML('<span class="badge badge-default">9.1</span>'),
                         Div('psychomotor', css_class='col-md-4'),
                         css_class='row',
                     ),

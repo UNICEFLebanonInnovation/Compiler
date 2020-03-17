@@ -122,7 +122,6 @@ $(document).ready(function(){
     $("td[class='student.last_name']").addClass('font-bolder');
 
     reorganizeForm();
-
     $(document).on('change', 'select#id_level', function(){
 
          if($(document).find('#id_exam_result_arabic').length == 1) {
@@ -147,19 +146,22 @@ $(document).ready(function(){
          reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_student_nationality', function(){
+    $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_main_caregiver , select#id_student_family_status, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
          reorganizeForm();
     });
+    $(document).on('click', 'input[name=student_have_children]', function(){
+        reorganizeForm();
+    });
+
+    // $(document).on('click', 'input[name=have_labour]', function(){
+    //     reorganizeForm();
+    // });
 
     $(document).on('change', 'select#id_classroom, select#id_student_birthday_day, select#id_student_birthday_month, select#id_student_birthday_year', function(){
          verify_age_level();
     });
 
     $(document).on('change', 'select#id_student_registered_in_unhcr', function(){
-        reorganizeForm();
-    });
-
-    $(document).on('click', 'input[name=have_labour]', function(){
         reorganizeForm();
     });
 
@@ -173,10 +175,6 @@ $(document).ready(function(){
         reorganizeForm();
     });
     $(document).on('change', 'select#id_have_barcode', function(){
-        reorganizeForm();
-    });
-
-    $(document).on('change', '#id_student_family_status', function(){
         reorganizeForm();
     });
 
@@ -603,20 +601,97 @@ function reorganizeForm()
     var new_registry = $('select#id_new_registry').val();
     var outreached = $('select#id_student_outreached').val();
     var have_barcode = $('select#id_have_barcode').val();
-    var family_status = $('select#id_student_family_status').val();
-    var have_labour = $('input[name=have_labour]:checked').val();
     var program_site = $('select#id_site').val();
     var registered_unhcr = $('select#id_student_registered_in_unhcr').val();
     var id_cycle = $('select#id_cycle').val();
     var id_type = $('select#id_id_type').val();
     var nationality = $('select#id_student_nationality').val();
+    var education_status = $('select#id_education_status').val();
+    var main_caregiver = $('select#id_main_caregiver').val();
+    var family_status = $('select#id_student_family_status').val();
+    var have_children = $('input[name=student_have_children]:checked').val();
+    var have_labour = $('select#id_have_labour_single_selection').val();
+
 
     $('div.child_id').addClass('d-none');
-    $('div#div_id_other_nationality').addClass('d-none');
 
+    // id_student_nationality
+    $('div#div_id_other_nationality').addClass('d-none');
     if(nationality == '6'){
         $('#div_id_other_nationality').removeClass('d-none');
     }
+    // id_education_status
+    $('div#div_id_miss_school_date').addClass('d-none');
+    if(education_status != 'out of school'){
+        $('#div_id_miss_school_date').removeClass('d-none');
+    }
+
+    // id_main_caregiver
+    $('#id_caretaker_first_name').val('');
+    $('#id_caretaker_last_name').val('');
+
+    if(main_caregiver == 'father'){
+        var student_father_name = $('#id_student_father_name').val();
+        var student_last_name = $('#id_student_last_name').val();
+        $('#id_caretaker_first_name').val(student_father_name);
+        $('#id_caretaker_last_name').val(student_last_name);
+    }
+
+
+    $('div#div_id_student_number_children').addClass('d-none');
+        if(have_children == 1 ){
+            $('#div_id_student_number_children').removeClass('d-none');
+    }
+
+    // id_student_family_status
+    if(family_status != 'single'){
+        $('#div_id_student_have_children').removeClass('d-none');
+        // id_student_number_children
+    }else{
+        $('input[name=id_student_have_children_2]').attr('checked', true);
+        $('#id_student_number_children').val('');
+        $('div#div_id_student_have_children').addClass('d-none');
+        $('div#div_id_student_number_children').addClass('d-none');
+    }
+
+
+
+    // have_labour_single_selection
+    $('div#div_id_labour_weekly_income').addClass('d-none');
+    $('div#div_id_labours_single_selection').addClass('d-none');
+    $('div#div_id_labour_hours').addClass('d-none');
+    if(have_labour != 'no'){
+        $('#div_id_labour_weekly_income').removeClass('d-none');
+        $('#div_id_labours_single_selection').removeClass('d-none');
+        $('#div_id_labour_hours').removeClass('d-none');
+    }
+    // if(have_labour == 'yes_morning' || have_labour == 'yes_afternoon' || have_labour == 'yes_all_day'){
+    //     $('div#labours').removeClass('d-none');
+    //     $('div#labours').prev().removeClass('d-none');
+    //     $('div#labour_hours').removeClass('d-none');
+    //     $('div#labour_hours').prev().removeClass('d-none');
+    //     $('input#id_have_labour_1').attr('disabled', 'disabled');
+    //     $('input#id_have_labour_2').removeAttr('disabled');
+    //     $('input#id_have_labour_3').removeAttr('disabled');
+    //     $('input#id_have_labour_4').removeAttr('disabled');
+    // }else{
+    //     if(have_labour == 'no') {
+    //         $('input#id_have_labour_1').removeAttr('disabled');
+    //         $('input#id_have_labour_2').attr('disabled', 'disabled');
+    //         $('input#id_have_labour_3').attr('disabled', 'disabled');
+    //         $('input#id_have_labour_4').attr('disabled', 'disabled');
+    //     }else{
+    //         $('input#id_have_labour_1').removeAttr('disabled');
+    //         $('input#id_have_labour_2').removeAttr('disabled');
+    //         $('input#id_have_labour_3').removeAttr('disabled');
+    //         $('input#id_have_labour_4').removeAttr('disabled');
+    //     }
+    //     $('div#labours').addClass('d-none');
+    //     $('div#labours').prev().addClass('d-none');
+    //     $('div#labour_hours').addClass('d-none');
+    //     $('div#labour_hours').prev().addClass('d-none');
+    // }
+
 
     if(id_type == 'UNHCR Registered'){
         $('div.child_id1').removeClass('d-none');
@@ -660,33 +735,6 @@ function reorganizeForm()
     }else{
         $('option[value=graduated_to_formal_kg]').hide();
         $('option[value=graduated_to_formal_level1]').hide();
-    }
-
-    if(have_labour == 'yes_morning' || have_labour == 'yes_afternoon' || have_labour == 'yes_all_day'){
-        $('div#labours').removeClass('d-none');
-        $('div#labours').prev().removeClass('d-none');
-        $('div#labour_hours').removeClass('d-none');
-        $('div#labour_hours').prev().removeClass('d-none');
-        $('input#id_have_labour_1').attr('disabled', 'disabled');
-        $('input#id_have_labour_2').removeAttr('disabled');
-        $('input#id_have_labour_3').removeAttr('disabled');
-        $('input#id_have_labour_4').removeAttr('disabled');
-    }else{
-        if(have_labour == 'no') {
-            $('input#id_have_labour_1').removeAttr('disabled');
-            $('input#id_have_labour_2').attr('disabled', 'disabled');
-            $('input#id_have_labour_3').attr('disabled', 'disabled');
-            $('input#id_have_labour_4').attr('disabled', 'disabled');
-        }else{
-            $('input#id_have_labour_1').removeAttr('disabled');
-            $('input#id_have_labour_2').removeAttr('disabled');
-            $('input#id_have_labour_3').removeAttr('disabled');
-            $('input#id_have_labour_4').removeAttr('disabled');
-        }
-        $('div#labours').addClass('d-none');
-        $('div#labours').prev().addClass('d-none');
-        $('div#labour_hours').addClass('d-none');
-        $('div#labour_hours').prev().addClass('d-none');
     }
 
     if(registered_unhcr == '1') {
