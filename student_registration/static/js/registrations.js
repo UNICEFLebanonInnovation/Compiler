@@ -629,6 +629,7 @@ function reorganizeForm()
     // id_main_caregiver
     $('#id_caretaker_first_name').val('');
     $('#id_caretaker_last_name').val('');
+    $('#id_student_number_children').val('');
 
     if(main_caregiver == 'father'){
         var student_father_name = $('#id_student_father_name').val();
@@ -1057,6 +1058,19 @@ function load_districts(url)
         },
         success: function (data) {
             $("#id_district").html(data);
+        }
+    })
+}
+function load_cadasters(url)
+{
+    var value = $("#id_district").val();
+    $.ajax({
+        url: url,
+        data: {
+            'id_district': value
+        },
+        success: function (data) {
+            $("#id_cadaster").html(data);
         }
     })
 }

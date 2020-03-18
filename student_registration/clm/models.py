@@ -216,12 +216,19 @@ class CLM(TimeStampedModel):
         related_name='+',
         verbose_name=_('District')
     )
+    cadaster = models.ForeignKey(
+        Location,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Cadaster')
+    )
     location = models.CharField(
         max_length=50,
         blank=True,
         null=True,
         verbose_name=_('Location')
     )
+
     language = models.CharField(
         max_length=100,
         blank=True,

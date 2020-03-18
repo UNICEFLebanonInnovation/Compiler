@@ -102,7 +102,6 @@ class CommonForm(forms.ModelForm):
         widget=forms.TextInput,
         required=False
     )
-
     governorate = forms.ModelChoiceField(
         queryset=Location.objects.filter(parent__isnull=True), widget=forms.Select,
         label=_('Governorate'),
@@ -117,6 +116,13 @@ class CommonForm(forms.ModelForm):
         required=True, to_field_name='id',
         # initial=0
     )
+    cadaster = forms.ModelChoiceField(
+        queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
+        label=_('Cadaster'),
+        empty_label='-------',
+        required=True, to_field_name='id',
+        # initial=0
+    )
     round = forms.ModelChoiceField(
         queryset=CLMRound.objects.all(), widget=forms.Select,
         label=_('Round'),
@@ -126,11 +132,6 @@ class CommonForm(forms.ModelForm):
     )
     round_start_date = forms.DateField(
         label=_("Round start date"),
-        required=True
-    ),
-    cadaster = forms.CharField(
-        label=_('Cadaster'),
-        widget=forms.TextInput,
         required=True
     )
     registration_level = forms.CharField(
@@ -308,6 +309,7 @@ class CommonForm(forms.ModelForm):
             'round',
             'governorate',
             'district',
+            'cadaster',
             'location',
             'language',
             'student_first_name',
@@ -2196,11 +2198,11 @@ class ABLNForm(CommonForm):
         label=_("Round start date"),
         required=True
     )
-    cadaster = forms.CharField(
-        label=_('Cadaster'),
-        widget=forms.TextInput,
-        required=True
-    )
+    # cadaster = forms.CharField(
+    #     label=_('Cadaster'),
+    #     widget=forms.TextInput,
+    #     required=True
+    # )
     registration_level = forms.ChoiceField(
         label=_("Registration level"),
         widget=forms.Select, required=True,
@@ -2492,7 +2494,7 @@ class ABLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h3>A</h3>'),
+                    # HTML('<h3>A</h3>'),
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('General Information') + '</h4>')
                 ),
                 Div(
@@ -2523,7 +2525,7 @@ class ABLNForm(CommonForm):
                     Div('registration_level', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning child_data red_right_border'
+                css_class='bd-callout bd-callout-warning child_data A_right_border'
             ),
             Fieldset(
                 None,
@@ -2596,7 +2598,7 @@ class ABLNForm(CommonForm):
                     Div('source_of_transportation', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning child_data orange_right_border'
+                css_class='bd-callout bd-callout-warning child_data B_right_border'
             ),
             Fieldset(
                 None,
@@ -2741,7 +2743,7 @@ class ABLNForm(CommonForm):
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id5',
                 ),
-                css_class='bd-callout bd-callout-warning child_data'
+                css_class='bd-callout bd-callout-warning child_data C_right_border'
             ),
             Fieldset(
                 None,
@@ -2771,7 +2773,7 @@ class ABLNForm(CommonForm):
                     Div('labour_weekly_income', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning child_data'
+                css_class='bd-callout bd-callout-warning child_data D_right_border'
             ),
             Fieldset(
                 None,

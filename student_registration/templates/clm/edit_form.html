@@ -38,13 +38,14 @@
 
     <script>
       var url = "{% url 'clm:load_districts' %}";
-
-      <!--$(document).ready(function () {-->
-          <!--load_districts(url);-->
-      <!--});-->
+      var url_cadasters = "{% url 'clm:load_cadasters' %}";
 
       $("#id_governorate").change(function () {
           load_districts(url);
+          load_cadasters(url_cadasters);
+      });
+      $("#id_district").change(function () {
+          load_cadasters(url_cadasters);
       });
     </script>
 {% endblock %}

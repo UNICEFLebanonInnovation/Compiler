@@ -95,6 +95,7 @@ class CLMSerializer(serializers.ModelSerializer):
     student_outreach_child_id = serializers.IntegerField(source='student.outreach_child.id', read_only=True)
     governorate_name = serializers.CharField(source='governorate.name', read_only=True)
     district_name = serializers.CharField(source='district.name', read_only=True)
+    cadaster_name = serializers.CharField(source='cadaster.name', read_only=True)
     partner_name = serializers.CharField(source='partner.name', read_only=True)
     created = serializers.CharField(read_only=True)
 
@@ -143,6 +144,8 @@ class CLMSerializer(serializers.ModelSerializer):
             'governorate_name',
             'district',
             'district_name',
+            'cadaster',
+            'cadaster_name',
             'location',
             'outreach_barcode',
             'disability',

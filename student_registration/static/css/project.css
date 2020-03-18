@@ -516,7 +516,7 @@ section.inline-form .btn-actions .btn {
 }
 .red_right_border
 {
-  border-right: 7px solid blue;a
+  border-right: 7px solid blue;
 }
 .red_right_border:hover
 {
@@ -526,3 +526,24 @@ section.inline-form .btn-actions .btn {
 {
   border-right: 7px solid orange;
 }
+.A_right_border
+{
+  border-right: 7px solid #68B0AB;
+}
+
+.B_right_border
+{
+  border-right: 7px solid #99d19c;
+}
+.C_right_border
+{
+  border-right: 7px solid #8c7aa9;
+}
+
+.D_right_border
+{
+  border-right: 7px solid #7192be;
+}
+
+
+

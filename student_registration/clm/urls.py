@@ -169,6 +169,11 @@ urlpatterns = [
         name='load_districts'
     ),
     url(
+        'load-cadasters/$',
+        views.load_cadasters,
+        name='load_cadasters'
+    ),
+    url(
         'search-clm-child/$',
         views.search_clm_child,
         name='search_clm_child'

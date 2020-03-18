@@ -3113,6 +3113,13 @@ def load_districts(request):
     cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
     return render(request, 'clm/city_dropdown_list_options.html', {'cities': cities})
 
+def load_cadasters(request):
+    from django.shortcuts import render
+
+    id_district = request.GET.get('id_district')
+    cities = Location.objects.filter(parent_id=id_district).order_by('name')
+    return render(request, 'clm/cadaster_dropdown_list_options.html', {'cities': cities})
+
 
 def search_clm_child(request):
     clm_type = request.GET.get('clm_type', 'BLN')
