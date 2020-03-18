@@ -3085,6 +3085,7 @@ class ABLNAssessmentForm(forms.ModelForm):
         label=_('Type of follow up'),
         widget=forms.Select, required=False,
         choices=(
+                ('none', _('----------')),
                 ('Phone', _('Phone Call')),
                 ('House visit', _('House Visit')),
                 ('Family Visit', _('Family Visit')),
@@ -3229,7 +3230,7 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div(
                         HTML('<span class="badge badge-default">6</span>'),
                         Div('attended_arabic', css_class='col-md-4'),
-                        HTML('<span class="badge badge-default">6.1</span>'),
+                        # HTML('<span class="badge badge-default">6.1</span>'),
                         Div('arabic', css_class='col-md-4'),
                         css_class='row',
                     ),
@@ -3237,7 +3238,7 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div(
                         HTML('<span class="badge badge-default">7</span>'),
                         Div('attended_math', css_class='col-md-4'),
-                        HTML('<span class="badge badge-default">7.1</span>'),
+                        # HTML('<span class="badge badge-default">7.1</span>'),
                         Div('math', css_class='col-md-4'),
                         css_class='row',
                     ),
@@ -3245,7 +3246,7 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div(
                         HTML('<span class="badge badge-default">8</span>'),
                         Div('attended_social', css_class='col-md-4'),
-                        HTML('<span class="badge badge-default">8.1</span>'),
+                        # HTML('<span class="badge badge-default">8.1</span>'),
                         Div('social', css_class='col-md-4'),
                         css_class='row',
                     ),
@@ -3253,7 +3254,7 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div(
                         HTML('<span class="badge badge-default">9</span>'),
                         Div('attended_psychomotor', css_class='col-md-4'),
-                        HTML('<span class="badge badge-default">9.1</span>'),
+                        # HTML('<span class="badge badge-default">9.1</span>'),
                         Div('psychomotor', css_class='col-md-4'),
                         css_class='row',
                     ),
@@ -3272,22 +3273,26 @@ class ABLNAssessmentForm(forms.ModelForm):
                         HTML('<span class="badge badge-default">1.1</span>'),
                         Div('phone_call_number', css_class='col-md-3'),
                         css_class='row',
+                        id='div_phone_call_number'
                     ),
                     Div(
                         HTML('<span class="badge badge-default">1.1</span>'),
                         Div('house_visit_number', css_class='col-md-3'),
                         css_class='row',
+                        id='div_house_visit_number'
                     ),
                     Div(
                         HTML('<span class="badge badge-default">1.1</span>'),
                         Div('family_visit_number', css_class='col-md-3'),
                         css_class='row',
+                        id='div_family_visit_number'
                     ),
                     Div(
                         HTML('<span class="badge badge-default">2</span>'),
                         Div('follow_up_result', css_class='col-md-3'),
                         css_class='row',
                     ),
+                    id='follow_up'
                 ),
                 Fieldset(
                     None,

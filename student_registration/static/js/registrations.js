@@ -122,6 +122,7 @@ $(document).ready(function(){
     $("td[class='student.last_name']").addClass('font-bolder');
 
     reorganizeForm();
+    reorganizeForm_post_assessment();
     $(document).on('change', 'select#id_level', function(){
 
          if($(document).find('#id_exam_result_arabic').length == 1) {
@@ -176,6 +177,11 @@ $(document).ready(function(){
     });
     $(document).on('change', 'select#id_have_barcode', function(){
         reorganizeForm();
+    });
+
+    $(document).on('change', 'select#id_participation, select#id_follow_up_type, select#id_attended_arabic,  select#id_attended_math,  ' +
+        'select#id_attended_social,  select#id_attended_psychomotor ', function(){
+       reorganizeForm_post_assessment();
     });
 
     $(document).on('blur', arabic_fields, function(){
@@ -816,6 +822,85 @@ function reorganizeForm()
         return true;
     }
 
+    reorganizeForm_post_assessment();
+
+}
+
+function reorganizeForm_post_assessment()
+{
+
+    var participation = $('select#id_participation').val();
+    var follow_up_type = $('select#id_follow_up_type').val();
+
+    var attended_arabic = $('select#id_attended_arabic').val();
+    var attended_math = $('select#id_attended_math').val();
+    var attended_social = $('select#id_attended_social').val();
+    var attended_psychomotor = $('select#id_attended_psychomotor').val();
+
+    // alert('hi');
+
+
+    // id_participation
+    $('div#div_id_barriers_single').addClass('d-none');
+    $('#follow_up').addClass('d-none');
+
+    if(participation != 'no_absence'){
+        $('#div_id_barriers_single').removeClass('d-none');
+        $('#follow_up').removeClass('d-none');
+        // $('input[name=follow_up_type]').val('none').checked(true);
+        $('div#div_phone_call_number').val('');
+        $('div#div_house_visit_number').val('');
+        $('div#div_family_visit_number').val('');
+    }
+
+    // follow_up_type
+    $('div#div_phone_call_number').addClass('d-none');
+    $('div#div_house_visit_number').addClass('d-none');
+    $('div#div_family_visit_number').addClass('d-none');
+    if(follow_up_type == 'Phone'){
+        $('div#div_phone_call_number').removeClass('d-none');
+
+    }else if(follow_up_type == 'House visit'){
+        $('div#div_house_visit_number').removeClass('d-none');
+
+    }else if(follow_up_type == 'Family Visit') {
+        $('div#div_family_visit_number').removeClass('d-none');
+    }
+
+    $('div#div_id_arabic').addClass('d-none');
+    $('div#div_id_math').addClass('d-none');
+    $('div#div_id_social').addClass('d-none');
+    $('div#div_id_psychomotor').addClass('d-none');
+    // attended_arabic
+    if(attended_arabic == 'yes'){
+        $('div#div_id_arabic').removeClass('d-none');
+    }
+    else{
+        $('#id_arabic').val('');
+    }
+    // attended_math
+    if(attended_math == 'yes'){
+        $('div#div_id_math').removeClass('d-none');
+    }
+    else{
+        $('#id_math').val('');
+    }
+    // attended_social
+    if(attended_social == 'yes'){
+        $('div#div_id_social').removeClass('d-none');
+    }
+    else{
+        $('#id_social').val('');
+    }
+    // attended_psychomotor
+    if(attended_psychomotor == 'yes'){
+        $('div#div_id_psychomotor').removeClass('d-none');
+    }
+    else{
+        $('#id_psychomotor').val('');
+    }
+
+
 }
 
 
@@ -1074,3 +1159,4 @@ function load_cadasters(url)
         }
     })
 }
+

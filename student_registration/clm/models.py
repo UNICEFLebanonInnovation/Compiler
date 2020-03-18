@@ -141,12 +141,12 @@ class CLM(TimeStampedModel):
         ('from_displaced_community', _('Referral from the displaced community')),
     )
     PARTICIPATION = Choices(
-        ('', _('Participation')),
-        ('less_than_10days', _('Less than 10 absence days')),
-        ('10_15_days', _('10 to 15 absence days')),
-        ('15_20_days', _('15 to 20 absence days')),
-        ('more_than_20days', _('More than 20 absence days')),
-        ('no_absence', _('No Absence'))
+        ('', '----------'),
+        ('no_absence', _('No Absence')),
+        ('less_than_3days', _('Less than 3 absence days')),
+        ('3_7_days', _('3 to 7 absence days')),
+        ('7_12_days', _('7 to 12 absence days')),
+        ('more_than_12days', _('More than 12 absence days')),
     )
     BARRIERS = Choices(
         ('Full time job to support family financially', _('Full time job to support family financially')),
@@ -186,11 +186,6 @@ class CLM(TimeStampedModel):
         ('referred_to_another_program', _('Referred to another program')),
         # ('dropout', _('Dropout from school'))
     )
-    # REGISTRATION_LEVEL = Choices(
-    #     ('', _('Registration level')),
-    #     ('level_one', _('Level one')),
-    #     ('level_two', _('Level two')),
-    # )
 
     first_attendance_date = models.DateField(
         blank=True,
@@ -419,6 +414,7 @@ class CLM(TimeStampedModel):
         blank=True,
         null=True,
         choices=(
+            ('none', _('----------')),
             ('Phone', _('Phone Call')),
             ('House visit', _('House Visit')),
             ('Family Visit', _('Family Visit')),
@@ -1814,7 +1810,6 @@ class ABLN(CLM):
         ('referred_to_cbt', _('Referred to CBT')),
         ('dropout', _('Dropout, referral not possible')),
     )
-
     cycle = models.ForeignKey(
         Cycle,
         blank=True, null=True,
@@ -1850,179 +1845,6 @@ class ABLN(CLM):
         null=True,
         verbose_name=_('First attendance date')
     )
-    # participation = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=CLM.PARTICIPATION,
-    #     verbose_name=_('Participation')
-    # )
-    # barriers = ArrayField(
-    #     models.CharField(
-    #         choices=CLM.BARRIERS,
-    #         max_length=100,
-    #         blank=True,
-    #         null=True,
-    #     ),
-    #     blank=True,
-    #     null=True,
-    #     verbose_name=_('Barriers')
-    # )
-    # learning_result = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=LEARNING_RESULT,
-    #     verbose_name=_('Learning result')
-    # )
-    # barriers_single = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=CLM.BARRIERS,
-    #     verbose_name=_('The main barriers affecting the daily attendance and performance')
-    # )
-    # test_done = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     verbose_name=_('test_done')
-    # )
-    # round_complete = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     verbose_name=_('Round complete')
-    # )
-    # attended_arabic = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     verbose_name=_('Attended Arabic test')
-    # )
-    # arabic = models.TextField(
-    #     blank=True,
-    #     null=True,
-    #     verbose_name=_('Please enter the result for this subject')
-    # )
-    # attended_math = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     verbose_name=_('Attended Math test')
-    # )
-    # math = models.TextField(
-    #     blank=True,
-    #     null=True,
-    #     verbose_name=_('Please enter the result for this subject')
-    # )
-    # attended_social = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     verbose_name=_('Attended Social test')
-    # )
-    # social = models.TextField(
-    #     blank=True,
-    #     null=True,
-    #     verbose_name=_('Please enter the result for this subject')
-    # )
-    # attended_psychomotor = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     verbose_name=_('Attended Psychomotor test')
-    # )
-    # psychomotor = models.TextField(
-    #     blank=True,
-    #     null=True,
-    #     verbose_name=_('Please enter the result for this subject')
-    # )
-    # follow_up_type = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(
-    #         ('Phone', _('Phone Call')),
-    #         ('House visit', _('House Visit')),
-    #         ('Family Visit', _('Family Visit')),
-    #     ),
-    #     verbose_name=_('Type of follow up')
-    # )
-    #
-    # phone_call_number = models.IntegerField(
-    #     blank=True,
-    #     null=True,
-    #     verbose_name=_('Please enter the number phone calls')
-    # )
-    # house_visit_number = models.IntegerField(
-    #     blank=True,
-    #     null=True,
-    #     verbose_name=_('Please enter the number of house visits')
-    # )
-    # family_visit_number = models.IntegerField(
-    #     blank=True,
-    #     null=True,
-    #     verbose_name=_('Please enter the number parent visits')
-    # )
-    # follow_up_result = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(
-    #         ('child back', _('Phone Call')),
-    #         ('child transfer to difficulty center', _('Child transfer to difficulty center')),
-    #         ('child transfer to protection', _('Child transfer to protection')),
-    #         ('child transfer to medical', _('Child transfer to medical')),
-    #         ('Intensive followup', _('Intensive followup')),
-    #         ('dropout', _('Dropout')),
-    #     ),
-    #     verbose_name=_('Result of follow up')
-    # )
-    # parent_attended_visits = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     verbose_name=_('Parents attended parents meeting')
-    # )
-    # visits_number = models.IntegerField(
-    #     blank=True,
-    #     null=True,
-    #     verbose_name=_('Please enter the number parent visits')
-    # )
-    # parent_attended = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(
-    #         ('', '----------'),
-    #         ('mother', _('Mother')),
-    #         ('father', _('Father')),
-    #         ('other', _('Other')),
-    #     ),
-    #     verbose_name=_('Parents attended parents meeting')
-    # )
-    # child_health_examed = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     verbose_name=_('"Did the child receive health exam')
-    # )
-    # child_health_concern = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     verbose_name=_('Anything to worry about')
-    # )
 
     def calculate_score(self, stage):
         keys = [
