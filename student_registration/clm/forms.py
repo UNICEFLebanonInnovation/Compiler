@@ -199,10 +199,10 @@ class CommonForm(forms.ModelForm):
         label=_('P-Code If a child lives in a tent / Brax in a random camp'),
         widget=forms.TextInput, required=False
     )
-    student_id_number = forms.CharField(
-        label=_('ID number'),
-        widget=forms.TextInput, required=False
-    )
+    # student_id_number = forms.CharField(
+    #     label=_('ID number'),
+    #     widget=forms.TextInput, required=False
+    # )
 
     disability = forms.ModelChoiceField(
         queryset=Disability.objects.filter(active=True), widget=forms.Select,
@@ -322,7 +322,7 @@ class CommonForm(forms.ModelForm):
             'student_mother_fullname',
             # 'student_address',
             'student_p_code',
-            'student_id_number',
+            # 'student_id_number',
             'internal_number',
             'disability',
             # 'have_labour',
@@ -335,8 +335,8 @@ class CommonForm(forms.ModelForm):
             # 'learning_result',
             'student_id',
             'enrollment_id',
-            'comments',
-            'unsuccessful_pretest_reason',
+            # 'comments',
+            # 'unsuccessful_pretest_reason',
             # 'unsuccessful_posttest_reason',
         )
         initial_fields = fields
@@ -789,8 +789,8 @@ class BLNForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default d-none">14</span>'),
-                    Div('student_id_number', css_class='col-md-3 d-none'),
+                    # HTML('<span class="badge badge-default d-none">14</span>'),
+                    # Div('student_id_number', css_class='col-md-3 d-none'),
                     HTML('<span class="badge badge-default">15</span>'),
                     Div('internal_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">16</span>'),
@@ -1563,7 +1563,7 @@ class RSForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">13</span>'),
-                    Div('student_id_number', css_class='col-md-3'),
+                    # Div('student_id_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('internal_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">15</span>'),
@@ -2052,7 +2052,7 @@ class CBECEForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">13</span>'),
-                    Div('student_id_number', css_class='col-md-3'),
+                    # Div('student_id_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('internal_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">15</span>'),
@@ -2773,16 +2773,12 @@ class ABLNForm(CommonForm):
                     Div('labour_weekly_income', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning child_data D_right_border'
+                css_class='bd-callout bd-callout-warning child_data D_right_border' + display_assessment
             ),
-            Fieldset(
-                None,
-                Div(
-                    HTML('<div class="p-3"></div>'),
-                    css_class='row'
-                ),
-                css_class='bd-callout bd-callout-warning' + display_assessment
-            ),
+            # Fieldset(
+            #     None,
+            #     css_class='bd-callout bd-callout-warning'
+            # ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
