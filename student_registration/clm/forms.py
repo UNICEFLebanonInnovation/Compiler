@@ -2169,16 +2169,9 @@ class ABLNForm(CommonForm):
         label=_("First attendance date"),
         required=True
     )
-    # miss_school_date = forms.DateField(
-    #     label=_("Miss school date"),
-    #     required=True,
-    #     widget=forms.DateField(attrs={'auto-complete': 'False'})
-    # widget = forms.DateField((empty_label = "Nothing")
-    # )
     miss_school_date = forms.DateField(
         label=_("Miss school date"),
         required=True,
-        # widget=forms.DateField()
     )
 
     new_registry = forms.ChoiceField(
@@ -2198,11 +2191,6 @@ class ABLNForm(CommonForm):
         label=_("Round start date"),
         required=True
     )
-    # cadaster = forms.CharField(
-    #     label=_('Cadaster'),
-    #     widget=forms.TextInput,
-    #     required=True
-    # )
     registration_level = forms.ChoiceField(
         label=_("Registration level"),
         widget=forms.Select, required=True,
@@ -2231,24 +2219,12 @@ class ABLNForm(CommonForm):
         label=_('How many children does this child have?'),
         widget=forms.TextInput, required=False
     )
-    # have_labour = forms.MultipleChoiceField(
-    #     label=_('Does the child participate in work?'),
-    #     choices=CLM.HAVE_LABOUR,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False, initial='no'
-    # )
     have_labour_single_selection = forms.ChoiceField(
         label=_('Does the child participate in work?'),
         widget=forms.Select, required=True,
         choices=CLM.HAVE_LABOUR,
         initial='no'
     )
-    # labours = forms.MultipleChoiceField(
-    #     label=_('What is the type of work ?'),
-    #     choices=CLM.LABOURS,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False
-    # )
     labours_single_selection = forms.ChoiceField(
         label=_('What is the type of work ?'),
         widget=forms.Select, required=False,
@@ -2532,11 +2508,6 @@ class ABLNForm(CommonForm):
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child Information') + '</h4>')
                 ),
-                # Div(
-                #     HTML('<span class="badge badge-default">1</span>'),
-                #     Div('referral', css_class='col-md-9'),
-                #     css_class='row',
-                # ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('student_first_name', css_class='col-md-3'),
@@ -2776,10 +2747,6 @@ class ABLNForm(CommonForm):
                 ),
                 css_class='bd-callout bd-callout-warning child_data D_right_border' + display_assessment
             ),
-            # Fieldset(
-            #     None,
-            #     css_class='bd-callout bd-callout-warning'
-            # ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
@@ -2807,7 +2774,6 @@ class ABLNForm(CommonForm):
         syrian_national_number_confirm = cleaned_data.get("syrian_national_number_confirm")
         sop_national_number = cleaned_data.get("sop_national_number")
         sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
-
         parent_individual_case_number = cleaned_data.get("parent_individual_case_number")
         parent_individual_case_number_confirm = cleaned_data.get("parent_individual_case_number_confirm")
         parent_national_number = cleaned_data.get("parent_national_number")
@@ -2913,8 +2879,6 @@ class ABLNForm(CommonForm):
     class Meta:
         model = ABLN
         fields = CommonForm.Meta.fields + (
-            # 'cycle',
-            # 'referral',
             'first_attendance_date',
             'miss_school_date',
             'student_birthday_year',
