@@ -1039,8 +1039,13 @@ class CLM(TimeStampedModel):
         abstract = True
 
 
-class BLN(CLM):
 
+class BLN(CLM):
+    miss_school_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('First attendance date')
+    )
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
         ('graduated_to_bln_next_level', _('Graduated to the next level')),
@@ -1058,11 +1063,6 @@ class BLN(CLM):
         blank=True, null=True,
         related_name='+',
         verbose_name=_('Cycle')
-    )
-    miss_school_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('First attendance date')
     )
     referral = ArrayField(
         models.CharField(
@@ -1083,17 +1083,19 @@ class BLN(CLM):
         choices=LEARNING_RESULT,
         verbose_name=_('Learning result')
     )
+    first_attendance_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('First attendance date')
+    )
 
     def calculate_score(self, stage):
         keys = [
             'BLN_ASSESSMENT/arabic',
             'BLN_ASSESSMENT/math',
-            'BLN_ASSESSMENT/foreign_language',
             'BLN_ASSESSMENT/social_emotional',
             'BLN_ASSESSMENT/psychomotor',
             'BLN_ASSESSMENT/artistic',
-            # 'BLN_ASSESSMENT/english',
-            # 'BLN_ASSESSMENT/french'
         ]
         super(BLN, self).score(keys, stage)
 
@@ -1144,13 +1146,6 @@ class BLN(CLM):
     @property
     def french_improvement(self):
         return str(self.domain_improvement('french')) + '%'
-
-    @property
-    def foreign_language_improvement(self):
-        french_english = self.domain_improvement('english') + self.domain_improvement('french')
-        if not french_english:
-            return str(self.domain_improvement('foreign_language')) + '%'
-        return str(french_english) + '%'
 
     @property
     def social_emotional_improvement(self):
@@ -1799,6 +1794,11 @@ class SelfPerceptionGrades(models.Model):
 
 class ABLN(CLM):
 
+    miss_school_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('First attendance date')
+    )
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
         ('graduated_to_abln_next_level', _('Graduated to the ABLN next level')),
@@ -1815,11 +1815,6 @@ class ABLN(CLM):
         blank=True, null=True,
         related_name='+',
         verbose_name=_('Cycle')
-    )
-    miss_school_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('First attendance date')
     )
     referral = ArrayField(
         models.CharField(
