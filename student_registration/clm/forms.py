@@ -2762,16 +2762,17 @@ class ABLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('have_labour_single_selection', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('labours_single_selection', css_class='col-md-3', css_id='labours'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('labour_weekly_income', css_class='col-md-3'),
                     css_class='row',
+                    id='labour_details'
                 ),
                 css_class='bd-callout bd-callout-warning child_data D_right_border' + display_assessment
             ),

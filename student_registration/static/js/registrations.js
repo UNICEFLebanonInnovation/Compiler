@@ -664,41 +664,14 @@ function reorganizeForm()
 
 
     // have_labour_single_selection
-    $('div#div_id_labour_weekly_income').addClass('d-none');
-    $('div#div_id_labours_single_selection').addClass('d-none');
-    $('div#div_id_labour_hours').addClass('d-none');
-    if(have_labour != 'no'){
-        $('#div_id_labour_weekly_income').removeClass('d-none');
-        $('#div_id_labours_single_selection').removeClass('d-none');
-        $('#div_id_labour_hours').removeClass('d-none');
-    }
-    // if(have_labour == 'yes_morning' || have_labour == 'yes_afternoon' || have_labour == 'yes_all_day'){
-    //     $('div#labours').removeClass('d-none');
-    //     $('div#labours').prev().removeClass('d-none');
-    //     $('div#labour_hours').removeClass('d-none');
-    //     $('div#labour_hours').prev().removeClass('d-none');
-    //     $('input#id_have_labour_1').attr('disabled', 'disabled');
-    //     $('input#id_have_labour_2').removeAttr('disabled');
-    //     $('input#id_have_labour_3').removeAttr('disabled');
-    //     $('input#id_have_labour_4').removeAttr('disabled');
-    // }else{
-    //     if(have_labour == 'no') {
-    //         $('input#id_have_labour_1').removeAttr('disabled');
-    //         $('input#id_have_labour_2').attr('disabled', 'disabled');
-    //         $('input#id_have_labour_3').attr('disabled', 'disabled');
-    //         $('input#id_have_labour_4').attr('disabled', 'disabled');
-    //     }else{
-    //         $('input#id_have_labour_1').removeAttr('disabled');
-    //         $('input#id_have_labour_2').removeAttr('disabled');
-    //         $('input#id_have_labour_3').removeAttr('disabled');
-    //         $('input#id_have_labour_4').removeAttr('disabled');
-    //     }
-    //     $('div#labours').addClass('d-none');
-    //     $('div#labours').prev().addClass('d-none');
-    //     $('div#labour_hours').addClass('d-none');
-    //     $('div#labour_hours').prev().addClass('d-none');
-    // }
 
+     $('#labour_details').addClass('d-none');
+    // $('div#div_id_labour_weekly_income').addClass('d-none');
+    // $('div#div_id_labours_single_selection').addClass('d-none');
+    // $('div#div_id_labour_hours').addClass('d-none');
+    if(have_labour != 'no'){
+        $('#labour_details').removeClass('d-none');
+    }
 
     if(id_type == 'UNHCR Registered'){
         $('div.child_id1').removeClass('d-none');
