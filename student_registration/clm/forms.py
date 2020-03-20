@@ -3278,6 +3278,7 @@ class ABLNAssessmentForm(forms.ModelForm):
     def save(self, instance=None, request=None):
         instance = super(ABLNAssessmentForm, self).save()
         instance.modified_by = request.user
+
         instance.save()
         messages.success(request, _('Your data has been sent successfully to the server'))
 
@@ -3650,6 +3651,17 @@ class BLNAssessmentForm(forms.ModelForm):
     def save(self, instance=None, request=None):
         instance = super(BLNAssessmentForm, self).save()
         instance.modified_by = request.user
+        instance.post_test = {
+            "ABLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
+            "ABLN_ASSESSMENT/arabic": request.POST.get('arabic'),
+            "ABLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
+            "ABLN_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
+            "ABLN_ASSESSMENT/attended_math": request.POST.get('attended_math'),
+            "ABLN_ASSESSMENT/math": request.POST.get('math'),
+            "ABLN_ASSESSMENT/attended_social": request.POST.get('attended_social'),
+            "ABLN_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+        }
+
         instance.save()
         messages.success(request, _('Your data has been sent successfully to the server'))
 
