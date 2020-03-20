@@ -16,6 +16,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
 from django.shortcuts import render
 from django.contrib.auth.models import Group
+from django.utils.translation import ugettext as _
+from import_export.formats import base_formats
 from student_registration.locations.models import (
     Location,
 )
@@ -26,6 +28,8 @@ from student_registration.schools.models import (
     ClassLevel,
     ClassRoom,
 )
+import time
+from django_tables2.export.export import TableExport
 from student_registration.users.utils import force_default_language
 from django.shortcuts import redirect
 
@@ -694,17 +698,23 @@ class List_Justification(TemplateView):
     def handle_no_permission(self, request):
         return HttpResponseForbidden()
 
+    def get_queryset(self):
+        if (self.request.GET.get('rb_groupby') == 'BYSECTION'):
+            print('Section')
+        else:
+            print ('class')
+
     def get_context_data(self, **kwargs):
         from student_registration.enrollments.models import Enrollment
         from student_registration.schools.models import EducationYear
         education_year = EducationYear.objects.get(current_year=True)
         v_exist = Enrollment.objects.filter(education_year_id=education_year, disabled=False,
                                             school_id__isnull=False, school__is_2nd_shift=True,
-                                            school_id=self.request.user.school_id, # moved=False,
+                                            school_id=self.request.user.school_id,
                                             justificationnumber__isnull=False).count()
         if v_exist:
             v_last_nb = Enrollment.objects.filter(education_year_id=education_year,
-                                                  school_id__isnull=False, school__is_2nd_shift=True,# moved=False,
+                                                  school_id__isnull=False, school__is_2nd_shift=True,
                                                   school_id=self.request.user.school_id, disabled=False,
                                                   justificationnumber__isnull=False).values_list('justificationnumber',
                                                                                                  flat=True).order_by('-justificationnumber')[0]
@@ -712,15 +722,57 @@ class List_Justification(TemplateView):
             v_last_nb = ''
         return {
             'enrollment': Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
-                                                    school__is_2nd_shift=True, disabled=False,# moved=False,  #dropout_status=False,
+                                                    school__is_2nd_shift=True, disabled=False,
+                                                    school_id=self.request.user.school_id).
+                order_by('classroom_id', 'student__first_name', 'student__father_name', 'student__last_name'),
+            'school': School.objects.filter(id=self.request.user.school_id),
+            'education_year': education_year,
+            'current_date': datetime.now(),
+            'last_justificationnumber': v_last_nb,
+            'rep_groupby': 'CLASS',
+        }
+
+
+class List_Justification_BySection(TemplateView):
+    template_name = 'dashboard/list_justification.html'
+    group_required = [u"MEHE"]
+
+    def handle_no_permission(self, request):
+        return HttpResponseForbidden()
+
+    def get_queryset(self):
+        if (self.request.GET.get('rb_groupby') == 'BYSECTION'):
+            print('Section')
+        else:
+            print ('class')
+
+    def get_context_data(self, **kwargs):
+        from student_registration.enrollments.models import Enrollment
+        from student_registration.schools.models import EducationYear
+        education_year = EducationYear.objects.get(current_year=True)
+        v_exist = Enrollment.objects.filter(education_year_id=education_year, disabled=False,
+                                            school_id__isnull=False, school__is_2nd_shift=True,
+                                            school_id=self.request.user.school_id,
+                                            justificationnumber__isnull=False).count()
+        if v_exist:
+            v_last_nb = Enrollment.objects.filter(education_year_id=education_year,
+                                                  school_id__isnull=False, school__is_2nd_shift=True,
+                                                  school_id=self.request.user.school_id, disabled=False,
+                                                  justificationnumber__isnull=False).values_list('justificationnumber',
+                                                                                                 flat=True).order_by('-justificationnumber')[0]
+        else:
+            v_last_nb = ''
+        return {
+            'enrollment': Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                                    school__is_2nd_shift=True, disabled=False,
                                                     school_id=self.request.user.school_id).
                 order_by('classroom_id', 'section_id', 'student__first_name', 'student__father_name', 'student__last_name'),
             'school': School.objects.filter(id=self.request.user.school_id),
             'education_year': education_year,
             'current_date': datetime.now(),
-            'last_justificationnumber': v_last_nb
+            'last_justificationnumber': v_last_nb,
+            'rep_groupby': 'SECTION',
         }
-
 
 class List_of_available_documents(TemplateView):
     template_name = 'dashboard/available_documents.html'
@@ -818,7 +870,6 @@ class List_of_Attendance(TemplateView):
         from_date = self.request.GET['att_fromdate']
         to_date = self.request.GET['att_todate']
         education_year = EducationYear.objects.get(current_year=True)
-
         ENR = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
                                         # moved=False,  dropout_status=False,
                                         school__is_2nd_shift=True, disabled=False, school__number__gte=from_school,
@@ -829,25 +880,134 @@ class List_of_Attendance(TemplateView):
         list_data = []
         for enr in ENR:
             ATTEND = AttendanceDt.objects.filter(attendance_date__gte=from_date, attendance_date__lte=to_date,
-                                                 is_present=True, student_id=enr.student_id, school_id=enr.school_id,
+                                                 is_present=True, student_id=enr.student_id,
+                                                 school_id=enr.school_id,
                                                  classlevel_id=enr.classroom_id, section_id=enr.section_id).count()
             ABSENCES = AttendanceDt.objects.filter(attendance_date__gte=from_date, attendance_date__lte=to_date,
-                                                   is_present=False, student_id=enr.student_id, school_id=enr.school_id,
-                                                   classlevel_id=enr.classroom_id, section_id=enr.section_id).count()
-            if (((self.request.GET['rb_option'] == 'rb_nozero_attend')and(ATTEND != 0))
-                or(self.request.GET['rb_option'] == 'rb_all')
-                or((self.request.GET['rb_option'] == 'rb_zero_attend')and(ATTEND == 0))):
+                                                   is_present=False, student_id=enr.student_id,
+                                                   school_id=enr.school_id,
+                                                   classlevel_id=enr.classroom_id,
+                                                   section_id=enr.section_id).count()
+            if (((self.request.GET['rb_option'] == 'rb_nozero_attend') and (ATTEND != 0))
+                or (self.request.GET['rb_option'] == 'rb_all')
+                or ((self.request.GET['rb_option'] == 'rb_zero_attend') and (ATTEND == 0))):
                 list_data.append({
-                    'groupby': u'{} - {} - {}'.format(enr.school, enr.classroom, enr.section),
-                    'school_id': enr.school,
-                    'class_id': enr.classroom,
-                    'section_id': enr.section,
-                    'student_id': enr.student_id,
-                    'first_name': enr.student.first_name,
-                    'father_name': enr.student.father_name,
-                    'last_name': enr.student.last_name,
-                    'sex': enr.student.sex,
-                    'total_attend': ATTEND,
-                    'total_absent': ABSENCES})
-        return {'v_data': list_data}
+                            'groupby': u'{} - {} - {}'.format(enr.school, enr.classroom, enr.section),
+                            'school_id': enr.school,
+                            'class_id': enr.classroom,
+                            'section_id': enr.section,
+                            'student_id': enr.student_id,
+                            'full_name': enr.student.full_name,
+                            'mother_fullname': enr.student.mother_fullname,
+                            'birthday': enr.student.birthday,
+                            'sex': enr.student.sex,
+                            'total_attend': ATTEND,
+                            'total_absent': ABSENCES})
+                return {'v_data': list_data}
 
+
+def export_summary_of_Attendance(request):
+    from student_registration.enrollments.models import Enrollment
+    from student_registration.schools.models import EducationYear
+    from_school = request.GET['att_fromschool']
+    to_school = request.GET['att_toschool']
+    from_date = request.GET['att_fromdate']
+    to_date = request.GET['att_todate']
+    education_year = EducationYear.objects.get(current_year=True)
+    if (from_school)and(to_date):
+        qs_enr = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                           school__is_2nd_shift=True, school__number__gte=from_school,
+                                           school__number__lte=to_school).extra(
+            select={
+                'attend': """ select count(id) from attendances_attendancedt where is_present=True and
+                   attendances_attendancedt.student_id=enrollments_enrollment.student_id and
+                   attendances_attendancedt.school_id=enrollments_enrollment.school_id
+                   and attendances_attendancedt.attendance_date between %s and %s""",
+                'absent': """ select count(id) from attendances_attendancedt where is_present=False and
+                   attendances_attendancedt.student_id=enrollments_enrollment.student_id and
+                   attendances_attendancedt.school_id=enrollments_enrollment.school_id
+                   and attendances_attendancedt.attendance_date between %s and %s""",
+                'tel': """ concat(phone_prefix,phone) """,
+                'first_attend': """ select min(attendance_date)  attendance_date from attendances_attendancedt
+                    where attendances_attendancedt.student_id = enrollments_enrollment.student_id 
+                    and is_present=True and attendances_attendancedt.school_id =enrollments_enrollment.school_id """,
+            }, select_params=[from_date, to_date, from_date, to_date]).order_by('school_id', 'classroom_id',
+                                                                                'section_id', 'student__first_name',
+                                                                                'student__father_name', 'student__last_name')
+    else:
+        qs_enr = Enrollment.objects.filter(education_year_id=education_year, school_id__isnull=False,
+                                           school__is_2nd_shift=True, disabled=False,).extra(
+            select={
+                'attend': """ select count(id) from attendances_attendancedt where is_present=True and
+                        attendances_attendancedt.student_id=enrollments_enrollment.student_id and
+                        attendances_attendancedt.school_id=enrollments_enrollment.school_id
+                        and attendances_attendancedt.attendance_date between %s and %s""",
+                'absent': """ select count(id) from attendances_attendancedt where is_present=False and
+                        attendances_attendancedt.student_id=enrollments_enrollment.student_id and
+                        attendances_attendancedt.school_id=enrollments_enrollment.school_id
+                        and attendances_attendancedt.attendance_date between %s and %s""",
+                'tel': """ concat(phone_prefix,phone) """,
+                'first_attend': """ select min(attendance_date)  attendance_date from attendances_attendancedt
+                            where attendances_attendancedt.student_id = enrollments_enrollment.student_id 
+                            and is_present=True and attendances_attendancedt.school_id =enrollments_enrollment.school_id """,
+            }, select_params=[from_date, to_date, from_date, to_date]).order_by('school_id', 'classroom_id',
+                                                                                'section_id', 'student__first_name',
+                                                                                'student__father_name',
+                                                                                'student__last_name')
+    headers = {
+        'school__number': _('School number'),
+        'school__name': _('School'),
+        'school__location__name': _('District'),
+        'school__location__parent__name': _('Governorate'),
+        'section__name': _('Current Section'),
+        'classroom__name': _('Current Class'),
+        'student__id': 'student id',
+        'student__number': 'student number',
+        'student__first_name': _('Student first name'),
+        'student__father_name': _('Student father name'),
+        'student__last_name': _('Student last name'),
+        'student__mother_fullname': _('Mother fullname'),
+        'student__sex': _('Sex'),
+        'student__birthday_year': _('year'),
+        'student__birthday_month': _('month'),
+        'student__birthday_day': _('day'),
+        'student__place_of_birth': _('Place of birth'),
+        'tel': _('Phone'),
+        'student__id_number': _('Student ID Number'),
+        'student__nationality__name': _('Student nationality'),
+        'attend': _('attend'),
+        'absent': _('absent'),
+        'disabled': _('disabled'),
+        'moved': _('moved'),
+        'dropout_status': _('dropout status'),
+        'first_attend': _('first attend'),
+    }
+    qs_enr = qs_enr.values(
+        'school__number',
+        'school__name',
+        'school__location__name',
+        'school__location__parent__name',
+        'section__name',
+        'classroom__name',
+        'student__id',
+        'student__number',
+        'student__first_name',
+        'student__father_name',
+        'student__last_name',
+        'student__mother_fullname',
+        'student__sex',
+        'student__birthday_year',
+        'student__birthday_month',
+        'student__birthday_day',
+        'student__place_of_birth',
+        'tel',
+        'student__id_number',
+        'student__nationality__name',
+        'attend',
+        'absent',
+        'disabled',
+        'moved',
+        'dropout_status',
+        'first_attend',
+    )
+    return render_to_csv_response(qs_enr, field_header_map=headers)

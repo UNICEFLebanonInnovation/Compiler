@@ -117,6 +117,9 @@ $(document).ready(function(){
     if($(document).find('.dropout-date-input').length >= 1) {
         $('.dropout-date-input').datepicker({dateFormat: "yy-mm-dd"});
     }
+    if($(document).find('.justify-date-input').length >= 1) {
+        $('.justify-date-input').datepicker({dateFormat: "yy-mm-dd"});
+    }
     $("td[class='student.first_name']").addClass('font-bolder');
     $("td[class='student.father_name']").addClass('font-bolder');
     $("td[class='student.last_name']").addClass('font-bolder');
@@ -246,6 +249,18 @@ $(document).ready(function(){
         if($('#dropout_date_'+itemscope).val()) {
             dropout_student_enrollment(item.attr('itemscope'), $('#dropout_date_'+itemscope).val());
             item.parents('tr').remove();
+        }
+    });
+
+
+   $(document).on('click', '.justify-button', function(){
+        var item = $(this);
+        var itemscope = item.attr('itemscope');
+        if(confirm($(this).attr('translation'))) {
+            $('.justify-date-block').addClass('d-none');
+            $('#justify_date_block_'+itemscope).removeClass('d-none');
+            var itemscope = item.attr('itemscope');
+            justify_student_enrollment(item.attr('itemscope'));
         }
     });
 
@@ -905,6 +920,27 @@ function dropout_student_enrollment(dropout_status, dropout_date)
     $.ajax({
         type: "POST",
         url: '/api/student-dropout-enrollment/',
+        data: data,
+        cache: false,
+        async: false,
+        headers: getHeader(),
+        dataType: 'json',
+        success: function (response) {
+            console.log(response);
+        },
+        error: function(response) {
+            console.log(response);
+        }
+    });
+}
+
+function justify_student_enrollment(justify_status, justify_date)
+{
+    var data = {justify_status: justify_status, justify_date: justify_date};
+
+    $.ajax({
+        type: "POST",
+        url: '/api/student-justify-enrollment/',
         data: data,
         cache: false,
         async: false,

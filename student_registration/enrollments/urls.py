@@ -17,6 +17,11 @@ urlpatterns = [
         name='edit'
     ),
     url(
+        regex=r'^edit_region/(?P<pk>[\w.@+-]+)/$',
+        view=views.Edit_RegionView.as_view(),
+        name='edit_region'
+    ),
+    url(
         regex=r'^saveimage/(?P<pk>[\w.@+-]+)/$',
         view=views.Update_Image.as_view(),
         name='saveimage'
@@ -35,6 +40,11 @@ urlpatterns = [
         regex=r'^list/$',
         view=views.ListingView.as_view(),
         name='list'
+    ),
+    url(
+        regex=r'^student_by_regions/$',
+        view=views.Student_By_Regions.as_view(),
+        name='student_by_regions'
     ),
     url(
         regex=r'^list-old-data/$',
@@ -126,4 +136,5 @@ urlpatterns = [
         view=views.clear_pic,
         name='clear_pic'
     ),
+
 ]

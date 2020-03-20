@@ -23,29 +23,25 @@
     content: counter(tableCount);
     counter-increment: tableCount;
    }
-#content {
+  #content {
     display: table;
-}
-
-#pageFooter {
+  }
+  #pageFooter {
     display: table-footer-group;
-}
-
-#pageFooter:after {
+  }
+  #pageFooter:after {
     counter-increment: page;
     content: counter(page);
-}
-table {
-   border-collapse: collapse;
-   table-layout:fixed;
-}
-td {
-  page-break-inside: avoid !important;
-
-  overflow : hidden;
-  word-wrap:break-word;
-
-}
+  }
+  table {
+    border-collapse: collapse;
+    table-layout:fixed;
+  }
+  td {
+    page-break-inside: avoid !important;
+    overflow : hidden;
+    word-wrap:break-word;
+  }
 </style>
 <script type='text/javascript'>
 		function PrintReport()
@@ -53,31 +49,27 @@ td {
 			window.print();
 		}
 
-	</script>
+</script>
 <body>
-
-
-
-<table width="100%" border="0">
+ <table width="100%" border="0">
    <th width="15%" height="190">
      <div>
         <img src="{% static 'images/mehe.png' %}" style="float: center; width: 90px; height: 90px;" />
      </div>
-
      <div>
      الجمهورية اللبنانية
-     <br>
-     وزارة التربية والتعليم العالي
-     <br>
+       <br>
+       وزارة التربية والتعليم العالي
+       <br>
      وحدة برنامج التعليم الشامل
        <br>
-       <u>PMU</u>
-       </div>
+        <u>PMU</u>
+     </div>
    </th>
    <th width="10%">  </th>
    <th width="40%">
-       <font color="navy">
-        <h2 align="center">     مجموع الحضور و الغياب لكل طالب </h2>
+     <font color="navy">
+         <h align="center"> </h>    مجموع الحضور و الغياب لكل طالب </font></h2>
    </th>
    <th width="10%"> </th>
 </table>
@@ -86,53 +78,47 @@ td {
 {% regroup v_data by groupby as std_data %}
 
 <ul>
-{% for groupby in std_data %}
+  {% for groupby in std_data %}
+
   <br>
-    <font color="green" size="5">
-      <li>{{ groupby.grouper }} </li>
-    </font>
-
-
-<table width="100%" border="1" class="fixed">
+  <font color="green" size="5">
+  <li>{{ groupby.grouper }} </li>
+  </font>
+  <table width="100%" border="1" class="fixed">
      <th width="10%">
          <font size="2" color="black">الرقم </font>
-         <font size="1" color="black">
-          المتسلسل
-         </font>
+         <font size="1" color="black">          المتسلسل         </font>
      </th>
-     <th width="20%"> الإسم</th>
-     <th width="17%">إسم الأب</th>
-     <th width="15%">الشهرة</th>
+     <th width="20%"> الإسم الثلاثي</th>
+     <th width="17%">إسم الأم</th>
+     <th width="15%">تاريخ الميلاد</th>
      <th width="7%">الجنس</th>
      <th width="10%" align="right">رقم compiler الموحد</th>
      <th width="10%" ><font size="2" color="black">عدد أيام الحضور</font></th>
      <th width="10%" ><font size="2" color="black">عدد أيام الغياب</font></th>
-
-
-
-  {% for data in groupby.list %}
-
+     {% for data in groupby.list %}
      <tr>
         <div>
           <td width="10%" class="counterCell"  ></td>
-          <td width="20%" ><font size="2"> {{ data.first_name }}</font></div></td>
-          <td width="17%" ><font size="2">{{ data.father_name }}</font></td>
-          <td width="15%" ><font size="2">{{ data.last_name }}</font></td>
-          {% ifequal enr.student.sex 'Male' %}
+          <td width="20%" ><font size="2"> {{ data.full_name }}</font></div></td>
+          <td width="17%" ><font size="2">{{ data.mother_fullname }}</font></td>
+          <td width="15%" ><font size="2">{{ data.birthday }}</font></td>
+
+          {% ifequal data.sex 'Male' %}
              <td width="7%" align="center"><font size="2"> ذ</font></td>
           {% else %}
              <td width="7%" align="center"><font size="2"> أ</font></td>
            {% endifequal %}
           <td width="10%" ><font size="2">{{ data.student_id}}</font></td>
+
           <td width="10%" align="center"><font size="2"><b>{{ data.total_attend }}</b></font></td>
           <td width="10%" align="center"><font size="2"><b>{{ data.total_absent }}</b></font></td>
         </div>
       </tr>
-  {% endfor %}
-
-  </table>
-</u>
-{% endfor %}
+      {% endfor %}
+    </table>
+   {% endfor %}
+</ul>
 
 </body>
 

@@ -380,7 +380,6 @@ class Student(Person):
     objects = StudentManager()
     second_shift = Student2ndShiftManager()
     alp = StudentALPManager()
-    is_justified = models.BooleanField(default=True)
     is_specialneeds = models.BooleanField(default=False)
     birth_documenttype = models.ForeignKey(
         Birth_DocumentType,

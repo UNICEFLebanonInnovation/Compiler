@@ -2456,6 +2456,7 @@ class ABLNForm(CommonForm):
             ),
             Fieldset(
                 None,
+                Div(css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _(
                         'Search CLM student') + '</h4>')
@@ -2469,6 +2470,8 @@ class ABLNForm(CommonForm):
             ),
             Fieldset(
                 None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
                 Div(
                     # HTML('<h3>A</h3>'),
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('General Information') + '</h4>')
@@ -2505,6 +2508,7 @@ class ABLNForm(CommonForm):
             ),
             Fieldset(
                 None,
+                Div(HTML('<span>B</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child Information') + '</h4>')
                 ),
@@ -2573,6 +2577,7 @@ class ABLNForm(CommonForm):
             ),
             Fieldset(
                 None,
+                Div(HTML('<span>C</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parent/Caregiver Information') + '</h4>')
                 ),
@@ -2718,6 +2723,7 @@ class ABLNForm(CommonForm):
             ),
             Fieldset(
                 None,
+                Div(HTML('<span>D</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Family Status') + '</h4>')
                 ),

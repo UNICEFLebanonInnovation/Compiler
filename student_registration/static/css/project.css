@@ -545,5 +545,38 @@ section.inline-form .btn-actions .btn {
   border-right: 7px solid #7192be;
 }
 
+fieldset.bd-callout {
+    position: relative;
+    margin-right: 50px;
+}
 
+div.block_tag {
+    /*border: 1px solid;*/
+    width: 55px;
+    height: 30px;
+    background-color: #cccccc;
+    position: absolute;
+    right: -55px;
+    top: -1px;
+    font-size: 20px;
+    text-align: center;
+    color: white;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    font-weight: bold;
+}
 
+.A_right_border div.block_tag {
+  background-color: #68B0AB;
+}
+
+.B_right_border div.block_tag {
+  background-color: #99d19c;
+}
+.C_right_border div.block_tag {
+  background-color: #8c7aa9;
+}
+
+.D_right_border div.block_tag {
+  background-color: #7192be;
+}
