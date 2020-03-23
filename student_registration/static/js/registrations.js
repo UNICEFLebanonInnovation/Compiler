@@ -825,7 +825,6 @@ function reorganizeForm_post_assessment()
     var attended_social = $('select#id_attended_social').val();
     var attended_psychomotor = $('select#id_attended_psychomotor').val();
 
-    // alert('hi');
 
 
     // id_participation

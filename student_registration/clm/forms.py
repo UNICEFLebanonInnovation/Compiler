@@ -2399,6 +2399,53 @@ class ABLNForm(CommonForm):
 
     no_child_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
     no_parent_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
+    attended_arabic = forms.ChoiceField(
+        label=_("Attended Arabic test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+
+    arabic = forms.FloatField(
+        label=_('Please enter the result for this subject'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_math = forms.ChoiceField(
+        label=_("Attended Math test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+
+    math = forms.FloatField(
+        label=_('Please enter the result for this subject'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_social = forms.ChoiceField(
+        label=_("Attended Social test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+
+    social_emotional = forms.FloatField(
+        label=_('Please enter the result for this subject'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_psychomotor = forms.ChoiceField(
+        label=_("Attended Psychomotor test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    psychomotor = forms.FloatField(
+        label=_('Please enter the result for this subject'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
 
     source_of_identification = forms.ChoiceField(
         label=_("Source of identification of the child"),
@@ -2751,7 +2798,43 @@ class ABLNForm(CommonForm):
                     css_class='row',
                     id='labour_details'
                 ),
-                css_class='bd-callout bd-callout-warning child_data D_right_border' + display_assessment
+                css_class='bd-callout bd-callout-warning child_data D_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>E</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('attended_arabic', css_class='col-md-4'),
+                    Div('arabic', css_class='col-md-4'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('attended_math', css_class='col-md-4'),
+                    Div('math', css_class='col-md-4'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('attended_social', css_class='col-md-4'),
+                    Div('social_emotional', css_class='col-md-4'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('attended_psychomotor', css_class='col-md-4'),
+                    Div('psychomotor', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning E_right_border' + display_assessment
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
@@ -2879,8 +2962,21 @@ class ABLNForm(CommonForm):
                 msg = "The national numbers are not matched"
                 self.add_error('sop_national_number_confirm', msg)
 
-    def save(self, request=None, instance=None, serializer=None):
-        super(ABLNForm, self).save(request=request, instance=instance, serializer=ABLNSerializer)
+    def save(self, instance=None, request=None):
+        instance = super(ABLNForm, self).save()
+        instance.modified_by = request.user
+        instance.pre_test = {
+            "ABLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
+            "ABLN_ASSESSMENT/arabic": request.POST.get('arabic'),
+            "ABLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
+            "ABLN_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
+            "ABLN_ASSESSMENT/attended_math": request.POST.get('attended_math'),
+            "ABLN_ASSESSMENT/math": request.POST.get('math'),
+            "ABLN_ASSESSMENT/attended_social": request.POST.get('attended_social'),
+            "ABLN_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+        }
+
+        instance.save()
 
     class Meta:
         model = ABLN
@@ -3024,7 +3120,7 @@ class ABLNAssessmentForm(forms.ModelForm):
         initial='yes'
     )
 
-    social = forms.FloatField(
+    social_emotional = forms.FloatField(
         label=_('Please enter the result for this subject'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
@@ -3134,8 +3230,18 @@ class ABLNAssessmentForm(forms.ModelForm):
                 assessment_slug='abln_post_test',
                 callback=self.request.build_absolute_uri(reverse('clm:abln_post_assessment', kwargs={'pk': instance.id}))
              )
+            # post_test
         if instance.post_test:
             post_test_button = ' btn-success '
+            p_test = instance.post_test
+            attended_arabic = p_test["ABLN_ASSESSMENT/attended_arabic"]
+            arabic = p_test["ABLN_ASSESSMENT/arabic"]
+            attended_math = p_test["ABLN_ASSESSMENT/attended_math"]
+            math = p_test["ABLN_ASSESSMENT/math"]
+            attended_social = p_test["ABLN_ASSESSMENT/attended_social"]
+            social_emotional = p_test["ABLN_ASSESSMENT/social_emotional"]
+            attended_psychomotor = p_test["ABLN_ASSESSMENT/attended_psychomotor"]
+            psychomotor = p_test["ABLN_ASSESSMENT/psychomotor"]
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -3145,128 +3251,130 @@ class ABLNAssessmentForm(forms.ModelForm):
                 None,
                 Div(
                     'clm_type',
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>'),
+                    # css_class='bd-callout bd-callout-warning'
                 ),
-                Fieldset(
-                    None,
-                    Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
-                    ),
-                    Div(
-                        HTML('<span class="badge badge-default">1</span>'),
-                        Div('participation', css_class='col-md-4'),
-                        HTML('<span class="badge badge-default">2</span>'),
-                        Div('barriers_single', css_class='col-md-4'),
-                        css_class='row',
-                    ),
-                    Div(
-                        HTML('<span class="badge badge-default">3</span>'),
-                        Div('test_done', css_class='col-md-4'),
-                        HTML('<span class="badge badge-default">4</span>'),
-                        Div('round_complete', css_class='col-md-4'),
-                        css_class='row',
-                    ),
-                    Div(
-                        HTML('<span class="badge badge-default">5</span>'),
-                        Div('learning_result', css_class='col-md-4'),
-                        css_class='row',
-                    ),
-                    Div(
-                        HTML('<span class="badge badge-default">6</span>'),
-                        Div('attended_arabic', css_class='col-md-4'),
-                        # HTML('<span class="badge badge-default">6.1</span>'),
-                        Div('arabic', css_class='col-md-4'),
-                        css_class='row',
-                    ),
-
-                    Div(
-                        HTML('<span class="badge badge-default">7</span>'),
-                        Div('attended_math', css_class='col-md-4'),
-                        # HTML('<span class="badge badge-default">7.1</span>'),
-                        Div('math', css_class='col-md-4'),
-                        css_class='row',
-                    ),
-
-                    Div(
-                        HTML('<span class="badge badge-default">8</span>'),
-                        Div('attended_social', css_class='col-md-4'),
-                        # HTML('<span class="badge badge-default">8.1</span>'),
-                        Div('social', css_class='col-md-4'),
-                        css_class='row',
-                    ),
-
-                    Div(
-                        HTML('<span class="badge badge-default">9</span>'),
-                        Div('attended_psychomotor', css_class='col-md-4'),
-                        # HTML('<span class="badge badge-default">9.1</span>'),
-                        Div('psychomotor', css_class='col-md-4'),
-                        css_class='row',
-                    ),
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
                 ),
-                Fieldset(
-                    None,
-                    Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Follow up') + '</h4>')
-                    ),
-                    Div(
-                        HTML('<span class="badge badge-default">1</span>'),
-                        Div('follow_up_type', css_class='col-md-3'),
-                        css_class='row',
-                    ),
-                    Div(
-                        HTML('<span class="badge badge-default">1.1</span>'),
-                        Div('phone_call_number', css_class='col-md-3'),
-                        css_class='row',
-                        id='div_phone_call_number'
-                    ),
-                    Div(
-                        HTML('<span class="badge badge-default">1.1</span>'),
-                        Div('house_visit_number', css_class='col-md-3'),
-                        css_class='row',
-                        id='div_house_visit_number'
-                    ),
-                    Div(
-                        HTML('<span class="badge badge-default">1.1</span>'),
-                        Div('family_visit_number', css_class='col-md-3'),
-                        css_class='row',
-                        id='div_family_visit_number'
-                    ),
-                    Div(
-                        HTML('<span class="badge badge-default">2</span>'),
-                        Div('follow_up_result', css_class='col-md-3'),
-                        css_class='row',
-                    ),
-                    id='follow_up'
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('participation', css_class='col-md-4'),
+                    Div('barriers_single', css_class='col-md-4'),
+                    css_class='row',
                 ),
-                Fieldset(
-                    None,
-                    Div(
-                        HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parents Meeting and Health Exam') + '</h4>')
-                    ),
-                    Div(
-                        HTML('<span class="badge badge-default">1</span>'),
-                        Div('parent_attended_visits', css_class='col-md-3'),
-                        HTML('<span class="badge badge-default">2</span>'),
-                        Div('visits_number', css_class='col-md-4'),
-                        css_class='row',
-                    ),
-                    Div(
-                        HTML('<span class="badge badge-default">3</span>'),
-                        Div('parent_attended', css_class='col-md-4'),
-                        css_class='row',
-                    ),
-                    Div(
-                        HTML('<span class="badge badge-default">4</span>'),
-                        Div('child_health_examed', css_class='col-md-4'),
-                        HTML('<span class="badge badge-default">5</span>'),
-                        Div('child_health_concern', css_class='col-md-4'),
-                        css_class='row',
-                    ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('test_done', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('round_complete', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('learning_result', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('attended_arabic', css_class='col-md-4'),
+                    Div('arabic', css_class='col-md-4'),
+                    css_class='row',
                 ),
 
+                Div(
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('attended_math', css_class='col-md-4'),
+                    Div('math', css_class='col-md-4'),
+                    css_class='row',
+                ),
 
+                Div(
+                    HTML('<span class="badge badge-default">7</span>'),
+                    Div('attended_social', css_class='col-md-4'),
+                    Div('social_emotional', css_class='col-md-4'),
+                    css_class='row',
+                ),
 
-                css_class='bd-callout bd-callout-warning'+ display_assessment
+                Div(
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('attended_psychomotor', css_class='col-md-4'),
+                    Div('psychomotor', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning A_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>B</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Follow up') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('follow_up_type', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1.1</span>'),
+                    Div('phone_call_number', css_class='col-md-3'),
+                    css_class='row',
+                    id='div_phone_call_number'
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1.1</span>'),
+                    Div('house_visit_number', css_class='col-md-3'),
+                    css_class='row',
+                    id='div_house_visit_number'
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1.1</span>'),
+                    Div('family_visit_number', css_class='col-md-3'),
+                    css_class='row',
+                    id='div_family_visit_number'
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('follow_up_result', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                id='follow_up',
+                css_class='bd-callout bd-callout-warning B_right_border'
+            ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>C</span>'), css_class='block_tag'),
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parents Meeting and Health Exam') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('parent_attended_visits', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('visits_number', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('parent_attended', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('child_health_examed', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('child_health_concern', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning C_right_border'+ display_assessment ,
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
@@ -3278,7 +3386,16 @@ class ABLNAssessmentForm(forms.ModelForm):
     def save(self, instance=None, request=None):
         instance = super(ABLNAssessmentForm, self).save()
         instance.modified_by = request.user
-
+        instance.post_test = {
+            "ABLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
+            "ABLN_ASSESSMENT/arabic": request.POST.get('arabic'),
+            "ABLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
+            "ABLN_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
+            "ABLN_ASSESSMENT/attended_math": request.POST.get('attended_math'),
+            "ABLN_ASSESSMENT/math": request.POST.get('math'),
+            "ABLN_ASSESSMENT/attended_social": request.POST.get('attended_social'),
+            "ABLN_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+        }
         instance.save()
         messages.success(request, _('Your data has been sent successfully to the server'))
 
@@ -3290,14 +3407,6 @@ class ABLNAssessmentForm(forms.ModelForm):
             'barriers_single',
             'test_done',
             'round_complete',
-            'attended_arabic',
-            'arabic',
-            'attended_math',
-            'math',
-            'attended_social',
-            'social',
-            'attended_psychomotor',
-            'psychomotor',
             'follow_up_type',
             'phone_call_number',
             'house_visit_number',
@@ -3362,54 +3471,6 @@ class BLNAssessmentForm(forms.ModelForm):
         widget=forms.Select, required=True,
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
-    )
-
-    attended_arabic = forms.ChoiceField(
-        label=_("Attended Arabic test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-
-    arabic = forms.FloatField(
-        label=_('Please enter the result for this subject'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    attended_math = forms.ChoiceField(
-        label=_("Attended Math test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-
-    math = forms.FloatField(
-        label=_('Please enter the result for this subject'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    attended_social = forms.ChoiceField(
-        label=_("Attended Social test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-
-    social = forms.FloatField(
-        label=_('Please enter the result for this subject'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
-    )
-    attended_psychomotor = forms.ChoiceField(
-        label=_("Attended Psychomotor test"),
-        widget=forms.Select, required=True,
-        choices=(('yes', _("Yes")), ('no', _("No"))),
-        initial='yes'
-    )
-    psychomotor = forms.FloatField(
-        label=_('Please enter the result for this subject'),
-        widget=forms.NumberInput(attrs=({'maxlength': 4})),
-        min_value=0, required=False
     )
 
     follow_up_type = forms.ChoiceField(
@@ -3544,37 +3605,6 @@ class BLNAssessmentForm(forms.ModelForm):
                         Div('learning_result', css_class='col-md-4'),
                         css_class='row',
                     ),
-                    Div(
-                        HTML('<span class="badge badge-default">6</span>'),
-                        Div('attended_arabic', css_class='col-md-4'),
-                        # HTML('<span class="badge badge-default">6.1</span>'),
-                        Div('arabic', css_class='col-md-4'),
-                        css_class='row',
-                    ),
-
-                    Div(
-                        HTML('<span class="badge badge-default">7</span>'),
-                        Div('attended_math', css_class='col-md-4'),
-                        # HTML('<span class="badge badge-default">7.1</span>'),
-                        Div('math', css_class='col-md-4'),
-                        css_class='row',
-                    ),
-
-                    Div(
-                        HTML('<span class="badge badge-default">8</span>'),
-                        Div('attended_social', css_class='col-md-4'),
-                        # HTML('<span class="badge badge-default">8.1</span>'),
-                        Div('social', css_class='col-md-4'),
-                        css_class='row',
-                    ),
-
-                    Div(
-                        HTML('<span class="badge badge-default">9</span>'),
-                        Div('attended_psychomotor', css_class='col-md-4'),
-                        # HTML('<span class="badge badge-default">9.1</span>'),
-                        Div('psychomotor', css_class='col-md-4'),
-                        css_class='row',
-                    ),
                 ),
                 Fieldset(
                     None,
@@ -3673,14 +3703,6 @@ class BLNAssessmentForm(forms.ModelForm):
             'barriers_single',
             'test_done',
             'round_complete',
-            'attended_arabic',
-            'arabic',
-            'attended_math',
-            'math',
-            'attended_social',
-            'social',
-            'attended_psychomotor',
-            'psychomotor',
             'follow_up_type',
             'phone_call_number',
             'house_visit_number',

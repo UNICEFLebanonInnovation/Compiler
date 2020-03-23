@@ -545,6 +545,10 @@ section.inline-form .btn-actions .btn {
   border-right: 7px solid #7192be;
 }
 
+.E_right_border
+{
+  border-right: 7px solid #ffe599;
+}
 fieldset.bd-callout {
     position: relative;
     margin-right: 50px;
@@ -579,4 +583,7 @@ div.block_tag {
 
 .D_right_border div.block_tag {
   background-color: #7192be;
+}
+.E_right_border div.block_tag {
+  background-color: #ffe599;
 }
