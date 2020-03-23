@@ -587,3 +587,7 @@ div.block_tag {
 .E_right_border div.block_tag {
   background-color: #ffe599;
 }
+
+form fieldset.bd-callout:hover {
+  background-color: #f6f6f6;
+}

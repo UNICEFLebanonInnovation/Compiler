@@ -300,7 +300,7 @@ class CommonForm(forms.ModelForm):
             else:
                 messages.warning(request, serializer.errors)
 
-        return True
+        return instance
 
     class Meta:
         model = CLM
@@ -2468,26 +2468,11 @@ class ABLNForm(CommonForm):
         self.request = kwargs.pop('request', None)
         super(ABLNForm, self).__init__(*args, **kwargs)
 
-        pre_test = ''
-        pre_test_button = ' btn-outline-success '
         display_assessment = ' d-none'
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:abln_add')
         self.fields['clm_type'].initial = 'ABLN'
-
-        if instance:
-            display_assessment = ''
-            display_registry = ' d-none'
-            form_action = reverse('clm:abln_edit', kwargs={'pk': instance.id})
-
-            pre_test = instance.assessment_form(
-                stage='pre_test',
-                assessment_slug='abln_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:abln_edit', kwargs={'pk': instance.id}))
-             )
-            if instance.pre_test:
-                pre_test_button = ' btn-success '
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -2961,9 +2946,8 @@ class ABLNForm(CommonForm):
                 msg = "The national numbers are not matched"
                 self.add_error('sop_national_number_confirm', msg)
 
-    def save(self, instance=None, request=None):
-        instance = super(ABLNForm, self).save()
-        instance.modified_by = request.user
+    def save(self, request=None, instance=None, serializer=None):
+        instance = super(ABLNForm, self).save(request=request, instance=instance, serializer=ABLNSerializer)
         instance.pre_test = {
             "ABLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
             "ABLN_ASSESSMENT/arabic": request.POST.get('arabic'),
@@ -3208,39 +3192,25 @@ class ABLNAssessmentForm(forms.ModelForm):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         initial='yes'
     )
-    clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(ABLNAssessmentForm, self).__init__(*args, **kwargs)
-
-        post_test = ''
-        post_test_button = ' btn-outline-secondary disabled'
         instance = kwargs['instance'] if 'instance' in kwargs else ''
-        self.fields['clm_type'].initial = 'ABLN'
 
-        display_assessment = ''
         form_action = reverse('clm:abln_post_assessment', kwargs={'pk': instance.id})
 
-        if instance.pre_test:
-            post_test_button = ' btn-outline-success '
-            post_test = instance.assessment_form(
-                stage='post_test',
-                assessment_slug='abln_post_test',
-                callback=self.request.build_absolute_uri(reverse('clm:abln_post_assessment', kwargs={'pk': instance.id}))
-             )
-            # post_test
+        # post_test
         if instance.post_test:
-            post_test_button = ' btn-success '
             p_test = instance.post_test
-            attended_arabic = p_test["ABLN_ASSESSMENT/attended_arabic"]
-            arabic = p_test["ABLN_ASSESSMENT/arabic"]
-            attended_math = p_test["ABLN_ASSESSMENT/attended_math"]
-            math = p_test["ABLN_ASSESSMENT/math"]
-            attended_social = p_test["ABLN_ASSESSMENT/attended_social"]
-            social_emotional = p_test["ABLN_ASSESSMENT/social_emotional"]
-            attended_psychomotor = p_test["ABLN_ASSESSMENT/attended_psychomotor"]
-            psychomotor = p_test["ABLN_ASSESSMENT/psychomotor"]
+            self.fields['attended_arabic'].initial = p_test["ABLN_ASSESSMENT/attended_arabic"]
+            self.fields['arabic'].initial = p_test["ABLN_ASSESSMENT/arabic"]
+            self.fields['attended_math'].initial = p_test["ABLN_ASSESSMENT/attended_math"]
+            self.fields['math'].initial = p_test["ABLN_ASSESSMENT/math"]
+            self.fields['attended_social'].initial = p_test["ABLN_ASSESSMENT/attended_social"]
+            self.fields['social_emotional'].initial = p_test["ABLN_ASSESSMENT/social_emotional"]
+            self.fields['attended_psychomotor'].initial = p_test["ABLN_ASSESSMENT/attended_psychomotor"]
+            self.fields['psychomotor'].initial = p_test["ABLN_ASSESSMENT/psychomotor"]
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -3249,9 +3219,7 @@ class ABLNAssessmentForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    'clm_type',
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>'),
-                    # css_class='bd-callout bd-callout-warning'
                 ),
             ),
             Fieldset(
@@ -3373,7 +3341,7 @@ class ABLNAssessmentForm(forms.ModelForm):
                     Div('child_health_concern', css_class='col-md-4'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning C_right_border'+ display_assessment ,
+                css_class='bd-callout bd-callout-warning C_right_border',
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
@@ -3415,8 +3383,7 @@ class ABLNAssessmentForm(forms.ModelForm):
             'visits_number',
             'parent_attended',
             'child_health_examed',
-            'child_health_concern'
-
+            'child_health_concern',
         )
 
 

@@ -361,54 +361,6 @@ class CLM(TimeStampedModel):
         choices=(('yes', _("Yes")), ('no', _("No"))),
         verbose_name=_('Round complete')
     )
-    # attended_arabic = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     verbose_name=_('Attended Arabic test')
-    # )
-    # arabic = models.TextField(
-    #     blank=True,
-    #     null=True,
-    #     verbose_name=_('Please enter the result for this subject')
-    # )
-    # attended_math = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     verbose_name=_('Attended Math test')
-    # )
-    # math = models.TextField(
-    #     blank=True,
-    #     null=True,
-    #     verbose_name=_('Please enter the result for this subject')
-    # )
-    # attended_social = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     verbose_name=_('Attended Social test')
-    # )
-    # social = models.TextField(
-    #     blank=True,
-    #     null=True,
-    #     verbose_name=_('Please enter the result for this subject')
-    # )
-    # attended_psychomotor = models.CharField(
-    #     max_length=100,
-    #     blank=True,
-    #     null=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     verbose_name=_('Attended Psychomotor test')
-    # )
-    # psychomotor = models.TextField(
-    #     blank=True,
-    #     null=True,
-    #     verbose_name=_('Please enter the result for this subject')
-    # )
     follow_up_type = models.CharField(
         max_length=100,
         blank=True,
