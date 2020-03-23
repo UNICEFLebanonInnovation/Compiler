@@ -2520,7 +2520,6 @@ class ABLNForm(CommonForm):
                 Div(
                     HTML('<span>A</span>'), css_class='block_tag'),
                 Div(
-                    # HTML('<h3>A</h3>'),
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('General Information') + '</h4>')
                 ),
                 Div(
@@ -4160,8 +4159,10 @@ class ABLNReferralForm(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 None,
+                Div(css_class='block_tag'),
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Referral 1') + '</h4>')
+                    Div(HTML('<span>1</span>'), css_class='block_tag'),
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Referral 1') + '</h4>'),
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
@@ -4177,11 +4178,12 @@ class ABLNReferralForm(forms.ModelForm):
                     Div('confirmation_date_1', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning'
+                css_class='bd-callout bd-callout-warning A_right_border'
             ),
             Fieldset(
                 None,
                 Div(
+                    Div(HTML('<span>2</span>'), css_class='block_tag'),
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Referral 2') + '</h4>')
                 ),
                 Div(
@@ -4198,11 +4200,12 @@ class ABLNReferralForm(forms.ModelForm):
                     Div('confirmation_date_2', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning'
+                css_class='bd-callout bd-callout-warning B_right_border'
             ),
             Fieldset(
                 None,
                 Div(
+                    Div(HTML('<span>3</span>'), css_class='block_tag'),
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Referral 3') + '</h4>')
                 ),
                 Div(
@@ -4219,7 +4222,7 @@ class ABLNReferralForm(forms.ModelForm):
                     Div('confirmation_date_3', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning'
+                css_class='bd-callout bd-callout-warning C_right_border'
             ),
             FormActions(
                 Submit('save', _('Save')),
