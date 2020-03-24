@@ -760,64 +760,74 @@ class BLNForm(CommonForm):
             ),
             Fieldset(
                 None,
+                Div(HTML('<span>B</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child Information') + '</h4>')
                 ),
-                # Div( nannanananannannnnnnndqlkwjdfwqhflqwjfiqwifiwehfgowehofghweoghowehgowhgohwoghiowhgoiwhgoihwoighwoeghowheogihewoghowiehgiowheioghohowhogohhowgehogwe
-                #     HTML('<span class="badge badge-default">1</span>'),
-                #     Div('referral', css_class='col-md-9'),
-                #     css_class='row',
-                # ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('student_first_name', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('student_father_name', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('student_mother_fullname', css_class='col-md-3'),
+                    Div('student_last_name', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('student_last_name', css_class='col-md-3'),
+                    Div('student_mother_fullname', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('student_sex', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('student_nationality', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default"></span>'),
                     Div('other_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('student_birthday_year', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('student_birthday_month', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('student_birthday_day', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    # HTML('<span class="badge badge-default">11</span>'),
-                    # Div('student_address', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('student_p_code', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">11</span>'),
                     Div('disability', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('education_status', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default"></span>'),
+                    Div('miss_school_date', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    # HTML('<span class="badge badge-default d-none">14</span>'),
-                    # Div('student_id_number', css_class='col-md-3 d-none'),
-                    HTML('<span class="badge badge-default">15</span>'),
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('internal_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">16</span>'),
-                    Div('comments', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('first_attendance_date', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning child_data'
+                Div(
+                    HTML('<span class="badge badge-default">15</span>'),
+                    Div('source_of_identification', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">16</span>'),
+                    Div('source_of_transportation', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data B_right_border'
             ),
+            # jfjja;fgjad;gjf;adsjg;asjg;sjg;jsl;dgj;sajg;sjd;gjsl;djg;sd;gjsdo;jg;sdjg;jsdl;gj;jsgj;jghllhjglkhwjkghjshg
             Fieldset(
                 None,
                 Div(
@@ -1195,7 +1205,7 @@ class BLNForm(CommonForm):
             'caretaker_middle_name',
             'caretaker_last_name',
             'caretaker_mother_name',
-            # 'miss_school_date',
+            'miss_school_date',
             # 'student_have_children',
             'student_family_status',
             # 'student_number_children',
@@ -1204,7 +1214,7 @@ class BLNForm(CommonForm):
             'registration_level',
             # 'main_caregiver',
             # 'labour_weekly_income',
-            # 'source_of_transportation',
+            'source_of_transportation',
         )
 
     class Media:
