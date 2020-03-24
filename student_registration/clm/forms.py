@@ -340,32 +340,40 @@ class BLNForm(CommonForm):
 
     YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 16, Person.CURRENT_YEAR)))
     YEARS_BLN.insert(0, ('', '---------'))
-
-    # participation = forms.ChoiceField(
-    #     label=_('How was the level of child participation in the program?'),
-    #     widget=forms.Select, required=False,
-    #     choices=(
-    #             ('', '----------'),
-    #             ('less_than_10days', _('Less than 10 absence days')),
-    #             ('10_15_days', _('10 to 15 absence days')),
-    #             ('15_20_days', _('15 to 20 absence days')),
-    #             ('more_than_20days', _('More than 20 absence days'))
-    #         ),
-    #     initial=''
-    # )
-
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
         required=True
     )
+    # miss_school_date = forms.DateField(
+    #     label=_("Miss school date"),
+    #     required=True,
+    # )
+
+    new_registry = forms.ChoiceField(
+        label=_("First time registered?"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
 
     round = forms.ModelChoiceField(
         # queryset=CLMRound.objects.filter(current_round_bln=True), widget=forms.Select,
+        # queryset=CLMRound.objects.filter(current_round_abln=True), widget=forms.Select,
         queryset=CLMRound.objects.all(), widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
         # initial=CLMRound.objects.filter(current_round_bln=True).first().id
+    )
+
+    round_start_date = forms.DateField(
+        label=_("Round start date"),
+        required=True
+    )
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=True,
+        choices=REGISTRATION_LEVEL
     )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
@@ -386,59 +394,32 @@ class BLNForm(CommonForm):
     #     widget=forms.RadioSelect,
     #     required=True,
     # )
-    student_number_children = forms.CharField(
-        label=_('How many children does this child have?'),
-        widget=forms.TextInput, required=False
-    )
-    # have_labour = forms.MultipleChoiceField(
-    #     label=_('Does the child participate in work?'),
-    #     choices=CLM.HAVE_LABOUR,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=True, initial='no'
-    # )
-    have_labour_single_selection = forms.ChoiceField(
-        label=_('Does the child participate in work?'),
-        widget=forms.Select, required=True,
-        choices=CLM.HAVE_LABOUR,
-        initial='no'
-    )
-    # labours = forms.MultipleChoiceField(
-    #     label=_('What is the type of work ?'),
-    #     choices=CLM.LABOURS,
-    #     widget=forms.CheckboxSelectMultiple,
-    #     required=False
-    # )
-    labours_single_selection = forms.ChoiceField(
-        label=_('What is the type of work ?'),
-        widget=forms.Select, required=False,
-        choices=CLM.LABOURS
-    )
-    labour_hours = forms.CharField(
-        label=_('How many hours does this child work in a day?'),
-        widget=forms.TextInput, required=False
-    )
-    # labour_weekly_income = forms.ChoiceField(
-    #     label=_('What is the family status of the child?'),
-    #     widget=forms.Select, required=True,
-    #     choices=Student.FAMILY_STATUS,
-    #     initial='single'
-    # )
-    # learning_result = forms.ChoiceField(
-    #     label=_('Based on the overall score, what is the recommended learning path?'),
-    #     widget=forms.Select, required=False,
-    #     choices=(
-    #         ('', '----------'),
-    #         ('graduated_to_bln_next_round_same_level', _('Graduated to the next round, same level')),
-    #         ('graduated_to_bln_next_round_higher_level', _('Graduated to the next round, higher level')),
-    #         ('referred_to_alp', _('referred to ALP')),
-    #         ('referred_public_school', _('Referred to public school')),
-    #         ('referred_to_tvet', _('Referred to TVET')),
-    #         ('referred_to_ybln', _('Referred to YBLN')),
-    #         ('dropout', _('Dropout, referral not possible')),
-    #     ),
-    #     initial=''
+    # student_number_children = forms.CharField(
+    #     label=_('How many children does this child have?'),
+    #     widget=forms.TextInput, required=False
     # )
 
+    # have_labour_single_selection = forms.ChoiceField(
+    #     label=_('Does the child participate in work?'),
+    #     widget=forms.Select, required=True,
+    #     choices=CLM.HAVE_LABOUR,
+    #     initial='no'
+    # )
+    # labours_single_selection = forms.ChoiceField(
+    #     label=_('What is the type of work ?'),
+    #     widget=forms.Select, required=False,
+    #     choices=CLM.LABOURS
+    # )
+    # labour_hours = forms.CharField(
+    #     label=_('How many hours does this child work in a day?'),
+    #     widget=forms.TextInput, required=False
+    # )
+    # labour_weekly_income = forms.ChoiceField(
+    #     label=_('What is the income of the child per week?'),
+    #     widget=forms.Select,
+    #     choices=Student.STUDENT_INCOME,
+    #     initial='single'
+    # )
     education_status = forms.ChoiceField(
         label=_('Education status'),
         widget=forms.Select, required=True,
@@ -468,6 +449,8 @@ class BLNForm(CommonForm):
         required=True,
         label=_('Phone number confirm')
     )
+
+
 
     id_type = forms.ChoiceField(
         label=_("ID type of the caretaker"),
@@ -615,6 +598,63 @@ class BLNForm(CommonForm):
         ),
         initial=''
     )
+    # attended_arabic = forms.ChoiceField(
+    #     label=_("Attended Arabic test"),
+    #     widget=forms.Select, required=True,
+    #     choices=(('yes', _("Yes")), ('no', _("No"))),
+    #     initial='yes'
+    # )
+    #
+    # arabic = forms.FloatField(
+    #     label=_('Please enter the result for this subject'),
+    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
+    #     min_value=0, required=False
+    # )
+    # attended_math = forms.ChoiceField(
+    #     label=_("Attended Math test"),
+    #     widget=forms.Select, required=True,
+    #     choices=(('yes', _("Yes")), ('no', _("No"))),
+    #     initial='yes'
+    # )
+    #
+    # math = forms.FloatField(
+    #     label=_('Please enter the result for this subject'),
+    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
+    #     min_value=0, required=False
+    # )
+    # attended_social = forms.ChoiceField(
+    #     label=_("Attended Social test"),
+    #     widget=forms.Select, required=True,
+    #     choices=(('yes', _("Yes")), ('no', _("No"))),
+    #     initial='yes'
+    # )
+    #
+    # social_emotional = forms.FloatField(
+    #     label=_('Please enter the result for this subject'),
+    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
+    #     min_value=0, required=False
+    # )
+    # attended_psychomotor = forms.ChoiceField(
+    #     label=_("Attended Psychomotor test"),
+    #     widget=forms.Select, required=True,
+    #     choices=(('yes', _("Yes")), ('no', _("No"))),
+    #     initial='yes'
+    # )
+    # psychomotor = forms.FloatField(
+    #     label=_('Please enter the result for this subject'),
+    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
+    #     min_value=0, required=False
+    # )
+    # main_caregiver = forms.ChoiceField(
+    #     label=_("Main Caregiver"),
+    #     widget=forms.Select, required=True,
+    #     choices=(
+    #         ('', '----------'),
+    #         ('mother', _('Mother')),
+    #         ('father', _('Father')),
+    #         ('other', _('Other')),
+    #     )
+    # )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -669,17 +709,7 @@ class BLNForm(CommonForm):
             ),
             Fieldset(
                 None,
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">'+_('Register by Barcode')+'</h4>')
-                ),
-                Div(
-                    Div('search_barcode', css_class='col-md-4'),
-                    css_class='row',
-                ),
-                css_id='register_by_barcode', css_class='bd-callout bd-callout-warning'+display_registry
-            ),
-            Fieldset(
-                None,
+                Div(css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _(
                         'Search CLM student') + '</h4>')
@@ -694,18 +724,18 @@ class BLNForm(CommonForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Program Information') + '</h4>')
+                    HTML('<span>A</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('General Information') + '</h4>')
                 ),
                 Div(
+
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('first_attendance_date', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
+                    Div('new_registry', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('round', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('source_of_identification', css_class='col-md-3'),
+                    Div('round_start_date', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -713,23 +743,27 @@ class BLNForm(CommonForm):
                     Div('governorate', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('district', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('cadaster', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">6</span>'),
-                    Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
+                    Div('location', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('language', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">9</span>'),
+                    Div('registration_level', css_class='col-md-3'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning child_data'
+                css_class='bd-callout bd-callout-warning child_data A_right_border'
             ),
             Fieldset(
                 None,
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Child Information') + '</h4>')
                 ),
-                # Div(
+                # Div( nannanananannannnnnnndqlkwjdfwqhflqwjfiqwifiwehfgowehofghweoghowehgowhgohwoghiowhgoiwhgoihwoighwoeghowheogihewoghowiehgiowheioghohowhogohhowgehogwe
                 #     HTML('<span class="badge badge-default">1</span>'),
                 #     Div('referral', css_class='col-md-9'),
                 #     css_class='row',
@@ -1125,12 +1159,8 @@ class BLNForm(CommonForm):
     class Meta:
         model = BLN
         fields = CommonForm.Meta.fields + (
-            # 'cycle',
-            # 'referral',
             'first_attendance_date',
             'student_birthday_year',
-            'student_family_status',
-            # 'student_have_children',
             'have_labour_single_selection',
             'labours_single_selection',
             'labour_hours',
@@ -1165,6 +1195,16 @@ class BLNForm(CommonForm):
             'caretaker_middle_name',
             'caretaker_last_name',
             'caretaker_mother_name',
+            # 'miss_school_date',
+            # 'student_have_children',
+            'student_family_status',
+            # 'student_number_children',
+            'round_start_date',
+            'cadaster',
+            'registration_level',
+            # 'main_caregiver',
+            # 'labour_weekly_income',
+            # 'source_of_transportation',
         )
 
     class Media:
