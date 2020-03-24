@@ -130,15 +130,10 @@ class CommonForm(forms.ModelForm):
         required=True, to_field_name='id',
         initial=0
     )
-    round_start_date = forms.DateField(
-        label=_("Round start date"),
-        required=True
-    )
-    registration_level = forms.CharField(
-        label=_('Registration level'),
-        widget=forms.TextInput,
-        required=True
-    )
+    # round_start_date = forms.DateField(
+    #     label=_("Round start date"),
+    #     required=True
+    # )
     language = forms.ChoiceField(
         label=_('The language supported in the program'),
         widget=forms.Select,
@@ -219,16 +214,6 @@ class CommonForm(forms.ModelForm):
         queryset=EducationalLevel.objects.exclude(id=3), widget=forms.Select,
         label=_('What is the educational level of the father?'),
         required=False, to_field_name='id',
-    )
-    main_caregiver = forms.ChoiceField(
-        label=_("Main Caregiver"),
-        widget=forms.Select, required=True,
-        choices=(
-            ('', '----------'),
-            ('mother', _('Mother')),
-            ('father', _('Father')),
-            ('other', _('Other')),
-        )
     )
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -394,13 +379,13 @@ class BLNForm(CommonForm):
         choices=Student.FAMILY_STATUS,
         initial='single'
     )
-    student_have_children = forms.TypedChoiceField(
-        label=_("Does the child have children?"),
-        choices=YES_NO_CHOICE,
-        coerce=lambda x: bool(int(x)),
-        widget=forms.RadioSelect,
-        required=True,
-    )
+    # student_have_children = forms.TypedChoiceField(
+    #     label=_("Does the child have children?"),
+    #     choices=YES_NO_CHOICE,
+    #     coerce=lambda x: bool(int(x)),
+    #     widget=forms.RadioSelect,
+    #     required=True,
+    # )
     student_number_children = forms.CharField(
         label=_('How many children does this child have?'),
         widget=forms.TextInput, required=False
@@ -432,12 +417,12 @@ class BLNForm(CommonForm):
         label=_('How many hours does this child work in a day?'),
         widget=forms.TextInput, required=False
     )
-    labour_weekly_income = forms.ChoiceField(
-        label=_('What is the family status of the child?'),
-        widget=forms.Select, required=True,
-        choices=Student.FAMILY_STATUS,
-        initial='single'
-    )
+    # labour_weekly_income = forms.ChoiceField(
+    #     label=_('What is the family status of the child?'),
+    #     widget=forms.Select, required=True,
+    #     choices=Student.FAMILY_STATUS,
+    #     initial='single'
+    # )
     # learning_result = forms.ChoiceField(
     #     label=_('Based on the overall score, what is the recommended learning path?'),
     #     widget=forms.Select, required=False,
@@ -944,22 +929,22 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Family Status') + '</h4>')
                 ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_family_status', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('student_have_children', css_class='col-md-3', css_id='student_have_children'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('have_labour_single_selection', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
-                    Div('labours_single_selection', css_class='col-md-3', css_id='student_have_children'),
-                    HTML('<span class="badge badge-default">5</span>'),
-                    Div('labour_hours', css_class='col-md-3', css_id='student_have_children'),
-                    css_class='row',
-                ),
+                # Div(
+                #     HTML('<span class="badge badge-default">1</span>'),
+                #     Div('student_family_status', css_class='col-md-3'),
+                #     HTML('<span class="badge badge-default">2</span>'),
+                #     Div('student_have_children', css_class='col-md-3', css_id='student_have_children'),
+                #     css_class='row',
+                # ),
+                # Div(
+                #     HTML('<span class="badge badge-default">3</span>'),
+                #     Div('have_labour_single_selection', css_class='col-md-3'),
+                #     HTML('<span class="badge badge-default">4</span>'),
+                #     Div('labours_single_selection', css_class='col-md-3', css_id='student_have_children'),
+                #     HTML('<span class="badge badge-default">5</span>'),
+                #     Div('labour_hours', css_class='col-md-3', css_id='student_have_children'),
+                #     css_class='row',
+                # ),
                 css_class='bd-callout bd-callout-warning child_data'
             ),
             Fieldset(
@@ -1145,7 +1130,7 @@ class BLNForm(CommonForm):
             'first_attendance_date',
             'student_birthday_year',
             'student_family_status',
-            'student_have_children',
+            # 'student_have_children',
             'have_labour_single_selection',
             'labours_single_selection',
             'labour_hours',
@@ -2164,7 +2149,6 @@ class ABLNForm(CommonForm):
 
     YEARS_BLN = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 16, Person.CURRENT_YEAR)))
     YEARS_BLN.insert(0, ('', '---------'))
-
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
         required=True
@@ -2445,6 +2429,16 @@ class ABLNForm(CommonForm):
         label=_('Please enter the result for this subject'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
+    )
+    main_caregiver = forms.ChoiceField(
+        label=_("Main Caregiver"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
     )
 
     source_of_identification = forms.ChoiceField(
