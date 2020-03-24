@@ -645,16 +645,16 @@ class BLNForm(CommonForm):
     #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
     #     min_value=0, required=False
     # )
-    # main_caregiver = forms.ChoiceField(
-    #     label=_("Main Caregiver"),
-    #     widget=forms.Select, required=True,
-    #     choices=(
-    #         ('', '----------'),
-    #         ('mother', _('Mother')),
-    #         ('father', _('Father')),
-    #         ('other', _('Other')),
-    #     )
-    # )
+    main_caregiver = forms.ChoiceField(
+        label=_("Main Caregiver"),
+        widget=forms.Select, required=True,
+        choices=(
+            ('', '----------'),
+            ('mother', _('Mother')),
+            ('father', _('Father')),
+            ('other', _('Other')),
+        )
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -827,9 +827,9 @@ class BLNForm(CommonForm):
                 ),
                 css_class='bd-callout bd-callout-warning child_data B_right_border'
             ),
-            # jfjja;fgjad;gjf;adsjg;asjg;sjg;jsl;dgj;sajg;sjd;gjsl;djg;sd;gjsdo;jg;sdjg;jsdl;gj;jsgj;jghllhjglkhwjkghjshg
             Fieldset(
                 None,
+                Div(HTML('<span>C</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parent/Caregiver Information') + '</h4>')
                 ),
@@ -849,27 +849,32 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
-                    Div('caretaker_first_name', css_class='col-md-3'),
+                    Div('main_caregiver', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">6</span>'),
+                    Div('caretaker_first_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('caretaker_middle_name', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('caretaker_last_name', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">8</span>'),
+                    Div('caretaker_last_name', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">9</span>'),
                     Div('caretaker_mother_name', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge badge-default">10</span>'),
                     Div('id_type', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
-                    Div('case_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">11</span>'),
+                    Div('case_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('case_number_confirm', css_class='col-md-3'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/unhcr_certificate.jpg" target="_blank">' +
@@ -877,9 +882,9 @@ class BLNForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
-                    Div('parent_individual_case_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">13</span>'),
+                    Div('parent_individual_case_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
                     Div('parent_individual_case_number_confirm', css_class='col-md-3'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -887,9 +892,9 @@ class BLNForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">14</span>'),
-                    Div('individual_case_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">15</span>'),
+                    Div('individual_case_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">16</span>'),
                     Div('individual_case_number_confirm', css_class='col-md-3'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
@@ -897,9 +902,9 @@ class BLNForm(CommonForm):
                     css_class='row child_id child_id1',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">17</span>'),
                     Div('recorded_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge badge-default">18</span>'),
                     Div('recorded_number_confirm', css_class='col-md-3'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
@@ -907,9 +912,9 @@ class BLNForm(CommonForm):
                     css_class='row child_id child_id2',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">19</span>'),
                     Div('parent_national_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge badge-default">20</span>'),
                     Div('parent_national_number_confirm', css_class='col-md-3'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
@@ -917,9 +922,9 @@ class BLNForm(CommonForm):
                     css_class='row child_id child_id3',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">21</span>'),
                     Div('national_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">22</span>'),
                     Div('national_number_confirm', css_class='col-md-3'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
@@ -927,9 +932,9 @@ class BLNForm(CommonForm):
                     css_class='row child_id child_id3',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">23</span>'),
                     Div('parent_syrian_national_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge badge-default">24</span>'),
                     Div('parent_syrian_national_number_confirm', css_class='col-md-3'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
@@ -937,9 +942,9 @@ class BLNForm(CommonForm):
                     css_class='row child_id child_id4',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">25</span>'),
                     Div('syrian_national_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">26</span>'),
                     Div('syrian_national_number_confirm', css_class='col-md-3'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
@@ -947,9 +952,9 @@ class BLNForm(CommonForm):
                     css_class='row child_id child_id4',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">10</span>'),
+                    HTML('<span class="badge badge-default">27</span>'),
                     Div('parent_sop_national_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">11</span>'),
+                    HTML('<span class="badge badge-default">28</span>'),
                     Div('parent_sop_national_number_confirm', css_class='col-md-3'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/sop_nationalID.png" target="_blank">' +
@@ -957,17 +962,158 @@ class BLNForm(CommonForm):
                     css_class='row child_id child_id5',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">12</span>'),
+                    HTML('<span class="badge badge-default">29</span>'),
                     Div('sop_national_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">13</span>'),
-                    Div('sop_national_number_confirm', css_class='col-md-3 '),
+                    HTML('<span class="badge badge-default">30</span>'),
+                    Div('sop_national_number_confirm', css_class='col-md-3'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/sop_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id5',
                 ),
-                css_class='bd-callout bd-callout-warning child_data'
+                css_class='bd-callout bd-callout-warning child_data C_right_border'
             ),
+            # jfjja;fgjad;gjf;adsjg;asjg;sjg;jsl;dgj;sajg;sjd;gjsl;djg;sd;gjsdo;jg;sdjg;jsdl;gj;jsgj;jghllhjglkhwjkghjshg
+            # Fieldset(
+            #     None,
+            #     Div(
+            #         HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parent/Caregiver Information') + '</h4>')
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">1</span>'),
+            #         Div('hh_educational_level', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">2</span>'),
+            #         Div('father_educational_level', css_class='col-md-3'),
+            #         css_class='row',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">3</span>'),
+            #         Div('phone_number', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">4</span>'),
+            #         Div('phone_number_confirm', css_class='col-md-3'),
+            #         css_class='row',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">5</span>'),
+            #         Div('caretaker_first_name', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">6</span>'),
+            #         Div('caretaker_middle_name', css_class='col-md-3'),
+            #         css_class='row',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">7</span>'),
+            #         Div('caretaker_last_name', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">8</span>'),
+            #         Div('caretaker_mother_name', css_class='col-md-3'),
+            #         css_class='row',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">9</span>'),
+            #         Div('id_type', css_class='col-md-3'),
+            #         css_class='row',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">10</span>'),
+            #         Div('case_number', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">11</span>'),
+            #         Div('case_number_confirm', css_class='col-md-3'),
+            #         HTML('<span style="padding-top: 37px;">' +
+            #              '<a href="/static/images/unhcr_certificate.jpg" target="_blank">' +
+            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+            #         css_class='row child_id child_id1',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">12</span>'),
+            #         Div('parent_individual_case_number', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">13</span>'),
+            #         Div('parent_individual_case_number_confirm', css_class='col-md-3'),
+            #         HTML('<span style="padding-top: 37px;">' +
+            #              '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+            #         css_class='row child_id child_id1',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">14</span>'),
+            #         Div('individual_case_number', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">15</span>'),
+            #         Div('individual_case_number_confirm', css_class='col-md-3'),
+            #         HTML('<span style="padding-top: 37px;">' +
+            #              '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+            #         css_class='row child_id child_id1',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">10</span>'),
+            #         Div('recorded_number', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">11</span>'),
+            #         Div('recorded_number_confirm', css_class='col-md-3'),
+            #         HTML('<span style="padding-top: 37px;">' +
+            #              '<a href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
+            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+            #         css_class='row child_id child_id2',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">10</span>'),
+            #         Div('parent_national_number', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">11</span>'),
+            #         Div('parent_national_number_confirm', css_class='col-md-3'),
+            #         HTML('<span style="padding-top: 37px;">' +
+            #              '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
+            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+            #         css_class='row child_id child_id3',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">12</span>'),
+            #         Div('national_number', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">13</span>'),
+            #         Div('national_number_confirm', css_class='col-md-3'),
+            #         HTML('<span style="padding-top: 37px;">' +
+            #              '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
+            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+            #         css_class='row child_id child_id3',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">10</span>'),
+            #         Div('parent_syrian_national_number', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">11</span>'),
+            #         Div('parent_syrian_national_number_confirm', css_class='col-md-3'),
+            #         HTML('<span style="padding-top: 37px;">' +
+            #              '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
+            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+            #         css_class='row child_id child_id4',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">12</span>'),
+            #         Div('syrian_national_number', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">13</span>'),
+            #         Div('syrian_national_number_confirm', css_class='col-md-3'),
+            #         HTML('<span style="padding-top: 37px;">' +
+            #              '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
+            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+            #         css_class='row child_id child_id4',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">10</span>'),
+            #         Div('parent_sop_national_number', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">11</span>'),
+            #         Div('parent_sop_national_number_confirm', css_class='col-md-3'),
+            #         HTML('<span style="padding-top: 37px;">' +
+            #              '<a href="/static/images/sop_nationalID.png" target="_blank">' +
+            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+            #         css_class='row child_id child_id5',
+            #     ),
+            #     Div(
+            #         HTML('<span class="badge badge-default">12</span>'),
+            #         Div('sop_national_number', css_class='col-md-3'),
+            #         HTML('<span class="badge badge-default">13</span>'),
+            #         Div('sop_national_number_confirm', css_class='col-md-3 '),
+            #         HTML('<span style="padding-top: 37px;">' +
+            #              '<a href="/static/images/sop_nationalID.png" target="_blank">' +
+            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
+            #         css_class='row child_id child_id5',
+            #     ),
+            #     css_class='bd-callout bd-callout-warning child_data'
+            # ),
             Fieldset(
                 None,
                 Div(
@@ -1212,7 +1358,7 @@ class BLNForm(CommonForm):
             'round_start_date',
             'cadaster',
             'registration_level',
-            # 'main_caregiver',
+            'main_caregiver',
             # 'labour_weekly_income',
             'source_of_transportation',
         )
