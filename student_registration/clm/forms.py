@@ -387,39 +387,39 @@ class BLNForm(CommonForm):
         choices=Student.FAMILY_STATUS,
         initial='single'
     )
-    # student_have_children = forms.TypedChoiceField(
-    #     label=_("Does the child have children?"),
-    #     choices=YES_NO_CHOICE,
-    #     coerce=lambda x: bool(int(x)),
-    #     widget=forms.RadioSelect,
-    #     required=True,
-    # )
-    # student_number_children = forms.CharField(
-    #     label=_('How many children does this child have?'),
-    #     widget=forms.TextInput, required=False
-    # )
+    student_have_children = forms.TypedChoiceField(
+        label=_("Does the child have children?"),
+        choices=YES_NO_CHOICE,
+        coerce=lambda x: bool(int(x)),
+        widget=forms.RadioSelect,
+        required=True,
+    )
+    student_number_children = forms.CharField(
+        label=_('How many children does this child have?'),
+        widget=forms.TextInput, required=False
+    )
 
-    # have_labour_single_selection = forms.ChoiceField(
-    #     label=_('Does the child participate in work?'),
-    #     widget=forms.Select, required=True,
-    #     choices=CLM.HAVE_LABOUR,
-    #     initial='no'
-    # )
-    # labours_single_selection = forms.ChoiceField(
-    #     label=_('What is the type of work ?'),
-    #     widget=forms.Select, required=False,
-    #     choices=CLM.LABOURS
-    # )
-    # labour_hours = forms.CharField(
-    #     label=_('How many hours does this child work in a day?'),
-    #     widget=forms.TextInput, required=False
-    # )
-    # labour_weekly_income = forms.ChoiceField(
-    #     label=_('What is the income of the child per week?'),
-    #     widget=forms.Select,
-    #     choices=Student.STUDENT_INCOME,
-    #     initial='single'
-    # )
+    have_labour_single_selection = forms.ChoiceField(
+        label=_('Does the child participate in work?'),
+        widget=forms.Select, required=True,
+        choices=CLM.HAVE_LABOUR,
+        initial='no'
+    )
+    labours_single_selection = forms.ChoiceField(
+        label=_('What is the type of work ?'),
+        widget=forms.Select, required=False,
+        choices=CLM.LABOURS
+    )
+    labour_hours = forms.CharField(
+        label=_('How many hours does this child work in a day?'),
+        widget=forms.TextInput, required=False
+    )
+    labour_weekly_income = forms.ChoiceField(
+        label=_('What is the income of the child per week?'),
+        widget=forms.Select,
+        choices=Student.STUDENT_INCOME,
+        initial='single'
+    )
     education_status = forms.ChoiceField(
         label=_('Education status'),
         widget=forms.Select, required=True,
@@ -973,170 +973,41 @@ class BLNForm(CommonForm):
                 ),
                 css_class='bd-callout bd-callout-warning child_data C_right_border'
             ),
-            # jfjja;fgjad;gjf;adsjg;asjg;sjg;jsl;dgj;sajg;sjd;gjsl;djg;sd;gjsdo;jg;sdjg;jsdl;gj;jsgj;jghllhjglkhwjkghjshg
-            # Fieldset(
-            #     None,
-            #     Div(
-            #         HTML('<h4 id="alternatives-to-hidden-labels">' + _('Parent/Caregiver Information') + '</h4>')
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">1</span>'),
-            #         Div('hh_educational_level', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">2</span>'),
-            #         Div('father_educational_level', css_class='col-md-3'),
-            #         css_class='row',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">3</span>'),
-            #         Div('phone_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">4</span>'),
-            #         Div('phone_number_confirm', css_class='col-md-3'),
-            #         css_class='row',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">5</span>'),
-            #         Div('caretaker_first_name', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">6</span>'),
-            #         Div('caretaker_middle_name', css_class='col-md-3'),
-            #         css_class='row',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">7</span>'),
-            #         Div('caretaker_last_name', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">8</span>'),
-            #         Div('caretaker_mother_name', css_class='col-md-3'),
-            #         css_class='row',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">9</span>'),
-            #         Div('id_type', css_class='col-md-3'),
-            #         css_class='row',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">10</span>'),
-            #         Div('case_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">11</span>'),
-            #         Div('case_number_confirm', css_class='col-md-3'),
-            #         HTML('<span style="padding-top: 37px;">' +
-            #              '<a href="/static/images/unhcr_certificate.jpg" target="_blank">' +
-            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-            #         css_class='row child_id child_id1',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">12</span>'),
-            #         Div('parent_individual_case_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">13</span>'),
-            #         Div('parent_individual_case_number_confirm', css_class='col-md-3'),
-            #         HTML('<span style="padding-top: 37px;">' +
-            #              '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
-            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-            #         css_class='row child_id child_id1',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">14</span>'),
-            #         Div('individual_case_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">15</span>'),
-            #         Div('individual_case_number_confirm', css_class='col-md-3'),
-            #         HTML('<span style="padding-top: 37px;">' +
-            #              '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
-            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-            #         css_class='row child_id child_id1',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">10</span>'),
-            #         Div('recorded_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">11</span>'),
-            #         Div('recorded_number_confirm', css_class='col-md-3'),
-            #         HTML('<span style="padding-top: 37px;">' +
-            #              '<a href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
-            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-            #         css_class='row child_id child_id2',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">10</span>'),
-            #         Div('parent_national_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">11</span>'),
-            #         Div('parent_national_number_confirm', css_class='col-md-3'),
-            #         HTML('<span style="padding-top: 37px;">' +
-            #              '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
-            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-            #         css_class='row child_id child_id3',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">12</span>'),
-            #         Div('national_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">13</span>'),
-            #         Div('national_number_confirm', css_class='col-md-3'),
-            #         HTML('<span style="padding-top: 37px;">' +
-            #              '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
-            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-            #         css_class='row child_id child_id3',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">10</span>'),
-            #         Div('parent_syrian_national_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">11</span>'),
-            #         Div('parent_syrian_national_number_confirm', css_class='col-md-3'),
-            #         HTML('<span style="padding-top: 37px;">' +
-            #              '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
-            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-            #         css_class='row child_id child_id4',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">12</span>'),
-            #         Div('syrian_national_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">13</span>'),
-            #         Div('syrian_national_number_confirm', css_class='col-md-3'),
-            #         HTML('<span style="padding-top: 37px;">' +
-            #              '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
-            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-            #         css_class='row child_id child_id4',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">10</span>'),
-            #         Div('parent_sop_national_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">11</span>'),
-            #         Div('parent_sop_national_number_confirm', css_class='col-md-3'),
-            #         HTML('<span style="padding-top: 37px;">' +
-            #              '<a href="/static/images/sop_nationalID.png" target="_blank">' +
-            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-            #         css_class='row child_id child_id5',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">12</span>'),
-            #         Div('sop_national_number', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">13</span>'),
-            #         Div('sop_national_number_confirm', css_class='col-md-3 '),
-            #         HTML('<span style="padding-top: 37px;">' +
-            #              '<a href="/static/images/sop_nationalID.png" target="_blank">' +
-            #              '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
-            #         css_class='row child_id child_id5',
-            #     ),
-            #     css_class='bd-callout bd-callout-warning child_data'
-            # ),
+
             Fieldset(
                 None,
+                Div(HTML('<span>D</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Family Status') + '</h4>')
                 ),
-                # Div(
-                #     HTML('<span class="badge badge-default">1</span>'),
-                #     Div('student_family_status', css_class='col-md-3'),
-                #     HTML('<span class="badge badge-default">2</span>'),
-                #     Div('student_have_children', css_class='col-md-3', css_id='student_have_children'),
-                #     css_class='row',
-                # ),
-                # Div(
-                #     HTML('<span class="badge badge-default">3</span>'),
-                #     Div('have_labour_single_selection', css_class='col-md-3'),
-                #     HTML('<span class="badge badge-default">4</span>'),
-                #     Div('labours_single_selection', css_class='col-md-3', css_id='student_have_children'),
-                #     HTML('<span class="badge badge-default">5</span>'),
-                #     Div('labour_hours', css_class='col-md-3', css_id='student_have_children'),
-                #     css_class='row',
-                # ),
-                css_class='bd-callout bd-callout-warning child_data'
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('student_family_status', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('student_have_children', css_class='col-md-3', css_id='student_have_children'),
+                    HTML('<span class="badge badge-default"></span>'),
+                    Div('student_number_children', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('have_labour_single_selection', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('labours_single_selection', css_class='col-md-3', css_id='labours'),
+                    HTML('<span class="badge badge-default">5</span>'),
+                    Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
+                    HTML('<span class="badge badge-default">6</span>'),
+                    Div('labour_weekly_income', css_class='col-md-3'),
+                    css_class='row',
+                    id='labour_details'
+                ),
+                css_class='bd-callout bd-callout-warning child_data D_right_border'
             ),
+
+            # jfjja;fgjad;gjf;adsjg;asjg;sjg;jsl;dgj;sajg;sjd;gjsl;djg;sd;gjsdo;jg;sdjg;jsdl;gj;jsgj;jghllhjglkhwjkghjshg
             Fieldset(
                 None,
                 Div(
@@ -1352,14 +1223,14 @@ class BLNForm(CommonForm):
             'caretaker_last_name',
             'caretaker_mother_name',
             'miss_school_date',
-            # 'student_have_children',
+            'student_have_children',
             'student_family_status',
-            # 'student_number_children',
+            'student_number_children',
             'round_start_date',
             'cadaster',
             'registration_level',
             'main_caregiver',
-            # 'labour_weekly_income',
+            'labour_weekly_income',
             'source_of_transportation',
         )
 
