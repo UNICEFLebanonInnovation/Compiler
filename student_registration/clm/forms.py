@@ -598,53 +598,53 @@ class BLNForm(CommonForm):
         ),
         initial=''
     )
-    # attended_arabic = forms.ChoiceField(
-    #     label=_("Attended Arabic test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    #
-    # arabic = forms.FloatField(
-    #     label=_('Please enter the result for this subject'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
-    # attended_math = forms.ChoiceField(
-    #     label=_("Attended Math test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    #
-    # math = forms.FloatField(
-    #     label=_('Please enter the result for this subject'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
-    # attended_social = forms.ChoiceField(
-    #     label=_("Attended Social test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    #
-    # social_emotional = forms.FloatField(
-    #     label=_('Please enter the result for this subject'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
-    # attended_psychomotor = forms.ChoiceField(
-    #     label=_("Attended Psychomotor test"),
-    #     widget=forms.Select, required=True,
-    #     choices=(('yes', _("Yes")), ('no', _("No"))),
-    #     initial='yes'
-    # )
-    # psychomotor = forms.FloatField(
-    #     label=_('Please enter the result for this subject'),
-    #     widget=forms.NumberInput(attrs=({'maxlength': 4})),
-    #     min_value=0, required=False
-    # )
+    attended_arabic = forms.ChoiceField(
+        label=_("Attended Arabic test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+
+    arabic = forms.FloatField(
+        label=_('Please enter the result for this subject'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_math = forms.ChoiceField(
+        label=_("Attended Math test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+
+    math = forms.FloatField(
+        label=_('Please enter the result for this subject'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_social = forms.ChoiceField(
+        label=_("Attended Social test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+
+    social_emotional = forms.FloatField(
+        label=_('Please enter the result for this subject'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
+    attended_psychomotor = forms.ChoiceField(
+        label=_("Attended Psychomotor test"),
+        widget=forms.Select, required=True,
+        choices=(('yes', _("Yes")), ('no', _("No"))),
+        initial='yes'
+    )
+    psychomotor = forms.FloatField(
+        label=_('Please enter the result for this subject'),
+        widget=forms.NumberInput(attrs=({'maxlength': 4})),
+        min_value=0, required=False
+    )
     main_caregiver = forms.ChoiceField(
         label=_("Main Caregiver"),
         widget=forms.Select, required=True,
@@ -681,15 +681,16 @@ class BLNForm(CommonForm):
                 callback=self.request.build_absolute_uri(reverse('clm:bln_edit', kwargs={'pk': instance.id}))
              )
             if instance.pre_test:
-                pre_test_button = ' btn-success '
-                # post_test_button = ' btn-outline-success '
-                # post_test = instance.assessment_form(
-                #     stage='post_test',
-                #     assessment_slug='bln_post_test',
-                #     callback=self.request.build_absolute_uri(reverse('clm:bln_edit', kwargs={'pk': instance.id}))
-                #  )
-            # if instance.post_test:
-            #     post_test_button = ' btn-success '
+                p_test = instance.pre_test
+                print(p_test)
+                self.fields['attended_arabic'].initial = p_test["BLN_ASSESSMENT/attended_arabic"]
+                self.fields['arabic'].initial = p_test["BLN_ASSESSMENT/arabic"]
+                self.fields['attended_math'].initial = p_test["BLN_ASSESSMENT/attended_math"]
+                self.fields['math'].initial = p_test["BLN_ASSESSMENT/math"]
+                self.fields['attended_social'].initial = p_test["BLN_ASSESSMENT/attended_social"]
+                self.fields['social_emotional'].initial = p_test["BLN_ASSESSMENT/social_emotional"]
+                self.fields['attended_psychomotor'].initial = p_test["BLN_ASSESSMENT/attended_psychomotor"]
+                self.fields['psychomotor'].initial = p_test["BLN_ASSESSMENT/psychomotor"]
 
         self.helper = FormHelper()
         self.helper.form_show_labels = True
@@ -1006,8 +1007,42 @@ class BLNForm(CommonForm):
                 ),
                 css_class='bd-callout bd-callout-warning child_data D_right_border'
             ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>E</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('attended_arabic', css_class='col-md-4'),
+                    Div('arabic', css_class='col-md-4'),
+                    css_class='row',
+                ),
 
-            # jfjja;fgjad;gjf;adsjg;asjg;sjg;jsl;dgj;sajg;sjd;gjsl;djg;sd;gjsdo;jg;sdjg;jsdl;gj;jsgj;jghllhjglkhwjkghjshg
+                Div(
+                    HTML('<span class="badge badge-default">2</span>'),
+                    Div('attended_math', css_class='col-md-4'),
+                    Div('math', css_class='col-md-4'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">3</span>'),
+                    Div('attended_social', css_class='col-md-4'),
+                    Div('social_emotional', css_class='col-md-4'),
+                    css_class='row',
+                ),
+
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('attended_psychomotor', css_class='col-md-4'),
+                    Div('psychomotor', css_class='col-md-4'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning E_right_border' + display_assessment
+            ),
             Fieldset(
                 None,
                 Div(
@@ -1018,7 +1053,7 @@ class BLNForm(CommonForm):
                     HTML('<div class="col-md-3"><a class="btn ' + pre_test_button + '" href="' +
                          pre_test + '">' + _('Pre-assessment') + '</a></div>'),
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('unsuccessful_pretest_reason', css_class='col-md-3'),
+                    # Div('unsuccessful_pretest_reason', css_class='col-md-3'),
                     # HTML(
                     #     '<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
                     #     post_test + '">' + _('Post-assessment') + '</a></div>'),
@@ -1030,29 +1065,7 @@ class BLNForm(CommonForm):
                 ),
                 css_class='bd-callout bd-callout-warning' + display_assessment
             ),
-            # Fieldset(
-            #     None,
-            #     Div(
-            #         HTML('<h4 id="alternatives-to-hidden-labels">' + _('School evaluation') + '</h4>')
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">1</span>'),
-            #         Div('unsuccessful_pretest_reason', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">2</span>'),
-            #         Div('unsuccessful_posttest_reason', css_class='col-md-3'),
-            #         css_class='row',
-            #     ),
-            #     Div(
-            #         HTML('<span class="badge badge-default">3</span>'),
-            #         Div('participation', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">4</span>'),
-            #         Div('barriers', css_class='col-md-3'),
-            #         HTML('<span class="badge badge-default">5</span>'),
-            #         Div('learning_result', css_class='col-md-3'),
-            #         css_class='row',
-            #     ),
-            #     css_class='bd-callout bd-callout-warning'+display_assessment
-            # ),
+
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
@@ -1181,7 +1194,18 @@ class BLNForm(CommonForm):
                 self.add_error('sop_national_number_confirm', msg)
 
     def save(self, request=None, instance=None, serializer=None):
-        super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
+        instance = super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
+        instance.pre_test = {
+            "BLN_ASSESSMENT/attended_arabic": request.POST.get('attended_arabic'),
+            "BLN_ASSESSMENT/arabic": request.POST.get('arabic'),
+            "BLN_ASSESSMENT/attended_psychomotor": request.POST.get('attended_psychomotor'),
+            "BLN_ASSESSMENT/psychomotor": request.POST.get('psychomotor'),
+            "BLN_ASSESSMENT/attended_math": request.POST.get('attended_math'),
+            "BLN_ASSESSMENT/math": request.POST.get('math'),
+            "BLN_ASSESSMENT/attended_social": request.POST.get('attended_social'),
+            "BLN_ASSESSMENT/social_emotional": request.POST.get('social_emotional'),
+        }
+        instance.save()
 
     class Meta:
         model = BLN
