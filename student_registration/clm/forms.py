@@ -1043,28 +1043,28 @@ class BLNForm(CommonForm):
                 ),
                 css_class='bd-callout bd-callout-warning E_right_border' + display_assessment
             ),
-            Fieldset(
-                None,
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">1</span>'),
-                    HTML('<div class="col-md-3"><a class="btn ' + pre_test_button + '" href="' +
-                         pre_test + '">' + _('Pre-assessment') + '</a></div>'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    # Div('unsuccessful_pretest_reason', css_class='col-md-3'),
-                    # HTML(
-                    #     '<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
-                    #     post_test + '">' + _('Post-assessment') + '</a></div>'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<div class="p-3"></div>'),
-                    css_class='row'
-                ),
-                css_class='bd-callout bd-callout-warning' + display_assessment
-            ),
+            # Fieldset(
+            #     None,
+            #     # Div(
+            #     #     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>')
+            #     # ),
+            #     # Div(
+            #     #     HTML('<span class="badge badge-default">1</span>'),
+            #     #     HTML('<div class="col-md-3"><a class="btn ' + pre_test_button + '" href="' +
+            #     #          pre_test + '">' + _('Pre-assessment') + '</a></div>'),
+            #     #     HTML('<span class="badge badge-default">2</span>'),
+            #     #     # Div('unsuccessful_pretest_reason', css_class='col-md-3'),
+            #     #     # HTML(
+            #     #     #     '<div class="col-md-3"><a class="btn ' + post_test_button + '" href="' +
+            #     #     #     post_test + '">' + _('Post-assessment') + '</a></div>'),
+            #     #     css_class='row',
+            #     # ),
+            #     Div(
+            #         HTML('<div class="p-3"></div>'),
+            #         css_class='row'
+            #     ),
+            #     css_class='bd-callout bd-callout-warning' + display_assessment
+            # ),
 
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
