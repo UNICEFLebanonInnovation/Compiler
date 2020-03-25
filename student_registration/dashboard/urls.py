@@ -157,5 +157,9 @@ urlpatterns = [
         view=views.export_summary_of_Attendance,
         name='export-summary-attendance'
     ),
-
+    url(
+        regex=r'^evaluation/$',
+        view=views.generate_evaluation,
+        name='evaluation'
+    ),
 ]

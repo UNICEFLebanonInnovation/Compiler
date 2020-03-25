@@ -1198,3 +1198,4 @@ class DuplicateStd(TimeStampedModel):
 
     class Meta:
         verbose_name = 'Duplicated Students'
+

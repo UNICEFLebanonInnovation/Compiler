@@ -57,6 +57,8 @@ class UserAdmin(AuthUserAdmin):
         'deny_showpic',
         'allow_clearpic',
         'deny_clearpic',
+        'allow_evalcovid19',
+        'deny_evalcovid19'
     )
 
     fieldsets = (
@@ -119,6 +121,11 @@ class UserAdmin(AuthUserAdmin):
         for user in queryset:
             user.groups.add(group)
 
+    def allow_evalcovid19(self, request, queryset):
+        group = Group.objects.get(name='EVAL_COVID19')
+        for user in queryset:
+            user.groups.add(group)
+
     def allow_clearpic(self, request, queryset):
         group = Group.objects.get(name='ENROL_CLEARPIC')
         for user in queryset:
@@ -166,6 +173,11 @@ class UserAdmin(AuthUserAdmin):
 
     def deny_showpic(self, request, queryset):
         group = Group.objects.get(name='ENROL_SHOWPIC')
+        for user in queryset:
+            user.groups.remove(group)
+
+    def deny_evalcovid19(self, request, queryset):
+        group = Group.objects.get(name='EVAL_COVID19')
         for user in queryset:
             user.groups.remove(group)
 

@@ -21,7 +21,8 @@ from .models import (
     Holiday,
     CLMRound,
     PublicDocument,
-    Coordinator
+    Coordinator,
+    Subject,
 )
 from student_registration.locations.models import Location
 
@@ -523,3 +524,4 @@ admin.site.register(PublicDocument, PublicDocumentAdmin)
 admin.site.register(EducationalLevel, EducationalLevelAdmin)
 admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
 admin.site.register(Coordinator)
+admin.site.register(Subject)

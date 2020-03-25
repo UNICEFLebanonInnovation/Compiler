@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-04 15:16+0200\n"
+"POT-Creation-Date: 2020-03-25 08:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,12 +40,13 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:904
 #: .\student_registration\clm\filters.py:73
 #: .\student_registration\clm\filters.py:106
-#: .\student_registration\dashboard\views.py:250
-#: .\student_registration\dashboard\views.py:338
-#: .\student_registration\dashboard\views.py:959
-#: .\student_registration\enrollments\admin.py:452
+#: .\student_registration\dashboard\views.py:251
+#: .\student_registration\dashboard\views.py:339
+#: .\student_registration\dashboard\views.py:960
+#: .\student_registration\enrollments\admin.py:462
 #: .\student_registration\enrollments\filters.py:52
 #: .\student_registration\enrollments\models.py:144
+#: .\student_registration\schools\models.py:619
 #: .\student_registration\staffenroll\models.py:97
 #: .\student_registration\staffenroll\models.py:169
 #: .\student_registration\staffenroll\models.py:198
@@ -119,13 +120,17 @@ msgstr ""
 #: .\student_registration\enrollments\forms.py:1692
 #: .\student_registration\enrollments\forms.py:1698
 #: .\student_registration\enrollments\forms.py:1808
-#: .\student_registration\enrollments\forms.py:1903
 #: .\student_registration\enrollments\models.py:91
 #: .\student_registration\enrollments\models.py:222
 #: .\student_registration\enrollments\models.py:488
 #: .\student_registration\enrollments\models.py:495
 #: .\student_registration\enrollments\models.py:502
 #: .\student_registration\outreach\models.py:155
+#: .\student_registration\schools\models.py:661
+#: .\student_registration\schools\models.py:691
+#: .\student_registration\schools\models.py:721
+#: .\student_registration\schools\models.py:2192
+#: .\student_registration\schools\models.py:2222
 #: .\student_registration\students\models.py:231
 #: .\student_registration\students\models.py:240
 msgid "Yes"
@@ -162,7 +167,6 @@ msgstr ""
 #: .\student_registration\enrollments\forms.py:1692
 #: .\student_registration\enrollments\forms.py:1698
 #: .\student_registration\enrollments\forms.py:1809
-#: .\student_registration\enrollments\forms.py:1904
 #: .\student_registration\enrollments\models.py:70
 #: .\student_registration\enrollments\models.py:92
 #: .\student_registration\enrollments\models.py:223
@@ -170,6 +174,11 @@ msgstr ""
 #: .\student_registration\enrollments\models.py:495
 #: .\student_registration\enrollments\models.py:502
 #: .\student_registration\outreach\models.py:156
+#: .\student_registration\schools\models.py:662
+#: .\student_registration\schools\models.py:692
+#: .\student_registration\schools\models.py:722
+#: .\student_registration\schools\models.py:2193
+#: .\student_registration\schools\models.py:2223
 #: .\student_registration\students\models.py:231
 #: .\student_registration\students\models.py:240
 msgid "No"
@@ -343,14 +352,26 @@ msgstr ""
 
 #: .\student_registration\alp\forms.py:60
 #: .\student_registration\alp\models.py:69
+#: .\student_registration\schools\forms.py:681
+#: .\student_registration\schools\forms.py:893
+#: .\student_registration\schools\forms.py:1105
+#: .\student_registration\schools\forms.py:1317
+#: .\student_registration\schools\forms.py:1529
+#: .\student_registration\schools\forms.py:1741
+#: .\student_registration\schools\forms.py:1965
+#: .\student_registration\schools\forms.py:2239
+#: .\student_registration\schools\forms.py:2517
+#: .\student_registration\schools\forms.py:2806
 #: .\student_registration\schools\models.py:66
-#: .\student_registration\templates\header.html:167
+#: .\student_registration\schools\models.py:651
+#: .\student_registration\templates\header.html:173
 msgid "English"
 msgstr ""
 
 #: .\student_registration\alp\forms.py:61
 #: .\student_registration\alp\models.py:70
 #: .\student_registration\schools\models.py:65
+#: .\student_registration\schools\models.py:650
 msgid "French"
 msgstr ""
 
@@ -403,9 +424,9 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:548
 #: .\student_registration\backends\tasks.py:912
 #: .\student_registration\clm\forms.py:169
-#: .\student_registration\dashboard\views.py:258
-#: .\student_registration\dashboard\views.py:346
-#: .\student_registration\dashboard\views.py:970
+#: .\student_registration\dashboard\views.py:259
+#: .\student_registration\dashboard\views.py:347
+#: .\student_registration\dashboard\views.py:971
 #: .\student_registration\enrollments\forms.py:151
 #: .\student_registration\enrollments\forms.py:1503
 #: .\student_registration\enrollments\forms.py:1750
@@ -463,9 +484,9 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:365
 #: .\student_registration\backends\tasks.py:911
 #: .\student_registration\clm\forms.py:198
-#: .\student_registration\dashboard\views.py:257
-#: .\student_registration\dashboard\views.py:345
-#: .\student_registration\dashboard\views.py:969
+#: .\student_registration\dashboard\views.py:258
+#: .\student_registration\dashboard\views.py:346
+#: .\student_registration\dashboard\views.py:970
 #: .\student_registration\enrollments\forms.py:196
 #: .\student_registration\enrollments\forms.py:1541
 #: .\student_registration\enrollments\forms.py:1795
@@ -525,8 +546,8 @@ msgstr ""
 #: .\student_registration\alp\forms.py:929
 #: .\student_registration\backends\tasks.py:52
 #: .\student_registration\backends\tasks.py:918
-#: .\student_registration\dashboard\views.py:264
-#: .\student_registration\dashboard\views.py:352
+#: .\student_registration\dashboard\views.py:265
+#: .\student_registration\dashboard\views.py:353
 #: .\student_registration\enrollments\forms.py:223
 #: .\student_registration\enrollments\forms.py:1822
 #: .\student_registration\students\models.py:235
@@ -542,8 +563,8 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:370
 #: .\student_registration\backends\tasks.py:917
 #: .\student_registration\clm\models.py:415
-#: .\student_registration\dashboard\views.py:263
-#: .\student_registration\dashboard\views.py:351
+#: .\student_registration\dashboard\views.py:264
+#: .\student_registration\dashboard\views.py:352
 #: .\student_registration\enrollments\forms.py:227
 #: .\student_registration\enrollments\forms.py:1826
 #: .\student_registration\enrollments\tables.py:41
@@ -572,7 +593,7 @@ msgstr ""
 #: .\student_registration\alp\forms.py:1059
 #: .\student_registration\enrollments\forms.py:477
 #: .\student_registration\enrollments\forms.py:1569
-#: .\student_registration\enrollments\forms.py:2059
+#: .\student_registration\enrollments\forms.py:1959
 msgid "Basic Data"
 msgstr ""
 
@@ -603,9 +624,20 @@ msgstr ""
 #: .\student_registration\enrollments\forms.py:1387
 #: .\student_registration\enrollments\forms.py:1441
 #: .\student_registration\enrollments\forms.py:1613
-#: .\student_registration\enrollments\forms.py:2267
+#: .\student_registration\enrollments\forms.py:2072
 #: .\student_registration\schools\forms.py:160
 #: .\student_registration\schools\forms.py:231
+#: .\student_registration\schools\forms.py:568
+#: .\student_registration\schools\forms.py:777
+#: .\student_registration\schools\forms.py:989
+#: .\student_registration\schools\forms.py:1201
+#: .\student_registration\schools\forms.py:1413
+#: .\student_registration\schools\forms.py:1625
+#: .\student_registration\schools\forms.py:1837
+#: .\student_registration\schools\forms.py:2109
+#: .\student_registration\schools\forms.py:2383
+#: .\student_registration\schools\forms.py:2685
+#: .\student_registration\schools\forms.py:2902
 #: .\student_registration\templates\attendances\level_section.html:68
 #: .\student_registration\templates\attendances\level_section.html:146
 #: .\student_registration\templates\django_tables2\dropout_column.html:8
@@ -649,7 +681,7 @@ msgstr ""
 #: .\student_registration\enrollments\forms.py:1389
 #: .\student_registration\enrollments\forms.py:1442
 #: .\student_registration\enrollments\forms.py:1615
-#: .\student_registration\enrollments\forms.py:2269
+#: .\student_registration\enrollments\forms.py:2074
 msgid "Are you sure you want to cancel this registration?"
 msgstr ""
 
@@ -680,7 +712,7 @@ msgstr ""
 #: .\student_registration\enrollments\forms.py:1389
 #: .\student_registration\enrollments\forms.py:1442
 #: .\student_registration\enrollments\forms.py:1615
-#: .\student_registration\enrollments\forms.py:2269
+#: .\student_registration\enrollments\forms.py:2074
 msgid "Back to list"
 msgstr ""
 
@@ -711,9 +743,20 @@ msgstr ""
 #: .\student_registration\enrollments\forms.py:1395
 #: .\student_registration\enrollments\forms.py:1453
 #: .\student_registration\enrollments\forms.py:1624
-#: .\student_registration\enrollments\forms.py:2286
+#: .\student_registration\enrollments\forms.py:2091
 #: .\student_registration\schools\forms.py:166
 #: .\student_registration\schools\forms.py:237
+#: .\student_registration\schools\forms.py:574
+#: .\student_registration\schools\forms.py:783
+#: .\student_registration\schools\forms.py:995
+#: .\student_registration\schools\forms.py:1207
+#: .\student_registration\schools\forms.py:1419
+#: .\student_registration\schools\forms.py:1631
+#: .\student_registration\schools\forms.py:1843
+#: .\student_registration\schools\forms.py:2115
+#: .\student_registration\schools\forms.py:2389
+#: .\student_registration\schools\forms.py:2691
+#: .\student_registration\schools\forms.py:2908
 #: .\student_registration\templates\attendances\level_section.html:38
 #: .\student_registration\templates\attendances\school_day.html:26
 msgid "Your data has been sent successfully to the server"
@@ -747,7 +790,17 @@ msgstr ""
 #: .\student_registration\enrollments\models.py:284
 #: .\student_registration\enrollments\models.py:425
 #: .\student_registration\enrollments\models.py:731
-#: .\student_registration\templates\header.html:172
+#: .\student_registration\schools\forms.py:665
+#: .\student_registration\schools\forms.py:877
+#: .\student_registration\schools\forms.py:1089
+#: .\student_registration\schools\forms.py:1301
+#: .\student_registration\schools\forms.py:1513
+#: .\student_registration\schools\forms.py:1725
+#: .\student_registration\schools\forms.py:1949
+#: .\student_registration\schools\forms.py:2223
+#: .\student_registration\schools\forms.py:2501
+#: .\student_registration\schools\forms.py:2790
+#: .\student_registration\templates\header.html:178
 msgid "Arabic"
 msgstr ""
 
@@ -787,6 +840,16 @@ msgstr ""
 #: .\student_registration\enrollments\models.py:319
 #: .\student_registration\enrollments\models.py:441
 #: .\student_registration\enrollments\models.py:766
+#: .\student_registration\schools\forms.py:713
+#: .\student_registration\schools\forms.py:925
+#: .\student_registration\schools\forms.py:1137
+#: .\student_registration\schools\forms.py:1349
+#: .\student_registration\schools\forms.py:1561
+#: .\student_registration\schools\forms.py:1773
+#: .\student_registration\schools\forms.py:1997
+#: .\student_registration\schools\forms.py:2271
+#: .\student_registration\schools\forms.py:2549
+#: .\student_registration\schools\forms.py:2838
 msgid "Math"
 msgstr ""
 
@@ -808,6 +871,16 @@ msgstr ""
 #: .\student_registration\enrollments\forms.py:1023
 #: .\student_registration\enrollments\models.py:326
 #: .\student_registration\enrollments\models.py:773
+#: .\student_registration\schools\forms.py:729
+#: .\student_registration\schools\forms.py:941
+#: .\student_registration\schools\forms.py:1153
+#: .\student_registration\schools\forms.py:1365
+#: .\student_registration\schools\forms.py:1577
+#: .\student_registration\schools\forms.py:1789
+#: .\student_registration\schools\forms.py:2013
+#: .\student_registration\schools\forms.py:2287
+#: .\student_registration\schools\forms.py:2565
+#: .\student_registration\schools\forms.py:2854
 msgid "Science"
 msgstr ""
 
@@ -901,12 +974,11 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:221
 #: .\student_registration\backends\tasks.py:390
 #: .\student_registration\backends\tasks.py:923
-#: .\student_registration\dashboard\views.py:267
-#: .\student_registration\dashboard\views.py:357
-#: .\student_registration\dashboard\views.py:962
+#: .\student_registration\dashboard\views.py:268
+#: .\student_registration\dashboard\views.py:358
+#: .\student_registration\dashboard\views.py:963
 #: .\student_registration\enrollments\forms.py:241
 #: .\student_registration\enrollments\forms.py:1550
-#: .\student_registration\enrollments\forms.py:1840
 #: .\student_registration\enrollments\models.py:150
 #: .\student_registration\enrollments\models.py:1052
 #: .\student_registration\staffenroll\models.py:103
@@ -915,14 +987,12 @@ msgstr ""
 
 #: .\student_registration\alp\forms.py:954
 #: .\student_registration\enrollments\forms.py:261
-#: .\student_registration\enrollments\forms.py:1860
 msgid "Last education level"
 msgstr ""
 
 #: .\student_registration\alp\forms.py:960
 #: .\student_registration\alp\models.py:205
 #: .\student_registration\enrollments\forms.py:284
-#: .\student_registration\enrollments\forms.py:1883
 #: .\student_registration\enrollments\models.py:201
 #: .\student_registration\staffs\models.py:288
 msgid "Last Education year"
@@ -931,7 +1001,6 @@ msgstr ""
 #: .\student_registration\alp\forms.py:966
 #: .\student_registration\alp\models.py:219
 #: .\student_registration\enrollments\forms.py:300
-#: .\student_registration\enrollments\forms.py:1899
 #: .\student_registration\enrollments\models.py:225
 msgid "Participated in ALP"
 msgstr ""
@@ -940,8 +1009,6 @@ msgstr ""
 #: .\student_registration\alp\models.py:74
 #: .\student_registration\enrollments\forms.py:293
 #: .\student_registration\enrollments\forms.py:303
-#: .\student_registration\enrollments\forms.py:1892
-#: .\student_registration\enrollments\forms.py:1902
 #: .\student_registration\enrollments\models.py:84
 #: .\student_registration\enrollments\models.py:721
 msgid "n/a"
@@ -956,7 +1023,6 @@ msgstr ""
 #: .\student_registration\alp\forms.py:982
 #: .\student_registration\alp\models.py:245
 #: .\student_registration\enrollments\forms.py:316
-#: .\student_registration\enrollments\forms.py:1909
 #: .\student_registration\enrollments\models.py:251
 msgid "Last informal education round"
 msgstr ""
@@ -964,7 +1030,6 @@ msgstr ""
 #: .\student_registration\alp\forms.py:988
 #: .\student_registration\alp\models.py:251
 #: .\student_registration\enrollments\forms.py:322
-#: .\student_registration\enrollments\forms.py:1915
 #: .\student_registration\enrollments\models.py:257
 msgid "Last informal education status"
 msgstr ""
@@ -975,7 +1040,7 @@ msgstr ""
 #: .\student_registration\clm\forms.py:1929
 #: .\student_registration\clm\forms.py:2462
 #: .\student_registration\enrollments\forms.py:428
-#: .\student_registration\enrollments\forms.py:2010
+#: .\student_registration\enrollments\forms.py:1910
 msgid "Registry"
 msgstr ""
 
@@ -985,25 +1050,25 @@ msgstr ""
 #: .\student_registration\clm\forms.py:1949
 #: .\student_registration\clm\forms.py:2482
 #: .\student_registration\enrollments\forms.py:449
-#: .\student_registration\enrollments\forms.py:2031
+#: .\student_registration\enrollments\forms.py:1931
 msgid "Register by Barcode"
 msgstr ""
 
 #: .\student_registration\alp\forms.py:1045
 #: .\student_registration\enrollments\forms.py:461
-#: .\student_registration\enrollments\forms.py:2043
+#: .\student_registration\enrollments\forms.py:1943
 msgid "Search old student (fullname Or ID number)"
 msgstr ""
 
 #: .\student_registration\alp\forms.py:1065
 #: .\student_registration\enrollments\forms.py:493
-#: .\student_registration\enrollments\forms.py:2071
+#: .\student_registration\enrollments\forms.py:1971
 msgid "The barcode is not required, enter a valid one or leave it empty"
 msgstr ""
 
 #: .\student_registration\alp\forms.py:1067
 #: .\student_registration\enrollments\forms.py:495
-#: .\student_registration\enrollments\forms.py:2073
+#: .\student_registration\enrollments\forms.py:1973
 msgid "Click to see the barcode"
 msgstr ""
 
@@ -1011,7 +1076,6 @@ msgstr ""
 #: .\student_registration\enrollments\forms.py:611
 #: .\student_registration\enrollments\forms.py:1429
 #: .\student_registration\enrollments\forms.py:1601
-#: .\student_registration\enrollments\forms.py:2187
 #: .\student_registration\templates\alp\test_grading.html:29
 #: .\student_registration\templates\enrollments\grading.html:24
 msgid "Current situation"
@@ -1019,13 +1083,11 @@ msgstr ""
 
 #: .\student_registration\alp\forms.py:1139
 #: .\student_registration\enrollments\forms.py:625
-#: .\student_registration\enrollments\forms.py:2201
 msgid "Last student formal education"
 msgstr ""
 
 #: .\student_registration\alp\forms.py:1153
 #: .\student_registration\enrollments\forms.py:650
-#: .\student_registration\enrollments\forms.py:2226
 msgid "Last student informal education"
 msgstr ""
 
@@ -1055,7 +1117,6 @@ msgstr ""
 #: .\student_registration\enrollments\forms.py:864
 #: .\student_registration\enrollments\forms.py:900
 #: .\student_registration\enrollments\forms.py:1349
-#: .\student_registration\enrollments\forms.py:1893
 #: .\student_registration\enrollments\models.py:79
 #: .\student_registration\enrollments\models.py:85
 #: .\student_registration\enrollments\models.py:722
@@ -1067,7 +1128,6 @@ msgstr ""
 #: .\student_registration\enrollments\forms.py:865
 #: .\student_registration\enrollments\forms.py:901
 #: .\student_registration\enrollments\forms.py:1350
-#: .\student_registration\enrollments\forms.py:1894
 #: .\student_registration\enrollments\models.py:80
 #: .\student_registration\enrollments\models.py:86
 #: .\student_registration\enrollments\models.py:723
@@ -1078,6 +1138,7 @@ msgstr ""
 #: .\student_registration\alp\tables.py:126
 #: .\student_registration\enrollments\models.py:168
 #: .\student_registration\enrollments\models.py:1021
+#: .\student_registration\schools\models.py:631
 #: .\student_registration\staffenroll\models.py:127
 #: .\student_registration\staffs\models.py:198
 msgid "Created by"
@@ -1108,7 +1169,6 @@ msgstr ""
 
 #: .\student_registration\alp\models.py:212
 #: .\student_registration\enrollments\forms.py:290
-#: .\student_registration\enrollments\forms.py:1889
 #: .\student_registration\enrollments\models.py:208
 msgid "Last Education result"
 msgstr ""
@@ -1142,6 +1202,7 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:400
 #: .\student_registration\clm\models.py:386
 #: .\student_registration\schools\models.py:73
+#: .\student_registration\schools\models.py:749
 msgid "Comments"
 msgstr ""
 
@@ -1244,9 +1305,9 @@ msgstr ""
 #: .\student_registration\clm\filters.py:20
 #: .\student_registration\clm\forms.py:132
 #: .\student_registration\clm\models.py:215
-#: .\student_registration\dashboard\views.py:251
-#: .\student_registration\dashboard\views.py:339
-#: .\student_registration\dashboard\views.py:960
+#: .\student_registration\dashboard\views.py:252
+#: .\student_registration\dashboard\views.py:340
+#: .\student_registration\dashboard\views.py:961
 #: .\student_registration\enrollments\views.py:687
 #: .\student_registration\enrollments\views.py:734
 msgid "District"
@@ -1261,9 +1322,9 @@ msgstr ""
 #: .\student_registration\clm\filters.py:19
 #: .\student_registration\clm\forms.py:125
 #: .\student_registration\clm\models.py:209
-#: .\student_registration\dashboard\views.py:252
-#: .\student_registration\dashboard\views.py:340
-#: .\student_registration\dashboard\views.py:961
+#: .\student_registration\dashboard\views.py:253
+#: .\student_registration\dashboard\views.py:341
+#: .\student_registration\dashboard\views.py:962
 #: .\student_registration\enrollments\views.py:688
 #: .\student_registration\enrollments\views.py:735
 #: .\student_registration\staffs\forms.py:141
@@ -1315,7 +1376,7 @@ msgid "Weekly Holiday"
 msgstr ""
 
 #: .\student_registration\attendances\models.py:198
-#: .\student_registration\dashboard\views.py:980
+#: .\student_registration\dashboard\views.py:981
 msgid "disabled"
 msgstr ""
 
@@ -1341,10 +1402,10 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:356
 #: .\student_registration\backends\tasks.py:530
 #: .\student_registration\backends\tasks.py:903
-#: .\student_registration\dashboard\views.py:249
-#: .\student_registration\dashboard\views.py:337
-#: .\student_registration\dashboard\views.py:958
-#: .\student_registration\templates\dashboard\exporter.html:320
+#: .\student_registration\dashboard\views.py:250
+#: .\student_registration\dashboard\views.py:338
+#: .\student_registration\dashboard\views.py:959
+#: .\student_registration\templates\dashboard\exporter.html:323
 msgid "School number"
 msgstr ""
 
@@ -1354,9 +1415,10 @@ msgstr ""
 #: .\student_registration\enrollments\models.py:162
 #: .\student_registration\enrollments\models.py:1064
 #: .\student_registration\schools\models.py:599
+#: .\student_registration\schools\models.py:625
 #: .\student_registration\staffenroll\models.py:121
 #: .\student_registration\staffenroll\models.py:204
-#: .\student_registration\users\models.py:63
+#: .\student_registration\users\models.py:68
 msgid "Education year"
 msgstr ""
 
@@ -1373,9 +1435,9 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:211
 #: .\student_registration\backends\tasks.py:362
 #: .\student_registration\backends\tasks.py:908
-#: .\student_registration\dashboard\views.py:254
-#: .\student_registration\dashboard\views.py:342
-#: .\student_registration\dashboard\views.py:966
+#: .\student_registration\dashboard\views.py:255
+#: .\student_registration\dashboard\views.py:343
+#: .\student_registration\dashboard\views.py:967
 msgid "Student first name"
 msgstr ""
 
@@ -1383,9 +1445,9 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:212
 #: .\student_registration\backends\tasks.py:363
 #: .\student_registration\backends\tasks.py:909
-#: .\student_registration\dashboard\views.py:255
-#: .\student_registration\dashboard\views.py:343
-#: .\student_registration\dashboard\views.py:967
+#: .\student_registration\dashboard\views.py:256
+#: .\student_registration\dashboard\views.py:344
+#: .\student_registration\dashboard\views.py:968
 msgid "Student father name"
 msgstr ""
 
@@ -1393,9 +1455,9 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:213
 #: .\student_registration\backends\tasks.py:364
 #: .\student_registration\backends\tasks.py:910
-#: .\student_registration\dashboard\views.py:256
-#: .\student_registration\dashboard\views.py:344
-#: .\student_registration\dashboard\views.py:968
+#: .\student_registration\dashboard\views.py:257
+#: .\student_registration\dashboard\views.py:345
+#: .\student_registration\dashboard\views.py:969
 msgid "Student last name"
 msgstr ""
 
@@ -1403,9 +1465,9 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:216
 #: .\student_registration\backends\tasks.py:367
 #: .\student_registration\backends\tasks.py:913
-#: .\student_registration\dashboard\views.py:259
-#: .\student_registration\dashboard\views.py:347
-#: .\student_registration\dashboard\views.py:971
+#: .\student_registration\dashboard\views.py:260
+#: .\student_registration\dashboard\views.py:348
+#: .\student_registration\dashboard\views.py:972
 msgid "year"
 msgstr ""
 
@@ -1413,9 +1475,9 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:217
 #: .\student_registration\backends\tasks.py:368
 #: .\student_registration\backends\tasks.py:914
-#: .\student_registration\dashboard\views.py:260
-#: .\student_registration\dashboard\views.py:348
-#: .\student_registration\dashboard\views.py:972
+#: .\student_registration\dashboard\views.py:261
+#: .\student_registration\dashboard\views.py:349
+#: .\student_registration\dashboard\views.py:973
 msgid "month"
 msgstr ""
 
@@ -1423,19 +1485,19 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:218
 #: .\student_registration\backends\tasks.py:369
 #: .\student_registration\backends\tasks.py:915
-#: .\student_registration\dashboard\views.py:261
-#: .\student_registration\dashboard\views.py:349
-#: .\student_registration\dashboard\views.py:973
+#: .\student_registration\dashboard\views.py:262
+#: .\student_registration\dashboard\views.py:350
+#: .\student_registration\dashboard\views.py:974
 msgid "day"
 msgstr ""
 
 #: .\student_registration\backends\tasks.py:50
 #: .\student_registration\backends\tasks.py:916
-#: .\student_registration\dashboard\views.py:262
-#: .\student_registration\dashboard\views.py:350
-#: .\student_registration\dashboard\views.py:974
+#: .\student_registration\dashboard\views.py:263
+#: .\student_registration\dashboard\views.py:351
+#: .\student_registration\dashboard\views.py:975
 #: .\student_registration\enrollments\forms.py:248
-#: .\student_registration\enrollments\forms.py:1847
+#: .\student_registration\enrollments\forms.py:1834
 #: .\student_registration\staffs\forms.py:71
 #: .\student_registration\staffs\models.py:175
 #: .\student_registration\students\models.py:218
@@ -1450,9 +1512,9 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:55
 #: .\student_registration\backends\tasks.py:373
 #: .\student_registration\backends\tasks.py:920
-#: .\student_registration\dashboard\views.py:265
-#: .\student_registration\dashboard\views.py:354
-#: .\student_registration\dashboard\views.py:976
+#: .\student_registration\dashboard\views.py:266
+#: .\student_registration\dashboard\views.py:355
+#: .\student_registration\dashboard\views.py:977
 msgid "Student ID Number"
 msgstr ""
 
@@ -1460,9 +1522,9 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:219
 #: .\student_registration\backends\tasks.py:374
 #: .\student_registration\backends\tasks.py:921
-#: .\student_registration\dashboard\views.py:266
-#: .\student_registration\dashboard\views.py:355
-#: .\student_registration\dashboard\views.py:977
+#: .\student_registration\dashboard\views.py:267
+#: .\student_registration\dashboard\views.py:356
+#: .\student_registration\dashboard\views.py:978
 msgid "Student nationality"
 msgstr ""
 
@@ -1474,27 +1536,27 @@ msgstr ""
 #: .\student_registration\backends\tasks.py:61
 #: .\student_registration\backends\tasks.py:222
 #: .\student_registration\backends\tasks.py:924
-#: .\student_registration\dashboard\views.py:268
-#: .\student_registration\dashboard\views.py:358
-#: .\student_registration\dashboard\views.py:963
+#: .\student_registration\dashboard\views.py:269
+#: .\student_registration\dashboard\views.py:359
+#: .\student_registration\dashboard\views.py:964
 #: .\student_registration\enrollments\forms.py:236
 #: .\student_registration\enrollments\forms.py:1545
-#: .\student_registration\enrollments\forms.py:1835
 #: .\student_registration\enrollments\models.py:156
 #: .\student_registration\enrollments\models.py:1058
+#: .\student_registration\schools\models.py:2273
 #: .\student_registration\staffenroll\models.py:109
 msgid "Current Class"
 msgstr ""
 
 #: .\student_registration\backends\tasks.py:63
 #: .\student_registration\backends\tasks.py:926
-#: .\student_registration\dashboard\views.py:269
+#: .\student_registration\dashboard\views.py:270
 msgid "Last attendance date"
 msgstr ""
 
 #: .\student_registration\backends\tasks.py:64
 #: .\student_registration\backends\tasks.py:927
-#: .\student_registration\dashboard\views.py:270
+#: .\student_registration\dashboard\views.py:271
 msgid "Last absent date"
 msgstr ""
 
@@ -1530,7 +1592,7 @@ msgstr ""
 
 #: .\student_registration\backends\tasks.py:74
 #: .\student_registration\enrollments\forms.py:256
-#: .\student_registration\enrollments\forms.py:1855
+#: .\student_registration\enrollments\forms.py:1842
 #: .\student_registration\enrollments\models.py:187
 msgid "Serial number in previous school"
 msgstr ""
@@ -1551,13 +1613,13 @@ msgstr ""
 
 #: .\student_registration\backends\tasks.py:91
 #: .\student_registration\backends\tasks.py:247
-#: .\student_registration\dashboard\views.py:272
+#: .\student_registration\dashboard\views.py:273
 #: .\student_registration\enrollments\models.py:518
 msgid "dropout date"
 msgstr ""
 
 #: .\student_registration\backends\tasks.py:94
-#: .\student_registration\dashboard\views.py:274
+#: .\student_registration\dashboard\views.py:275
 msgid "last moved date"
 msgstr ""
 
@@ -1642,6 +1704,9 @@ msgstr ""
 #: .\student_registration\enrollments\forms.py:1129
 #: .\student_registration\enrollments\models.py:340
 #: .\student_registration\enrollments\models.py:787
+#: .\student_registration\schools\forms.py:2077
+#: .\student_registration\schools\forms.py:2351
+#: .\student_registration\schools\forms.py:2629
 msgid "Chemistry"
 msgstr ""
 
@@ -1656,6 +1721,9 @@ msgstr ""
 #: .\student_registration\enrollments\forms.py:1111
 #: .\student_registration\enrollments\models.py:312
 #: .\student_registration\enrollments\models.py:759
+#: .\student_registration\schools\forms.py:2093
+#: .\student_registration\schools\forms.py:2367
+#: .\student_registration\schools\forms.py:2645
 msgid "History"
 msgstr ""
 
@@ -1665,6 +1733,16 @@ msgstr ""
 #: .\student_registration\enrollments\forms.py:1105
 #: .\student_registration\enrollments\models.py:305
 #: .\student_registration\enrollments\models.py:752
+#: .\student_registration\schools\forms.py:761
+#: .\student_registration\schools\forms.py:973
+#: .\student_registration\schools\forms.py:1185
+#: .\student_registration\schools\forms.py:1397
+#: .\student_registration\schools\forms.py:1609
+#: .\student_registration\schools\forms.py:1821
+#: .\student_registration\schools\forms.py:2045
+#: .\student_registration\schools\forms.py:2319
+#: .\student_registration\schools\forms.py:2597
+#: .\student_registration\schools\forms.py:2886
 msgid "Geography"
 msgstr ""
 
@@ -1730,7 +1808,7 @@ msgid "Education year/ALP round"
 msgstr ""
 
 #: .\student_registration\backends\tasks.py:537
-#: .\student_registration\dashboard\views.py:360
+#: .\student_registration\dashboard\views.py:361
 msgid "Attendance date"
 msgstr ""
 
@@ -2729,7 +2807,7 @@ msgid "Learning result"
 msgstr ""
 
 #: .\student_registration\clm\models.py:234
-#: .\student_registration\enrollments\admin.py:461
+#: .\student_registration\enrollments\admin.py:471
 #: .\student_registration\enrollments\models.py:925
 #: .\student_registration\templates\alp\test_grading.html:19
 #: .\student_registration\templates\enrollments\grading.html:18
@@ -3229,58 +3307,58 @@ msgstr ""
 msgid "Psychomotor Development - Improvement"
 msgstr ""
 
-#: .\student_registration\dashboard\views.py:271
-#: .\student_registration\dashboard\views.py:982
+#: .\student_registration\dashboard\views.py:272
+#: .\student_registration\dashboard\views.py:983
 msgid "dropout status"
 msgstr ""
 
-#: .\student_registration\dashboard\views.py:273
-#: .\student_registration\dashboard\views.py:981
+#: .\student_registration\dashboard\views.py:274
+#: .\student_registration\dashboard\views.py:982
 msgid "moved"
 msgstr ""
 
-#: .\student_registration\dashboard\views.py:361
+#: .\student_registration\dashboard\views.py:362
 msgid "Is Present"
 msgstr ""
 
-#: .\student_registration\dashboard\views.py:975
+#: .\student_registration\dashboard\views.py:976
 msgid "Phone"
 msgstr ""
 
-#: .\student_registration\dashboard\views.py:978
+#: .\student_registration\dashboard\views.py:979
 msgid "attend"
 msgstr ""
 
-#: .\student_registration\dashboard\views.py:979
+#: .\student_registration\dashboard\views.py:980
 msgid "absent"
 msgstr ""
 
-#: .\student_registration\dashboard\views.py:983
+#: .\student_registration\dashboard\views.py:984
 msgid "first attend"
 msgstr ""
 
-#: .\student_registration\enrollments\admin.py:266
+#: .\student_registration\enrollments\admin.py:269
 #: .\student_registration\enrollments\models.py:907
 #: .\student_registration\templates\enrollments\list.html:46
 #: .\student_registration\templates\staffs\list.html:46
 msgid "Term1"
 msgstr ""
 
-#: .\student_registration\enrollments\admin.py:267
+#: .\student_registration\enrollments\admin.py:270
 #: .\student_registration\enrollments\models.py:908
 #: .\student_registration\templates\enrollments\list.html:47
 #: .\student_registration\templates\staffs\list.html:47
 msgid "Term2"
 msgstr ""
 
-#: .\student_registration\enrollments\admin.py:268
+#: .\student_registration\enrollments\admin.py:271
 #: .\student_registration\enrollments\models.py:909
 #: .\student_registration\templates\enrollments\list.html:48
 #: .\student_registration\templates\staffs\list.html:48
 msgid "Term3"
 msgstr ""
 
-#: .\student_registration\enrollments\admin.py:269
+#: .\student_registration\enrollments\admin.py:272
 #: .\student_registration\enrollments\models.py:910
 #: .\student_registration\templates\enrollments\list.html:49
 #: .\student_registration\templates\staffs\list.html:49
@@ -3293,94 +3371,85 @@ msgid "2nd Shift"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:252
-#: .\student_registration\enrollments\forms.py:1851
+#: .\student_registration\enrollments\forms.py:1838
 #: .\student_registration\students\models.py:281
 msgid "Identity record number"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:267
-#: .\student_registration\enrollments\forms.py:1866
 #: .\student_registration\enrollments\models.py:264
 msgid "Last school type"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:273
-#: .\student_registration\enrollments\forms.py:1872
 #: .\student_registration\enrollments\models.py:271
 msgid "Last school shift"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:280
-#: .\student_registration\enrollments\forms.py:1879
 #: .\student_registration\enrollments\models.py:277
 msgid "Last school"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:327
-#: .\student_registration\enrollments\forms.py:1920
 msgid "Special Needs"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:329
-#: .\student_registration\enrollments\forms.py:1922
 msgid "Special needs program"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:335
-#: .\student_registration\enrollments\forms.py:1928
 msgid "Details Special needs"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:340
-#: .\student_registration\enrollments\forms.py:1933
 msgid "Is Financial Support"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:342
-#: .\student_registration\enrollments\forms.py:1935
 msgid "Financial Support Nb"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:347
-#: .\student_registration\enrollments\forms.py:1940
 #: .\student_registration\students\models.py:442
 msgid "Financial Support Program"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:356
-#: .\student_registration\enrollments\forms.py:1949
+#: .\student_registration\enrollments\forms.py:1849
 msgid "UNHCR Family Nb."
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:359
-#: .\student_registration\enrollments\forms.py:1952
+#: .\student_registration\enrollments\forms.py:1852
 msgid "UNHCR Personal Nb."
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:373
-#: .\student_registration\enrollments\forms.py:1963
+#: .\student_registration\enrollments\forms.py:1863
 msgid "Private Document Type"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:378
-#: .\student_registration\enrollments\forms.py:1968
+#: .\student_registration\enrollments\forms.py:1868
 #: .\student_registration\enrollments\models.py:537
 msgid "Document Year"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:383
-#: .\student_registration\enrollments\forms.py:1973
+#: .\student_registration\enrollments\forms.py:1873
 #: .\student_registration\enrollments\models.py:555
 msgid "Signature Date"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:387
-#: .\student_registration\enrollments\forms.py:1977
+#: .\student_registration\enrollments\forms.py:1877
 msgid "Document Number"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:392
-#: .\student_registration\enrollments\forms.py:1982
+#: .\student_registration\enrollments\forms.py:1882
 #: .\student_registration\enrollments\models.py:544
 #: .\student_registration\templates\enrollments\clear_images.html:72
 #: .\student_registration\templates\enrollments\modifying_images.html:165
@@ -3388,24 +3457,22 @@ msgid "picture of previous education"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:570
-#: .\student_registration\enrollments\forms.py:2148
 msgid "Special needs"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:590
-#: .\student_registration\enrollments\forms.py:2167
 msgid "Financial support"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:667
-#: .\student_registration\enrollments\forms.py:2243
+#: .\student_registration\enrollments\forms.py:2048
 msgid ""
 "Details of the documents justifying the most recent school year (regular or "
 "informal)"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:685
-#: .\student_registration\enrollments\forms.py:2261
+#: .\student_registration\enrollments\forms.py:2066
 #: .\student_registration\templates\students\imagestd.html:53
 #: .\student_registration\templates\students\imagestd.html:93
 #: .\student_registration\templates\students\imagestd.html:116
@@ -3413,7 +3480,7 @@ msgid "The name of file should not be in arabic"
 msgstr ""
 
 #: .\student_registration\enrollments\forms.py:700
-#: .\student_registration\enrollments\forms.py:2274
+#: .\student_registration\enrollments\forms.py:2079
 msgid "Upload Pictures"
 msgstr ""
 
@@ -3871,32 +3938,32 @@ msgid ""
 "<>./?"
 msgstr ""
 
-#: .\student_registration\schools\forms.py:18
+#: .\student_registration\schools\forms.py:19
 #: .\student_registration\schools\models.py:59
 msgid "School email"
 msgstr ""
 
-#: .\student_registration\schools\forms.py:22
+#: .\student_registration\schools\forms.py:23
 #: .\student_registration\schools\models.py:49
 msgid "School land phone number"
 msgstr ""
 
-#: .\student_registration\schools\forms.py:27
+#: .\student_registration\schools\forms.py:28
 #: .\student_registration\schools\models.py:54
 msgid "School fax number"
 msgstr ""
 
-#: .\student_registration\schools\forms.py:33
+#: .\student_registration\schools\forms.py:34
 #: .\student_registration\schools\models.py:44
 msgid "School director cell phone"
 msgstr ""
 
-#: .\student_registration\schools\forms.py:38
+#: .\student_registration\schools\forms.py:39
 #: .\student_registration\schools\models.py:92
 msgid "School IT phone number"
 msgstr ""
 
-#: .\student_registration\schools\forms.py:44
+#: .\student_registration\schools\forms.py:45
 #: .\student_registration\schools\models.py:136
 msgid "School year start date"
 msgstr ""
@@ -3917,15 +3984,465 @@ msgstr ""
 msgid "CLM round"
 msgstr ""
 
+#: .\student_registration\schools\forms.py:301
+msgid "Evaluation for Prep-Ece"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:303
+msgid "Prep-Ece"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:308
+#: .\student_registration\schools\forms.py:367
+#: .\student_registration\schools\forms.py:422
+#: .\student_registration\schools\forms.py:475
+#: .\student_registration\schools\forms.py:528
+#: .\student_registration\schools\models.py:664
+#: .\student_registration\schools\models.py:694
+#: .\student_registration\schools\models.py:724
+#: .\student_registration\schools\models.py:2195
+#: .\student_registration\schools\models.py:2225
+msgid "Have you implemented distance education ?"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:355
+msgid "Evaluation for Cylce 1"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:357
+msgid "Cycle 1"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:359
+msgid "Cycle 2"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:361
+msgid "Cycle 3"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:411
+msgid "Evaluation for Cycle 2"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:413
+msgid "Cycle 4"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:415
+msgid "Cycle 5"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:417
+msgid "Cycle 6"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:466
+msgid "Evaluation for Cycle 3"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:468
+msgid "Cycle 7"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:470
+msgid "Cycle 8"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:519
+msgid "Evaluation for Grade 9"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:521
+msgid "Cycle 9"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:647
+msgid "Grade 2"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:653
+#: .\student_registration\schools\forms.py:865
+#: .\student_registration\schools\forms.py:1077
+#: .\student_registration\schools\forms.py:1289
+#: .\student_registration\schools\forms.py:1501
+#: .\student_registration\schools\forms.py:1713
+#: .\student_registration\schools\forms.py:1937
+#: .\student_registration\schools\forms.py:2211
+#: .\student_registration\schools\forms.py:2489
+#: .\student_registration\schools\forms.py:2778
+#: .\student_registration\schools\models.py:754
+#: .\student_registration\schools\models.py:772
+#: .\student_registration\schools\models.py:790
+#: .\student_registration\schools\models.py:808
+#: .\student_registration\schools\models.py:826
+#: .\student_registration\schools\models.py:844
+#: .\student_registration\schools\models.py:862
+#: .\student_registration\schools\models.py:881
+#: .\student_registration\schools\models.py:899
+#: .\student_registration\schools\models.py:917
+#: .\student_registration\schools\models.py:935
+#: .\student_registration\schools\models.py:953
+#: .\student_registration\schools\models.py:971
+#: .\student_registration\schools\models.py:989
+#: .\student_registration\schools\models.py:1007
+#: .\student_registration\schools\models.py:1025
+#: .\student_registration\schools\models.py:1043
+#: .\student_registration\schools\models.py:1061
+#: .\student_registration\schools\models.py:1079
+#: .\student_registration\schools\models.py:1097
+#: .\student_registration\schools\models.py:1115
+#: .\student_registration\schools\models.py:1133
+#: .\student_registration\schools\models.py:1151
+#: .\student_registration\schools\models.py:1169
+#: .\student_registration\schools\models.py:1187
+#: .\student_registration\schools\models.py:1205
+#: .\student_registration\schools\models.py:1223
+#: .\student_registration\schools\models.py:1241
+#: .\student_registration\schools\models.py:1259
+#: .\student_registration\schools\models.py:1277
+#: .\student_registration\schools\models.py:1295
+#: .\student_registration\schools\models.py:1313
+#: .\student_registration\schools\models.py:1331
+#: .\student_registration\schools\models.py:1349
+#: .\student_registration\schools\models.py:1367
+#: .\student_registration\schools\models.py:1385
+#: .\student_registration\schools\models.py:1403
+#: .\student_registration\schools\models.py:1421
+#: .\student_registration\schools\models.py:1439
+#: .\student_registration\schools\models.py:1457
+#: .\student_registration\schools\models.py:1475
+#: .\student_registration\schools\models.py:1493
+#: .\student_registration\schools\models.py:1511
+#: .\student_registration\schools\models.py:1529
+#: .\student_registration\schools\models.py:1547
+#: .\student_registration\schools\models.py:1565
+#: .\student_registration\schools\models.py:1583
+#: .\student_registration\schools\models.py:1601
+#: .\student_registration\schools\models.py:1619
+#: .\student_registration\schools\models.py:1637
+#: .\student_registration\schools\models.py:1655
+#: .\student_registration\schools\models.py:1673
+#: .\student_registration\schools\models.py:1691
+#: .\student_registration\schools\models.py:1709
+#: .\student_registration\schools\models.py:1727
+#: .\student_registration\schools\models.py:1745
+#: .\student_registration\schools\models.py:1763
+#: .\student_registration\schools\models.py:1781
+#: .\student_registration\schools\models.py:1799
+#: .\student_registration\schools\models.py:1817
+#: .\student_registration\schools\models.py:1835
+#: .\student_registration\schools\models.py:1853
+#: .\student_registration\schools\models.py:1871
+#: .\student_registration\schools\models.py:1889
+#: .\student_registration\schools\models.py:1907
+#: .\student_registration\schools\models.py:1925
+#: .\student_registration\schools\models.py:1943
+#: .\student_registration\schools\models.py:1961
+#: .\student_registration\schools\models.py:1979
+#: .\student_registration\schools\models.py:1997
+#: .\student_registration\schools\models.py:2015
+#: .\student_registration\schools\models.py:2033
+#: .\student_registration\schools\models.py:2051
+#: .\student_registration\schools\models.py:2069
+#: .\student_registration\schools\models.py:2087
+#: .\student_registration\schools\models.py:2105
+#: .\student_registration\schools\models.py:2123
+#: .\student_registration\schools\models.py:2141
+#: .\student_registration\schools\models.py:2159
+#: .\student_registration\schools\models.py:2283
+msgid "The number of lessons completed till february"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:655
+#: .\student_registration\schools\forms.py:867
+#: .\student_registration\schools\forms.py:1079
+#: .\student_registration\schools\forms.py:1291
+#: .\student_registration\schools\forms.py:1503
+#: .\student_registration\schools\forms.py:1715
+#: .\student_registration\schools\forms.py:1939
+#: .\student_registration\schools\forms.py:2213
+#: .\student_registration\schools\forms.py:2491
+#: .\student_registration\schools\forms.py:2780
+#: .\student_registration\schools\models.py:760
+#: .\student_registration\schools\models.py:778
+#: .\student_registration\schools\models.py:796
+#: .\student_registration\schools\models.py:814
+#: .\student_registration\schools\models.py:832
+#: .\student_registration\schools\models.py:850
+#: .\student_registration\schools\models.py:868
+#: .\student_registration\schools\models.py:887
+#: .\student_registration\schools\models.py:905
+#: .\student_registration\schools\models.py:923
+#: .\student_registration\schools\models.py:941
+#: .\student_registration\schools\models.py:959
+#: .\student_registration\schools\models.py:977
+#: .\student_registration\schools\models.py:995
+#: .\student_registration\schools\models.py:1013
+#: .\student_registration\schools\models.py:1031
+#: .\student_registration\schools\models.py:1049
+#: .\student_registration\schools\models.py:1067
+#: .\student_registration\schools\models.py:1085
+#: .\student_registration\schools\models.py:1103
+#: .\student_registration\schools\models.py:1121
+#: .\student_registration\schools\models.py:1139
+#: .\student_registration\schools\models.py:1157
+#: .\student_registration\schools\models.py:1175
+#: .\student_registration\schools\models.py:1193
+#: .\student_registration\schools\models.py:1211
+#: .\student_registration\schools\models.py:1229
+#: .\student_registration\schools\models.py:1247
+#: .\student_registration\schools\models.py:1265
+#: .\student_registration\schools\models.py:1283
+#: .\student_registration\schools\models.py:1301
+#: .\student_registration\schools\models.py:1319
+#: .\student_registration\schools\models.py:1337
+#: .\student_registration\schools\models.py:1355
+#: .\student_registration\schools\models.py:1373
+#: .\student_registration\schools\models.py:1391
+#: .\student_registration\schools\models.py:1409
+#: .\student_registration\schools\models.py:1427
+#: .\student_registration\schools\models.py:1445
+#: .\student_registration\schools\models.py:1463
+#: .\student_registration\schools\models.py:1481
+#: .\student_registration\schools\models.py:1499
+#: .\student_registration\schools\models.py:1517
+#: .\student_registration\schools\models.py:1535
+#: .\student_registration\schools\models.py:1553
+#: .\student_registration\schools\models.py:1571
+#: .\student_registration\schools\models.py:1589
+#: .\student_registration\schools\models.py:1607
+#: .\student_registration\schools\models.py:1625
+#: .\student_registration\schools\models.py:1643
+#: .\student_registration\schools\models.py:1661
+#: .\student_registration\schools\models.py:1679
+#: .\student_registration\schools\models.py:1697
+#: .\student_registration\schools\models.py:1715
+#: .\student_registration\schools\models.py:1733
+#: .\student_registration\schools\models.py:1751
+#: .\student_registration\schools\models.py:1769
+#: .\student_registration\schools\models.py:1787
+#: .\student_registration\schools\models.py:1805
+#: .\student_registration\schools\models.py:1823
+#: .\student_registration\schools\models.py:1841
+#: .\student_registration\schools\models.py:1859
+#: .\student_registration\schools\models.py:1877
+#: .\student_registration\schools\models.py:1895
+#: .\student_registration\schools\models.py:1913
+#: .\student_registration\schools\models.py:1931
+#: .\student_registration\schools\models.py:1949
+#: .\student_registration\schools\models.py:1967
+#: .\student_registration\schools\models.py:1985
+#: .\student_registration\schools\models.py:2003
+#: .\student_registration\schools\models.py:2021
+#: .\student_registration\schools\models.py:2039
+#: .\student_registration\schools\models.py:2057
+#: .\student_registration\schools\models.py:2075
+#: .\student_registration\schools\models.py:2093
+#: .\student_registration\schools\models.py:2111
+#: .\student_registration\schools\models.py:2129
+#: .\student_registration\schools\models.py:2147
+#: .\student_registration\schools\models.py:2165
+#: .\student_registration\schools\models.py:2289
+#: .\student_registration\schools\models.py:2295
+msgid "Number of lessons accomplished through distance education in march"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:657
+#: .\student_registration\schools\forms.py:869
+#: .\student_registration\schools\forms.py:1081
+#: .\student_registration\schools\forms.py:1293
+#: .\student_registration\schools\forms.py:1505
+#: .\student_registration\schools\forms.py:1717
+#: .\student_registration\schools\forms.py:1941
+#: .\student_registration\schools\forms.py:2215
+#: .\student_registration\schools\forms.py:2493
+#: .\student_registration\schools\forms.py:2782
+#: .\student_registration\schools\models.py:766
+#: .\student_registration\schools\models.py:784
+#: .\student_registration\schools\models.py:802
+#: .\student_registration\schools\models.py:820
+#: .\student_registration\schools\models.py:838
+#: .\student_registration\schools\models.py:856
+#: .\student_registration\schools\models.py:874
+#: .\student_registration\schools\models.py:893
+#: .\student_registration\schools\models.py:911
+#: .\student_registration\schools\models.py:929
+#: .\student_registration\schools\models.py:947
+#: .\student_registration\schools\models.py:965
+#: .\student_registration\schools\models.py:983
+#: .\student_registration\schools\models.py:1001
+#: .\student_registration\schools\models.py:1019
+#: .\student_registration\schools\models.py:1037
+#: .\student_registration\schools\models.py:1055
+#: .\student_registration\schools\models.py:1073
+#: .\student_registration\schools\models.py:1091
+#: .\student_registration\schools\models.py:1109
+#: .\student_registration\schools\models.py:1127
+#: .\student_registration\schools\models.py:1145
+#: .\student_registration\schools\models.py:1163
+#: .\student_registration\schools\models.py:1181
+#: .\student_registration\schools\models.py:1199
+#: .\student_registration\schools\models.py:1217
+#: .\student_registration\schools\models.py:1235
+#: .\student_registration\schools\models.py:1253
+#: .\student_registration\schools\models.py:1271
+#: .\student_registration\schools\models.py:1289
+#: .\student_registration\schools\models.py:1307
+#: .\student_registration\schools\models.py:1325
+#: .\student_registration\schools\models.py:1343
+#: .\student_registration\schools\models.py:1361
+#: .\student_registration\schools\models.py:1379
+#: .\student_registration\schools\models.py:1397
+#: .\student_registration\schools\models.py:1415
+#: .\student_registration\schools\models.py:1433
+#: .\student_registration\schools\models.py:1451
+#: .\student_registration\schools\models.py:1469
+#: .\student_registration\schools\models.py:1487
+#: .\student_registration\schools\models.py:1505
+#: .\student_registration\schools\models.py:1523
+#: .\student_registration\schools\models.py:1541
+#: .\student_registration\schools\models.py:1559
+#: .\student_registration\schools\models.py:1577
+#: .\student_registration\schools\models.py:1595
+#: .\student_registration\schools\models.py:1613
+#: .\student_registration\schools\models.py:1631
+#: .\student_registration\schools\models.py:1649
+#: .\student_registration\schools\models.py:1667
+#: .\student_registration\schools\models.py:1685
+#: .\student_registration\schools\models.py:1703
+#: .\student_registration\schools\models.py:1721
+#: .\student_registration\schools\models.py:1739
+#: .\student_registration\schools\models.py:1757
+#: .\student_registration\schools\models.py:1775
+#: .\student_registration\schools\models.py:1793
+#: .\student_registration\schools\models.py:1811
+#: .\student_registration\schools\models.py:1829
+#: .\student_registration\schools\models.py:1847
+#: .\student_registration\schools\models.py:1865
+#: .\student_registration\schools\models.py:1883
+#: .\student_registration\schools\models.py:1901
+#: .\student_registration\schools\models.py:1919
+#: .\student_registration\schools\models.py:1937
+#: .\student_registration\schools\models.py:1955
+#: .\student_registration\schools\models.py:1973
+#: .\student_registration\schools\models.py:1991
+#: .\student_registration\schools\models.py:2009
+#: .\student_registration\schools\models.py:2027
+#: .\student_registration\schools\models.py:2045
+#: .\student_registration\schools\models.py:2063
+#: .\student_registration\schools\models.py:2081
+#: .\student_registration\schools\models.py:2099
+#: .\student_registration\schools\models.py:2117
+#: .\student_registration\schools\models.py:2135
+#: .\student_registration\schools\models.py:2153
+#: .\student_registration\schools\models.py:2171
+msgid "Number of lessons remaining"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:697
+#: .\student_registration\schools\forms.py:909
+#: .\student_registration\schools\forms.py:1121
+#: .\student_registration\schools\forms.py:1333
+#: .\student_registration\schools\forms.py:1545
+#: .\student_registration\schools\forms.py:1757
+#: .\student_registration\schools\forms.py:1981
+#: .\student_registration\schools\forms.py:2255
+#: .\student_registration\schools\forms.py:2533
+#: .\student_registration\schools\forms.py:2822
+msgid "Frensh"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:745
+#: .\student_registration\schools\forms.py:957
+#: .\student_registration\schools\forms.py:1169
+#: .\student_registration\schools\forms.py:1381
+#: .\student_registration\schools\forms.py:1593
+#: .\student_registration\schools\forms.py:1805
+#: .\student_registration\schools\forms.py:2029
+#: .\student_registration\schools\forms.py:2303
+#: .\student_registration\schools\forms.py:2581
+#: .\student_registration\schools\forms.py:2870
+msgid "Civic Education"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:859
+msgid "Grade 1"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:1071
+msgid "Grade 3"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:1283
+msgid "Grade 4"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:1495
+msgid "Grade 5"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:1707
+msgid "Grade 6"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:1931
+msgid "Grade 7"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:2061
+#: .\student_registration\schools\forms.py:2335
+#: .\student_registration\schools\forms.py:2613
+msgid "Physics"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:2205
+msgid "Grade 8"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:2483
+msgid "Grade 9"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:2662
+#: .\student_registration\schools\models.py:2250
+#, fuzzy
+#| msgid "dropout students"
+msgid "Total of teachers"
+msgstr "تلميذ منقطع"
+
+#: .\student_registration\schools\forms.py:2667
+#: .\student_registration\schools\models.py:2256
+msgid "Number of teachers who have committed to distance education"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:2672
+#: .\student_registration\schools\models.py:2177
+#, fuzzy
+#| msgid "dropout students"
+msgid "Total of students"
+msgstr "تلميذ منقطع"
+
+#: .\student_registration\schools\forms.py:2677
+#: .\student_registration\schools\models.py:2183
+msgid "Total of students they follow distance education"
+msgstr ""
+
+#: .\student_registration\schools\forms.py:2772
+msgid "Grade Prep-Ece"
+msgstr ""
+
 #: .\student_registration\schools\models.py:39
 msgid "School director name"
 msgstr ""
 
 #: .\student_registration\schools\models.py:67
+#: .\student_registration\schools\models.py:652
 msgid "French & English"
 msgstr ""
 
 #: .\student_registration\schools\models.py:69
+#: .\student_registration\schools\models.py:654
 msgid "Certified foreign language"
 msgstr ""
 
@@ -4056,6 +4573,57 @@ msgstr ""
 msgid "school type"
 msgstr ""
 
+#: .\student_registration\schools\models.py:635
+msgid ""
+"Teaching days completed since the beginning of the school year till the end "
+"of february"
+msgstr ""
+
+#: .\student_registration\schools\models.py:641
+msgid "Teaching days from the beginning of march till now"
+msgstr ""
+
+#: .\student_registration\schools\models.py:669
+#: .\student_registration\schools\models.py:699
+#: .\student_registration\schools\models.py:729
+#: .\student_registration\schools\models.py:2200
+#: .\student_registration\schools\models.py:2230
+msgid "Determine the reasons"
+msgstr ""
+
+#: .\student_registration\schools\models.py:674
+#: .\student_registration\schools\models.py:704
+#: .\student_registration\schools\models.py:734
+#: .\student_registration\schools\models.py:2205
+#: .\student_registration\schools\models.py:2235
+msgid "The challenges that you faced during distance education"
+msgstr ""
+
+#: .\student_registration\schools\models.py:679
+#: .\student_registration\schools\models.py:709
+#: .\student_registration\schools\models.py:739
+#: .\student_registration\schools\models.py:2210
+#: .\student_registration\schools\models.py:2240
+msgid "What are the steps followed in distance education"
+msgstr ""
+
+#: .\student_registration\schools\models.py:684
+#: .\student_registration\schools\models.py:714
+#: .\student_registration\schools\models.py:744
+#: .\student_registration\schools\models.py:2215
+#: .\student_registration\schools\models.py:2245
+msgid "Evaluate the steps followed in distance education"
+msgstr ""
+
+#: .\student_registration\schools\models.py:2267
+msgid "Evaluation"
+msgstr ""
+
+#: .\student_registration\schools\models.py:2279
+#: .\student_registration\staffenroll\models.py:115
+msgid "Subjects"
+msgstr ""
+
 #: .\student_registration\staffenroll\models.py:23
 msgid "Hourly"
 msgstr ""
@@ -4087,10 +4655,6 @@ msgstr ""
 
 #: .\student_registration\staffenroll\models.py:85
 msgid "Jobs"
-msgstr ""
-
-#: .\student_registration\staffenroll\models.py:115
-msgid "Subjects"
 msgstr ""
 
 #: .\student_registration\staffenroll\models.py:135
@@ -4771,7 +5335,7 @@ msgstr ""
 msgid "Full data export"
 msgstr ""
 
-#: .\student_registration\templates\dashboard\exporter.html:322
+#: .\student_registration\templates\dashboard\exporter.html:325
 msgid "De-Generate List"
 msgstr ""
 
@@ -4893,19 +5457,19 @@ msgstr ""
 msgid "Incomplete"
 msgstr ""
 
-#: .\student_registration\templates\django_tables2\is_verified.html:4
+#: .\student_registration\templates\django_tables2\is_verified.html:5
 msgid "Are you sure you want to un justify this student ?"
 msgstr ""
 
-#: .\student_registration\templates\django_tables2\is_verified.html:7
+#: .\student_registration\templates\django_tables2\is_verified.html:8
 msgid "Justified "
 msgstr ""
 
-#: .\student_registration\templates\django_tables2\is_verified.html:12
+#: .\student_registration\templates\django_tables2\is_verified.html:13
 msgid "Are you sure you want to justify this student ?"
 msgstr ""
 
-#: .\student_registration\templates\django_tables2\is_verified.html:15
+#: .\student_registration\templates\django_tables2\is_verified.html:16
 msgid "Not Justified "
 msgstr ""
 
@@ -5035,32 +5599,36 @@ msgstr ""
 msgid "Special for regions"
 msgstr ""
 
-#: .\student_registration\templates\header.html:147
+#: .\student_registration\templates\header.html:143
+msgid "evaluation of distance education"
+msgstr ""
+
+#: .\student_registration\templates\header.html:153
 msgid "Partner Profile"
 msgstr ""
 
-#: .\student_registration\templates\header.html:152
+#: .\student_registration\templates\header.html:158
 #: .\student_registration\templates\helpdesk\navigation.html:68
 msgid "School Profile"
 msgstr ""
 
-#: .\student_registration\templates\header.html:155
+#: .\student_registration\templates\header.html:161
 #: .\student_registration\templates\helpdesk\navigation.html:71
 #: .\student_registration\templates\schools\documents.html:15
 msgid "Public documents"
 msgstr ""
 
-#: .\student_registration\templates\header.html:159
+#: .\student_registration\templates\header.html:165
 #: .\student_registration\templates\helpdesk\navigation.html:75
 msgid "Change password"
 msgstr ""
 
-#: .\student_registration\templates\header.html:162
+#: .\student_registration\templates\header.html:168
 #: .\student_registration\templates\helpdesk\navigation.html:78
 msgid "Logout"
 msgstr ""
 
-#: .\student_registration\templates\header.html:179
+#: .\student_registration\templates\header.html:185
 #: .\student_registration\templates\helpdesk\navigation.html:83
 msgid "Log In"
 msgstr ""
@@ -5184,22 +5752,26 @@ msgstr ""
 msgid "upload"
 msgstr ""
 
-#: .\student_registration\users\admin.py:64
-#: .\student_registration\users\admin.py:73
+#: .\student_registration\users\admin.py:66
+#: .\student_registration\users\admin.py:75
 msgid "Personal info"
-msgstr ""
-
-#: .\student_registration\users\admin.py:65
-#: .\student_registration\users\admin.py:74
-msgid "Permissions"
 msgstr ""
 
 #: .\student_registration\users\admin.py:67
 #: .\student_registration\users\admin.py:76
+msgid "Permissions"
+msgstr ""
+
+#: .\student_registration\users\admin.py:69
+#: .\student_registration\users\admin.py:78
 msgid "Important dates"
 msgstr ""
 
-#: .\student_registration\users\models.py:57
+#: .\student_registration\users\models.py:43
+msgid "staff password"
+msgstr ""
+
+#: .\student_registration\users\models.py:62
 msgid "User"
 msgstr ""
 
