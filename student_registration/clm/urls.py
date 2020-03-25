@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from django.conf.urls import url
 
 from . import views
-# from .views import BLN, CBECE, RS
+from . import inclusion_views
 
 urlpatterns = [
 
@@ -183,4 +183,35 @@ urlpatterns = [
         view=views.ExecABLNUpdateView.as_view(),
         name='exec_abln_update'
     ),
+    url(
+        regex=r'^inclusion-add/$',
+        view=inclusion_views.InclusionAddView.as_view(),
+        name='inclusion_add'
+    ),
+    url(
+        regex=r'^inclusion-edit/(?P<pk>[\w.@+-]+)/$',
+        view=inclusion_views.InclusionEditView.as_view(),
+        name='inclusion_edit'
+    ),
+    url(
+        regex=r'^inclusion-export/$',
+        view=inclusion_views.InclusionExportViewSet.as_view(),
+        name='inclusion_export'
+    ),
+    url(
+        regex=r'^inclusion-list/$',
+        view=inclusion_views.InclusionListView.as_view(),
+        name='inclusion_list'
+    ),
+    url(
+        regex=r'^inclusion-referral/(?P<pk>[\w.@+-]+)/$',
+        view=inclusion_views.InclusionReferralView.as_view(),
+        name='inclusion_referral'
+    ),
+    url(
+        regex=r'^inclusion-assessment/(?P<pk>[\w.@+-]+)/$',
+        view=inclusion_views.InclusionAssessmentView.as_view(),
+        name='inclusion_assessment'
+    ),
+
 ]

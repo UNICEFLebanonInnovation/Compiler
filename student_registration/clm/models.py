@@ -1905,3 +1905,522 @@ class ABLN(CLM):
         ordering = ['-id']
         verbose_name = "ABLN"
         verbose_name_plural = "ABLN"
+
+
+class Inclusion(TimeStampedModel):
+
+    YES_NO = Choices(
+        (1, _("Yes")),
+        (0, _("No"))
+    )
+    PARTICIPATION = Choices(
+        ('', '----------'),
+        ('no_absence', _('No Absence')),
+        ('less_than_3days', _('Less than 3 absence days')),
+        ('3_7_days', _('3 to 7 absence days')),
+        ('7_12_days', _('7 to 12 absence days')),
+        ('more_than_12days', _('More than 12 absence days')),
+    )
+    BARRIERS = Choices(
+        ('Full time job to support family financially', _('Full time job to support family financially')),
+        ('seasonal_work', _('Seasonal work')),
+        ('cold_weather', _('Cold Weather')),
+        ('sickness', _('Sickness')),
+        ('security', _('Security')),
+        ('family moved', _('Family moved')),
+        ('Moved back to Syria', _('Moved back to Syria')),
+        ('Enrolled in formal education', _('Enrolled in formal education')),
+        ('marriage engagement pregnancy', _('Marriage/Engagement/Pregnancy')),
+        ('violence bullying', _('Violence/Bullying')),
+        ('No interest in pursuing the programme/No value', _('No interest in pursuing the programme/No value')),
+    )
+    HAVE_LABOUR = Choices(
+        ('no', _('No')),
+        ('yes_morning', _('Yes - Morning')),
+        ('yes_afternoon', _('Yes - Afternoon')),
+        ('yes_all_day', _('Yes - All day')),
+    )
+    LABOURS = Choices(
+        ('agriculture', _('Agriculture')),
+        ('building', _('Building')),
+        ('manufacturing', _('Manufacturing')),
+        ('retail_store', _('Retail / Store')),
+        ('begging', _('Begging')),
+        ('other_many_other', _('Other services (hotel, restaurant, transport, personal services such as cleaning, hair care, cooking and childcare)')),
+        # ('other', _('Other')),
+    )
+    LEARNING_RESULT = Choices(
+        ('', _('Learning result')),
+        ('graduated_next_level', _('Graduated to the next level')),
+        ('graduated_next_round_same_level', _('Graduated to the next round, same level')),
+        ('graduated_next_round_higher_level', _('Graduated to the next round, higher level')),
+        ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
+        ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
+        ('referred_to_another_program', _('Referred to another program')),
+        # ('dropout', _('Dropout from school'))
+    )
+
+    source_of_identification = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('Direct outreach', _('Direct outreach')),
+            ('List database', _('List database')),
+            ('Referral from another NGO', _('Referral from another NGO')),
+            ('Referred by CP partner', _('Referred by CP partner')),
+            ('Referred by youth partner', _('Referred by youth partner')),
+            ('Referral from another Municipality', _('Referral from Municipality')),
+            ('Family walked in to NGO', _('Family walked in to NGO'))
+        ),
+        verbose_name=_('Source of identification of the child')
+    )
+
+    first_attendance_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('First attendance date')
+    )
+    round = models.ForeignKey(
+        CLMRound,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Round')
+    )
+    governorate = models.ForeignKey(
+        Location,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Governorate')
+    )
+    district = models.ForeignKey(
+        Location,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('District')
+    )
+    cadaster = models.ForeignKey(
+        Location,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Cadaster')
+    )
+    location = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Location')
+    )
+    student = models.ForeignKey(
+        Student,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Student')
+    )
+    disability = models.ForeignKey(
+        Disability,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Disability')
+    )
+    have_labour = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=HAVE_LABOUR,
+        verbose_name=_('Does the child participate in work?')
+    )
+    labour_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LABOURS,
+        verbose_name=_('What is the type of work ?')
+    )
+    participation = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=PARTICIPATION,
+        verbose_name=_('Participation')
+    )
+    learning_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LEARNING_RESULT,
+        verbose_name=_('Learning result')
+    )
+    barriers = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=BARRIERS,
+        verbose_name=_('The main barriers affecting the daily attendance and performance')
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+    )
+    modified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Modified by'),
+    )
+    deleted = models.BooleanField(blank=True, default=False)
+    registration_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Registration date')
+    )
+    partner = models.ForeignKey(
+        PartnerOrganization,
+        blank=True, null=True,
+        verbose_name=_('Partner'),
+        related_name='+'
+    )
+    internal_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Internal number')
+    )
+    comments = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Comments')
+    )
+    phone_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Phone number')
+    )
+    phone_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Phone number confirm')
+    )
+
+    education_status = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('out of school', _('Out of school')),
+            ('enrolled in formal education but did not continue', _("Enrolled in formal education but did not continue")),
+            ('enrolled in ABLN', _("Enrolled in ABLN")),
+        ),
+        verbose_name=_('Education status')
+    )
+
+    id_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('UNHCR Registered', _('UNHCR Registered')),
+            ('UNHCR Recorded', _("UNHCR Recorded")),
+            ('Syrian national ID', _("Syrian national ID")),
+            ('Palestinian national ID', _("Palestinian national ID")),
+            ('Lebanese national ID', _("Lebanese national ID")),
+            ('Child have no ID', _("Child have no ID"))
+        ),
+        verbose_name=_('Child ID type')
+    )
+
+    case_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Case number')
+    )
+    case_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Case number confirm')
+    )
+
+    individual_case_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Individual Case number')
+    )
+    individual_case_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Individual Case number confirm')
+    )
+
+    recorded_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Recorded number')
+    )
+    recorded_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Recorded number confirm')
+    )
+
+    other_nationality = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name=_('Specify the nationality')
+    )
+
+    national_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Lebanese ID number ')
+    )
+    national_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Lebanese ID number confirm')
+    )
+    syrian_national_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Syrian ID number ')
+    )
+    syrian_national_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Syrian ID number confirm')
+    )
+    sop_national_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Palestinian ID number ')
+    )
+    sop_national_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Palestinian ID number confirm')
+    )
+    no_child_id_confirmation = models.CharField(max_length=50, blank=True, null=True,)
+    no_parent_id_confirmation = models.CharField(max_length=50, blank=True, null=True,)
+
+    parent_case_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Case number')
+    )
+    parent_case_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Case number confirm')
+    )
+
+    parent_individual_case_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Individual Case number')
+    )
+    parent_individual_case_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Individual Case number confirm')
+    )
+
+    parent_national_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Lebanese ID number ')
+    )
+    parent_national_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Lebanese ID number confirm')
+    )
+    parent_syrian_national_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Syrian ID number ')
+    )
+    parent_syrian_national_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Syrian ID number confirm')
+    )
+    parent_sop_national_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Palestinian ID number ')
+    )
+    parent_sop_national_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Palestinian ID number confirm')
+    )
+    caretaker_first_name = models.CharField(
+        max_length=500,
+        blank=False,
+        null=True,
+        verbose_name=_('Caretaker First Name')
+    )
+    caretaker_middle_name = models.CharField(
+        max_length=500,
+        blank=False,
+        null=True,
+        verbose_name=_('Caretaker Middle Name')
+    )
+    caretaker_last_name = models.CharField(
+        max_length=500,
+        blank=False,
+        null=True,
+        verbose_name=_('Caretaker Last Name')
+    )
+    caretaker_mother_name = models.CharField(
+        max_length=500,
+        blank=False,
+        null=True,
+        verbose_name=_('Caretaker Mother Name')
+    )
+
+    referral_programme_type_1 = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('CP (PSS and/or Case Management)', _('CP (PSS and/or Case Management)')),
+            ('Health', _('Health')),
+            ('WASH', _('WASH')),
+            ('Specialized Services', _('Specialized Services')),
+            ('Other', _('Other')),
+            ('No need', _('No need')),
+        ),
+        verbose_name=_('Programme Type')
+    )
+    referral_partner_1 = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('School / Center')
+    )
+    referral_date_1 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Referral date')
+    )
+    confirmation_date_1 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date when the receiving organization confirms accepting the child (or child receiving service)')
+    )
+
+    referral_programme_type_2 = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('CP (PSS and/or Case Management)', _('CP (PSS and/or Case Management)')),
+            ('Health', _('Health')),
+            ('WASH', _('WASH')),
+            ('Specialized Services', _('Specialized Services')),
+            ('Other', _('Other')),
+            ('No need', _('No need')),
+        ),
+        verbose_name=_('Programme Type')
+    )
+    referral_partner_2 = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('School / Center')
+    )
+    referral_date_2 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Referral date')
+    )
+    confirmation_date_2 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date when the receiving organization confirms accepting the child (or child receiving service)')
+    )
+
+    referral_programme_type_3 = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('CP (PSS and/or Case Management)', _('CP (PSS and/or Case Management)')),
+            ('Health', _('Health')),
+            ('WASH', _('WASH')),
+            ('Specialized Services', _('Specialized Services')),
+            ('Other', _('Other')),
+            ('No need', _('No need')),
+        ),
+        verbose_name=_('Programme Type')
+    )
+    referral_partner_3 = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('School / Center')
+    )
+    referral_date_3 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Referral date')
+    )
+    confirmation_date_3 = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Date when the receiving organization confirms accepting the child (or child receiving service)')
+    )
+    additional_comments = models.TextField(
+        blank=True, null=True,
+        verbose_name=_('Comments')
+    )
+
+    @property
+    def student_fullname(self):
+        if self.student:
+            return self.student.full_name
+        return ''
+
+    @property
+    def student_age(self):
+        if self.student:
+            return self.student.age
+        return 0
+
+    def get_absolute_url(self):
+        return '/inclusion/edit/%d/' % self.pk
+
+    def __unicode__(self):
+        if self.student:
+            return self.student.__unicode__()
+        return str(self.id)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Disability specialized"
+        verbose_name_plural = "Disability specialized"

@@ -373,8 +373,13 @@ tr.odd {
     margin-left: 10px;
     margin-right: 10px;
 }
-
+.inline-form .col-md-4 {
+  float: right;
+}
 .inline-form .col-md-3 {
+  float: right;
+}
+.inline-form .col-md-2 {
   float: right;
 }
 section.inline-form.inner-section {
@@ -590,4 +595,25 @@ div.block_tag {
 
 form fieldset.bd-callout:hover {
   background-color: #f6f6f6;
+}
+
+.flex-panel span {
+  font-family: sans-serif !important;
+  font-weight: 700;
+  line-height: 1.2em;
+  display: inline-block;
+  margin-bottom: 6px;
+  padding-left: 15px;
+}
+
+form .button-group {
+  margin-right: 50px;
+  margin-top: 50px;
+  height: 100px;
+}
+
+form .button-group input, form .button-group a {
+  display: block;
+  float: right;
+  margin-left: 50px;
 }
