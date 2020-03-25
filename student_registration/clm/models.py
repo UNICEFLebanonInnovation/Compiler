@@ -946,12 +946,6 @@ class CLM(TimeStampedModel):
 
     cycle_completed = models.BooleanField(blank=True, default=False, verbose_name=_('Course completed successfully'))
     enrolled_at_school = models.BooleanField(blank=True, default=False, verbose_name=_('Enrolled at School'))
-    student_p_code = models.CharField(
-        max_length=500,
-        blank=False,
-        null=True,
-        verbose_name=_('P-Code If a child lives in a tent / Brax in a random camp')
-    )
 
     @property
     def student_fullname(self):
@@ -1024,6 +1018,13 @@ class BLN(CLM):
         ('level_one', _('Level one')),
         ('level_two', _('Level two')),
     )
+
+    MAIN_CAREGIVER = (
+        ('', '----------'),
+        ('mother', _('Mother')),
+        ('father', _('Father')),
+        ('other', _('Other')),
+    )
     cycle = models.ForeignKey(
         Cycle,
         blank=True, null=True,
@@ -1066,11 +1067,12 @@ class BLN(CLM):
         choices=REGISTRATION_LEVEL,
         verbose_name=_('Registration level')
     )
-    student_p_code = models.CharField(
-        max_length=500,
-        blank=False,
+    main_caregiver = models.CharField(
+        max_length=100,
+        blank=True,
         null=True,
-        verbose_name=_('P-Code If a child lives in a tent / Brax in a random camp')
+        choices=MAIN_CAREGIVER,
+        verbose_name=_('Main Caregiver')
     )
 
     def calculate_sore(self, stage):

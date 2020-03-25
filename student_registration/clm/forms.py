@@ -652,10 +652,10 @@ class BLNForm(CommonForm):
             ('other', _('Other')),
         )
     )
-    student_p_code = forms.CharField(
-        label=_('P-Code If a child lives in a tent / Brax in a random camp'),
-        widget=forms.TextInput, required=False
-    )
+    # student_p_code = forms.CharField(
+    #     label=_('P-Code If a child lives in a tent / Brax in a random camp'),
+    #     widget=forms.TextInput, required=False
+    # )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -683,7 +683,7 @@ class BLNForm(CommonForm):
              )
             if instance.pre_test:
                 p_test = instance.pre_test
-                print(p_test)
+                # print(p_test)
                 self.fields['attended_arabic'].initial = p_test["BLN_ASSESSMENT/attended_arabic"]
                 self.fields['arabic'].initial = p_test["BLN_ASSESSMENT/arabic"]
                 self.fields['attended_math'].initial = p_test["BLN_ASSESSMENT/attended_math"]
@@ -1234,7 +1234,7 @@ class BLNForm(CommonForm):
             'main_caregiver',
             'labour_weekly_income',
             'source_of_transportation',
-            'student_p_code'
+            # 'student_p_code'
         )
 
     class Media:

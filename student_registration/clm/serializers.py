@@ -255,9 +255,9 @@ class BLNSerializer(CLMSerializer):
             'round_start_date',
             'registration_level',
             'cadaster',
-            'student_p_code',
             'miss_school_date',
             'source_of_transportation',
+            'main_caregiver'
         )
 
 
