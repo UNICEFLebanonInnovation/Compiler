@@ -693,7 +693,6 @@ class BLNForm(CommonForm):
                 self.fields['social_emotional'].initial = p_test["BLN_ASSESSMENT/social_emotional"]
                 self.fields['attended_psychomotor'].initial = p_test["BLN_ASSESSMENT/attended_psychomotor"]
                 self.fields['psychomotor'].initial = p_test["BLN_ASSESSMENT/psychomotor"]
-
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
