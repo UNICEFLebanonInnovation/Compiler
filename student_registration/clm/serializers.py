@@ -252,6 +252,12 @@ class BLNSerializer(CLMSerializer):
             'caretaker_middle_name',
             'caretaker_last_name',
             'caretaker_mother_name',
+            'round_start_date',
+            'registration_level',
+            'cadaster',
+            'student_p_code',
+            'miss_school_date',
+            'source_of_transportation',
         )
 
 

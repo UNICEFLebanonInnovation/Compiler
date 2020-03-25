@@ -946,6 +946,12 @@ class CLM(TimeStampedModel):
 
     cycle_completed = models.BooleanField(blank=True, default=False, verbose_name=_('Course completed successfully'))
     enrolled_at_school = models.BooleanField(blank=True, default=False, verbose_name=_('Enrolled at School'))
+    student_p_code = models.CharField(
+        max_length=500,
+        blank=False,
+        null=True,
+        verbose_name=_('P-Code If a child lives in a tent / Brax in a random camp')
+    )
 
     @property
     def student_fullname(self):
@@ -1000,7 +1006,7 @@ class BLN(CLM):
     miss_school_date = models.DateField(
         blank=True,
         null=True,
-        verbose_name=_('First attendance date')
+        verbose_name=_('miss_school_date')
     )
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),
@@ -1013,7 +1019,11 @@ class BLN(CLM):
         ('referred_to_ybln', _('Referred to YBLN')),
         ('dropout', _('Dropout, referral not possible')),
     )
-
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+    )
     cycle = models.ForeignKey(
         Cycle,
         blank=True, null=True,
@@ -1044,8 +1054,26 @@ class BLN(CLM):
         null=True,
         verbose_name=_('First attendance date')
     )
+    round_start_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Round start date')
+    )
+    registration_level = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=REGISTRATION_LEVEL,
+        verbose_name=_('Registration level')
+    )
+    student_p_code = models.CharField(
+        max_length=500,
+        blank=False,
+        null=True,
+        verbose_name=_('P-Code If a child lives in a tent / Brax in a random camp')
+    )
 
-    def calculate_score(self, stage):
+    def calculate_sore(self, stage):
         keys = [
             'BLN_ASSESSMENT/arabic',
             'BLN_ASSESSMENT/math',
@@ -1753,7 +1781,7 @@ class ABLN(CLM):
     miss_school_date = models.DateField(
         blank=True,
         null=True,
-        verbose_name=_('First attendance date')
+        verbose_name=_('miss_school_date')
     )
     LEARNING_RESULT = Choices(
         ('', _('Learning result')),

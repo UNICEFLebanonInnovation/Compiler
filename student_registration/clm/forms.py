@@ -344,10 +344,10 @@ class BLNForm(CommonForm):
         label=_("First attendance date"),
         required=True
     )
-    # miss_school_date = forms.DateField(
-    #     label=_("Miss school date"),
-    #     required=True,
-    # )
+    miss_school_date = forms.DateField(
+        label=_("Miss school date"),
+        required=True,
+    )
 
     new_registry = forms.ChoiceField(
         label=_("First time registered?"),
@@ -449,9 +449,6 @@ class BLNForm(CommonForm):
         required=True,
         label=_('Phone number confirm')
     )
-
-
-
     id_type = forms.ChoiceField(
         label=_("ID type of the caretaker"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
@@ -654,6 +651,10 @@ class BLNForm(CommonForm):
             ('father', _('Father')),
             ('other', _('Other')),
         )
+    )
+    student_p_code = forms.CharField(
+        label=_('P-Code If a child lives in a tent / Brax in a random camp'),
+        widget=forms.TextInput, required=False
     )
 
     def __init__(self, *args, **kwargs):
@@ -1233,6 +1234,7 @@ class BLNForm(CommonForm):
             'main_caregiver',
             'labour_weekly_income',
             'source_of_transportation',
+            'student_p_code'
         )
 
     class Media:
