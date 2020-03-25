@@ -257,7 +257,8 @@ class BLNSerializer(CLMSerializer):
             'cadaster',
             'miss_school_date',
             'source_of_transportation',
-            'main_caregiver'
+            'main_caregiver',
+            'student_number_children'
         )
 
 

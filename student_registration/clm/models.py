@@ -943,7 +943,6 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Caretaker Mother Name')
     )
-
     cycle_completed = models.BooleanField(blank=True, default=False, verbose_name=_('Course completed successfully'))
     enrolled_at_school = models.BooleanField(blank=True, default=False, verbose_name=_('Enrolled at School'))
 
@@ -1073,6 +1072,12 @@ class BLN(CLM):
         null=True,
         choices=MAIN_CAREGIVER,
         verbose_name=_('Main Caregiver')
+    )
+    student_number_children = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 20)),
+        verbose_name=_('How many children does this child have?')
     )
 
     def calculate_sore(self, stage):

@@ -394,7 +394,7 @@ class BLNForm(CommonForm):
         widget=forms.RadioSelect,
         required=True,
     )
-    student_number_children = forms.CharField(
+    student_number_children = forms.IntegerField(
         label=_('How many children does this child have?'),
         widget=forms.TextInput, required=False
     )
@@ -652,6 +652,7 @@ class BLNForm(CommonForm):
             ('other', _('Other')),
         )
     )
+
     # student_p_code = forms.CharField(
     #     label=_('P-Code If a child lives in a tent / Brax in a random camp'),
     #     widget=forms.TextInput, required=False
