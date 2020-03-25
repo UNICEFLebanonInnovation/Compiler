@@ -16,6 +16,7 @@ class StudentSerializer(serializers.ModelSerializer):
     registration = OutreachSerializer(source='last_alp_registration', read_only=True)
     enrollment = EnrollmentSerializer(source='last_enrollment', read_only=True)
     have_children = serializers.CharField(required=False)
+    p_code = serializers.CharField(required=False)
 
     alp_registrations = OutreachSerializer(read_only=True, many=True)
     secondshift_registrations = EnrollmentSerializer(read_only=True, many=True)
@@ -77,4 +78,5 @@ class StudentSerializer(serializers.ModelSerializer):
             'financialsupport',
             'unhcr_family',
             'unhcr_personal',
+            'p_code',
         )

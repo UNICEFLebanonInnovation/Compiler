@@ -18,7 +18,7 @@ from student_registration.students.models import (
 )
 
 from student_registration.locations.models import Location
-from .models import Disability, CLM, Inclusion
+from .models import Disability, Inclusion
 from .inclusion_serializers import InclusionSerializer
 
 
@@ -75,16 +75,20 @@ class InclusionForm(forms.ModelForm):
         required=True, to_field_name='id',
     )
     district = forms.ModelChoiceField(
-        queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
+        queryset=Location.objects.filter(type=2), widget=forms.Select,
         label=_('District'),
         empty_label='-------',
         required=True, to_field_name='id',
     )
     cadaster = forms.ModelChoiceField(
-        queryset=Location.objects.filter(parent__isnull=False), widget=forms.Select,
+        queryset=Location.objects.filter(type=3), widget=forms.Select,
         label=_('Cadaster'),
         empty_label='-------',
         required=True, to_field_name='id',
+    )
+    location = forms.CharField(
+        label=_("Location"),
+        widget=forms.TextInput, required=False
     )
     student_first_name = forms.CharField(
         label=_("First name"),
@@ -167,13 +171,13 @@ class InclusionForm(forms.ModelForm):
     have_labour = forms.ChoiceField(
         label=_('Does the child participate in work?'),
         widget=forms.Select, required=True,
-        choices=CLM.HAVE_LABOUR,
+        choices=Inclusion.HAVE_LABOUR,
         initial='no'
     )
     labour_type = forms.ChoiceField(
         label=_('What is the type of work ?'),
         widget=forms.Select, required=False,
-        choices=CLM.LABOURS
+        choices=Inclusion.LABOURS
     )
     labour_hours = forms.CharField(
         label=_('How many hours does this child work in a day?'),
@@ -417,11 +421,11 @@ class InclusionForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">7</span>'),
-                    Div('student_birthday_year', css_class='col-md-3'),
+                    Div('student_birthday_year', css_class='col-md-2'),
                     HTML('<span class="badge badge-default">8</span>'),
-                    Div('student_birthday_month', css_class='col-md-3'),
+                    Div('student_birthday_month', css_class='col-md-2'),
                     HTML('<span class="badge badge-default">9</span>'),
-                    Div('student_birthday_day', css_class='col-md-3'),
+                    Div('student_birthday_day', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
@@ -484,9 +488,9 @@ class InclusionForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">11</span>'),
-                    Div('case_number', css_class='col-md-3'),
+                    Div('case_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">12</span>'),
-                    Div('case_number_confirm', css_class='col-md-3'),
+                    Div('case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/unhcr_certificate.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -494,9 +498,9 @@ class InclusionForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">13</span>'),
-                    Div('parent_individual_case_number', css_class='col-md-3'),
+                    Div('parent_individual_case_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">14</span>'),
-                    Div('parent_individual_case_number_confirm', css_class='col-md-3'),
+                    Div('parent_individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -504,9 +508,9 @@ class InclusionForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">15</span>'),
-                    Div('individual_case_number', css_class='col-md-3'),
+                    Div('individual_case_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">16</span>'),
-                    Div('individual_case_number_confirm', css_class='col-md-3'),
+                    Div('individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -514,9 +518,9 @@ class InclusionForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">17</span>'),
-                    Div('recorded_number', css_class='col-md-3'),
+                    Div('recorded_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">18</span>'),
-                    Div('recorded_number_confirm', css_class='col-md-3'),
+                    Div('recorded_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -524,9 +528,9 @@ class InclusionForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">19</span>'),
-                    Div('parent_national_number', css_class='col-md-3'),
+                    Div('parent_national_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">20</span>'),
-                    Div('parent_national_number_confirm', css_class='col-md-3'),
+                    Div('parent_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -534,9 +538,9 @@ class InclusionForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">21</span>'),
-                    Div('national_number', css_class='col-md-3'),
+                    Div('national_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">22</span>'),
-                    Div('national_number_confirm', css_class='col-md-3'),
+                    Div('national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -544,9 +548,9 @@ class InclusionForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">23</span>'),
-                    Div('parent_syrian_national_number', css_class='col-md-3'),
+                    Div('parent_syrian_national_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">24</span>'),
-                    Div('parent_syrian_national_number_confirm', css_class='col-md-3'),
+                    Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -554,9 +558,9 @@ class InclusionForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">25</span>'),
-                    Div('syrian_national_number', css_class='col-md-3'),
+                    Div('syrian_national_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">26</span>'),
-                    Div('syrian_national_number_confirm', css_class='col-md-3'),
+                    Div('syrian_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -564,9 +568,9 @@ class InclusionForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">27</span>'),
-                    Div('parent_sop_national_number', css_class='col-md-3'),
+                    Div('parent_sop_national_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">28</span>'),
-                    Div('parent_sop_national_number_confirm', css_class='col-md-3'),
+                    Div('parent_sop_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/sop_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -574,9 +578,9 @@ class InclusionForm(forms.ModelForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">29</span>'),
-                    Div('sop_national_number', css_class='col-md-3'),
+                    Div('sop_national_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">30</span>'),
-                    Div('sop_national_number_confirm', css_class='col-md-3'),
+                    Div('sop_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/sop_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -606,7 +610,7 @@ class InclusionForm(forms.ModelForm):
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
                 Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/inclusion-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/inclusion-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
         )
@@ -849,7 +853,7 @@ class InclusionAssessmentForm(forms.ModelForm):
     barriers = forms.ChoiceField(
         label=_('The main barriers affecting the daily attendance and performance '
                 'of the child or drop out of programme? (Select more than one if applicable)'),
-        choices=CLM.BARRIERS,
+        choices=Inclusion.BARRIERS,
         widget=forms.Select,
         required=True
     )
@@ -865,12 +869,6 @@ class InclusionAssessmentForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            Fieldset(
-                None,
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Assessment data') + '</h4>'),
-                ),
-            ),
             Fieldset(
                 None,
                 Div(
@@ -893,8 +891,9 @@ class InclusionAssessmentForm(forms.ModelForm):
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                HTML('<a class="btn btn-info cancel-button" href="/clm/inclusion-list/" translation="' +
+                HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/inclusion-list/" translation="' +
                      _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
             )
         )
 
@@ -1007,8 +1006,9 @@ class InclusionReferralForm(forms.ModelForm):
                 css_class='bd-callout bd-callout-warning C_right_border'
             ),
             FormActions(
-                Submit('save', _('Save')),
-                HTML('<a class="btn btn-info" href="/clm/inclusion-list/">' + _('Back to list') + '</a>'),
+                Submit('save', _('Save'), css_class='col-md-2'),
+                HTML('<a class="btn btn-info col-md-2" href="/clm/inclusion-list/">' + _('Back to list') + '</a>'),
+                css_class='button-group'
             )
         )
 

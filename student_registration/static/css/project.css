@@ -617,3 +617,6 @@ form .button-group input, form .button-group a {
   float: right;
   margin-left: 50px;
 }
+div.d-none {
+  display: none;
+}

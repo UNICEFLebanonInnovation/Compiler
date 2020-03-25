@@ -43,6 +43,7 @@ def create_instance(validated_data):
 def update_instance(instance, validated_data):
     from student_registration.students.serializers import StudentSerializer
     student_data = validated_data.pop('student', None)
+    print(student_data)
 
     if student_data:
         student_serializer = StudentSerializer(instance.student, data=student_data)
@@ -82,12 +83,10 @@ class InclusionSerializer(serializers.ModelSerializer):
     student_address = serializers.CharField(source='student.address', required=False)
     student_p_code = serializers.CharField(source='student.p_code', required=False)
     student_id_number = serializers.CharField(source='student.id_number', required=False)
-    student_family_status = serializers.CharField(source='student.family_status', required=False)
-    student_have_children = serializers.CharField(source='student.have_children', required=False)
+    location = serializers.CharField(required=False)
+
     comments = serializers.CharField(required=False)
 
-    student_outreach_child = serializers.IntegerField(source='student.outreach_child', required=False)
-    student_outreach_child_id = serializers.IntegerField(source='student.outreach_child.id', read_only=True)
     governorate_name = serializers.CharField(source='governorate.name', read_only=True)
     district_name = serializers.CharField(source='district.name', read_only=True)
     cadaster_name = serializers.CharField(source='cadaster.name', read_only=True)
@@ -114,9 +113,6 @@ class InclusionSerializer(serializers.ModelSerializer):
             'first_attendance_date',
             'partner',
             'partner_name',
-            'language',
-            'student_outreach_child',
-            'student_outreach_child_id',
             'student_first_name',
             'student_father_name',
             'student_last_name',
@@ -151,6 +147,8 @@ class InclusionSerializer(serializers.ModelSerializer):
             'comments',
             'created',
             'id_type',
+            'phone_number',
+            'phone_number_confirm',
             'case_number',
             'case_number_confirm',
             'individual_case_number',
@@ -174,8 +172,11 @@ class InclusionSerializer(serializers.ModelSerializer):
             'no_child_id_confirmation',
             'source_of_identification',
             'other_nationality',
+            'main_caregiver',
             'caretaker_first_name',
             'caretaker_middle_name',
             'caretaker_last_name',
             'caretaker_mother_name',
+            'have_labour',
+            'labour_type',
         )

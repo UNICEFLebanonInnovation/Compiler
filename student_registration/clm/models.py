@@ -1929,6 +1929,7 @@ class Inclusion(TimeStampedModel):
         ('more_than_12days', _('More than 12 absence days')),
     )
     BARRIERS = Choices(
+        ('', '----------'),
         ('Full time job to support family financially', _('Full time job to support family financially')),
         ('seasonal_work', _('Seasonal work')),
         ('cold_weather', _('Cold Weather')),
@@ -1948,6 +1949,7 @@ class Inclusion(TimeStampedModel):
         ('yes_all_day', _('Yes - All day')),
     )
     LABOURS = Choices(
+        ('', '----------'),
         ('agriculture', _('Agriculture')),
         ('building', _('Building')),
         ('manufacturing', _('Manufacturing')),
@@ -1957,14 +1959,18 @@ class Inclusion(TimeStampedModel):
         # ('other', _('Other')),
     )
     LEARNING_RESULT = Choices(
-        ('', _('Learning result')),
-        ('graduated_next_level', _('Graduated to the next level')),
-        ('graduated_next_round_same_level', _('Graduated to the next round, same level')),
-        ('graduated_next_round_higher_level', _('Graduated to the next round, higher level')),
-        ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
-        ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
-        ('referred_to_another_program', _('Referred to another program')),
-        # ('dropout', _('Dropout from school'))
+        ('graduated_to_abln_next_round_same_level', _('Graduated to the next round, same level')),
+        ('graduated_to_abln_next_round_higher_level', _('Graduated to the next round, higher level')),
+        ('referred_to_bln', _('Referred to BLN')),
+        ('referred_to_ybln', _('Referred to YBLN')),
+        # ('referred_to_alp', _('Referred to ALP')),
+        ('referred_to_cbt', _('Referred to CBT')),
+    )
+    MAIN_CAREGIVER = (
+        ('', '----------'),
+        ('mother', _('Mother')),
+        ('father', _('Father')),
+        ('other', _('Other')),
     )
 
     source_of_identification = models.CharField(
@@ -2013,7 +2019,7 @@ class Inclusion(TimeStampedModel):
         verbose_name=_('Cadaster')
     )
     location = models.CharField(
-        max_length=50,
+        max_length=250,
         blank=True,
         null=True,
         verbose_name=_('Location')
@@ -2285,6 +2291,15 @@ class Inclusion(TimeStampedModel):
         null=True,
         verbose_name=_('Palestinian ID number confirm')
     )
+
+    main_caregiver = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=MAIN_CAREGIVER,
+        verbose_name=_('Main Caregiver')
+    )
+
     caretaker_first_name = models.CharField(
         max_length=500,
         blank=False,

@@ -83,6 +83,7 @@ class InclusionEditView(LoginRequiredMixin,
             return InclusionForm(self.request.POST, instance=instance, request=self.request)
         else:
             data = InclusionSerializer(instance).data
+            data['student_nationality'] = data['student_nationality_id']
             return InclusionForm(data, instance=instance, request=self.request)
 
     def form_valid(self, form):

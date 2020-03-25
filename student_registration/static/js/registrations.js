@@ -689,6 +689,8 @@ function reorganizeForm()
         $('#labour_details').removeClass('d-none');
     }
 
+    console.log(id_type);
+
     if(id_type == 'UNHCR Registered'){
         $('div.child_id1').removeClass('d-none');
     }
