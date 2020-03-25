@@ -199,7 +199,7 @@ class Staffs(models.Model):
         related_name='+',
     )
     created = models.DateTimeField(default=django.utils.timezone.now)
-    bank_Base1 = models.ForeignKey(
+    bank_base1 = models.ForeignKey(
         Bank,
         blank=True, null=True,
         related_name='+',
@@ -217,7 +217,7 @@ class Staffs(models.Model):
         null=True,
         verbose_name=_('IBAN LL')
     )
-    bank_Base2 = models.ForeignKey(
+    bank_base2 = models.ForeignKey(
         Bank,
         related_name='+',
         blank=True, null=True,
