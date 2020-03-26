@@ -832,11 +832,11 @@ function reorganizeForm_post_assessment()
 
     // id_participation
     $('div#div_id_barriers_single').addClass('d-none');
-    $('#follow_up').addClass('d-none');
+    $('#follow_up').addClass('hide');
 
     if(participation != 'no_absence'){
         $('#div_id_barriers_single').removeClass('d-none');
-        $('#follow_up').removeClass('d-none');
+        $('#follow_up').removeClass('hide');
         // $('input[name=follow_up_type]').val('none').checked(true);
         $('div#div_phone_call_number').val('');
         $('div#div_house_visit_number').val('');

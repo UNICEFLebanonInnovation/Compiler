@@ -14,6 +14,7 @@
 {% block content-full-page %}
 <section>
     <div id="resume" class="inner-content">
+
         <section id="page-title" class="inline-form inner-section ui-menu-color02">
             <div class="container-fluid nopadding">
                 <h3 class="font-accident-two-light color01 uppercase"
@@ -25,12 +26,14 @@
             </div>
         </section>
 
+        {% if is_allowed_create == False %}
         <section class="inline-form inner-section light bg-color01">
             <div class="container-fluid nopadding">
                 {{ form.errors }}
                 {% crispy form 'bootstrap4' %}
             </div>
         </section>
+        {% endif %}
 
     </div>
 </section>
@@ -44,5 +47,18 @@
     <script type="text/javascript" language="javascript" src="{% static 'js/bootstrap-combobox.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/validator.js' %}"></script>
     <script type="text/javascript" language="javascript" src="{% static 'js/registrations.js' %}"></script>
+
+    <script>
+      var url = "{% url 'clm:load_districts' %}";
+      var url_cadasters = "{% url 'clm:load_cadasters' %}";
+
+      $("#id_governorate").change(function () {
+          load_districts(url);
+          load_cadasters(url_cadasters);
+      });
+      $("#id_district").change(function () {
+          load_cadasters(url_cadasters);
+      });
+    </script>
 
 {% endblock %}

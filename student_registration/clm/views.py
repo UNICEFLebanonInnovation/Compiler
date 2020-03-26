@@ -80,7 +80,7 @@ class BLNAddView(LoginRequiredMixin,
                  GroupRequiredMixin,
                  FormView):
 
-    template_name = 'clm/create_form.html'
+    template_name = 'clm/bln_create_form.html'
     form_class = BLNForm
     success_url = '/clm/bln-list/'
     group_required = [u"CLM_BLN"]
@@ -141,7 +141,7 @@ class BLNEditView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
 
-    template_name = 'clm/edit_form.html'
+    template_name = 'clm/bln_edit_form.html'
     form_class = BLNForm
     success_url = '/clm/bln-list/'
     group_required = [u"CLM_BLN"]
@@ -400,7 +400,7 @@ class ABLNAddView(LoginRequiredMixin,
                   GroupRequiredMixin,
                   FormView):
 
-    template_name = 'clm/create_form.html'
+    template_name = 'clm/abln_create_form.html'
     form_class = ABLNForm
     success_url = '/clm/abln-list/'
     group_required = [u"CLM_ABLN"]
@@ -461,7 +461,7 @@ class ABLNEditView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FormView):
 
-    template_name = 'clm/edit_form.html'
+    template_name = 'clm/abln_edit_form.html'
     form_class = ABLNForm
     success_url = '/clm/abln-list/'
     group_required = [u"CLM_ABLN"]

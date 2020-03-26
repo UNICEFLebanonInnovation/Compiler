@@ -620,3 +620,6 @@ form .button-group input, form .button-group a {
 div.d-none {
   display: none;
 }
+.hide {
+ display:none;
+}
