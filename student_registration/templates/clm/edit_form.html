@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base2.html" %}
 {% load staticfiles i18n %}
 {% load crispy_forms_tags %}
 
@@ -11,21 +11,30 @@
 
 {% endblock %}
 
-{% block content %}
-
+{% block content-full-page %}
+<section>
     <div id="resume" class="inner-content">
+        <section id="page-title" class="inline-form inner-section ui-menu-color02">
+            <div class="container-fluid nopadding">
+                <h3 class="font-accident-two-light color01 uppercase"
+                    data-animation-origin="right"
+                    data-animation-duration="400"
+                    data-animation-delay="100"
+                    data-animation-distance="50px">{% trans "BLN" %}</h3>
 
-{#        {% if is_allowed_edit %}#}
-        <section class="inner-section light bg-color01">
+            </div>
+        </section>
+{#        {% if is_allowed_create == False %}#}
+        <section class="inline-form inner-section light bg-color01">
             <div class="container-fluid nopadding">
                 {{ form.errors }}
-                {% crispy form %}
+                {% crispy form 'bootstrap4' %}
             </div>
         </section>
 {#        {% endif %}#}
 
     </div>
-
+</section>
 {% endblock %}
 
 {% block extra_js %}
