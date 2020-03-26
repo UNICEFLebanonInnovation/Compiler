@@ -994,7 +994,6 @@ class CLM(TimeStampedModel):
         abstract = True
 
 
-
 class BLN(CLM):
     miss_school_date = models.DateField(
         blank=True,
@@ -1160,6 +1159,173 @@ class BLN(CLM):
         ordering = ['-id']
         verbose_name = "BLN"
         verbose_name_plural = "BLN"
+
+
+class ABLN(CLM):
+    miss_school_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('miss_school_date')
+    )
+    LEARNING_RESULT = Choices(
+        ('', _('Learning result')),
+        ('graduated_to_abln_next_level', _('Graduated to the ABLN next level')),
+        ('graduated_to_abln_next_round_same_level', _('Graduated to the next round, same level')),
+        ('graduated_to_abln_next_round_higher_level', _('Graduated to the next round, higher level')),
+        ('referred_to_bln', _('Referred to BLN')),
+        ('referred_to_ybln', _('Referred to YBLN')),
+        ('referred_to_alp', _('Referred to ALP')),
+        ('referred_to_cbt', _('Referred to CBT')),
+        ('dropout', _('Dropout, referral not possible')),
+    )
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_one', _('Level one')),
+        ('level_two', _('Level two')),
+    )
+
+    MAIN_CAREGIVER = (
+        ('', '----------'),
+        ('mother', _('Mother')),
+        ('father', _('Father')),
+        ('other', _('Other')),
+    )
+    cycle = models.ForeignKey(
+        Cycle,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Cycle')
+    )
+    referral = ArrayField(
+        models.CharField(
+            choices=CLM.REFERRAL,
+            max_length=100,
+            blank=True,
+            null=True,
+        ),
+        blank=True,
+        null=True,
+        verbose_name=_('Referral')
+    )
+
+    learning_result = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=LEARNING_RESULT,
+        verbose_name=_('Learning result')
+    )
+    first_attendance_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('First attendance date')
+    )
+    round_start_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Round start date')
+    )
+    registration_level = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=REGISTRATION_LEVEL,
+        verbose_name=_('Registration level')
+    )
+    main_caregiver = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=MAIN_CAREGIVER,
+        verbose_name=_('Main Caregiver')
+    )
+    student_number_children = models.IntegerField(
+        blank=True,
+        null=True,
+        choices=((x, x) for x in range(0, 20)),
+        verbose_name=_('How many children does this child have?')
+    )
+
+    def calculate_sore(self, stage):
+        keys = [
+            'ABLN_ASSESSMENT/arabic',
+            'ABLN_ASSESSMENT/math',
+            'ABLN_ASSESSMENT/social_emotional',
+            'ABLN_ASSESSMENT/psychomotor',
+            'ABLN_ASSESSMENT/artistic',
+        ]
+        super(ABLN, self).score(keys, stage)
+
+    def assessment_form(self, stage, assessment_slug, callback=''):
+        try:
+            assessment = Assessment.objects.get(slug=assessment_slug)
+            return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=ABLN&returnURL={callback}'.format(
+                form=assessment.assessment_form,
+                status=stage,
+                enrollment_id=self.id,
+                callback=callback
+            )
+        except Assessment.DoesNotExist as ex:
+            return ''
+
+    def domain_improvement(self, domain_mame):
+        key = '{}/{}'.format(
+            'ABLN_ASSESSMENT',
+            domain_mame,
+        )
+        try:
+            if self.pre_test and self.post_test:
+                return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
+                              20.0) * 100.0, 2)
+        except Exception:
+            return 0.0
+        return 0.0
+
+    def get_assessment_value(self, key, stage):
+        assessment = getattr(self, stage)
+        if assessment:
+            key = 'ABLN_ASSESSMENT/'+key
+            return assessment.get(key, 0)
+        return 0
+
+    @property
+    def arabic_improvement(self):
+        return str(self.domain_improvement('arabic')) + '%'
+
+    @property
+    def math_improvement(self):
+        return str(self.domain_improvement('math')) + '%'
+
+    @property
+    def english_improvement(self):
+        return str(self.domain_improvement('english')) + '%'
+
+    @property
+    def french_improvement(self):
+        return str(self.domain_improvement('french')) + '%'
+
+    @property
+    def social_emotional_improvement(self):
+        return str(self.domain_improvement('social_emotional')) + '%'
+
+    @property
+    def psychomotor_improvement(self):
+        return str(self.domain_improvement('psychomotor')) + '%'
+
+    @property
+    def artistic_improvement(self):
+        return str(self.domain_improvement('artistic')) + '%'
+
+    def pre_assessment_form(self):
+        return self.assessment_form(stage='pre_test', assessment_slug='abln_pre_test')
+
+    def post_assessment_form(self):
+        return self.assessment_form(stage='post_test', assessment_slug='abln_post_test')
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name = "ABLN"
+        verbose_name_plural = "ABLN"
 
 
 class RS(CLM):
@@ -1781,137 +1947,6 @@ class SelfPerceptionGrades(models.Model):
 
     def __unicode__(self):
         return self.enrollment
-
-
-class ABLN(CLM):
-
-    miss_school_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('miss_school_date')
-    )
-    LEARNING_RESULT = Choices(
-        ('', _('Learning result')),
-        ('graduated_to_abln_next_level', _('Graduated to the ABLN next level')),
-        ('graduated_to_abln_next_round_same_level', _('Graduated to the next round, same level')),
-        ('graduated_to_abln_next_round_higher_level', _('Graduated to the next round, higher level')),
-        ('referred_to_bln', _('Referred to BLN')),
-        ('referred_to_ybln', _('Referred to YBLN')),
-        ('referred_to_alp', _('Referred to ALP')),
-        ('referred_to_cbt', _('Referred to CBT')),
-        ('dropout', _('Dropout, referral not possible')),
-    )
-    cycle = models.ForeignKey(
-        Cycle,
-        blank=True, null=True,
-        related_name='+',
-        verbose_name=_('Cycle')
-    )
-    referral = ArrayField(
-        models.CharField(
-            choices=CLM.REFERRAL,
-            max_length=100,
-            blank=True,
-            null=True,
-        ),
-        blank=True,
-        null=True,
-        verbose_name=_('Referral')
-    )
-
-    learning_result = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        choices=LEARNING_RESULT,
-        verbose_name=_('Learning result')
-    )
-    first_attendance_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name=_('First attendance date')
-    )
-
-    def calculate_score(self, stage):
-        keys = [
-            'ABLN_ASSESSMENT/arabic',
-            'ABLN_ASSESSMENT/math',
-            'ABLN_ASSESSMENT/social_emotional',
-            'ABLN_ASSESSMENT/psychomotor',
-            'ABLN_ASSESSMENT/artistic',
-        ]
-        super(ABLN, self).score(keys, stage)
-
-    def assessment_form(self, stage, assessment_slug, callback=''):
-        try:
-            assessment = Assessment.objects.get(slug=assessment_slug)
-            return '{form}?d[status]={status}&d[enrollment_id]={enrollment_id}&d[enrollment_model]=ABLN&returnURL={callback}'.format(
-                form=assessment.assessment_form,
-                status=stage,
-                enrollment_id=self.id,
-                callback=callback
-            )
-        except Assessment.DoesNotExist as ex:
-            return ''
-
-    def domain_improvement(self, domain_mame):
-        key = '{}/{}'.format(
-            'ABLN_ASSESSMENT',
-            domain_mame,
-        )
-        try:
-            if self.pre_test and self.post_test:
-                return round(((float(self.post_test[key]) - float(self.pre_test[key])) /
-                              20.0) * 100.0, 2)
-        except Exception:
-            return 0.0
-        return 0.0
-
-    def get_assessment_value(self, key, stage):
-        assessment = getattr(self, stage)
-        if assessment:
-            key = 'ABLN_ASSESSMENT/'+key
-            return assessment.get(key, 0)
-        return 0
-
-    @property
-    def arabic_improvement(self):
-        return str(self.domain_improvement('arabic')) + '%'
-
-    @property
-    def math_improvement(self):
-        return str(self.domain_improvement('math')) + '%'
-
-    @property
-    def english_improvement(self):
-        return str(self.domain_improvement('english')) + '%'
-
-    @property
-    def french_improvement(self):
-        return str(self.domain_improvement('french')) + '%'
-
-    @property
-    def social_emotional_improvement(self):
-        return str(self.domain_improvement('social_emotional')) + '%'
-
-    @property
-    def psychomotor_improvement(self):
-        return str(self.domain_improvement('psychomotor')) + '%'
-
-    @property
-    def artistic_improvement(self):
-        return str(self.domain_improvement('artistic')) + '%'
-
-    def pre_assessment_form(self):
-        return self.assessment_form(stage='pre_test', assessment_slug='bln_pre_test')
-
-    def post_assessment_form(self):
-        return self.assessment_form(stage='post_test', assessment_slug='bln_post_test')
-
-    class Meta:
-        ordering = ['-id']
-        verbose_name = "ABLN"
-        verbose_name_plural = "ABLN"
 
 
 class Inclusion(TimeStampedModel):

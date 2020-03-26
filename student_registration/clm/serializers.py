@@ -311,6 +311,13 @@ class ABLNSerializer(CLMSerializer):
             'caretaker_middle_name',
             'caretaker_last_name',
             'caretaker_mother_name',
+            'round_start_date',
+            'registration_level',
+            'cadaster',
+            'miss_school_date',
+            'source_of_transportation',
+            'main_caregiver',
+            'student_number_children'
         )
 
 
