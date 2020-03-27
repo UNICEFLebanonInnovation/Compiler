@@ -392,7 +392,7 @@ class BLNForm(CommonForm):
         choices=YES_NO_CHOICE,
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
-        required=True,
+        required=False,
     )
     student_number_children = forms.IntegerField(
         label=_('How many children does this child have?'),
@@ -761,7 +761,7 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('student_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_other_nationality">6.1</span>'),
                     Div('other_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -785,7 +785,7 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">12</span>'),
                     Div('education_status', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">12.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_miss_school_date">12.1</span>'),
                     Div('miss_school_date', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -961,9 +961,9 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('student_family_status', css_class='col-md-4'),
-                    HTML('<span class="badge badge-default">1.1</span>'),
+                    HTML('<span class="badge badge-default" id=span_student_have_children">1.1</span>'),
                     Div('student_have_children', css_class='col-md-4', css_id='student_have_children'),
-                    HTML('<span class="badge badge-default">1.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_student_number_children">1.2</span>'),
                     Div('student_number_children', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1276,7 +1276,7 @@ class ABLNForm(CommonForm):
         choices=YES_NO_CHOICE,
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
-        required=True,
+        required=False,
     )
     student_number_children = forms.IntegerField(
         label=_('How many children does this child have?'),
@@ -1640,7 +1640,7 @@ class ABLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('student_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge badge-default" id="span_other_nationality">6.1</span>'),
                     Div('other_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1664,7 +1664,7 @@ class ABLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">12</span>'),
                     Div('education_status', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">12.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_miss_school_date">12.1</span>'),
                     Div('miss_school_date', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1840,9 +1840,9 @@ class ABLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('student_family_status', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">1.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_student_have_children">1.1</span>'),
                     Div('student_have_children', css_class='col-md-3', css_id='student_have_children'),
-                    HTML('<span class="badge badge-default">1.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_student_number_children">1.2</span>'),
                     Div('student_number_children', css_class='col-md-3'),
                     css_class='row',
                 ),
