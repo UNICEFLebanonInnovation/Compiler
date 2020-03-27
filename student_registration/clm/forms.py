@@ -346,7 +346,7 @@ class BLNForm(CommonForm):
     )
     miss_school_date = forms.DateField(
         label=_("Miss school date"),
-        required=True,
+        required=False,
     )
 
     new_registry = forms.ChoiceField(
@@ -662,29 +662,17 @@ class BLNForm(CommonForm):
         self.request = kwargs.pop('request', None)
         super(BLNForm, self).__init__(*args, **kwargs)
 
-        pre_test = ''
-        post_test = ''
-        pre_test_button = ' btn-outline-success '
-        post_test_button = ' btn-outline-secondary disabled'
-        display_assessment = ' d-none'
         display_registry = ''
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:bln_add')
         self.fields['clm_type'].initial = 'BLN'
 
         if instance:
-            display_assessment = ''
             display_registry = ' d-none'
             form_action = reverse('clm:bln_edit', kwargs={'pk': instance.id})
 
-            pre_test = instance.assessment_form(
-                stage='pre_test',
-                assessment_slug='bln_pre_test',
-                callback=self.request.build_absolute_uri(reverse('clm:bln_edit', kwargs={'pk': instance.id}))
-             )
             if instance.pre_test:
                 p_test = instance.pre_test
-                # print(p_test)
                 self.fields['attended_arabic'].initial = p_test["BLN_ASSESSMENT/attended_arabic"]
                 self.fields['arabic'].initial = p_test["BLN_ASSESSMENT/arabic"]
                 self.fields['attended_math'].initial = p_test["BLN_ASSESSMENT/attended_math"]
@@ -697,18 +685,6 @@ class BLNForm(CommonForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
-            Fieldset(
-                None,
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Registry') + '</h4>')
-                ),
-                Div(
-                    'clm_type',
-                    'student_id',
-                    'enrollment_id',
-                ),
-                css_class='bd-callout bd-callout-warning'+display_registry, css_id='registry_block'
-            ),
             Fieldset(
                 None,
                 Div(css_class='block_tag'),
@@ -785,17 +761,17 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('student_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default"></span>'),
+                    HTML('<span class="badge badge-default">6.1</span>'),
                     Div('other_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">7</span>'),
-                    Div('student_birthday_year', css_class='col-md-3'),
+                    Div('student_birthday_year', css_class='col-md-2'),
                     HTML('<span class="badge badge-default">8</span>'),
-                    Div('student_birthday_month', css_class='col-md-3'),
+                    Div('student_birthday_month', css_class='col-md-2'),
                     HTML('<span class="badge badge-default">9</span>'),
-                    Div('student_birthday_day', css_class='col-md-3'),
+                    Div('student_birthday_day', css_class='col-md-2'),
                     css_class='row',
                 ),
                 Div(
@@ -809,7 +785,7 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">12</span>'),
                     Div('education_status', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default"></span>'),
+                    HTML('<span class="badge badge-default">12.1</span>'),
                     Div('miss_school_date', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -875,9 +851,9 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">11</span>'),
-                    Div('case_number', css_class='col-md-3'),
+                    Div('case_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">12</span>'),
-                    Div('case_number_confirm', css_class='col-md-3'),
+                    Div('case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/unhcr_certificate.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -885,9 +861,9 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">13</span>'),
-                    Div('parent_individual_case_number', css_class='col-md-3'),
+                    Div('parent_individual_case_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">14</span>'),
-                    Div('parent_individual_case_number_confirm', css_class='col-md-3'),
+                    Div('parent_individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -895,9 +871,9 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">15</span>'),
-                    Div('individual_case_number', css_class='col-md-3'),
+                    Div('individual_case_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">16</span>'),
-                    Div('individual_case_number_confirm', css_class='col-md-3'),
+                    Div('individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -905,9 +881,9 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">17</span>'),
-                    Div('recorded_number', css_class='col-md-3'),
+                    Div('recorded_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">18</span>'),
-                    Div('recorded_number_confirm', css_class='col-md-3'),
+                    Div('recorded_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -915,9 +891,9 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">19</span>'),
-                    Div('parent_national_number', css_class='col-md-3'),
+                    Div('parent_national_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">20</span>'),
-                    Div('parent_national_number_confirm', css_class='col-md-3'),
+                    Div('parent_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -925,9 +901,9 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">21</span>'),
-                    Div('national_number', css_class='col-md-3'),
+                    Div('national_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">22</span>'),
-                    Div('national_number_confirm', css_class='col-md-3'),
+                    Div('national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -935,9 +911,9 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">23</span>'),
-                    Div('parent_syrian_national_number', css_class='col-md-3'),
+                    Div('parent_syrian_national_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">24</span>'),
-                    Div('parent_syrian_national_number_confirm', css_class='col-md-3'),
+                    Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -945,9 +921,9 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">25</span>'),
-                    Div('syrian_national_number', css_class='col-md-3'),
+                    Div('syrian_national_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">26</span>'),
-                    Div('syrian_national_number_confirm', css_class='col-md-3'),
+                    Div('syrian_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -955,9 +931,9 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">27</span>'),
-                    Div('parent_sop_national_number', css_class='col-md-3'),
+                    Div('parent_sop_national_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">28</span>'),
-                    Div('parent_sop_national_number_confirm', css_class='col-md-3'),
+                    Div('parent_sop_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/sop_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -965,9 +941,9 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">29</span>'),
-                    Div('sop_national_number', css_class='col-md-3'),
+                    Div('sop_national_number', css_class='col-md-4'),
                     HTML('<span class="badge badge-default">30</span>'),
-                    Div('sop_national_number_confirm', css_class='col-md-3'),
+                    Div('sop_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
                          '<a href="/static/images/sop_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
@@ -984,10 +960,10 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('student_family_status', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">2</span>'),
-                    Div('student_have_children', css_class='col-md-3', css_id='student_have_children'),
-                    HTML('<span class="badge badge-default"></span>'),
+                    Div('student_family_status', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">1.1</span>'),
+                    Div('student_have_children', css_class='col-md-4', css_id='student_have_children'),
+                    HTML('<span class="badge badge-default">1.2</span>'),
                     Div('student_number_children', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -997,11 +973,11 @@ class BLNForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
                     Div('labours_single_selection', css_class='col-md-3', css_id='labours'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">3.2</span>'),
                     Div('labour_hours', css_class='col-md-3', css_id='labour_hours'),
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge badge-default">3.3</span>'),
                     Div('labour_weekly_income', css_class='col-md-3'),
                     css_class='row',
                     id='labour_details'
@@ -1017,39 +993,40 @@ class BLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
-                    Div('attended_arabic', css_class='col-md-4'),
-                    Div('arabic', css_class='col-md-4'),
+                    Div('attended_arabic', css_class='col-md-2'),
+                    Div('arabic', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
                     HTML('<span class="badge badge-default">2</span>'),
-                    Div('attended_math', css_class='col-md-4'),
-                    Div('math', css_class='col-md-4'),
+                    Div('attended_math', css_class='col-md-2'),
+                    Div('math', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
-                    Div('attended_social', css_class='col-md-4'),
-                    Div('social_emotional', css_class='col-md-4'),
+                    Div('attended_social', css_class='col-md-2'),
+                    Div('social_emotional', css_class='col-md-2'),
                     css_class='row',
                 ),
 
                 Div(
                     HTML('<span class="badge badge-default">4</span>'),
-                    Div('attended_psychomotor', css_class='col-md-4'),
-                    Div('psychomotor', css_class='col-md-4'),
+                    Div('attended_psychomotor', css_class='col-md-2'),
+                    Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning E_right_border' + display_assessment
+                css_class='bd-callout bd-callout-warning E_right_border'
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
-                Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
-                Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data'),
-                Submit('save_and_pretest', _('Save and Fill pre-test'), css_class='col-md-2 child_data'),
+                Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
+                Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data col-md-2'),
+                Submit('save_and_pretest', _('Save and Fill pre-test'), css_class='col-md-2 child_data col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
+                css_class='button-group'
             )
         )
 
@@ -1234,7 +1211,7 @@ class BLNForm(CommonForm):
             'main_caregiver',
             'labour_weekly_income',
             'source_of_transportation',
-            # 'student_p_code'
+            'student_p_code'
         )
 
     class Media:
@@ -3153,7 +3130,7 @@ class ABLNAssessmentForm(forms.ModelForm):
     )
 
     arabic = forms.FloatField(
-        label=_('Please enter the result for this subject'),
+        label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
@@ -3165,7 +3142,7 @@ class ABLNAssessmentForm(forms.ModelForm):
     )
 
     math = forms.FloatField(
-        label=_('Please enter the result for this subject'),
+        label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
@@ -3177,7 +3154,7 @@ class ABLNAssessmentForm(forms.ModelForm):
     )
 
     social_emotional = forms.FloatField(
-        label=_('Please enter the result for this subject'),
+        label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
@@ -3188,7 +3165,7 @@ class ABLNAssessmentForm(forms.ModelForm):
         initial='yes'
     )
     psychomotor = forms.FloatField(
-        label=_('Please enter the result for this subject'),
+        label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
@@ -3519,7 +3496,7 @@ class BLNAssessmentForm(forms.ModelForm):
     )
 
     arabic = forms.FloatField(
-        label=_('Please enter the result for this subject'),
+        label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
@@ -3531,7 +3508,7 @@ class BLNAssessmentForm(forms.ModelForm):
     )
 
     math = forms.FloatField(
-        label=_('Please enter the result for this subject'),
+        label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
@@ -3543,7 +3520,7 @@ class BLNAssessmentForm(forms.ModelForm):
     )
 
     social_emotional = forms.FloatField(
-        label=_('Please enter the result for this subject'),
+        label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
@@ -3554,7 +3531,7 @@ class BLNAssessmentForm(forms.ModelForm):
         initial='yes'
     )
     psychomotor = forms.FloatField(
-        label=_('Please enter the result for this subject'),
+        label=_('Results'),
         widget=forms.NumberInput(attrs=({'maxlength': 4})),
         min_value=0, required=False
     )
