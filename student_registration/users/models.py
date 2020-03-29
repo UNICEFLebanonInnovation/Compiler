@@ -39,7 +39,12 @@ class User(AbstractUser):
     locations = models.ManyToManyField(Location, blank=True)
     schools = models.ManyToManyField(School, blank=True)
     regions = models.ManyToManyField(Location, blank=True, related_name='regions')
-
+    staff_password = models.CharField(
+        _('staff password'),
+        max_length=255,
+        null=True,
+        blank=True
+    )
     def __str__(self):
         return self.username
 

@@ -1,5 +1,5 @@
 from __future__ import unicode_literals, absolute_import, division
-
+from django.conf import settings
 from django.db import models
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
@@ -597,4 +597,1663 @@ class class_section(TimeStampedModel):
         blank=True, null=True,
         related_name='+',
         verbose_name=_('Education year')
+    )
+
+
+class Subject(models.Model):
+    name = models.CharField(max_length=45, unique=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name_plural = 'Subjects'
+
+    def __unicode__(self):
+        return self.name
+
+
+class Evaluation(TimeStampedModel):
+    school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('School')
+    )
+    education_year = models.ForeignKey(
+        EducationYear,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Education year')
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Created by')
+    )
+    total_teaching_days = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Teaching days completed since the beginning of the school year till the end of february'),
+        default=0,
+        choices=((x, x) for x in range(0, 365))
+    )
+    total_teaching_days_tillnow = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Teaching days from the beginning of march till now'),
+        default=0,
+        choices=((x, x) for x in range(0, 365))
+    )
+
+    models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        choices=Choices(
+            ('French', _('French')),
+            ('English', _('English')),
+            ('French & English', _('French & English'))
+        ),
+        verbose_name=_('Certified foreign language')
+    )
+
+    implemented_de = models.CharField(
+        blank=True,  default='no',
+        max_length=3,
+        choices=Choices(
+            ('yes', _('Yes')),
+            ('no', _('No')),
+        ),
+        verbose_name=_('Have you implemented distance education ?')
+    )
+    reasons_no_de = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Determine the reasons')
+    )
+    challenges_de = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The challenges that you faced during distance education')
+    )
+    steps_de = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('What are the steps followed in distance education')
+    )
+    evaluate_steps_de = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Evaluate the steps followed in distance education')
+    )
+
+    implemented_de_2 = models.CharField(
+        blank=True,  default='no',
+        max_length=3,
+        choices=Choices(
+            ('yes', _('Yes')),
+            ('no', _('No')),
+        ),
+        verbose_name=_('Have you implemented distance education ?')
+    )
+    reasons_no_de_2 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Determine the reasons')
+    )
+    challenges_de_2 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The challenges that you faced during distance education')
+    )
+    steps_de_2 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('What are the steps followed in distance education')
+    )
+    evaluate_steps_de_2 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Evaluate the steps followed in distance education')
+    )
+
+    implemented_de_3 = models.CharField(
+        blank=True,  default='no',
+        max_length=3,
+        choices=Choices(
+            ('yes', _('Yes')),
+            ('no', _('No')),
+        ),
+        verbose_name=_('Have you implemented distance education ?')
+    )
+    reasons_no_de_3 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Determine the reasons')
+    )
+    challenges_de_3 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The challenges that you faced during distance education')
+    )
+    steps_de_3 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('What are the steps followed in distance education')
+    )
+    evaluate_steps_de_3 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Evaluate the steps followed in distance education')
+    )
+    other_notes_de = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Comments')
+    )
+
+    c2_eng_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_eng_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_eng_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_fr_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_fr_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_fr_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_math_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_math_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_math_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_sc_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_sc_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_sc_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_ara_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_ara_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_ara_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_civic_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_civic_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_civic_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_geo_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_geo_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c2_geo_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+
+    c3_eng_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_eng_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_eng_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_fr_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_fr_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_fr_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_math_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_math_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_math_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_sc_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_sc_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_sc_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_ara_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_ara_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_ara_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_civic_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_civic_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_civic_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_geo_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_geo_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c3_geo_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_eng_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_eng_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_eng_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_fr_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_fr_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_fr_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_math_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_math_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_math_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_sc_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_sc_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_sc_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_ara_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_ara_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_ara_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_civic_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_civic_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_civic_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_geo_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_geo_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c4_geo_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_eng_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_eng_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_eng_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_fr_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_fr_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_fr_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_math_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_math_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_math_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_sc_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_sc_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_sc_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_ara_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_ara_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_ara_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_civic_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_civic_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_civic_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_geo_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_geo_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c5_geo_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_eng_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_eng_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_eng_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_fr_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_fr_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_fr_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_math_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_math_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_math_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_sc_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_sc_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_sc_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_ara_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_ara_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_ara_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_civic_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_civic_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_civic_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_geo_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_geo_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c1_geo_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_eng_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_eng_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_eng_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_fr_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_fr_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_fr_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_math_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_math_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_math_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_sc_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_sc_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_sc_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_ara_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_ara_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_ara_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_civic_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_civic_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_civic_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_geo_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_geo_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c6_geo_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_eng_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_eng_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_eng_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_fr_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_fr_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_fr_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_math_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_math_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_math_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_sc_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_sc_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_sc_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_ara_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_ara_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_ara_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_civic_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_civic_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_civic_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_geo_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_geo_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    cprep_geo_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_eng_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_eng_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_eng_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_fr_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_fr_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_fr_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_math_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_math_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_math_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_sc_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_sc_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_sc_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_ara_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_ara_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_ara_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_civic_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_civic_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_civic_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_geo_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_geo_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_geo_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_his_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_his_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_his_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_phy_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_phy_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_phy_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_che_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_che_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c7_che_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_eng_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_eng_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_eng_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_fr_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_fr_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_fr_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_math_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_math_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_math_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_sc_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_sc_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_sc_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_ara_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_ara_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_ara_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_civic_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_civic_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_civic_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_geo_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_geo_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_geo_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_his_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_his_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_his_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_phy_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_phy_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_phy_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_che_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_che_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c8_che_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_eng_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_eng_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_eng_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_fr_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_fr_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_fr_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_math_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_math_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_math_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_sc_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_sc_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_sc_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_ara_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_ara_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_ara_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_civic_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_civic_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_civic_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_geo_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_geo_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_geo_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_his_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_his_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_his_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_phy_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_phy_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_phy_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_che_completed = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('The number of lessons completed till february'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_che_completed_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons accomplished through distance education in march'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_che_remaining_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of lessons remaining'),
+        default=0,
+        choices=((x, x) for x in range(0, 100))
+    )
+    c9_total_std = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total of students'),
+        default=0,
+        choices=((x, x) for x in range(0, 50))
+    )
+    c9_total_std_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total of students they follow distance education'),
+        default=0,
+        choices=((x, x) for x in range(0, 50))
+    )
+
+    implemented_de_9 = models.CharField(
+        blank=True,  default='no',
+        max_length=3,
+        choices=Choices(
+            ('yes', _('Yes')),
+            ('no', _('No')),
+        ),
+        verbose_name=_('Have you implemented distance education ?')
+    )
+    reasons_no_de_9 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Determine the reasons')
+    )
+    challenges_de_9 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The challenges that you faced during distance education')
+    )
+    steps_de_9 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('What are the steps followed in distance education')
+    )
+    evaluate_steps_de_9 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Evaluate the steps followed in distance education')
+    )
+
+    implemented_de_prep = models.CharField(
+        blank=True,  default='no',
+        max_length=3,
+        choices=Choices(
+            ('yes', _('Yes')),
+            ('no', _('No')),
+        ),
+        verbose_name=_('Have you implemented distance education ?')
+    )
+    reasons_no_de_prep = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Determine the reasons')
+    )
+    challenges_de_prep = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The challenges that you faced during distance education')
+    )
+    steps_de_prep = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('What are the steps followed in distance education')
+    )
+    evaluate_steps_de_prep = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Evaluate the steps followed in distance education')
+    )
+
+    c9_total_teachers = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Total of teachers'),
+        default=0,
+        choices=((x, x) for x in range(0, 50))
+    )
+    c9_total_teachers_de = models.IntegerField(
+        blank=True, null=True,
+        verbose_name=_('Number of teachers who have committed to distance education'),
+        default=0,
+        choices=((x, x) for x in range(0, 50))
     )

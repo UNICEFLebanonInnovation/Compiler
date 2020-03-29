@@ -27,6 +27,7 @@ from student_registration.schools.models import (
     EducationLevel,
     ClassLevel,
     ClassRoom,
+    Evaluation,
 )
 import time
 from django_tables2.export.export import TableExport
@@ -1011,3 +1012,18 @@ def export_summary_of_Attendance(request):
         'first_attend',
     )
     return render_to_csv_response(qs_enr, field_header_map=headers)
+
+
+def generate_evaluation(request):
+    school = School.objects.filter(is_closed=False)
+    education_year = EducationYear.objects.get(current_year=True)
+    for sch in school:
+        count_evaluation = Evaluation.objects.filter(school_id=sch.id, education_year=education_year).count()
+        if count_evaluation == 0:
+            Evaluation.objects.create(
+                school_id=sch.id,
+                education_year=education_year,
+                owner_id=request.user.id,
+            )
+    context = {}
+    return render(request, "dashboard/exporter.html", context)
