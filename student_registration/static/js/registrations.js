@@ -639,13 +639,18 @@ function reorganizeForm()
 
     // id_student_nationality
     $('div#div_id_other_nationality').addClass('d-none');
+    $('#span_other_nationality').addClass('d-none');
+
     if(nationality == '6'){
         $('#div_id_other_nationality').removeClass('d-none');
+    $('#span_other_nationality').removeClass('d-none');
     }
     // id_education_status
     $('div#div_id_miss_school_date').addClass('d-none');
+    $('#span_miss_school_date').addClass('d-none');
     if(education_status != 'out of school'){
         $('#div_id_miss_school_date').removeClass('d-none');
+    $('#span_miss_school_date').removeClass('d-none');
     }
 
     // id_main_caregiver
@@ -662,19 +667,24 @@ function reorganizeForm()
 
 
     $('div#div_id_student_number_children').addClass('d-none');
+    $('#span_student_number_children').addClass('d-none');
         if(have_children == 1 ){
             $('#div_id_student_number_children').removeClass('d-none');
+            $('#span_student_number_children').removeClass('d-none');
     }
 
     // id_student_family_status
     if(family_status != 'single'){
         $('#div_id_student_have_children').removeClass('d-none');
+        $('#span_student_have_children').removeClass('d-none');
         // id_student_number_children
     }else{
         $('input[name=id_student_have_children_2]').attr('checked', true);
         $('#id_student_number_children').val('');
         $('div#div_id_student_have_children').addClass('d-none');
         $('div#div_id_student_number_children').addClass('d-none');
+        $('#span_student_have_children').addClass('d-none');
+        $('#span_student_number_children').addClass('d-none');
     }
 
 
