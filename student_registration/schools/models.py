@@ -643,6 +643,17 @@ class Evaluation(TimeStampedModel):
         choices=((x, x) for x in range(0, 365))
     )
 
+    models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        choices=Choices(
+            ('French', _('French')),
+            ('English', _('English')),
+            ('French & English', _('French & English'))
+        ),
+        verbose_name=_('Certified foreign language')
+    )
+
     implemented_de = models.CharField(
         blank=True,  default='no',
         max_length=3,
@@ -2246,6 +2257,3 @@ class Evaluation(TimeStampedModel):
         default=0,
         choices=((x, x) for x in range(0, 50))
     )
-
-    def __unicode__(self):
-            return self.school.name
