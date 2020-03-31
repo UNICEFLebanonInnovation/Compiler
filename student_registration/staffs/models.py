@@ -297,6 +297,36 @@ class Staffs(models.Model):
         blank=True, null=True,
         verbose_name=_('Speciality')
     )
+    pic_identification = models.CharField(
+        max_length=200,
+        blank=True, null=True,
+        verbose_name=_('Picture of Identy')
+    )
+    pic_commitment = models.CharField(
+        max_length=200,
+        blank=True, null=True,
+        verbose_name=_('Picture of the commitment')
+    )
+    pic_2ndshiftcertificate = models.CharField(
+        max_length=200,
+        blank=True, null=True,
+        verbose_name=_('Picture of the second shift certificate')
+    )
+    pic_iban = models.CharField(
+        max_length=200,
+        blank=True, null=True,
+        verbose_name=_('Picture of the iban')
+    )
+    pic_certificate = models.CharField(
+        max_length=200,
+        blank=True, null=True,
+        verbose_name=_('Picture of the certificate')
+    )
+    disabled = models.BooleanField(
+        blank=True, default=False,
+        verbose_name=_('Disabled?')
+    )
+
     def __unicode__(self):
         if not self.first_name:
             return 'No name'
