@@ -512,6 +512,7 @@ class EvaluationResource(resources.ModelResource):
     class Meta:
         model = Evaluation
         fields = (
+            'owner',
             'school',
             'school__location',
             'school__number',
