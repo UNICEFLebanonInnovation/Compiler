@@ -175,9 +175,11 @@ class EvaluationView(FormView):
 
     def get_form(self, form_class=None):
         education_year = EducationYear.objects.get(current_year=True)
-        if self.request.user.school_id:
-            evaluation = Evaluation.objects.filter(school_id=self.request.user.school_id, education_year=education_year)
-            instance = Evaluation.objects.get(id=evaluation)
+        if self.request:
+            if self.request.user:
+                if self.request.user.school_id:
+                    evaluation = Evaluation.objects.filter(school_id=self.request.user.school_id, education_year=education_year)
+                    instance = Evaluation.objects.get(id=evaluation)
 
         if self.request.method == "POST":
             return EvaluationForm(self.request.POST, instance=instance)
