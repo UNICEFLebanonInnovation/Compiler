@@ -2,7 +2,7 @@
 import json
 
 from rest_framework import serializers
-from .models import CLM, BLN, ABLN, RS, CBECE, SelfPerceptionGrades
+from .models import CLM, BLN, ABLN, RS, CBECE, Location, SelfPerceptionGrades
 
 
 def create_instance(validated_data, model):
@@ -373,6 +373,24 @@ class CBECESerializer(CLMSerializer):
             'referral',
             'child_muac',
             'final_grade',
+        )
+
+
+class LocationSerializer(CLMSerializer):
+
+    def create(self, validated_data):
+        return create_instance(validated_data=validated_data, model=self.Meta.model)
+
+    def update(self, instance, validated_data):
+        return update_instance(instance=instance, validated_data=validated_data)
+
+    class Meta:
+        model = Location
+        fields = (
+            'name',
+            'name_en',
+            'type',
+            'parent'
         )
 
 

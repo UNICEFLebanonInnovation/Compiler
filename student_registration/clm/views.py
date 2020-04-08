@@ -45,7 +45,7 @@ from .forms import (
     CBECEFollowupForm,
     CBECEReferralForm,
 )
-from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
+from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, LocationSerializer, SelfPerceptionGradesSerializer
 from .utils import is_allowed_create, is_allowed_edit
 
 
@@ -3162,3 +3162,31 @@ class ExecABLNUpdateView(LoginRequiredMixin, TemplateView):
         return {
             'result': instances.count(),
         }
+
+
+class LocationViewSet(mixins.RetrieveModelMixin,
+                   mixins.ListModelMixin,
+                   mixins.CreateModelMixin,
+                   mixins.UpdateModelMixin,
+                   viewsets.GenericViewSet):
+
+    model = Location
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.request.method in ["PATCH", "POST", "PUT"]:
+            return self.queryset
+
+
+class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
+                                  mixins.ListModelMixin,
+                                  mixins.CreateModelMixin,
+                                  mixins.UpdateModelMixin,
+                                  viewsets.GenericViewSet):
+
+    model = SelfPerceptionGrades
+    queryset = SelfPerceptionGrades.objects.all()
+    serializer_class = SelfPerceptionGradesSerializer
+    permission_classes = (permissions.IsAuthenticated,)
