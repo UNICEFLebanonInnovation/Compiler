@@ -580,7 +580,7 @@ class BLNForm(CommonForm):
     no_parent_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
 
     source_of_identification = forms.ChoiceField(
-        label=_("Source of identification of the child"),
+        label=_("Source of identification of the child to BLN"),
         widget=forms.Select,
         required=True,
         choices=(
@@ -1024,7 +1024,6 @@ class BLNForm(CommonForm):
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
                 Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data col-md-2'),
-                Submit('save_and_pretest', _('Save and Fill pre-test'), css_class='col-md-2 child_data col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -1464,7 +1463,7 @@ class ABLNForm(CommonForm):
     no_parent_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
 
     source_of_identification = forms.ChoiceField(
-        label=_("Source of identification of the child"),
+        label=_("Source of identification of the child to ABLN"),
         widget=forms.Select,
         required=True,
         choices=(
@@ -1903,7 +1902,6 @@ class ABLNForm(CommonForm):
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
                 Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data col-md-2'),
-                Submit('save_and_pretest', _('Save and Fill pre-test'), css_class='col-md-2 child_data col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
