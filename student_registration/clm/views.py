@@ -45,7 +45,7 @@ from .forms import (
     CBECEFollowupForm,
     CBECEReferralForm,
 )
-from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, LocationSerializer, SelfPerceptionGradesSerializer
+from .serializers import BLNSerializer, ABLNSerializer, RSSerializer, CBECESerializer, SelfPerceptionGradesSerializer
 from .utils import is_allowed_create, is_allowed_edit
 
 

@@ -6,23 +6,6 @@ from .models import Location
 
 from .serializers import LocationSerializer
 
-#
-# from dal import autocomplete
-# from django.db.models import Q
-#
-# from .models import (
-#     Student,
-# )
-# from .serializers import (
-#     StudentSerializer,
-# )
-# from student_registration.enrollments.models import (
-#     EducationYear
-# )
-# from student_registration.alp.models import ALPRound
-
-
-
 ####################### API VIEWS #############################
 
 

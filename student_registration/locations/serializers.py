@@ -10,8 +10,8 @@ class LocationSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=True)
     name = serializers.CharField(required=False)
     name_en = serializers.CharField(required=True)
-    type = serializers.IntegerField(required=True)
-    parent = serializers.IntegerField(required=True)
+    type_id = serializers.IntegerField(required=True)
+    parent_id = serializers.IntegerField(required=True)
 
     def create(self, validated_data):
 
@@ -30,8 +30,8 @@ class LocationSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'name_en',
-            'type',
-            'parent',
+            'type_id',
+            'parent_id',
 
         )
 

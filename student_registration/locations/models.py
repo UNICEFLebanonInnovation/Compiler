@@ -27,7 +27,6 @@ class Location(MPTTModel):
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     p_code = models.CharField(max_length=32, blank=True, null=True)
-
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
 
     def __unicode__(self):
