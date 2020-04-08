@@ -3164,22 +3164,6 @@ class ExecABLNUpdateView(LoginRequiredMixin, TemplateView):
         }
 
 
-class LocationViewSet(mixins.RetrieveModelMixin,
-                   mixins.ListModelMixin,
-                   mixins.CreateModelMixin,
-                   mixins.UpdateModelMixin,
-                   viewsets.GenericViewSet):
-
-    model = Location
-    queryset = Location.objects.all()
-    serializer_class = LocationSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get_queryset(self):
-        if self.request.method in ["PATCH", "POST", "PUT"]:
-            return self.queryset
-
-
 class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
                                   mixins.ListModelMixin,
                                   mixins.CreateModelMixin,

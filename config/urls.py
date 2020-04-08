@@ -35,8 +35,11 @@ from student_registration.clm.views import (
     RSViewSet,
     CBECEViewSet,
     CLMStudentViewSet,
-    LocationViewSet,
     SelfPerceptionGradesViewSet
+)
+
+from student_registration.locations.views import (
+    LocationViewSet,
 )
 
 from student_registration.users.views import LoginRedirectView
