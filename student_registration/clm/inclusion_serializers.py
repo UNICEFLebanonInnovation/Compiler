@@ -179,4 +179,5 @@ class InclusionSerializer(serializers.ModelSerializer):
             'caretaker_mother_name',
             'have_labour',
             'labour_type',
+            'additional_comments'
         )

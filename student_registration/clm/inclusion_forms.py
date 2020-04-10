@@ -606,6 +606,20 @@ class InclusionForm(forms.ModelForm):
                 ),
                 css_class='bd-callout bd-callout-warning child_data D_right_border d-none'
             ),
+            Fieldset(
+                None,
+                Div(
+                    HTML('<span>E</span>'), css_class='block_tag'),
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Comments') + '</h4>')
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">1</span>'),
+                    Div('additional_comments', css_class='col-md-12'),
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning child_data E_right_border'
+            ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
@@ -813,6 +827,7 @@ class InclusionForm(forms.ModelForm):
             'caretaker_middle_name',
             'caretaker_last_name',
             'caretaker_mother_name',
+            'additional_comments'
         )
 
     class Media:
