@@ -24,6 +24,7 @@ from .models import (
     Coordinator,
     Subject,
     Evaluation,
+    PublicHolidays,
 )
 from student_registration.locations.models import Location
 
@@ -814,3 +815,4 @@ admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
 admin.site.register(Coordinator)
 admin.site.register(Subject)
 admin.site.register(Evaluation, EvaluationAdmin)
+admin.site.register(PublicHolidays)

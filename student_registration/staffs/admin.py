@@ -9,4 +9,3 @@ admin.site.register(Certificate)
 admin.site.register(University)
 admin.site.register(Staffs)
 admin.site.register(Login)
-
