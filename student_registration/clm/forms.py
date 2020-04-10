@@ -342,7 +342,7 @@ class BLNForm(CommonForm):
     YEARS_BLN.insert(0, ('', '---------'))
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
-        required=True
+        required=False
     )
     miss_school_date = forms.DateField(
         label=_("Miss school date"),
@@ -368,7 +368,7 @@ class BLNForm(CommonForm):
 
     round_start_date = forms.DateField(
         label=_("Round start date"),
-        required=True
+        required=False
     )
     registration_level = forms.ChoiceField(
         label=_("Registration level"),
@@ -712,25 +712,25 @@ class BLNForm(CommonForm):
                     Div('new_registry', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('round', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('round_start_date', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">3</span>'),
+                    Div('round_start_date', css_class='col-md-3 d-none'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('governorate', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('district', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('cadaster', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('location', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('registration_level', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -793,15 +793,15 @@ class BLNForm(CommonForm):
                     HTML('<span class="badge badge-default">13</span>'),
                     Div('internal_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
-                    Div('first_attendance_date', css_class='col-md-3'),
+                    Div('source_of_identification', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">15</span>'),
-                    Div('source_of_identification', css_class='col-md-3'),
+                    Div('first_attendance_date', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">16</span>'),
                     Div('source_of_transportation', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row d-none',
                 ),
                 css_class='bd-callout bd-callout-warning child_data B_right_border'
             ),
@@ -1018,7 +1018,7 @@ class BLNForm(CommonForm):
                     Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning E_right_border'
+                css_class='bd-callout bd-callout-warning E_right_border d-none'
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
@@ -1209,7 +1209,7 @@ class BLNForm(CommonForm):
             'registration_level',
             'main_caregiver',
             'labour_weekly_income',
-            'source_of_transportation',
+            # 'source_of_transportation',
             'student_p_code'
         )
 
@@ -1228,7 +1228,7 @@ class ABLNForm(CommonForm):
     YEARS_ABLN.insert(0, ('', '---------'))
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
-        required=True
+        required=False
     )
     miss_school_date = forms.DateField(
         label=_("Miss school date"),
@@ -1251,7 +1251,7 @@ class ABLNForm(CommonForm):
 
     round_start_date = forms.DateField(
         label=_("Round start date"),
-        required=True
+        required=False
     )
     registration_level = forms.ChoiceField(
         label=_("Registration level"),
@@ -1590,25 +1590,25 @@ class ABLNForm(CommonForm):
                     Div('new_registry', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">2</span>'),
                     Div('round', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">3</span>'),
-                    Div('round_start_date', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">3</span>'),
+                    Div('round_start_date', css_class='col-md-3 d-none'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">3</span>'),
                     Div('governorate', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5</span>'),
+                    HTML('<span class="badge badge-default">4</span>'),
                     Div('district', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6</span>'),
+                    HTML('<span class="badge badge-default">5</span>'),
                     Div('cadaster', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge badge-default">6</span>'),
                     Div('location', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">8</span>'),
+                    HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">9</span>'),
+                    HTML('<span class="badge badge-default">8</span>'),
                     Div('registration_level', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1671,15 +1671,15 @@ class ABLNForm(CommonForm):
                     HTML('<span class="badge badge-default">13</span>'),
                     Div('internal_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">14</span>'),
-                    Div('first_attendance_date', css_class='col-md-3'),
+                    Div('source_of_identification', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">15</span>'),
-                    Div('source_of_identification', css_class='col-md-3'),
+                    Div('first_attendance_date', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">16</span>'),
                     Div('source_of_transportation', css_class='col-md-3'),
-                    css_class='row',
+                    css_class='row d-none',
                 ),
                 css_class='bd-callout bd-callout-warning child_data B_right_border'
             ),
@@ -1896,7 +1896,7 @@ class ABLNForm(CommonForm):
                     Div('psychomotor', css_class='col-md-2'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning E_right_border'
+                css_class='bd-callout bd-callout-warning E_right_border d-none'
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
@@ -2087,7 +2087,7 @@ class ABLNForm(CommonForm):
             'registration_level',
             'main_caregiver',
             'labour_weekly_income',
-            'source_of_transportation',
+            # 'source_of_transportation',
             'student_p_code'
         )
 
