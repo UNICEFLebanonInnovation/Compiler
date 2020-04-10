@@ -151,7 +151,7 @@ $(document).ready(function(){
          reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_main_caregiver , select#id_student_family_status, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
+    $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_main_caregiver , select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
          reorganizeForm();
     });
     $(document).on('click', 'input[name=student_have_children]', function(){
@@ -653,10 +653,7 @@ function reorganizeForm()
     $('#span_miss_school_date').removeClass('d-none');
     }
 
-    // id_main_caregiver
-    // $('#id_caretaker_first_name').val('');
-    // $('#id_caretaker_last_name').val('');
-    $('#id_student_number_children').val('');
+
 
     if(main_caregiver == 'father'){
         var student_father_name = $('#id_student_father_name').val();
@@ -665,27 +662,19 @@ function reorganizeForm()
         $('#id_caretaker_last_name').val(student_last_name);
     }
 
-
-    $('div#div_id_student_number_children').addClass('d-none');
-    $('#span_student_number_children').addClass('d-none');
-        if(have_children == 1 ){
-            $('#div_id_student_number_children').removeClass('d-none');
-            $('#span_student_number_children').removeClass('d-none');
-    }
-
-    // id_student_family_status
-    if(family_status != 'single'){
-        $('#div_id_student_have_children').removeClass('d-none');
-        $('#span_student_have_children').removeClass('d-none');
-        // id_student_number_children
-    }else{
-        $('input[name=id_student_have_children_2]').attr('checked', true);
-        $('#id_student_number_children').val('');
-        $('div#div_id_student_have_children').addClass('d-none');
-        $('div#div_id_student_number_children').addClass('d-none');
-        $('#span_student_have_children').addClass('d-none');
-        $('#span_student_number_children').addClass('d-none');
-    }
+    // // id_student_family_status
+    // if(family_status != 'single'){
+    //     $('#div_id_student_have_children').removeClass('d-none');
+    //     $('#span_student_have_children').removeClass('d-none');
+    //     // id_student_number_children
+    // }else{
+    //     $('input[name=id_student_have_children_2]').attr('checked', true);
+    //     $('#id_student_number_children').val('');
+    //     $('div#div_id_student_have_children').addClass('d-none');
+    //     $('div#div_id_student_number_children').addClass('d-none');
+    //     $('#span_student_have_children').addClass('d-none');
+    //     $('#span_student_number_children').addClass('d-none');
+    // }
 
 
 

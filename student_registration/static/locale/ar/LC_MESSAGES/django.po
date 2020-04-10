@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-08 17:55+0300\n"
+"POT-Creation-Date: 2020-04-09 13:22+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -532,7 +532,7 @@ msgstr "تاريخ الولادة - اليوم"
 #: student_registration/staffs/models.py:138
 #: student_registration/students/models.py:186
 msgid "Mother fullname"
-msgstr "اسم الأم"
+msgstr "إسم الأم و شهرتها"
 
 #: student_registration/alp/forms.py:168 student_registration/alp/forms.py:410
 #: student_registration/alp/forms.py:657 student_registration/alp/forms.py:910
@@ -1159,7 +1159,7 @@ msgstr "اخر تعديل من قبل"
 #: student_registration/clm/models.py:228
 #: student_registration/clm/models.py:2060
 msgid "Location"
-msgstr "إسم الموقع/مركز"
+msgstr "إسم الموقع/المركز"
 
 #: student_registration/alp/models.py:174
 msgid "Pre test room"
@@ -1317,7 +1317,7 @@ msgstr "عدد التلامذة المصرح عنهم من قبل المدير"
 #: student_registration/enrollments/views.py:687
 #: student_registration/enrollments/views.py:734
 msgid "District"
-msgstr "القضاء"
+msgstr "المركز: القضاء"
 
 #: student_registration/alp/views.py:568
 #: student_registration/backends/tasks.py:38
@@ -1338,7 +1338,7 @@ msgstr "القضاء"
 #: student_registration/staffs/forms.py:141
 #: student_registration/staffs/models.py:271
 msgid "Governorate"
-msgstr "المحافظة"
+msgstr "المركز: المحافظة"
 
 #: student_registration/attendances/admin.py:264
 msgid "Open"
@@ -2022,7 +2022,7 @@ msgstr "المستوى الثاني"
 #: student_registration/clm/models.py:222
 #: student_registration/clm/models.py:2054
 msgid "Cadaster"
-msgstr "منطقة عقارية"
+msgstr "المركز: منطقة عقارية"
 
 #: student_registration/clm/forms.py:138 student_registration/clm/models.py:236
 msgid "The language supported in the program"
@@ -5198,7 +5198,7 @@ msgstr "الرقم المالي"
 #: student_registration/staffs/forms.py:146
 #: student_registration/staffs/models.py:278
 msgid "Caza"
-msgstr "القضاء"
+msgstr "المركز: القضاء"
 
 #: student_registration/staffs/models.py:61
 msgid "Cadre"

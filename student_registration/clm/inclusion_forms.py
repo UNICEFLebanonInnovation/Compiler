@@ -170,7 +170,7 @@ class InclusionForm(forms.ModelForm):
     )
     have_labour = forms.ChoiceField(
         label=_('Does the child participate in work?'),
-        widget=forms.Select, required=True,
+        widget=forms.Select, required=False,
         choices=Inclusion.HAVE_LABOUR,
         initial='no'
     )
@@ -604,7 +604,7 @@ class InclusionForm(forms.ModelForm):
                     Div('labour_type', css_class='col-md-3', css_id='labours'),
                     css_class='row',
                 ),
-                css_class='bd-callout bd-callout-warning child_data D_right_border'
+                css_class='bd-callout bd-callout-warning child_data D_right_border d-none'
             ),
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
