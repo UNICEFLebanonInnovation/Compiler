@@ -192,7 +192,6 @@ class School(models.Model):
         null=True,
         verbose_name=_('IBAN $')
     )
-
     class Meta:
         ordering = ['number']
 
@@ -376,7 +375,6 @@ class Section(models.Model):
 
 class ClassRoom(models.Model):
     name = models.CharField(max_length=45, unique=True)
-    classroom_type = models.CharField(blank=True, null=True, max_length=2)
 
     class Meta:
         ordering = ['id']
@@ -2251,44 +2249,3 @@ class Evaluation(TimeStampedModel):
 
     def __unicode__(self):
             return self.school.name
-
-
-class PublicHolidays(models.Model):
-    holiday = models.DateField(
-        blank=True,
-        verbose_name=_('Public holidays')
-    )
-
-    def __unicode__(self):
-        return self.holiday.strftime("%m/%d/%Y")
-
-
-class Survey(TimeStampedModel):
-    school = models.ForeignKey(
-        School,
-        blank=True, null=True,
-        verbose_name=_('School'),
-        related_name='+',
-    )
-    classroom = models.ForeignKey(
-        ClassRoom,
-        blank=True, null=True,
-        verbose_name=_('Class'),
-        related_name='+',
-    )
-    subject = models.ForeignKey(
-        Subject,
-        blank=True, null=True,
-        verbose_name=_('Subject'),
-        related_name='+',
-    )
-    teachingdays_tillfeb = models.IntegerField(
-        blank=True, null=True,
-    )
-    teachingdays_frommars = models.IntegerField(
-        blank=True, null=True,
-    )
-    teachingdays_remaining= models.IntegerField(
-        blank=True, null=True,
-    )
-

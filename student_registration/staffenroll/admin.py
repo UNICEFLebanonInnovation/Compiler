@@ -1,7 +1,6 @@
 from django.contrib import admin
-from .models import Jobs, Subjects, Worklist
+from .models import Jobs, Subjects
 # Register your models here.
 
 admin.site.register(Jobs)
 admin.site.register(Subjects)
-admin.site.register(Worklist)

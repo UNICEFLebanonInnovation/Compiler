@@ -115,9 +115,9 @@ class Staffs(models.Model):
         blank=True, null=True,
         verbose_name=_('Father name')
     )
-    id_number = models.CharField(max_length=30, blank=False)
+    id_number = models.CharField(max_length=30, blank=False, unique=True)
     ministerapproval = models.CharField(
-        max_length=250,
+        max_length=150,
         blank=True,
         null=True,
         choices=MinisAppr,
@@ -317,11 +317,6 @@ class Staffs(models.Model):
         blank=True, null=True,
         verbose_name=_('Picture of the iban')
     )
-    pic_iban2 = models.CharField(
-        max_length=200,
-        blank=True, null=True,
-        verbose_name=_('Picture of the iban')
-    )
     pic_certificate = models.CharField(
         max_length=200,
         blank=True, null=True,
@@ -344,33 +339,3 @@ class Staffs(models.Model):
 
     class Meta:
         verbose_name_plural = "Staff"
-
-
-class ParticipantYear(models.Model):
-    SELECTYEAR = Choices(
-        ('2013/2014', '2013/2014'),
-        ('2014/2015', '2014/2015'),
-        ('2015/2016', '2015/2016'),
-        ('2016/2017', '2016/2017'),
-        ('2017/2018', '2017/2018'),
-        ('2018/2019', '2018/2019'),
-        ('2019/2020', '2019/2020'),
-        ('2020/2021', '2020/2021'),
-    )
-    participantyear = models.CharField(
-        max_length=9,
-        blank=True,
-        null=True,
-        choices=SELECTYEAR
-    )
-    notes = models.CharField(
-        max_length=150,
-        blank=True, null=True
-    ),
-
-    staff = models.ForeignKey(
-        Staffs,
-        blank=True, null=True,
-        related_name='+',
-        verbose_name=_('Staff')
-    )
