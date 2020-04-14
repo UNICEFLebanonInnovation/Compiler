@@ -150,6 +150,8 @@ class InclusionSerializer(serializers.ModelSerializer):
             'phone_number',
             'phone_number_confirm',
             'phone_owner',
+            'second_phone_number',
+            'second_phone_number_confirm',
             'case_number',
             'case_number_confirm',
             'individual_case_number',
@@ -182,5 +184,5 @@ class InclusionSerializer(serializers.ModelSerializer):
             'caretaker_mother_name',
             'have_labour',
             'labour_type',
-            'additional_comments'
+            'additional_comments',
         )

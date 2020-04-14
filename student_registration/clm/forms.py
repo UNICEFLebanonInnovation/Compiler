@@ -449,6 +449,18 @@ class BLNForm(CommonForm):
         required=True,
         label=_('Phone number confirm')
     )
+    second_phone_number = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=True,
+        label=_('Phone number (own or closest relative)')
+    )
+    second_phone_number_confirm = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=True,
+        label=_('Phone number confirm')
+    )
     id_type = forms.ChoiceField(
         label=_("ID type of the caretaker"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
@@ -821,10 +833,17 @@ class BLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
                     Div('phone_number_confirm', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4.1</span>'),
+                    HTML('<span class="badge badge-default">3.2</span>'),
                     Div('phone_owner', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('second_phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4.1</span>'),
+                    Div('second_phone_number_confirm', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -1029,7 +1048,6 @@ class BLNForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/bln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -1040,6 +1058,8 @@ class BLNForm(CommonForm):
 
         phone_number = cleaned_data.get("phone_number")
         phone_number_confirm = cleaned_data.get("phone_number_confirm")
+        second_phone_number = cleaned_data.get("second_phone_number")
+        second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
         id_type = cleaned_data.get("id_type")
         case_number = cleaned_data.get("case_number")
         case_number_confirm = cleaned_data.get("case_number_confirm")
@@ -1066,6 +1086,9 @@ class BLNForm(CommonForm):
         if phone_number != phone_number_confirm:
             msg = "The phone numbers are not matched"
             self.add_error('phone_number_confirm', msg)
+        if second_phone_number != second_phone_number_confirm:
+            msg = "The phone numbers are not matched"
+            self.add_error('second_phone_number_confirm', msg)
 
         if id_type == 'UNHCR Registered':
             if not case_number:
@@ -1178,6 +1201,8 @@ class BLNForm(CommonForm):
             'phone_number',
             'phone_number_confirm',
             'phone_owner',
+            'second_phone_number',
+            'second_phone_number_confirm',
             'id_type',
             'case_number',
             'case_number_confirm',
@@ -1336,6 +1361,18 @@ class ABLNForm(CommonForm):
         label=_('Phone number (own or closest relative)')
     )
     phone_number_confirm = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=True,
+        label=_('Phone number confirm')
+    )
+    second_phone_number = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=True,
+        label=_('Phone number (own or closest relative)')
+    )
+    second_phone_number_confirm = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=True,
@@ -1708,10 +1745,17 @@ class ABLNForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
                     Div('phone_number_confirm', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4.1</span>'),
+                    HTML('<span class="badge badge-default">3.2</span>'),
                     Div('phone_owner', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('second_phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4.1</span>'),
+                    Div('second_phone_number_confirm', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -1916,7 +1960,6 @@ class ABLNForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data col-md-2'),
-                Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data col-md-2'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/abln-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -1927,6 +1970,8 @@ class ABLNForm(CommonForm):
 
         phone_number = cleaned_data.get("phone_number")
         phone_number_confirm = cleaned_data.get("phone_number_confirm")
+        second_phone_number = cleaned_data.get("second_phone_number")
+        second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
         id_type = cleaned_data.get("id_type")
         case_number = cleaned_data.get("case_number")
         case_number_confirm = cleaned_data.get("case_number_confirm")
@@ -1940,7 +1985,6 @@ class ABLNForm(CommonForm):
         syrian_national_number_confirm = cleaned_data.get("syrian_national_number_confirm")
         sop_national_number = cleaned_data.get("sop_national_number")
         sop_national_number_confirm = cleaned_data.get("sop_national_number_confirm")
-
         parent_individual_case_number = cleaned_data.get("parent_individual_case_number")
         parent_individual_case_number_confirm = cleaned_data.get("parent_individual_case_number_confirm")
         parent_national_number = cleaned_data.get("parent_national_number")
@@ -1953,6 +1997,10 @@ class ABLNForm(CommonForm):
         if phone_number != phone_number_confirm:
             msg = "The phone numbers are not matched"
             self.add_error('phone_number_confirm', msg)
+
+        if second_phone_number != second_phone_number_confirm:
+            msg = "The phone numbers are not matched"
+            self.add_error('second_phone_number_confirm', msg)
 
         if id_type == 'UNHCR Registered':
             if not case_number:
@@ -2065,6 +2113,8 @@ class ABLNForm(CommonForm):
             'phone_number',
             'phone_number_confirm',
             'phone_owner',
+            'second_phone_number',
+            'second_phone_number_confirm',
             'id_type',
             'case_number',
             'case_number_confirm',
@@ -2699,7 +2749,6 @@ class RSForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
-                Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data'),
                 Submit('save_and_pretest', _('Save and Fill pre-test'), css_class='col-md-2 child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/rs-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )
@@ -3065,7 +3114,6 @@ class CBECEForm(CommonForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
-                Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data'),
                 Submit('save_and_pretest', _('Save and Fill pre-test'), css_class='col-md-2 child_data'),
                 HTML('<a class="btn btn-info cancel-button" href="/clm/cbece-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
             )

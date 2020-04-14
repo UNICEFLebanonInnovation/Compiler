@@ -200,7 +200,18 @@ class InclusionForm(forms.ModelForm):
         required=True,
         label=_('Phone number confirm')
     )
-
+    second_phone_number = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=True,
+        label=_('Phone number (own or closest relative)')
+    )
+    second_phone_number_confirm = forms.RegexField(
+        regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
+        required=True,
+        label=_('Phone number confirm')
+    )
     id_type = forms.ChoiceField(
         label=_("ID type of the caretaker"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
@@ -458,10 +469,17 @@ class InclusionForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">3</span>'),
                     Div('phone_number', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4</span>'),
+                    HTML('<span class="badge badge-default">3.1</span>'),
                     Div('phone_number_confirm', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">4.1</span>'),
+                    HTML('<span class="badge badge-default">3.2</span>'),
                     Div('phone_owner', css_class='col-md-3'),
+                    css_class='row',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">4</span>'),
+                    Div('second_phone_number', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4.1</span>'),
+                    Div('second_phone_number_confirm', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -629,7 +647,6 @@ class InclusionForm(forms.ModelForm):
             FormActions(
                 Submit('save', _('Save'), css_class='col-md-2'),
                 Submit('save_add_another', _('Save and add another'), css_class='col-md-2 child_data'),
-                Submit('save_and_continue', _('Save and continue'), css_class='col-md-2 child_data'),
                 HTML('<a class="btn btn-info cancel-button col-md-2" href="/clm/inclusion-list/" translation="' + _('Are you sure you want to cancel this registration?') + '">' + _('Back to list') + '</a>'),
                 css_class='button-group'
             )
@@ -640,6 +657,8 @@ class InclusionForm(forms.ModelForm):
 
         phone_number = cleaned_data.get("phone_number")
         phone_number_confirm = cleaned_data.get("phone_number_confirm")
+        second_phone_number = cleaned_data.get("second_phone_number")
+        second_phone_number_confirm = cleaned_data.get("second_phone_number_confirm")
         id_type = cleaned_data.get("id_type")
         case_number = cleaned_data.get("case_number")
         case_number_confirm = cleaned_data.get("case_number_confirm")
@@ -665,6 +684,10 @@ class InclusionForm(forms.ModelForm):
         if phone_number != phone_number_confirm:
             msg = "The phone numbers are not matched"
             self.add_error('phone_number_confirm', msg)
+
+        if second_phone_number != second_phone_number_confirm:
+            msg = "The phone numbers are not matched"
+            self.add_error('second_phone_number_confirm', msg)
 
         if id_type == 'UNHCR Registered':
             if not case_number:
@@ -807,6 +830,8 @@ class InclusionForm(forms.ModelForm):
             'labour_type',
             'phone_number',
             'phone_number_confirm',
+            'second_phone_number',
+            'second_phone_number_confirm',
             'phone_owner',
             'id_type',
             'case_number',

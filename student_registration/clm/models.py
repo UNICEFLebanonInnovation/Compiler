@@ -550,7 +550,6 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Phone number confirm')
     )
-
     education_status = models.CharField(
         max_length=100,
         blank=True,
@@ -1104,6 +1103,18 @@ class BLN(CLM):
         ),
         verbose_name=_('Phone Owner')
     )
+    second_phone_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Second Phone number')
+    )
+    second_phone_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Phone number confirm')
+    )
 
     def calculate_sore(self, stage):
         keys = [
@@ -1296,6 +1307,18 @@ class ABLN(CLM):
             ('shawish', _('Shawish')),
         ),
         verbose_name=_('Phone Owner')
+    )
+    second_phone_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Second Phone number')
+    )
+    second_phone_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Phone number confirm')
     )
 
     def calculate_sore(self, stage):
@@ -2215,6 +2238,18 @@ class Inclusion(TimeStampedModel):
             ('shawish', _('Shawish')),
         ),
         verbose_name=_('Phone Owner')
+    )
+    second_phone_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Second Phone number')
+    )
+    second_phone_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Phone number confirm')
     )
 
     education_status = models.CharField(
