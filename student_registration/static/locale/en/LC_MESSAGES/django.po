@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-14 17:49+0300\n"
+"POT-Creation-Date: 2020-04-14 18:06+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2152,9 +2152,7 @@ msgstr ""
 #: student_registration/clm/inclusion_forms.py:201
 #: student_registration/clm/inclusion_forms.py:213
 #: student_registration/clm/models.py:551
-#: student_registration/clm/models.py:1116
 #: student_registration/clm/models.py:2227
-#: student_registration/clm/models.py:2252
 msgid "Phone number confirm"
 msgstr ""
 
@@ -3504,16 +3502,18 @@ msgstr ""
 msgid "Second Phone number"
 msgstr ""
 
+#: student_registration/clm/models.py:1116
+#: student_registration/clm/models.py:1321
+#: student_registration/clm/models.py:2252
+msgid "Second Phone number confirm"
+msgstr ""
+
 #: student_registration/clm/models.py:1209
 msgid "Graduated to the ABLN next level"
 msgstr ""
 
 #: student_registration/clm/models.py:1214
 msgid "Referred to ALP"
-msgstr ""
-
-#: student_registration/clm/models.py:1321
-msgid "Second Phone number confirm"
 msgstr ""
 
 #: student_registration/clm/models.py:1416

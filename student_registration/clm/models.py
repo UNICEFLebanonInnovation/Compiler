@@ -1105,13 +1105,13 @@ class BLN(CLM):
     )
     second_phone_number = models.CharField(
         max_length=50,
-        blank=True,
+        blank=False,
         null=True,
         verbose_name=_('Second Phone number')
     )
     second_phone_number_confirm = models.CharField(
         max_length=50,
-        blank=True,
+        blank=False,
         null=True,
         verbose_name=_('Second Phone number confirm')
     )
@@ -1310,13 +1310,13 @@ class ABLN(CLM):
     )
     second_phone_number = models.CharField(
         max_length=50,
-        blank=True,
+        blank=False,
         null=True,
         verbose_name=_('Second Phone number')
     )
     second_phone_number_confirm = models.CharField(
         max_length=50,
-        blank=True,
+        blank=False,
         null=True,
         verbose_name=_('Second Phone number confirm')
     )
@@ -2241,13 +2241,13 @@ class Inclusion(TimeStampedModel):
     )
     second_phone_number = models.CharField(
         max_length=50,
-        blank=True,
+        blank=False,
         null=True,
         verbose_name=_('Second Phone number')
     )
     second_phone_number_confirm = models.CharField(
         max_length=50,
-        blank=True,
+        blank=False,
         null=True,
         verbose_name=_('Second Phone number confirm')
     )
