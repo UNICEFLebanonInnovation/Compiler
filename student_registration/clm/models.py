@@ -1113,7 +1113,7 @@ class BLN(CLM):
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Phone number confirm')
+        verbose_name=_('Second Phone number confirm')
     )
 
     def calculate_sore(self, stage):
@@ -1318,7 +1318,7 @@ class ABLN(CLM):
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Phone number confirm')
+        verbose_name=_('Second Phone number confirm')
     )
 
     def calculate_sore(self, stage):
@@ -2249,7 +2249,7 @@ class Inclusion(TimeStampedModel):
         max_length=50,
         blank=True,
         null=True,
-        verbose_name=_('Phone number confirm')
+        verbose_name=_('Second Phone number confirm')
     )
 
     education_status = models.CharField(
