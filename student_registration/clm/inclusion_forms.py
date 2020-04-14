@@ -460,11 +460,17 @@ class InclusionForm(forms.ModelForm):
                     Div('phone_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('phone_number_confirm', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4.1</span>'),
+                    Div('phone_owner', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('main_caregiver', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5.1</span>'),
+                    Div('main_caregiver_nationality', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5.2</span>'),
+                    Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -609,12 +615,12 @@ class InclusionForm(forms.ModelForm):
             Fieldset(
                 None,
                 Div(
-                    HTML('<span>E</span>'), css_class='block_tag'),
+                    HTML('<span>D</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _('Comments') + '</h4>')
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    # HTML('<span class="badge badge-default">1</span>'),
                     Div('additional_comments', css_class='col-md-12'),
                     css_class='row',
                 ),
@@ -795,10 +801,13 @@ class InclusionForm(forms.ModelForm):
             'student_id',
             'enrollment_id',
             'main_caregiver',
+            'main_caregiver_nationality',
+            'other_caregiver_relationship',
             'have_labour',
             'labour_type',
             'phone_number',
             'phone_number_confirm',
+            'phone_owner',
             'id_type',
             'case_number',
             'case_number_confirm',

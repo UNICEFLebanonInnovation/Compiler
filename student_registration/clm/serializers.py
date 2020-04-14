@@ -223,6 +223,7 @@ class BLNSerializer(CLMSerializer):
             'student_have_children',
             'phone_number',
             'phone_number_confirm',
+            'phone_owner',
             'id_type',
             'case_number',
             'case_number_confirm',
@@ -258,6 +259,8 @@ class BLNSerializer(CLMSerializer):
             'miss_school_date',
             'source_of_transportation',
             'main_caregiver',
+            'main_caregiver_nationality',
+            'other_caregiver_relationship',
             'student_number_children'
         )
 
@@ -282,6 +285,7 @@ class ABLNSerializer(CLMSerializer):
             'student_have_children',
             'phone_number',
             'phone_number_confirm',
+            'phone_owner',
             'id_type',
             'case_number',
             'case_number_confirm',
@@ -317,6 +321,8 @@ class ABLNSerializer(CLMSerializer):
             'miss_school_date',
             'source_of_transportation',
             'main_caregiver',
+            'main_caregiver_nationality',
+            'other_caregiver_relationship',
             'student_number_children'
         )
 

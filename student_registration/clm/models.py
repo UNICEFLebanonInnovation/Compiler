@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
-from student_registration.students.models import Student, Labour
+from student_registration.students.models import Student, Labour, Nationality
 from student_registration.locations.models import Location
 from student_registration.schools.models import (
     School,
@@ -1072,11 +1072,37 @@ class BLN(CLM):
         choices=MAIN_CAREGIVER,
         verbose_name=_('Main Caregiver')
     )
+    main_caregiver_nationality = models.ForeignKey(
+        Nationality,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Main Caregiver Nationality')
+    )
+
+    other_caregiver_relationship = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('Other Caregiver Relationship')
+    )
+
     student_number_children = models.IntegerField(
         blank=True,
         null=True,
         choices=((x, x) for x in range(0, 20)),
         verbose_name=_('How many children does this child have?')
+    )
+    phone_owner = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('main_caregiver', _('Phone Main Caregiver')),
+            ('family member', _('Family Member')),
+            ('neighbors', _('Neighbors')),
+            ('shawish', _('Shawish')),
+        ),
+        verbose_name=_('Phone Owner')
     )
 
     def calculate_sore(self, stage):
@@ -1239,11 +1265,37 @@ class ABLN(CLM):
         choices=MAIN_CAREGIVER,
         verbose_name=_('Main Caregiver')
     )
+
+    main_caregiver_nationality = models.ForeignKey(
+        Nationality,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Main Caregiver Nationality')
+    )
+
+    other_caregiver_relationship = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('Other Caregiver Relationship')
+    )
     student_number_children = models.IntegerField(
         blank=True,
         null=True,
         choices=((x, x) for x in range(0, 20)),
         verbose_name=_('How many children does this child have?')
+    )
+    phone_owner = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('main_caregiver', _('Phone Main Caregiver')),
+            ('family member', _('Family Member')),
+            ('neighbors', _('Neighbors')),
+            ('shawish', _('Shawish')),
+        ),
+        verbose_name=_('Phone Owner')
     )
 
     def calculate_sore(self, stage):
@@ -2152,6 +2204,19 @@ class Inclusion(TimeStampedModel):
         verbose_name=_('Phone number confirm')
     )
 
+    phone_owner = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('main_caregiver', _('Phone Main Caregiver')),
+            ('family member', _('Family Member')),
+            ('neighbors', _('Neighbors')),
+            ('shawish', _('Shawish')),
+        ),
+        verbose_name=_('Phone Owner')
+    )
+
     education_status = models.CharField(
         max_length=100,
         blank=True,
@@ -2333,6 +2398,20 @@ class Inclusion(TimeStampedModel):
         null=True,
         choices=MAIN_CAREGIVER,
         verbose_name=_('Main Caregiver')
+    )
+
+    main_caregiver_nationality = models.ForeignKey(
+        Nationality,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Main Caregiver Nationality')
+    )
+
+    other_caregiver_relationship = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name=_('Other Caregiver Relationship')
     )
 
     caretaker_first_name = models.CharField(

@@ -823,11 +823,17 @@ class BLNForm(CommonForm):
                     Div('phone_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('phone_number_confirm', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4.1</span>'),
+                    Div('phone_owner', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('main_caregiver', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5.1</span>'),
+                    Div('main_caregiver_nationality', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5.2</span>'),
+                    Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -1171,6 +1177,7 @@ class BLNForm(CommonForm):
             'labour_hours',
             'phone_number',
             'phone_number_confirm',
+            'phone_owner',
             'id_type',
             'case_number',
             'case_number_confirm',
@@ -1208,8 +1215,10 @@ class BLNForm(CommonForm):
             'cadaster',
             'registration_level',
             'main_caregiver',
+            'main_caregiver_nationality',
+            'other_caregiver_relationship',
             'labour_weekly_income',
-            # 'source_of_transportation',
+            'source_of_transportation',
             'student_p_code'
         )
 
@@ -1701,11 +1710,17 @@ class ABLNForm(CommonForm):
                     Div('phone_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4</span>'),
                     Div('phone_number_confirm', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4.1</span>'),
+                    Div('phone_owner', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('main_caregiver', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5.1</span>'),
+                    Div('main_caregiver_nationality', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">5.2</span>'),
+                    Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -2049,6 +2064,7 @@ class ABLNForm(CommonForm):
             'labour_hours',
             'phone_number',
             'phone_number_confirm',
+            'phone_owner',
             'id_type',
             'case_number',
             'case_number_confirm',
@@ -2086,8 +2102,10 @@ class ABLNForm(CommonForm):
             'cadaster',
             'registration_level',
             'main_caregiver',
+            'main_caregiver_nationality',
+            'other_caregiver_relationship',
             'labour_weekly_income',
-            # 'source_of_transportation',
+            'source_of_transportation',
             'student_p_code'
         )
 
