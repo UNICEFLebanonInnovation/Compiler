@@ -653,7 +653,8 @@ function reorganizeForm()
     $('#span_miss_school_date').removeClass('d-none');
     }
 
-
+    $('div#div_id_other_caregiver_relationship').addClass('d-none');
+    $('#lbl_other_caregiver_relationship').addClass('d-none');
 
     if(main_caregiver == 'father'){
         var student_father_name = $('#id_student_father_name').val();
@@ -661,6 +662,11 @@ function reorganizeForm()
         $('#id_caretaker_first_name').val(student_father_name);
         $('#id_caretaker_last_name').val(student_last_name);
     }
+    else if(main_caregiver == 'other'){
+        $('div#div_id_other_caregiver_relationship').removeClass('d-none');
+        $('#lbl_other_caregiver_relationship').removeClass('d-none');
+    }
+
 
     // // id_student_family_status
     // if(family_status != 'single'){

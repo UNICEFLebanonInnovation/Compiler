@@ -1103,15 +1103,27 @@ class BLN(CLM):
         ),
         verbose_name=_('Phone Owner')
     )
+    second_phone_owner = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('main_caregiver', _('Phone Main Caregiver')),
+            ('family member', _('Family Member')),
+            ('neighbors', _('Neighbors')),
+            ('shawish', _('Shawish')),
+        ),
+        verbose_name=_('Second Phone Owner')
+    )
     second_phone_number = models.CharField(
         max_length=50,
-        blank=False,
+        blank=True,
         null=True,
         verbose_name=_('Second Phone number')
     )
     second_phone_number_confirm = models.CharField(
         max_length=50,
-        blank=False,
+        blank=True,
         null=True,
         verbose_name=_('Second Phone number confirm')
     )
@@ -1308,15 +1320,27 @@ class ABLN(CLM):
         ),
         verbose_name=_('Phone Owner')
     )
+    second_phone_owner = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('main_caregiver', _('Phone Main Caregiver')),
+            ('family member', _('Family Member')),
+            ('neighbors', _('Neighbors')),
+            ('shawish', _('Shawish')),
+        ),
+        verbose_name=_('Second Phone Owner')
+    )
     second_phone_number = models.CharField(
         max_length=50,
-        blank=False,
+        blank=True,
         null=True,
         verbose_name=_('Second Phone number')
     )
     second_phone_number_confirm = models.CharField(
         max_length=50,
-        blank=False,
+        blank=True,
         null=True,
         verbose_name=_('Second Phone number confirm')
     )
@@ -2239,15 +2263,27 @@ class Inclusion(TimeStampedModel):
         ),
         verbose_name=_('Phone Owner')
     )
+    second_phone_owner = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('main_caregiver', _('Phone Main Caregiver')),
+            ('family member', _('Family Member')),
+            ('neighbors', _('Neighbors')),
+            ('shawish', _('Shawish')),
+        ),
+        verbose_name=_('Second Phone Owner')
+    )
     second_phone_number = models.CharField(
         max_length=50,
-        blank=False,
+        blank=True,
         null=True,
         verbose_name=_('Second Phone number')
     )
     second_phone_number_confirm = models.CharField(
         max_length=50,
-        blank=False,
+        blank=True,
         null=True,
         verbose_name=_('Second Phone number confirm')
     )

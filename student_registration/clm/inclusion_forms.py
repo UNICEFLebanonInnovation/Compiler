@@ -157,7 +157,7 @@ class InclusionForm(forms.ModelForm):
     first_attendance_date = forms.DateField(
         label=_("First attendance date"),
         widget=forms.TextInput(attrs={'autocomplete': 'false'}),
-        required=True
+        required=False
     )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
@@ -203,13 +203,13 @@ class InclusionForm(forms.ModelForm):
     second_phone_number = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=True,
+        required=False,
         label=_('Phone number (own or closest relative)')
     )
     second_phone_number_confirm = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=True,
+        required=False,
         label=_('Phone number confirm')
     )
     id_type = forms.ChoiceField(
@@ -346,6 +346,13 @@ class InclusionForm(forms.ModelForm):
         required=True,
         choices=(
             ('', '----------'),
+            ('Referred by CP partner', _('Referred by CP partner')),
+            ('Referred by youth partner', _('Referred by youth partner')),
+            ('Family walked in to NGO', _('Family walked in to NGO')),
+            ('Referral from another NGO', _('Referral from another NGO')),
+            ('Referral from another Municipality', _('Referral from Municipality')),
+            ('Direct outreach', _('Direct outreach')),
+            ('List database', _('List database')),
             ('abln', _('ABLN')),
             ('bln', _('BLN')),
             ('cbece', _('CBECE')),
@@ -445,12 +452,9 @@ class InclusionForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">13</span>'),
                     Div('internal_number', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">14</span>'),
+                    Div('first_attendance_date', css_class='col-md-3 d-none'),
                     HTML('<span class="badge badge-default">14</span>'),
-                    Div('first_attendance_date', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">15</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -476,6 +480,8 @@ class InclusionForm(forms.ModelForm):
                     Div('second_phone_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4.1</span>'),
                     Div('second_phone_number_confirm', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4.2</span>'),
+                    Div('second_phone_owner', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -483,7 +489,7 @@ class InclusionForm(forms.ModelForm):
                     Div('main_caregiver', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5.1</span>'),
                     Div('main_caregiver_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5.2</span>'),
+                    HTML('<span class="badge badge-default" id="lbl_other_caregiver_relationship" >5.2</span>'),
                     Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -829,6 +835,7 @@ class InclusionForm(forms.ModelForm):
             'second_phone_number',
             'second_phone_number_confirm',
             'phone_owner',
+            'second_phone_owner',
             'id_type',
             'case_number',
             'case_number_confirm',

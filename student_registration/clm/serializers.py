@@ -226,6 +226,7 @@ class BLNSerializer(CLMSerializer):
             'second_phone_number',
             'second_phone_number_confirm',
             'phone_owner',
+            'second_phone_owner',
             'id_type',
             'case_number',
             'case_number_confirm',

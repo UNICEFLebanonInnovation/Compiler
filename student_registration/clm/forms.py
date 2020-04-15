@@ -357,13 +357,10 @@ class BLNForm(CommonForm):
     )
 
     round = forms.ModelChoiceField(
-        # queryset=CLMRound.objects.filter(current_round_bln=True), widget=forms.Select,
-        # queryset=CLMRound.objects.filter(current_round_abln=True), widget=forms.Select,
-        queryset=CLMRound.objects.all(), widget=forms.Select,
+        queryset=CLMRound.objects.filter(current_round_bln=True), widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
-        # initial=CLMRound.objects.filter(current_round_bln=True).first().id
     )
 
     round_start_date = forms.DateField(
@@ -452,14 +449,14 @@ class BLNForm(CommonForm):
     second_phone_number = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=True,
-        label=_('Phone number (own or closest relative)')
+        required=False,
+        label=_('Second Phone number')
     )
     second_phone_number_confirm = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=True,
-        label=_('Phone number confirm')
+        required=False,
+        label=_('Second Phone number confirm')
     )
     id_type = forms.ChoiceField(
         label=_("ID type of the caretaker"),
@@ -844,6 +841,8 @@ class BLNForm(CommonForm):
                     Div('second_phone_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4.1</span>'),
                     Div('second_phone_number_confirm', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4.2</span>'),
+                    Div('second_phone_owner', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -851,7 +850,7 @@ class BLNForm(CommonForm):
                     Div('main_caregiver', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5.1</span>'),
                     Div('main_caregiver_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5.2</span>'),
+                    HTML('<span class="badge badge-default" id="lbl_other_caregiver_relationship" >5.2</span>'),
                     Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1203,6 +1202,7 @@ class BLNForm(CommonForm):
             'phone_owner',
             'second_phone_number',
             'second_phone_number_confirm',
+            'second_phone_owner',
             'id_type',
             'case_number',
             'case_number_confirm',
@@ -1369,14 +1369,14 @@ class ABLNForm(CommonForm):
     second_phone_number = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=True,
-        label=_('Phone number (own or closest relative)')
+        required=False,
+        label=_('Second Phone number')
     )
     second_phone_number_confirm = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
-        required=True,
-        label=_('Phone number confirm')
+        required=False,
+        label=_('Second Phone number confirm')
     )
     id_type = forms.ChoiceField(
         label=_("ID type of the caretaker"),
@@ -1756,6 +1756,8 @@ class ABLNForm(CommonForm):
                     Div('second_phone_number', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">4.1</span>'),
                     Div('second_phone_number_confirm', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">4.2</span>'),
+                    Div('second_phone_owner', css_class='col-md-3'),
                     css_class='row',
                 ),
                 Div(
@@ -1763,7 +1765,7 @@ class ABLNForm(CommonForm):
                     Div('main_caregiver', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5.1</span>'),
                     Div('main_caregiver_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5.2</span>'),
+                    HTML('<span class="badge badge-default id="lbl_other_caregiver_relationship" ">5.2</span>'),
                     Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -2113,6 +2115,7 @@ class ABLNForm(CommonForm):
             'phone_number',
             'phone_number_confirm',
             'phone_owner',
+            'second_phone_owner',
             'second_phone_number',
             'second_phone_number_confirm',
             'id_type',

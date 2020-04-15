@@ -150,6 +150,7 @@ class InclusionSerializer(serializers.ModelSerializer):
             'phone_number',
             'phone_number_confirm',
             'phone_owner',
+            'second_phone_owner',
             'second_phone_number',
             'second_phone_number_confirm',
             'case_number',
