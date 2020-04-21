@@ -438,25 +438,25 @@ class BLNForm(CommonForm):
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=True,
-        label=_('Phone number (own or closest relative)')
+        label=_('Main Phone number')
     )
     phone_number_confirm = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=True,
-        label=_('Phone number confirm')
+        label=_('Main Phone number confirm')
     )
     second_phone_number = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=False,
-        label=_('Second Phone number')
+        label=_('Second Phone Number')
     )
     second_phone_number_confirm = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=False,
-        label=_('Second Phone number confirm')
+        label=_('Second Phone Number confirm')
     )
     id_type = forms.ChoiceField(
         label=_("ID type of the caretaker"),
@@ -1358,25 +1358,25 @@ class ABLNForm(CommonForm):
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=True,
-        label=_('Phone number (own or closest relative)')
+        label=_('Main Phone number')
     )
     phone_number_confirm = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=True,
-        label=_('Phone number confirm')
+        label=_('Main Phone number confirm')
     )
     second_phone_number = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=False,
-        label=_('Second Phone number')
+        label=_('Second Phone Number')
     )
     second_phone_number_confirm = forms.RegexField(
         regex=r'^((03)|(70)|(71)|(76)|(78)|(79)|(81))-\d{6}$',
         widget=forms.TextInput(attrs={'placeholder': 'Format: XX-XXXXXX'}),
         required=False,
-        label=_('Second Phone number confirm')
+        label=_('Second Phone Number confirm')
     )
     id_type = forms.ChoiceField(
         label=_("ID type of the caretaker"),
