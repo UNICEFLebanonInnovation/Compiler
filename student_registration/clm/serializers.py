@@ -106,6 +106,8 @@ class CLMSerializer(serializers.ModelSerializer):
     search_clm_student = serializers.CharField(source='student.full_name', read_only=True)
     search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
 
+    owner_name = serializers.CharField(source='owner.name', read_only=True)
+    modified_by_name = serializers.CharField(source='modified_by.name', read_only=True)
 
     class Meta:
         model = CLM
@@ -139,7 +141,9 @@ class CLMSerializer(serializers.ModelSerializer):
             'student_id_number',
             'internal_number',
             'owner',
+            'owner_name',
             'modified_by',
+            'modified_by_name',
             'governorate',
             'governorate_name',
             'district',
@@ -184,6 +188,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'unsuccessful_posttest_reason',
             'unsuccessful_pretest_reason',
             'created',
+            'modified',
             'cycle_completed',
             'enrolled_at_school',
             'barriers_single',
