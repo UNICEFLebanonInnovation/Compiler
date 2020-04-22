@@ -367,11 +367,11 @@ class BLNForm(CommonForm):
         label=_("Round start date"),
         required=False
     )
-    registration_level = forms.ChoiceField(
-        label=_("Registration level"),
-        widget=forms.Select, required=True,
-        choices=REGISTRATION_LEVEL
-    )
+    # registration_level = forms.ChoiceField(
+    #     label=_("Registration level"),
+    #     widget=forms.Select, required=True,
+    #     choices=REGISTRATION_LEVEL
+    # )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
         widget=forms.Select, required=True,
@@ -739,8 +739,8 @@ class BLNForm(CommonForm):
                     Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">8</span>'),
-                    Div('registration_level', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">8</span>'),
+                    # Div('registration_level', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data A_right_border'
@@ -850,7 +850,7 @@ class BLNForm(CommonForm):
                     Div('main_caregiver', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5.1</span>'),
                     Div('main_caregiver_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="lbl_other_caregiver_relationship" >5.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_other_caregiver_relationship">5.2</span>'),
                     Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1238,7 +1238,7 @@ class BLNForm(CommonForm):
             'student_number_children',
             'round_start_date',
             'cadaster',
-            'registration_level',
+            # 'registration_level',
             'main_caregiver',
             'main_caregiver_nationality',
             'other_caregiver_relationship',
@@ -1287,11 +1287,11 @@ class ABLNForm(CommonForm):
         label=_("Round start date"),
         required=False
     )
-    registration_level = forms.ChoiceField(
-        label=_("Registration level"),
-        widget=forms.Select, required=True,
-        choices=REGISTRATION_LEVEL
-    )
+    # registration_level = forms.ChoiceField(
+    #     label=_("Registration level"),
+    #     widget=forms.Select, required=True,
+    #     choices=REGISTRATION_LEVEL
+    # )
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
         widget=forms.Select, required=True,
@@ -1654,8 +1654,8 @@ class ABLNForm(CommonForm):
                     Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">8</span>'),
-                    Div('registration_level', css_class='col-md-3'),
+                    # HTML('<span class="badge badge-default">8</span>'),
+                    # Div('registration_level', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data A_right_border'
@@ -1765,7 +1765,7 @@ class ABLNForm(CommonForm):
                     Div('main_caregiver', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5.1</span>'),
                     Div('main_caregiver_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default id="lbl_other_caregiver_relationship" ">5.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_other_caregiver_relationship">5.2</span>'),
                     Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -2153,7 +2153,7 @@ class ABLNForm(CommonForm):
             'student_number_children',
             'round_start_date',
             'cadaster',
-            'registration_level',
+            # 'registration_level',
             'main_caregiver',
             'main_caregiver_nationality',
             'other_caregiver_relationship',

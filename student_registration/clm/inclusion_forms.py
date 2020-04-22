@@ -489,7 +489,7 @@ class InclusionForm(forms.ModelForm):
                     Div('main_caregiver', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">5.1</span>'),
                     Div('main_caregiver_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="lbl_other_caregiver_relationship" >5.2</span>'),
+                    HTML('<span class="badge badge-default" id="span_other_caregiver_relationship">5.2</span>'),
                     Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
