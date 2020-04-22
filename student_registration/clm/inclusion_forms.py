@@ -281,11 +281,13 @@ class InclusionForm(forms.ModelForm):
     )
     national_number = forms.RegexField(
         regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
         label=_('Lebanese ID number of the child (Optional)')
     )
     national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
         label=_('Confirm Lebanese ID number of the child (optional)')
     )
@@ -309,11 +311,13 @@ class InclusionForm(forms.ModelForm):
     )
     parent_national_number = forms.RegexField(
         regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
         label=_('Lebanese ID number of the caretaker (Mandatory)')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
         label=_('Confirm Lebanese ID number of the caretaker (Mandatory)')
     )

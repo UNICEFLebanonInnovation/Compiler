@@ -389,7 +389,7 @@ class BLNForm(CommonForm):
         choices=YES_NO_CHOICE,
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
-        required=False,
+        required=True,
     )
     student_number_children = forms.IntegerField(
         label=_('How many children does this child have?'),
@@ -528,11 +528,13 @@ class BLNForm(CommonForm):
 
     national_number = forms.RegexField(
         regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
         label=_('Lebanese ID number of the child (Optional)')
     )
     national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
         label=_('Confirm Lebanese ID number of the child (optional)')
     )
@@ -556,11 +558,13 @@ class BLNForm(CommonForm):
     )
     parent_national_number = forms.RegexField(
         regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
         label=_('Lebanese ID number of the caretaker (Mandatory)')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
         label=_('Confirm Lebanese ID number of the caretaker (Mandatory)')
     )
@@ -600,7 +604,8 @@ class BLNForm(CommonForm):
             ('Referral from another NGO', _('Referral from another NGO')),
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Direct outreach', _('Direct outreach')),
-            ('List database', _('List database'))
+            ('List database', _('List database')),
+            ('ABLN', _('ABLN'))
         ),
         initial=''
     )
@@ -1309,7 +1314,7 @@ class ABLNForm(CommonForm):
         choices=YES_NO_CHOICE,
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
-        required=False,
+        required=True,
     )
     student_number_children = forms.IntegerField(
         label=_('How many children does this child have?'),
@@ -1448,11 +1453,13 @@ class ABLNForm(CommonForm):
 
     national_number = forms.RegexField(
         regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
         label=_('Lebanese ID number of the child (Optional)')
     )
     national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
         label=_('Confirm Lebanese ID number of the child (optional)')
     )
@@ -1476,13 +1483,21 @@ class ABLNForm(CommonForm):
     )
     parent_national_number = forms.RegexField(
         regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
         label=_('Lebanese ID number of the caretaker (Mandatory)')
     )
     parent_national_number_confirm = forms.RegexField(
         regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
         required=False,
         label=_('Confirm Lebanese ID number of the caretaker (Mandatory)')
+    )
+    parent_national_number = forms.RegexField(
+        regex=r'^\d{12}$',
+        widget=forms.TextInput(attrs={'placeholder': 'Format: XXXXXXXXXXXX'}),
+        required=False,
+        label=_('Lebanese ID number of the caretaker (Mandatory)')
     )
     parent_syrian_national_number = forms.RegexField(
         regex=r'^\d{11}$',
@@ -2251,7 +2266,7 @@ class RSForm(CommonForm):
         choices=YES_NO_CHOICE,
         coerce=lambda x: bool(int(x)),
         widget=forms.RadioSelect,
-        required=False,
+        required=True,
     )
     grade = forms.ModelChoiceField(
         queryset=ClassRoom.objects.all(), widget=forms.Select,

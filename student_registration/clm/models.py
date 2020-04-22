@@ -1073,7 +1073,7 @@ class BLN(CLM):
     )
     main_caregiver_nationality = models.ForeignKey(
         Nationality,
-        blank=True, null=True,
+        blank=False, null=True,
         related_name='+',
         verbose_name=_('Main Caregiver Nationality')
     )
@@ -1093,7 +1093,7 @@ class BLN(CLM):
     )
     phone_owner = models.CharField(
         max_length=100,
-        blank=True,
+        blank=False,
         null=True,
         choices=Choices(
             ('main_caregiver', _('Phone Main Caregiver')),
@@ -1291,7 +1291,7 @@ class ABLN(CLM):
 
     main_caregiver_nationality = models.ForeignKey(
         Nationality,
-        blank=True, null=True,
+        blank=False, null=True,
         related_name='+',
         verbose_name=_('Main Caregiver Nationality')
     )
@@ -1310,7 +1310,7 @@ class ABLN(CLM):
     )
     phone_owner = models.CharField(
         max_length=100,
-        blank=True,
+        blank=False,
         null=True,
         choices=Choices(
             ('main_caregiver', _('Phone Main Caregiver')),
@@ -2253,7 +2253,7 @@ class Inclusion(TimeStampedModel):
 
     phone_owner = models.CharField(
         max_length=100,
-        blank=True,
+        blank=False,
         null=True,
         choices=Choices(
             ('main_caregiver', _('Phone Main Caregiver')),
@@ -2473,7 +2473,7 @@ class Inclusion(TimeStampedModel):
 
     main_caregiver_nationality = models.ForeignKey(
         Nationality,
-        blank=True, null=True,
+        blank=False, null=True,
         related_name='+',
         verbose_name=_('Main Caregiver Nationality')
     )
