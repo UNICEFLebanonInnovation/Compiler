@@ -155,6 +155,7 @@ class Person(TimeStampedModel):
     )
 
     STUDENT_INCOME= Choices(
+        ('', '----------'),
         ('thousand_or_less', _('10,000 LBP or less')),
         ('eleven_thousand_to_twenty_five', _('11,000 to 25,000 LBP')),
         ('twenty_six_thousand_to_fifty', _('26,000 to 50,000 LBP')),

@@ -168,6 +168,7 @@ class CLM(TimeStampedModel):
         ('yes_all_day', _('Yes - All day')),
     )
     LABOURS = Choices(
+        ('', '----------'),
         ('agriculture', _('Agriculture')),
         ('building', _('Building')),
         ('manufacturing', _('Manufacturing')),
