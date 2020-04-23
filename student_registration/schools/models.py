@@ -22,6 +22,16 @@ class Coordinator(models.Model):
             return self.name
 
 
+class PublicHolidays(models.Model):
+    holiday = models.DateField(
+        unique=True,
+        verbose_name=_('Public holidays')
+    )
+
+    def __unicode__(self):
+        return self.holiday.strftime("%m/%d/%Y")
+
+
 class School(models.Model):
 
     name = models.CharField(
@@ -375,6 +385,13 @@ class Section(models.Model):
 
 class ClassRoom(models.Model):
     name = models.CharField(max_length=45, unique=True)
+    classroom_type = models.CharField(
+        blank=True, null=True, max_length=2,
+        choices=Choices(
+            ('PV', _('Private School')),
+            ('PU', _('Public School')),
+        ),
+    )
 
     class Meta:
         ordering = ['id']
@@ -598,17 +615,6 @@ class class_section(TimeStampedModel):
         related_name='+',
         verbose_name=_('Education year')
     )
-
-
-class Subject(models.Model):
-    name = models.CharField(max_length=45, unique=True)
-
-    class Meta:
-        ordering = ['id']
-        verbose_name_plural = 'Subjects'
-
-    def __unicode__(self):
-        return self.name
 
 
 class Evaluation(TimeStampedModel):
@@ -2249,3 +2255,286 @@ class Evaluation(TimeStampedModel):
 
     def __unicode__(self):
             return self.school.name
+
+
+class Schl_Subject(models.Model):
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_('Subject')
+    )
+    class Meta:
+        verbose_name_plural = "Subjects"
+
+    def __unicode__(self):
+        return self.name
+
+
+class Schl_Survey(TimeStampedModel):
+    school = models.ForeignKey(
+        School,
+        blank=True, null=True,
+        verbose_name=_('School'),
+        related_name='+',
+    )
+    classroom = models.ForeignKey(
+        ClassRoom,
+        blank=True, null=True,
+        verbose_name=_('Class'),
+        related_name='+',
+    )
+    schl_subject = models.ForeignKey(
+        Schl_Subject,
+        blank=True, null=True,
+        verbose_name=_('Course'),
+        related_name='+',
+    )
+    teachingdays_tillfeb = models.IntegerField(
+        blank=True, null=True,
+    )
+    teachingdays_frommars = models.IntegerField(
+        blank=True, null=True,
+    )
+    teachingdays_remaining = models.IntegerField(
+        blank=True, null=True,
+    )
+
+
+class Schl_Survey_Class(TimeStampedModel):
+    school = models.ForeignKey(
+        School,
+        blank=True, null=True,
+        verbose_name=_('School'),
+        related_name='+',
+    )
+    classroom = models.ForeignKey(
+        ClassRoom,
+        blank=True, null=True,
+        verbose_name=_('Class'),
+        related_name='+',
+    )
+    de_implemented = models.BooleanField(
+        blank=True,
+        default=False,
+        verbose_name=_('Distance education implemented ?')
+    )
+    de_usedmethod_1 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The methods used during the distance education plan')
+    )
+    de_challenge_1 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The challenges during the distance education plan')
+    )
+    de_negativenotes_1 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_positivenotes_1 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_interactedstudents_1 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The number of interacted students  ')
+    )
+
+    de_usedmethod_2 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The methods used during the distance education plan')
+    )
+    de_challenge_2 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The challenges during the distance education plan')
+    )
+    de_negativenotes_2 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_positivenotes_2 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_interactedstudents_2 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The number of interacted students  ')
+    )
+
+    de_usedmethod_3 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The methods used during the distance education plan')
+    )
+    de_challenge_3 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The challenges during the distance education plan')
+    )
+    de_negativenotes_3 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_positivenotes_3 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_interactedstudents_3 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The number of interacted students  ')
+    )
+
+    de_usedmethod_4 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The methods used during the distance education plan')
+    )
+    de_challenge_4 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The challenges during the distance education plan')
+    )
+    de_negativenotes_4 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_positivenotes_4 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_interactedstudents_4 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The number of interacted students  ')
+    )
+
+    de_usedmethod_5 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The methods used during the distance education plan')
+    )
+    de_challenge_5 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The challenges during the distance education plan')
+    )
+    de_negativenotes_5 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_positivenotes_5 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_interactedstudents_5 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The number of interacted students  ')
+    )
+
+    de_usedmethod_6 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The methods used during the distance education plan')
+    )
+    de_challenge_6 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The challenges during the distance education plan')
+    )
+    de_negativenotes_6 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_positivenotes_6 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_interactedstudents_6 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The number of interacted students  ')
+    )
+
+    de_usedmethod_7 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The methods used during the distance education plan')
+    )
+    de_challenge_7 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The challenges during the distance education plan')
+    )
+    de_negativenotes_7 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_positivenotes_7 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_interactedstudents_7 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The number of interacted students  ')
+    )
+
+    de_usedmethod_8 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The methods used during the distance education plan')
+    )
+    de_challenge_8 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The challenges during the distance education plan')
+    )
+    de_negativenotes_8 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_positivenotes_8 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The negative notes ')
+    )
+    de_interactedstudents_8 = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('The number of interacted students  ')
+    )
+    nbstudents = models.IntegerField(
+        blank=True, null=True,
+    )
+
+    de_nbstudents = models.IntegerField(
+        blank=True, null=True,
+    )
+    nbteachers = models.IntegerField(
+        blank=True, null=True,
+    )
+    de_nbteachers = models.IntegerField(
+        blank=True, null=True,
+    )

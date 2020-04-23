@@ -58,7 +58,11 @@ class UserAdmin(AuthUserAdmin):
         'allow_clearpic',
         'deny_clearpic',
         'allow_evalcovid19',
-        'deny_evalcovid19'
+        'deny_evalcovid19',
+        'allow_staff_attendance',
+        'deny_staff_attendance',
+        'allow_survey_ps',
+        'deny_survey_ps',
     )
 
     fieldsets = (
@@ -121,8 +125,18 @@ class UserAdmin(AuthUserAdmin):
         for user in queryset:
             user.groups.add(group)
 
-    def allow_evalcovid19(self, request, queryset):
+    def allow_staff_evalcovid19(self, request, queryset):
         group = Group.objects.get(name='EVAL_COVID19')
+        for user in queryset:
+            user.groups.add(group)
+
+    def allow_staff_attendance(self, request, queryset):
+        group = Group.objects.get(name='ALLOW_STAFF_ATTENDANCE')
+        for user in queryset:
+            user.groups.add(group)
+
+    def allow_survey_ps(self, request, queryset):
+        group = Group.objects.get(name='SURVEY_PS')
         for user in queryset:
             user.groups.add(group)
 
@@ -183,6 +197,16 @@ class UserAdmin(AuthUserAdmin):
 
     def deny_attendance(self, request, queryset):
         group = Group.objects.get(name='ATTENDANCE')
+        for user in queryset:
+            user.groups.remove(group)
+
+    def deny_staff_attendance(self, request, queryset):
+        group = Group.objects.get(name='ALLOW_STAFF_ATTENDANCE')
+        for user in queryset:
+            user.groups.remove(group)
+
+    def deny_survey_ps(self, request, queryset):
+        group = Group.objects.get(name='SURVEY_PS')
         for user in queryset:
             user.groups.remove(group)
 
