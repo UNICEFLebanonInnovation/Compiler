@@ -572,6 +572,7 @@ class CLM(TimeStampedModel):
             ('Syrian national ID', _("Syrian national ID")),
             ('Palestinian national ID', _("Palestinian national ID")),
             ('Lebanese national ID', _("Lebanese national ID")),
+            ('Other nationality', _("Other nationality")),
             ('Child have no ID', _("Child have no ID"))
         ),
         verbose_name=_('Child ID type')
@@ -767,7 +768,30 @@ class CLM(TimeStampedModel):
         null=True,
         verbose_name=_('Palestinian ID number confirm')
     )
-
+    parent_other_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('ID number ')
+    )
+    parent_other_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('ID number confirm')
+    )
+    other_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Child ID number ')
+    )
+    other_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Child ID number confirm')
+    )
     referral_programme_type_1 = models.CharField(
         max_length=100,
         blank=True,
@@ -2310,6 +2334,7 @@ class Inclusion(TimeStampedModel):
             ('Syrian national ID', _("Syrian national ID")),
             ('Palestinian national ID', _("Palestinian national ID")),
             ('Lebanese national ID', _("Lebanese national ID")),
+            ('Other nationality', _("Other nationality")),
             ('Child have no ID', _("Child have no ID"))
         ),
         verbose_name=_('Child ID type')
@@ -2462,7 +2487,30 @@ class Inclusion(TimeStampedModel):
         null=True,
         verbose_name=_('Palestinian ID number confirm')
     )
-
+    parent_other_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('ID number ')
+    )
+    parent_other_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('ID number confirm')
+    )
+    other_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Child ID number ')
+    )
+    other_number_confirm = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Child ID number confirm')
+    )
     main_caregiver = models.CharField(
         max_length=100,
         blank=True,

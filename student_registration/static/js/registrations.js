@@ -714,6 +714,10 @@ function reorganizeForm()
         $('div.child_id5').removeClass('d-none');
     }
 
+    if(id_type == 'Other nationality'){
+        $('div.child_id6').removeClass('d-none');
+    }
+
     if(program_site == 'out_school') {
         $('div#div_id_school').parent().addClass('d-none');
         $('div#div_id_school').parent().prev().addClass('d-none');

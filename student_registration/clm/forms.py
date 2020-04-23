@@ -469,6 +469,7 @@ class BLNForm(CommonForm):
             ('Syrian national ID', _("Syrian national ID")),
             ('Palestinian national ID', _("Palestinian national ID")),
             ('Lebanese national ID', _("Lebanese national ID")),
+            ('Other nationality', _("Other nationality")),
             ('Child have no ID', _("Child have no ID"))
         ),
         initial=''
@@ -587,6 +588,23 @@ class BLNForm(CommonForm):
         # regex=r'^\d{11}$',
         required=False,
         label=_('Confirm Palestinian ID number of the Caretaker (Mandatory)')
+    )
+
+    parent_other_number = forms.CharField(
+        required=False,
+        label=_('ID number of the Caretaker (Mandatory)')
+    )
+    parent_other_number_confirm = forms.CharField(
+        required=False,
+        label=_('Confirm ID number of the Caretaker (Mandatory)')
+    )
+    other_number = forms.CharField(
+        required=False,
+        label=_(' ID number of the child (Optional)')
+    )
+    other_number_confirm = forms.CharField(
+        required=False,
+        label=_('Confirm ID number of the child (optional)')
     )
 
     no_child_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -978,6 +996,20 @@ class BLNForm(CommonForm):
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id5',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">31</span>'),
+                    Div('parent_other_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">32</span>'),
+                    Div('parent_other_number_confirm', css_class='col-md-4'),
+                    css_class='row child_id child_id6',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">33</span>'),
+                    Div('other_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">34</span>'),
+                    Div('other_number_confirm', css_class='col-md-4'),
+                    css_class='row child_id child_id6',
+                ),
                 css_class='bd-callout bd-callout-warning child_data C_right_border'
             ),
 
@@ -1086,6 +1118,10 @@ class BLNForm(CommonForm):
         sop_parent_national_number_confirm = cleaned_data.get("parent_sop_national_number_confirm")
         parent_syrian_national_number = cleaned_data.get("parent_syrian_national_number")
         parent_syrian_national_number_confirm = cleaned_data.get("parent_syrian_national_number_confirm")
+        parent_other_number = cleaned_data.get("parent_other_number")
+        parent_other_number_confirm = cleaned_data.get("parent_other_number_confirm")
+        other_number = cleaned_data.get("other_number")
+        other_number_confirm = cleaned_data.get("other_number_confirm")
 
         if phone_number != phone_number_confirm:
             msg = "The phone numbers are not matched"
@@ -1180,6 +1216,21 @@ class BLNForm(CommonForm):
                 msg = "The national numbers are not matched"
                 self.add_error('sop_national_number_confirm', msg)
 
+        if id_type == 'Other nationality':
+            if not parent_other_number:
+                self.add_error('parent_other_number', 'This field is required')
+
+            if not parent_other_number_confirm:
+                self.add_error('parent_other_number_confirm', 'This field is required')
+
+            if parent_other_number != parent_other_number_confirm:
+                msg = "The ID numbers are not matched"
+                self.add_error('parent_other_number_confirm', msg)
+
+            if other_number != other_number_confirm:
+                msg = "The ID numbers are not matched"
+                self.add_error('other_number_confirm', msg)
+
     def save(self, request=None, instance=None, serializer=None):
         instance = super(BLNForm, self).save(request=request, instance=instance, serializer=BLNSerializer)
         instance.pre_test = {
@@ -1229,6 +1280,10 @@ class BLNForm(CommonForm):
             'parent_syrian_national_number_confirm',
             'parent_sop_national_number',
             'parent_sop_national_number_confirm',
+            'parent_other_number',
+            'parent_other_number_confirm',
+            'other_number',
+            'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
             'other_nationality',
@@ -1394,6 +1449,7 @@ class ABLNForm(CommonForm):
             ('Syrian national ID', _("Syrian national ID")),
             ('Palestinian national ID', _("Palestinian national ID")),
             ('Lebanese national ID', _("Lebanese national ID")),
+            ('Other nationality', _("Other nationality")),
             ('Child have no ID', _("Child have no ID"))
         ),
         initial=''
@@ -1518,6 +1574,23 @@ class ABLNForm(CommonForm):
         # regex=r'^\d{11}$',
         required=False,
         label=_('Confirm Palestinian ID number of the Caretaker (Mandatory)')
+    )
+
+    parent_other_number = forms.CharField(
+        required=False,
+        label=_('ID number of the Caretaker (Mandatory)')
+    )
+    parent_other_number_confirm = forms.CharField(
+        required=False,
+        label=_('Confirm ID number of the Caretaker (Mandatory)')
+    )
+    other_number = forms.CharField(
+        required=False,
+        label=_(' ID number of the child (Optional)')
+    )
+    other_number_confirm = forms.CharField(
+        required=False,
+        label=_('Confirm ID number of the child (optional)')
     )
 
     no_child_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -1903,6 +1976,20 @@ class ABLNForm(CommonForm):
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id5',
                 ),
+                Div(
+                    HTML('<span class="badge badge-default">31</span>'),
+                    Div('parent_other_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">32</span>'),
+                    Div('parent_other_number_confirm', css_class='col-md-4'),
+                    css_class='row child_id child_id6',
+                ),
+                Div(
+                    HTML('<span class="badge badge-default">33</span>'),
+                    Div('other_number', css_class='col-md-4'),
+                    HTML('<span class="badge badge-default">34</span>'),
+                    Div('other_number_confirm', css_class='col-md-4'),
+                    css_class='row child_id child_id6',
+                ),
                 css_class='bd-callout bd-callout-warning child_data C_right_border'
             ),
 
@@ -2010,6 +2097,10 @@ class ABLNForm(CommonForm):
         sop_parent_national_number_confirm = cleaned_data.get("parent_sop_national_number_confirm")
         parent_syrian_national_number = cleaned_data.get("parent_syrian_national_number")
         parent_syrian_national_number_confirm = cleaned_data.get("parent_syrian_national_number_confirm")
+        parent_other_number = cleaned_data.get("parent_other_number")
+        parent_other_number_confirm = cleaned_data.get("parent_other_number_confirm")
+        other_number = cleaned_data.get("other_number")
+        other_number_confirm = cleaned_data.get("other_number_confirm")
 
         if phone_number != phone_number_confirm:
             msg = "The phone numbers are not matched"
@@ -2105,6 +2196,21 @@ class ABLNForm(CommonForm):
                 msg = "The national numbers are not matched"
                 self.add_error('sop_national_number_confirm', msg)
 
+        if id_type == 'Other nationality':
+            if not parent_other_number:
+                self.add_error('parent_other_number', 'This field is required')
+
+            if not parent_other_number_confirm:
+                self.add_error('parent_other_number_confirm', 'This field is required')
+
+            if parent_other_number != parent_other_number_confirm:
+                msg = "The ID numbers are not matched"
+                self.add_error('parent_other_number_confirm', msg)
+
+            if other_number != other_number_confirm:
+                msg = "The ID numbers are not matched"
+                self.add_error('other_number_confirm', msg)
+
     def save(self, request=None, instance=None, serializer=None):
         instance = super(ABLNForm, self).save(request=request, instance=instance, serializer=ABLNSerializer)
         instance.pre_test = {
@@ -2154,6 +2260,10 @@ class ABLNForm(CommonForm):
             'parent_syrian_national_number_confirm',
             'parent_sop_national_number',
             'parent_sop_national_number_confirm',
+            'parent_other_number',
+            'parent_other_number_confirm',
+            'other_number',
+            'other_number_confirm',
             'no_child_id_confirmation',
             'source_of_identification',
             'other_nationality',
