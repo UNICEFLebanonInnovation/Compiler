@@ -22,8 +22,9 @@ from .models import (
     CLMRound,
     PublicDocument,
     Coordinator,
-    Subject,
     Evaluation,
+    PublicHolidays,
+    Schl_Subject,
 )
 from student_registration.locations.models import Location
 
@@ -382,6 +383,7 @@ class ClassRoomAdmin(ImportExportModelAdmin):
     resource_class = ClassRoomResource
     fields = (
         'name',
+        'classroom_type',
     )
     list_display = fields
 
@@ -812,5 +814,6 @@ admin.site.register(PublicDocument, PublicDocumentAdmin)
 admin.site.register(EducationalLevel, EducationalLevelAdmin)
 admin.site.register(ALPAssignmentMatrix, ALPAssignmentMatrixAdmin)
 admin.site.register(Coordinator)
-admin.site.register(Subject)
+admin.site.register(Schl_Subject)
 admin.site.register(Evaluation, EvaluationAdmin)
+admin.site.register(PublicHolidays)
