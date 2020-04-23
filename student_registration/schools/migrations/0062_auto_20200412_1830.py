@@ -19,27 +19,27 @@ class Migration(migrations.Migration):
                 ('holiday', models.DateField(unique=True, verbose_name='Public holidays')),
             ],
         ),
-        migrations.RemoveField(
-            model_name='evaluationdt',
-            name='classroom',
-        ),
-        migrations.RemoveField(
-            model_name='evaluationdt',
-            name='evaluation',
-        ),
-        migrations.RemoveField(
-            model_name='evaluationdt',
-            name='subject',
-        ),
-        migrations.DeleteModel(
-            name='Subject',
-        ),
-        migrations.AddField(
-            model_name='classroom',
-            name='classroom_type',
-            field=models.CharField(blank=True, max_length=2, null=True),
-        ),
-        migrations.DeleteModel(
-            name='EvaluationDt',
-        ),
+        # migrations.RemoveField(
+        #     model_name='evaluationdt',
+        #     name='classroom',
+        # ),
+        # migrations.RemoveField(
+        #     model_name='evaluationdt',
+        #     name='evaluation',
+        # ),
+        # migrations.RemoveField(
+        #     model_name='evaluationdt',
+        #     name='subject',
+        # ),
+        # migrations.DeleteModel(
+        #     name='Subject',
+        # ),
+        # migrations.AddField(
+        #     model_name='classroom',
+        #     name='classroom_type',
+        #     field=models.CharField(blank=True, max_length=2, null=True),
+        # ),
+        # migrations.DeleteModel(
+        #     name='EvaluationDt',
+        # ),
     ]
