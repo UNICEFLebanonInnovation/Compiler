@@ -106,8 +106,8 @@ class CLMSerializer(serializers.ModelSerializer):
     search_clm_student = serializers.CharField(source='student.full_name', read_only=True)
     search_barcode = serializers.CharField(source='outreach_barcode', read_only=True)
 
-    owner_name = serializers.CharField(source='owner.name', read_only=True)
-    modified_by_name = serializers.CharField(source='modified_by.name', read_only=True)
+    owner_name = serializers.CharField(source='owner.username', read_only=True)
+    modified_by_name = serializers.CharField(source='modified_by.username', read_only=True)
 
     class Meta:
         model = CLM
@@ -203,7 +203,7 @@ class CLMSerializer(serializers.ModelSerializer):
             'visits_number',
             'parent_attended',
             'child_health_examed',
-            'child_health_concern'
+            'child_health_concern',
             # 'internal',
         )
 
@@ -333,7 +333,7 @@ class ABLNSerializer(CLMSerializer):
             'main_caregiver',
             'main_caregiver_nationality',
             'other_caregiver_relationship',
-            'student_number_children'
+            'student_number_children',
         )
 
 

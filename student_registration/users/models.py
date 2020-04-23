@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from student_registration.schools.models import PartnerOrganization,EducationYear, School
 from student_registration.locations.models import Location
 
+
 @python_2_unicode_compatible
 class User(AbstractUser):
 
