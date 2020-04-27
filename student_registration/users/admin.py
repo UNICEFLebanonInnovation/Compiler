@@ -32,6 +32,7 @@ class UserAdmin(AuthUserAdmin):
         'groups',
         'school',
         'location',
+        'partner',
         'is_active',
     )
     actions = (
