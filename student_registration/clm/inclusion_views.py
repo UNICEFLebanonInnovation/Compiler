@@ -352,7 +352,7 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'governorate__name_en',
             'district__name_en',
             'location',
-            'language',
+            # 'language',
             'student__first_name',
             'student__father_name',
             'student__last_name',

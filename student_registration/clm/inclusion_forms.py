@@ -360,25 +360,25 @@ class InclusionForm(forms.ModelForm):
     )
     no_child_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
     no_parent_id_confirmation = forms.CharField(widget=forms.HiddenInput, required=False)
-    # source_of_identification = forms.ChoiceField(
-    #     label=_("Disability Source of identification of the child"),
-    #     widget=forms.Select,
-    #     required=True,
-    #     choices=(
-    #         ('', '----------'),
-    #         ('Referred by CP partner', _('Referred by CP partner')),
-    #         ('Referred by youth partner', _('Referred by youth partner')),
-    #         ('Family walked in to NGO', _('Family walked in to NGO')),
-    #         ('Referral from another NGO', _('Referral from another NGO')),
-    #         ('Referral from another Municipality', _('Referral from Municipality')),
-    #         ('Direct outreach', _('Direct outreach')),
-    #         ('List database', _('List database')),
-    #         ('abln', _('ABLN')),
-    #         ('bln', _('BLN')),
-    #         ('cbece', _('CBECE')),
-    #     ),
-    #     initial=''
-    # )
+    source_of_identification = forms.ChoiceField(
+        label=_("Disability Source of identification of the child"),
+        widget=forms.Select,
+        required=True,
+        choices=(
+            ('', '----------'),
+            ('Referred by CP partner', _('Referred by CP partner')),
+            ('Referred by youth partner', _('Referred by youth partner')),
+            ('Family walked in to NGO', _('Family walked in to NGO')),
+            ('Referral from another NGO', _('Referral from another NGO')),
+            ('Referral from another Municipality', _('Referral from Municipality')),
+            ('Direct outreach', _('Direct outreach')),
+            ('List database', _('List database')),
+            ('abln', _('ABLN')),
+            ('bln', _('BLN')),
+            ('cbece', _('CBECE')),
+        ),
+        initial=''
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -474,8 +474,8 @@ class InclusionForm(forms.ModelForm):
                     Div('internal_number', css_class='col-md-3'),
                     # HTML('<span class="badge badge-default">14</span>'),
                     Div('first_attendance_date', css_class='col-md-3 d-none'),
-                    # HTML('<span class="badge badge-default">14</span>'),
-                    # Div('source_of_identification', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">14</span>'),
+                    Div('source_of_identification', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data B_right_border'
@@ -914,7 +914,7 @@ class InclusionForm(forms.ModelForm):
             'other_number',
             'other_number_confirm',
             'no_child_id_confirmation',
-            # 'source_of_identification',
+            'source_of_identification',
             'other_nationality',
             'caretaker_first_name',
             'caretaker_middle_name',

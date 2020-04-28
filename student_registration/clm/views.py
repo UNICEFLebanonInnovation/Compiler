@@ -1402,7 +1402,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
 
         headers = {
-            'id': 'enropllment_id',
+            'id': 'enrollment_id',
             'partner__name': 'Partner',
             'source_of_identification': 'Source of Identification',
             'first_attendance_date': 'first attendance date',
