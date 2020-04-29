@@ -12,6 +12,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AddField(
+            model_name='classroom',
+            name='classroom_type',
+            field=models.CharField(blank=True, max_length=2, null=True),
+        ),
         migrations.AlterField(
             model_name='classroom',
             name='classroom_type',
