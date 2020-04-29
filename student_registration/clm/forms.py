@@ -219,6 +219,7 @@ class CommonForm(forms.ModelForm):
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
     clm_type = forms.CharField(widget=forms.HiddenInput, required=False)
 
+
     # participation = forms.ChoiceField(
     #     label=_('How was the level of child participation in the program?'),
     #     widget=forms.Select, required=False,
@@ -1712,7 +1713,6 @@ class ABLNForm(CommonForm):
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:abln_add')
         self.fields['clm_type'].initial = 'ABLN'
-
         if instance:
             display_registry = ' d-none'
             form_action = reverse('clm:abln_edit', kwargs={'pk': instance.id})
@@ -1731,6 +1731,20 @@ class ABLNForm(CommonForm):
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
+            Fieldset(
+                None,
+                Div(
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Registry') + '</h4>')
+                ),
+                Div(
+                    'clm_type',
+                    'student_id',
+                    'enrollment_id',
+                    'student_outreach_child',
+                    css_class='row',
+                ),
+                css_class='bd-callout bd-callout-warning' + display_registry, css_id='registry_block'
+            ),
             Fieldset(
                 None,
                 Div(css_class='block_tag'),
@@ -2151,7 +2165,7 @@ class ABLNForm(CommonForm):
         if education_status != 'out of school':
             if not miss_school_date:
                 self.add_error('miss_school_date', 'This field is required')
-        if student_nationality == 'other':
+        if student_nationality.id == 6:
             if not other_nationality:
                 self.add_error('other_nationality', 'This field is required')
         if main_caregiver == 'other':

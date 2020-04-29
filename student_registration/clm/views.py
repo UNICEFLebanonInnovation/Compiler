@@ -3170,7 +3170,6 @@ def search_clm_child(request):
     elif clm_type == 'CBECE':
         model = CBECE
     qs = model.objects.filter(partner=request.user.partner_id)
-
     if terms:
         for term in terms.split():
             qs = qs.filter(
