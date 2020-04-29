@@ -2,13 +2,32 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
+from import_export import resources, fields
+from import_export import fields
+from import_export.admin import ImportExportModelAdmin
 from django.utils.translation import gettext, gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.models import Group
 from .models import User
 
 
-class UserAdmin(AuthUserAdmin):
+class UserResource(resources.ModelResource):
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'first_name',
+            'last_name',
+            'username',
+            'email',
+            'partner__name',
+        )
+        export_order = fields
+
+
+class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
+    resource_class = UserResource
 
     filter_horizontal = ('groups', 'user_permissions', 'locations', 'schools', 'regions')
     list_display = (
@@ -32,6 +51,7 @@ class UserAdmin(AuthUserAdmin):
         'groups',
         'school',
         'location',
+        'partner',
         'is_active',
     )
     actions = (
@@ -236,6 +256,7 @@ class UserAdmin(AuthUserAdmin):
         group = Group.objects.get(name='STAFFENROL_DELETE')
         for user in queryset:
             user.groups.add(group)
+
 
 admin.site.register(User, UserAdmin)
 
