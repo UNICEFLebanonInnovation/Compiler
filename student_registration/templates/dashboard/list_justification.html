@@ -13,10 +13,12 @@
    body{
         width: 31.7cm;
         height: 21cm;
-        margin: 5mm 5mm 5mm 5mm;
+        <!--margin: 5mm 5mm 5mm 5mm;-->
         max-height: 21cm;
         /* change the margins as you want them to be. */
         counter-reset: tableCount;
+        margin:0;
+        padding:0;
    }
    .counterCell:before {
     content: counter(tableCount);
@@ -210,8 +212,9 @@ td {
 <ul>
 {% for class_section in v_enrollment %}
   <br>
+
     <font color="green" size="5">
-      <li>السنة المنهجية : {{ class_section.grouper }} </li>
+      <li><div style="height: 51px; overflow:hidden;">السنة المنهجية : {{ class_section.grouper }} </div></li>
     </font>
 
 
@@ -347,14 +350,19 @@ td {
     <table width="100%" border="1" cellspacing="0" cellpadding="4" >
       <tr>
         <th width="4%" style="max-height:20px">
+           <div style="height: 51px; overflow:hidden;">
            <font size="3" color="black" ><b># </b></font>
+           </div>
         </th>
         <th width="25%">الإسم الثلاثي /
+          <div style="height: 51px; overflow:hidden;">
            <br><br>رقم compiler الموحد
+          </div>
         </th>
-        <th width="5%" ><font size="2"><small>الجنس</small></font></th>
-        <th width="13%" style="max-height:20px">مكان الولادة</th>
+        <th width="5%" ><font size="2"><div style="height: 51px; overflow:hidden;"><small>الجنس</small></div></font></th>
+        <th width="13%" style="max-height:20px"><div style="height: 51px; overflow:hidden;">مكان الولادة</div></th>
         <th width="11%" style="max-height:20px">
+          <div style="height: 51px; overflow:hidden;">
           <table border="0" width="100%" >
             <th colspan="3" style="max-height:20px">
               <u>         تاريخ الولادة       </u>
@@ -366,8 +374,10 @@ td {
               <td><font size="1" color="black">السنة</font></td>
             </tr>
           </table>
+          </div>
         </th>
         <th width="41%">
+          <div style="height: 51px; overflow:hidden;">
           معلومات عن اّخر سنة دراسية
           <table width="100%" border="1" >
            <tr >
@@ -377,33 +387,39 @@ td {
              <td width="20%"><font size="1" color="black">تاريخ التصديق</font></td>
            </tr>
           </table>
+          </div>
         </th>
       </tr>
      {% for enr in classroom.list %}
         <tr>
-          <td width="4%" class="counterCell" style="max-height:20px" ></td>
-          <td width="25%"><div>
-            {% if enr.moved or enr.dropout_status %}
-               <fornt size="2" color="red"><b>(-)</b></fornt>
-            {% endif %}
-               <font size="4">             {{ enr.student.full_name}}               <br>              {{ enr.student.id }}     </font>         </div>
+          <td width="4%" class="counterCell" style="max-height:20px" ><div style="height: 51px; overflow:hidden;"></div></td>
+          <td width="25%">
+              <div style="height: 51px; overflow:hidden;">
+                  {% if enr.moved or enr.dropout_status %}
+                  <fornt size="2" color="red"><b>(-)</b></fornt>
+                 {% endif %}
+                  <font size="4">             {{ enr.student.full_name}}               <br>              {{ enr.student.id }}     </font>
+              </div>
           </td>
           {% ifequal enr.student.sex 'Male' %}
-              <td width="5%" style="max-height:20px" align="center"><font size="3"> ذ</font></td>
+          <td width="5%" style="max-height:20px" align="center"><div style="height: 51px; overflow:hidden;"><font size="3"> ذ</font></div></td>
           {% endifequal %}
           {% ifequal enr.student.sex 'Female' %}
-              <td width="5%" style="max-height:20px" align="center"><font size="3"> أ</font></td>
+          <td width="5%" style="max-height:20px" align="center"><div style="height: 51px; overflow:hidden;"><font size="3"> أ</font></div></td>
           {% endifequal %}
-          <td width="13%"><font size="2"> {{ enr.student.place_of_birth }}</font></td>
+          <td width="13%"><div style="height: 51px; overflow:hidden;"><font size="2"> {{ enr.student.place_of_birth }}</font></div></td>
           <td width="11%">
+            <div style="height: 51px; overflow:hidden;">
             <table width="100%" >
               <td width="25%"><font size="2"> {{ enr.student.birthday_day }}</font></td>
               <td width="25%"><font size="2"> {{ enr.student.birthday_month }}</font></td>
               <td width="50%"><font size="2"> {{ enr.student.birthday_year }}</font></td>
             </table>
+            </div>
           </td>
           {% ifnotequal enr.last_education_year 'na' %}
           <td width="41%" >
+            <div style="height: 51px; overflow:hidden;">
             <table width="100%" >
                 <td width="20%" align="rigth"><font size="2"> {{ enr.last_education_year }}</font></td>
                 <td width="20%" align="rigth"><font size="2"> {{ enr.last_school.name }}</font></td>
@@ -417,15 +433,18 @@ td {
                 <td width="20%" align="right"><font size="2"> {{ enr.documenttype.description2 }}</font></td>
                 <td width="15%" align="right"><font size="2"> {{enr.signature_cert_date}}</font></td>
             </table>
+            </div>
           </td>
           {% else %}
           <td width="41%" >
+            <div style="height: 51px; overflow:hidden;">
             <table width="100%" border="0" >
                <td width="25%" align="right"><font size="2" > {{ enr.last_informal_edu_round }}</font></td>
                <td width="25%" align="right"><font size="2" > {{ enr.last_informal_edu_final_result }}</font></td>
                <td width="30%" align="right"><font size="2"> {{ enr.documenttype.description2 }}</font></td>
                <td width="20%" align="right"><font size="2"> {{enr.signature_cert_date}}</font></td>
              </table>
+            </div>
           </td>
           {% endifnotequal %}
         </tr>

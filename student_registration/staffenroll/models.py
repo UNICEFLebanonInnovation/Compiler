@@ -14,8 +14,16 @@ from student_registration.schools.models import (
     Section,
     EducationYear,
 )
+from django.core.exceptions import ValidationError
+
 
 # Create your models here.
+def validate_file_size(value):
+    filesize = value.size
+    if filesize > 250000:
+        raise ValidationError("The maximum file size that can be uploaded is 250K")
+    else:
+        return value
 
 
 class Jobs(models.Model):
@@ -187,6 +195,19 @@ class StaffEnroll(TimeStampedModel):
         blank=True,
         null=True,
         verbose_name=_('List of work')
+    )
+    image = models.ImageField(
+        upload_to="profiles",
+        null=True,
+        blank=True,
+        help_text=_('Form 5'),
+        verbose_name=_('Form 5'),
+        validators=[validate_file_size]
+    )
+    pic_commitment = models.CharField(
+        max_length=200,
+        blank=True, null=True,
+        verbose_name=_('Picture of the commitment')
     )
     @property
     def cycle(self):
