@@ -266,6 +266,13 @@ class CLM(TimeStampedModel):
         choices=HAVE_LABOUR,
         verbose_name=_('Does the child participate in work?')
     )
+    labour_weekly_income = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Student.STUDENT_INCOME,
+        verbose_name=_('What is the income of the child per week?')
+    )
     labours = ArrayField(
         models.CharField(
             choices=LABOURS,

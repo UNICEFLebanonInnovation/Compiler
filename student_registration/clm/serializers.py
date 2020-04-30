@@ -224,6 +224,9 @@ class BLNSerializer(CLMSerializer):
             'have_labour',
             'labours',
             'labour_hours',
+            'have_labour_single_selection',
+            'labours_single_selection',
+            'labour_weekly_income',
             'student_family_status',
             'student_have_children',
             'phone_number',
@@ -293,6 +296,9 @@ class ABLNSerializer(CLMSerializer):
             'have_labour',
             'labours',
             'labour_hours',
+            'have_labour_single_selection',
+            'labours_single_selection',
+            'labour_weekly_income',
             'student_family_status',
             'student_have_children',
             'phone_number',
@@ -341,7 +347,7 @@ class ABLNSerializer(CLMSerializer):
             'main_caregiver',
             'main_caregiver_nationality',
             'other_caregiver_relationship',
-            'student_number_children',
+            'student_number_children'
         )
 
 

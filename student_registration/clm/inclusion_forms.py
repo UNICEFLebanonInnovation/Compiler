@@ -88,7 +88,7 @@ class InclusionForm(forms.ModelForm):
     )
     location = forms.CharField(
         label=_("Location"),
-        widget=forms.TextInput, required=False
+        widget=forms.TextInput, required=True
     )
     student_first_name = forms.CharField(
         label=_("First name"),
@@ -449,7 +449,7 @@ class InclusionForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('student_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7</span>'),
+                    HTML('<span class="badge badge-default">6.1</span>'),
                     Div('other_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),

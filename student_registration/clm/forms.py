@@ -123,6 +123,10 @@ class CommonForm(forms.ModelForm):
         required=True, to_field_name='id',
         # initial=0
     )
+    location = forms.CharField(
+        label=_("Location"),
+        widget=forms.TextInput, required=True
+    )
     round = forms.ModelChoiceField(
         queryset=CLMRound.objects.all(), widget=forms.Select,
         label=_('Round'),
