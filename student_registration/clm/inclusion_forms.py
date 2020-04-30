@@ -538,7 +538,7 @@ class InclusionForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">12</span>'),
                     Div('case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
-                         '<a href="/static/images/unhcr_certificate.jpg" target="_blank">' +
+                         '<a class="image-link" href="/static/images/unhcr_certificate.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id1',
                 ),
@@ -548,7 +548,7 @@ class InclusionForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">14</span>'),
                     Div('parent_individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
-                         '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+                         '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id1',
                 ),
@@ -558,7 +558,7 @@ class InclusionForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">16</span>'),
                     Div('individual_case_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
-                         '<a href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
+                         '<a class="image-link" href="/static/images/UNHCR_individualID.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id1',
                 ),
@@ -568,7 +568,7 @@ class InclusionForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">18</span>'),
                     Div('recorded_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
-                         '<a href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
+                         '<a class="image-link" href="/static/images/UNHCR_barcode.jpg" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id2',
                 ),
@@ -578,7 +578,7 @@ class InclusionForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">20</span>'),
                     Div('parent_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
-                         '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
+                         '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id3',
                 ),
@@ -588,7 +588,7 @@ class InclusionForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">22</span>'),
                     Div('national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
-                         '<a href="/static/images/lebanese_nationalID.png" target="_blank">' +
+                         '<a class="image-link" href="/static/images/lebanese_nationalID.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id3',
                 ),
@@ -598,7 +598,7 @@ class InclusionForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">24</span>'),
                     Div('parent_syrian_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
-                         '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
+                         '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id4',
                 ),
@@ -608,7 +608,7 @@ class InclusionForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">26</span>'),
                     Div('syrian_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
-                         '<a href="/static/images/syrian_nationalID.png" target="_blank">' +
+                         '<a class="image-link" href="/static/images/Syrian_passport.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id4',
                 ),
@@ -618,7 +618,7 @@ class InclusionForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">28</span>'),
                     Div('parent_sop_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
-                         '<a href="/static/images/sop_nationalID.png" target="_blank">' +
+                         '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id5',
                 ),
@@ -628,7 +628,7 @@ class InclusionForm(forms.ModelForm):
                     HTML('<span class="badge badge-default">30</span>'),
                     Div('sop_national_number_confirm', css_class='col-md-4'),
                     HTML('<span style="padding-top: 37px;">' +
-                         '<a href="/static/images/sop_nationalID.png" target="_blank">' +
+                         '<a class="image-link" href="/static/images/Palestinian_from_Lebanon.png" target="_blank">' +
                          '<img src="/static/images/icon-help.png" width="25px" height="25px;"/></a></span>'),
                     css_class='row child_id child_id5',
                 ),
