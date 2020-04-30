@@ -2,13 +2,32 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
+from import_export import resources, fields
+from import_export import fields
+from import_export.admin import ImportExportModelAdmin
 from django.utils.translation import gettext, gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.models import Group
 from .models import User
 
 
-class UserAdmin(AuthUserAdmin):
+class UserResource(resources.ModelResource):
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'first_name',
+            'last_name',
+            'username',
+            'email',
+            'partner__name',
+        )
+        export_order = fields
+
+
+class UserAdmin(AuthUserAdmin, ImportExportModelAdmin):
+    resource_class = UserResource
 
     filter_horizontal = ('groups', 'user_permissions', 'locations', 'schools', 'regions')
     list_display = (
@@ -32,6 +51,7 @@ class UserAdmin(AuthUserAdmin):
         'groups',
         'school',
         'location',
+        'partner',
         'is_active',
     )
     actions = (
@@ -58,7 +78,11 @@ class UserAdmin(AuthUserAdmin):
         'allow_clearpic',
         'deny_clearpic',
         'allow_evalcovid19',
-        'deny_evalcovid19'
+        'deny_evalcovid19',
+        'allow_staff_attendance',
+        'deny_staff_attendance',
+        'allow_survey_ps',
+        'deny_survey_ps',
     )
 
     fieldsets = (
@@ -121,8 +145,18 @@ class UserAdmin(AuthUserAdmin):
         for user in queryset:
             user.groups.add(group)
 
-    def allow_evalcovid19(self, request, queryset):
+    def allow_staff_evalcovid19(self, request, queryset):
         group = Group.objects.get(name='EVAL_COVID19')
+        for user in queryset:
+            user.groups.add(group)
+
+    def allow_staff_attendance(self, request, queryset):
+        group = Group.objects.get(name='ALLOW_STAFF_ATTENDANCE')
+        for user in queryset:
+            user.groups.add(group)
+
+    def allow_survey_ps(self, request, queryset):
+        group = Group.objects.get(name='SURVEY_PS')
         for user in queryset:
             user.groups.add(group)
 
@@ -186,6 +220,16 @@ class UserAdmin(AuthUserAdmin):
         for user in queryset:
             user.groups.remove(group)
 
+    def deny_staff_attendance(self, request, queryset):
+        group = Group.objects.get(name='ALLOW_STAFF_ATTENDANCE')
+        for user in queryset:
+            user.groups.remove(group)
+
+    def deny_survey_ps(self, request, queryset):
+        group = Group.objects.get(name='SURVEY_PS')
+        for user in queryset:
+            user.groups.remove(group)
+
     def allow_helpdesk(self, request, queryset):
         group = Group.objects.get(name='HELPDESK')
         for user in queryset:
@@ -212,6 +256,7 @@ class UserAdmin(AuthUserAdmin):
         group = Group.objects.get(name='STAFFENROL_DELETE')
         for user in queryset:
             user.groups.add(group)
+
 
 admin.site.register(User, UserAdmin)
 

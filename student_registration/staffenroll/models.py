@@ -14,8 +14,16 @@ from student_registration.schools.models import (
     Section,
     EducationYear,
 )
+from django.core.exceptions import ValidationError
+
 
 # Create your models here.
+def validate_file_size(value):
+    filesize = value.size
+    if filesize > 250000:
+        raise ValidationError("The maximum file size that can be uploaded is 250K")
+    else:
+        return value
 
 
 class Jobs(models.Model):
@@ -43,6 +51,16 @@ class Jobs(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name_plural = 'Jobs'
+
+    def __unicode__(self):
+        return self.name
+
+
+class Worklist(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name
@@ -168,7 +186,29 @@ class StaffEnroll(TimeStampedModel):
         related_name='+',
         verbose_name=_('School')
     )
-
+    is_main = models.BooleanField(
+        blank=True, default=False,
+        verbose_name=_('main record')
+    )
+    worklist = models.ForeignKey(
+        Worklist,
+        blank=True,
+        null=True,
+        verbose_name=_('List of work')
+    )
+    image = models.ImageField(
+        upload_to="profiles",
+        null=True,
+        blank=True,
+        help_text=_('Form 5'),
+        verbose_name=_('Form 5'),
+        validators=[validate_file_size]
+    )
+    pic_commitment = models.CharField(
+        max_length=200,
+        blank=True, null=True,
+        verbose_name=_('Picture of the commitment')
+    )
     @property
     def cycle(self):
         if self.classroom_id in [2, 3, 4]:
@@ -219,3 +259,28 @@ class staffattend(TimeStampedModel):
     attendhours = models.IntegerField(default=0)
     isattend = models.NullBooleanField(blank=True, default=False, null=True)
     attendremarks = models.CharField(blank=True, null=True, max_length=200)
+
+
+class StatisticAttend(TimeStampedModel):
+    school = models.ForeignKey(
+        School,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('School')
+    )
+    education_year = models.ForeignKey(
+        EducationYear,
+        blank=True, null=True,
+        related_name='+',
+        verbose_name=_('Education year')
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False, null=True,
+        related_name='+',
+        verbose_name=_('Created by')
+    )
+    attenddate = models.DateField(null=False)
+    hoursofattendance = models.IntegerField(default=0)
+    nb_of_section = models.IntegerField(default=0)
+    remarks = models.CharField(blank=True, null=True, max_length=200)
