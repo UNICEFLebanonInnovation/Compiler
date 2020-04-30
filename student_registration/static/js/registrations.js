@@ -13,6 +13,19 @@ var min_age_restriction_msg = '';
 var min_age_limit_msg = '';
 var max_age_limit_msg = '';
 
+$(window).load(function () {
+
+    /* Background loading full-size images */
+    $('.image-link').each(function() {
+        var src = $(this).attr('href');
+        var img = document.createElement('img');
+
+        img.src = src;
+        $('#image-cache').append(img);
+    });
+
+});
+
 $(document).ready(function(){
 
     if($(document).find('#id_registration_date').length == 1) {
@@ -608,7 +621,34 @@ $(document).ready(function(){
                 .appendTo(ul);
         };
     }
+
+    pageScripts();
+
+        /* Ajax page load settings */
+        $(document).on('pjax:end', pageScripts);
+        if (sessionStorage.getItem("pjax-enabled") === "0") {
+            return;
+        }
+        // Comment it to disable Ajax Page load
+        $(document).pjax('a', '.content-wrap', {fragment: '.content-wrap'});
+
+        $(document).on('pjax:beforeReplace', function() {
+            $('.content-wrap').css('opacity', '0.1');
+            setTimeout(function() {
+                $('.content-wrap').fadeTo('100', '1');
+            }, 1);
+        });
 });
+
+function pageScripts() {
+    /* Magnific Popup */
+    $('.image-link').magnificPopup({
+        type: 'image',
+        gallery: {
+            enabled: true
+        }
+    });
+}
 
 function urlParam(name){
 	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
