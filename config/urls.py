@@ -57,23 +57,23 @@ from student_registration.outreach.views import HouseHoldViewSet, ChildViewSet
 from student_registration.backends.views import NotificationViewSet, ExporterViewSet
 
 api = routers.SimpleRouter()
-api.register(r'alp', OutreachViewSet, base_name='alp')
-api.register(r'enrollments', EnrollmentViewSet, base_name='enrollments')
-api.register(r'import-enrollment', EnrollmentImportViewSet, base_name='import_enrollments')
-api.register(r'import-grading', EnrollmentGradingImportViewSet, base_name='import_gradings')
-api.register(r'update-enrollment', EnrollmentUpdateViewSet, base_name='update_enrollments')
-api.register(r'logging-student-move', LoggingStudentMoveViewSet, base_name='logging_student_move')
-api.register(r'student-dropout-enrollment', StudentDropoutViewSet, base_name='student_dropout_enrollment')
-api.register(r'student-justify-enrollment', StudentJustifyViewSet, base_name='student_justify_enrollment')
-api.register(r'logging-student-program-move', LoggingProgramMoveViewSet, base_name='logging_student_ptogram_move')
-api.register(r'attendances', AttendanceViewSet, base_name='attendances')
-api.register(r'absentees', AbsenteeViewSet, base_name='absentees')
-api.register(r'export-attendances', AttendancesExportViewSet, base_name='export_attendances')
+# api.register(r'alp', OutreachViewSet, base_name='alp')
+# api.register(r'enrollments', EnrollmentViewSet, base_name='enrollments')
+# api.register(r'import-enrollment', EnrollmentImportViewSet, base_name='import_enrollments')
+# api.register(r'import-grading', EnrollmentGradingImportViewSet, base_name='import_gradings')
+# api.register(r'update-enrollment', EnrollmentUpdateViewSet, base_name='update_enrollments')
+# api.register(r'logging-student-move', LoggingStudentMoveViewSet, base_name='logging_student_move')
+# api.register(r'student-dropout-enrollment', StudentDropoutViewSet, base_name='student_dropout_enrollment')
+# api.register(r'student-justify-enrollment', StudentJustifyViewSet, base_name='student_justify_enrollment')
+# api.register(r'logging-student-program-move', LoggingProgramMoveViewSet, base_name='logging_student_ptogram_move')
+# api.register(r'attendances', AttendanceViewSet, base_name='attendances')
+# api.register(r'absentees', AbsenteeViewSet, base_name='absentees')
+# api.register(r'export-attendances', AttendancesExportViewSet, base_name='export_attendances')
 
 api.register(r'students', StudentViewSet, base_name='students')
 api.register(r'students-search', StudentSearchViewSet, base_name='students-search')
-api.register(r'household', HouseHoldViewSet, base_name='household')
-api.register(r'child', ChildViewSet, base_name='child')
+# api.register(r'household', HouseHoldViewSet, base_name='household')
+# api.register(r'child', ChildViewSet, base_name='child')
 api.register(r'schools', SchoolViewSet, base_name='schools')
 api.register(r'classrooms', ClassRoomViewSet, base_name='classrooms')
 api.register(r'sections', SectionViewSet, base_name='sections')
@@ -83,8 +83,8 @@ api.register(r'clm-rs', RSViewSet, base_name='clm-rs')
 api.register(r'clm-cbece', CBECEViewSet, base_name='clm-cbece')
 api.register(r'clm-students', CLMStudentViewSet, base_name='clm-students')
 api.register(r'self-perception-grads', SelfPerceptionGradesViewSet, base_name='self-perception-grads')
-api.register(r'notifications', NotificationViewSet, base_name='notifications')
-api.register(r'backend-exporter', ExporterViewSet, base_name='backend-exporter')
+# api.register(r'notifications', NotificationViewSet, base_name='notifications')
+# api.register(r'backend-exporter', ExporterViewSet, base_name='backend-exporter')
 api.register(r'locations', LocationViewSet, base_name='locations')
 
 schema_view = get_swagger_view(title='Compiler API')
@@ -104,20 +104,20 @@ urlpatterns = [
     url(r'^accounts/', include('allauth.urls')),
 
     url(r'^students/', include('student_registration.students.urls', namespace='students')),
-    url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
+    # url(r'^alp/', include('student_registration.alp.urls', namespace='alp')),
     url(r'^clm/', include('student_registration.clm.urls', namespace='clm')),
-    url(r'^outreach/', include('student_registration.outreach.urls', namespace='outreach')),
-    url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
-    url(r'^staffenroll/', include('student_registration.staffenroll.urls', namespace='staffenroll')),
-    url(r'^staffs/', include('student_registration.staffs.urls', namespace='staffs')),
-    url(r'^enrollments/', include('student_registration.enrollments.urls', namespace='enrollments')),
+    # url(r'^outreach/', include('student_registration.outreach.urls', namespace='outreach')),
+    # url(r'^attendances/', include('student_registration.attendances.urls', namespace='attendances')),
+    # url(r'^staffenroll/', include('student_registration.staffenroll.urls', namespace='staffenroll')),
+    # url(r'^staffs/', include('student_registration.staffs.urls', namespace='staffs')),
+    # url(r'^enrollments/', include('student_registration.enrollments.urls', namespace='enrollments')),
     url(r'^schools/', include('student_registration.schools.urls', namespace='schools')),
     url(r'^locations/', include('student_registration.locations.urls', namespace='locations')),
     url(r'^dashboard/', include('student_registration.dashboard.urls', namespace='dashboard')),
-    url(r'^backends/', include('student_registration.backends.urls', namespace='backends')),
+    # url(r'^backends/', include('student_registration.backends.urls', namespace='backends')),
 
     url(r'helpdesk/', include('helpdesk.urls')),
-    url(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
+    # url(r'^winterization/', include('student_registration.winterization.urls', namespace='winterization')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/docs/', schema_view),

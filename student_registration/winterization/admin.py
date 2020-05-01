@@ -201,5 +201,5 @@ class AssessmentAdmin(ImportExportModelAdmin):
         return Assessment.objects.none()
 
 
-admin.site.register(Assessment, AssessmentAdmin)
+# admin.site.register(Assessment, AssessmentAdmin)
 

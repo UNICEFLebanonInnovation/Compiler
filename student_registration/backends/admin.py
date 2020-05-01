@@ -351,8 +351,8 @@ class TicketSchoolAdmin(ImportExportModelAdmin):
         return attachments
 
 
-admin.site.register(LogEntry)
-admin.site.register(Exporter, ExporterAdmin)
-admin.site.register(Notification, NotificationAdmin)
-admin.site.unregister(Ticket)
-admin.site.register(Ticket, TicketSchoolAdmin)
+# admin.site.register(LogEntry)
+# admin.site.register(Exporter, ExporterAdmin)
+# admin.site.register(Notification, NotificationAdmin)
+# admin.site.unregister(Ticket)
+# admin.site.register(Ticket, TicketSchoolAdmin)

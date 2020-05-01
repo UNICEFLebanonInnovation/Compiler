@@ -1014,9 +1014,9 @@ class ALPRoundAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(Outreach, OutreachAdmin)
-admin.site.register(CurrentOutreach, CurrentOutreachAdmin)
-admin.site.register(PreTest, PreTestAdmin)
-admin.site.register(CurrentRound, CurrentRoundAdmin)
-admin.site.register(PostTest, PostTestAdmin)
-admin.site.register(ALPRound, ALPRoundAdmin)
+# admin.site.register(Outreach, OutreachAdmin)
+# admin.site.register(CurrentOutreach, CurrentOutreachAdmin)
+# admin.site.register(PreTest, PreTestAdmin)
+# admin.site.register(CurrentRound, CurrentRoundAdmin)
+# admin.site.register(PostTest, PostTestAdmin)
+# admin.site.register(ALPRound, ALPRoundAdmin)

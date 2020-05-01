@@ -651,8 +651,9 @@ class AttendanceAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
-admin.site.register(Attendance, AttendanceAdmin)
-admin.site.register(Absentee, AbsenteeAdmin)
-admin.site.register(AttendedDays, AttendedDaysAdmin)
-admin.site.register(AttendanceByStudent, AttendanceByStudentAdmin)
-admin.site.register(AttendanceDt, AttendanceDtAdmin)
+# admin.site.register(Attendance, AttendanceAdmin)
+# admin.site.register(Absentee, AbsenteeAdmin)
+# admin.site.register(AttendedDays, AttendedDaysAdmin)
+# admin.site.register(AttendanceByStudent, AttendanceByStudentAdmin)
+# admin.site.register(AttendanceDt, AttendanceDtAdmin)
+#

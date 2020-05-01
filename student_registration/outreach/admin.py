@@ -70,6 +70,6 @@ class ChildAdmin(ImportExportModelAdmin):
         return get_default_export_formats()
 
 
-admin.site.register(HouseHold, HouseHoldAdmin)
-admin.site.register(Child, ChildAdmin)
-admin.site.register(OutreachYear)
+# admin.site.register(HouseHold, HouseHoldAdmin)
+# admin.site.register(Child, ChildAdmin)
+# admin.site.register(OutreachYear)
