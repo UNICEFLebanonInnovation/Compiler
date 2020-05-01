@@ -12,14 +12,14 @@
 <style>
 
 div.b {
-  height: 55px;
+  height: 57px;
   border: 1px solid black;
 }
 
    body{
         width: 31.7cm;
         height: 21cm;
-        margin: 2mm 2mm 2mm 2mm;
+        <!--margin: 1mm 1mm 1mm 1mm;-->
         max-height: 21cm;
         /* change the margins as you want them to be. */
         counter-reset: tableCount;
@@ -51,7 +51,6 @@ td {
 
   <!--overflow : hidden;-->
   word-wrap:break-word;
-
 
 
 }
@@ -212,7 +211,7 @@ td {
 {% for class_section in v_enrollment %}
 
     <font color="green" size="5">
-      <div style="height: 40px; overflow:hidden;">السنة المنهجية : {{ class_section.grouper }} </div>
+      <div style="height: 38px; overflow:hidden;">السنة المنهجية : {{ class_section.grouper }} </div>
     </font>
 
 
@@ -270,7 +269,7 @@ td {
                <fornt size="2" color="red"><b>(-)</b></fornt>
             {% endif %}
 
-            <font size="4">
+            <font size="3">
               {{ enr.student.full_name}}
               <br>
               {{ enr.student.id }}
@@ -336,32 +335,33 @@ td {
 
 </div>
 {% else %}
- 
+ <br>
   {% regroup enrollment by classroom as v_enrollment %}
   <ul>
    {% for classroom in v_enrollment %}
 
       <div class="b">
+
         <font color="green" size="5"><br>السنة المنهجية : {{ classroom.grouper }}       </font>
       </div>
 
    <font size="2" face="Courier New" >
-   <table width="100%" border="1" cellspacing="0" cellpadding="4" >
+   <table width="100%" border="1" cellspacing="0" cellpadding="2" >
      <tr>
         <th width="4%" style="max-height:20px">
-           <div style="height: 40px; overflow:hidden;">
+           <div style="height: 38px; overflow:hidden;">
            <font size="3" color="black" ><b># </b></font>
            </div>
         </th>
         <th width="27%">الإسم الثلاثي /
-          <div style="height: 40px; overflow:hidden;">
+          <div style="height: 38px; overflow:hidden;">
            <br>رقم compiler الموحد
           </div>
         </th>
-        <th width="3%" ><font size="2"><div style="height: 40px; overflow:hidden;"><small>الجنس</small></div></font></th>
-        <th width="13%"><div style="height: 40px; overflow:hidden;">مكان الولادة</div></th>
+        <th width="3%" ><font size="2"><div style="height: 38px; overflow:hidden;"><small>الجنس</small></div></font></th>
+        <th width="13%"><div style="height: 38px; overflow:hidden;">مكان الولادة</div></th>
         <th width="10%">
-          <div style="height: 40px; overflow:hidden;">
+          <div style="height: 38px; overflow:hidden;">
           <table border="0" width="100%" >
             <th >                       تاريخ الولادة
               <br><font size="1">
@@ -373,11 +373,12 @@ td {
           </div>
         </th>
         <th width="42%">
-          <div style="height: 40px; overflow:hidden;">
+          <div style="height: 38px; overflow:hidden;">
           معلومات عن اّخر سنة دراسية
           <table width="100%" border="1" >
            <tr >
-             <td width="40%"><font size="1" color="black">اّخر سنة منهجية             <br>              / اّخر دورة             </font></td>
+             <td width="40%"><font size="1" color="black">اّخر سنة منهجية
+                             / اّخر دورة             </font></td>
              <td width="20%" ><font size="1" color="black">النتيجة</font></td>
              <td width="20%" ><font size="1" color="black">الإفادة المبرزة</font></td>
              <td width="20%"><font size="1" color="black">تاريخ التصديق</font></td>
@@ -388,9 +389,9 @@ td {
      </tr>
      {% for enr in classroom.list %}
      <tr>
-       <td width="4%" class="counterCell" ><div style="height: 40px; overflow:hidden;"></div></td>
+       <td width="4%" class="counterCell" ><div style="height: 38px; overflow:hidden;"></div></td>
        <td width="27%">
-           <div style="height: 40px; overflow:hidden;">
+           <div style="height: 38px; overflow:hidden;">
               {% if enr.moved or enr.dropout_status %}
               <fornt size="2" color="red"><b>(-)</b></fornt>
               {% endif %}
@@ -398,14 +399,14 @@ td {
            </div>
        </td>
        {% ifequal enr.student.sex 'Male' %}
-       <td width="3%" align="center"><div style="height: 40px; overflow:hidden;"><font size="3"> ذ</font></div></td>
+       <td width="3%" align="center"><div style="height: 38px; overflow:hidden;"><font size="3"> ذ</font></div></td>
        {% endifequal %}
        {% ifequal enr.student.sex 'Female' %}
-       <td width="3%" align="center"><div style="height: 40px; overflow:hidden;"><font size="3"> أ</font></div></td>
+       <td width="3%" align="center"><div style="height: 38px; overflow:hidden;"><font size="3"> أ</font></div></td>
        {% endifequal %}
-       <td width="13%"><div style="height: 40px; overflow:hidden;"><font size="2"> {{ enr.student.place_of_birth }}</font></div></td>
+       <td width="13%"><div style="height: 38px; overflow:hidden;"><font size="2"> {{ enr.student.place_of_birth }}</font></div></td>
        <td width="10%">
-          <div style="height: 40px; overflow:hidden;">
+          <div style="height: 38px; overflow:hidden;">
           <table width="100%" >
             <td width="25%"><font size="2"> {{ enr.student.birthday_day }}</font></td>
             <td width="25%"><font size="2"> {{ enr.student.birthday_month }}</font></td>
@@ -415,7 +416,7 @@ td {
        </td>
        {% ifnotequal enr.last_education_year 'na' %}
        <td width="42%" >
-           <div style="height: 40px; overflow:hidden;">
+           <div style="height: 38px; overflow:hidden;">
            <table width="100%" >
               <td width="10%" align="rigth"><font size="2"> {{ enr.last_education_year }}</font></td>
               <td width="30%" align="rigth"><font size="2"> {{ enr.last_school.name }}</font></td>
