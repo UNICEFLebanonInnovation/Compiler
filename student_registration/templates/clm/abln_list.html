@@ -47,7 +47,7 @@
                   {% trans "Export data" %}
               </a>
 
-              {% if 'ABLN'|is_allowed_create == False %}
+              {% if 'ABLN'|is_allowed_create %}
               <a href="{% url 'clm:abln_add' %}" class="btn btn-success">
                   <i class="icon-plus-sign icon-white"></i>
                   {% trans "Add new Child" %}
