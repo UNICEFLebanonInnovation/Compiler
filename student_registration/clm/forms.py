@@ -731,6 +731,12 @@ class BLNForm(CommonForm):
                         'Search CLM student') + '</h4>')
                 ),
                 Div(
+                    'clm_type',
+                    'student_id',
+                    'enrollment_id',
+                    css_class='row',
+                ),
+                Div(
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('search_clm_student', css_class='col-md-3'),
                     css_class='row',
@@ -1737,24 +1743,16 @@ class ABLNForm(CommonForm):
         self.helper.layout = Layout(
             Fieldset(
                 None,
+                Div(css_class='block_tag'),
                 Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _('Registry') + '</h4>')
+                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
+                        'Search CLM student') + '</h4>')
                 ),
                 Div(
                     'clm_type',
                     'student_id',
                     'enrollment_id',
-                    'student_outreach_child',
                     css_class='row',
-                ),
-                css_class='bd-callout bd-callout-warning' + display_registry, css_id='registry_block'
-            ),
-            Fieldset(
-                None,
-                Div(css_class='block_tag'),
-                Div(
-                    HTML('<h4 id="alternatives-to-hidden-labels">' + _(
-                        'Search CLM student') + '</h4>')
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),

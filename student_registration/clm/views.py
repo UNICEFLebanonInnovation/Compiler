@@ -12,6 +12,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q, Sum, Avg, F, Func
 from django.db.models.expressions import RawSQL
 from django.core.urlresolvers import reverse
+from django.shortcuts import render
 
 from rest_framework import status
 from rest_framework import viewsets, mixins, permissions
@@ -3145,14 +3146,13 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
 
 
 def load_districts(request):
-    from django.shortcuts import render
 
     id_governorate = request.GET.get('id_governorate')
     cities = Location.objects.filter(parent_id=id_governorate).order_by('name')
     return render(request, 'clm/city_dropdown_list_options.html', {'cities': cities})
 
+
 def load_cadasters(request):
-    from django.shortcuts import render
 
     id_district = request.GET.get('id_district')
     cities = Location.objects.filter(parent_id=id_district).order_by('name')
@@ -3161,7 +3161,7 @@ def load_cadasters(request):
 
 def search_clm_child(request):
     clm_type = request.GET.get('clm_type', 'BLN')
-    terms = request.GET.get('term', 0)
+    term = request.GET.get('term', 0)
     model = BLN
     if clm_type == 'RS':
         model = RS
@@ -3169,21 +3169,24 @@ def search_clm_child(request):
         model = ABLN
     elif clm_type == 'CBECE':
         model = CBECE
-    qs = model.objects.filter(partner=request.user.partner_id)
-    if terms:
-        for term in terms.split():
-            qs = qs.filter(
-                Q(student__first_name__contains=term) |
-                Q(student__father_name__contains=term) |
-                Q(student__last_name__contains=term) |
-                Q(student__id_number=term) |
-                Q(internal_number=term)
-            ).values('id', 'student__first_name', 'student__father_name',
-                     'student__last_name', 'student__mother_fullname',
-                     'student__sex', 'student__birthday_day', 'student__birthday_month',
-                     'student__birthday_year', 'internal_number').distinct()
+    # qs = model.objects.filter(partner=request.user.partner_id)
+    qs = {}
+    # if terms:
+    #     for term in terms.split():
+    if term:
+        qs = model.objects.filter(partner=request.user.partner_id).filter(
+            Q(student__first_name__contains=term) |
+            Q(student__father_name__contains=term) |
+            Q(student__last_name__contains=term) |
+            Q(student__id_number__startswith=term) |
+            Q(student__number__startswith=term) |
+            Q(internal_number__startswith=term)
+        ).values('id', 'student__first_name', 'student__father_name',
+                 'student__last_name', 'student__mother_fullname',
+                 'student__sex', 'student__birthday_day', 'student__birthday_month',
+                 'student__birthday_year', 'internal_number').distinct()
 
-        return JsonResponse({'result': json.dumps(list(qs))})
+    return JsonResponse({'result': json.dumps(list(qs))})
 
 
 class ExecABLNUpdateView(LoginRequiredMixin, TemplateView):
@@ -3199,14 +3202,3 @@ class ExecABLNUpdateView(LoginRequiredMixin, TemplateView):
             'result': instances.count(),
         }
 
-
-class SelfPerceptionGradesViewSet(mixins.RetrieveModelMixin,
-                                  mixins.ListModelMixin,
-                                  mixins.CreateModelMixin,
-                                  mixins.UpdateModelMixin,
-                                  viewsets.GenericViewSet):
-
-    model = SelfPerceptionGrades
-    queryset = SelfPerceptionGrades.objects.all()
-    serializer_class = SelfPerceptionGradesSerializer
-    permission_classes = (permissions.IsAuthenticated,)
