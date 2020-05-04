@@ -98,6 +98,11 @@ $(document).ready(function(){
         $('#id_parent_syrian_national_number_confirm').val('');
         $('#id_parent_sop_national_number').val('');
         $('#id_parent_sop_national_number_confirm').val('');
+        $('#id_parent_other_number').val('');
+        $('#id_parent_other_number_confirm').val('');
+        $('#id_other_number').val('');
+        $('#id_other_number_confirm').val('');
+
 
         if($(this).val() != 'Child have no ID'){
 
@@ -705,6 +710,14 @@ function reorganizeForm()
     else if(main_caregiver == 'other'){
         $('div#div_id_other_caregiver_relationship').removeClass('d-none');
         $('#span_other_caregiver_relationship').removeClass('d-none');
+
+        $('#id_caretaker_first_name').val('');
+        $('#id_caretaker_last_name').val('');
+    }
+    else
+    {
+        $('#id_caretaker_first_name').val('');
+        $('#id_caretaker_last_name').val('');
     }
 
 
