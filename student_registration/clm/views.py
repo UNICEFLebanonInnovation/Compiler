@@ -3162,6 +3162,7 @@ def load_cadasters(request):
 def search_clm_child(request):
     clm_type = request.GET.get('clm_type', 'BLN')
     term = request.GET.get('term', 0)
+    terms = request.GET.get('term', 0)
     model = BLN
     if clm_type == 'RS':
         model = RS
@@ -3171,20 +3172,20 @@ def search_clm_child(request):
         model = CBECE
     # qs = model.objects.filter(partner=request.user.partner_id)
     qs = {}
-    # if terms:
-    #     for term in terms.split():
-    if term:
-        qs = model.objects.filter(partner=request.user.partner_id).filter(
-            Q(student__first_name__contains=term) |
-            Q(student__father_name__contains=term) |
-            Q(student__last_name__contains=term) |
-            Q(student__id_number__startswith=term) |
-            Q(student__number__startswith=term) |
-            Q(internal_number__startswith=term)
-        ).values('id', 'student__first_name', 'student__father_name',
-                 'student__last_name', 'student__mother_fullname',
-                 'student__sex', 'student__birthday_day', 'student__birthday_month',
-                 'student__birthday_year', 'internal_number').distinct()
+    if terms:
+        for term in terms.split():
+    # if term:
+            qs = model.objects.filter(partner=request.user.partner_id).filter(
+                Q(student__first_name__contains=term) |
+                Q(student__father_name__contains=term) |
+                Q(student__last_name__contains=term) |
+                Q(student__id_number__startswith=term) |
+                Q(student__number__startswith=term) |
+                Q(internal_number__startswith=term)
+            ).values('id', 'student__first_name', 'student__father_name',
+                     'student__last_name', 'student__mother_fullname',
+                     'student__sex', 'student__birthday_day', 'student__birthday_month',
+                     'student__birthday_year', 'internal_number').distinct()
 
     return JsonResponse({'result': json.dumps(list(qs))})
 
