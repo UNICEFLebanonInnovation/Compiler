@@ -123,7 +123,7 @@ class InclusionForm(forms.ModelForm):
     )
     student_nationality = forms.ModelChoiceField(
         label=_("Nationality"),
-        queryset=Nationality.objects.all(), widget=forms.Select,
+        queryset=Nationality.objects.exclude(id=9), widget=forms.Select,
         required=True, to_field_name='id',
     )
     student_mother_fullname = forms.CharField(

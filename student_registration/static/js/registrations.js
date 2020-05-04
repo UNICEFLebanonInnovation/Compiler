@@ -702,7 +702,7 @@ function reorganizeForm()
         $('#id_caretaker_first_name').val(student_father_name);
         $('#id_caretaker_last_name').val(student_last_name);
     }
-    else if(main_caregiver == 'other'|| main_caregiver == 'mother'){
+    else if(main_caregiver == 'other'){
         $('div#div_id_other_caregiver_relationship').removeClass('d-none');
         $('#span_other_caregiver_relationship').removeClass('d-none');
     }
