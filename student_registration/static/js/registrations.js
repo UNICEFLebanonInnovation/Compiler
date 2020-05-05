@@ -465,6 +465,7 @@ $(document).ready(function(){
                     + "<b>Base Data:</b> " + full_name + " - " + item.student__mother_fullname
                     + "<br/> <b>Gender - Birthday:</b> " + item.student__sex + " - " + student_birthday
                      + "<br/> <b>Internal number:</b> " + item.internal_number
+                     + "<br/> <b>Round:</b> " + item.round__name
                     + "</div>")
                 .appendTo(ul);
         };

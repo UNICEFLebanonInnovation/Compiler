@@ -741,6 +741,11 @@ class BLNForm(CommonForm):
                     Div('search_clm_student', css_class='col-md-3'),
                     css_class='row',
                 ),
+                Div(
+                    HTML('<p>' + _(
+                        'Search by the following keywords: child first name, father name, last name, '
+                        'child number or partner internal number') + '</p>'),
+                ),
                 css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
             ),
             Fieldset(
@@ -1758,6 +1763,11 @@ class ABLNForm(CommonForm):
                     HTML('<span class="badge badge-default">1</span>'),
                     Div('search_clm_student', css_class='col-md-3'),
                     css_class='row',
+                ),
+                Div(
+                    HTML('<p>' + _(
+                        'Search by the following keywords: child first name, father name, last name, '
+                        'child number or partner internal number') + '</p>'),
                 ),
                 css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
             ),

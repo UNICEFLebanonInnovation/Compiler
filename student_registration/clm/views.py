@@ -3160,6 +3160,9 @@ def load_cadasters(request):
 
 
 def search_clm_child(request):
+    from django.db.models.functions import Concat
+    from django.db.models import Value
+
     clm_type = request.GET.get('clm_type', 'BLN')
     term = request.GET.get('term', 0)
     terms = request.GET.get('term', 0)
@@ -3172,9 +3175,20 @@ def search_clm_child(request):
         model = CBECE
     # qs = model.objects.filter(partner=request.user.partner_id)
     qs = {}
+
     if terms:
-        for term in terms.split():
-    # if term:
+        if len(terms.split()) > 1:
+            qs = model.objects.annotate(fullname=Concat('student__first_name', Value(' '),
+                                                        'student__father_name', Value(' '),
+                                                        'student__last_name'))\
+                .filter(partner=request.user.partner_id)\
+                .filter(fullname__icontains=terms)\
+                .values('id', 'student__first_name', 'student__father_name',
+                        'student__last_name', 'student__mother_fullname',
+                        'student__sex', 'student__birthday_day', 'student__birthday_month',
+                        'student__birthday_year', 'round__name', 'internal_number').distinct()
+        else:
+            # for term in terms:
             qs = model.objects.filter(partner=request.user.partner_id).filter(
                 Q(student__first_name__contains=term) |
                 Q(student__father_name__contains=term) |
@@ -3185,7 +3199,7 @@ def search_clm_child(request):
             ).values('id', 'student__first_name', 'student__father_name',
                      'student__last_name', 'student__mother_fullname',
                      'student__sex', 'student__birthday_day', 'student__birthday_month',
-                     'student__birthday_year', 'internal_number').distinct()
+                     'student__birthday_year', 'round__name', 'internal_number').distinct()
 
     return JsonResponse({'result': json.dumps(list(qs))})
 
