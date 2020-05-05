@@ -446,7 +446,7 @@ class ABLNAddView(LoginRequiredMixin,
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['new_registry'] = self.request.GET.get('new_registry', 'no')
             data['student_outreached'] = self.request.GET.get('student_outreached', '')
             data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
@@ -1102,7 +1102,7 @@ class CBECEAddView(LoginRequiredMixin,
             instance = Child.objects.get(id=int(self.request.GET.get('child_id')))
             data = ChildSerializer(instance).data
         if data:
-            data['new_registry'] = self.request.GET.get('new_registry', '')
+            data['new_registry'] = self.request.GET.get('new_registry', 'no')
             data['student_outreached'] = self.request.GET.get('student_outreached', '')
             data['have_barcode'] = self.request.GET.get('have_barcode', '')
         initial = data
