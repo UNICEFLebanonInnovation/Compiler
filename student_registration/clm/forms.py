@@ -186,6 +186,11 @@ class CommonForm(forms.ModelForm):
         queryset=Nationality.objects.exclude(id=9), widget=forms.Select,
         required=True, to_field_name='id',
     )
+    main_caregiver_nationality = forms.ModelChoiceField(
+        label=_("Nationality"),
+        queryset=Nationality.objects.exclude(id=9), widget=forms.Select,
+        required=True, to_field_name='id',
+    )
     student_mother_fullname = forms.CharField(
         label=_("Mother fullname"),
         widget=forms.TextInput, required=True

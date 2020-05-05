@@ -2150,7 +2150,10 @@ class Inclusion(TimeStampedModel):
             ('Referred by CP partner', _('Referred by CP partner')),
             ('Referred by youth partner', _('Referred by youth partner')),
             ('Referral from another Municipality', _('Referral from Municipality')),
-            ('Family walked in to NGO', _('Family walked in to NGO'))
+            ('Family walked in to NGO', _('Family walked in to NGO')),
+            ('abln', _('ABLN')),
+            ('bln', _('BLN')),
+            ('cbece', _('CBECE')),
         ),
         verbose_name=_('Source of identification of the child')
     )

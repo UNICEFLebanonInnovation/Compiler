@@ -169,9 +169,31 @@ $(document).ready(function(){
          reorganizeForm();
     });
 
-    $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_main_caregiver , select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
+    $(document).on('change', 'select#id_student_nationality, select#id_education_status, select#id_have_labour_single_selection, select#id_labour_weekly_income', function(){
          reorganizeForm();
     });
+
+    $(document).on('change', 'select#id_main_caregiver', function(){
+        var main_caregiver = $('select#id_main_caregiver').val();
+        if(main_caregiver == 'father'){
+            var student_father_name = $('#id_student_father_name').val();
+            var student_last_name = $('#id_student_last_name').val();
+            $('#id_caretaker_first_name').val(student_father_name);
+            $('#id_caretaker_last_name').val(student_last_name);
+        }
+        else if(main_caregiver == 'other'){
+            $('div#div_id_other_caregiver_relationship').removeClass('d-none');
+            $('#span_other_caregiver_relationship').removeClass('d-none');
+
+            $('#id_caretaker_first_name').val('');
+            $('#id_caretaker_last_name').val('');
+        }
+        else {
+            $('#id_caretaker_first_name').val('');
+            $('#id_caretaker_last_name').val('');
+        }
+    });
+
     $(document).on('click', 'input[name=student_have_children]', function(){
         reorganizeForm();
     });
@@ -334,6 +356,7 @@ $(document).ready(function(){
                             response(result);
                          }else{
                             response(data);
+
                         }
                     }
                 });
@@ -675,7 +698,6 @@ function reorganizeForm()
     var id_type = $('select#id_id_type').val();
     var nationality = $('select#id_student_nationality').val();
     var education_status = $('select#id_education_status').val();
-    var main_caregiver = $('select#id_main_caregiver').val();
     var family_status = $('select#id_student_family_status').val();
     var have_children = $('input[name=student_have_children]:checked').val();
     var have_labour = $('select#id_have_labour_single_selection').val();
@@ -701,25 +723,6 @@ function reorganizeForm()
 
     $('#span_other_caregiver_relationship').addClass('d-none');
     $('div#div_id_other_caregiver_relationship').addClass('d-none');
-
-    if(main_caregiver == 'father'){
-        var student_father_name = $('#id_student_father_name').val();
-        var student_last_name = $('#id_student_last_name').val();
-        $('#id_caretaker_first_name').val(student_father_name);
-        $('#id_caretaker_last_name').val(student_last_name);
-    }
-    else if(main_caregiver == 'other'){
-        $('div#div_id_other_caregiver_relationship').removeClass('d-none');
-        $('#span_other_caregiver_relationship').removeClass('d-none');
-
-        $('#id_caretaker_first_name').val('');
-        $('#id_caretaker_last_name').val('');
-    }
-    else
-    {
-        $('#id_caretaker_first_name').val('');
-        $('#id_caretaker_last_name').val('');
-    }
 
 
     // // id_student_family_status
