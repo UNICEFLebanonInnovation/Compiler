@@ -454,7 +454,7 @@ class InclusionForm(forms.ModelForm):
                 Div(
                     HTML('<span class="badge badge-default">6</span>'),
                     Div('student_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">6.1</span>'),
+                    HTML('<span class="badge badge-default" id="span_other_nationality">6.1</span>'),
                     Div('other_nationality', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -725,6 +725,38 @@ class InclusionForm(forms.ModelForm):
         parent_other_number_confirm = cleaned_data.get("parent_other_number_confirm")
         other_number = cleaned_data.get("other_number")
         other_number_confirm = cleaned_data.get("other_number_confirm")
+        # education_status = cleaned_data.get("education_status")
+        # miss_school_date = cleaned_data.get("miss_school_date")
+        student_nationality = cleaned_data.get("student_nationality")
+        other_nationality = cleaned_data.get("other_nationality")
+        main_caregiver = cleaned_data.get("main_caregiver")
+        other_caregiver_relationship = cleaned_data.get("other_caregiver_relationship")
+        # have_labour_single_selection = cleaned_data.get("have_labour_single_selection")
+        # labours_single_selection = cleaned_data.get("labours_single_selection")
+        # labour_hours = cleaned_data.get("labour_hours")
+        # labour_weekly_income = cleaned_data.get("labour_weekly_income")
+        student_have_children = cleaned_data.get("student_have_children")
+        student_number_children = cleaned_data.get("student_number_children")
+
+        # if education_status != 'out of school':
+        #     if not miss_school_date:
+        #         self.add_error('miss_school_date', 'This field is required')
+        if student_nationality.id == 6:
+            if not other_nationality:
+                self.add_error('other_nationality', 'This field is required')
+        if main_caregiver == 'other':
+            if not other_caregiver_relationship:
+                self.add_error('other_caregiver_relationship', 'This field is required')
+        # if student_have_children:
+        #     if not student_number_children:
+        #         self.add_error('student_number_children', 'This field is required')
+        # if have_labour_single_selection != 'no':
+        #     if not labours_single_selection:
+        #         self.add_error('labours_single_selection', 'This field is required')
+        #     if not labour_hours:
+        #         self.add_error('labour_hours', 'This field is required')
+        #     if not labour_weekly_income:
+        #         self.add_error('labour_weekly_income', 'This field is required')
 
         if phone_number != phone_number_confirm:
             msg = "The phone numbers are not matched"
