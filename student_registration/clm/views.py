@@ -240,7 +240,7 @@ class BLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return BLN.objects.filter(partner=self.request.user.partner_id)
+        return BLN.objects.filter(partner=self.request.user.partner_id).order_by('-id')
 
 
 class BLNReferralView(LoginRequiredMixin,
@@ -522,7 +522,7 @@ class ABLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return ABLN.objects.filter(partner=self.request.user.partner_id)
+        return ABLN.objects.filter(partner=self.request.user.partner_id).order_by('-id')
 
 
 class ABLNReferralView(LoginRequiredMixin,
@@ -1050,7 +1050,7 @@ class RSListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return RS.objects.filter(partner=self.request.user.partner_id)
+        return RS.objects.filter(partner=self.request.user.partner_id).order_by('-id')
 
 
 class CBECEAddView(LoginRequiredMixin,
@@ -1178,7 +1178,7 @@ class CBECEListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return CBECE.objects.filter(partner=self.request.user.partner_id)
+        return CBECE.objects.filter(partner=self.request.user.partner_id).order_by('-id')
 
 
 class CBECEReferralView(LoginRequiredMixin,

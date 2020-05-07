@@ -104,12 +104,11 @@ class InclusionListView(LoginRequiredMixin,
     template_name = 'clm/inclusion_list.html'
     table = BootstrapTable(Inclusion.objects.all(), order_by='id')
     group_required = [u"CLM_Inclusion"]
-
     filterset_class = InclusionFilter
 
     def get_queryset(self):
         force_default_language(self.request)
-        return Inclusion.objects.filter(partner=self.request.user.partner_id)
+        return Inclusion.objects.filter(partner=self.request.user.partner_id).order_by('-id')
 
 
 class InclusionReferralView(LoginRequiredMixin,

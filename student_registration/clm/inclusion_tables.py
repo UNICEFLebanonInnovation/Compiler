@@ -13,20 +13,20 @@ class InclusionTable(tables.Table):
     delete_column = tables.TemplateColumn(verbose_name=_('Delete student'), orderable=False,
                                           template_name='django_tables2/clm_delete_column.html',
                                           attrs={'url': '/api/clm-inclusion/', 'programme': 'Inclusion'})
-    referral_column = tables.TemplateColumn(verbose_name=_('refer'), orderable=False,
-                                            template_name='django_tables2/clm_referral_column.html',
-                                            attrs={'url': '/clm/inclusion-referral/', 'programme': 'Inclusion'})
-    assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
-                                                   template_name='django_tables2/clm_assessment_column.html',
-                                                   attrs={'url': '/clm/inclusion-assessment/', 'programme': 'Inclusion'})
+    # referral_column = tables.TemplateColumn(verbose_name=_('refer'), orderable=False,
+    #                                         template_name='django_tables2/clm_referral_column.html',
+    #                                         attrs={'url': '/clm/inclusion-referral/', 'programme': 'Inclusion'})
+    # assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
+    #                                                template_name='django_tables2/clm_assessment_column.html',
+    #                                                attrs={'url': '/clm/inclusion-assessment/', 'programme': 'Inclusion'})
 
     class Meta:
         model = Inclusion
         fields = (
             'edit_column',
-            'assessment_column',
+            # 'assessment_column',
             'delete_column',
-            'referral_column',
+            # 'referral_column',
             'first_attendance_date',
             'governorate',
             'district',
