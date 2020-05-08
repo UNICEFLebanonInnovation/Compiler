@@ -198,10 +198,7 @@ $(document).ready(function(){
         }
     });
 
-});
-
     $(document).on('change', 'input[name=id_student_have_children_1]', function(){
-        alert('hi');
         reorganizeForm();
     });
 
