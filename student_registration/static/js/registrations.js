@@ -198,15 +198,7 @@ $(document).ready(function(){
         }
     });
 
-    $('').change(function() {
-    if (this.value == 'allot') {
-        alert("Allot Thai Gayo Bhai");
-    }
-    else if (this.value == 'transfer') {
-        alert("Transfer Thai Gayo");
-    }
 });
-
 
     $(document).on('change', 'input[name=id_student_have_children_1]', function(){
         alert('hi');
