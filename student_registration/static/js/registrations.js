@@ -198,8 +198,18 @@ $(document).ready(function(){
         }
     });
 
+    $('').change(function() {
+    if (this.value == 'allot') {
+        alert("Allot Thai Gayo Bhai");
+    }
+    else if (this.value == 'transfer') {
+        alert("Transfer Thai Gayo");
+    }
+});
 
-    $(document).on('click', 'input[name=student_have_children]', function(){
+
+    $(document).on('change', 'input[name=id_student_have_children_1]', function(){
+        alert('hi');
         reorganizeForm();
     });
 
@@ -726,19 +736,20 @@ function reorganizeForm()
         $('#span_miss_school_date').removeClass('d-none');
     }
 
-    // // id_student_family_status
-    // if(family_status != 'single'){
-    //     $('#div_id_student_have_children').removeClass('d-none');
-    //     $('#span_student_have_children').removeClass('d-none');
-    //     // id_student_number_children
-    // }else{
-    //     $('input[name=id_student_have_children_2]').attr('checked', true);
-    //     $('#id_student_number_children').val('');
-    //     $('div#div_id_student_have_children').addClass('d-none');
-    //     $('div#div_id_student_number_children').addClass('d-none');
-    //     $('#span_student_have_children').addClass('d-none');
-    //     $('#span_student_number_children').addClass('d-none');
-    // }
+
+    // id_student_family_status
+    if(family_status != 'single'){
+        $('#div_id_student_have_children').removeClass('d-none');
+        $('#span_student_have_children').removeClass('d-none');
+        // id_student_number_children
+    }else{
+        $('input[name=id_student_have_children_2]').attr('checked', true);
+        $('#id_student_number_children').val('');
+        $('div#div_id_student_have_children').addClass('d-none');
+        $('div#div_id_student_number_children').addClass('d-none');
+        $('#span_student_have_children').addClass('d-none');
+        $('#span_student_number_children').addClass('d-none');
+    }
 
 
 
@@ -829,19 +840,21 @@ function reorganizeForm()
         // $('select#id_have_barcode').val('yes');
     }
 
+    $('#search_options').addClass('d-none');
+
     if(new_registry == 'yes' && outreached == 'yes' && have_barcode == 'yes'){
         $('#block_id_outreach_barcode').removeClass('d-none');
         $('#block_id_outreach_barcode').prev().removeClass('d-none');
 
         $('#register_by_barcode').removeClass('d-none');
-        $('#search_options').addClass('d-none');
+        // $('#search_options').addClass('d-none');
         $('.child_data').addClass('d-none');
         return true;
     }
 
     if(new_registry == 'yes' && outreached == 'yes' && have_barcode == 'no'){
         $('#register_by_barcode').addClass('d-none');
-        $('#search_options').addClass('d-none');
+        // $('#search_options').addClass('d-none');
         $('.child_data').removeClass('d-none');
         return true;
     }
@@ -849,7 +862,7 @@ function reorganizeForm()
     if(new_registry == 'yes' && outreached == 'no'){
 
         $('#register_by_barcode').addClass('d-none');
-        $('#search_options').addClass('d-none');
+        // $('#search_options').addClass('d-none');
         $('.child_data').removeClass('d-none');
 
         return true;
@@ -858,7 +871,7 @@ function reorganizeForm()
     if(new_registry == 'no' && outreached == 'no'){
 
         $('#register_by_barcode').addClass('d-none');
-        $('#search_options').removeClass('d-none');
+        // $('#search_options').removeClass('d-none');
         $('.child_data').addClass('d-none');
         return true;
     }
@@ -866,18 +879,23 @@ function reorganizeForm()
     if(new_registry == 'no' && outreached == 'yes' && have_barcode == 'yes'){
 
         $('#register_by_barcode').addClass('d-none');
-        $('#search_options').removeClass('d-none');
+        // $('#search_options').removeClass('d-none');
         $('.child_data').addClass('d-none');
         return true;
     }
     if(new_registry == 'no' && outreached == 'yes' && have_barcode == 'no'){
 
         $('#register_by_barcode').addClass('d-none');
-        $('#search_options').removeClass('d-none');
+        // $('#search_options').removeClass('d-none');
         $('.child_data').addClass('d-none');
         return true;
     }
 
+    if(new_registry == 'no')
+     // search_options
+     {
+        $('#search_options').removeClass('d-none');
+     }
     reorganizeForm_post_assessment();
 
 }

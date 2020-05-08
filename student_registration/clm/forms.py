@@ -742,7 +742,7 @@ class BLNForm(CommonForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">1</span>'),
+                    HTML('<span class="badge badge-default"></span>'),
                     Div('search_clm_student', css_class='col-md-3'),
                     css_class='row',
                 ),
