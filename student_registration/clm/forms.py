@@ -709,7 +709,7 @@ class BLNForm(CommonForm):
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:bln_add')
         self.fields['clm_type'].initial = 'BLN'
-
+        self.fields['new_registry'].initial = 'yes'
         if instance:
             display_registry = ' d-none'
             form_action = reverse('clm:bln_edit', kwargs={'pk': instance.id})
@@ -1733,6 +1733,7 @@ class ABLNForm(CommonForm):
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:abln_add')
         self.fields['clm_type'].initial = 'ABLN'
+        self.fields['new_registry'].initial = 'yes'
         if instance:
             display_registry = ' d-none'
             form_action = reverse('clm:abln_edit', kwargs={'pk': instance.id})
@@ -2572,6 +2573,7 @@ class RSForm(CommonForm):
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:rs_add')
         self.fields['clm_type'].initial = 'RS'
+        self.fields['new_registry'].initial = 'yes'
 
         if instance:
             display_assessment = ''
@@ -3103,6 +3105,7 @@ class CBECEForm(CommonForm):
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:cbece_add')
         self.fields['clm_type'].initial = 'CBECE'
+        self.fields['new_registry'].initial = 'yes'
 
         if instance:
             display_assessment = ''

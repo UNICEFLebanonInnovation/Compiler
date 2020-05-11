@@ -51,9 +51,9 @@ class BLNTable(CommonTable):
     re_enroll_column = tables.TemplateColumn(verbose_name=_('Re-enroll'), orderable=False,
                                              template_name='django_tables2/clm_re_enroll_column.html',
                                              attrs={'url': '/clm/bln-add/', 'programme': 'BLN'})
-    post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
-                                                   template_name='django_tables2/clm_assessment_column.html',
-                                                   attrs={'url': '/clm/bln-post-assessment/', 'programme': 'BLN'})
+    # post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
+    #                                                template_name='django_tables2/clm_assessment_column.html',
+    #                                                attrs={'url': '/clm/bln-post-assessment/', 'programme': 'BLN'})
     arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
                                        accessor='arabic_improvement')
     foreign_language_improvement = tables.Column(verbose_name=_('Foreign Language Development - Improvement'), orderable=False,
@@ -74,7 +74,7 @@ class BLNTable(CommonTable):
         model = BLN
         fields = (
             'edit_column',
-            'post_assessment_column',
+            # 'post_assessment_column',
             'delete_column',
             # 'referral_column',
             # 'followup_column',
@@ -128,9 +128,9 @@ class ABLNTable(CommonTable):
     # followup_column = tables.TemplateColumn(verbose_name=_('Follow-up'), orderable=False,
     #                                         template_name='django_tables2/clm_followup_column.html',
     #                                         attrs={'url': '/clm/abln-followup/', 'programme': 'ABLN'})
-    post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
-                                                   template_name='django_tables2/clm_assessment_column.html',
-                                                   attrs={'url': '/clm/abln-post-assessment/', 'programme': 'ABLN'})
+    # post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
+    #                                                template_name='django_tables2/clm_assessment_column.html',
+    #                                                attrs={'url': '/clm/abln-post-assessment/', 'programme': 'ABLN'})
     arabic_improvement = tables.Column(verbose_name=_('Arabic Language Development - Improvement'), orderable=False,
                                        accessor='arabic_improvement')
     math_improvement = tables.Column(verbose_name=_('Cognitive Development - Mathematics - Improvement'), orderable=False,
@@ -149,7 +149,7 @@ class ABLNTable(CommonTable):
         model = ABLN
         fields = (
             'edit_column',
-            'post_assessment_column',
+            # 'post_assessment_column',
             'delete_column',
             # 'referral_column',
             # 'followup_column',
@@ -316,9 +316,9 @@ class CBECETable(CommonTable):
     #                                         template_name='django_tables2/clm_followup_column.html',
     #                                         attrs={'url': '/clm/cbece-followup/', 'programme': 'CBECE'})
 
-    post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
-                                                   template_name='django_tables2/clm_assessment_column.html',
-                                                   attrs={'url': '/clm/cbece-post-assessment/', 'programme': 'CBECE'})
+    # post_assessment_column = tables.TemplateColumn(verbose_name=_('Post-Assessment'), orderable=False,
+    #                                                template_name='django_tables2/clm_assessment_column.html',
+    #                                                attrs={'url': '/clm/cbece-post-assessment/', 'programme': 'CBECE'})
 
     pre_assessment_result = tables.Column(verbose_name=_('Assessment Result - Pre'), orderable=False,
                                           accessor='pre_test_score')
@@ -348,7 +348,7 @@ class CBECETable(CommonTable):
             # 'referral_column',
             # 'followup_column',
             'first_attendance_date',
-            'post_assessment_column',
+            # 'post_assessment_column',
             'delete_column',
             'round',
             'cycle',
