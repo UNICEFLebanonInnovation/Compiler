@@ -724,13 +724,15 @@ class BLNForm(CommonForm):
                 self.fields['social_emotional'].initial = p_test["BLN_ASSESSMENT/social_emotional"]
                 self.fields['attended_psychomotor'].initial = p_test["BLN_ASSESSMENT/attended_psychomotor"]
                 self.fields['psychomotor'].initial = p_test["BLN_ASSESSMENT/psychomotor"]
+
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.helper.form_action = form_action
         self.helper.layout = Layout(
             Fieldset(
                 None,
-                Div(css_class='block_tag'),
+                Div(
+                    HTML('<span>A.1</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _(
                         'Search CLM student') + '</h4>')
@@ -751,7 +753,7 @@ class BLNForm(CommonForm):
                         'Search by the following keywords: child first name, father name, last name, '
                         'child number or partner internal number') + '</p>'),
                 ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
+                css_id='search_options', css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
             Fieldset(
                 None,
@@ -1754,7 +1756,7 @@ class ABLNForm(CommonForm):
         self.helper.layout = Layout(
             Fieldset(
                 None,
-                Div(css_class='block_tag'),
+                Div( HTML('<span>A</span>'), css_class='block_tag'),
                 Div(
                     HTML('<h4 id="alternatives-to-hidden-labels">' + _(
                         'Search CLM student') + '</h4>')
@@ -1767,6 +1769,7 @@ class ABLNForm(CommonForm):
                 ),
                 Div(
                     HTML('<span class="badge badge-default">1</span>'),
+
                     Div('search_clm_student', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -1775,7 +1778,7 @@ class ABLNForm(CommonForm):
                         'Search by the following keywords: child first name, father name, last name, '
                         'child number or partner internal number') + '</p>'),
                 ),
-                css_id='search_options', css_class='bd-callout bd-callout-warning' + display_registry
+                css_id='search_options', css_class='bd-callout bd-callout-warning child_data E_right_border' + display_registry
             ),
             Fieldset(
                 None,
