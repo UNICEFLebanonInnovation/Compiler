@@ -475,11 +475,11 @@ class InclusionForm(forms.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    HTML('<span class="badge badge-default">13</span>'),
+                    HTML('<span class="badge badge-default">12</span>'),
                     Div('internal_number', css_class='col-md-3'),
                     # HTML('<span class="badge badge-default">14</span>'),
                     Div('first_attendance_date', css_class='col-md-3 d-none'),
-                    HTML('<span class="badge badge-default">14</span>'),
+                    HTML('<span class="badge badge-default">13</span>'),
                     Div('source_of_identification', css_class='col-md-3'),
                     css_class='row',
                 ),
