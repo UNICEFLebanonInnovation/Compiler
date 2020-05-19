@@ -24,10 +24,10 @@ class Migration(migrations.Migration):
         #     model_name='evaluationdt',
         #     name='subject',
         # ),
-        migrations.DeleteModel(
-            name='Subject',
-        ),
-        migrations.DeleteModel(
-            name='EvaluationDt',
-        ),
+        # migrations.DeleteModel(
+        #     name='Subject',
+        # ),
+        # migrations.DeleteModel(
+        #     name='EvaluationDt',
+        # ),
     ]
