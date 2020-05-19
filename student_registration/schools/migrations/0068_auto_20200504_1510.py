@@ -12,18 +12,18 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='evaluationdt',
-            name='classroom',
-        ),
-        migrations.RemoveField(
-            model_name='evaluationdt',
-            name='evaluation',
-        ),
-        migrations.RemoveField(
-            model_name='evaluationdt',
-            name='subject',
-        ),
+        # migrations.RemoveField(
+        #     model_name='evaluationdt',
+        #     name='classroom',
+        # ),
+        # migrations.RemoveField(
+        #     model_name='evaluationdt',
+        #     name='evaluation',
+        # ),
+        # migrations.RemoveField(
+        #     model_name='evaluationdt',
+        #     name='subject',
+        # ),
         migrations.DeleteModel(
             name='Subject',
         ),
