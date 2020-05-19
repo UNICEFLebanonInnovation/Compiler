@@ -496,6 +496,7 @@ class CLMRoundAdmin(ImportExportModelAdmin):
         'current_round_bln',
         'current_round_abln',
         'current_round_cbece',
+        'current_round_inclusion',
     )
 
 
@@ -609,7 +610,7 @@ class EvaluationResource(resources.ModelResource):
             'challenges_de_3',
             'steps_de_3',
             'evaluate_steps_de_3',
-            
+
             'c4_eng_completed',
             'c4_eng_completed_de',
             'c4_eng_remaining_de',

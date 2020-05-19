@@ -407,6 +407,7 @@ class CLMRound(models.Model):
     current_round_bln = models.BooleanField(blank=True, default=False)
     current_round_abln = models.BooleanField(blank=True, default=False)
     current_round_cbece = models.BooleanField(blank=True, default=False)
+    current_round_inclusion = models.BooleanField(blank=True, default=False)
 
     start_date_bln = models.DateField(blank=True, null=True)
     end_date_bln = models.DateField(blank=True, null=True)
@@ -422,6 +423,11 @@ class CLMRound(models.Model):
     end_date_cbece = models.DateField(blank=True, null=True)
     start_date_cbece_edit = models.DateField(blank=True, null=True)
     end_date_cbece_edit = models.DateField(blank=True, null=True)
+
+    start_date_inclusion = models.DateField(blank=True, null=True)
+    end_date_inclusion = models.DateField(blank=True, null=True)
+    start_date_inclusion_edit = models.DateField(blank=True, null=True)
+    end_date_inclusion_edit = models.DateField(blank=True, null=True)
 
 
     class Meta:
