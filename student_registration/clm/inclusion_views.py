@@ -45,7 +45,7 @@ class InclusionAddView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        # kwargs['is_allowed_create'] = is_allowed_create('Inclusion')
+        kwargs['is_allowed_create'] = is_allowed_create('Inclusion')
         return super(InclusionAddView, self).get_context_data(**kwargs)
 
     def form_valid(self, form):
@@ -74,7 +74,7 @@ class InclusionEditView(LoginRequiredMixin,
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
-        # kwargs['is_allowed_edit'] = is_allowed_edit('Inclusion')
+        kwargs['is_allowed_edit'] = is_allowed_edit('Inclusion')
         return super(InclusionEditView, self).get_context_data(**kwargs)
 
     def get_form(self, form_class=None):
