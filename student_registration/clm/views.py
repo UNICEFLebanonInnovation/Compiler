@@ -522,8 +522,7 @@ class ABLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return ABLN.objects.filter(partner=self.request.user.partner_id).order_by('-id')
-        # return ABLN.objects.filter(partner=self.request.user.partner_id, created__year=2020).order_by('-id')
+        return ABLN.objects.filter(partner=self.request.user.partner_id, created__year=2020).order_by('-id')
 
 
 class ABLNReferralView(LoginRequiredMixin,
@@ -1405,6 +1404,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
 
         headers = {
             'id': 'enrollment_id',
+            'new_registry': 'First time registered?',
             'partner__name': 'Partner',
             'source_of_identification': 'Source of Identification',
             'first_attendance_date': 'first attendance date',
@@ -1436,6 +1436,10 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
 
             'phone_number': 'Phone number',
             'phone_number_confirm': 'Phone number confirm',
+            'phone_owner': 'phone owner',
+            'second_phone_number': 'Second Phone number',
+            'second_phone_number_confirm': 'Second Phone number confirm',
+            'second_phone_owner': 'Second phone owner',
 
             'id_type': 'ID Type',
             'case_number': 'UNHCR case number',
@@ -1492,7 +1496,6 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
-            'new_registry': 'First time registered?',
             'student_outreached': 'Student outreached?',
             'have_barcode': 'Have barcode with him?',
             'owner__username': 'owner',
@@ -1647,6 +1650,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
         )
         field_list = (
             'id',
+            'new_registry',
             'partner__name',
             'source_of_identification',
             'first_attendance_date',
@@ -1678,6 +1682,10 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
 
             'phone_number',
             'phone_number_confirm',
+            'phone_owner',
+            'second_phone_number',
+            'second_phone_number_confirm',
+            'second_phone_owner',
 
             'id_type',
             'case_number',
@@ -1765,7 +1773,6 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'followup_visit_reason_1',
             'followup_visit_result_1',
 
-            'new_registry',
             'student_outreached',
             'have_barcode',
             'owner__username',
@@ -1855,6 +1862,11 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
 
             'phone_number',
             'phone_number_confirm',
+            'phone_owner',
+            'second_phone_number',
+            'second_phone_number_confirm',
+            'second_phone_owner',
+
             'id_type',
             'case_number',
             'case_number_confirm',
@@ -1926,6 +1938,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
 
         headers = {
             'id': 'enropllment_id',
+            'new_registry': 'First time registered?',
             'partner__name': 'Partner',
             'source_of_identification': 'Source of Identification',
             'first_attendance_date': 'first attendance date',
@@ -1957,6 +1970,10 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
 
             'phone_number': 'Phone number',
             'phone_number_confirm': 'Phone number confirm',
+            'phone_owner': 'phone owner',
+            'second_phone_number': 'Second Phone number',
+            'second_phone_number_confirm': 'Second Phone number confirm',
+            'second_phone_owner': 'Second phone owner',
 
             'id_type': 'ID Type',
             'case_number': 'UNHCR case number',
@@ -2011,7 +2028,6 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'participation': 'Level of participation / Absence',
             'barriers': 'The main barriers affecting the daily attendance and performance of the child or drop out of school?',
             'learning_result': 'Based on the overall score, what is the recommended learning path?',
-            'new_registry': 'First time registered?',
             'student_outreached': 'Student outreached?',
             'have_barcode': 'Have barcode with him?',
             'owner__username': 'owner',
@@ -2166,6 +2182,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
         )
         field_list = (
             'id',
+            'new_registry',
             'partner__name',
             'source_of_identification',
             'first_attendance_date',
@@ -2197,6 +2214,10 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
 
             'phone_number',
             'phone_number_confirm',
+            'phone_owner',
+            'second_phone_number',
+            'second_phone_number_confirm',
+            'second_phone_owner',
 
             'id_type',
             'case_number',
@@ -2282,7 +2303,6 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'followup_visit_reason_1',
             'followup_visit_result_1',
 
-            'new_registry',
             'student_outreached',
             'have_barcode',
             'owner__username',
@@ -2370,6 +2390,10 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
 
             'phone_number',
             'phone_number_confirm',
+            'phone_owner',
+            'second_phone_number',
+            'second_phone_number_confirm',
+            'second_phone_owner',
             'id_type',
             'case_number',
             'case_number_confirm',
