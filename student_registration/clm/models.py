@@ -1160,6 +1160,23 @@ class BLN(CLM):
         verbose_name=_('Second Phone number confirm')
     )
 
+    source_of_identification = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('Referred by CP partner', _('Referred by CP partner')),
+            ('Referred by youth partner', _('Referred by youth partner')),
+            ('Family walked in to NGO', _('Family walked in to NGO')),
+            ('Referral from another NGO', _('Referral from another NGO')),
+            ('Referral from another Municipality', _('Referral from Municipality')),
+            ('Direct outreach', _('Direct outreach')),
+            ('List database', _('List database')),
+            ('abln', _('ABLN'))
+        ),
+        verbose_name=_('Source of identification of the child')
+    )
     def calculate_sore(self, stage):
         keys = [
             'BLN_ASSESSMENT/arabic',
@@ -1375,6 +1392,24 @@ class ABLN(CLM):
         blank=True,
         null=True,
         verbose_name=_('Second Phone number confirm')
+    )
+
+    source_of_identification = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('Referred by CP partner', _('Referred by CP partner')),
+            ('Referred by youth partner', _('Referred by youth partner')),
+            ('Family walked in to NGO', _('Family walked in to NGO')),
+            ('Referral from another NGO', _('Referral from another NGO')),
+            ('Referral from another Municipality', _('Referral from Municipality')),
+            ('Direct outreach', _('Direct outreach')),
+            ('List database', _('List database')),
+            ('bln', _('BLN'))
+        ),
+        verbose_name=_('Source of identification of the child')
     )
 
     def calculate_sore(self, stage):

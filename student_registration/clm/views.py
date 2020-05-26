@@ -30,7 +30,7 @@ from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
 from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter
 from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable
-from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment
+from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment, TimeStampedModel
 from .forms import (
     BLNForm,
     ABLNForm,
@@ -240,7 +240,7 @@ class BLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return BLN.objects.filter(partner=self.request.user.partner_id).order_by('-id')
+        return BLN.objects.filter(partner=self.request.user.partner_id, created__year=2020).order_by('-id')
 
 
 class BLNReferralView(LoginRequiredMixin,
@@ -523,6 +523,7 @@ class ABLNListView(LoginRequiredMixin,
     def get_queryset(self):
         force_default_language(self.request)
         return ABLN.objects.filter(partner=self.request.user.partner_id).order_by('-id')
+        # return ABLN.objects.filter(partner=self.request.user.partner_id, created__year=2020).order_by('-id')
 
 
 class ABLNReferralView(LoginRequiredMixin,

@@ -634,7 +634,7 @@ class BLNForm(CommonForm):
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Direct outreach', _('Direct outreach')),
             ('List database', _('List database')),
-            ('ABLN', _('ABLN'))
+            ('abln', _('ABLN'))
         ),
         initial=''
     )
@@ -1665,7 +1665,8 @@ class ABLNForm(CommonForm):
             ('Referral from another NGO', _('Referral from another NGO')),
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Direct outreach', _('Direct outreach')),
-            ('List database', _('List database'))
+            ('List database', _('List database')),
+            ('bln', _('BLN'))
         ),
         initial=''
     )
