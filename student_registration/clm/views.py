@@ -28,9 +28,10 @@ from student_registration.outreach.models import Child
 from student_registration.outreach.serializers import ChildSerializer
 from student_registration.schools.models import CLMRound
 from student_registration.locations.models import Location
+from student_registration.students.models import Person
 from .filters import BLNFilter, ABLNFilter, RSFilter, CBECEFilter
 from .tables import BootstrapTable, BLNTable, ABLNTable, RSTable, CBECETable
-from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment, TimeStampedModel
+from .models import BLN, ABLN, RS, CBECE, SelfPerceptionGrades, Disability, Assessment
 from .forms import (
     BLNForm,
     ABLNForm,
@@ -240,7 +241,7 @@ class BLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return BLN.objects.filter(partner=self.request.user.partner_id, created__year=2020).order_by('-id')
+        return BLN.objects.filter(partner=self.request.user.partner_id, created__year= Person.CURRENT_YEAR).order_by('-id')
 
 
 class BLNReferralView(LoginRequiredMixin,
@@ -522,7 +523,7 @@ class ABLNListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return ABLN.objects.filter(partner=self.request.user.partner_id, created__year=2020).order_by('-id')
+        return ABLN.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
 class ABLNReferralView(LoginRequiredMixin,
@@ -1421,7 +1422,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'student__birthday_day': 'Birthday - day',
             'student__birthday_month': 'Birthday - month',
             'student__birthday_year': 'Birthday - year',
-            'student__nationality__name': 'Nationality',
+            'student__nationality__name': 'Student Nationality',
             'student__mother_fullname': 'Mother fullname',
             'student__p_code': 'P-Code If a child lives in a tent / Brax in a random camp',
             'student__id_number': 'ID number',
@@ -1940,7 +1941,7 @@ class BLNExportViewSet(LoginRequiredMixin, ListView):
             'followup_visit_reason_1',
             'followup_visit_result_1',
         )
-
+        print(qs.query)
         return render_to_csv_response(qs, field_header_map=headers, field_order=field_list)
 
 
@@ -1975,7 +1976,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'student__birthday_day': 'Birthday - day',
             'student__birthday_month': 'Birthday - month',
             'student__birthday_year': 'Birthday - year',
-            'student__nationality__name': 'Nationality',
+            'student__nationality__name': 'Student Nationality',
             'student__mother_fullname': 'Mother fullname',
             'student__p_code': 'P-Code If a child lives in a tent / Brax in a random camp',
             'student__id_number': 'ID number',
@@ -2485,7 +2486,7 @@ class ABLNExportViewSet(LoginRequiredMixin, ListView):
             'followup_visit_reason_1',
             'followup_visit_result_1',
         )
-
+        print(qs.query)
         return render_to_csv_response(qs, field_header_map=headers, field_order=field_list)
 
 
@@ -2518,7 +2519,7 @@ class RSExportViewSet(LoginRequiredMixin, ListView):
             'student__birthday_day': 'Birthday - day',
             'student__birthday_month': 'Birthday - month',
             'student__birthday_year': 'Birthday - year',
-            'student__nationality__name': 'Nationality',
+            'student__nationality__name': 'Student Nationality',
             'student__mother_fullname': 'Mother fullname',
             'student__p_code': 'P-Code If a child lives in a tent / Brax in a random camp',
             'student__id_number': 'ID number',
@@ -3204,6 +3205,7 @@ class CBECEExportViewSet(LoginRequiredMixin, ListView):
             'created',
             'modified',
         )
+        print(qs.query)
 
         return render_to_csv_response(qs, field_header_map=headers, field_order=field_list)
 

@@ -189,6 +189,7 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'source_of_identification': 'Source of Identification',
             'first_attendance_date': 'first attendance date',
             'governorate__name_en': 'Governorate',
+            'cadaster__name_en': 'Cadaster',
             'district__name_en': 'District',
             'location': 'Location',
             'student__first_name': 'First name',
@@ -198,7 +199,7 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'student__birthday_day': 'Birthday - day',
             'student__birthday_month': 'Birthday - month',
             'student__birthday_year': 'Birthday - year',
-            'student__nationality__name': 'Nationality',
+            'student__nationality__name': 'Student Nationality',
             'student__mother_fullname': 'Mother fullname',
             'student__p_code': 'P-Code If a child lives in a tent / Brax in a random camp',
             'student__id_number': 'ID number',
@@ -272,6 +273,7 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'referral_partner_3': 'Referral partner 3',
             'referral_date_3': 'Referral date 3',
             'confirmation_date_3': 'Referral confirmation date 3',
+            'additional_comments': 'Comments',
         }
 
         field_list = (
@@ -281,6 +283,7 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'first_attendance_date',
             'governorate__name_en',
             'district__name_en',
+            'cadaster__name_en',
             'location',
             'student__first_name',
             'student__father_name',
@@ -364,6 +367,7 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'modified_by__username',
             'created',
             'modified',
+            'additional_comments',
         )
 
         qs = self.get_queryset().values(
@@ -372,6 +376,7 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'first_attendance_date',
             'governorate__name_en',
             'district__name_en',
+            'cadaster__name_en',
             'location',
             # 'language',
             'student__first_name',
@@ -386,8 +391,8 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'student__p_code',
             'student__id_number',
             'student__number',
-            'student__family_status',
-            'student__have_children',
+            # 'student__family_status',
+            # 'student__have_children',
             'disability__name_en',
             'internal_number',
             'comments',
@@ -453,6 +458,7 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
             'referral_partner_3',
             'referral_date_3',
             'confirmation_date_3',
+            'additional_comments',
         )
 
         return render_to_csv_response(qs, field_header_map=headers, field_order=field_list)

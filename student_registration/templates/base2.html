@@ -183,27 +183,27 @@
             <div class="col-sm-3">
                 {% load i18n %}
                 {% get_current_language as LANGUAGE_CODE %}
-                <div class="btn-group">
-                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-                      {% if LANGUAGE_CODE == 'ar-ar' %}
-                        {% trans 'Arabic' %}
-                      {% else  %}
-                        {% trans 'English' %}
-                      {% endif %}
-                      <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="{% url 'users:set_language' 'en-us' %}">
-                                {% trans 'English' %}
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'users:set_language' 'ar-ar' %}">
-                                {% trans 'Arabic' %}
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+{#                <div class="btn-group">#}
+{#                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">#}
+{#                      {% if LANGUAGE_CODE == 'ar-ar' %}#}
+{#                        {% trans 'Arabic' %}#}
+{#                      {% else  %}#}
+{#                        {% trans 'English' %}#}
+{#                      {% endif %}#}
+{#                      <span class="caret"></span></a>#}
+{#                    <ul class="dropdown-menu">#}
+{#                        <li>#}
+{#                            <a href="{% url 'users:set_language' 'en-us' %}">#}
+{#                                {% trans 'English' %}#}
+{#                            </a>#}
+{#                        </li>#}
+{#                        <li>#}
+{#                            <a href="{% url 'users:set_language' 'ar-ar' %}">#}
+{#                                {% trans 'Arabic' %}#}
+{#                            </a>#}
+{#                        </li>#}
+{#                    </ul>#}
+{#                </div>#}
                 <div id="Menu"></div>
             </div>
         </div>
