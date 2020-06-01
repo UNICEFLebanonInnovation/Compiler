@@ -3022,6 +3022,7 @@ class CBECEForm(CommonForm):
     YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 13, Person.CURRENT_YEAR - 2)))
     YEARS_CB.insert(0, ('', '---------'))
 
+
     student_birthday_year = forms.ChoiceField(
         label=_("Birthday year"),
         widget=forms.Select, required=True,
@@ -3109,7 +3110,7 @@ class CBECEForm(CommonForm):
         instance = kwargs['instance'] if 'instance' in kwargs else ''
         form_action = reverse('clm:cbece_add')
         self.fields['clm_type'].initial = 'CBECE'
-        self.fields['new_registry'].initial = 'yes'
+        # self.fields['new_registry'].initial = 'yes'
 
         if instance:
             display_assessment = ''
