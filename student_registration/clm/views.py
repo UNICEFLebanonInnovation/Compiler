@@ -1058,7 +1058,7 @@ class CBECEAddView(LoginRequiredMixin,
                    GroupRequiredMixin,
                    FormView):
 
-    template_name = 'clm/create_form.html'
+    template_name = 'clm/cbece_create_form.html'
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
     group_required = [u"CLM_CBECE"]
@@ -1119,7 +1119,7 @@ class CBECEEditView(LoginRequiredMixin,
                     GroupRequiredMixin,
                     FormView):
 
-    template_name = 'clm/edit_form.html'
+    template_name = 'clm/cbece_edit_form.html'
     form_class = CBECEForm
     success_url = '/clm/cbece-list/'
     group_required = [u"CLM_CBECE"]

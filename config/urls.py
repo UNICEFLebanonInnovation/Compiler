@@ -38,6 +38,10 @@ from student_registration.clm.views import (
     SelfPerceptionGradesViewSet
 )
 
+from student_registration.clm.inclusion_views import (
+    InclusionViewSet
+)
+
 from student_registration.locations.views import (
     LocationViewSet,
 )
@@ -81,6 +85,7 @@ api.register(r'clm-bln', BLNViewSet, base_name='clm-bln')
 api.register(r'clm-abln', ABLNViewSet, base_name='clm-abln')
 api.register(r'clm-rs', RSViewSet, base_name='clm-rs')
 api.register(r'clm-cbece', CBECEViewSet, base_name='clm-cbece')
+api.register(r'clm-inclusion', InclusionViewSet, base_name='clm-inclusion')
 api.register(r'clm-students', CLMStudentViewSet, base_name='clm-students')
 api.register(r'self-perception-grads', SelfPerceptionGradesViewSet, base_name='self-perception-grads')
 # api.register(r'notifications', NotificationViewSet, base_name='notifications')

@@ -3,8 +3,12 @@ from __future__ import absolute_import, unicode_literals
 
 from django.views.generic import ListView, FormView, TemplateView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
+
 
 from braces.views import GroupRequiredMixin, SuperuserRequiredMixin
+from rest_framework import viewsets, mixins, permissions
+from rest_framework import status
 
 from django_filters.views import FilterView
 from django_tables2 import MultiTableMixin, RequestConfig, SingleTableView
@@ -462,3 +466,34 @@ class InclusionExportViewSet(LoginRequiredMixin, ListView):
         )
 
         return render_to_csv_response(qs, field_header_map=headers, field_order=field_list)
+
+
+####################### API VIEWS #############################
+
+
+class InclusionViewSet(mixins.RetrieveModelMixin,
+                 mixins.ListModelMixin,
+                 mixins.CreateModelMixin,
+                 mixins.UpdateModelMixin,
+                 viewsets.GenericViewSet):
+
+    model = Inclusion
+    queryset = Inclusion.objects.all()
+    serializer_class = InclusionSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        from datetime import datetime
+
+        qs = self.queryset
+        if self.request.GET.get('creation_date', None):
+            return self.queryset.filter(created__gte=datetime.strptime(self.request.GET.get('creation_date', None), '%Y-%m-%d'))
+        if self.request.GET.get('school', None):
+            return self.queryset.filter(school_id=self.request.GET.get('school', None))
+
+        return qs
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.model.objects.get(id=kwargs['pk'])
+        instance.delete()
+        return JsonResponse({'status': status.HTTP_200_OK})
