@@ -721,7 +721,7 @@ function reorganizeForm()
     // id_education_status
     $('div#div_id_miss_school_date').addClass('d-none');
     $('#span_miss_school_date').addClass('d-none');
-    if(education_status == 'enrolled in formal education but did not continue' || education_status == 'enrolled in BLN'){
+    if(education_status == 'enrolled in formal education but did not continue' || education_status == 'enrolled in BLN' || education_status == 'enrolled in ABLN'){
         $('#div_id_miss_school_date').removeClass('d-none');
         $('#span_miss_school_date').removeClass('d-none');
     }

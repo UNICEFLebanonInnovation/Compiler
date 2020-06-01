@@ -566,6 +566,7 @@ class CLM(TimeStampedModel):
             ('out of school', _('Out of school')),
             ('enrolled in formal education but did not continue', _("Enrolled in formal education but did not continue")),
             ('enrolled in ABLN', _("Enrolled in ABLN")),
+            ('enrolled in BLN', _("Enrolled in BLN")),
         ),
         verbose_name=_('Education status')
     )
