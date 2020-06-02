@@ -4321,6 +4321,21 @@ class RSAdminForm(forms.ModelForm):
         fields = '__all__'
 
 
+class InclusionAdminForm(forms.ModelForm):
+
+    student = forms.ModelChoiceField(
+        queryset=Student.objects.all(),
+        widget=autocomplete.ModelSelect2(url='student_autocomplete')
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(InclusionAdminForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = BLN
+        fields = '__all__'
+
+
 class CBECEAdminForm(forms.ModelForm):
 
     student = forms.ModelChoiceField(
