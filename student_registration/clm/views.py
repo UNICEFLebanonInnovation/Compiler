@@ -1179,7 +1179,7 @@ class CBECEListView(LoginRequiredMixin,
 
     def get_queryset(self):
         force_default_language(self.request)
-        return CBECE.objects.filter(partner=self.request.user.partner_id).order_by('-id')
+        return CBECE.objects.filter(partner=self.request.user.partner_id, created__year=Person.CURRENT_YEAR).order_by('-id')
 
 
 class CBECEReferralView(LoginRequiredMixin,
