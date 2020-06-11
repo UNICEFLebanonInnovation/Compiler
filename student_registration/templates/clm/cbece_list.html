@@ -19,7 +19,7 @@
                 data-animation-origin="right"
                 data-animation-duration="400"
                 data-animation-delay="100"
-                data-animation-distance="50px">{% trans "CBECE - Community-Based Early Childhood Education" %}
+                data-animation-distance="50px">{% trans "CBECE -  Community-Based Early Childhood Education" %}
             </h3>
         </div>
     </section>
@@ -47,7 +47,7 @@
                   {% trans "Export data" %}
               </a>
 
-              {% if 'BLN'|is_allowed_create %}
+              {% if 'CBECE'|is_allowed_create %}
               <a href="{% url 'clm:cbece_add' %}" class="btn btn-success">
                   <i class="icon-plus-sign icon-white"></i>
                   {% trans "Add new Child" %}
@@ -80,5 +80,3 @@
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
     </script>
 {% endblock %}
-
-
