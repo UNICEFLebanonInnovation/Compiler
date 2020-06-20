@@ -240,6 +240,51 @@ def geo_calculate_attendances_per_day(from_school, to_school, from_date, to_date
                 add_attendance(attendance=line, students=students, std_id=txt_std)
 
 
+def geo_calculate_attendances_per_day_2(from_date, to_date):
+    from django.db import connection
+
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "SELECT att.id, att.school_id, "  # 0, 1
+        "att.classroom_id, att.classlevel_id, "  # 2, 3
+        "att.section_id, att.status, "  # 4, 5
+        "att.attendance_date, "  # 6
+        # "att.validation_status, att.validation_date, "  # 7, 8
+        # "att.absence_reason, att.close_reason, "  # 9, 10
+        "att.students "  # 7
+        # "att.school_type, att.education_year_id "  # 12, 13  
+        "FROM attendances_attendance att LEFT OUTER JOIN schools_school scl "
+        "ON (att.school_id = scl.id) "
+        "WHERE att.close_reason IS NULL "
+        "AND att.education_year_id = 3 "
+        # "AND att.attendance_date >= '2019-01-01' "
+        # "AND att.attendance_date <= '2019-02-01' "
+        "ORDER BY att.attendance_date ASC, scl.number ASC "
+        "LIMIT 10000")
+
+    rows = cursor.fetchall()
+    for attendance in rows:
+        for level_section, attendances in attendance[7].items():
+
+            if 'students' not in attendances:
+                continue
+
+            students = attendances['students']
+            for student in students:
+                try:
+                    cursor.execute("INSERT INTO public.attendances_attendancedt("
+                                   "is_present, attendance_date, levelname, attendance_id, classlevel_id, "
+                                   "classroom_id, school_id, section_id, student_id)"
+                                   "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", [student['status'], attendance[6],
+                                                                                   student['level_name'], attendance[0],
+                                                                                   student['level'], attendance[2],
+                                                                                   attendance[1], student['section'],
+                                                                                   student['student_id']])
+                except Exception:
+                    continue
+
+
 def geo_calculate_attendances_by_student(from_school, to_school, from_date, to_date):
     from .utils import calculate_absentees
     from .models import Attendance
