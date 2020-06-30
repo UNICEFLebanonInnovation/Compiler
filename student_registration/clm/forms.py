@@ -217,12 +217,12 @@ class CommonForm(forms.ModelForm):
     hh_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.exclude(id=3), widget=forms.Select,
         label=_('What is the educational level of the mother?'),
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
     )
     father_educational_level = forms.ModelChoiceField(
         queryset=EducationalLevel.objects.exclude(id=3), widget=forms.Select,
         label=_('What is the educational level of the father?'),
-        required=False, to_field_name='id',
+        required=True, to_field_name='id',
     )
     student_id = forms.CharField(widget=forms.HiddenInput, required=False)
     enrollment_id = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -3018,7 +3018,7 @@ class RSForm(CommonForm):
 
 
 class CBECEForm(CommonForm):
-    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 13, Person.CURRENT_YEAR - 2)))
+    YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 6, Person.CURRENT_YEAR - 1)))
     YEARS_CB.insert(0, ('', '---------'))
 
     cycle = forms.ModelChoiceField(
@@ -3099,7 +3099,7 @@ class CBECEForm(CommonForm):
     )
 
     round = forms.ModelChoiceField(
-        queryset=CLMRound.objects.all(), widget=forms.Select,
+        queryset=CLMRound.objects.filter(current_round_cbece=True), widget=forms.Select,
         label=_('Round'),
         empty_label='-------',
         required=True, to_field_name='id',
@@ -3182,7 +3182,7 @@ class CBECEForm(CommonForm):
     id_type = forms.ChoiceField(
         label=_("ID type of the caretaker"),
         widget=forms.Select(attrs=({'translation': _('Child no ID confirmation popup message')})),
-        required=True,
+        required=False,
         choices=(
             ('', '----------'),
             ('UNHCR Registered', _('UNHCR Registered')),
@@ -3628,25 +3628,25 @@ class CBECEForm(CommonForm):
                     Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
-                Div(
-                    HTML('<span class="badge badge-default">6</span>'),
-                    Div('caretaker_first_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">7</span>'),
-                    Div('caretaker_middle_name', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">8</span>'),
-                    Div('caretaker_last_name', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">9</span>'),
-                    Div('caretaker_mother_name', css_class='col-md-3'),
-                    css_class='row',
-                ),
-                Div(
-                    HTML('<span class="badge badge-default">10</span>'),
-                    Div('id_type', css_class='col-md-3'),
-                    css_class='row',
-                ),
+                # Div(
+                #     HTML('<span class="badge badge-default">6</span>'),
+                #     Div('caretaker_first_name', css_class='col-md-3'),
+                #     HTML('<span class="badge badge-default">7</span>'),
+                #     Div('caretaker_middle_name', css_class='col-md-3'),
+                #     css_class='row',
+                # ),
+                # Div(
+                #     HTML('<span class="badge badge-default">8</span>'),
+                #     Div('caretaker_last_name', css_class='col-md-3'),
+                #     HTML('<span class="badge badge-default">9</span>'),
+                #     Div('caretaker_mother_name', css_class='col-md-3'),
+                #     css_class='row',
+                # ),
+                # Div(
+                #     HTML('<span class="badge badge-default">10</span>'),
+                #     Div('id_type', css_class='col-md-3'),
+                #     css_class='row',
+                # ),
                 Div(
                     HTML('<span class="badge badge-default">11</span>'),
                     Div('case_number', css_class='col-md-4'),
@@ -4033,7 +4033,7 @@ class CBECEForm(CommonForm):
             'second_phone_number',
             'second_phone_number_confirm',
             'second_phone_owner',
-            'id_type',
+            # 'id_type',
             'case_number',
             'case_number_confirm',
             'individual_case_number',
@@ -4062,10 +4062,10 @@ class CBECEForm(CommonForm):
             'source_of_identification',
             'other_nationality',
             'education_status',
-            'caretaker_first_name',
-            'caretaker_middle_name',
-            'caretaker_last_name',
-            'caretaker_mother_name',
+            # 'caretaker_first_name',
+            # 'caretaker_middle_name',
+            # 'caretaker_last_name',
+            # 'caretaker_mother_name',
             'miss_school_date',
             'round_start_date',
             'cadaster',

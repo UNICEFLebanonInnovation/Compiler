@@ -24,7 +24,7 @@ from .inclusion_serializers import InclusionSerializer
 
 YES_NO_CHOICE = ((1, _("Yes")), (0, _("No")))
 
-YEARS = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 16, Person.CURRENT_YEAR)))
+YEARS = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 29, Person.CURRENT_YEAR)))
 YEARS.insert(0, ('', '---------'))
 
 DAYS = list(((str(x), x) for x in range(1, 32)))
