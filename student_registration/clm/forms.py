@@ -3018,6 +3018,12 @@ class RSForm(CommonForm):
 
 
 class CBECEForm(CommonForm):
+    REGISTRATION_LEVEL = (
+        ('', '----------'),
+        ('level_two', _('Level two')),
+        ('level_three', _('Level three'))
+    )
+
     YEARS_CB = list(((str(x), x) for x in range(Person.CURRENT_YEAR - 6, Person.CURRENT_YEAR - 1)))
     YEARS_CB.insert(0, ('', '---------'))
 
@@ -3109,11 +3115,11 @@ class CBECEForm(CommonForm):
         label=_("Round start date"),
         required=False
     )
-    # registration_level = forms.ChoiceField(
-    #     label=_("Registration level"),
-    #     widget=forms.Select, required=True,
-    #     choices=REGISTRATION_LEVEL
-    # )
+    registration_level = forms.ChoiceField(
+        label=_("Registration level"),
+        widget=forms.Select, required=True,
+        choices=REGISTRATION_LEVEL
+    )
 
     have_labour_single_selection = forms.ChoiceField(
         label=_('Does the child participate in work?'),
@@ -3338,12 +3344,13 @@ class CBECEForm(CommonForm):
         choices=(
             ('', '----------'),
             ('Referred by CP partner', _('Referred by CP partner')),
-            ('Referred by youth partner', _('Referred by youth partner')),
             ('Family walked in to NGO', _('Family walked in to NGO')),
             ('Referral from another NGO', _('Referral from another NGO')),
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Direct outreach', _('Direct outreach')),
-            ('List database', _('List database'))
+            ('List database', _('List database')),
+            ('From hosted community', _('From hosted community')),
+            ('From displaced community', _('From displaced community'))
         ),
         initial=''
     )
@@ -3403,6 +3410,11 @@ class CBECEForm(CommonForm):
             ('father', _('Father')),
             ('other', _('Other')),
         )
+    )
+    main_caregiver_nationality = forms.ModelChoiceField(
+        label=_("Nationality"),
+        queryset=Nationality.objects.exclude(id=9), widget=forms.Select,
+        required=False, to_field_name='id',
     )
 
     # student_p_code = forms.CharField(
@@ -3513,8 +3525,8 @@ class CBECEForm(CommonForm):
                     Div('location', css_class='col-md-3'),
                     HTML('<span class="badge badge-default">7</span>'),
                     Div('language', css_class='col-md-3'),
-                    # HTML('<span class="badge badge-default">8</span>'),
-                    # Div('registration_level', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default">8</span>'),
+                    Div('registration_level', css_class='col-md-3'),
                     css_class='row',
                 ),
                 css_class='bd-callout bd-callout-warning child_data A_right_border'
@@ -3622,9 +3634,9 @@ class CBECEForm(CommonForm):
                 Div(
                     HTML('<span class="badge badge-default">5</span>'),
                     Div('main_caregiver', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default">5.1</span>'),
-                    Div('main_caregiver_nationality', css_class='col-md-3'),
-                    HTML('<span class="badge badge-default" id="span_other_caregiver_relationship">5.2</span>'),
+                    # HTML('<span class="badge badge-default">5.1</span>'),
+                    # Div('main_caregiver_nationality', css_class='col-md-3'),
+                    HTML('<span class="badge badge-default" id="span_other_caregiver_relationship">5.1</span>'),
                     Div('other_caregiver_relationship', css_class='col-md-3'),
                     css_class='row',
                 ),
@@ -4071,7 +4083,7 @@ class CBECEForm(CommonForm):
             'cadaster',
             # 'registration_level',
             'main_caregiver',
-            'main_caregiver_nationality',
+            # 'main_caregiver_nationality',
             'other_caregiver_relationship',
             'labour_weekly_income',
             'source_of_transportation',

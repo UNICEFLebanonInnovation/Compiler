@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-30 19:41+0300\n"
+"POT-Creation-Date: 2020-07-02 17:37+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2011,14 +2011,13 @@ msgstr ""
 #: student_registration/clm/forms.py:93 student_registration/clm/models.py:192
 #: student_registration/clm/models.py:1048
 #: student_registration/clm/models.py:1282
-#: student_registration/clm/models.py:1892
 msgid "Level one"
 msgstr ""
 
 #: student_registration/clm/forms.py:94 student_registration/clm/models.py:193
 #: student_registration/clm/models.py:1049
 #: student_registration/clm/models.py:1283
-#: student_registration/clm/models.py:1893
+#: student_registration/clm/models.py:1892
 msgid "Level two"
 msgstr ""
 
@@ -2423,7 +2422,6 @@ msgstr ""
 #: student_registration/clm/models.py:682
 #: student_registration/clm/models.py:1171
 #: student_registration/clm/models.py:1405
-#: student_registration/clm/models.py:2083
 #: student_registration/clm/models.py:2328
 msgid "Referred by youth partner"
 msgstr ""
@@ -2434,7 +2432,7 @@ msgstr ""
 #: student_registration/clm/models.py:684
 #: student_registration/clm/models.py:1172
 #: student_registration/clm/models.py:1406
-#: student_registration/clm/models.py:2084
+#: student_registration/clm/models.py:2083
 #: student_registration/clm/models.py:2330
 msgid "Family walked in to NGO"
 msgstr ""
@@ -2445,7 +2443,7 @@ msgstr ""
 #: student_registration/clm/models.py:680
 #: student_registration/clm/models.py:1173
 #: student_registration/clm/models.py:1407
-#: student_registration/clm/models.py:2085
+#: student_registration/clm/models.py:2084
 #: student_registration/clm/models.py:2326
 msgid "Referral from another NGO"
 msgstr ""
@@ -2456,7 +2454,7 @@ msgstr ""
 #: student_registration/clm/models.py:683
 #: student_registration/clm/models.py:1174
 #: student_registration/clm/models.py:1408
-#: student_registration/clm/models.py:2086
+#: student_registration/clm/models.py:2085
 #: student_registration/clm/models.py:2329
 msgid "Referral from Municipality"
 msgstr ""
@@ -2467,7 +2465,7 @@ msgstr ""
 #: student_registration/clm/models.py:678
 #: student_registration/clm/models.py:1175
 #: student_registration/clm/models.py:1409
-#: student_registration/clm/models.py:2087
+#: student_registration/clm/models.py:2086
 #: student_registration/clm/models.py:2324
 msgid "Direct outreach"
 msgstr ""
@@ -2478,7 +2476,7 @@ msgstr ""
 #: student_registration/clm/models.py:679
 #: student_registration/clm/models.py:1176
 #: student_registration/clm/models.py:1410
-#: student_registration/clm/models.py:2088
+#: student_registration/clm/models.py:2087
 #: student_registration/clm/models.py:2325
 msgid "List database"
 msgstr ""
@@ -3800,8 +3798,20 @@ msgstr ""
 msgid "MUAC"
 msgstr ""
 
+#: student_registration/clm/models.py:1893
+msgid "Level three"
+msgstr ""
+
 #: student_registration/clm/models.py:1937
 msgid "Child MUAC"
+msgstr ""
+
+#: student_registration/clm/models.py:2088
+msgid "From hosted community"
+msgstr ""
+
+#: student_registration/clm/models.py:2089
+msgid "From displaced community"
 msgstr ""
 
 #: student_registration/clm/models.py:2231

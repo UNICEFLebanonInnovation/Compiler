@@ -1889,8 +1889,8 @@ class CBECE(CLM):
 
     REGISTRATION_LEVEL = (
         ('', '----------'),
-        ('level_one', _('Level one')),
         ('level_two', _('Level two')),
+        ('level_three', _('Level three'))
     )
     MAIN_CAREGIVER = (
         ('', '----------'),
@@ -2080,13 +2080,13 @@ class CBECE(CLM):
         choices=Choices(
             ('', '----------'),
             ('Referred by CP partner', _('Referred by CP partner')),
-            ('Referred by youth partner', _('Referred by youth partner')),
             ('Family walked in to NGO', _('Family walked in to NGO')),
             ('Referral from another NGO', _('Referral from another NGO')),
             ('Referral from another Municipality', _('Referral from Municipality')),
             ('Direct outreach', _('Direct outreach')),
-            ('List database', _('List database'))
-
+            ('List database', _('List database')),
+            ('From hosted community', _('From hosted community')),
+            ('From displaced community', _('From displaced community'))
         ),
         verbose_name=_('Source of identification of the child')
     )
