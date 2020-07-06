@@ -1162,7 +1162,7 @@ class BLNForm(CommonForm):
         if education_status != 'out of school':
             if not miss_school_date:
                 self.add_error('miss_school_date', 'This field is required')
-        if student_nationality == 'other':
+        if student_nationality.id == 6:
             if not other_nationality:
                 self.add_error('other_nationality', 'This field is required')
         if main_caregiver == 'other':
@@ -3879,7 +3879,7 @@ class CBECEForm(CommonForm):
         education_status = cleaned_data.get("education_status")
         miss_school_date = cleaned_data.get("miss_school_date")
         student_nationality = cleaned_data.get("student_nationality")
-        other_nationality = cleaned_data.get("other_nationality")
+        other_nationality = cleaned_data.get("other_nationality.id")
         main_caregiver = cleaned_data.get("main_caregiver")
         other_caregiver_relationship = cleaned_data.get("other_caregiver_relationship")
         have_labour_single_selection = cleaned_data.get("have_labour_single_selection")
@@ -3892,7 +3892,8 @@ class CBECEForm(CommonForm):
         if education_status != 'out of school':
             if not miss_school_date:
                 self.add_error('miss_school_date', 'This field is required')
-        if student_nationality == 'other':
+
+        if student_nationality.id == 6:
             if not other_nationality:
                 self.add_error('other_nationality', 'This field is required')
         if main_caregiver == 'other':
