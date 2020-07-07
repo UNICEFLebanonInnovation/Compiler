@@ -152,6 +152,7 @@ class CLM(TimeStampedModel):
         ('Full time job to support family financially', _('Full time job to support family financially')),
         ('seasonal_work', _('Seasonal work')),
         ('cold_weather', _('Cold Weather')),
+        ('transportation', _('Transportation')),
         ('sickness', _('Sickness')),
         ('security', _('Security')),
         ('family moved', _('Family moved')),
@@ -160,6 +161,8 @@ class CLM(TimeStampedModel):
         ('marriage engagement pregnancy', _('Marriage/Engagement/Pregnancy')),
         ('violence bullying', _('Violence/Bullying')),
         ('No interest in pursuing the programme/No value', _('No interest in pursuing the programme/No value')),
+        ('no barriers', _('No barriers')),
+        ('other', _('Other')),
     )
     HAVE_LABOUR = Choices(
         ('no', _('No')),
@@ -1875,16 +1878,25 @@ class CBECE(CLM):
         ('out_school', _('Outside the school')),
     )
 
+    # LEARNING_RESULT = Choices(
+    #     ('', _('Learning result')),
+    #     ('graduated_to_cbece_next_level', _('Graduated to the next level')),
+    #     ('graduated_to_cbec_next_round_same_level', _('Graduated to the next round, same level')),
+    #     ('graduated_to_cbec_next_round_higher_level', _('Graduated to the next round, higher level')),
+    #     ('referred_to_alp', _('referred to ALP')),
+    #     ('referred_public_school', _('Referred to public school')),
+    #     ('referred_to_tvet', _('Referred to TVET')),
+    #     ('referred_to_ybln', _('Referred to YBLN')),
+    #     ('dropout', _('Dropout, referral not possible')),
+    # )
+
     LEARNING_RESULT = Choices(
-        ('', _('Learning result')),
-        ('graduated_to_cbece_next_level', _('Graduated to the next level')),
-        ('graduated_to_cbec_next_round_same_level', _('Graduated to the next round, same level')),
-        ('graduated_to_cbec_next_round_higher_level', _('Graduated to the next round, higher level')),
-        ('referred_to_alp', _('referred to ALP')),
-        ('referred_public_school', _('Referred to public school')),
-        ('referred_to_tvet', _('Referred to TVET')),
-        ('referred_to_ybln', _('Referred to YBLN')),
-        ('dropout', _('Dropout, referral not possible')),
+        ('graduated_to_formal_kg', _('Graduated to formal education - KG')),
+        ('graduated_to_formal_level1', _('Graduated to formal education - Level 1')),
+        ('referred_to_another_program', _('Referred to another program')),
+        ('dropout', _('Dropout from school')),
+        ('repeat_level', _('Repeat level')),
+        ('graduated_next_round_higher_level', _('Graduated to the next round, higher level')),
     )
 
     REGISTRATION_LEVEL = (
