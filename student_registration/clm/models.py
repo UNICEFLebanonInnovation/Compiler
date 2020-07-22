@@ -155,13 +155,13 @@ class CLM(TimeStampedModel):
         ('transportation', _('Transportation')),
         ('sickness', _('Sickness')),
         ('security', _('Security')),
-        ('family moved', _('Family moved')),
+        ('family_moved', _('Family moved')),
         ('Moved back to Syria', _('Moved back to Syria')),
         ('Enrolled in formal education', _('Enrolled in formal education')),
         ('marriage engagement pregnancy', _('Marriage/Engagement/Pregnancy')),
         ('violence bullying', _('Violence/Bullying')),
         ('No interest in pursuing the programme/No value', _('No interest in pursuing the programme/No value')),
-        ('no barriers', _('No barriers')),
+        ('no_barriers', _('No barriers')),
         ('other', _('Other')),
     )
     HAVE_LABOUR = Choices(
@@ -1911,6 +1911,19 @@ class CBECE(CLM):
         ('other', _('Other')),
     )
 
+    education_status = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=Choices(
+            ('', '----------'),
+            ('out of school', _('Out of school')),
+            ('enrolled in formal education but did not continue',
+             _("Enrolled in formal education but did not continue")),
+            ('enrolled in CBECE', _("Enrolled in CBECE")),
+        ),
+        verbose_name=_('Education status')
+    )
     cycle = models.ForeignKey(
         Cycle,
         blank=True, null=True,

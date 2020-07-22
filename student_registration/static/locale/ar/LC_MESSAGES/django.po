@@ -3680,7 +3680,7 @@ msgstr "أحد افراد العائلة"
 #: student_registration/clm/models.py:2474
 #: student_registration/clm/models.py:2486
 msgid "Neighbors"
-msgstr "الجياران"
+msgstr "الجيران"
 
 #: student_registration/clm/models.py:1135
 #: student_registration/clm/models.py:1147
